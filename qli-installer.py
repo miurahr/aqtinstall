@@ -22,42 +22,24 @@
 
 import sys
 import os
+import requests
+import xml.etree.ElementTree as ElementTree
 
-if len(sys.argv) < 3 or len(sys.argv) > 4:
+if len(sys.argv) < 4 or len(sys.argv) > 5:
     print("Usage: {} <host> <target> [<arch>]\n".format(sys.argv[0]))
     print("host systems: linux, mac, windows")
     print("targets:      desktop, android, ios")
     exit(1)
 
 base_url = "https://download.qt.io/online/qtsdkrepository/"
+
+# Qt version
+qt_version = sys.argv[1]
+qt_ver_num = qt_version.replace(".", "")
 # one of: "linux", "mac", "windows"
-os_name = sys.argv[1]
+os_name = sys.argv[2]
 # one of: "desktop", "android", "ios"
-target = sys.argv[2]
-
-qt_major = "5"
-qt_minor = "11"
-qt_patch = "2"
-qt_extra = "0" # needed for buid num
-qt_version = "{}.{}.{}".format(qt_major, qt_minor, qt_patch)
-qt_ver_num = "{}{}{}".format(qt_major, qt_minor, qt_patch)
-qt_build_date = ""
-if os_name == "linux" and target == "desktop":
-    qt_build_date = "201809141941"
-elif os_name == "linux" and target == "android":
-    qt_build_date = "201809142008"
-elif os_name == "mac" and target == "desktop":
-    qt_build_date = "201809141947"
-elif os_name == "mac" and target == "ios":
-    qt_build_date = "201809142015"
-elif os_name == "mac" and target == "android":
-    qt_build_date = "201809142012"
-elif os_name == "windows" and target == "desktop":
-    qt_build_date = "201809141946"
-elif os_name == "windows" and target == "android":
-    qt_build_date = "201809142114"
-
-qt_build_num = "{}-{}-{}".format(qt_version, qt_extra, qt_build_date)
+target = sys.argv[3]
 
 # Target architectures:
 #
@@ -68,8 +50,8 @@ qt_build_num = "{}-{}-{}".format(qt_version, qt_extra, qt_build_date)
 #                  "win32_msvc2015", "win32_mingw53"
 # */android:       "android_x86", "android_armv7"
 arch = ""
-if len(sys.argv) == 4:
-    arch = sys.argv[3]
+if len(sys.argv) == 5:
+    arch = sys.argv[4]
 elif os_name == "linux" and target == "desktop":
     arch = "gcc_64"
 elif os_name == "mac" and target == "desktop":
@@ -81,52 +63,6 @@ if arch == "":
     print("Please supply a target architecture.")
     exit(1)
 
-print("****************************************")
-print("Installing Qt {}".format(qt_version))
-print("****************************************")
-print("HOST:   {}".format(os_name))
-print("TARGET: {}".format(target))
-print("ARCH:   {}".format(arch))
-print("****************************************")
-
-# These are the base packages we need on every configuration
-packages = [
-    "qtbase",
-    "qtconnectivity",
-    "qtwebchannel",
-    "qtmultimedia",
-    "qttranslations",
-    "qtgraphicaleffects",
-    "qtsvg",
-    "qtdeclarative",
-    "qtwebsockets",
-    "qtimageformats",
-    "qttools",
-    "qtxmlpatterns",
-    "qtsensors",
-    "qtlocation",
-    "qtserialport",
-    "qtquickcontrols",
-    "qtquickcontrols2",
-    "qt3d",
-    "qtcanvas3d",
-    "qtwebview",
-    "qtserialbus",
-    "qtscxml",
-    "qtgamepad",
-    "qtspeech"
-]
-# Add extra packages
-if os_name == "linux" and target == "desktop":
-    packages.append("qtx11extras")
-    packages.append("qtwayland")
-elif os_name == "mac" and (target == "ios" or target == "desktop"):
-    packages.append("qtmacextras")
-elif os_name == "windows" and target == "desktop":
-    packages.append("qtwinextras")
-elif target == "android":
-    packages.append("qtandroidextras")
-
 # Build repo URL
 packages_url = base_url
 if os_name == "windows":
@@ -135,55 +71,48 @@ else:
     packages_url += os_name + "_x64/"
 packages_url += target + "/"
 packages_url += "qt5_" + qt_ver_num + "/"
-packages_url += "qt.qt5.{}.{}/".format(qt_ver_num, arch)
 
-pkg_name = qt_build_num + "{}" # qt package name will be inserted here
-if os_name == "linux":
-    if target == "desktop":
-        pkg_name += "-Linux-RHEL_7_4-GCC-Linux-RHEL_7_4-X86_64"
-    elif target == "android":
-        if arch == "android_x86":
-            pkg_name += "-Linux-RHEL_7_4-GCC-Android-Android_ANY-X86"
-        elif arch == "android_armv7":
-            pkg_name += "-Linux-RHEL_7_4-GCC-Android-Android_ANY-ARMv7"
-elif os_name == "mac":
-    if target == "desktop":
-        pkg_name += "-MacOS-MacOS_10_12-Clang-MacOS-MacOS_10_12-X86_64"
-    elif target == "ios":
-        pkg_name += "-MacOS-MacOS_10_12-Clang-IOS-IOS_ANY-Multi"
-    elif target == "android":
-        if arch == "android_x86":
-            pkg_name += "-MacOS-MacOS_10_12-GCC-Android-Android_ANY-X86"
-        elif arch == "android_armv7":
-            pkg_name += "-MacOS-MacOS_10_12-GCC-Android-Android_ANY-ARMv7"
-elif os_name == "windows":
-    if target == "desktop":
-        if arch == "win64_msvc2017_64":
-            pkg_name += "-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64"
-        elif arch == "win64_msvc2015_64":
-            pkg_name += "-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64"
-        elif arch == "win32_msvc2015":
-            pkg_name += "-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86"
-        elif arch == "win32_mingw53":
-            pkg_name += "-Windows-Windows_7-Mingw53-Windows-Windows_7-X86"
-    elif target == "android":
-        if arch == "android_x86":
-            pkg_name += "-Windows-Windows_7-Mingw53-Android-Android_ANY-X86"
-        elif arch == "android_armv7":
-            pkg_name += "-Windows-Windows_7-Mingw53-Android-Android_ANY-ARMv7"
-pkg_name += ".7z"
+# Get packages index
+update_xml_url = packages_url + "Updates.xml"
+reply = requests.get(update_xml_url)
+update_xml = ElementTree.fromstring(reply.content)
 
-packages_url += pkg_name
+package_desc = ""
+full_version = ""
+archives = []
+for packageupdate in update_xml.findall("PackageUpdate"):
+    name = packageupdate.find("Name").text
+    if name != "qt.qt5.{}.{}".format(qt_ver_num, arch):
+        continue
 
-for package in packages:
-    package_name = pkg_name.format(package)
-    package_url = packages_url.format(package)
+    full_version = packageupdate.find("Version").text
+    archives = packageupdate.find("DownloadableArchives").text.split(", ")
+    package_desc = packageupdate.find("Description").text
+    break
 
-    print("Downloading {}...".format(package), end="\r")
+if not full_version or not archives:
+    print("Error while parsing package information!")
+    exit(1)
+
+archives_url = packages_url + "qt.qt5.{}.{}/".format(qt_ver_num, arch)
+
+print("****************************************")
+print("Installing {}".format(package_desc))
+print("****************************************")
+print("HOST:      ", os_name)
+print("TARGET:    ", target)
+print("ARCH:      ", arch)
+print("Source URL:", archives_url)
+print("****************************************")
+
+for archive in archives:
+    url = archives_url + full_version + archive
+
+    print("Downloading {}...".format(archive), end="\r")
     sys.stdout.write("\033[K")
-    os.system("wget -q -O package.7z " + package_url)
+    os.system("wget -q -O package.7z " + url)
 
-    print("Extracting {}...".format(package), end="\r")
+    print("Extracting {}...".format(archive), end="\r")
     sys.stdout.write("\033[K")
     os.system("7z x package.7z 1>/dev/null")
     os.system("rm package.7z")
