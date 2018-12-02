@@ -80,21 +80,23 @@ update_xml = ElementTree.fromstring(reply.content)
 package_desc = ""
 full_version = ""
 archives = []
+archives_url = ""
 for packageupdate in update_xml.findall("PackageUpdate"):
     name = packageupdate.find("Name").text
-    if name != "qt.qt5.{}.{}".format(qt_ver_num, arch):
-        continue
-
-    full_version = packageupdate.find("Version").text
-    archives = packageupdate.find("DownloadableArchives").text.split(", ")
-    package_desc = packageupdate.find("Description").text
-    break
+    if name == "qt.qt5.{}.{}".format(qt_ver_num, arch) or name == "qt.{}.{}".format(qt_ver_num, arch):
+        full_version = packageupdate.find("Version").text
+        archives = packageupdate.find("DownloadableArchives").text.split(", ")
+        package_desc = packageupdate.find("Description").text
+        if ".qt5." in name:
+            archives_url = packages_url + "qt.qt5.{}.{}/".format(qt_ver_num, arch)
+        else:
+            archives_url = packages_url + "qt.{}.{}/".format(qt_ver_num, arch)
+        break
 
 if not full_version or not archives:
     print("Error while parsing package information!")
     exit(1)
 
-archives_url = packages_url + "qt.qt5.{}.{}/".format(qt_ver_num, arch)
 
 print("****************************************")
 print("Installing {}".format(package_desc))
