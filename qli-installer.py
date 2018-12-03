@@ -111,13 +111,14 @@ print("****************************************")
 for archive in archives:
     url = archives_url + full_version + archive
 
-    print("Downloading {}...".format(archive), end="\r")
     sys.stdout.write("\033[K")
+    print("Downloading {}...".format(archive), end="\r")
     os.system("wget -q -O package.7z " + url)
 
-    print("Extracting {}...".format(archive), end="\r")
     sys.stdout.write("\033[K")
+    print("Extracting {}...".format(archive), end="\r")
     os.system("7z x package.7z 1>/dev/null")
     os.system("rm package.7z")
 
+sys.stdout.write("\033[K")
 print("Finished installation")
