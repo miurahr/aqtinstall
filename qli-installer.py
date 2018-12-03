@@ -26,7 +26,8 @@ import requests
 import xml.etree.ElementTree as ElementTree
 
 if len(sys.argv) < 4 or len(sys.argv) > 5:
-    print("Usage: {} <host> <target> [<arch>]\n".format(sys.argv[0]))
+    print("Usage: {} <qt-version> <host> <target> [<arch>]\n".format(sys.argv[0]))
+    print("qt-version:   Qt version in the format of \"5.X.Y\"")
     print("host systems: linux, mac, windows")
     print("targets:      desktop, android, ios")
     exit(1)
