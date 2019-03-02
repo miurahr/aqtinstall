@@ -1,5 +1,13 @@
 # Qt CLI installer
 
+|  OS         | Status                                                                                                                                                                                                                    |
+|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| MacOS       |[![Build Status](https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=macOS)](https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master)      |
+| Ubuntu      |[![Build Status](https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604)](https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master)|
+| Windows     |[![Build Status](https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Windows64)](https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master)  |
+
+
+
 This is a simple script replacing the official graphical Qt installer. It can
 automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).

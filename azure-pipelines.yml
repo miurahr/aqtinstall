@@ -4,6 +4,7 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - script: |
+      sudo apt-get update
       sudo apt-get -y install python3 python3-requests 7zip
       cd $(Build.BinariesDirectory)
       $(Build.SourcesDirectory)/qli-installer.py 5.12.1 linux desktop
@@ -17,6 +18,7 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
   - script: |
+      brew install 7zip
       python -m pip install requests
       cd $(Build.BinariesDirectory)
       $(Build.SourcesDirectory)/qli-installer.py 5.12.1 mac desktop
