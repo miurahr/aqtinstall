@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
+# Copyright (C) 2019 Hiroshi Miura <miurahr@linux.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -20,8 +21,11 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import sys
 import os
+import platform
+import sys
+import subprocess
+import urllib.request
 import requests
 import xml.etree.ElementTree as ElementTree
 
@@ -30,6 +34,13 @@ if len(sys.argv) < 4 or len(sys.argv) > 5:
     print("qt-version:   Qt version in the format of \"5.X.Y\"")
     print("host systems: linux, mac, windows")
     print("targets:      desktop, android, ios")
+    print("arch: ")
+    print("  target linux/desktop:   gcc_64")
+    print("  target mac/desktop:     clang_64")
+    print("  target mac/ios:         ios")
+    print("  windows/desktop:        win64_msvc2017_64, win64_msvc2015_64")
+    print("                          in32_msvc2015, win32_mingw53")
+    print("  android:                android_x86, android_armv7")
     exit(1)
 
 base_url = "https://download.qt.io/online/qtsdkrepository/"
@@ -113,12 +124,14 @@ for archive in archives:
 
     sys.stdout.write("\033[K")
     print("Downloading {}...".format(archive), end="\r")
-    os.system("wget -q -O package.7z " + url)
-
+    urllib.request.urlretrieve(url, archive)
     sys.stdout.write("\033[K")
     print("Extracting {}...".format(archive), end="\r")
-    os.system("7z x package.7z 1>/dev/null")
-    os.system("rm package.7z")
+    if platform.system() is 'Windows':
+        subprocess.run([r'C:\Program Files\7-Zip\7z.exe', 'x', archive])
+    else:
+        subprocess.run([r'7z', 'x', archive])
+    os.unlink(archive)
 
 sys.stdout.write("\033[K")
 print("Finished installation")
