@@ -1,0 +1,37 @@
+jobs:
+- job: Ubuntu_1604
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - script: |
+      sudo apt-get -y install python3 python3-requests 7zip
+      cd $(Build.BinariesDirectory)
+      $(Build.SourcesDirectory)/qli-installer.py 5.12.1 linux desktop
+
+- job: macOS
+  pool:
+    vmImage: 'macOS-10.13'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.6'
+      architecture: 'x64'
+  - script: |
+      python -m pip install requests
+      cd $(Build.BinariesDirectory)
+      $(Build.SourcesDirectory)/qli-installer.py 5.12.1 mac desktop
+
+- job: Windows64
+  pool:
+    vmImage: 'vs2017-win2016'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.6'
+      architecture: 'x64'
+  - script: |
+      cinst -y 7zip
+      python -m pip install requests
+      cd $(Build.BinariesDirectory)
+      python $(Build.SourcesDirectory)/qli-installer.py 5.12.1 windows desktop win64_msvc2017_64
+
