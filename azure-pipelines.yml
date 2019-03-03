@@ -12,7 +12,7 @@ jobs:
       sudo apt-get -y install python3 python3-requests p7zip-full
       cd $(Build.BinariesDirectory)
       $(Build.SourcesDirectory)/qli-installer.py $(qtversion) linux desktop
-      ls -lR $(qtversion)
+      ls -lR 
 
 - job: macOS
   pool:
@@ -27,7 +27,7 @@ jobs:
       python -m pip install requests
       cd $(Build.BinariesDirectory)
       $(Build.SourcesDirectory)/qli-installer.py $(qtversion) mac desktop
-      ls -lR $(qtversion)
+      ls -lR
 
 - job: Windows64
   pool:
@@ -42,5 +42,5 @@ jobs:
       python -m pip install requests
       cd $(Build.BinariesDirectory)
       python $(Build.SourcesDirectory)/qli-installer.py $(qtversion) windows desktop win64_msvc2017_64
-      ls -lR $(qtversion)
+      ls -lR
 
