@@ -160,7 +160,7 @@ def main():
     target = args.target
 
     arch = args.arch
-    if arch == "":
+    if arch is None:
         if os_name == "linux" and target == "desktop":
             arch = "gcc_64"
         elif os_name == "mac" and target == "desktop":
