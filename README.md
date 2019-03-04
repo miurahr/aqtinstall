@@ -53,5 +53,5 @@ This program is distributed under MIT license.
 
 Qt SDK and its related files are under its licenses. When using the qli-installer.py
 you are considered to agree upon these licenses.
-For details see https://www.qt.io/licensing/
+For details see [Qt licensing](https://www.qt.io/licensing/) and [Licenses used in Qt5](https://doc.qt.io/qt-5/licenses-used-in-qt.html)
 
