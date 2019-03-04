@@ -13,7 +13,13 @@ automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
 It's working on Linux, OS X and Windows.
 
+## Prerequisite
+
 **Dependencies**: python3, 7z
+
+It is required `p7zip` for windows, `7zip` for mac or `p7zip-full` for Ubuntu.
+
+## Usage
 
 General usage looks like this:
 ```
@@ -35,3 +41,17 @@ Example: Installing Android (armv7) Qt 5.10.2:
 ```bash
 ./qli-installer.py 5.10.2 linux android android_armv7
 ```
+
+Example: Show help message
+```bash
+./qli-installer.py -h
+```
+
+## License
+
+This program is distributed under MIT license.
+
+Qt SDK and its related files are under its licenses. When using the qli-installer.py
+you are considered to agree upon these licenses.
+For details see https://www.qt.io/licensing/
+

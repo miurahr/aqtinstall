@@ -17,8 +17,6 @@ Added
 Changed
 -------
 
-* Support  multiprocess concurent download and installation.
-
 Fixed
 -----
 
@@ -30,6 +28,14 @@ Removed
 
 Security
 --------
+
+`v0.1.0`_ (5, March, 2019)
+========================
+
+Changed
+-------
+
+* Support  multiprocess concurent download and installation.
 
 `v0.0.2`_ (4, March, 2019)
 ========================
@@ -58,5 +64,7 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.0.1...HEAD
--- _v0.0.1: https://github.com/miurahr/qli-installer/releases/tag/v0.0.1
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.1.0...HEAD
+.. _v0.1.0: https://github.com/miurahr/qli-installer/compare/v0.0.2...v0.1.0
+.. _v0.0.2: https://github.com/miurahr/qli-installer/compare/v0.0.1...v0.0.2
+.. _v0.0.1: https://github.com/miurahr/qli-installer/releases/tag/v0.0.1
