@@ -23,23 +23,23 @@
 
 import os
 import platform
-import sys
 import subprocess
+import sys
 import urllib.request
 import xml.etree.ElementTree as ElementTree
 from multiprocessing.dummy import Pool
 
+BASE_URL = "https://download.qt.io/online/qtsdkrepository/"
 
 class QtArchives:
-    base_url = "https://download.qt.io/online/qtsdkrepository/"
     full_version = ""
     archives = []
     archives_url = ""
 
-    def __init__(self, os_name, qt_ver_num, target, arch):
-        package_desc = ""
+    def __init__(self, os_name, qt_version, target, arch):
+        qt_ver_num = qt_version.replace(".", "")
         # Build repo URL
-        packages_url = self.base_url
+        packages_url = BASE_URL
         if os_name == "windows":
             packages_url += os_name + "_x86/"
         else:
@@ -55,7 +55,7 @@ class QtArchives:
             if name == "qt.qt5.{}.{}".format(qt_ver_num, arch) or name == "qt.{}.{}".format(qt_ver_num, arch):
                 self.full_version = packageupdate.find("Version").text
                 self.archives = packageupdate.find("DownloadableArchives").text.split(", ")
-                package_desc = packageupdate.find("Description").text
+                self.package_desc = packageupdate.find("Description").text
                 if ".qt5." in name:
                     self.archives_url = packages_url + "qt.qt5.{}.{}/".format(qt_ver_num, arch)
                 else:
@@ -66,13 +66,12 @@ class QtArchives:
             print("Error while parsing package information!")
             exit(1)
 
-        print("****************************************")
-        print("Installing {}".format(package_desc))
-        print("****************************************")
-        print("HOST:      ", os_name)
-        print("TARGET:    ", target)
-        print("ARCH:      ", arch)
-        print("Source URL:", self.archives_url)
+
+    def get_package_desc(self):
+        return self.package_desc
+
+    def get_archives_url(self):
+        return self.archives_url
 
     def get_base_url(self):
         return self.archives_url + self.full_version
@@ -81,17 +80,52 @@ class QtArchives:
         return self.archives
 
 
-def retrieve_archive(url_base, archive):
-    sys.stdout.write("\033[K")
-    print("Downloading {}...".format(archive), end="\r")
-    urllib.request.urlretrieve(url_base + archive, archive)
-    sys.stdout.write("\033[K")
-    print("Extracting {}...".format(archive), end="\r")
-    if platform.system() is 'Windows':
-        subprocess.run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
-    else:
-        subprocess.run([r'7z', 'x', '-aoa', '-y', archive])
-    os.unlink(archive)
+class QtInstaller:
+    def __init__(self, qt_archives):
+        self.qt_archives = qt_archives
+        self.url_base = qt_archives.get_base_url()
+
+    def retrieve_archive(self, archive):
+        sys.stdout.write("\033[K")
+        print("Downloading {}...".format(archive), end="\r")
+        urllib.request.urlretrieve(self.url_base + archive, archive)
+        sys.stdout.write("\033[K")
+        print("Extracting {}...".format(archive), end="\r")
+        if platform.system() is 'Windows':
+            subprocess.run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
+        else:
+            subprocess.run([r'7z', 'x', '-aoa', '-y', archive])
+        os.unlink(archive)
+
+
+    def get_base_dir(self, qt_version):
+        return os.path.join(os.getcwd(), 'Qt{}'.format(qt_version))
+
+    def install(self, qt_version, arch):
+
+        if arch.startswith('win'):
+            arch_dir = arch[6:]
+        else:
+            arch_dir = arch
+        base_dir = self.get_base_dir(qt_version)
+        if not os.path.exists(base_dir):
+            os.mkdir(base_dir)
+        elif not os.path.isdir(base_dir):
+            os.unlink(base_dir)
+            os.mkdir(base_dir)
+        os.chdir(base_dir)
+
+        # FIXME: use Pool()
+        # p = Pool(4)
+        # p.map(self.retrieve_archive, self.qt_archives.get_archives())
+        for archive in self.qt_archives.get_archives():
+            self.retrieve_archive(archive)
+
+        f = open(os.path.join(self.base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w')
+        f.write("[Paths]\n")
+        f.write("Prefix=..\n")
+        f.close()
+
 
 def show_help():
     print("Usage: {} <qt-version> <host> <target> [<arch>]\n".format(sys.argv[0]))
@@ -107,37 +141,6 @@ def show_help():
     print("  android:                android_x86, android_armv7")
     exit(1)
 
-def generate_qt_conf(qtconf_path):
-    f = open(qtconf_path, 'w')
-    f.write("[Paths]\n")
-    f.write("Prefix=..\n")
-    f.close()
-
-def install_qt(os_name, qt_version, target, arch):  
-    qt_ver_num = qt_version.replace(".", "")
-    base_dir= os.path.join(os.getcwd(), 'Qt{}'.format(qt_version))
-    if not os.path.exists(base_dir):
-        os.mkdir(base_dir)
-    elif not os.path.isdir(base_dir):
-        os.unlink(base_dir)
-        os.mkdir(base_dir)
-    os.chdir(base_dir)
-    print("****************************************")
-    print("Install to: ", base_dir)
-    qt_archives = QtArchives(os_name, qt_ver_num, target, arch)
-    qtbase_url = qt_archives.get_base_url()
-    archives = qt_archives.get_archives()
-    
-    # FIXME: use Pool(4)
-    for archive in archives:
-        retrieve_archive(qtbase_url, archive)
-
-    if arch.startswith('win'):
-        arch_dir = arch[6:]
-    else:
-        arch_dir = arch
-    generate_qt_conf(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'))
-
 def main():
     if len(sys.argv) < 4 or len(sys.argv) > 5:
         show_help()
@@ -148,7 +151,6 @@ def main():
     os_name = sys.argv[2]
     # one of: "desktop", "android", "ios"
     target = sys.argv[3]
-
     arch = ""
     if len(sys.argv) == 5:
         arch = sys.argv[4]
@@ -162,7 +164,22 @@ def main():
         print("Please supply a target architecture.")
         exit(1)
 
-    install_qt(os_name, qt_version, target, arch)
+    qt_archives = QtArchives(os_name, qt_version, target, arch)
+    installer = QtInstaller(qt_archives)
+
+    # show teaser
+    print("****************************************")
+    print("Installing {}".format(qt_archives.get_package_desc()))
+    print("****************************************")
+    print("HOST:      ", os_name)
+    print("TARGET:    ", target)
+    print("ARCH:      ", arch)
+    print("Source URL:", qt_archives.get_archives_url())
+    print("****************************************")
+    print("Install to: ", installer.get_base_dir(qt_version))
+    # start install
+
+    installer.install(qt_version, arch)
 
     sys.stdout.write("\033[K")
     print("Finished installation")
