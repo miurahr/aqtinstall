@@ -124,7 +124,7 @@ class QtInstaller:
         for archive in self.qt_archives.get_archives():
             self.retrieve_archive(archive)
 
-        f = open(os.path.join(self.base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w')
+        f = open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w')
         f.write("[Paths]\n")
         f.write("Prefix=..\n")
         f.close()
