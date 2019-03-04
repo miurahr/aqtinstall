@@ -17,6 +17,8 @@ Added
 Changed
 -------
 
+* Support  multiprocess concurent download and installation.
+
 Fixed
 -----
 
