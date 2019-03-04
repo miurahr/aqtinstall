@@ -21,12 +21,15 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import argparse
 import os
 import platform
 import subprocess
 import sys
 import urllib.request
 import xml.etree.ElementTree as ElementTree
+
+from argparse import RawTextHelpFormatter
 from multiprocessing.dummy import Pool
 
 BASE_URL = "https://download.qt.io/online/qtsdkrepository/"
@@ -142,26 +145,33 @@ def show_help():
     exit(1)
 
 def main():
-    if len(sys.argv) < 4 or len(sys.argv) > 5:
-        show_help()
+    parser = argparse.ArgumentParser(description='Install Qt SDK.', formatter_class=RawTextHelpFormatter, add_help=True)
+    parser.add_argument("qt_version", nargs=1, help="Qt version in the format of \"5.X.Y\"")
+    parser.add_argument('host', nargs=1, help="linux, mac, windows")
+    parser.add_argument('target', nargs=1, help="desktop, android, ios")
+    parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
+                                                "\ntarget mac/desktop:   clang_64"
+                                                "\ntarget mac/ios:       ios"
+                                                "\nwindows/desktop:      win64_msvc2017_64, win64_msvc2015_64"
+                                                "\n                      in32_msvc2015, win32_mingw53"
+                                                "\nandroid:              android_x86, android_armv7")
+    args = parser.parse_args()
 
-    # Qt version
-    qt_version = sys.argv[1]
-    # one of: "linux", "mac", "windows"
-    os_name = sys.argv[2]
-    # one of: "desktop", "android", "ios"
-    target = sys.argv[3]
-    arch = ""
-    if len(sys.argv) == 5:
-        arch = sys.argv[4]
-    elif os_name == "linux" and target == "desktop":
-        arch = "gcc_64"
-    elif os_name == "mac" and target == "desktop":
-        arch = "clang_64"
-    elif os_name == "mac" and target == "ios":
-        arch = "ios"
+    qt_version = args.qt_version
+    os_name = args.host
+    target = args.target
+
+    arch = args.arch
+    if arch == "":
+        if os_name == "linux" and target == "desktop":
+            arch = "gcc_64"
+        elif os_name == "mac" and target == "desktop":
+            arch = "clang_64"
+        elif os_name == "mac" and target == "ios":
+            arch = "ios"
     if arch == "":
         print("Please supply a target architecture.")
+        args.print_help()
         exit(1)
 
     qt_archives = QtArchives(os_name, qt_version, target, arch)
@@ -177,8 +187,8 @@ def main():
     print("Source URL:", qt_archives.get_archives_url())
     print("****************************************")
     print("Install to: ", installer.get_base_dir(qt_version))
-    # start install
 
+    # start install
     installer.install(qt_version, arch)
 
     sys.stdout.write("\033[K")

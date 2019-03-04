@@ -43,6 +43,7 @@ Changed
 * Refactoring code
 * Install QtSDK into (cwd)/Qt<version>/<version>/gcc_64/
 * Drop dependency for `requests` library
+* Use standard `argparser` for command line argument.
 
 Fixed
 =====
