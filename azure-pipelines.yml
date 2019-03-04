@@ -54,7 +54,7 @@ jobs:
     inputs:
       scriptSource: filePath
       scriptPath: $(Build.SourcesDirectory)/qli-installer.py
-      arguments: $(qtversion) mac desktop
+      arguments: $(qtversion) windows desktop win64_msvc2017_64
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
   - script: ls -lR $(Build.BinariesDirectory)
