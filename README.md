@@ -47,7 +47,7 @@ Example: Show help message
 ./qli-installer.py -h
 ```
 
-## License
+## License and copyright
 
 This program is distributed under MIT license.
 
@@ -55,3 +55,8 @@ Qt SDK and its related files are under its licenses. When using the qli-installe
 you are considered to agree upon these licenses.
 For details see [Qt licensing](https://www.qt.io/licensing/) and [Licenses used in Qt5](https://doc.qt.io/qt-5/licenses-used-in-qt.html)
 
+## History
+
+This program is originally shown in [Kaidan project](https://git.kaidan.im/lnj/qli-installer)
+The project extend the original to run with standard python3 features with Linux, Mac and Windows,
+test on CI platform, and improve performance with concurrent downloading.
