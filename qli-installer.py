@@ -116,11 +116,9 @@ class QtInstaller:
             os.mkdir(base_dir)
         os.chdir(base_dir)
 
-        # FIXME: use Pool()
-        # p = Pool(4)
-        # p.map(self.retrieve_archive, self.qt_archives.get_archives())
-        for archive in self.qt_archives.get_archives():
-            self.retrieve_archive(archive)
+        p = Pool(4)
+        archives = self.qt_archives.get_archives()
+        p.map(self.retrieve_archive, archives)
 
         f = open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w')
         f.write("[Paths]\n")
