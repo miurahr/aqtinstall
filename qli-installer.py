@@ -26,7 +26,6 @@ import platform
 import sys
 import subprocess
 import urllib.request
-import requests
 import xml.etree.ElementTree as ElementTree
 
 if len(sys.argv) < 4 or len(sys.argv) > 5:
@@ -95,8 +94,8 @@ packages_url += "qt5_" + qt_ver_num + "/"
 
 # Get packages index
 update_xml_url = packages_url + "Updates.xml"
-reply = requests.get(update_xml_url)
-update_xml = ElementTree.fromstring(reply.content)
+content = urllib.request.urlopen(update_xml_url).read()
+update_xml = ElementTree.fromstring(content)
 
 package_desc = ""
 full_version = ""
