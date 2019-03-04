@@ -69,7 +69,6 @@ class QtArchives:
             print("Error while parsing package information!")
             exit(1)
 
-
     def get_package_desc(self):
         return self.package_desc
 
@@ -99,7 +98,6 @@ class QtInstaller:
         else:
             subprocess.run([r'7z', 'x', '-aoa', '-y', archive])
         os.unlink(archive)
-
 
     def get_base_dir(self, qt_version):
         return os.path.join(os.getcwd(), 'Qt{}'.format(qt_version))
@@ -146,9 +144,9 @@ def show_help():
 
 def main():
     parser = argparse.ArgumentParser(description='Install Qt SDK.', formatter_class=RawTextHelpFormatter, add_help=True)
-    parser.add_argument("qt_version", nargs=1, help="Qt version in the format of \"5.X.Y\"")
-    parser.add_argument('host', nargs=1, help="linux, mac, windows")
-    parser.add_argument('target', nargs=1, help="desktop, android, ios")
+    parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
+    parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
+    parser.add_argument('target', choices=['desktop', 'android', 'ios'], help="target sdk")
     parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
                                                 "\ntarget mac/desktop:   clang_64"
                                                 "\ntarget mac/ios:       ios"
