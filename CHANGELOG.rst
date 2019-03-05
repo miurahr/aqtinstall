@@ -20,6 +20,8 @@ Changed
 Fixed
 -----
 
+* Update mkspecs/qconfig.pri to indicate QT_EDITION is OpenSource
+
 Deprecated
 ----------
 

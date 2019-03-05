@@ -120,11 +120,22 @@ class QtInstaller:
         archives = self.qt_archives.get_archives()
         p.map(self.retrieve_archive, archives)
 
-        f = open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w')
-        f.write("[Paths]\n")
-        f.write("Prefix=..\n")
-        f.close()
-
+        try:
+            # prepare qt.conf
+            with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
+                f.write("[Paths]\n")
+                f.write("Prefix=..\n")
+            # prepare qtconfig.pri
+            with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
+                lines = f.readlines()
+                f.seek(0)
+                f.truncate()
+                for line in lines:
+                    if 'QT_EDITION' in line:
+                        line = 'QT_EDITION = OpenSource'
+                    f.write(line)
+        except FileNotFoundError:
+            pass
 
 def show_help():
     print("Usage: {} <qt-version> <host> <target> [<arch>]\n".format(sys.argv[0]))
@@ -190,4 +201,6 @@ def main():
     sys.stdout.write("\033[K")
     print("Finished installation")
 
-main()
+
+if __name__ == "__main__":
+        sys.exit(main())
