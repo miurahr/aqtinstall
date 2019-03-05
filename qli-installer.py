@@ -190,4 +190,6 @@ def main():
     sys.stdout.write("\033[K")
     print("Finished installation")
 
-main()
+
+if __name__ == "__main__":
+        sys.exit(main())
