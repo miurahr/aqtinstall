@@ -17,14 +17,8 @@ Added
 Changed
 -------
 
-* Install not only basic packages also optional packages.
-* Rename project/command to aqt - Another QT installer
-
 Fixed
 -----
-
-* Update mkspecs/qconfig.pri to indicate QT_EDITION is OpenSource
-* Support Python2
 
 Deprecated
 ----------
@@ -35,8 +29,23 @@ Removed
 Security
 --------
 
+`v0.2.0`_ (7, March, 2019)
+==========================
+
+Changed
+-------
+
+* Install not only basic packages also optional packages.
+* Rename project/command to aqt - Another QT installer
+
+Fixed
+-----
+
+* Update mkspecs/qconfig.pri to indicate QT_EDITION is OpenSource
+* Support Python2
+
 `v0.1.0`_ (5, March, 2019)
-========================
+==========================
 
 Changed
 -------
@@ -70,7 +79,8 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.1.0...HEAD
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.2.0...HEAD
+.. _v0.2.0: https://github.com/miurahr/qli-installer/compare/v0.1.0...v0.2.0
 .. _v0.1.0: https://github.com/miurahr/qli-installer/compare/v0.0.2...v0.1.0
 .. _v0.0.2: https://github.com/miurahr/qli-installer/compare/v0.0.1...v0.0.2
 .. _v0.0.1: https://github.com/miurahr/qli-installer/releases/tag/v0.0.1

@@ -13,7 +13,7 @@ def readme():
 
 setup(name='aqtinstall',
       version='0.2.0',
-      description='Another Qt installer',
+      description='Another unoffical Qt installer',
       url='http://github.com/miurahr/qli-installer',
       license='MIT',
       long_description=readme(),
