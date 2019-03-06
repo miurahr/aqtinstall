@@ -17,7 +17,8 @@ Added
 Changed
 -------
 
-* Install not only basic packages also optional pacakges.
+* Install not only basic packages also optional packages.
+* Rename project/command to aqt - Another QT installer
 
 Fixed
 -----
@@ -39,7 +40,7 @@ Security
 Changed
 -------
 
-* Support  multiprocess concurent download and installation.
+* Support  multiprocess concurrent download and installation.
 
 `v0.0.2`_ (4, March, 2019)
 ========================

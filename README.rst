@@ -1,5 +1,5 @@
-Qt CLI installer
-################
+Another Qt installer(aqt)
+=========================
 
 .. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=macOS
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
