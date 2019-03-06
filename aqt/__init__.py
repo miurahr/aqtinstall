@@ -23,14 +23,18 @@
 import argparse
 import sys
 
-from argparse import RawTextHelpFormatter
 from aqt.archives import QtArchives
 from aqt.installer import QtInstaller
+
+if sys.version_info.major == 3:
+    from urllib.request import ProxyHandler, build_opener, install_opener
+else:
+    from urllib2 import ProxyHandler, build_opener, install_opener
 
 
 def main():
     parser = argparse.ArgumentParser(description='Install Qt SDK.',
-                                     formatter_class=RawTextHelpFormatter, add_help=True)
+                                     formatter_class=argparse.RawTextHelpFormatter, add_help=True)
     parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
     parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
     parser.add_argument('target', choices=['desktop', 'android', 'ios'], help="target sdk")
@@ -56,6 +60,11 @@ def main():
         args.print_help()
         exit(1)
     qt_version = args.qt_version
+
+    # support proxy connection
+    proxies = ProxyHandler({})
+    opener = build_opener(proxies)
+    install_opener(opener)
 
     archives = QtArchives(os_name, qt_version, target, arch)
     qt_installer = QtInstaller(archives)

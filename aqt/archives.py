@@ -20,11 +20,12 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-try:
-    from urllib.request import ProxyHandler, build_opener, install_opener, urlopen
-except ImportError:
-    from urllib2 import ProxyHandler, build_opener, install_opener, urlopen
+import sys
 import xml.etree.ElementTree as ElementTree
+if sys.version_info.major == 3:
+    from urllib.request import urlopen
+else:
+    from urllib2 import urlopen
 
 
 class QtPackage:
@@ -65,9 +66,6 @@ class QtArchives:
 
         # Get packages index
         update_xml_url = "{0}Updates.xml".format(archive_url)
-        proxies = ProxyHandler({})
-        opener = build_opener(proxies)
-        install_opener(opener)
         content = urlopen(update_xml_url).read()
         self.update_xml = ElementTree.fromstring(content)
         for packageupdate in self.update_xml.iter("PackageUpdate"):
