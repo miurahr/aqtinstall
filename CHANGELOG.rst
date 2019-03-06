@@ -24,6 +24,7 @@ Fixed
 -----
 
 * Update mkspecs/qconfig.pri to indicate QT_EDITION is OpenSource
+* Support Python2
 
 Deprecated
 ----------

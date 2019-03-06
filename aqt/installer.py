@@ -22,11 +22,16 @@
 
 import os
 import platform
-import subprocess
 import sys
-from six.moves import urllib
-
 from multiprocessing.dummy import Pool
+if sys.version_info.major == 3:
+    from urllib.request import ProxyHandler, build_opener, install_opener, urlretrieve
+    from subprocess import run
+else:
+    from urllib2 import ProxyHandler, build_opener, install_opener
+    from urllib import urlretrieve
+    from subprocess import call as run
+
 
 NUM_PROCESS = 3
 
@@ -41,16 +46,16 @@ class QtInstaller:
         url = package.get_url()
         sys.stdout.write("\033[K")
         print("-Downloading {}...".format(url))
-        proxies = urllib.request.ProxyHandler({})
-        opener = urllib.request.build_opener(proxies)
-        urllib.request.install_opener(opener)
-        urllib.request.urlretrieve(url, archive)
+        proxies = ProxyHandler({})
+        opener = build_opener(proxies)
+        install_opener(opener)
+        urlretrieve(url, archive)
         sys.stdout.write("\033[K")
         print("-Extracting {}...".format(archive))
         if platform.system() == 'Windows':
-            subprocess.run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
+            run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
         else:
-            subprocess.run([r'7z', 'x', '-aoa', '-y', archive])
+            run([r'7z', 'x', '-aoa', '-y', archive])
         os.unlink(archive)
 
     @staticmethod
@@ -70,8 +75,8 @@ class QtInstaller:
             os.mkdir(base_dir)
         os.chdir(base_dir)
 
-        p = Pool(NUM_PROCESS)
         archives = self.qt_archives.get_archives()
+        p = Pool(NUM_PROCESS)
         p.map(self.retrieve_archive, archives)
 
         try:
