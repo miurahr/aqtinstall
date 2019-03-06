@@ -12,7 +12,9 @@ Another Qt installer(aqt)
 |  OS         | Status    |
 +-------------+-----------+
 | MacOS       | |macos|   |
++-------------+-----------+
 | Ubuntu      | |ubuntu|  |
++-------------+-----------+
 | Windows     | |windows| |
 +-------------+-----------+
 
