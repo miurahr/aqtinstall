@@ -3,7 +3,9 @@ Another Qt installer(aqt)
 
 .. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=macOS
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ubuntu| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604
+.. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604_py3
+   :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
+.. |ubuntu2| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604_py3
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |windows| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Windows
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
@@ -13,12 +15,14 @@ Another Qt installer(aqt)
 +-------------+-----------+
 | MacOS       | |macos|   |
 +-------------+-----------+
-| Ubuntu      | |ubuntu|  |
+| Ubuntu      | |ubuntu3| |
++-------------+-----------+
+| Python2     | |ubuntu2| |
 +-------------+-----------+
 | Windows     | |windows| |
 +-------------+-----------+
 
-This is a simple script replacing the official graphical Qt installer. It can
+This is an utility replacing the official graphical Qt installer. It can
 automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
 It's working on Linux, OS X and Windows.
@@ -37,7 +41,7 @@ General usage looks like this:
 
 .. code-block:: bash
 
-    ./qli-installer.py [-h][--help] <qt-version> <host> <target> [<arch>]
+    aqtinst [-h][--help] <qt-version> <host> <target> [<arch>]
 
 The Qt version is formatted like this: `5.11.3`
 Host is one of: `linux`, `mac`, `windows`  
@@ -55,27 +59,27 @@ run such as follows;
 
     C:\> mkdir Qt
     C:\> cd Qt
-    C:\Qt\> C:\python3.7\bin\python \Users\user\Downloads\qli-installer.py 5.11.3 windows win64_msvc2017_64
+    C:\Qt\> C:\python3.7\bin\python aqtinst 5.11.3 windows win64_msvc2017_64
 
 
 Example: Installing Qt 5.12.0 for Linux:
 
 .. code-block:: bash
 
-    ./qli-installer.py 5.12.0 linux desktop
+    aqtinst 5.12.0 linux desktop
 
 
 Example: Installing Android (armv7) Qt 5.10.2:
 
 .. code-block:: bash
 
-    ./qli-installer.py 5.10.2 linux android android_armv7
+    aqtinst 5.10.2 linux android android_armv7
 
 Example: Show help message
 
 .. code-block:: bash
 
-    ./qli-installer.py -h
+    aqtinst -h
 
 Supported CI platform
 ---------------------
