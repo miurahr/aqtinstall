@@ -17,6 +17,8 @@ Added
 Changed
 -------
 
+* Install not only basic packages also optional pacakges.
+
 Fixed
 -----
 
