@@ -94,4 +94,3 @@ class QtArchives:
 
     def get_archives(self):
         return self.archives
-

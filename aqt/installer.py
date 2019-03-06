@@ -47,7 +47,7 @@ class QtInstaller:
         urllib.request.urlretrieve(url, archive)
         sys.stdout.write("\033[K")
         print("-Extracting {}...".format(archive))
-        if platform.system() is 'Windows':
+        if platform.system() == 'Windows':
             subprocess.run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
         else:
             subprocess.run([r'7z', 'x', '-aoa', '-y', archive])
@@ -88,6 +88,5 @@ class QtInstaller:
                     if 'QT_EDITION' in line:
                         line = 'QT_EDITION = OpenSource'
                     f.write(line)
-        except:
+        except IOError:
             pass
-
