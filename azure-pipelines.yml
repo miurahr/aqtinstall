@@ -3,7 +3,7 @@ variables:
   qtversion: 5.12.1
 
 jobs:
-- job: Ubuntu_1604
+- job: Ubuntu_1604_py3
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
@@ -12,12 +12,32 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
   - script: |
-      python -m pip install six flake8
+      python -m pip install flake8
       flake8 .
     displayName: 'Run lint tests'
   - script: |
       sudo apt-get update
-      sudo apt-get -y install p7zip-full
+      sudo apt-get -y install p7zip-full python3-six
+  - task: PythonScript@0
+    inputs:
+      scriptSource: filePath
+      scriptPath: $(Build.SourcesDirectory)/aqtinst
+      arguments: $(qtversion) linux desktop
+      workingDirectory: $(Build.BinariesDirectory)
+    displayName: install qt
+  - script: ls -lR $(Build.BinariesDirectory)
+
+- job: Ubuntu_1604_py2
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '2.7'
+      architecture: 'x64'
+  - script: |
+      sudo apt-get update
+      sudo apt-get -y install p7zip-full python-six
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
