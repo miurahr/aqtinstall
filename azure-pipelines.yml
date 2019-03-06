@@ -17,7 +17,7 @@ jobs:
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/qli-installer.py
+      scriptPath: $(Build.SourcesDirectory)/aqtinst
       arguments: $(qtversion) linux desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
@@ -35,7 +35,7 @@ jobs:
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/qli-installer.py
+      scriptPath: $(Build.SourcesDirectory)/aqtinst
       arguments: $(qtversion) mac desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
@@ -53,7 +53,7 @@ jobs:
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/qli-installer.py
+      scriptPath: $(Build.SourcesDirectory)/aqtinst
       arguments: $(qtversion) windows desktop win64_msvc2017_64
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
