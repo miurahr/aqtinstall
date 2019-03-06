@@ -15,9 +15,7 @@ jobs:
       python -m pip install six flake8
       flake8 .
     displayName: 'Run lint tests'
-      os_name = args.host
-    target = args.target
-- script: |
+  - script: |
       sudo apt-get update
       sudo apt-get -y install p7zip-full
   - task: PythonScript@0
