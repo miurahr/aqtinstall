@@ -12,12 +12,18 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
   - script: |
+      python -m pip install six flake8
+      flake8 .
+    displayName: 'Run lint tests'
+      os_name = args.host
+    target = args.target
+- script: |
       sudo apt-get update
       sudo apt-get -y install p7zip-full
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/qli-installer.py
+      scriptPath: $(Build.SourcesDirectory)/aqtinst
       arguments: $(qtversion) linux desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
@@ -32,10 +38,12 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
   - script: brew install p7zip
+  - script: pip install -r requirements.txt
+    displayName: 'Install requirements'
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/qli-installer.py
+      scriptPath: $(Build.SourcesDirectory)/aqtinst
       arguments: $(qtversion) mac desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
@@ -50,10 +58,12 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
   - script: cinst -y 7zip
+  - script: pip install -r requirements.txt
+    displayName: 'Install requirements'
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/qli-installer.py
+      scriptPath: $(Build.SourcesDirectory)/aqtinst
       arguments: $(qtversion) windows desktop win64_msvc2017_64
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt

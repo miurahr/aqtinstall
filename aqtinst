@@ -1,8 +1,8 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 
 import sys
 
-from qli-installer import main
+from aqt import main
 if __name__ == '__main__':
         sys.exit(main())
 
