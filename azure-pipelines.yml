@@ -12,7 +12,7 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
   - script: |
-      python -m pip install flake8
+      python -m pip install flake8 twine
       flake8 .
     displayName: 'Run lint tests'
   - script: |
@@ -25,7 +25,9 @@ jobs:
       arguments: $(qtversion) linux desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
-  - script: ls -lR $(Build.BinariesDirectory)
+  - script: |
+      python setup.py sdist bdist_wheel
+      echo twine upload dist/*
 
 - job: Ubuntu_1604_py2
   pool:
