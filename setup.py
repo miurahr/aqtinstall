@@ -11,14 +11,14 @@ def readme():
         return f.read()
 
 
-setup(name = 'aqtinstall',
-      version = '0.2.0',
-      description = 'Another Qt installer',
+setup(name='aqtinstall',
+      version='0.2.0',
+      description='Another Qt installer',
       url='http://github.com/miurahr/qli-installer',
-      license ='MIT',
+      license='MIT',
       long_description=readme(),
-      author ='Hioshi Miura',
-      author_email ='miurahr@linux.com',
-      packages = ["aqt"],
-      scripts = ["aqtinst"]
+      author='Hioshi Miura',
+      author_email='miurahr@linux.com',
+      packages=["aqt"],
+      scripts=["aqtinst"]
       )
