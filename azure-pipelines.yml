@@ -12,12 +12,12 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
   - script: |
-      python -m pip install flake8
+      python -m pip install flake8 six
       flake8 .
     displayName: 'Run lint tests'
   - script: |
       sudo apt-get update
-      sudo apt-get -y install p7zip-full python3-six
+      sudo apt-get -y install p7zip-full
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
@@ -35,9 +35,10 @@ jobs:
     inputs:
       versionSpec: '2.7'
       architecture: 'x64'
+  - script: python -m pip install -r requirements.txt
   - script: |
       sudo apt-get update
-      sudo apt-get -y install p7zip-full python-six
+      sudo apt-get -y install p7zip-full
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
