@@ -5,7 +5,7 @@ Another Qt installer(aqt)
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604_py3
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ubuntu2| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604_py3
+.. |ubuntu2| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604_py2
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |windows| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Windows
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
