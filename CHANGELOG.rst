@@ -1,6 +1,6 @@
-=======================
-qli-installer changeLog
-=======================
+====================
+aqtinstall changeLog
+====================
 
 All notable changes to this project will be documented in this file.
 
@@ -14,7 +14,28 @@ Current changes
 Added
 -----
 
-* Allow execute though command line `python -m aqt 5.12.1 linux desktop`
+Changed
+-------
+
+Fixed
+-----
+
+Deprecated
+----------
+
+Removed
+-------
+
+Security
+--------
+
+`v0.3.0`_ (8, March, 2019)
+==========================
+
+Added
+-----
+
+* Allow execute both `aqtinst`  and `python -m aqt` form.
 
 Changed
 -------
@@ -25,17 +46,10 @@ Fixed
 -----
 
 * Update README wordings.
-* Remove dependency for python3 with aqtinst command utility.
+* Remove dependency for python3 with `aqtinst` command utility.
 * Fix command name in help message.
 
-Deprecated
-----------
 
-Removed
--------
-
-Security
---------
 
 `v0.2.0`_ (7, March, 2019)
 ==========================
@@ -92,7 +106,8 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.2.0...HEAD
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.3.0...HEAD
+.. _v0.3.0: https://github.com/miurahr/qli-installer/compare/v0.2.0...v0.3.0
 .. _v0.2.0: https://github.com/miurahr/qli-installer/compare/v0.1.0...v0.2.0
 .. _v0.1.0: https://github.com/miurahr/qli-installer/compare/v0.0.2...v0.1.0
 .. _v0.0.2: https://github.com/miurahr/qli-installer/compare/v0.0.1...v0.0.2

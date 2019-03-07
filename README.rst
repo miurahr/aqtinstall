@@ -42,18 +42,18 @@ General usage looks like this:
 .. code-block:: bash
 
     aqtinst [-h][--help] <qt-version> <host> <target> [<arch>]
+    python -m aqt [-h][--help] <qt-version> <host> <target> [<arch>]
 
-The Qt version is formatted like this: `5.11.3`
-Host is one of: `linux`, `mac`, `windows`  
-Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)  
-For android and windows you also need to specify an arch: `win64_msvc2017_64`,
-`win64_msvc2015_64`, `win32_msvc2015`, `win32_mingw53`, `android_x86`,
-`android_armv7`
+* The Qt version is formatted like this: `5.11.3`
+* Host is one of: `linux`, `mac`, `windows`
+* Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)
+* For android and windows you also need to specify an arch: `win64_msvc2017_64`,
+  `win64_msvc2015_64`, `win32_msvc2015`, `win32_mingw53`, `android_x86`, `android_armv7`
+
 
 The Qt packages are installed under current directory as such `Qt<ver>/<ver>/gcc_64/`
 If you want to install it in `C:\Qt` as same as standard gui installer default,
-run such as follows;
-
+run such as follows:
 
 .. code-block:: bash
 
@@ -77,11 +77,13 @@ Example: Installing Android (armv7) Qt 5.10.2:
 
     aqtinst 5.10.2 linux android android_armv7
 
+
 Example: Show help message
 
 .. code-block:: bash
 
     aqtinst -h
+
 
 
 Supported CI platform
