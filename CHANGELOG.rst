@@ -14,6 +14,8 @@ Current changes
 Added
 -----
 
+* Allow execute though command line `python -m aqt 5.12.1 linux desktop`
+
 Changed
 -------
 
