@@ -25,10 +25,9 @@ import platform
 import sys
 from multiprocessing.dummy import Pool
 if sys.version_info.major == 3:
-    from urllib.request import ProxyHandler, build_opener, install_opener, urlretrieve
+    from urllib.request import urlretrieve
     from subprocess import run
 else:
-    from urllib2 import ProxyHandler, build_opener, install_opener
     from urllib import urlretrieve
     from subprocess import call as run
 
