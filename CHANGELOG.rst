@@ -22,6 +22,8 @@ Changed
 Fixed
 -----
 
+* Fix command name in help message.
+
 Deprecated
 ----------
 

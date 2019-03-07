@@ -33,7 +33,7 @@ else:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Install Qt SDK.',
+    parser = argparse.ArgumentParser(prog='aqtinst', description='Install Qt SDK.',
                                      formatter_class=argparse.RawTextHelpFormatter, add_help=True)
     parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
     parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
