@@ -5,10 +5,10 @@ install:
 
 script:
   - flake8 
-  - python -m aqt install 5.12.0 linux desktop
+  - python -m aqt --help
 
 after_success:
-  - python setup.py sdist bdist_wheel --python-tag=${PYTHON_TAG}
+  - python setup.py sdist bdist_wheel
 
 deploy:
   - provider: pypi
