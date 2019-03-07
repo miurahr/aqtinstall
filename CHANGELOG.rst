@@ -32,6 +32,11 @@ Security
 `v0.2.0`_ (7, March, 2019)
 ==========================
 
+Added
+-----
+
+* Released on pypi.org
+
 Changed
 -------
 
