@@ -41,6 +41,7 @@ Changed
 -------
 
 * Project URL is changed.
+* Generate universal wheel support both python2.7 and python 3.x.
 
 Fixed
 -----
