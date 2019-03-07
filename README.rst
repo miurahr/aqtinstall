@@ -40,6 +40,15 @@ Prerequisite
 
 It is required `p7zip` for windows, `7zip` for mac or `p7zip-full` for Ubuntu.
 
+Install
+-------
+
+Same as usual, it can be installed with `pip`
+
+.. code-block:: bash
+
+    $ pip install aqtinstall
+
 Usage
 -----
 
