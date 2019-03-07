@@ -1,6 +1,12 @@
 Another Qt installer(aqt)
 =========================
 
+
+.. image:: https://badge.fury.io/py/aqtinstall.png
+   :target: http://badge.fury.io/py/aqtinstall
+      :alt: PyPI version
+
+
 .. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=macOS
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Ubuntu_1604_py3
