@@ -17,8 +17,13 @@ Added
 Changed
 -------
 
+* Project URL is changed.
+
 Fixed
 -----
+
+* Update README wordings.
+* Remove dependency for python3 with aqtinst command utility.
 
 Deprecated
 ----------

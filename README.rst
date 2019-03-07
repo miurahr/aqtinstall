@@ -1,13 +1,13 @@
 Another Qt installer(aqt)
 =========================
 
-.. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=macOS
+.. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=macOS
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604_py3
+.. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Ubuntu_1604_py3
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ubuntu2| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Ubuntu_1604_py2
+.. |ubuntu2| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Ubuntu_1604_py2
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |windows| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.qli-installer?branchName=master&jobName=Windows
+.. |windows| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Windows
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 
 +-------------+-----------+
@@ -30,7 +30,7 @@ It's working on Linux, OS X and Windows.
 Prerequisite
 ------------
 
-**Dependencies**: python3, 7z
+**Dependencies**: python, 7z
 
 It is required `p7zip` for windows, `7zip` for mac or `p7zip-full` for Ubuntu.
 
@@ -51,7 +51,7 @@ For android and windows you also need to specify an arch: `win64_msvc2017_64`,
 `android_armv7`
 
 The Qt packages are installed under current directory as such `Qt<ver>/<ver>/gcc_64/`
-If you want to install it in `C:\Qt` as same as standard gui installer defuult,
+If you want to install it in `C:\Qt` as same as standard gui installer default,
 run such as follows;
 
 
@@ -59,14 +59,16 @@ run such as follows;
 
     C:\> mkdir Qt
     C:\> cd Qt
-    C:\Qt\> C:\python3.7\bin\python aqtinst 5.11.3 windows win64_msvc2017_64
+    C:\Qt\> aqtinst 5.11.3 windows win64_msvc2017_64
 
 
 Example: Installing Qt 5.12.0 for Linux:
 
 .. code-block:: bash
 
-    aqtinst 5.12.0 linux desktop
+    pip install aqtinstall
+    cd /opt
+    sudo aqtinst 5.12.0 linux desktop
 
 
 Example: Installing Android (armv7) Qt 5.10.2:
@@ -81,10 +83,11 @@ Example: Show help message
 
     aqtinst -h
 
+
 Supported CI platform
 ---------------------
 
-There are no limitation for CI platform but currently we are tested on Azure Pipelines.
+There are no limitation for CI platform but currently it is tested on Azure Pipelines.
 
 
 License and copyright
@@ -92,13 +95,14 @@ License and copyright
 
 This program is distributed under MIT license.
 
-Qt SDK and its related files are under its licenses. When using the qli-installer.py
-you are considered to agree upon these licenses.
+Qt SDK and its related files are under its licenses. When using the utility, you are considered
+to agree upon Qt licenses.
 For details see [Qt licensing](https://www.qt.io/licensing/) and [Licenses used in Qt5](https://doc.qt.io/qt-5/licenses-used-in-qt.html)
+
 
 History
 -------
 
 This program is originally shown in [Kaidan project](https://git.kaidan.im/lnj/qli-installer)
-The project extend the original to run with standard python3 features with Linux, Mac and Windows,
-test on CI platform, and improve performance with concurrent downloading.
+A project `aqtinstall` extend the original to run with standard python features with Linux, Mac and Windows,
+to be tested on CI platform, and to improve performance with a concurrent downloading.
