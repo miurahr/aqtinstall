@@ -14,7 +14,7 @@ def readme():
 setup(name='aqtinstall',
       version='0.2.0',
       description='Another unoffical Qt installer',
-      url='http://github.com/miurahr/qli-installer',
+      url='http://github.com/miurahr/aqtinstall',
       license='MIT',
       long_description=readme(),
       author='Hioshi Miura',
