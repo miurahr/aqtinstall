@@ -1,0 +1,23 @@
+language: python
+
+install:
+  - pip install wheel flake8
+
+script:
+  - flake8 
+  - python -m aqt install 5.12.0 linux desktop
+
+after_success:
+  - python setup.py sdist bdist_wheel --python-tag=${PYTHON_TAG}
+
+deploy:
+  - provider: pypi
+    user: miurahr
+    password:
+      secure: CUY3E7DJMMyC9ARkkC5plAWTAnwmp+wyS+GbRgjOPDL8H4AwzCSCD03D4z/5BHHpGFilF+sAsaNte/9dDjtzEXtvmMCfJwovShnr9GdAm+PU4+TyhEWqVYbeYHiJMiSnLPcsyJMkYZ8JtNMXyp0onPQr6P28OsEq+ohG6Ha9P1Y=
+    file_glob: true
+    file:
+      - dist/*
+    on:
+      repo: miurahr/aqtinstall
+      tags: true
