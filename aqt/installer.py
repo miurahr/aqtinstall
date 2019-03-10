@@ -51,7 +51,7 @@ class QtInstaller:
         if platform.system() == 'Windows':
             run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
         else:
-            run([r'7z', 'x', '-aoa', '-y', archive])
+            run([r'7zr', 'x', '-aoa', '-y', archive])
         os.unlink(archive)
 
     @staticmethod

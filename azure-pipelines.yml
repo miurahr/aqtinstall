@@ -17,7 +17,7 @@ jobs:
     displayName: 'Run lint tests'
   - script: |
       sudo apt-get update
-      sudo apt-get -y install p7zip-full
+      sudo apt-get -y install p7zip
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
@@ -37,7 +37,7 @@ jobs:
       architecture: 'x64'
   - script: |
       sudo apt-get update
-      sudo apt-get -y install p7zip-full
+      sudo apt-get -y install p7zip
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
