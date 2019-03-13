@@ -114,12 +114,17 @@ This program is distributed under MIT license.
 
 Qt SDK and its related files are under its licenses. When using the utility, you are considered
 to agree upon Qt licenses.
-For details see [Qt licensing](https://www.qt.io/licensing/) and [Licenses used in Qt5](https://doc.qt.io/qt-5/licenses-used-in-qt.html)
+For details see `Qt licensing`_ and `Licenses used in Qt5`_
 
+.. _`Qt licensing`: https://www.qt.io/licensing/
+
+.. _`Licenses used in Qt5`: https://doc.qt.io/qt-5/licenses-used-in-qt.html
 
 History
 -------
 
-This program is originally shown in [Kaidan project](https://git.kaidan.im/lnj/qli-installer)
+This program is originally shown in `Kaidan`_ project
 A project `aqtinstall` extend the original to run with standard python features with Linux, Mac and Windows,
 to be tested on CI platform, and to improve performance with a concurrent downloading.
+
+.. _`kaidan`: https://git.kaidan.im/lnj/qli-installer
