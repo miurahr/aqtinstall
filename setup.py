@@ -20,5 +20,6 @@ setup(name='aqtinstall',
       author='Hioshi Miura',
       author_email='miurahr@linux.com',
       packages=["aqt"],
+      install_requires=['requests'],
       scripts=["aqtinst"]
       )
