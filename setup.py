@@ -12,7 +12,7 @@ def readme():
 
 
 setup(name='aqtinstall',
-      version='0.3.0',
+      version='0.3.1',
       description='Another unofficial Qt installer',
       url='http://github.com/miurahr/aqtinstall',
       license='MIT',
@@ -20,5 +20,14 @@ setup(name='aqtinstall',
       author='Hioshi Miura',
       author_email='miurahr@linux.com',
       packages=["aqt"],
+      install_requires=['requests'],
+      extras_require={
+        'dev': [
+            'pytest',
+            'pytest-pep8',
+            'pytest-cov',
+            'flake8'
+        ]
+      },
       scripts=["aqtinst"]
       )

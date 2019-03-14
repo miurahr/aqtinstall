@@ -29,6 +29,32 @@ Removed
 Security
 --------
 
+`v0.3.1`_ (15, March, 2019)
+==========================
+
+Added
+-----
+
+* Qmake build test code in CI environment.(#14)
+
+Fixed
+-----
+
+* Connect to Qt download server through proxy with authentication.(#17)
+
+Changed
+-------
+
+* Change QtInstaller.install() function signature not to take any parameter.
+* Replace standard urllib to requests library.(#18)
+* Use 7zr external command instead of 7z in Linux and mac OSX envitonment.
+
+Removed
+-------
+
+* requirements.txt file.
+
+
 `v0.3.0`_ (8, March, 2019)
 ==========================
 
@@ -107,7 +133,8 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.3.0...HEAD
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.3.1...HEAD
+.. _v0.3.1: https://github.com/miurahr/qli-installer/compare/v0.3.0...v0.3.1
 .. _v0.3.0: https://github.com/miurahr/qli-installer/compare/v0.2.0...v0.3.0
 .. _v0.2.0: https://github.com/miurahr/qli-installer/compare/v0.1.0...v0.2.0
 .. _v0.1.0: https://github.com/miurahr/qli-installer/compare/v0.0.2...v0.1.0
