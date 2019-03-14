@@ -20,16 +20,18 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import logging
 import os
 import platform
 import sys
-from multiprocessing.dummy import Pool
+import traceback
 import requests
+from six import StringIO
+from multiprocessing.dummy import Pool
 if sys.version_info.major == 3:
     from subprocess import run
 else:
     from subprocess import call as run
-
 
 NUM_PROCESS = 3
 
@@ -44,17 +46,25 @@ class QtInstaller:
         url = package.get_url()
         sys.stdout.write("\033[K")
         print("-Downloading {}...".format(url))
-        r = requests.get(url, stream=True)
-        with open(archive, 'wb') as fd:
-            for chunk in r.iter_content(chunk_size=8196):
-                fd.write(chunk)
-        sys.stdout.write("\033[K")
-        print("-Extracting {}...".format(archive))
-        if platform.system() == 'Windows':
-            run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
+        try:
+            r = requests.get(url, stream=True)
+        except requests.exceptions.ConnectionError as e:
+            print("Caught download error: %s" % e.args)
+            exc_buffer = StringIO()
+            traceback.print_exc(file=exc_buffer)
+            logging.error('Uncaught exception in worker process:\n%s', exc_buffer.getvalue())
+            raise e
         else:
-            run([r'7zr', 'x', '-aoa', '-y', archive])
-        os.unlink(archive)
+            with open(archive, 'wb') as fd:
+                for chunk in r.iter_content(chunk_size=8196):
+                    fd.write(chunk)
+            sys.stdout.write("\033[K")
+            print("-Extracting {}...".format(archive))
+            if platform.system() == 'Windows':
+                run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
+            else:
+                run([r'7zr', 'x', '-aoa', '-y', archive])
+            os.unlink(archive)
 
     @staticmethod
     def get_base_dir(qt_version):
@@ -92,5 +102,9 @@ class QtInstaller:
                     if 'QT_EDITION' in line:
                         line = 'QT_EDITION = OpenSource'
                     f.write(line)
-        except IOError:
-            pass
+        except IOError as e:
+            print("Configuration file generation error: %s" % e.args)
+            exc_buffer = StringIO()
+            traceback.print_exc(file=exc_buffer)
+            logging.error('Error happened when writing configuration files:\n%s', exc_buffer.getvalue())
+            raise e

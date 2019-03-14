@@ -20,8 +20,11 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import xml.etree.ElementTree as ElementTree
+import logging
 import requests
+import traceback
+import xml.etree.ElementTree as ElementTree
+from six import StringIO
 
 
 class QtPackage:
@@ -65,32 +68,40 @@ class QtArchives:
 
         # Get packages index
         update_xml_url = "{0}Updates.xml".format(archive_url)
-        r = requests.get(update_xml_url)
-        self.update_xml = ElementTree.fromstring(r.text)
-        for packageupdate in self.update_xml.iter("PackageUpdate"):
-            name = packageupdate.find("Name").text
-            if name.split(".")[-1] != arch:
-                continue
-            if name.split(".")[-2] == "debug_info":
-                continue
-            if packageupdate.find("DownloadableArchives").text is None:
-                continue
-            if name == "qt.qt5.{}.{}".format(qt_ver_num, arch) or name == "qt.{}.{}".format(qt_ver_num, arch):
-                # basic packages
-                pass
-            else:
-                # optional packages: FIXME: check option whether install or not
-                pass
-            downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
-            full_version = packageupdate.find("Version").text
-            package_desc = packageupdate.find("Description").text
-            for archive in downloadable_archives:
-                package_url = archive_url + name + "/" + full_version + archive
-                self.archives.append(QtPackage(name, package_url, archive, package_desc))
+        try:
+            r = requests.get(update_xml_url)
+        except requests.exceptions.ConnectionError as e:
+            print("Caught download error: %s" % e.args)
+            exc_buffer = StringIO()
+            traceback.print_exc(file=exc_buffer)
+            logging.error('Download error:\n%s', exc_buffer.getvalue())
+            raise e
+        else:
+            self.update_xml = ElementTree.fromstring(r.text)
+            for packageupdate in self.update_xml.iter("PackageUpdate"):
+                name = packageupdate.find("Name").text
+                if name.split(".")[-1] != arch:
+                    continue
+                if name.split(".")[-2] == "debug_info":
+                    continue
+                if packageupdate.find("DownloadableArchives").text is None:
+                    continue
+                if name == "qt.qt5.{}.{}".format(qt_ver_num, arch) or name == "qt.{}.{}".format(qt_ver_num, arch):
+                    # basic packages
+                    pass
+                else:
+                    # optional packages: FIXME: check option whether install or not
+                    pass
+                downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+                full_version = packageupdate.find("Version").text
+                package_desc = packageupdate.find("Description").text
+                for archive in downloadable_archives:
+                    package_url = archive_url + name + "/" + full_version + archive
+                    self.archives.append(QtPackage(name, package_url, archive, package_desc))
 
-        if len(self.archives) == 0:
-            print("Error while parsing package information!")
-            exit(1)
+            if len(self.archives) == 0:
+                print("Error while parsing package information!")
+                exit(1)
 
     def get_archives(self):
         return self.archives
