@@ -2,7 +2,7 @@ language: python
 python: 3.6
 
 install:
-- pip install wheel flake8 requests
+- pip install wheel flake8 requests six
 
 script:
 - flake8
