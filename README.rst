@@ -74,7 +74,7 @@ run such as follows:
 
     C:\> mkdir Qt
     C:\> cd Qt
-    C:\Qt\> aqtinst 5.11.3 windows win64_msvc2017_64
+    C:\Qt\> aqtinst 5.11.3 windows desktop win64_msvc2017_64
 
 
 Example: Installing Qt 5.12.0 for Linux:
