@@ -20,12 +20,8 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import sys
 import xml.etree.ElementTree as ElementTree
-if sys.version_info.major == 3:
-    from urllib.request import urlopen
-else:
-    from urllib2 import urlopen
+import requests
 
 
 class QtPackage:
@@ -58,6 +54,9 @@ class QtArchives:
     archives = []
 
     def __init__(self, os_name, qt_version, target, arch):
+        self.qt_version = qt_version
+        self.target = target
+        self.arch = arch
         qt_ver_num = qt_version.replace(".", "")
         if os_name == 'windows':
             archive_url = self.BASE_URL + os_name + '_x86/' + target + '/' + 'qt5_' + qt_ver_num + '/'
@@ -66,8 +65,8 @@ class QtArchives:
 
         # Get packages index
         update_xml_url = "{0}Updates.xml".format(archive_url)
-        content = urlopen(update_xml_url).read()
-        self.update_xml = ElementTree.fromstring(content)
+        r = requests.get(update_xml_url)
+        self.update_xml = ElementTree.fromstring(r.text)
         for packageupdate in self.update_xml.iter("PackageUpdate"):
             name = packageupdate.find("Name").text
             if name.split(".")[-1] != arch:
@@ -95,3 +94,6 @@ class QtArchives:
 
     def get_archives(self):
         return self.archives
+
+    def get_target_config(self):
+        return self.qt_version, self.target, self.arch

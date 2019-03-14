@@ -26,11 +26,6 @@ import sys
 from aqt.archives import QtArchives
 from aqt.installer import QtInstaller
 
-if sys.version_info.major == 3:
-    from urllib.request import ProxyHandler, build_opener, install_opener
-else:
-    from urllib2 import ProxyHandler, build_opener, install_opener
-
 
 def main():
     parser = argparse.ArgumentParser(prog='aqtinst', description='Install Qt SDK.',
@@ -61,12 +56,7 @@ def main():
         exit(1)
     qt_version = args.qt_version
 
-    # support proxy connection
-    proxies = ProxyHandler({})
-    opener = build_opener(proxies)
-    install_opener(opener)
-
-    QtInstaller(QtArchives(os_name, qt_version, target, arch)).install(qt_version, arch)
+    QtInstaller(QtArchives(os_name, qt_version, target, arch)).install()
 
     sys.stdout.write("\033[K")
     print("Finished installation")

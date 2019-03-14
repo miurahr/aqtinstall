@@ -24,11 +24,10 @@ import os
 import platform
 import sys
 from multiprocessing.dummy import Pool
+import requests
 if sys.version_info.major == 3:
-    from urllib.request import urlretrieve
     from subprocess import run
 else:
-    from urllib import urlretrieve
     from subprocess import call as run
 
 
@@ -45,7 +44,10 @@ class QtInstaller:
         url = package.get_url()
         sys.stdout.write("\033[K")
         print("-Downloading {}...".format(url))
-        urlretrieve(url, archive)
+        r = requests.get(url, stream=True)
+        with open(archive, 'wb') as fd:
+            for chunk in r.iter_content(chunk_size=8196):
+                fd.write(chunk)
         sys.stdout.write("\033[K")
         print("-Extracting {}...".format(archive))
         if platform.system() == 'Windows':
@@ -58,7 +60,8 @@ class QtInstaller:
     def get_base_dir(qt_version):
         return os.path.join(os.getcwd(), 'Qt{}'.format(qt_version))
 
-    def install(self, qt_version, arch):
+    def install(self):
+        qt_version, target, arch = self.qt_archives.get_target_config()
         if arch.startswith('win'):
             arch_dir = arch[6:]
         else:

@@ -12,6 +12,7 @@ jobs:
       versionSpec: '3.6'
       architecture: 'x64'
   - script: |
+      python -m pip install requests
       python -m pip install flake8 twine wheel
       flake8 .
     displayName: 'Run lint tests'
@@ -25,6 +26,9 @@ jobs:
       arguments: $(qtversion) linux desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
+  - script: |
+      $(Build.BinariesDirectory)/Qt$(qtversion)/$(qtversion)/gcc_64/bin/qmake $(Build.SourcesDirectory)/tests
+      make
   - script: python setup.py sdist bdist_wheel
 
 - job: Ubuntu_1604_py2
@@ -38,6 +42,7 @@ jobs:
   - script: |
       sudo apt-get update
       sudo apt-get -y install p7zip
+      python -m pip install requests
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
@@ -45,6 +50,9 @@ jobs:
       arguments: $(qtversion) linux desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
+  - script: |
+      $(Build.BinariesDirectory)/Qt$(qtversion)/$(qtversion)/gcc_64/bin/qmake $(Build.SourcesDirectory)/tests
+      make
   - script: ls -lR $(Build.BinariesDirectory)
   
 - job: macOS
@@ -55,7 +63,9 @@ jobs:
     inputs:
       versionSpec: '3.6'
       architecture: 'x64'
-  - script: brew install p7zip
+  - script: |
+      brew install p7zip
+      python -m pip install requests
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
@@ -63,6 +73,9 @@ jobs:
       arguments: $(qtversion) mac desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
+  - script: |
+      $(Build.BinariesDirectory)/Qt$(qtversion)/$(qtversion)/clang_64/bin/qmake $(Build.SourcesDirectory)/tests
+      make
   - script: ls -lR $(Build.BinariesDirectory)
 
 - job: Windows
@@ -73,7 +86,9 @@ jobs:
     inputs:
       versionSpec: '3.6'
       architecture: 'x64'
-  - script: cinst -y 7zip
+  - script: |
+      cinst -y 7zip
+      python -m pip install requests
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
