@@ -20,6 +20,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import functools
 import logging
 import os
 import platform
@@ -29,6 +30,7 @@ import traceback
 import aqt.metalink
 from six import StringIO
 from multiprocessing.dummy import Pool
+from operator import and_
 if sys.version_info.major == 3:
     from subprocess import run
 else:
@@ -39,24 +41,23 @@ NUM_PROCESS = 3
 
 
 class QtInstaller:
+    """
+    Installer class to download packages and extract it.
+    """
 
     def __init__(self, qt_archives):
         self.qt_archives = qt_archives
 
     @staticmethod
-    def retrieve_archive(package):
+    def retrieve_archive(package, path=None):
         archive = package.get_archive()
         url = package.get_url()
-        sys.stdout.write("\033[K")
         print("-Downloading {}...".format(url))
         try:
             r = aqt.metalink.get(url, stream=True)
         except requests.exceptions.ConnectionError as e:
             print("Caught download error: %s" % e.args)
-            exc_buffer = StringIO()
-            traceback.print_exc(file=exc_buffer)
-            logging.error('Uncaught exception in worker process:\n%s', exc_buffer.getvalue())
-            raise e
+            return False
         else:
             with open(archive, 'wb') as fd:
                 for chunk in r.iter_content(chunk_size=8196):
@@ -64,50 +65,56 @@ class QtInstaller:
             sys.stdout.write("\033[K")
             print("-Extracting {}...".format(archive))
             if platform.system() == 'Windows':
-                run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
+                if path is not None:
+                    run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', '-o', path, archive])
+                else:
+                    run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
             else:
-                run([r'7zr', 'x', '-aoa', '-y', archive])
+                if path is not None:
+                    run([r'7zr', 'x', '-aoa', '-y', '-o', path, archive])
+                else:
+                    run([r'7zr', 'x', '-aoa', '-y', archive])
             os.unlink(archive)
+        return True
 
     @staticmethod
-    def get_base_dir(qt_version):
-        return os.path.join(os.getcwd(), 'Qt{}'.format(qt_version))
-
-    def install(self):
-        qt_version, target, arch = self.qt_archives.get_target_config()
-        if arch.startswith('win'):
-            arch_dir = arch[6:]
+    def get_base_dir(qt_version, target_dir=None):
+        if target_dir is not None:
+            return os.path.join(target_dir, 'Qt{}'.format(qt_version))
         else:
-            arch_dir = arch
-        base_dir = self.get_base_dir(qt_version)
-        if not os.path.exists(base_dir):
-            os.mkdir(base_dir)
-        elif not os.path.isdir(base_dir):
-            os.unlink(base_dir)
-            os.mkdir(base_dir)
-        os.chdir(base_dir)
+            return os.path.join(os.getcwd(), 'Qt{}'.format(qt_version))
 
+    def install(self, target_dir=None):
+        qt_version, target, arch = self.qt_archives.get_target_config()
+        base_dir = self.get_base_dir(qt_version, target_dir)
         archives = self.qt_archives.get_archives()
         p = Pool(NUM_PROCESS)
-        p.map(self.retrieve_archive, archives)
-
-        try:
-            # prepare qt.conf
-            with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
-                f.write("[Paths]\n")
-                f.write("Prefix=..\n")
-            # prepare qtconfig.pri
-            with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
-                lines = f.readlines()
-                f.seek(0)
-                f.truncate()
-                for line in lines:
-                    if 'QT_EDITION' in line:
-                        line = 'QT_EDITION = OpenSource'
-                    f.write(line)
-        except IOError as e:
-            print("Configuration file generation error: %s" % e.args)
-            exc_buffer = StringIO()
-            traceback.print_exc(file=exc_buffer)
-            logging.error('Error happened when writing configuration files:\n%s', exc_buffer.getvalue())
-            raise e
+        ret_arr = p.map(functools.partial(self.retrieve_archive, path=base_dir), archives)
+        ret = functools.reduce(and_, ret_arr)
+        if ret:
+            if arch.startswith('win'):
+                arch_dir = arch[6:]
+            else:
+                arch_dir = arch
+            try:
+                # prepare qt.conf
+                with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
+                    f.write("[Paths]\n")
+                    f.write("Prefix=..\n")
+                # prepare qtconfig.pri
+                with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
+                    lines = f.readlines()
+                    f.seek(0)
+                    f.truncate()
+                    for line in lines:
+                        if 'QT_EDITION' in line:
+                            line = 'QT_EDITION = OpenSource'
+                        f.write(line)
+            except IOError as e:
+                print("Configuration file generation error: %s" % e.args)
+                exc_buffer = StringIO()
+                traceback.print_exc(file=exc_buffer)
+                logging.error('Error happened when writing configuration files:\n%s', exc_buffer.getvalue())
+                raise e
+        else:
+            exit(1)

@@ -16,6 +16,7 @@ Added
 
 * sphnix document.
 * test packaging on CI.
+* cli: output directory option.
 
 Changed
 -------

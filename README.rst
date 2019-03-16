@@ -30,7 +30,7 @@ Another Qt installer(aqt)
 This is an utility replacing the official graphical Qt installer. It can
 automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
-It's working on Linux, OS X and Windows.
+It's working with python on Linux, OS X and Windows.
 
 Prerequisite
 ------------

@@ -35,6 +35,7 @@ class Cli():
         arch = args.arch
         target = args.target
         os_name = args.host
+        output_dir = args.outputdir
         if arch is None:
             if os_name == "linux" and target == "desktop":
                 arch = "gcc_64"
@@ -48,7 +49,10 @@ class Cli():
             exit(1)
         qt_version = args.qt_version
 
-        QtInstaller(QtArchives(os_name, qt_version, target, arch)).install()
+        if output_dir is not None:
+            QtInstaller(QtArchives(os_name, qt_version, target, arch)).install(target_dir=output_dir)
+        else:
+            QtInstaller(QtArchives(os_name, qt_version, target, arch)).install()
 
         sys.stdout.write("\033[K")
         print("Finished installation")
@@ -76,6 +80,8 @@ class Cli():
                                     "\nwindows/desktop:      win64_msvc2017_64, win64_msvc2015_64"
                                     "\n                      in32_msvc2015, win32_mingw53"
                                     "\nandroid:              android_x86, android_armv7")
+        install_parser.add_argument('-O', '--outputdir', nargs='?',
+                                    help='Target output directory(default current directory)')
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
