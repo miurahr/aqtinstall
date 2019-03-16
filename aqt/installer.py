@@ -23,24 +23,23 @@
 import functools
 import logging
 import os
-import platform
+import py7zr
 import requests
-import sys
 import traceback
 import xml.etree.ElementTree as ElementTree
 from six import StringIO
 from multiprocessing.dummy import Pool
 from operator import and_
-if sys.version_info.major == 3:
-    from subprocess import run
-else:
-    from subprocess import call as run
-
+from subprocess import run
 
 NUM_PROCESS = 3
 blacklist = ['http://mirrors.ustc.edu.cn',
              'http://mirrors.tuna.tsinghua.edu.cn',
              'http://mirrors.geekpie.club']
+
+
+class BadPackageFile(Exception):
+    pass
 
 
 class QtInstaller:
@@ -52,7 +51,7 @@ class QtInstaller:
         self.qt_archives = qt_archives
 
     @staticmethod
-    def retrieve_archive(package, path=None):
+    def retrieve_archive(package, path=None, command=None):
         archive = package.archive
         url = package.url
         print("-Downloading {}...".format(url))
@@ -73,18 +72,16 @@ class QtInstaller:
             with open(archive, 'wb') as fd:
                 for chunk in r.iter_content(chunk_size=8196):
                     fd.write(chunk)
-            sys.stdout.write("\033[K")
             print("-Extracting {}...".format(archive))
-            if platform.system() == 'Windows':
-                if path is not None:
-                    run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-bd', '-y', '-o{}'.format(path), archive])
-                else:
-                    run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-bd', '-y', archive])
+            if not py7zr.is_7zfile(archive):
+                raise BadPackageFile
+            if command is None:
+                py7zr.SevenZipFile(archive).extractall(path=path)
             else:
                 if path is not None:
-                    run([r'7zr', 'x', '-aoa', '-bd', '-y', '-o{}'.format(path), archive])
+                    run([command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(path), archive])
                 else:
-                    run([r'7zr', 'x', '-aoa', '-bd', '-y', archive])
+                    run([command, 'x', '-aoa', '-bd', '-y', archive])
             os.unlink(archive)
         return True
 
@@ -95,12 +92,12 @@ class QtInstaller:
         else:
             return os.path.join(os.getcwd(), 'Qt{}'.format(qt_version))
 
-    def install(self, target_dir=None):
+    def install(self, command=None, target_dir=None):
         qt_version, target, arch = self.qt_archives.get_target_config()
         base_dir = self.get_base_dir(qt_version, target_dir)
         archives = self.qt_archives.get_archives()
         p = Pool(NUM_PROCESS)
-        ret_arr = p.map(functools.partial(self.retrieve_archive, path=base_dir), archives)
+        ret_arr = p.map(functools.partial(self.retrieve_archive, command=command, path=base_dir), archives)
         ret = functools.reduce(and_, ret_arr)
         if ret:
             if arch.startswith('win64_mingw'):
