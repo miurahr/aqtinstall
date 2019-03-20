@@ -29,5 +29,5 @@ setup(name='aqtinstall',
             'flake8'
         ]
       },
-      scripts=["aqtinst"]
+      scripts=["bin/aqtinst"]
       )

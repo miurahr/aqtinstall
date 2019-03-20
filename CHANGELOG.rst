@@ -17,6 +17,8 @@ Added
 Changed
 -------
 
+* Project directory structure.
+
 Fixed
 -----
 
