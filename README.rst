@@ -97,7 +97,7 @@ Example: Show help message
 
 .. code-block:: bash
 
-    aqt -h
+    aqt help
 
 
 

@@ -14,10 +14,13 @@ Current changes
 Added
 -----
 
+* sphnix document.
+
 Changed
 -------
 
 * Project directory structure.
+* cli command name changed ot `aqt` and now you can run `aqt install`
 
 Fixed
 -----
