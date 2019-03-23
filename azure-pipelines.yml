@@ -23,8 +23,8 @@ jobs:
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/aqtinst
-      arguments: $(qtversion) linux desktop
+      scriptPath: $(Build.SourcesDirectory)/aqt
+      arguments: install $(qtversion) linux desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
   - script: |
@@ -47,8 +47,8 @@ jobs:
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/aqtinst
-      arguments: $(qtversion) linux desktop
+      scriptPath: $(Build.SourcesDirectory)/aqt
+      arguments: install $(qtversion) linux desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
   - script: |
@@ -70,8 +70,8 @@ jobs:
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/aqtinst
-      arguments: $(qtversion) mac desktop
+      scriptPath: $(Build.SourcesDirectory)/aqt
+      arguments: install $(qtversion) mac desktop
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
   - script: |

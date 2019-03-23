@@ -28,17 +28,22 @@ from aqt.installer import QtInstaller
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='aqtinst', description='Install Qt SDK.',
+    parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
                                      formatter_class=argparse.RawTextHelpFormatter, add_help=True)
-    parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
-    parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
-    parser.add_argument('target', choices=['desktop', 'android', 'ios'], help="target sdk")
-    parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
+    subparsers = parser.add_subparsers(help='subcommand for aqt Qt installer')
+    install_parser = subparsers.add_parser('install')
+    install_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
+    install_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
+    install_parser.add_argument('target', choices=['desktop', 'android', 'ios'], help="target sdk")
+    install_parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
                                                 "\ntarget mac/desktop:   clang_64"
                                                 "\ntarget mac/ios:       ios"
                                                 "\nwindows/desktop:      win64_msvc2017_64, win64_msvc2015_64"
                                                 "\n                      in32_msvc2015, win32_mingw53"
                                                 "\nandroid:              android_x86, android_armv7")
+    list_parser = subparsers.add_parser('list')
+    list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
+    help_parser = subparsers.add_parser('help')
     args = parser.parse_args()
     arch = args.arch
     target = args.target
