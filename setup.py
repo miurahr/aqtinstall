@@ -29,5 +29,19 @@ setup(name='aqtinstall',
             'flake8'
         ]
       },
-      scripts=["bin/aqt"]
+      scripts=["bin/aqt"],
+      classifiers=[
+          'Development Status :: 3 - Alpha',
+          'Environment :: Console',
+          'Environment :: X11 Applications :: Qt',
+          'Intended Audience :: Developers',
+          'License :: OSI Approved :: MIT License',
+          'Operating System :: MacOS :: MacOS X',
+          'Operating System :: Microsoft :: Windows',
+          'Operating System :: POSIX',
+          'Programming Language :: Python',
+          'Programming Language :: C++',
+          'Topic :: Software Development',
+          'Topic :: Software Development :: Libraries',
+          ],
       )
