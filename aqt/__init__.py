@@ -20,49 +20,9 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import argparse
-import sys
-
-from aqt.archives import QtArchives
-from aqt.installer import QtInstaller
+from aqt.cli import Cli
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
-                                     formatter_class=argparse.RawTextHelpFormatter, add_help=True)
-    subparsers = parser.add_subparsers(help='subcommand for aqt Qt installer')
-    install_parser = subparsers.add_parser('install')
-    install_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
-    install_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
-    install_parser.add_argument('target', choices=['desktop', 'android', 'ios'], help="target sdk")
-    install_parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
-                                "\ntarget mac/desktop:   clang_64"
-                                "\ntarget mac/ios:       ios"
-                                "\nwindows/desktop:      win64_msvc2017_64, win64_msvc2015_64"
-                                "\n                      in32_msvc2015, win32_mingw53"
-                                "\nandroid:              android_x86, android_armv7")
-    list_parser = subparsers.add_parser('list')
-    list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
-    help_parser = subparsers.add_parser('help')
-    help_parser.add_help("show help")
-    args = parser.parse_args()
-    arch = args.arch
-    target = args.target
-    os_name = args.host
-    if arch is None:
-        if os_name == "linux" and target == "desktop":
-            arch = "gcc_64"
-        elif os_name == "mac" and target == "desktop":
-            arch = "clang_64"
-        elif os_name == "mac" and target == "ios":
-            arch = "ios"
-    if arch == "":
-        print("Please supply a target architecture.")
-        args.print_help()
-        exit(1)
-    qt_version = args.qt_version
-
-    QtInstaller(QtArchives(os_name, qt_version, target, arch)).install()
-
-    sys.stdout.write("\033[K")
-    print("Finished installation")
+    cli = Cli()
+    return cli.run()
