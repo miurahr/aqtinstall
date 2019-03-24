@@ -129,7 +129,7 @@ jobs:
     inputs:
       scriptSource: filePath
       scriptPath: $(Build.SourcesDirectory)/bin/aqt
-      arguments: $(qtversion) windows desktop win64_msvc2017_64
+      arguments: install $(qtversion) windows desktop win64_msvc2017_64
       workingDirectory: $(Build.BinariesDirectory)
     displayName: install qt
   - script: ls -lR $(Build.BinariesDirectory)
