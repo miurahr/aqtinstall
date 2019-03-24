@@ -15,12 +15,13 @@ Added
 -----
 
 * sphnix document.
+* test packaging on CI.
 
 Changed
 -------
 
 * Project directory structure.
-* cli command name changed ot `aqt` and now you can run `aqt install`
+* cli command name changed from `aqtinst` to `aqt` and now you can run `aqt install`
 
 Fixed
 -----
