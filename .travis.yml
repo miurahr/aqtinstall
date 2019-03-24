@@ -5,7 +5,7 @@ install:
 - pip install wheel flake8 requests six
 
 script:
-- flake8
+- flake8 aqt bin
 - python -m aqt --help
 
 deploy:

@@ -15,7 +15,7 @@ jobs:
   - script: |
       python -m pip install $(pydepends)
       python -m pip install flake8 twine wheel
-      flake8 .
+      flake8 aqt bin
     displayName: 'Run lint tests'
   - script: |
       sudo apt-get update
