@@ -31,7 +31,7 @@ class Cli():
 
     __slot__ = ['parser']
 
-    def run_install(self,args):
+    def run_install(self, args):
         arch = args.arch
         target = args.target
         os_name = args.host
