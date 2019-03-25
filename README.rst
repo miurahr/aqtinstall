@@ -56,8 +56,8 @@ General usage looks like this:
 
 .. code-block:: bash
 
-    aqtinst [-h][--help] <qt-version> <host> <target> [<arch>]
-    python -m aqt [-h][--help] <qt-version> <host> <target> [<arch>]
+    aqt [-h][--help] install <qt-version> <host> <target> [<arch>]
+    python -m aqt [-h][--help] install <qt-version> <host> <target> [<arch>]
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
@@ -74,7 +74,7 @@ run such as follows:
 
     C:\> mkdir Qt
     C:\> cd Qt
-    C:\Qt\> aqtinst 5.11.3 windows desktop win64_msvc2017_64
+    C:\Qt\> aqt install 5.11.3 windows desktop win64_msvc2017_64
 
 
 Example: Installing Qt 5.12.0 for Linux:
@@ -83,21 +83,21 @@ Example: Installing Qt 5.12.0 for Linux:
 
     pip install aqtinstall
     cd /opt
-    sudo aqtinst 5.12.0 linux desktop
+    sudo aqt install 5.12.0 linux desktop
 
 
 Example: Installing Android (armv7) Qt 5.10.2:
 
 .. code-block:: bash
 
-    aqtinst 5.10.2 linux android android_armv7
+    aqt install 5.10.2 linux android android_armv7
 
 
 Example: Show help message
 
 .. code-block:: bash
 
-    aqtinst -h
+    aqt help
 
 
 
