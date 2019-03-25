@@ -6,6 +6,9 @@ Another Qt installer(aqt)
    :target: http://badge.fury.io/py/aqtinstall
       :alt: PyPI version
 
+.. image:: https://readthedocs.org/projects/aqtinstall/badge/?version=latest
+   :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 .. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=macOS
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
