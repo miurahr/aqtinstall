@@ -8,3 +8,4 @@ __pycache__
 .tox
 .venv
 _build
+ci/*.matrix.gen.yml

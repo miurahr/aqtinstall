@@ -12,9 +12,7 @@ Another Qt installer(aqt)
 
 .. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=macOS
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Ubuntu_1604_py3
-   :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ubuntu2| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Ubuntu_1604_py2
+.. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |windows| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Windows
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
@@ -25,8 +23,6 @@ Another Qt installer(aqt)
 | MacOS       | |macos|   |
 +-------------+-----------+
 | Ubuntu      | |ubuntu3| |
-+-------------+-----------+
-| Python2     | |ubuntu2| |
 +-------------+-----------+
 | Windows     | |windows| |
 +-------------+-----------+
@@ -126,7 +122,7 @@ For details see `Qt licensing`_ and `Licenses used in Qt5`_
 History
 -------
 
-This program is originally shown in `Kaidan`_ project
+This program is originally shown in `Kaidan`_ project as a name `qli-installer`.
 A project `aqtinstall` extend the original to run with standard python features with Linux, Mac and Windows,
 to be tested on CI platform, and to improve performance with a concurrent downloading.
 

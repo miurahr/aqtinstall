@@ -1,0 +1,99 @@
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.6'
+      architecture: 'x64'
+  - script: |
+      cd $(Build.SourcesDirectory)
+      python -m pip install -rrequirements.txt
+    displayName: 'Install dependency'
+  - script: flake8 aqt bin
+    displayName: 'Run lint tests'
+  - task: PythonScript@0
+    inputs:
+      scriptSource: filePath
+      scriptPath: $(Build.SourcesDirectory)/setup.py
+      arguments: sdist bdist_wheel
+      workingDirectory: $(Build.SourcesDirectory)
+    displayName: build package
+  #
+  # Install aqtinstall
+  - bash: |
+      export AQT_VERSION=$(python $(Build.SourcesDirectory)/setup.py --version)
+      pip install $(Build.SourcesDirectory)/dist/aqtinstall-${AQT_VERSION}-py2.py3-none-any.whl
+    condition: or( eq( variables['Agent.OS'], 'Linux' ), eq( variables['Agent.OS'], 'Darwin' ))
+    displayName: install package on MacOS and Linux
+  - powershell: |
+      $aqtVersion = & python $(Build.SourcesDirectory)/setup.py --version | Out-String -Stream
+      pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
+    displayName: install package on Windows
+  #
+  # Run Aqt
+  - task: PythonScript@0
+    inputs:
+      scriptSource: filePath
+      scriptPath: $(Build.SourcesDirectory)/bin/aqt
+      arguments: install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
+      workingDirectory: $(Build.BinariesDirectory)
+    displayName: Install Qt
+  #
+  # Test installation result
+  # for Android on linux
+  - script: |
+      wget https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip
+      unzip android-ndk-r19c-linux-x86_64.zip
+    condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Linux'))
+    displayName: Download and extract Android NDK
+  # for Android on mac
+  - script: |
+      wget https://dl.google.com/android/repository/android-ndk-r19c-darwin-x86_64.zip
+      unzip android-ndk-r19c-darwin-x86_64.zip
+    condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Darwin'))
+    displayName: Download and extract Android NDK
+   # for Android on windows
+  - script: |
+      cinst -y --no-progress wget
+      wget https://dl.google.com/android/repository/android-ndk-r19c-windows-x86_64.zip
+      unzip android-ndk-r19c-windows-x86_64.zip
+    condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: Download and extract Android NDK
+  - script: |
+      export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r19c
+      $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/accelbubble/ && make
+    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    displayName: Build accelbubble example application to test for android
+  # for desktop application
+  - powershell: |
+      if ('$(ARCH)' like '*msvc*') {
+        echo '##vso[task.setvariable variable=RUNTEST]true'
+        if ($(ARCH) like 'win64_msvc*') {
+          echo '##vso[task.setvariable variable=ARCHITECTURE]amd64'
+        } else {
+          echo '##vso[task.setvariable variable=ARCHITECTURE]x86'
+        }
+        if ('$(ARCH)' like '*msvc2017*') {
+          echo '##vso[task.setvariable variable=VS_VER]2017'
+        } else {
+          echo '##vso[task.setvariable variable=VS_VER]2015'
+        }
+        Install-PackageProvider NuGet -Force
+        Import-PackageProvider NuGet -Force
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        Install-Module Pscx -AllowClobber
+        Install-Module VSSetup -Scope CurrentUser
+        Import-VisualStudioVars -VisualStudioVersion $(VS_VER) -Architecture $(ARCHITECTURE)
+        $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
+        nmake
+      }
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TARGET'], 'desktop'))
+    displayName: build test with qmake for windows
+  - script: |
+      $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
+      make
+    condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    displayName: Build test with qmake for Linux and macOS
+  # for ios
+  - script: echo Currently not implemented.
+    condition: and(eq(variables['TARGET'], 'ios'), eq(variables['Agent.OS'], 'Darwin'))
+    displayName: Build test with qmake for ios
