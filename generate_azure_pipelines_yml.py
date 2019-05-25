@@ -23,7 +23,6 @@ class PlatformBuildJobs:
 
 
 python_versions = [
-    '3.6',
     '3.7',
 ]
 
