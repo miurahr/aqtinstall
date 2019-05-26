@@ -27,13 +27,15 @@ from . import exceptions
 
 __all__ = ['get', 'exceptions']
 
-_blacklist = ['http://mirrors.tuna.tsinghua.edu.cn' ]
+_blacklist = ['http://mirrors.tuna.tsinghua.edu.cn']
+
 
 def _in_blacklist(url):
     for b in _blacklist:
         if url.startswith(b):
             return True
     return False
+
 
 def get(url, stream=False):
     r = requests.get(url, stream=stream, allow_redirects=False)

@@ -40,4 +40,3 @@ FileModeWarning = requests.exceptions.FileModeWarning
 ConnectTimeout = requests.exceptions.ConnectTimeout
 
 ReadTimeout = requests.exceptions.ReadTimeout
-
