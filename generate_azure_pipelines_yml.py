@@ -64,6 +64,7 @@ mac_build_jobs.append(
 # Windows Desktop
 windows_build_jobs.extend(
     [
+        BuildJob('5.11.3', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
         BuildJob('5.11.3', 'windows', 'desktop', 'win32_msvc2015', 'msvc2015'),
     ]
 )
@@ -71,14 +72,17 @@ windows_build_jobs.extend(
 windows_build_jobs.extend(
     [
         BuildJob('5.12.3', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
+        BuildJob('5.12.3', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
     ]
 )
 
 windows_build_jobs.extend(
     [
         BuildJob('5.13.0', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.13.0', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
+        BuildJob('5.13.0', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
         BuildJob('5.13.0', 'windows', 'desktop', 'win64_mingw73', 'mingw73'),
+        BuildJob('5.13.0', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
+        BuildJob('5.13.0', 'windows', 'desktop', 'win32_mingw73', 'mingw73'),
     ]
 )
 
@@ -97,7 +101,7 @@ for platform_build_job in all_platform_build_jobs:
         'matrix': {}
     }
     for build_job, python_version in product(platform_build_job.build_jobs, python_versions):
-        key = 'QT {} {} {} {}'.format(build_job.qt_version, build_job.host, build_job.target,
+        key = 'Python {} QT {} {} {} {}'.format(python_version, build_job.qt_version, build_job.host, build_job.target,
                                                 build_job.arch)
         yaml_dictionary['matrix'][key] = \
             {
