@@ -36,7 +36,7 @@ def get(url, stream=False):
                 mml = Metalink(url)
                 newurl = mml.altlink(blacklist=blacklist)
                 break
-        print('**** newurl ***** {}'.format(newurl))
+        print('Redirected to new URL: {}'.format(newurl))
         r = requests.get(newurl, stream=stream)
     return r
 
