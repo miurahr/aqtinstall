@@ -21,6 +21,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import requests
+from . import mirrors
 from . import exceptions
 
 
@@ -30,15 +31,14 @@ __all__ = ['get', 'exceptions']
 def get(url, stream=False):
     r = requests.get(url, stream=stream, allow_redirects=False)
     if r.status_code == 302:
-        # asked redirect
-
+        # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
+        # we will use another redirected location for that.
+        redirect = r.headers['Location']
         if r.headers['Location'].startswith('http://mirrors.tuna.tsinghua.edu.cn'):
-            # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
-            # we will use another redirected location for that.
-            # MIRRORLIST = 'https://download.qt.io/static/mirrorlist/'
-            # r2 = requests.get(MIRRORLIST)
-            newurl = r.headers['Location']  # fixme
+            blacklist = [redirect]
+            mml = mirrors.Metalink(url, blacklist=blacklist)
+            newurl = mml.altlink()
         else:
-            newurl = r.headers['Location']
+            newurl = redirect
         r = requests.get(newurl, stream=stream)
     return r
