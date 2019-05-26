@@ -25,6 +25,7 @@ import requests
 import traceback
 import xml.etree.ElementTree as ElementTree
 from six import StringIO
+import aqt.metalink
 
 
 class QtPackage:
@@ -69,7 +70,7 @@ class QtArchives:
         # Get packages index
         update_xml_url = "{0}Updates.xml".format(archive_url)
         try:
-            r = requests.get(update_xml_url)
+            r = aqt.metalink.get(update_xml_url)
         except requests.exceptions.ConnectionError as e:
             print("Caught download error: %s" % e.args)
             exc_buffer = StringIO()
