@@ -65,7 +65,12 @@ class Metalink:
             if blacklist is not None:
                 for ind in range(len(self.mirrors)):
                     mirror = self.mirrors[str(ind + 1)]
-                    if mirror in blacklist:
+                    black = False
+                    for b in blacklist:
+                        if mirror.startswith(b):
+                            black = True
+                            continue
+                    if black:
                         continue
                     return mirror
             else:
