@@ -25,7 +25,7 @@ import os
 import platform
 import sys
 import traceback
-import aqt.requests as requests
+from . import requests
 from six import StringIO
 from multiprocessing.dummy import Pool
 if sys.version_info.major == 3:
