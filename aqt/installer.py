@@ -25,13 +25,14 @@ import os
 import platform
 import sys
 import traceback
-import requests
+from aqt.qtrequests import qtrequests as requests
 from six import StringIO
 from multiprocessing.dummy import Pool
 if sys.version_info.major == 3:
     from subprocess import run
 else:
     from subprocess import call as run
+
 
 NUM_PROCESS = 3
 

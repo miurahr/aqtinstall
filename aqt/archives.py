@@ -21,10 +21,10 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import logging
-import requests
 import traceback
 import xml.etree.ElementTree as ElementTree
 from six import StringIO
+from aqt.qtrequests import qtrequests as requests
 
 
 class QtPackage:
