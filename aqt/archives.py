@@ -24,7 +24,7 @@ import logging
 import traceback
 import xml.etree.ElementTree as ElementTree
 from six import StringIO
-from aqt.qtrequests import qtrequests as requests
+import aqt.requests as requests
 
 
 class QtPackage:

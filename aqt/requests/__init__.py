@@ -21,24 +21,24 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import requests
+from . import exceptions
 
 
-class qtrequests:
-    @classmethod
-    def get(url):
-        r = requests.get(url, allow_redirects=False)
-        if r.status_code == 302:
-            # asked redirect
-            if r.headers['Location'].startswith('http://mirrors.tuna.tsinghua.edu.cn'):
-                # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
-                # we will use another redirected location for that.
-                # MIRRORLIST = 'https://download.qt.io/static/mirrorlist/'
-                # r2 = requests.get(MIRRORLIST)
-                newurl = r.headers['Location']  # fixme
-            else:
-                newurl = r.headers['Location']
-            r = requests.get(newurl)
-        return r
+__all__ = ['get', 'exceptions']
 
-    class exceptions(requests.exceptions):
-        pass
+
+def get(url, stream=False):
+    r = requests.get(url, stream=stream, allow_redirects=False)
+    if r.status_code == 302:
+        # asked redirect
+
+        if r.headers['Location'].startswith('http://mirrors.tuna.tsinghua.edu.cn'):
+            # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
+            # we will use another redirected location for that.
+            # MIRRORLIST = 'https://download.qt.io/static/mirrorlist/'
+            # r2 = requests.get(MIRRORLIST)
+            newurl = r.headers['Location']  # fixme
+        else:
+            newurl = r.headers['Location']
+        r = requests.get(newurl, stream=stream)
+    return r
