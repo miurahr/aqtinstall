@@ -29,16 +29,16 @@ Removed
 Security
 --------
 
-`v0.4.0`_ (27, May, 2019)
+`v0.4.0`_ (29, May, 2019)
 =========================
 
 Added
 -----
 
-* sphnix document.
+* cli: output directory option.
+* sphinx document.
 * test packaging on CI.
 * Handler for metalink information and intelligent mirror selection.
-* cli: output directory option.
 
 Changed
 -------
@@ -47,6 +47,9 @@ Changed
 * cli command name changed from `aqtinst` to `aqt` and now you can run `aqt install`
 * Introduce Cli class
 * Massive regression test on azure pipelines(#20)
+* blacklist against http://mirrors.tuna.tsinghua.edu.cn and http://mirrors.geekpie.club/
+  from mirror site.
+* Run 7zip command with '-o{directory}' option.
 
 
 `v0.3.1`_ (15, March, 2019)
