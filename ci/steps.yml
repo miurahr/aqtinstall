@@ -65,27 +65,26 @@ steps:
     displayName: Build accelbubble example application to test for android
   # for desktop application
   - powershell: |
-      if ('$(ARCH)' like '*msvc*') {
-        echo '##vso[task.setvariable variable=RUNTEST]true'
-        if ($(ARCH) like 'win64_msvc*') {
-          echo '##vso[task.setvariable variable=ARCHITECTURE]amd64'
-        } else {
-          echo '##vso[task.setvariable variable=ARCHITECTURE]x86'
-        }
-        if ('$(ARCH)' like '*msvc2017*') {
-          echo '##vso[task.setvariable variable=VS_VER]2017'
-        } else {
-          echo '##vso[task.setvariable variable=VS_VER]2015'
-        }
-        Install-PackageProvider NuGet -Force
-        Import-PackageProvider NuGet -Force
-        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-        Install-Module Pscx -AllowClobber
-        Install-Module VSSetup -Scope CurrentUser
-        Import-VisualStudioVars -VisualStudioVersion $(VS_VER) -Architecture $(ARCHITECTURE)
+      Install-PackageProvider NuGet -Force
+      Import-PackageProvider NuGet -Force
+      Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+      Install-Module Pscx -AllowClobber
+      Install-Module VSSetup -Scope CurrentUser
+      if ('$(ARCH)' -like 'win64_msvc*') {
+        echo '##vso[task.setvariable variable=ARCHITECTURE]amd64'
+      } else {
+        echo '##vso[task.setvariable variable=ARCHITECTURE]x86'
+      }
+      if ('$(ARCH)' -like '*msvc2017*') {
+        echo '##vso[task.setvariable variable=VSVER]2017'
+      } else {
+        echo '##vso[task.setvariable variable=VSVER]2015'
+      }
+    condition: eq( variables['Agent.OS'], 'Windows_NT')
+  - powershell: |
+        Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
         $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
         nmake
-      }
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TARGET'], 'desktop'))
     displayName: build test with qmake for windows
   - script: |
