@@ -11,48 +11,48 @@ jobs:
   - template: ci/steps.yml
   strategy:
     matrix:
-      Python 3.7 QT 5.13.0 mac ios ios:
-        PYTHON_VERSION: '3.7'
-        TARGET: ios
-        ARCH: ios
-        QT_VERSION: 5.13.0
+      QT 5.11.3 mac desktop clang_64:
         HOST: mac
-        ARCHDIR: ios
-      Python 3.7 QT 5.12.3 mac desktop clang_64:
-        PYTHON_VERSION: '3.7'
+        QT_VERSION: 5.11.3
+        ARCHDIR: clang_64
         TARGET: desktop
         ARCH: clang_64
-        QT_VERSION: 5.12.3
-        HOST: mac
-        ARCHDIR: clang_64
-      Python 3.7 QT 5.13.0 mac android android_x86:
         PYTHON_VERSION: '3.7'
+      QT 5.13.0 mac android android_x86:
+        HOST: mac
+        QT_VERSION: 5.13.0
+        ARCHDIR: android_x86
         TARGET: android
         ARCH: android_x86
-        QT_VERSION: 5.13.0
-        HOST: mac
-        ARCHDIR: android_x86
-      Python 3.7 QT 5.13.0 mac android android_armv7:
         PYTHON_VERSION: '3.7'
+      QT 5.13.0 mac android android_armv7:
+        HOST: mac
+        QT_VERSION: 5.13.0
+        ARCHDIR: android_armv7
         TARGET: android
         ARCH: android_armv7
-        QT_VERSION: 5.13.0
-        HOST: mac
-        ARCHDIR: android_armv7
-      Python 3.7 QT 5.11.3 mac desktop clang_64:
         PYTHON_VERSION: '3.7'
+      QT 5.12.3 mac desktop clang_64:
+        HOST: mac
+        QT_VERSION: 5.12.3
+        ARCHDIR: clang_64
         TARGET: desktop
         ARCH: clang_64
-        QT_VERSION: 5.11.3
-        HOST: mac
-        ARCHDIR: clang_64
-      Python 3.7 QT 5.13.0 mac desktop clang_64:
         PYTHON_VERSION: '3.7'
+      QT 5.13.0 mac desktop clang_64:
+        HOST: mac
+        QT_VERSION: 5.13.0
+        ARCHDIR: clang_64
         TARGET: desktop
         ARCH: clang_64
-        QT_VERSION: 5.13.0
+        PYTHON_VERSION: '3.7'
+      QT 5.13.0 mac ios ios:
         HOST: mac
-        ARCHDIR: clang_64
+        QT_VERSION: 5.13.0
+        ARCHDIR: ios
+        TARGET: ios
+        ARCH: ios
+        PYTHON_VERSION: '3.7'
 - job: Windows
   pool:
     vmImage: vs2017-win2016
@@ -60,83 +60,83 @@ jobs:
   - template: ci/steps.yml
   strategy:
     matrix:
-      Python 3.7 QT 5.13.0 windows android android_x86:
-        PYTHON_VERSION: '3.7'
-        TARGET: android
-        ARCH: android_x86
-        QT_VERSION: 5.13.0
+      QT 5.13.0 windows desktop win64_msvc2017_64:
         HOST: windows
-        ARCHDIR: android_x86
-      Python 3.7 QT 5.11.3 windows desktop win32_msvc2015:
+        QT_VERSION: 5.13.0
+        ARCHDIR: msvc2017_64
+        TARGET: desktop
+        ARCH: win64_msvc2017_64
         PYTHON_VERSION: '3.7'
+      QT 5.11.3 windows desktop win32_msvc2015:
+        HOST: windows
+        QT_VERSION: 5.11.3
+        ARCHDIR: msvc2015
         TARGET: desktop
         ARCH: win32_msvc2015
-        QT_VERSION: 5.11.3
-        HOST: windows
-        ARCHDIR: msvc2015
-      Python 3.7 QT 5.13.0 windows desktop win64_mingw73:
         PYTHON_VERSION: '3.7'
-        TARGET: desktop
-        ARCH: win64_mingw73
+      QT 5.13.0 windows desktop win32_mingw73:
+        HOST: windows
         QT_VERSION: 5.13.0
-        HOST: windows
-        ARCHDIR: mingw73
-      Python 3.7 QT 5.13.0 windows desktop win32_mingw73:
-        PYTHON_VERSION: '3.7'
+        ARCHDIR: mingw73_32
         TARGET: desktop
         ARCH: win32_mingw73
-        QT_VERSION: 5.13.0
-        HOST: windows
-        ARCHDIR: mingw73
-      Python 3.7 QT 5.13.0 windows desktop win32_msvc2017:
         PYTHON_VERSION: '3.7'
-        TARGET: desktop
-        ARCH: win32_msvc2017
-        QT_VERSION: 5.13.0
+      QT 5.13.0 windows android android_armv7:
         HOST: windows
-        ARCHDIR: msvc2017
-      Python 3.7 QT 5.13.0 windows desktop win64_msvc2015_64:
-        PYTHON_VERSION: '3.7'
-        TARGET: desktop
-        ARCH: win64_msvc2015_64
         QT_VERSION: 5.13.0
-        HOST: windows
-        ARCHDIR: msvc2015_64
-      Python 3.7 QT 5.13.0 windows desktop win64_msvc2017_64:
-        PYTHON_VERSION: '3.7'
-        TARGET: desktop
-        ARCH: win64_msvc2017_64
-        QT_VERSION: 5.13.0
-        HOST: windows
-        ARCHDIR: msvc2017_64
-      Python 3.7 QT 5.13.0 windows android android_armv7:
-        PYTHON_VERSION: '3.7'
+        ARCHDIR: android_armv7
         TARGET: android
         ARCH: android_armv7
-        QT_VERSION: 5.13.0
-        HOST: windows
-        ARCHDIR: android_armv7
-      Python 3.7 QT 5.11.3 windows desktop win64_msvc2017_64:
         PYTHON_VERSION: '3.7'
+      QT 5.12.3 windows desktop win64_msvc2017_64:
+        HOST: windows
+        QT_VERSION: 5.12.3
+        ARCHDIR: msvc2017_64
         TARGET: desktop
         ARCH: win64_msvc2017_64
-        QT_VERSION: 5.11.3
-        HOST: windows
-        ARCHDIR: msvc2017_64
-      Python 3.7 QT 5.12.3 windows desktop win32_msvc2017:
         PYTHON_VERSION: '3.7'
+      QT 5.13.0 windows desktop win32_msvc2017:
+        HOST: windows
+        QT_VERSION: 5.13.0
+        ARCHDIR: msvc2017
         TARGET: desktop
         ARCH: win32_msvc2017
-        QT_VERSION: 5.12.3
-        HOST: windows
-        ARCHDIR: msvc2017
-      Python 3.7 QT 5.12.3 windows desktop win64_msvc2017_64:
         PYTHON_VERSION: '3.7'
+      QT 5.13.0 windows desktop win64_mingw73:
+        HOST: windows
+        QT_VERSION: 5.13.0
+        ARCHDIR: mingw73_64
+        TARGET: desktop
+        ARCH: win64_mingw73
+        PYTHON_VERSION: '3.7'
+      QT 5.13.0 windows android android_x86:
+        HOST: windows
+        QT_VERSION: 5.13.0
+        ARCHDIR: android_x86
+        TARGET: android
+        ARCH: android_x86
+        PYTHON_VERSION: '3.7'
+      QT 5.13.0 windows desktop win64_msvc2015_64:
+        HOST: windows
+        QT_VERSION: 5.13.0
+        ARCHDIR: msvc2015_64
+        TARGET: desktop
+        ARCH: win64_msvc2015_64
+        PYTHON_VERSION: '3.7'
+      QT 5.12.3 windows desktop win32_msvc2017:
+        HOST: windows
+        QT_VERSION: 5.12.3
+        ARCHDIR: msvc2017
+        TARGET: desktop
+        ARCH: win32_msvc2017
+        PYTHON_VERSION: '3.7'
+      QT 5.11.3 windows desktop win64_msvc2017_64:
+        HOST: windows
+        QT_VERSION: 5.11.3
+        ARCHDIR: msvc2017_64
         TARGET: desktop
         ARCH: win64_msvc2017_64
-        QT_VERSION: 5.12.3
-        HOST: windows
-        ARCHDIR: msvc2017_64
+        PYTHON_VERSION: '3.7'
 - job: Linux
   pool:
     vmImage: ubuntu-16.04
@@ -144,38 +144,38 @@ jobs:
   - template: ci/steps.yml
   strategy:
     matrix:
-      Python 3.7 QT 5.12.3 linux desktop gcc_64:
-        PYTHON_VERSION: '3.7'
-        TARGET: desktop
-        ARCH: gcc_64
-        QT_VERSION: 5.12.3
+      QT 5.13.0 linux desktop gcc_64:
         HOST: linux
-        ARCHDIR: gcc_64
-      Python 3.7 QT 5.11.3 linux desktop gcc_64:
-        PYTHON_VERSION: '3.7'
-        TARGET: desktop
-        ARCH: gcc_64
-        QT_VERSION: 5.11.3
-        HOST: linux
-        ARCHDIR: gcc_64
-      Python 3.7 QT 5.13.0 linux android android_armv7:
-        PYTHON_VERSION: '3.7'
-        TARGET: android
-        ARCH: android_armv7
         QT_VERSION: 5.13.0
-        HOST: linux
-        ARCHDIR: android_armv7
-      Python 3.7 QT 5.13.0 linux android android_x86:
+        ARCHDIR: gcc_64
+        TARGET: desktop
+        ARCH: gcc_64
         PYTHON_VERSION: '3.7'
+      QT 5.13.0 linux android android_x86:
+        HOST: linux
+        QT_VERSION: 5.13.0
+        ARCHDIR: android_x86
         TARGET: android
         ARCH: android_x86
-        QT_VERSION: 5.13.0
-        HOST: linux
-        ARCHDIR: android_x86
-      Python 3.7 QT 5.13.0 linux desktop gcc_64:
         PYTHON_VERSION: '3.7'
+      QT 5.13.0 linux android android_armv7:
+        HOST: linux
+        QT_VERSION: 5.13.0
+        ARCHDIR: android_armv7
+        TARGET: android
+        ARCH: android_armv7
+        PYTHON_VERSION: '3.7'
+      QT 5.11.3 linux desktop gcc_64:
+        HOST: linux
+        QT_VERSION: 5.11.3
+        ARCHDIR: gcc_64
         TARGET: desktop
         ARCH: gcc_64
-        QT_VERSION: 5.13.0
+        PYTHON_VERSION: '3.7'
+      QT 5.12.3 linux desktop gcc_64:
         HOST: linux
+        QT_VERSION: 5.12.3
         ARCHDIR: gcc_64
+        TARGET: desktop
+        ARCH: gcc_64
+        PYTHON_VERSION: '3.7'

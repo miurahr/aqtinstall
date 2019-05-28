@@ -101,7 +101,7 @@ for platform_build_job in all_platform_build_jobs:
         'matrix': {}
     }
     for build_job, python_version in product(platform_build_job.build_jobs, python_versions):
-        key = 'Python {} QT {} {} {} {}'.format(python_version, build_job.qt_version, build_job.host, build_job.target,
+        key = 'QT {} {} {} {}'.format(build_job.qt_version, build_job.host, build_job.target,
                                                 build_job.arch)
         yaml_dictionary['matrix'][key] = \
             {
