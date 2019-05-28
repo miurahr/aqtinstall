@@ -54,7 +54,7 @@ Changed
 Fixed
 -----
 
-* Fix File Not Found Error when making qt.conf against win64_mingw73
+* Fix File Not Found Error when making qt.conf against win64_mingw73 and win32_mingw73
 
 
 `v0.3.1`_ (15, March, 2019)

@@ -92,11 +92,12 @@ class QtInstaller:
         ret_arr = p.map(functools.partial(self.retrieve_archive, path=base_dir), archives)
         ret = functools.reduce(and_, ret_arr)
         if ret:
-            if arch.startswith('win'):
-                if arch.startswith('win64_mingw'):
-                    arch_dir = arch[6:] + '_64'
-                else:
-                    arch_dir = arch[6:]
+            if arch.startswith('win64_mingw'):
+                arch_dir = arch[6:] + '_64'
+            elif arch.startswith('win32_mingw'):
+                arch_dir = arch[6:] + '_32'
+            elif arch.startswith('win'):
+                arch_dir = arch[6:]
             else:
                 arch_dir = arch
             try:
