@@ -78,7 +78,8 @@ class Cli():
                                     "\ntarget mac/desktop:   clang_64"
                                     "\ntarget mac/ios:       ios"
                                     "\nwindows/desktop:      win64_msvc2017_64, win64_msvc2015_64"
-                                    "\n                      in32_msvc2015, win32_mingw53"
+                                    "\n                      win32_msvc2015, win32_mingw53"
+                                    "\n                      win64_mingw73, win32_mingw73"
                                     "\nandroid:              android_x86, android_armv7")
         install_parser.add_argument('-O', '--outputdir', nargs='?',
                                     help='Target output directory(default current directory)')

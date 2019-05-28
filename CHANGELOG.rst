@@ -51,6 +51,11 @@ Changed
   from mirror site.
 * Run 7zip command with '-o{directory}' option.
 
+Fixed
+-----
+
+* Fix File Not Found Error when making qt.conf against win64_mingw73
+
 
 `v0.3.1`_ (15, March, 2019)
 ==========================
