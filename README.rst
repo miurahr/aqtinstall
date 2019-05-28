@@ -10,7 +10,7 @@ Another Qt installer(aqt)
    :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=macOS
+.. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Mac
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
