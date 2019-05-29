@@ -44,7 +44,7 @@ class QtPackage:
 
 
 class QtArchives:
-    BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
+    BASE_URL = 'https://download.qt.io'
     archives = []
     base = None
 
@@ -59,9 +59,9 @@ class QtArchives:
             self.base = self.BASE_URL
         qt_ver_num = qt_version.replace(".", "")
         if os_name == 'windows':
-            archive_url = self.base + os_name + '_x86/' + target + '/' + 'qt5_' + qt_ver_num + '/'
+            archive_url = self.base + '/online/qtsdkrepository/' + os_name + '_x86/' + target + '/' + 'qt5_' + qt_ver_num + '/'
         else:
-            archive_url = self.base + os_name + '_x64/' + target + '/' + 'qt5_' + qt_ver_num + '/'
+            archive_url = self.base + '/online/qtsdkrepository/' + os_name + '_x64/' + target + '/' + 'qt5_' + qt_ver_num + '/'
 
         # Get packages index
         update_xml_url = "{0}Updates.xml".format(archive_url)

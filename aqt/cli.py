@@ -36,7 +36,7 @@ class Cli():
         target = args.target
         os_name = args.host
         output_dir = args.outputdir
-        mirror = args.mirror
+        mirror = args.base
         if arch is None:
             if os_name == "linux" and target == "desktop":
                 arch = "gcc_64"
@@ -88,7 +88,7 @@ class Cli():
                                     "\nandroid:              android_x86, android_armv7")
         install_parser.add_argument('-O', '--outputdir', nargs='?',
                                     help='Target output directory(default current directory)')
-        install_parser.add_argument('-m', '--mirror', nargs='?',
+        install_parser.add_argument('-b', '--base', nargs='?',
                                     help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                          "where 'online' folder exist.")
         list_parser = subparsers.add_parser('list')

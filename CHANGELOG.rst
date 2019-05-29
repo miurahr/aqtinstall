@@ -14,7 +14,7 @@ Current changes
 Added
 -----
 
-* Option to specify mirror site.
+* Option -b | --base to specify mirror site.
 
 Changed
 -------

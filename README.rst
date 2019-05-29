@@ -55,8 +55,8 @@ General usage looks like this:
 
 .. code-block:: bash
 
-    aqt [-h][--help] install <qt-version> <host> <target> [<arch>]
-    python -m aqt [-h][--help] install <qt-version> <host> <target> [<arch>]
+    aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>] install <qt-version> <host> <target> [<arch>]
+    python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>]  install <qt-version> <host> <target> [<arch>]
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
@@ -72,8 +72,7 @@ run such as follows:
 .. code-block:: bash
 
     C:\> mkdir Qt
-    C:\> cd Qt
-    C:\Qt\> aqt install 5.11.3 windows desktop win64_msvc2017_64
+    C:\> aqt install -O c:\Qt 5.11.3 windows desktop win64_msvc2017_64
 
 
 Example: Installing Qt 5.12.0 for Linux:
@@ -81,8 +80,7 @@ Example: Installing Qt 5.12.0 for Linux:
 .. code-block:: bash
 
     pip install aqtinstall
-    cd /opt
-    sudo aqt install 5.12.0 linux desktop
+    sudo aqt install --outputdir /opt 5.12.0 linux desktop
 
 
 Example: Installing Android (armv7) Qt 5.10.2:
