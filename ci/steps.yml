@@ -63,6 +63,12 @@ steps:
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
       Install-Module Pscx -AllowClobber
       Install-Module VSSetup -Scope CurrentUser
+      if ('$(ARCH)' -like '*msvc*') {
+        echo '##vso[task.setvariable variable=TOOLCHAIN]MSVC'
+      }
+      if ('$(ARCH)' -like '*mingw*') {
+        echo '##vso[task.setvariable variable=TOOLCHAIN]MINGW'
+      }
       if ('$(ARCH)' -like 'win64_msvc*') {
         echo '##vso[task.setvariable variable=ARCHITECTURE]amd64'
       } else {
@@ -75,11 +81,11 @@ steps:
       }
     condition: eq( variables['Agent.OS'], 'Windows_NT')
   - powershell: |
-        Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-        $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
-        nmake
-    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TARGET'], 'desktop'))
-    displayName: build test with qmake for windows
+      Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
+      $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
+      nmake
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'))
+    displayName: build test with qmake with MSVC
   - script: |
       $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
       make

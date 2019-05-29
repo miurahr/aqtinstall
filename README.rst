@@ -62,7 +62,7 @@ General usage looks like this:
 * Host is one of: `linux`, `mac`, `windows`
 * Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)
 * For android and windows you also need to specify an arch: `win64_msvc2017_64`,
-  `win64_msvc2015_64`, `win32_msvc2015`, `win32_mingw53`, `android_x86`, `android_armv7`
+  `win64_msvc2015_64`, `win32_msvc2015`, `win32_mingw53`, 'win64_mingw73', `android_x86`, `android_armv7`
 
 
 The Qt packages are installed under current directory as such `Qt<ver>/<ver>/gcc_64/`
@@ -104,6 +104,13 @@ Supported CI platform
 ---------------------
 
 There are no limitation for CI platform but currently it is tested on Azure Pipelines.
+
+
+Known issues and limitations
+----------------------------
+
+Current version(v0.4.0) don't have a capability to install tools such as mingw and qtcreator.
+A utility install only Qt library staffs.
 
 
 License and copyright
