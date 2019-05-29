@@ -50,11 +50,14 @@ class QtInstaller:
 
     @staticmethod
     def retrieve_archive(package, path=None):
-        archive = package.get_archive()
-        url = package.get_url()
+        archive = package.archive
+        url = package.url
         print("-Downloading {}...".format(url))
         try:
-            r = aqt.metalink.get(url, stream=True)
+            if package.has_mirror:
+                r = aqt.metalink.get(url, stream=True)
+            else:
+                r = requests.get(url, stream=True)
         except requests.exceptions.ConnectionError as e:
             print("Caught download error: %s" % e.args)
             return False

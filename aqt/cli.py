@@ -36,6 +36,7 @@ class Cli():
         target = args.target
         os_name = args.host
         output_dir = args.outputdir
+        mirror = args.mirror
         if arch is None:
             if os_name == "linux" and target == "desktop":
                 arch = "gcc_64"
@@ -48,11 +49,15 @@ class Cli():
             args.print_help()
             exit(1)
         qt_version = args.qt_version
+        if mirror is not None:
+            if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
+                args.print_help()
+                exit(1)
 
         if output_dir is not None:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch)).install(target_dir=output_dir)
+            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror)).install(target_dir=output_dir)
         else:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch)).install()
+            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror)).install()
 
         sys.stdout.write("\033[K")
         print("Finished installation")
@@ -83,6 +88,9 @@ class Cli():
                                     "\nandroid:              android_x86, android_armv7")
         install_parser.add_argument('-O', '--outputdir', nargs='?',
                                     help='Target output directory(default current directory)')
+        install_parser.add_argument('-m', '--mirror', nargs='?',
+                                    help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
+                                         "where 'online' folder exist.")
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
