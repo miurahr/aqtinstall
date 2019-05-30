@@ -7,8 +7,6 @@ steps:
       cd $(Build.SourcesDirectory)
       python -m pip install -rrequirements.txt
     displayName: 'Install dependency'
-  - script: flake8 aqt bin
-    displayName: 'Run lint tests'
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
