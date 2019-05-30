@@ -19,8 +19,12 @@ Added
 Changed
 -------
 
+* CI: simplify script.
+
 Fixed
 -----
+
+* CI: Fix test script against used python version.
 
 Deprecated
 ----------
