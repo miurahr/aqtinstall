@@ -51,4 +51,11 @@ long options may be truncated to the shortest unambiguous abbreviation.
 
     Display help text
 
-.. option::
+.. option:: --outputdir, -O <Output Directory>
+
+    specify output directory.
+
+.. option:: --base, -b <base url>
+
+    specify mirror site base url such as  -b 'http://mirrors.ocf.berkeley.edu/qt/'
+    where 'online' folder exist.
