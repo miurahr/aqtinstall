@@ -54,7 +54,7 @@ class QtArchives:
         self.arch = arch
         if mirror is not None:
             self.has_mirror = True
-            self.base = mirror  + '/online/qtsdkrepository/'
+            self.base = mirror + '/online/qtsdkrepository/'
         else:
             self.base = self.BASE_URL
         qt_ver_num = qt_version.replace(".", "")
