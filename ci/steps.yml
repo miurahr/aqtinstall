@@ -18,16 +18,10 @@ steps:
     displayName: build package
   #
   # Install aqtinstall
-  - bash: |
-      export AQT_VERSION=$(python $(Build.SourcesDirectory)/setup.py --version)
-      pip install $(Build.SourcesDirectory)/dist/aqtinstall-${AQT_VERSION}-py2.py3-none-any.whl
-    condition: or( eq( variables['Agent.OS'], 'Linux' ), eq( variables['Agent.OS'], 'Darwin' ))
-    displayName: install package on MacOS and Linux
   - powershell: |
       $aqtVersion = & python $(Build.SourcesDirectory)/setup.py --version | Out-String -Stream
       pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
-    condition: eq( variables['Agent.OS'], 'Windows_NT' )
-    displayName: install package on Windows
+    displayName: install package
   #
   # Run Aqt
   - task: PythonScript@0
