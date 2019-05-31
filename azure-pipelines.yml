@@ -151,3 +151,17 @@ jobs:
         TARGET: android
         ARCH: android_armv7
         ARCHDIR: android_armv7
+- job: LinuxSpecificMirror
+  displayName: Linux (Specific Mirror)
+  variables:
+    PYTHON_VERSION: '3.7'
+    QT_VERSION: 5.13.0
+    HOST: linux
+    TARGET: android
+    ARCH: android_armv7
+    ARCHDIR: android_armv7
+    QT_BASE_MIRROR: http://mirrors.ocf.berkeley.edu/qt/
+  pool:
+    vmImage: ubuntu-16.04
+  steps:
+  - template: ci/steps.yml
