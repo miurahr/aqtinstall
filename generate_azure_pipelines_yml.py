@@ -86,13 +86,15 @@ windows_build_jobs.extend(
     ]
 )
 
-# All Androids for all platforms
+# Androids for Linux platforms
+# aqt is for CI/CD systems!
+# Users might develop on Win/Mac, but are most likely to use Linux for CI/CD with
+# the Android ecosystem.
 
-for android_arch in [ 'android_x86', 'android_armv7', ]:
-    for platform_build_jobs in all_platform_build_jobs:
-        platform_build_jobs.build_jobs.append(
-            BuildJob('5.13.0', platform_build_jobs.platform, 'android', android_arch, android_arch)
-        )
+for android_arch in ['android_x86', 'android_armv7']:
+    linux_build_jobs.append(
+        BuildJob('5.13.0', 'linux', 'android', android_arch, android_arch)
+    )
 
 matrices = {}
 
