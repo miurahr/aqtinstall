@@ -1,10 +1,12 @@
 """
 This generates a matrix of QT versions to test downloading against
 """
-
-from itertools import product
+import collections
 import os
+from itertools import product
+
 from ruamel.yaml import YAML
+from ruamel.yaml.comments import CommentedMap
 
 
 class BuildJob:
@@ -97,9 +99,9 @@ for android_arch in [ 'android_x86', 'android_armv7', ]:
 matrices = {}
 
 for platform_build_job in all_platform_build_jobs:
-    yaml_dictionary = {
-        'matrix': {}
-    }
+    yaml_dictionary = collections.OrderedDict({
+        'matrix':  CommentedMap()
+    })
     for build_job, python_version in product(platform_build_job.build_jobs, python_versions):
         key = 'QT {} {} {} {}'.format(build_job.qt_version, build_job.host, build_job.target,
                                                 build_job.arch)
@@ -112,7 +114,9 @@ for platform_build_job in all_platform_build_jobs:
                 'ARCH': build_job.arch,
                 'ARCHDIR': build_job.archdir,
             }
-    matrices[platform_build_job.platform.capitalize()] = yaml_dictionary
+
+    # CommentedMap wraps yaml_dictionary to suppress the !!omap annotation
+    matrices[platform_build_job.platform.capitalize()] = CommentedMap(yaml_dictionary)
 
 root_dir = os.path.abspath(os.path.dirname(__file__))
 
