@@ -25,7 +25,6 @@ import logging
 import os
 import platform
 import requests
-import sys
 import traceback
 import xml.etree.ElementTree as ElementTree
 from six import StringIO
@@ -38,25 +37,9 @@ else:
 
 
 NUM_PROCESS = 3
-
-
-def _get(url, stream=False, mirror=True):
-    if mirror:
-        r = requests.get(url, stream=stream, allow_redirects=False)
-        if r.status_code == 302:
-            # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
-            # we will use another redirected location for that.
-            newurl = r.headers['Location']
-            blacklist = ['http://mirrors.ustc.edu.cn',
-                         'http://mirrors.tuna.tsinghua.edu.cn',
-                         'http://mirrors.geekpie.club']
-            mml = Metalink(url)
-            newurl = mml.altlink(blacklist=blacklist)
-            print('Redirected to new URL: {}'.format(newurl))
-            r = requests.get(newurl, stream=stream)
-    else:
-        r = requests.get(url, stream=True)
-    return r
+blacklist = ['http://mirrors.ustc.edu.cn',
+             'http://mirrors.tuna.tsinghua.edu.cn',
+             'http://mirrors.geekpie.club']
 
 
 class QtInstaller:
@@ -73,7 +56,15 @@ class QtInstaller:
         url = package.url
         print("-Downloading {}...".format(url))
         try:
-            r = _get(url, stream=True, mirror=package.has_mirror)
+            r = requests.get(url, stream=True, allow_redirects=False)
+            if r.status_code == 302:
+                # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
+                # we will use another redirected location for that.
+                newurl = r.headers['Location']
+                mml = Metalink(url)
+                newurl = mml.altlink(blacklist=blacklist)
+                print('Redirected to new URL: {}'.format(newurl))
+                r = requests.get(newurl, stream=True, allow_redirects=False)
         except requests.exceptions.ConnectionError as e:
             print("Caught download error: %s" % e.args)
             return False
