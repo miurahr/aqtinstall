@@ -82,9 +82,9 @@ class QtInstaller:
                     run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
             else:
                 if path is not None:
-                    run([r'7zr', 'x', '-aoa',  '-bb0', '-bd', '-y', '-o{}'.format(path), archive])
+                    run([r'7zr', 'x', '-aoa', '-y', '-o{}'.format(path), archive])
                 else:
-                    run([r'7zr', 'x', '-aoa',  '-bb0', '-bd', '-y', archive])
+                    run([r'7zr', 'x', '-aoa', '-y', archive])
             os.unlink(archive)
         return True
 
