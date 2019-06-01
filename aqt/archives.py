@@ -25,7 +25,6 @@ import requests
 import traceback
 import xml.etree.ElementTree as ElementTree
 from six import StringIO
-import aqt.metalink
 
 
 class QtPackage:
