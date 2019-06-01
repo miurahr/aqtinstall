@@ -25,6 +25,7 @@ import logging
 import os
 import platform
 import requests
+import sys
 import traceback
 import xml.etree.ElementTree as ElementTree
 from six import StringIO
