@@ -14,17 +14,18 @@ Current changes
 Added
 -----
 
-* Option -b | --base to specify mirror site.
+* Option -b | --base to specify mirror site.(#24)
 
 Changed
 -------
 
-* CI: simplify script.
+* CI: add script to generate auzre-pipelines.yml (#27, #28, #29)
+* CI: use powershell script for linux, mac and windows. (#26)
 
 Fixed
 -----
 
-* CI: Fix test script against used python version.
+* Avoid blacklisted mirror site that cause CI fails.(#25)
 
 Deprecated
 ----------
