@@ -66,10 +66,7 @@ class QtArchives:
         # Get packages index
         update_xml_url = "{0}Updates.xml".format(archive_url)
         try:
-            if mirror is not None:
-                r = requests.get(update_xml_url)
-            else:
-                r = aqt.metalink.get(update_xml_url)
+            r = requests.get(update_xml_url)
         except requests.exceptions.ConnectionError as e:
             print("Caught download error: %s" % e.args)
             exc_buffer = StringIO()

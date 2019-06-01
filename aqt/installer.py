@@ -40,6 +40,32 @@ else:
 NUM_PROCESS = 3
 
 
+def _get(url, stream=False, mirror=True):
+    if mirror:
+        r = requests.get(url, stream=stream, allow_redirects=False)
+        if r.status_code == 302:
+            # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
+            # we will use another redirected location for that.
+            newurl = r.headers['Location']
+            blacklist = ['http://mirrors.ustc.edu.cn',
+                         'http://mirrors.tuna.tsinghua.edu.cn',
+                         'http://mirrors.geekpie.club']
+            for b in blacklist:
+                if newurl.startswith(b):
+                    mml = aqt.metalink.Metalink(url)
+                    newurl = mml.altlink(blacklist=blacklist)
+                    break
+            print('Redirected to new URL: {}'.format(newurl))
+        try:
+            r = requests.get(newurl, stream=stream)
+        except requests.exceptions.ConnectionError as e:
+            print("Try to connect {}".format(newurl))
+            raise e
+    else:
+        r = requests.get(url, stream=True)
+    return r
+
+
 class QtInstaller:
     """
     Installer class to download packages and extract it.
@@ -54,10 +80,7 @@ class QtInstaller:
         url = package.url
         print("-Downloading {}...".format(url))
         try:
-            if package.has_mirror:
-                r = aqt.metalink.get(url, stream=True)
-            else:
-                r = requests.get(url, stream=True)
+            r = _get(url, stream=True, mirror=package.has_mirror)
         except requests.exceptions.ConnectionError as e:
             print("Caught download error: %s" % e.args)
             return False

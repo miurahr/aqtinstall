@@ -24,25 +24,6 @@ import requests
 import xml.etree.ElementTree as ElementTree
 
 
-def get(url, stream=False):
-    r = requests.get(url, stream=stream, allow_redirects=False)
-    if r.status_code == 302:
-        # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
-        # we will use another redirected location for that.
-        newurl = r.headers['Location']
-        blacklist = ['http://mirrors.ustc.edu.cn',
-                     'http://mirrors.tuna.tsinghua.edu.cn',
-                     'http://mirrors.geekpie.club']
-        for b in blacklist:
-            if newurl.startswith(b):
-                mml = Metalink(url)
-                newurl = mml.altlink(blacklist=blacklist)
-                break
-        print('Redirected to new URL: {}'.format(newurl))
-        r = requests.get(newurl, stream=stream)
-    return r
-
-
 class Metalink:
     '''Download .meta4 metalink version4 xml file and parse it.'''
 
