@@ -27,7 +27,7 @@ import platform
 import requests
 import sys
 import traceback
-import aqt.metalink
+import xml.etree.ElementTree as ElementTree
 from six import StringIO
 from multiprocessing.dummy import Pool
 from operator import and_
@@ -50,16 +50,10 @@ def _get(url, stream=False, mirror=True):
             blacklist = ['http://mirrors.ustc.edu.cn',
                          'http://mirrors.tuna.tsinghua.edu.cn',
                          'http://mirrors.geekpie.club']
-            for b in blacklist:
-                if newurl.startswith(b):
-                    mml = aqt.metalink.Metalink(url)
-                    newurl = mml.altlink(blacklist=blacklist)
-                    break
-            try:
-                r = requests.get(newurl, stream=stream)
-            except requests.exceptions.ConnectionError as e:
-                print('Redirected to new URL: {}'.format(newurl))
-                raise e
+            mml = Metalink(url)
+            newurl = mml.altlink(blacklist=blacklist)
+            print('Redirected to new URL: {}'.format(newurl))
+            r = requests.get(newurl, stream=stream)
     else:
         r = requests.get(url, stream=True)
     return r
@@ -147,3 +141,47 @@ class QtInstaller:
                 raise e
         else:
             exit(1)
+
+
+
+class Metalink:
+    '''Download .meta4 metalink version4 xml file and parse it.'''
+
+    def __init__(self, url):
+        self.mirrors = {}
+        self.url = url
+        try:
+            m = requests.get(url + '.meta4')
+        except:
+            return
+        else:
+            mirror_xml = ElementTree.fromstring(m.text)
+            for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
+                for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
+                    pri = u.attrib['priority']
+                    self.mirrors[pri] = u.text
+
+    def altlink(self, priority=None, blacklist=None):
+        if len(self.mirrors) == 0:
+            # no alternative
+            return self.url
+        if priority is None:
+            if blacklist is not None:
+                for ind in range(len(self.mirrors)):
+                    mirror = self.mirrors[str(ind + 1)]
+                    black = False
+                    for b in blacklist:
+                        if mirror.startswith(b):
+                            black = True
+                            continue
+                    if black:
+                        continue
+                    return mirror
+            else:
+                for ind in range(len(self.mirrors)):
+                    mirror = self.mirrors[str(ind + 1)]
+                    if mirror == self.candidate:
+                        continue
+                    return mirror
+        else:
+            return self.mirrors[str(priority)]
