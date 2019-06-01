@@ -39,20 +39,6 @@ jobs:
         TARGET: ios
         ARCH: ios
         ARCHDIR: ios
-      QT 5.13.0 mac android android_x86:
-        PYTHON_VERSION: '3.7'
-        QT_VERSION: 5.13.0
-        HOST: mac
-        TARGET: android
-        ARCH: android_x86
-        ARCHDIR: android_x86
-      QT 5.13.0 mac android android_armv7:
-        PYTHON_VERSION: '3.7'
-        QT_VERSION: 5.13.0
-        HOST: mac
-        TARGET: android
-        ARCH: android_armv7
-        ARCHDIR: android_armv7
 - job: Windows
   pool:
     vmImage: vs2017-win2016
@@ -123,20 +109,6 @@ jobs:
         TARGET: desktop
         ARCH: win32_mingw73
         ARCHDIR: mingw73_32
-      QT 5.13.0 windows android android_x86:
-        PYTHON_VERSION: '3.7'
-        QT_VERSION: 5.13.0
-        HOST: windows
-        TARGET: android
-        ARCH: android_x86
-        ARCHDIR: android_x86
-      QT 5.13.0 windows android android_armv7:
-        PYTHON_VERSION: '3.7'
-        QT_VERSION: 5.13.0
-        HOST: windows
-        TARGET: android
-        ARCH: android_armv7
-        ARCHDIR: android_armv7
 - job: Linux
   pool:
     vmImage: ubuntu-16.04
