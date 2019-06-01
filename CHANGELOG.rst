@@ -14,6 +14,28 @@ Current changes
 Added
 -----
 
+Changed
+-------
+
+Fixed
+-----
+
+Deprecated
+----------
+
+Removed
+-------
+
+Security
+--------
+
+
+`v0.4.1`_ (01, Jun, 2019)
+=========================
+
+Added
+-----
+
 * Option -b | --base to specify mirror site.(#24)
 
 Changed
@@ -27,14 +49,6 @@ Fixed
 
 * Avoid blacklisted mirror site that cause CI fails.(#25)
 
-Deprecated
-----------
-
-Removed
--------
-
-Security
---------
 
 `v0.4.0`_ (29, May, 2019)
 =========================
@@ -168,7 +182,8 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.4.0...HEAD
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.4.1...HEAD
+.. _v0.4.1: https://github.com/miurahr/qli-installer/compare/v0.4.0...v0.4.1
 .. _v0.4.0: https://github.com/miurahr/qli-installer/compare/v0.3.1...v0.4.0
 .. _v0.3.1: https://github.com/miurahr/qli-installer/compare/v0.3.0...v0.3.1
 .. _v0.3.0: https://github.com/miurahr/qli-installer/compare/v0.2.0...v0.3.0
