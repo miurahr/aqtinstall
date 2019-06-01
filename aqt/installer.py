@@ -55,12 +55,11 @@ def _get(url, stream=False, mirror=True):
                     mml = aqt.metalink.Metalink(url)
                     newurl = mml.altlink(blacklist=blacklist)
                     break
-            print('Redirected to new URL: {}'.format(newurl))
-        try:
-            r = requests.get(newurl, stream=stream)
-        except requests.exceptions.ConnectionError as e:
-            print("Try to connect {}".format(newurl))
-            raise e
+            try:
+                r = requests.get(newurl, stream=stream)
+            except requests.exceptions.ConnectionError as e:
+                print('Redirected to new URL: {}'.format(newurl))
+                raise e
     else:
         r = requests.get(url, stream=True)
     return r
