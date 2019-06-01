@@ -30,9 +30,9 @@ def get(url, stream=False):
         # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
         # we will use another redirected location for that.
         newurl = r.headers['Location']
-        blacklist = ['https://mirrors.tuna.tsinghua.edu.cn',
+        blacklist = ['http://mirrors.ustc.edu.cn',
                      'http://mirrors.tuna.tsinghua.edu.cn',
-                     'http://mirrors.geekpie.club/']
+                     'http://mirrors.geekpie.club']
         for b in blacklist:
             if newurl.startswith(b):
                 mml = Metalink(url)
