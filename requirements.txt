@@ -4,6 +4,5 @@ pytest
 pytest-pep8
 pytest-cov
 flake8
-ruamel.yaml==0.15.94
 wheel
 twine
