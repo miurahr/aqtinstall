@@ -2,30 +2,24 @@ Another Qt installer(aqt)
 =========================
 
 
-.. image:: https://badge.fury.io/py/aqtinstall.png
+.. |pypi| image:: https://badge.fury.io/py/aqtinstall.png
    :target: http://badge.fury.io/py/aqtinstall
-      :alt: PyPI version
-
-.. image:: https://readthedocs.org/projects/aqtinstall/badge/?version=latest
+.. |docs| image:: https://readthedocs.org/projects/aqtinstall/badge/?version=latest
    :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
-   :alt: Documentation Status
-
+.. |pep8| image:: https://travis-ci.org/miurahr/aqtinstall.svg?branch=master
+   :target: https://travis-ci.org/miurahr/aqtinstall
 .. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Mac
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ubuntu3| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux
+.. |ubuntu| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |windows| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Windows
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 
-+-------------+-----------+
-|  OS         | Status    |
-+-------------+-----------+
-| MacOS       | |macos|   |
-+-------------+-----------+
-| Ubuntu      | |ubuntu3| |
-+-------------+-----------+
-| Windows     | |windows| |
-+-------------+-----------+
++----------+-----------+----------+-----------+--------+----------+--------------+
+| Metrics  | MacOS     | Linux    | Windows   | PEP8   | Document | PyPI version |
++----------+-----------+----------+-----------+--------+----------+--------------+
+| Status   | |macos|   | |ubuntu| | |windows| | |pep8| | |docs|   | |pypi|       |
++----------+-----------+----------+-----------+--------+----------+--------------+
 
 This is an utility replacing the official graphical Qt installer. It can
 automatically download prebuilt Qt binaries for any target (you're not bound to
