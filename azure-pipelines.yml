@@ -8,7 +8,7 @@ jobs:
       inputs:
         versionSpec: '3.7'
         addToPath: true
-    - bash: python generate_azure_pipelines_matrices.py
+    - bash: python ci/generate_azure_pipelines_matrices.py
       name: mtrx
       displayName: Generate test matrices and set variables in Azure Pipelines
 
