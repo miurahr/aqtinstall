@@ -17,11 +17,17 @@ Another Qt installer(aqt)
 .. |ext| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux%20(Specific%20Mirror)
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 
-+--------+---------+----------+-----------+--------+--------+----------+--------+
-| Jobs   | Mac     | Linux    | Windows   | Mirror | PEP8   | Document | PyPI   |
-+--------+---------+----------+-----------+--------+----------+--------+--------+
-| Status | |macos| | |ubuntu| | |windows| | |ext|  | |pep8| | |docs|   | |pypi| |
-+--------+---------+----------+-----------+--------+--------+----------+--------+
++--------+-----------+---------+
+| Jobs   | Mac       | Release |   
+|        | Linux     | Status  |
+|        | Windows   |         |
+|        | Mirror    |         |
++--------+-----------+---------+
+| Status | |macos|   | |pypi|  |
+|        | |ubuntu|  | |pep8|  |
+|        | |windows| | |docs|  |
+|        | |ext|     |         |
++--------+-----------+---------+
 
 This is an utility replacing the official graphical Qt installer. It can
 automatically download prebuilt Qt binaries for any target (you're not bound to
