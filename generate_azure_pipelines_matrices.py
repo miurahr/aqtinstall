@@ -1,12 +1,9 @@
 """
-This generates a matrix of QT versions to test downloading against
+This sets variables for a matrix of QT versions to test downloading against with Azure Pipelines
 """
 import collections
-import os
+import json
 from itertools import product
-
-from ruamel.yaml import YAML
-from ruamel.yaml.comments import CommentedMap
 
 
 class BuildJob:
@@ -101,37 +98,25 @@ for android_arch in ['android_x86', 'android_armv7']:
 matrices = {}
 
 for platform_build_job in all_platform_build_jobs:
-    yaml_dictionary = collections.OrderedDict({
-        'matrix':  CommentedMap()
-    })
+    matrix_dictionary = collections.OrderedDict()
+
     for build_job, python_version in product(platform_build_job.build_jobs, python_versions):
         key = 'QT {} {} {} {}'.format(build_job.qt_version, build_job.host, build_job.target,
-                                                build_job.arch)
-        yaml_dictionary['matrix'][key] = \
-            {
-                'PYTHON_VERSION': python_version,
-                'QT_VERSION': build_job.qt_version,
-                'HOST': build_job.host,
-                'TARGET': build_job.target,
-                'ARCH': build_job.arch,
-                'ARCHDIR': build_job.archdir,
-            }
+                                      build_job.arch)
+        matrix_dictionary[key] = collections.OrderedDict(
+            [
+                ('PYTHON_VERSION', python_version),
+                ('QT_VERSION', build_job.qt_version),
+                ('HOST', build_job.host),
+                ('TARGET', build_job.target),
+                ('ARCH', build_job.arch),
+                ('ARCHDIR', build_job.archdir),
+            ]
+        )
 
-    # CommentedMap wraps yaml_dictionary to suppress the !!omap annotation
-    matrices[platform_build_job.platform.capitalize()] = CommentedMap(yaml_dictionary)
+    matrices[platform_build_job.platform] = matrix_dictionary
 
-root_dir = os.path.abspath(os.path.dirname(__file__))
-
-# Load azure-pipelines.tmpl.yml
-with open(os.path.join(root_dir, 'ci', 'azure-pipelines.tmpl.yml'), 'r') as f:
-    azure_pipelines_yaml = YAML().load(f.read())
-
-# Attach strategies to their respective jobs
-for job_yaml in azure_pipelines_yaml['jobs']:
-    if job_yaml['job'] in matrices:
-        job_yaml['strategy'] = matrices[job_yaml['job']]
-
-with open(os.path.join(root_dir, 'azure-pipelines.yml'), 'w') as f:
-    YAML().dump(azure_pipelines_yaml, f)
-
-pass
+print("Setting Variables below")
+print(f"##vso[task.setVariable variable=linux;isOutput=true]{json.dumps(matrices['linux'])}")
+print(f"##vso[task.setVariable variable=windows;isOutput=true]{json.dumps(matrices['windows'])}")
+print(f"##vso[task.setVariable variable=mac;isOutput=true]{json.dumps(matrices['mac'])}")
