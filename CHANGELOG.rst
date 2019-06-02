@@ -17,6 +17,10 @@ Added
 Changed
 -------
 
+* README: update badge layout.
+* CI: Improve azure-pipelines configurations by Nelson (#20)
+
+
 Fixed
 -----
 

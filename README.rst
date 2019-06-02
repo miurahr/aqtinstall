@@ -14,12 +14,14 @@ Another Qt installer(aqt)
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |windows| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Windows
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
+.. |ext| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux%20(Specific%20Mirror)
+   :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 
-+----------+-----------+----------+-----------+--------+----------+--------------+
-| Metrics  | MacOS     | Linux    | Windows   | PEP8   | Document | PyPI version |
-+----------+-----------+----------+-----------+--------+----------+--------------+
-| Status   | |macos|   | |ubuntu| | |windows| | |pep8| | |docs|   | |pypi|       |
-+----------+-----------+----------+-----------+--------+----------+--------------+
++--------+---------+----------+-----------+--------+--------+----------+--------+
+| Jobs   | Mac     | Linux    | Windows   | Mirror | PEP8   | Document | PyPI   |
++--------+---------+----------+-----------+--------+----------+--------+--------+
+| Status | |macos| | |ubuntu| | |windows| | |ext|  | |pep8| | |docs|   | |pypi| |
++--------+---------+----------+-----------+--------+--------+----------+--------+
 
 This is an utility replacing the official graphical Qt installer. It can
 automatically download prebuilt Qt binaries for any target (you're not bound to
