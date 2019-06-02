@@ -19,7 +19,8 @@ Changed
 
 * README: update badge layout.
 * CI: Improve azure-pipelines configurations by Nelson (#20)
-
+* Check parameter combination allowance and add winrt variant.
+* Support installation of mingw runtime package.
 
 Fixed
 -----

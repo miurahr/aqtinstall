@@ -77,14 +77,14 @@ class QtInstaller:
             print("-Extracting {}...".format(archive))
             if platform.system() == 'Windows':
                 if path is not None:
-                    run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', '-o{}'.format(path), archive])
+                    run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-bd', '-y', '-o{}'.format(path), archive])
                 else:
-                    run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-y', archive])
+                    run([r'C:\Program Files\7-Zip\7z.exe', 'x', '-aoa', '-bd', '-y', archive])
             else:
                 if path is not None:
-                    run([r'7zr', 'x', '-aoa', '-y', '-o{}'.format(path), archive])
+                    run([r'7zr', 'x', '-aoa', '-bd', '-y', '-o{}'.format(path), archive])
                 else:
-                    run([r'7zr', 'x', '-aoa', '-y', archive])
+                    run([r'7zr', 'x', '-aoa', '-bd', '-y', archive])
             os.unlink(archive)
         return True
 

@@ -57,6 +57,36 @@ class QtArchives:
         else:
             self.base = self.BASE_URL
         qt_ver_num = qt_version.replace(".", "")
+
+        # install mingw runtime package
+        if arch in ['win64_mingw73', 'win32_mingw73', 'win64_mingw53', 'win32_mingw53']:
+            archive_url = self.base + 'windows_x86/desktop/tools_mingw/'
+            update_xml_url = "{0}Updates.xml".format(archive_url)
+            try:
+                r = requests.get(update_xml_url)
+            except requests.exceptions.ConnectionError as e:
+                print("Caught download error: %s" % e.args)
+                exc_buffer = StringIO()
+                traceback.print_exc(file=exc_buffer)
+                logging.error('Download error:\n%s', exc_buffer.getvalue())
+                raise e
+            else:
+                self.update_xml = ElementTree.fromstring(r.text)
+                for packageupdate in self.update_xml.iter("PackageUpdate"):
+                    name = packageupdate.find("Name").text
+                    if name.split(".")[-1] != arch:
+                        continue
+                    downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+                    full_version = packageupdate.find("Version").text
+                    split_version = full_version.split["-"]
+                    named_version = split_version[0] + "-" + split_version[1]
+                    package_desc = packageupdate.find("Description").text
+                    for archive in downloadable_archives:
+                        # ex. 7.3.0-1x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z
+                        package_url = archive_url + name + "/" + named_version + archive
+                        self.archives.append(QtPackage(name, package_url, archive, package_desc,
+                                                       has_mirror=(mirror is not None)))
+        # Ordinary packages
         if os_name == 'windows':
             archive_url = self.base + os_name + '_x86/' + target + '/' + 'qt5_' + qt_ver_num + '/'
         else:
@@ -96,9 +126,9 @@ class QtArchives:
                     self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                    has_mirror=(mirror is not None)))
 
-            if len(self.archives) == 0:
-                print("Error while parsing package information!")
-                exit(1)
+        if len(self.archives) == 0:
+            print("Error while parsing package information!")
+            exit(1)
 
     def get_archives(self):
         return self.archives

@@ -83,7 +83,6 @@ class Cli():
             if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
                 args.print_help()
                 exit(1)
-
         if output_dir is not None:
             QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror)).install(target_dir=output_dir)
         else:
@@ -108,7 +107,7 @@ class Cli():
         install_parser.set_defaults(func=self.run_install)
         install_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
         install_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
-        install_parser.add_argument('target', choices=['desktop', 'winrt', 'android', 'ios'], help="target sdk")
+        install_parser.add_argument('target', choices=['desktop', 'winrt', 'android', 'ios', 'tool'], help="target sdk")
         install_parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
                                     "\ntarget mac/desktop:   clang_64"
                                     "\ntarget mac/ios:       ios"
@@ -117,8 +116,7 @@ class Cli():
                                     "\n                      win64_mingw73, win32_mingw73"
                                     "\nwindows/winrt:        win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
                                     "\n                      win64_msvc2017_winrt_armv7"
-                                    "\nandroid:              android_x86, android_armv7"
-                                    "\nwindows/tool:         ")
+                                    "\nandroid:              android_x86, android_armv7")
         install_parser.add_argument('-O', '--outputdir', nargs='?',
                                     help='Target output directory(default current directory)')
         install_parser.add_argument('-b', '--base', nargs='?',
