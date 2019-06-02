@@ -135,7 +135,6 @@ class QtInstaller:
             exit(1)
 
 
-
 class Metalink:
     '''Download .meta4 metalink version4 xml file and parse it.'''
 
@@ -144,7 +143,7 @@ class Metalink:
         self.url = url
         try:
             m = requests.get(url + '.meta4')
-        except:
+        except requests.exceptions.ConnectionError:
             return
         else:
             mirror_xml = ElementTree.fromstring(m.text)
