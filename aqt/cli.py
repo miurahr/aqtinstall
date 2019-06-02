@@ -31,6 +31,33 @@ class Cli():
 
     __slot__ = ['parser']
 
+    COMBINATION = [
+        {'os_name': 'linux', 'target': 'desktop', 'arch': 'gcc_64'},
+        {'os_name': 'linux', 'target': 'android', 'arch': 'android_x86'},
+        {'os_name': 'linux', 'target': 'android', 'arch': 'android_armv7'},
+        {'os_name': 'mac',   'target': 'desktop', 'arch': 'clang_64'},
+        {'os_name': 'mac',   'target': 'ios',     'arch': 'ios'},
+        {'os_name': 'windows','target': 'desktop', 'arch': 'win64_msvc2017_64'},
+        {'os_name': 'windows','target': 'desktop', 'arch': 'win32_msvc2017'},
+        {'os_name': 'windows','target': 'desktop', 'arch': 'win64_msvc2015_64'},
+        {'os_name': 'windows','target': 'desktop', 'arch': 'win32_msvc2015'},
+        {'os_name': 'windows','target': 'desktop', 'arch': 'win64_mingw73'},
+        {'os_name': 'windows','target': 'desktop', 'arch': 'win32_mingw73'},
+        {'os_name': 'windows','target': 'desktop', 'arch': 'win64_mingw53'},
+        {'os_name': 'windows','target': 'desktop', 'arch': 'win32_mingw53'},
+        {'os_name': 'windows','target': 'winrt',   'arch': 'win64_msvc2017_winrt_x64'},
+        {'os_name': 'windows','target': 'winrt',   'arch': 'win64_msvc2017_winrt_x86'},
+        {'os_name': 'windows','target': 'winrt',   'arch': 'win64_msvc2017_winrt_armv7'},
+        {'os_name': 'windows','target': 'android', 'arch': 'android_x86'},
+        {'os_name': 'windows','target': 'android', 'arch': 'android_armv7'},
+    ]
+
+    def check_arg_combination(self, qt_version, os_name, target, arch):
+        for c in self.COMBINATION:
+            if c['os_name'] == os_name and c['target'] == target and c['arch'] == arch:
+                return True
+        return False
+
     def run_install(self, args):
         arch = args.arch
         target = args.target
@@ -49,6 +76,9 @@ class Cli():
             args.print_help()
             exit(1)
         qt_version = args.qt_version
+        if not self.check_arg_combination(qt_version, os_name, target, arch):
+            print("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
+            exit(1)
         if mirror is not None:
             if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
                 args.print_help()
@@ -78,14 +108,17 @@ class Cli():
         install_parser.set_defaults(func=self.run_install)
         install_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
         install_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
-        install_parser.add_argument('target', choices=['desktop', 'android', 'ios'], help="target sdk")
+        install_parser.add_argument('target', choices=['desktop', 'winrt', 'android', 'ios'], help="target sdk")
         install_parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
                                     "\ntarget mac/desktop:   clang_64"
                                     "\ntarget mac/ios:       ios"
                                     "\nwindows/desktop:      win64_msvc2017_64, win64_msvc2015_64"
                                     "\n                      win32_msvc2015, win32_mingw53"
                                     "\n                      win64_mingw73, win32_mingw73"
-                                    "\nandroid:              android_x86, android_armv7")
+                                    "\nwindows/winrt:        win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
+                                    "\n                      win64_msvc2017_winrt_armv7"
+                                    "\nandroid:              android_x86, android_armv7"
+                                    "\nwindows/tool:         ")
         install_parser.add_argument('-O', '--outputdir', nargs='?',
                                     help='Target output directory(default current directory)')
         install_parser.add_argument('-b', '--base', nargs='?',
