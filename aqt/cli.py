@@ -21,6 +21,8 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import os
+import platform
 import sys
 
 from aqt.archives import QtArchives
@@ -64,6 +66,16 @@ class Cli():
         os_name = args.host
         output_dir = args.outputdir
         mirror = args.base
+        sevenzip = args.external
+        if sevenzip is not None:
+            if not os.path.exists(sevenzip):
+                print('Specified unexist external command in option -E')
+                exit(1)
+        elif sys.version_info.major == 2:
+            if platform.system() == 'Windows':
+                sevenzip = r'C:\Program Files\7-Zip\7z.exe'
+            else:
+                sevenzip = r'7zr'
         if arch is None:
             if os_name == "linux" and target == "desktop":
                 arch = "gcc_64"
@@ -84,9 +96,10 @@ class Cli():
                 args.print_help()
                 exit(1)
         if output_dir is not None:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror)).install(target_dir=output_dir)
+            QtInstaller(QtArchives(os_name, qt_version, target, arch,  mirror=mirror)).install(command=sevenzip,
+                                                                                               target_dir=output_dir)
         else:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror)).install()
+            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror)).install(command=sevenzip)
 
         sys.stdout.write("\033[K")
         print("Finished installation")
@@ -122,6 +135,8 @@ class Cli():
         install_parser.add_argument('-b', '--base', nargs='?',
                                     help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                          "where 'online' folder exist.")
+        install_parser.add_argument('-E', '--external', nargs='?',
+                                    help='Use external 7zip command instead of internal extractor.')
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")

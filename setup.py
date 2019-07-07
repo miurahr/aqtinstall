@@ -20,7 +20,7 @@ setup(name='aqtinstall',
       author='Hioshi Miura',
       author_email='miurahr@linux.com',
       packages=["aqt"],
-      install_requires=['requests', 'six'],
+      install_requires=['requests', 'six', 'py7zr'],
       extras_require={
         'dev': [
             'pytest',

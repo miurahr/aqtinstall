@@ -21,6 +21,7 @@ Changed
 * CI: Improve azure-pipelines configurations by Nelson (#20)
 * Check parameter combination allowance and add winrt variant.
 * Support installation of mingw runtime package.
+* Use `py7zr` instead of external `7zip` command for extracting package archives.
 
 Fixed
 -----
