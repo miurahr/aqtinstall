@@ -33,7 +33,7 @@ This is an utility replacing the official graphical Qt installer. It can
 automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
 It's working with Python > 3.5 on Linux, OS X and Windows.
-
+It is required to install 7zip utility in your platform.
 
 Install
 -------
@@ -52,19 +52,20 @@ General usage looks like this:
 .. code-block:: bash
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install <qt-version> <host> <target> [<arch>]
+        [--internal] install <qt-version> <host> <target> [<arch>]
 
 .. code-block:: bash
 
-    python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>] \
-        install <qt-version> <host> <target> [<arch>]
+    python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
+        [--internal] install <qt-version> <host> <target> [<arch>]
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
 * Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)
 * For android and windows you also need to specify an arch: `win64_msvc2017_64`,
   `win64_msvc2015_64`, `win32_msvc2015`, `win32_mingw53`, `win64_mingw73`, `android_x86`, `android_armv7`
-* You can also use external 7zip command instead of internal extration function.
+* You can also use internal 7zip extractor instead of external 7zip command.
+* You can specify external 7zip command path.
 
 
 The Qt packages are installed under current directory as such `Qt<ver>/<ver>/gcc_64/`
