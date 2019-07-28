@@ -17,12 +17,6 @@ Added
 Changed
 -------
 
-* README: update badge layout.
-* CI: Improve azure-pipelines configurations by Nelson (#20)
-* Check parameter combination allowance and add winrt variant.
-* Support installation of mingw runtime package.
-* Use `py7zr` instead of external `7zip` command for extracting package archives.
-
 Fixed
 -----
 
@@ -34,6 +28,20 @@ Removed
 
 Security
 --------
+
+
+`v0.4.2`_ (28, Jul, 2019)
+=========================
+
+Changed
+-------
+
+* README: update badge layout.
+* CI: Improve azure-pipelines configurations by Nelson (#20)
+* Check parameter combination allowance and add winrt variant.
+* Support installation of mingw runtime package.
+* Add '--internal' option to use `py7zr` instead of
+  external `7zip` command for extracting package archives.(WIP)
 
 
 `v0.4.1`_ (01, Jun, 2019)
@@ -188,7 +196,8 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.4.1...HEAD
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.4.2...HEAD
+.. _v0.4.2: https://github.com/miurahr/qli-installer/compare/v0.4.1...v0.4.2
 .. _v0.4.1: https://github.com/miurahr/qli-installer/compare/v0.4.0...v0.4.1
 .. _v0.4.0: https://github.com/miurahr/qli-installer/compare/v0.3.1...v0.4.0
 .. _v0.3.1: https://github.com/miurahr/qli-installer/compare/v0.3.0...v0.3.1
