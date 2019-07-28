@@ -2,7 +2,7 @@ language: python
 python: 3.6
 
 install:
-- pip install wheel flake8 requests six py7zr bringbuf
+- pip install wheel flake8 requests six py7zr
 
 script:
 - flake8 aqt bin

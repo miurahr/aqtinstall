@@ -68,7 +68,12 @@ class Cli():
         mirror = args.base
         sevenzip = args.external
         if sevenzip is not None:
-            if not os.path.exists(sevenzip):
+            if sevenzip == '_auto':
+                if platform.system() == 'Windows':
+                    sevenzip = r'C:\Program Files\7-Zip\7z.exe'
+                else:
+                    sevenzip = r'7zr'
+            elif not os.path.exists(sevenzip):
                 print('Specified unexist external command in option -E')
                 exit(1)
         elif sys.version_info.major == 2:
@@ -135,7 +140,7 @@ class Cli():
         install_parser.add_argument('-b', '--base', nargs='?',
                                     help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                          "where 'online' folder exist.")
-        install_parser.add_argument('-E', '--external', nargs='?',
+        install_parser.add_argument('-E', '--external', nargs='?', const='_auto',
                                     help='Use external 7zip command instead of internal extractor.')
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)

@@ -7,4 +7,3 @@ flake8
 wheel
 twine
 py7zr
-bringbuf
