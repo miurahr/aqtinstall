@@ -64,7 +64,7 @@ class QtInstaller:
                 mml = Metalink(url)
                 newurl = mml.altlink(blacklist=blacklist)
                 print('Redirected to new URL: {}'.format(newurl))
-                r = requests.get(newurl, stream=True, allow_redirects=False)
+                r = requests.get(newurl, stream=True, allow_redirects=True)
         except requests.exceptions.ConnectionError as e:
             print("Caught download error: %s" % e.args)
             return False
