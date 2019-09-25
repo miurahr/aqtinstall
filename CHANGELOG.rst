@@ -30,6 +30,15 @@ Security
 --------
 
 
+`v0.4.3`_ (25, Sep, 2019)
+=========================
+
+Fixed
+-----
+
+* Allow multiple redirection to mirror site.(#41)
+
+
 `v0.4.2`_ (28, Jul, 2019)
 =========================
 
@@ -196,7 +205,8 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.4.2...HEAD
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.4.3...HEAD
+.. _v0.4.3: https://github.com/miurahr/qli-installer/compare/v0.4.2...v0.4.3
 .. _v0.4.2: https://github.com/miurahr/qli-installer/compare/v0.4.1...v0.4.2
 .. _v0.4.1: https://github.com/miurahr/qli-installer/compare/v0.4.0...v0.4.1
 .. _v0.4.0: https://github.com/miurahr/qli-installer/compare/v0.3.1...v0.4.0
