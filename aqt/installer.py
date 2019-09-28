@@ -22,15 +22,17 @@
 
 import functools
 import os
-import py7zr
-import requests
 import traceback
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
-from six import StringIO
 from multiprocessing.dummy import Pool
 from operator import and_
 from subprocess import run
+
+from six import StringIO
+
+import py7zr
+import requests
 
 NUM_PROCESS = 3
 blacklist = ['http://mirrors.ustc.edu.cn',
@@ -53,7 +55,6 @@ class QtInstaller:
             self.logger = logging
         else:
             self.logger = getLogger('aqt')
-
 
     @staticmethod
     def retrieve_archive(package, path=None, command=None):

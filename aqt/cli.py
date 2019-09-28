@@ -26,8 +26,8 @@ import logging.config
 import os
 import platform
 import sys
-import yaml
 
+import yaml
 from aqt.archives import QtArchives
 from aqt.installer import QtInstaller
 
@@ -37,24 +37,24 @@ class Cli():
     __slot__ = ['parser']
 
     COMBINATION = [
-        {'os_name': 'linux',   'target': 'desktop', 'arch': 'gcc_64'},
-        {'os_name': 'linux',   'target': 'android', 'arch': 'android_x86'},
-        {'os_name': 'linux',   'target': 'android', 'arch': 'android_armv7'},
-        {'os_name': 'mac',     'target': 'desktop', 'arch': 'clang_64'},
-        {'os_name': 'mac',     'target': 'ios',     'arch': 'ios'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2017_64'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2017'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2015_64'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2015'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw73'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw73'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw53'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw53'},
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x64'},
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x86'},
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_armv7'},
-        {'os_name': 'windows', 'target': 'android', 'arch': 'android_x86'},
-        {'os_name': 'windows', 'target': 'android', 'arch': 'android_armv7'},
+        {'os_name': 'linux',   'target': 'desktop', 'arch': 'gcc_64'},  # noqa:E241
+        {'os_name': 'linux',   'target': 'android', 'arch': 'android_x86'},  # noqa:E241
+        {'os_name': 'linux',   'target': 'android', 'arch': 'android_armv7'},  # noqa:E241
+        {'os_name': 'mac',     'target': 'desktop', 'arch': 'clang_64'},  # noqa:E241
+        {'os_name': 'mac',     'target': 'ios',     'arch': 'ios'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2017_64'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2017'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2015_64'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2015'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw73'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw73'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw53'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw53'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x64'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x86'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_armv7'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'android', 'arch': 'android_x86'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'android', 'arch': 'android_armv7'},  # noqa:E241
     ]
 
     def check_arg_combination(self, qt_version, os_name, target, arch):
@@ -103,11 +103,11 @@ class Cli():
                 args.print_help()
                 exit(1)
         if output_dir is not None:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch,  mirror=mirror, logging=self.logger),
+            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror, logging=self.logger),
                         logging=self.logger).install(command=sevenzip, target_dir=output_dir)
         else:
             QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror, logging=self.logger),
-                        logging = self.logger).install(command=sevenzip)
+                        logging=self.logger).install(command=sevenzip)
 
         sys.stdout.write("\033[K")
         print("Finished installation")
@@ -159,11 +159,11 @@ class Cli():
         envconf = os.getenv(env_key, None)
         conf = None
         if args.logging_conf:
-            conf=args.logging_conf
+            conf = args.logging_conf
         elif envconf is not None:
             conf = envconf
         if conf is None or not os.path.exists(conf):
-            conf=os.path.join(os.path.dirname(__file__), 'logging.yml')
+            conf = os.path.join(os.path.dirname(__file__), 'logging.yml')
         with open(conf, 'r') as f:
             log_config = yaml.safe_load(f.read())
             logging.config.dictConfig(log_config)

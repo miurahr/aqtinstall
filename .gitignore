@@ -9,3 +9,4 @@ __pycache__
 .venv
 _build
 ci/*.matrix.gen.yml
+docs/_build
