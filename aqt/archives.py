@@ -20,10 +20,10 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import logging
 import requests
 import traceback
 import xml.etree.ElementTree as ElementTree
+from logging import getLogger
 from six import StringIO
 
 
@@ -47,7 +47,7 @@ class QtArchives:
     archives = []
     base = None
 
-    def __init__(self, os_name, qt_version, target, arch, mirror=None):
+    def __init__(self, os_name, qt_version, target, arch, mirror=None, logging=None):
         self.qt_version = qt_version
         self.target = target
         self.arch = arch
@@ -56,10 +56,17 @@ class QtArchives:
             self.base = mirror + '/online/qtsdkrepository/'
         else:
             self.base = self.BASE_URL
-        qt_ver_num = qt_version.replace(".", "")
+        if logging:
+            self.logger = logging
+        else:
+            self.logger = getLogger('aqt')
+        self._get_archives(os_name)
+
+    def _get_archives(self, os_name):
+        qt_ver_num = self.qt_version.replace(".", "")
 
         # install mingw runtime package
-        if arch in ['win64_mingw73', 'win32_mingw73', 'win64_mingw53', 'win32_mingw53']:
+        if self.arch in ['win64_mingw73', 'win32_mingw73', 'win64_mingw53', 'win32_mingw53']:
             archive_url = self.base + 'windows_x86/desktop/tools_mingw/'
             update_xml_url = "{0}Updates.xml".format(archive_url)
             try:
@@ -68,13 +75,13 @@ class QtArchives:
                 print("Caught download error: %s" % e.args)
                 exc_buffer = StringIO()
                 traceback.print_exc(file=exc_buffer)
-                logging.error('Download error:\n%s', exc_buffer.getvalue())
+                self.logger.error('Download error:\n%s', exc_buffer.getvalue())
                 raise e
             else:
                 self.update_xml = ElementTree.fromstring(r.text)
                 for packageupdate in self.update_xml.iter("PackageUpdate"):
                     name = packageupdate.find("Name").text
-                    if name.split(".")[-1] != arch:
+                    if name.split(".")[-1] != self.arch:
                         continue
                     downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
                     full_version = packageupdate.find("Version").text
@@ -85,12 +92,12 @@ class QtArchives:
                         # ex. 7.3.0-1x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z
                         package_url = archive_url + name + "/" + named_version + archive
                         self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                       has_mirror=(mirror is not None)))
+                                                       has_mirror=(self.mirror is not None)))
         # Ordinary packages
         if os_name == 'windows':
-            archive_url = self.base + os_name + '_x86/' + target + '/' + 'qt5_' + qt_ver_num + '/'
+            archive_url = self.base + os_name + '_x86/' + self.target + '/' + 'qt5_' + qt_ver_num + '/'
         else:
-            archive_url = self.base + os_name + '_x64/' + target + '/' + 'qt5_' + qt_ver_num + '/'
+            archive_url = self.base + os_name + '_x64/' + self.target + '/' + 'qt5_' + qt_ver_num + '/'
 
         # Get packages index
         update_xml_url = "{0}Updates.xml".format(archive_url)
@@ -100,19 +107,19 @@ class QtArchives:
             print("Caught download error: %s" % e.args)
             exc_buffer = StringIO()
             traceback.print_exc(file=exc_buffer)
-            logging.error('Download error:\n%s', exc_buffer.getvalue())
+            self.logger.error('Download error:\n%s', exc_buffer.getvalue())
             raise e
         else:
             self.update_xml = ElementTree.fromstring(r.text)
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
-                if name.split(".")[-1] != arch:
+                if name.split(".")[-1] != self.arch:
                     continue
                 if name.split(".")[-2] == "debug_info":
                     continue
                 if packageupdate.find("DownloadableArchives").text is None:
                     continue
-                if name == "qt.qt5.{}.{}".format(qt_ver_num, arch) or name == "qt.{}.{}".format(qt_ver_num, arch):
+                if name == "qt.qt5.{}.{}".format(qt_ver_num, self.arch) or name == "qt.{}.{}".format(qt_ver_num, self.arch):
                     # basic packages
                     pass
                 else:
@@ -124,7 +131,7 @@ class QtArchives:
                 for archive in downloadable_archives:
                     package_url = archive_url + name + "/" + full_version + archive
                     self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                   has_mirror=(mirror is not None)))
+                                                   has_mirror=self.has_mirror))
 
         if len(self.archives) == 0:
             print("Error while parsing package information!")

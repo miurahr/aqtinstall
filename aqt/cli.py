@@ -21,9 +21,12 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import logging.config
 import os
 import platform
 import sys
+import yaml
+from logging import getLogger
 
 from aqt.archives import QtArchives
 from aqt.installer import QtInstaller
@@ -93,17 +96,18 @@ class Cli():
             exit(1)
         qt_version = args.qt_version
         if not self.check_arg_combination(qt_version, os_name, target, arch):
-            print("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
+            self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
             exit(1)
         if mirror is not None:
             if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
                 args.print_help()
                 exit(1)
         if output_dir is not None:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch,  mirror=mirror)).install(command=sevenzip,
-                                                                                               target_dir=output_dir)
+            QtInstaller(QtArchives(os_name, qt_version, target, arch,  mirror=mirror, logging=self.logger),
+                        logging=self.logger).install(command=sevenzip, target_dir=output_dir)
         else:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror)).install(command=sevenzip)
+            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror, logging=self.logger),
+                        logging = self.logger).install(command=sevenzip)
 
         sys.stdout.write("\033[K")
         print("Finished installation")
@@ -118,6 +122,9 @@ class Cli():
     def __init__(self):
         parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
                                          formatter_class=argparse.RawTextHelpFormatter, add_help=True)
+        parser.add_argument('--logging-conf', type=argparse.FileType('r'),
+                            nargs=1, help="Specify logging configuration YAML file.")
+        parser.add_argument('--logger', nargs=1, help="Specify logger name")
         subparsers = parser.add_subparsers(title='subcommands', description='Valid subcommands',
                                            help='subcommand for aqt Qt installer')
         install_parser = subparsers.add_parser('install')
@@ -150,4 +157,13 @@ class Cli():
 
     def run(self):
         args = self.parser.parse_args()
+        if args.logging_conf:
+            log_config = yaml.load(args.logging_conf)
+        else:
+            log_config = yaml.load(os.path.join(os.path.dirname(__file__), 'logging.yml'))
+        logging.config.dictConfig(log_config)
+        if args.logger is not None:
+            self.logger = getLogger(args.logger)
+        else:
+            self.logger = getLogger('aqt')
         args.func(args)
