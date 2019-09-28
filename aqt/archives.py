@@ -72,10 +72,7 @@ class QtArchives:
             try:
                 r = requests.get(update_xml_url)
             except requests.exceptions.ConnectionError as e:
-                print("Caught download error: %s" % e.args)
-                exc_buffer = StringIO()
-                traceback.print_exc(file=exc_buffer)
-                self.logger.error('Download error:\n%s', exc_buffer.getvalue())
+                self.logger.error('Download error: %s\n' % e.args, exc_info=True)
                 raise e
             else:
                 self.update_xml = ElementTree.fromstring(r.text)
@@ -104,10 +101,7 @@ class QtArchives:
         try:
             r = requests.get(update_xml_url)
         except requests.exceptions.ConnectionError as e:
-            print("Caught download error: %s" % e.args)
-            exc_buffer = StringIO()
-            traceback.print_exc(file=exc_buffer)
-            self.logger.error('Download error:\n%s', exc_buffer.getvalue())
+            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
             raise e
         else:
             self.update_xml = ElementTree.fromstring(r.text)

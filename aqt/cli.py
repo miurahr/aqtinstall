@@ -21,12 +21,12 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import logging
 import logging.config
 import os
 import platform
 import sys
 import yaml
-from logging import getLogger
 
 from aqt.archives import QtArchives
 from aqt.installer import QtInstaller
@@ -155,15 +155,24 @@ class Cli():
         help_parser.set_defaults(func=self.show_help)
         self.parser = parser
 
+    def setup_logging(self, args, env_key='LOG_CFG'):
+        envconf = os.getenv(env_key, None)
+        conf = None
+        if args.logging_conf:
+            conf=args.logging_conf
+        elif envconf is not None:
+            conf = envconf
+        if conf is None or not os.path.exists(conf):
+            conf=os.path.join(os.path.dirname(__file__), 'logging.yml')
+        with open(conf, 'r') as f:
+            log_config = yaml.safe_load(f.read())
+            logging.config.dictConfig(log_config)
+        if args.logger is not None:
+            self.logger = logging.getLogger(args.logger)
+        else:
+            self.logger = logging.getLogger('aqt')
+
     def run(self):
         args = self.parser.parse_args()
-        if args.logging_conf:
-            log_config = yaml.load(args.logging_conf)
-        else:
-            log_config = yaml.load(os.path.join(os.path.dirname(__file__), 'logging.yml'))
-        logging.config.dictConfig(log_config)
-        if args.logger is not None:
-            self.logger = getLogger(args.logger)
-        else:
-            self.logger = getLogger('aqt')
+        self.setup_logging(args)
         args.func(args)

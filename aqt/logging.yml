@@ -1,22 +1,32 @@
 version: 1
+disable_existing_loggers: False
+
 formatters:
+  simple:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
   brief:
     format: '%(message)s'
-  default:
-    format: '%(asctime)s %(levelname)-8s %(name)-15s %(message)s'
-    datefmt: '%Y-%m-%d %H:%M:%S'
+
 handlers:
   console:
     class: logging.StreamHandler
     level: WARN
     formatter: brief
     stream: ext://sys.stdout
+
   file:
-    class : logging.FileHandler
-    formatter: default
+    class: logging.FileHandler
+    level: INFO
+    formatter: simple
     filename: aqtinstall.log
+    encoding: utf-8
+
+loggers:
+  aqt:
+    level: ERROR
+    handler: [console]
+    propagate: yes
+
 root:
   level: INFO
-  handlers:
-  - console
-  - file
+  handlers: [console, file]
