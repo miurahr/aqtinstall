@@ -46,6 +46,7 @@ class QtArchives:
     BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
     archives = []
     base = None
+    has_mirror = False
 
     def __init__(self, os_name, qt_version, target, arch, mirror=None, logging=None):
         self.qt_version = qt_version
@@ -55,6 +56,7 @@ class QtArchives:
             self.has_mirror = True
             self.base = mirror + '/online/qtsdkrepository/'
         else:
+            self.has_mirror = False
             self.base = self.BASE_URL
         if logging:
             self.logger = logging
