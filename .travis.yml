@@ -1,12 +1,16 @@
+dist: xenial
+sudo: false
 language: python
-python: 3.6
+matrix:
+  include:
+    - python: 3.7
+      env: TOXENV=check
+    - python: 3.7
+      env: TOXENV=docs
 
-install:
-- pip install wheel flake8 requests six py7zr
+install: pip install tox-travis
 
-script:
-- flake8 aqt bin
-- python -m aqt --help
+script: tox
 
 deploy:
 - provider: pypi

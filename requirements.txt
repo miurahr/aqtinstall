@@ -7,3 +7,4 @@ flake8
 wheel
 twine
 py7zr>=0.3.4
+pyyaml
