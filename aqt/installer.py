@@ -21,16 +21,18 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import functools
-import logging
 import os
-import py7zr
-import requests
 import traceback
 import xml.etree.ElementTree as ElementTree
-from six import StringIO
+from logging import getLogger
 from multiprocessing.dummy import Pool
 from operator import and_
 from subprocess import run
+
+from six import StringIO
+
+import py7zr
+import requests
 
 NUM_PROCESS = 3
 blacklist = ['http://mirrors.ustc.edu.cn',
@@ -47,8 +49,12 @@ class QtInstaller:
     Installer class to download packages and extract it.
     """
 
-    def __init__(self, qt_archives):
+    def __init__(self, qt_archives, logging=None):
         self.qt_archives = qt_archives
+        if logging:
+            self.logger = logging
+        else:
+            self.logger = getLogger('aqt')
 
     @staticmethod
     def retrieve_archive(package, path=None, command=None):
@@ -126,7 +132,7 @@ class QtInstaller:
                 print("Configuration file generation error: %s" % e.args)
                 exc_buffer = StringIO()
                 traceback.print_exc(file=exc_buffer)
-                logging.error('Error happened when writing configuration files:\n%s', exc_buffer.getvalue())
+                self.logger.error('Error happened when writing configuration files:\n%s', exc_buffer.getvalue())
                 raise e
         else:
             exit(1)

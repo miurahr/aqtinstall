@@ -21,10 +21,13 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import logging
+import logging.config
 import os
 import platform
 import sys
 
+import yaml
 from aqt.archives import QtArchives
 from aqt.installer import QtInstaller
 
@@ -34,24 +37,24 @@ class Cli():
     __slot__ = ['parser']
 
     COMBINATION = [
-        {'os_name': 'linux',   'target': 'desktop', 'arch': 'gcc_64'},
-        {'os_name': 'linux',   'target': 'android', 'arch': 'android_x86'},
-        {'os_name': 'linux',   'target': 'android', 'arch': 'android_armv7'},
-        {'os_name': 'mac',     'target': 'desktop', 'arch': 'clang_64'},
-        {'os_name': 'mac',     'target': 'ios',     'arch': 'ios'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2017_64'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2017'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2015_64'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2015'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw73'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw73'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw53'},
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw53'},
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x64'},
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x86'},
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_armv7'},
-        {'os_name': 'windows', 'target': 'android', 'arch': 'android_x86'},
-        {'os_name': 'windows', 'target': 'android', 'arch': 'android_armv7'},
+        {'os_name': 'linux',   'target': 'desktop', 'arch': 'gcc_64'},  # noqa:E241
+        {'os_name': 'linux',   'target': 'android', 'arch': 'android_x86'},  # noqa:E241
+        {'os_name': 'linux',   'target': 'android', 'arch': 'android_armv7'},  # noqa:E241
+        {'os_name': 'mac',     'target': 'desktop', 'arch': 'clang_64'},  # noqa:E241
+        {'os_name': 'mac',     'target': 'ios',     'arch': 'ios'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2017_64'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2017'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2015_64'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2015'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw73'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw73'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw53'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw53'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x64'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x86'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_armv7'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'android', 'arch': 'android_x86'},  # noqa:E241
+        {'os_name': 'windows', 'target': 'android', 'arch': 'android_armv7'},  # noqa:E241
     ]
 
     def check_arg_combination(self, qt_version, os_name, target, arch):
@@ -93,17 +96,18 @@ class Cli():
             exit(1)
         qt_version = args.qt_version
         if not self.check_arg_combination(qt_version, os_name, target, arch):
-            print("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
+            self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
             exit(1)
         if mirror is not None:
             if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
                 args.print_help()
                 exit(1)
         if output_dir is not None:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch,  mirror=mirror)).install(command=sevenzip,
-                                                                                               target_dir=output_dir)
+            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror, logging=self.logger),
+                        logging=self.logger).install(command=sevenzip, target_dir=output_dir)
         else:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror)).install(command=sevenzip)
+            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror, logging=self.logger),
+                        logging=self.logger).install(command=sevenzip)
 
         sys.stdout.write("\033[K")
         print("Finished installation")
@@ -118,6 +122,9 @@ class Cli():
     def __init__(self):
         parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
                                          formatter_class=argparse.RawTextHelpFormatter, add_help=True)
+        parser.add_argument('--logging-conf', type=argparse.FileType('r'),
+                            nargs=1, help="Specify logging configuration YAML file.")
+        parser.add_argument('--logger', nargs=1, help="Specify logger name")
         subparsers = parser.add_subparsers(title='subcommands', description='Valid subcommands',
                                            help='subcommand for aqt Qt installer')
         install_parser = subparsers.add_parser('install')
@@ -148,6 +155,24 @@ class Cli():
         help_parser.set_defaults(func=self.show_help)
         self.parser = parser
 
+    def setup_logging(self, args, env_key='LOG_CFG'):
+        envconf = os.getenv(env_key, None)
+        conf = None
+        if args.logging_conf:
+            conf = args.logging_conf
+        elif envconf is not None:
+            conf = envconf
+        if conf is None or not os.path.exists(conf):
+            conf = os.path.join(os.path.dirname(__file__), 'logging.yml')
+        with open(conf, 'r') as f:
+            log_config = yaml.safe_load(f.read())
+            logging.config.dictConfig(log_config)
+        if args.logger is not None:
+            self.logger = logging.getLogger(args.logger)
+        else:
+            self.logger = logging.getLogger('aqt')
+
     def run(self):
         args = self.parser.parse_args()
+        self.setup_logging(args)
         args.func(args)

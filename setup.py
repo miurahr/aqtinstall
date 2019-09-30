@@ -20,15 +20,9 @@ setup(name='aqtinstall',
       author='Hioshi Miura',
       author_email='miurahr@linux.com',
       packages=["aqt"],
+      package_data={'aqt': ['*.yml']},
       install_requires=['requests', 'six', 'py7zr'],
-      extras_require={
-        'dev': [
-            'pytest',
-            'pytest-pep8',
-            'pytest-cov',
-            'flake8'
-        ]
-      },
+      extras_require={'dev': ['pytest', 'pytest-pep8', 'pytest-cov', 'flake8']},
       scripts=["bin/aqt"],
       classifiers=[
           'Development Status :: 3 - Alpha',
@@ -43,5 +37,5 @@ setup(name='aqtinstall',
           'Programming Language :: C++',
           'Topic :: Software Development',
           'Topic :: Software Development :: Libraries',
-          ],
+      ],
       )
