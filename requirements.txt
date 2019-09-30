@@ -6,4 +6,4 @@ pytest-cov
 flake8
 wheel
 twine
-py7zr>=0.3.3
+py7zr>=0.3.4
