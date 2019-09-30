@@ -32,7 +32,7 @@ steps:
     inputs:
       scriptSource: filePath
       scriptPath: $(Build.SourcesDirectory)/bin/aqt
-      arguments: install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR) --internal
+      arguments: install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
       workingDirectory: $(Build.BinariesDirectory)
     condition: variables['QT_BASE_MIRROR']
     displayName: Run Aqt (Base URL Set)
