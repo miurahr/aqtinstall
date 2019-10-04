@@ -174,8 +174,6 @@ class Metalink:
             else:
                 for ind in range(len(self.mirrors)):
                     mirror = self.mirrors[str(ind + 1)]
-                    if mirror == self.candidate:
-                        continue
                     return mirror
         else:
             return self.mirrors[str(priority)]
