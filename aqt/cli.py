@@ -28,7 +28,7 @@ import platform
 import sys
 
 import yaml
-from aqt.archives import QtArchives
+from aqt.archives import QtArchives, ToolArchives
 from aqt.installer import QtInstaller
 
 
@@ -63,12 +63,7 @@ class Cli():
                 return True
         return False
 
-    def run_install(self, args):
-        arch = args.arch
-        target = args.target
-        os_name = args.host
-        output_dir = args.outputdir
-        mirror = args.base
+    def _set_sevenzip(self, args):
         use_py7zr = args.internal
         sevenzip = None
         if not use_py7zr:
@@ -83,6 +78,10 @@ class Cli():
             else:
                 print('Specified external 7zip command is not exist.')
                 exit(1)
+        return sevenzip
+
+    def _set_arch(self, args, oarch, os_name, target):
+        arch = oarch
         if arch is None:
             if os_name == "linux" and target == "desktop":
                 arch = "gcc_64"
@@ -94,23 +93,48 @@ class Cli():
             print("Please supply a target architecture.")
             args.print_help()
             exit(1)
-        qt_version = args.qt_version
-        if not self.check_arg_combination(qt_version, os_name, target, arch):
-            self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
-            exit(1)
+        return arch
+
+    def _check_mirror(self, args):
+        mirror = args.base
         if mirror is not None:
             if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
                 args.print_help()
                 exit(1)
-        if output_dir is not None:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror, logging=self.logger),
+        return mirror
+
+    def run_install(self, args):
+        arch = args.arch
+        target = args.target
+        os_name = args.host
+        output_dir = args.outputdir
+        arch = self._set_arch(args, arch, os_name, target)
+        sevenzip = self._set_sevenzip(args)
+        mirror=self._check_mirror(args)
+        qt_version = args.qt_version
+        if not self.check_arg_combination(qt_version, os_name, target, arch):
+            self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
+            exit(1)
+        QtInstaller(QtArchives(os_name, target, qt_version, arch, mirror=mirror, logging=self.logger),
+                    logging=self.logger).install(command=sevenzip, target_dir=output_dir)
+        if arch in ['win64_mingw73', 'win32_mingw73', 'win64_mingw53', 'win32_mingw53']:
+            # install mingw runtime package
+            QtInstaller(ToolArchives(os_name, target, None, 'mingw', mirror=mirror, logging=self.logger),
                         logging=self.logger).install(command=sevenzip, target_dir=output_dir)
-        else:
-            QtInstaller(QtArchives(os_name, qt_version, target, arch, mirror=mirror, logging=self.logger),
-                        logging=self.logger).install(command=sevenzip)
 
         sys.stdout.write("\033[K")
         print("Finished installation")
+
+    def run_tool(self, args):
+        arch = args.arch
+        tool_name = args.tool_name
+        os_name = args.host
+        output_dir = args.outputdir
+        sevenzip = self._set_sevenzip(args)
+        version = args.version
+        mirror=self._check_mirror(args)
+        QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
+                    logging=self.logger).install(command=sevenzip, target_dir=output_dir)
 
     def run_list(self, args):
         print('List Qt packages for %s' % args.qt_version)
@@ -131,7 +155,7 @@ class Cli():
         install_parser.set_defaults(func=self.run_install)
         install_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
         install_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
-        install_parser.add_argument('target', choices=['desktop', 'winrt', 'android', 'ios', 'tool'], help="target sdk")
+        install_parser.add_argument('target', choices=['desktop', 'winrt', 'android', 'ios'], help="target sdk")
         install_parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
                                     "\ntarget mac/desktop:   clang_64"
                                     "\ntarget mac/ios:       ios"
@@ -148,6 +172,19 @@ class Cli():
                                          "where 'online' folder exist.")
         install_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
         install_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
+        tools_parser = subparsers.add_parser('tool')
+        tools_parser.set_defaults(func=self.run_tool)
+        tools_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
+        tools_parser.add_argument('tool_name', help="Name of tool such as tools_ifw, tools_mingw")
+        tools_parser.add_argument("version", help="Tool version in the format of \"4.1.2\"")
+        tools_parser.add_argument('arch', help="Name of full tool name such as qt.tools.ifw.31")
+        tools_parser.add_argument('-O', '--outputdir', nargs='?',
+                                    help='Target output directory(default current directory)')
+        tools_parser.add_argument('-b', '--base', nargs='?',
+                                    help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
+                                         "where 'online' folder exist.")
+        tools_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
+        tools_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")

@@ -91,16 +91,12 @@ class QtInstaller:
             os.unlink(archive)
         return True
 
-    @staticmethod
-    def get_base_dir(qt_version, target_dir=None):
-        if target_dir is not None:
-            return os.path.join(target_dir, 'Qt{}'.format(qt_version))
-        else:
-            return os.path.join(os.getcwd(), 'Qt{}'.format(qt_version))
-
     def install(self, command=None, target_dir=None):
         qt_version, target, arch = self.qt_archives.get_target_config()
-        base_dir = self.get_base_dir(qt_version, target_dir)
+        if target_dir is not None:
+            base_dir = os.path.join(target_dir, 'Qt')
+        else:
+            base_dir = os.path.join(os.getcwd(), 'Qt')
         archives = self.qt_archives.get_archives()
         p = Pool(NUM_PROCESS)
         ret_arr = p.map(functools.partial(self.retrieve_archive, command=command, path=base_dir), archives)
@@ -129,10 +125,7 @@ class QtInstaller:
                             line = 'QT_EDITION = OpenSource'
                         f.write(line)
             except IOError as e:
-                print("Configuration file generation error: %s" % e.args)
-                exc_buffer = StringIO()
-                traceback.print_exc(file=exc_buffer)
-                self.logger.error('Error happened when writing configuration files:\n%s', exc_buffer.getvalue())
+                self.logger.error("Configuration file generation error: %s\n", e.args, exc_info=True)
                 raise e
         else:
             exit(1)
