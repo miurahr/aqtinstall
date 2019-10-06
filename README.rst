@@ -114,6 +114,18 @@ Current version(v0.4.0) don't have a capability to install tools such as mingw a
 A utility install only Qt library staffs.
 
 
+Use cases
+---------
+
+* https://github.com/kashimotoxiang/ankimousereview
+
+
+Testimonials
+------------
+
+* I've tested it successfully with GH actions. (@skypjack)
+
+
 License and copyright
 ---------------------
 
