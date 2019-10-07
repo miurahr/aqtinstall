@@ -163,6 +163,6 @@ class ToolArchives(QtArchives):
                                                    has_mirror=(self.mirror is not None)))
 
     def get_target_config(self):
-        return None, self.target, self.arch
+        return "", self.target, self.arch
 
 
