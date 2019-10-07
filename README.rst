@@ -93,6 +93,16 @@ Example: Installing Android (armv7) Qt 5.10.2:
     aqt install 5.10.2 linux android android_armv7
 
 
+Example: Install Install FrameWork(IFW):
+
+    aqt tool linux tools_ifw 3.1.1 qt.tools.ifw.31
+
+
+.. code-block:: bash
+
+    aqt install 5.10.2 linux android android_armv7
+
+
 Example: Show help message
 
 .. code-block:: bash
@@ -106,12 +116,6 @@ Supported CI platform
 
 There are no limitation for CI platform but currently it is tested on Azure Pipelines.
 
-
-Known issues and limitations
-----------------------------
-
-Current version(v0.4.0) don't have a capability to install tools such as mingw and qtcreator.
-A utility install only Qt library staffs.
 
 
 License and copyright
