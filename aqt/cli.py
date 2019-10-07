@@ -117,11 +117,6 @@ class Cli():
             exit(1)
         QtInstaller(QtArchives(os_name, target, qt_version, arch, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
-        if arch in ['win64_mingw73', 'win32_mingw73', 'win64_mingw53', 'win32_mingw53']:
-            # install mingw runtime package
-            QtInstaller(ToolArchives(os_name, target, None, 'mingw', mirror=mirror, logging=self.logger),
-                        logging=self.logger).install(command=sevenzip, target_dir=output_dir)
-
         sys.stdout.write("\033[K")
         print("Finished installation")
 
