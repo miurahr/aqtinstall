@@ -86,6 +86,7 @@ steps:
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'))
     displayName: build test with qmake with MSVC
   - script: |
+      sudo apt-get install libgl1-mesa-dev
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
       make
     condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
