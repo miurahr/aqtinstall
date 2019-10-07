@@ -95,12 +95,9 @@ Example: Installing Android (armv7) Qt 5.10.2:
 
 Example: Install Install FrameWork(IFW):
 
-    aqt tool linux tools_ifw 3.1.1 qt.tools.ifw.31
-
-
 .. code-block:: bash
 
-    aqt install 5.10.2 linux android android_armv7
+    aqt tool linux tools_ifw 3.1.1 qt.tools.ifw.31
 
 
 Example: Show help message
