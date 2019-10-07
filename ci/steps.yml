@@ -95,3 +95,24 @@ steps:
   - script: echo Currently not implemented.
     condition: and(eq(variables['TARGET'], 'ios'), eq(variables['Agent.OS'], 'Darwin'))
     displayName: Build test with qmake for ios
+  #
+  # Install aqtinstall
+  - powershell: |
+      $aqtVersion = & python $(Build.SourcesDirectory)/setup.py --version | Out-String -Stream
+      pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
+    displayName: install package
+  - task: PythonScript@0
+    inputs:
+      scriptSource: filePath
+      scriptPath: $(Build.SourcesDirectory)/bin/aqt
+      arguments: tool $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH) --internal
+      workingDirectory: $(Build.BinariesDirectory)
+    condition: variables['TOOL_NAME']
+    displayName: Run Aqt (Tool)
+  #
+  # Test installation results
+  # for OpenSSL on linux
+  - script: |
+      $(Build.BinariesDirectory)/Qt/Tools/$(TEST_EXECUTABLE) $(TEST_COMMAND)
+    condition: variables['TOOL_NAME']
+    displayName: Tool test
