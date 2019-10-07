@@ -22,14 +22,11 @@
 
 import functools
 import os
-import traceback
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from multiprocessing.dummy import Pool
 from operator import and_
 from subprocess import run
-
-from six import StringIO
 
 import py7zr
 import requests

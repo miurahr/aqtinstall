@@ -110,7 +110,7 @@ class Cli():
         output_dir = args.outputdir
         arch = self._set_arch(args, arch, os_name, target)
         sevenzip = self._set_sevenzip(args)
-        mirror=self._check_mirror(args)
+        mirror = self._check_mirror(args)
         qt_version = args.qt_version
         if not self.check_arg_combination(qt_version, os_name, target, arch):
             self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
@@ -132,7 +132,7 @@ class Cli():
         output_dir = args.outputdir
         sevenzip = self._set_sevenzip(args)
         version = args.version
-        mirror=self._check_mirror(args)
+        mirror = self._check_mirror(args)
         QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
 
@@ -179,10 +179,10 @@ class Cli():
         tools_parser.add_argument("version", help="Tool version in the format of \"4.1.2\"")
         tools_parser.add_argument('arch', help="Name of full tool name such as qt.tools.ifw.31")
         tools_parser.add_argument('-O', '--outputdir', nargs='?',
-                                    help='Target output directory(default current directory)')
+                                  help='Target output directory(default current directory)')
         tools_parser.add_argument('-b', '--base', nargs='?',
-                                    help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
-                                         "where 'online' folder exist.")
+                                  help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
+                                       "where 'online' folder exist.")
         tools_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
         tools_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
         list_parser = subparsers.add_parser('list')

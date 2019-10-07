@@ -164,5 +164,3 @@ class ToolArchives(QtArchives):
 
     def get_target_config(self):
         return "", self.target, self.arch
-
-
