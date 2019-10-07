@@ -66,3 +66,7 @@ jobs:
     ARCH: qt.tools.openssl.gcc_64
     TEST_EXECUTABLE: OpenSSL/binary/bin/openssl
     TEST_COMMAND: version
+    pool:
+      vmImage: 'ubuntu-16.04'
+    steps:
+      - template: ci/steps.yml
