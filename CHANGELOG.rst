@@ -14,6 +14,8 @@ Current changes
 Added
 -----
 
+* Add feature to support installation of Qt Tools
+
 Changed
 -------
 

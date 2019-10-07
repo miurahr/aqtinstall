@@ -42,15 +42,22 @@ class QtPackage:
 
 
 class QtArchives:
+    """Hold Qt archive packages list"""
+
     BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
     archives = []
     base = None
     has_mirror = False
+    version = None
+    target = None
+    arch = None
+    mirror = None
 
-    def __init__(self, os_name, qt_version, target, arch, mirror=None, logging=None):
-        self.qt_version = qt_version
+    def __init__(self, os_name, target, version, arch, mirror=None, logging=None):
+        self.version = version
         self.target = target
         self.arch = arch
+        self.mirror = mirror
         if mirror is not None:
             self.has_mirror = True
             self.base = mirror + '/online/qtsdkrepository/'
@@ -64,34 +71,8 @@ class QtArchives:
         self._get_archives(os_name)
 
     def _get_archives(self, os_name):
-        qt_ver_num = self.qt_version.replace(".", "")
+        qt_ver_num = self.version.replace(".", "")
 
-        # install mingw runtime package
-        if self.arch in ['win64_mingw73', 'win32_mingw73', 'win64_mingw53', 'win32_mingw53']:
-            archive_url = self.base + 'windows_x86/desktop/tools_mingw/'
-            update_xml_url = "{0}Updates.xml".format(archive_url)
-            try:
-                r = requests.get(update_xml_url)
-            except requests.exceptions.ConnectionError as e:
-                self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-                raise e
-            else:
-                self.update_xml = ElementTree.fromstring(r.text)
-                for packageupdate in self.update_xml.iter("PackageUpdate"):
-                    name = packageupdate.find("Name").text
-                    if name.split(".")[-1] != self.arch:
-                        continue
-                    downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
-                    full_version = packageupdate.find("Version").text
-                    split_version = full_version.split["-"]
-                    named_version = split_version[0] + "-" + split_version[1]
-                    package_desc = packageupdate.find("Description").text
-                    for archive in downloadable_archives:
-                        # ex. 7.3.0-1x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z
-                        package_url = archive_url + name + "/" + named_version + archive
-                        self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                       has_mirror=(self.mirror is not None)))
-        # Ordinary packages
         if os_name == 'windows':
             archive_url = self.base + os_name + '_x86/' + self.target + '/' + 'qt5_' + qt_ver_num + '/'
         else:
@@ -136,4 +117,50 @@ class QtArchives:
         return self.archives
 
     def get_target_config(self):
-        return self.qt_version, self.target, self.arch
+        return self.version, self.target, self.arch
+
+
+class ToolArchives(QtArchives):
+    """Hold tool archive package list
+        when installing mingw tool, argument would be
+        ToolArchive(windows, desktop, 4.9.1-3, mingw)
+        when installing ifw tool, argument would be
+        ToolArchive(linux, desktop, 3.1.1, ifw)
+    """
+
+    def __init__(self, os_name, tool_name, version, arch, mirror=None, logging=None):
+        self.tool_name = tool_name
+        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, mirror, logging)
+
+    def _get_archives(self, os_name):
+        if os_name == 'windows':
+            archive_url = self.base + os_name + '_x86/' + self.target + '/'
+        else:
+            archive_url = self.base + os_name + '_x64/' + self.target + '/'
+        update_xml_url = "{0}{1}/Updates.xml".format(archive_url, self.tool_name)
+        try:
+            r = requests.get(update_xml_url)
+        except requests.exceptions.ConnectionError as e:
+            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
+            raise e
+        else:
+            self.update_xml = ElementTree.fromstring(r.text)
+            for packageupdate in self.update_xml.iter("PackageUpdate"):
+                name = packageupdate.find("Name").text
+                downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+                full_version = packageupdate.find("Version").text
+                if full_version != self.version:
+                    continue
+                if "-" in full_version:
+                    split_version = full_version.split["-"]
+                    named_version = split_version[0] + "-" + split_version[1]
+                else:
+                    named_version = full_version
+                package_desc = packageupdate.find("Description").text
+                for archive in downloadable_archives:
+                    package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
+                    self.archives.append(QtPackage(name, package_url, archive, package_desc,
+                                                   has_mirror=(self.mirror is not None)))
+
+    def get_target_config(self):
+        return "Tools", self.target, self.arch

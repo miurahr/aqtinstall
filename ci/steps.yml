@@ -52,7 +52,7 @@ steps:
     displayName: Download and extract Android NDK
   - script: |
       export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r19c
-      $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/accelbubble/ && make
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/accelbubble/ && make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: Build accelbubble example application to test for android
   # for desktop application
@@ -81,12 +81,13 @@ steps:
     condition: eq( variables['Agent.OS'], 'Windows_NT')
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-      $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'))
     displayName: build test with qmake with MSVC
   - script: |
-      $(Build.BinariesDirectory)/Qt$(QT_VERSION)/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
+      sudo apt-get install libgl1-mesa-dev
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
       make
     condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: Build test with qmake for Linux and macOS
