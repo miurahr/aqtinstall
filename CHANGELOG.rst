@@ -15,9 +15,15 @@ Added
 -----
 
 * Add feature to support installation of Qt Tools
+* Add CI test for tool installation
 
 Changed
 -------
+
+* CI test target
+  - add 5.14.0
+  - remove 5.11.3
+  - change patch_levels to up-to-date
 
 Fixed
 -----

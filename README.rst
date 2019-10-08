@@ -67,15 +67,22 @@ General usage looks like this:
 * You can also use internal 7zip extractor instead of external 7zip command.
 * You can specify external 7zip command path.
 
+.. code-block:: bash
 
-The Qt packages are installed under current directory as such `Qt<ver>/<ver>/gcc_64/`
+    python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
+        [--internal] tool <host> <tool_name> <tool-version> <arch>
+
+* tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
+* arch is full qualified tool name such as `qt.tools.ifw.31`
+
+The Qt packages are installed under current directory as such `Qt/<ver>/gcc_64/`
 If you want to install it in `C:\Qt` as same as standard gui installer default,
 run such as follows:
 
 .. code-block:: bash
 
     C:\> mkdir Qt
-    C:\> aqt install -O c:\Qt 5.11.3 windows desktop win64_msvc2017_64
+    C:\> aqt install --outputdir c:\Qt 5.11.3 windows desktop win64_msvc2017_64
 
 
 Example: Installing Qt 5.12.0 for Linux:
@@ -100,6 +107,21 @@ Example: Install Install FrameWork(IFW):
     aqt tool linux tools_ifw 3.1.1 qt.tools.ifw.31
 
 
+Example: Install vcredist:
+
+.. code-block:: bash
+
+    C:\ aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2017_x64
+    C:\ .\Qt\Tools\vcredist\vcredist_msvc2017_x64.exe /norestart /q
+
+
+Example: Install OpenSSL:
+
+.. code-block:: bash
+
+    C:\ aqt tool windows tools_openssl 1.1.1-1 qt.tools.openssl.win_x64
+
+
 Example: Show help message
 
 .. code-block:: bash
@@ -120,11 +142,6 @@ Use cases
 
 * https://github.com/kashimotoxiang/ankimousereview
 
-
-Testimonials
-------------
-
-* I've tested it successfully with GH actions. (@skypjack)
 
 
 License and copyright
