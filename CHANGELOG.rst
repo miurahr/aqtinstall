@@ -14,16 +14,8 @@ Current changes
 Added
 -----
 
-* Add feature to support installation of Qt Tools
-* Add CI test for tool installation
-
 Changed
 -------
-
-* CI test target
-  - add 5.14.0
-  - remove 5.11.3
-  - change patch_levels to up-to-date
 
 Fixed
 -----
@@ -36,6 +28,23 @@ Removed
 
 Security
 --------
+
+`v0.5b1`_ (8, Oct., 2019)
+=========================
+
+Added
+-----
+
+* Add feature to support installation of Qt Tools
+* Add CI test for tool installation
+
+Changed
+-------
+
+* CI test target
+  - add 5.14.0
+  - remove 5.11.3
+  - change patch_levels to up-to-date
 
 
 `v0.4.3`_ (25, Sep, 2019)
@@ -213,7 +222,8 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.4.3...HEAD
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.5b1...HEAD
+.. _v0.5b1: https://github.com/miurahr/qli-installer/compare/v0.4.3...v0.5b1
 .. _v0.4.3: https://github.com/miurahr/qli-installer/compare/v0.4.2...v0.4.3
 .. _v0.4.2: https://github.com/miurahr/qli-installer/compare/v0.4.1...v0.4.2
 .. _v0.4.1: https://github.com/miurahr/qli-installer/compare/v0.4.0...v0.4.1
