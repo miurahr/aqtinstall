@@ -152,7 +152,7 @@ class ToolArchives(QtArchives):
                 if full_version != self.version:
                     continue
                 if "-" in full_version:
-                    split_version = full_version.split["-"]
+                    split_version = full_version.split("-")
                     named_version = split_version[0] + "-" + split_version[1]
                 else:
                     named_version = full_version

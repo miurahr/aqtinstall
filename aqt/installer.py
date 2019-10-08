@@ -98,34 +98,41 @@ class QtInstaller:
         p = Pool(NUM_PROCESS)
         ret_arr = p.map(functools.partial(self.retrieve_archive, command=command, path=base_dir), archives)
         ret = functools.reduce(and_, ret_arr)
-        if ret:
-            if arch.startswith('win64_mingw'):
-                arch_dir = arch[6:] + '_64'
-            elif arch.startswith('win32_mingw'):
-                arch_dir = arch[6:] + '_32'
-            elif arch.startswith('win'):
-                arch_dir = arch[6:]
-            else:
-                arch_dir = arch
-            try:
-                # prepare qt.conf
-                with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
-                    f.write("[Paths]\n")
-                    f.write("Prefix=..\n")
-                # prepare qtconfig.pri
-                with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
-                    lines = f.readlines()
-                    f.seek(0)
-                    f.truncate()
-                    for line in lines:
-                        if 'QT_EDITION' in line:
-                            line = 'QT_EDITION = OpenSource'
-                        f.write(line)
-            except IOError as e:
-                self.logger.error("Configuration file generation error: %s\n", e.args, exc_info=True)
-                raise e
-        else:
+        if not ret:  # fails to install
+            self.logger.error("Failed to install.")
             exit(1)
+        if qt_version == "Tools":  # tools installation
+            return
+        # finalize
+        if arch.startswith('win64_mingw'):
+            arch_dir = arch[6:] + '_64'
+        elif arch.startswith('win32_mingw'):
+            arch_dir = arch[6:] + '_32'
+        elif arch.startswith('win'):
+            arch_dir = arch[6:]
+        else:
+            arch_dir = arch
+        self.make_conf_files(base_dir, qt_version, arch_dir)
+
+    def make_conf_files(self, base_dir, qt_version, arch_dir):
+        """Make Qt configuration files, qt.conf and qtconfig.pri"""
+        try:
+            # prepare qt.conf
+            with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
+                f.write("[Paths]\n")
+                f.write("Prefix=..\n")
+            # prepare qtconfig.pri
+            with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
+                lines = f.readlines()
+                f.seek(0)
+                f.truncate()
+                for line in lines:
+                    if 'QT_EDITION' in line:
+                        line = 'QT_EDITION = OpenSource'
+                    f.write(line)
+        except IOError as e:
+            self.logger.error("Configuration file generation error: %s\n", e.args, exc_info=True)
+            raise e
 
 
 class Metalink:

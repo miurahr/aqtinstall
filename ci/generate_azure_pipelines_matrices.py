@@ -26,9 +26,9 @@ python_versions = [
 ]
 
 qt_versions = [
-    '5.11.3',
-    '5.12.3',
-    '5.13.0'
+    '5.12.5',
+    '5.13.1',
+    '5.14.0'
 ]
 
 linux_build_jobs = []
@@ -63,25 +63,25 @@ mac_build_jobs.append(
 # Windows Desktop
 windows_build_jobs.extend(
     [
-        BuildJob('5.11.3', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.11.3', 'windows', 'desktop', 'win32_msvc2015', 'msvc2015'),
+        BuildJob('5.12.5', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
+        BuildJob('5.12.5', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
     ]
 )
 
 windows_build_jobs.extend(
     [
-        BuildJob('5.12.3', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.12.3', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
+        BuildJob('5.13.1', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
+        BuildJob('5.13.1', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
+        BuildJob('5.13.1', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
+        BuildJob('5.13.1', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
+        BuildJob('5.13.1', 'windows', 'desktop', 'win32_mingw73', 'mingw73_32'),
     ]
 )
 
 windows_build_jobs.extend(
     [
-        BuildJob('5.13.0', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.13.0', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
-        BuildJob('5.13.0', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
-        BuildJob('5.13.0', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
-        BuildJob('5.13.0', 'windows', 'desktop', 'win32_mingw73', 'mingw73_32'),
+        BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
+        BuildJob('5.14.0', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
     ]
 )
 
@@ -92,7 +92,7 @@ windows_build_jobs.extend(
 
 for android_arch in ['android_x86', 'android_armv7']:
     linux_build_jobs.append(
-        BuildJob('5.13.0', 'linux', 'android', android_arch, android_arch)
+        BuildJob('5.13.1', 'linux', 'android', android_arch, android_arch)
     )
 
 matrices = {}
