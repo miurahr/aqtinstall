@@ -17,9 +17,6 @@ Added
 Changed
 -------
 
-* Change install path from <target>/Qt/Qt<version>/<version> to <target>/<version> (#48).
-  - Also update CI test to specify --outputdir <target> that is $(BinariesDirectory)/Qt
-
 Fixed
 -----
 
@@ -31,6 +28,15 @@ Removed
 
 Security
 --------
+
+`v0.5b2`_ (8, Oct., 2019)
+=========================
+
+Changed
+-------
+
+* Change install path from <target>/Qt/Qt<version>/<version> to <target>/<version> (#48).
+  - Also update CI test to specify --outputdir <target> that is $(BinariesDirectory)/Qt
 
 `v0.5b1`_ (8, Oct., 2019)
 =========================
