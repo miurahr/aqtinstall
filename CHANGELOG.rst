@@ -17,9 +17,6 @@ Added
 Changed
 -------
 
-* Introduce combination DB in json form. User and developer now easily add new
-  component for installation checking.
-
 Fixed
 -----
 
@@ -31,6 +28,21 @@ Removed
 
 Security
 --------
+
+`v0.5`_ (10, Nov., 2019)
+=========================
+
+Changed
+-------
+
+* Introduce combination DB in json form. User and developer now easily add new
+  component for installation checking.
+
+Fixed
+-----
+
+* requires py7zr >= 0.4.1 because v0.4 can fails to extract file.
+
 
 `v0.5b2`_ (8, Oct., 2019)
 =========================
@@ -234,7 +246,9 @@ Fixed
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
 
-.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.5b1...HEAD
+.. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.5...HEAD
+.. _v0.5: https://github.com/miurahr/qli-installer/compare/v0.5b2...v0.5
+.. _v0.5b2: https://github.com/miurahr/qli-installer/compare/v0.5b1...v0.5b2
 .. _v0.5b1: https://github.com/miurahr/qli-installer/compare/v0.4.3...v0.5b1
 .. _v0.4.3: https://github.com/miurahr/qli-installer/compare/v0.4.2...v0.4.3
 .. _v0.4.2: https://github.com/miurahr/qli-installer/compare/v0.4.1...v0.4.2
