@@ -17,6 +17,9 @@ Added
 Changed
 -------
 
+* Change install path from <target>/Qt/Qt<version>/<version> to <target>/<version> (#48).
+  - Also update CI test to specify --outputdir <target> that is $(BinariesDirectory)/Qt
+
 Fixed
 -----
 

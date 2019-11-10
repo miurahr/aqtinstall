@@ -90,10 +90,10 @@ class QtInstaller:
 
     def install(self, command=None, target_dir=None):
         qt_version, target, arch = self.qt_archives.get_target_config()
-        if target_dir is not None:
-            base_dir = os.path.join(target_dir, 'Qt')
+        if target_dir is None:
+            base_dir = os.getcwd()
         else:
-            base_dir = os.path.join(os.getcwd(), 'Qt')
+            base_dir = target_dir
         archives = self.qt_archives.get_archives()
         p = Pool(NUM_PROCESS)
         ret_arr = p.map(functools.partial(self.retrieve_archive, command=command, path=base_dir), archives)
