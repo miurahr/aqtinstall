@@ -21,6 +21,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import json
 import logging
 import logging.config
 import os
@@ -34,31 +35,21 @@ from aqt.installer import QtInstaller
 
 class Cli():
 
-    __slot__ = ['parser']
+    __slot__ = ['parser', 'combinations', 'logger']
 
-    COMBINATION = [
-        {'os_name': 'linux',   'target': 'desktop', 'arch': 'gcc_64'},  # noqa:E241
-        {'os_name': 'linux',   'target': 'android', 'arch': 'android_x86'},  # noqa:E241
-        {'os_name': 'linux',   'target': 'android', 'arch': 'android_armv7'},  # noqa:E241
-        {'os_name': 'mac',     'target': 'desktop', 'arch': 'clang_64'},  # noqa:E241
-        {'os_name': 'mac',     'target': 'ios',     'arch': 'ios'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2017_64'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2017'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_msvc2015_64'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_msvc2015'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw73'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw73'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win64_mingw53'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'desktop', 'arch': 'win32_mingw53'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x64'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_x86'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'winrt',   'arch': 'win64_msvc2017_winrt_armv7'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'android', 'arch': 'android_x86'},  # noqa:E241
-        {'os_name': 'windows', 'target': 'android', 'arch': 'android_armv7'},  # noqa:E241
-    ]
+    def __init__(self):
+        with open(os.path.join(os.path.dirname(__file__), 'combinations.json'), 'r') as j:
+            self.combinations = json.load(j)[0]
+        self._create_parser()
 
-    def check_arg_combination(self, qt_version, os_name, target, arch):
-        for c in self.COMBINATION:
+    def _check_tools_arg_combination(self, os_name, tool_name, arch):
+        for c in self.combinations['tools']:
+            if c['os_name'] == os_name and c['tool_name'] == tool_name and c['arch'] == arch:
+                return True
+        return False
+
+    def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
+        for c in self.combinations['qt']:
             if c['os_name'] == os_name and c['target'] == target and c['arch'] == arch:
                 return True
         return False
@@ -112,7 +103,7 @@ class Cli():
         sevenzip = self._set_sevenzip(args)
         mirror = self._check_mirror(args)
         qt_version = args.qt_version
-        if not self.check_arg_combination(qt_version, os_name, target, arch):
+        if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
             exit(1)
         QtInstaller(QtArchives(os_name, target, qt_version, arch, mirror=mirror, logging=self.logger),
@@ -128,6 +119,9 @@ class Cli():
         sevenzip = self._set_sevenzip(args)
         version = args.version
         mirror = self._check_mirror(args)
+        if not self._check_tools_arg_combination(os_name, tool_name, arch):
+            self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
+            exit(1)
         QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
 
@@ -138,7 +132,7 @@ class Cli():
         print("show help")
         self.parser.print_help()
 
-    def __init__(self):
+    def _create_parser(self):
         parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
                                          formatter_class=argparse.RawTextHelpFormatter, add_help=True)
         parser.add_argument('--logging-conf', type=argparse.FileType('r'),
@@ -187,7 +181,7 @@ class Cli():
         help_parser.set_defaults(func=self.show_help)
         self.parser = parser
 
-    def setup_logging(self, args, env_key='LOG_CFG'):
+    def _setup_logging(self, args, env_key='LOG_CFG'):
         envconf = os.getenv(env_key, None)
         conf = None
         if args.logging_conf:
@@ -204,7 +198,7 @@ class Cli():
         else:
             self.logger = logging.getLogger('aqt')
 
-    def run(self):
-        args = self.parser.parse_args()
-        self.setup_logging(args)
+    def run(self, arg=None):
+        args = self.parser.parse_args(arg)
+        self._setup_logging(args)
         args.func(args)
