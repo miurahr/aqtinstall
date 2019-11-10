@@ -17,6 +17,9 @@ Added
 Changed
 -------
 
+* Introduce combination DB in json form. User and developer now easily add new
+  component for installation checking.
+
 Fixed
 -----
 
