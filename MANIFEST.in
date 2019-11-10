@@ -5,6 +5,8 @@ include *.yml
 include AUTHORS
 include LICENSE
 include tox.ini
+recursive-include aqt *.ini
+recursive-include aqt *.json
 recursive-include aqt *.yml
 recursive-include ci *.py
 recursive-include ci *.yml
