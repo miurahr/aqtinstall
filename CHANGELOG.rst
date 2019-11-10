@@ -41,7 +41,7 @@ Changed
 Fixed
 -----
 
-* requires py7zr >= 0.4.1 because v0.4 can fails to extract file.
+* requires `py7zr`_ >= 0.4.1 because v0.4 can fails to extract file.
 
 
 `v0.5b2`_ (8, Oct., 2019)
@@ -90,8 +90,8 @@ Changed
 * CI: Improve azure-pipelines configurations by Nelson (#20)
 * Check parameter combination allowance and add winrt variant.
 * Support installation of mingw runtime package.
-* Add '--internal' option to use `py7zr` instead of
-  external `7zip` command for extracting package archives.(WIP)
+* Add '--internal' option to use `py7zr`_ instead of
+  external `7zip`_ command for extracting package archives.(WIP)
 
 
 `v0.4.1`_ (01, Jun, 2019)
@@ -129,7 +129,7 @@ Changed
 -------
 
 * Change project directory structure.
-* cli command name changed from `aqtinst` to `aqt` and now you can run `aqt install`
+* cli command name changed from 'aqtinst' to 'aqt' and now you can run 'aqt install'
 * Introduce Cli class
 * Massive regression test on azure pipelines(#20)
 * blacklist against http://mirrors.tuna.tsinghua.edu.cn and http://mirrors.geekpie.club/
@@ -174,7 +174,7 @@ Removed
 Added
 -----
 
-* Allow execute both `aqtinst`  and `python -m aqt` form.
+* Allow execute both 'aqtinst'  and 'python -m aqt' form.
 
 Changed
 -------
@@ -186,7 +186,7 @@ Fixed
 -----
 
 * Update README wordings.
-* Remove dependency for python3 with `aqtinst` command utility.
+* Remove dependency for python3 with 'aqtinst' command utility.
 * Fix command name in help message.
 
 
@@ -232,8 +232,8 @@ Changed
 
 * Refactoring code
 * Install QtSDK into (cwd)/Qt<version>/<version>/gcc_64/
-* Drop dependency for `requests` library
-* Use standard `argparser` for command line argument.
+* Drop dependency for `requests`_ library
+* Use standard `argparse`_ for command line argument.
 
 Fixed
 =====
@@ -245,6 +245,12 @@ Fixed
 ==========================
 
 * Fork from https://git.kaidan.im/lnj/qli-installer
+
+
+.. _py7zr: https://github.com/miurahr/py7zr
+.. _7zip: https://www.7-zip.org/
+.. _requests: https://pypi.org/project/requests
+.. _argparse: https://pypi.org/project/argparse/
 
 .. _Unreleased: https://github.com/miurahr/qli-installer/compare/v0.5...HEAD
 .. _v0.5: https://github.com/miurahr/qli-installer/compare/v0.5b2...v0.5
