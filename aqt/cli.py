@@ -35,7 +35,12 @@ from aqt.installer import QtInstaller
 
 class Cli():
 
-    __slot__ = ['parser']
+    __slot__ = ['parser', 'combinations', 'logger']
+
+    def __init__(self):
+        with open(os.path.join(os.path.dirname(__file__), 'combinations.json'), 'r') as j:
+            self.combinations = json.load(j)[0]
+        self.create_parser()
 
     def check_tools_arg_combination(self, os_name, tool_name, arch):
         for c in self.combinations['tools']:
@@ -127,10 +132,7 @@ class Cli():
         print("show help")
         self.parser.print_help()
 
-    def __init__(self):
-        with open(os.path.join(os.path.dirname(__file__), 'combinations.json'), 'r') as j:
-            self.combinations = json.load(j)[0]
-
+    def create_parser(self):
         parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
                                          formatter_class=argparse.RawTextHelpFormatter, add_help=True)
         parser.add_argument('--logging-conf', type=argparse.FileType('r'),

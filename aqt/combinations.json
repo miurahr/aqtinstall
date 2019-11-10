@@ -16,7 +16,7 @@
   {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2017_winrt_x86"},
   {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2017_winrt_armv7"},
   {"os_name": "windows", "target": "android", "arch": "android_x86"},
-  {"os_name": "windows", "target": "android", "arch": "android_armv7"},
+  {"os_name": "windows", "target": "android", "arch": "android_armv7"}
 ], "tools": [
   {"os_name": "linux",   "target": "desktop", "tool_name": "tools_ifw", "arch": "qt.tools.ifw.20"},
   {"os_name": "linux",   "target": "desktop", "tool_name": "tools_ifw", "arch": "qt.tools.ifw.30"},
