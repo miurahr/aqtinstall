@@ -53,10 +53,12 @@ class QtArchives:
     arch = None
     mirror = None
 
-    def __init__(self, os_name, target, version, arch, mirror=None, logging=None):
+    def __init__(self, os_name, target, version, arch, modules=None, mirror=None, logging=None):
         self.version = version
+        self.qt_ver_num = self.version.replace(".", "")
         self.target = target
         self.arch = arch
+        self.mod_list = []
         self.mirror = mirror
         if mirror is not None:
             self.has_mirror = True
@@ -68,15 +70,17 @@ class QtArchives:
             self.logger = logging
         else:
             self.logger = getLogger('aqt')
+        for m in modules:
+            fqmn = "qt.qt5.{}.{}.{}".format(self.qt_ver_num, m, arch)
+            self.mod_list.append(fqmn)
         self._get_archives(os_name)
 
     def _get_archives(self, os_name):
-        qt_ver_num = self.version.replace(".", "")
 
         if os_name == 'windows':
-            archive_url = self.base + os_name + '_x86/' + self.target + '/' + 'qt5_' + qt_ver_num + '/'
+            archive_url = self.base + os_name + '_x86/' + self.target + '/' + 'qt5_' + self.qt_ver_num + '/'
         else:
-            archive_url = self.base + os_name + '_x64/' + self.target + '/' + 'qt5_' + qt_ver_num + '/'
+            archive_url = self.base + os_name + '_x64/' + self.target + '/' + 'qt5_' + self.qt_ver_num + '/'
 
         # Get packages index
         update_xml_url = "{0}Updates.xml".format(archive_url)
@@ -95,12 +99,14 @@ class QtArchives:
                     continue
                 if packageupdate.find("DownloadableArchives").text is None:
                     continue
-                if name == "qt.qt5.{}.{}".format(qt_ver_num, self.arch) or name == "qt.{}.{}".format(qt_ver_num, self.arch):
-                    # basic packages
+                if name == "qt.qt5.{}.{}".format(self.qt_ver_num, self.arch):
+                    pass
+                elif name == "qt.{}.{}".format(self.qt_ver_num, self.arch):
+                    pass
+                elif name in self.mod_list:
                     pass
                 else:
-                    # optional packages: FIXME: check option whether install or not
-                    pass
+                    continue
                 downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
                 full_version = packageupdate.find("Version").text
                 package_desc = packageupdate.find("Description").text
