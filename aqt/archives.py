@@ -32,6 +32,7 @@ class QtPackage:
     archive = ""
     desc = ""
     mirror = None
+    has_mirror = False
 
     def __init__(self, name, archive_url, archive, package_desc, has_mirror=False):
         self.name = name
@@ -49,12 +50,15 @@ class QtArchives:
     base = None
     has_mirror = False
     version = None
+    qt_ver_num = None
     target = None
     arch = None
+    mod_list = []
     mirror = None
 
-    def __init__(self, os_name, target, version, arch, mirror=None, logging=None):
+    def __init__(self, os_name, target, version, arch, modules=None, mirror=None, logging=None):
         self.version = version
+        self.qt_ver_num = self.version.replace(".", "")
         self.target = target
         self.arch = arch
         self.mirror = mirror
@@ -69,6 +73,9 @@ class QtArchives:
             self.logger = logging
         else:
             self.logger = getLogger('aqt')
+        for m in modules if modules is not None else []:
+            fqmn = "qt.qt5.{}.{}.{}".format(self.qt_ver_num, m, arch)
+            self.mod_list.append(fqmn)
         self._get_archives()
 
     def _get_archives(self):
@@ -93,8 +100,7 @@ class QtArchives:
                 for m in ('qtcharts', 'qtdatavis3d', 'qtlottie', 'qtnetworkauth', 'qtpurchasing', 'qtquicktimeline',
                           'qtscript', 'qtvirtualkeyboard', 'qtwebglplugin'):
                     target_packages.append("qt.qt5.{}.{}.{}".format(qt_ver_num, m, self.arch))
-            # TODO: optional packages here
-
+            target_packages.extend(self.mod_list)
             self.update_xml = ElementTree.fromstring(r.text)
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
@@ -108,7 +114,6 @@ class QtArchives:
                         package_url = archive_url + name + "/" + full_version + archive
                         self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                        has_mirror=self.has_mirror))
-
         if len(self.archives) == 0:
             print("Error while parsing package information!")
             exit(1)
@@ -131,7 +136,7 @@ class ToolArchives(QtArchives):
     def __init__(self, os_name, tool_name, version, arch, mirror=None, logging=None):
         self.tool_name = tool_name
         self.os_name = os_name
-        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, mirror, logging)
+        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, mirror=mirror, logging=logging)
 
     def _get_archives(self):
         if self.os_name == 'windows':

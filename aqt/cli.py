@@ -103,13 +103,14 @@ class Cli():
         os_name = args.host
         output_dir = args.outputdir
         arch = self._set_arch(args, arch, os_name, target)
+        modules = args.modules
         sevenzip = self._set_sevenzip(args)
         mirror = self._check_mirror(args)
         qt_version = args.qt_version
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
             exit(1)
-        QtInstaller(QtArchives(os_name, target, qt_version, arch, mirror=mirror, logging=self.logger),
+        QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
         sys.stdout.write("\033[K")
         print("Finished installation")
@@ -158,6 +159,7 @@ class Cli():
                                     "\nwindows/winrt:        win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
                                     "\n                      win64_msvc2017_winrt_armv7"
                                     "\nandroid:              android_x86, android_armv7")
+        install_parser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")
         install_parser.add_argument('-O', '--outputdir', nargs='?',
                                     help='Target output directory(default current directory)')
         install_parser.add_argument('-b', '--base', nargs='?',

@@ -28,7 +28,7 @@ steps:
       scriptPath: $(Build.SourcesDirectory)/bin/aqt
       arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) --internal
       workingDirectory: $(Build.BinariesDirectory)
-    condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']))
+    condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), eq(variables['MODULE'], ''))
     displayName: Run Aqt (No Base URL Set)
   - task: PythonScript@0
     inputs:
@@ -36,8 +36,16 @@ steps:
       scriptPath: $(Build.SourcesDirectory)/bin/aqt
       arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
       workingDirectory: $(Build.BinariesDirectory)
-    condition: and(variables['QT_BASE_MIRROR'], not(variables['TOOL_NAME']))
+    condition: and(variables['QT_BASE_MIRROR'], not(variables['TOOL_NAME']), eq(variables['MODULE'], ''))
     displayName: Run Aqt (Base URL Set)
+  - task: PythonScript@0
+    inputs:
+      scriptSource: filePath
+      scriptPath: $(Build.SourcesDirectory)/bin/aqt
+      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE) --internal
+      workingDirectory: $(Build.BinariesDirectory)
+    condition: and(not(variables['TOOL_NAME']), ne(variables['MODULE'], ''))
+    displayName: Run Aqt (With modules)
 
   # Test installation environments
   ##----------------------------------------------------
@@ -85,18 +93,32 @@ steps:
         echo '##vso[task.setvariable variable=VSVER]2015'
       }
     condition: eq( variables['Agent.OS'], 'Windows_NT')
-  # build sample project
+
+  # no modules
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/helloworld
       nmake
-    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'))
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), eq(variables['MODULE'], ''))
     displayName: build test with qmake with MSVC
   - script: |
       sudo apt-get install libgl1-mesa-dev
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/helloworld
       make
-    condition: and(eq( variables['TARGET'], 'desktop' ), not(eq( variables['ARCH'], 'wasm_32' )), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    condition: and(eq( variables['TARGET'], 'desktop' ), not(eq( variables['ARCH'], 'wasm_32' )), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin'), eq(variables['MODULE'], '')))
+    displayName: Build test with qmake for Linux and macOS
+  # modules
+  - powershell: |
+      Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/redditclient
+      nmake
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''))
+    displayName: build test with qmake with MSVC
+  - script: |
+      sudo apt-get install libgl1-mesa-dev
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/redditclient
+      make
+    condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
     displayName: Build test with qmake for Linux and macOS
 
   ##----------------------------------------------------
