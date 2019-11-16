@@ -12,7 +12,7 @@ def readme():
 
 
 setup(name='aqtinstall',
-      version='0.5',
+      version='0.6a1',
       description='Another unofficial Qt installer',
       url='http://github.com/miurahr/aqtinstall',
       license='MIT',

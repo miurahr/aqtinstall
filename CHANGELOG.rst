@@ -14,6 +14,27 @@ Current changes
 Added
 -----
 
+Changed
+-------
+
+Fixed
+-----
+
+Deprecated
+----------
+
+Removed
+-------
+
+Security
+--------
+
+`v0.6a1`_ (17, Nov., 2019)
+=========================
+
+Added
+-----
+
 * More build test with sample project which uses an extra module.(#56)
 * Add support for installation of WebAssembly component by specifying
   'wasm_32' as an arch argument.(#53, #55)
@@ -27,15 +48,6 @@ Fixed
 -----
 
 * Dependency for py7zr only for python > 3.5. Now it works with python2.7.
-
-Deprecated
-----------
-
-Removed
--------
-
-Security
---------
 
 `v0.5`_ (10, Nov., 2019)
 =========================
@@ -260,7 +272,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.5...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.6a1...HEAD
+.. _v0.6b1: https://github.com/miurahr/aqtinstall/compare/v0.5...v0.6a1
 .. _v0.5: https://github.com/miurahr/aqtinstall/compare/v0.5b2...v0.5
 .. _v0.5b2: https://github.com/miurahr/aqtinstall/compare/v0.5b1...v0.5b2
 .. _v0.5b1: https://github.com/miurahr/aqtinstall/compare/v0.4.3...v0.5b1
