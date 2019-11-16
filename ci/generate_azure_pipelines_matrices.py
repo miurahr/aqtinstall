@@ -114,8 +114,7 @@ for platform_build_job in all_platform_build_jobs:
     matrix_dictionary = collections.OrderedDict()
 
     for build_job, python_version in product(platform_build_job.build_jobs, python_versions):
-        key = 'QT {} {} {} {}'.format(build_job.qt_version, build_job.host, build_job.target,
-                                      build_job.arch)
+        key = '{} {} for {} on {}'.format(build_job.qt_version, build_job.arch, build_job.target, build_job.host)
         if build_job.module:
             key = "{} ({})".format(key, build_job.module)
         matrix_dictionary[key] = collections.OrderedDict(

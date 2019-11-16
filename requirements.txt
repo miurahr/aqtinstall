@@ -6,5 +6,5 @@ pytest-cov
 flake8
 wheel
 twine
-py7zr>=0.4.1
+py7zr>=0.4.1 ; python_version > '3.5'
 pyyaml
