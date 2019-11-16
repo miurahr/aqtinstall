@@ -24,4 +24,7 @@ recursive-include tests *.cpp
 recursive-include tests *.pro
 recursive-include tests *.qml
 recursive-include tests *.qrc
-recursive-include tests *.svg
+recursive-include tests *.svg 
+recursive-include tests *.h
+recursive-include tests *.png
+recursive-include tests *.qdoc
