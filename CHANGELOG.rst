@@ -29,6 +29,14 @@ Removed
 Security
 --------
 
+`v0.5.1`_ (17, Nov., 2019)
+========================
+
+Fixed
+-----
+
+* Same as v0.5 without Travis-CI test configuration.
+
 `v0.5`_ (10, Nov., 2019)
 =========================
 
@@ -106,9 +114,7 @@ Changed
 -------
 
 * CI: add script to generate auzre-pipelines.yml (#27, #28, #29)
-* CI: use powershell script for linux, mac and windows. (#26)
-
-Fixed
+* CI: use powershell script for linux, mac and windows. (#26) Fixed
 -----
 
 * Avoid blacklisted mirror site that cause CI fails.(#25)
@@ -252,8 +258,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.5...HEAD
-.. _v0.5: https://github.com/miurahr/aqtinstall/compare/v0.5b2...v0.5
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.5.1...HEAD
+.. _v0.5.1: https://github.com/miurahr/aqtinstall/compare/v0.5b2...v0.5.1
 .. _v0.5b2: https://github.com/miurahr/aqtinstall/compare/v0.5b1...v0.5b2
 .. _v0.5b1: https://github.com/miurahr/aqtinstall/compare/v0.4.3...v0.5b1
 .. _v0.4.3: https://github.com/miurahr/aqtinstall/compare/v0.4.2...v0.4.3
