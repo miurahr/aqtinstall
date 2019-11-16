@@ -22,14 +22,17 @@
 
 import functools
 import os
+import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from multiprocessing.dummy import Pool
 from operator import and_
 from subprocess import run
 
-import py7zr
 import requests
+
+if sys.version_info > (3, 5):
+    import py7zr
 
 NUM_PROCESS = 3
 blacklist = ['http://mirrors.ustc.edu.cn',
@@ -76,8 +79,10 @@ class QtInstaller:
                 for chunk in r.iter_content(chunk_size=8196):
                     fd.write(chunk)
             print("-Extracting {}...".format(archive))
-            if not py7zr.is_7zfile(archive):
-                raise BadPackageFile
+
+            if sys.version_info > (3, 5):
+                if not py7zr.is_7zfile(archive):
+                    raise BadPackageFile
             if command is None:
                 py7zr.SevenZipFile(archive).extractall(path=path)
             else:

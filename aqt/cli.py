@@ -55,8 +55,11 @@ class Cli():
         return False
 
     def _set_sevenzip(self, args):
-        use_py7zr = args.internal
         sevenzip = None
+        if sys.version_info > (3, 5):
+            use_py7zr = args.internal
+        else:
+            use_py7zr = False
         if not use_py7zr:
             sevenzip = args.external
             if sevenzip is None:
@@ -160,7 +163,8 @@ class Cli():
                                     help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                          "where 'online' folder exist.")
         install_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
-        install_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
+        if sys.version_info >= (3, 5):
+            install_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
         tools_parser = subparsers.add_parser('tool')
         tools_parser.set_defaults(func=self.run_tool)
         tools_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
