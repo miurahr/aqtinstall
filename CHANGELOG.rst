@@ -15,6 +15,8 @@ Added
 -----
 
 * More build test with sample project which uses an extra module.(#56)
+* Add support for installation of WebAssembly component by specifying
+  'wasm_32' as an arch argument.(#53, #55)
 
 Changed
 -------
