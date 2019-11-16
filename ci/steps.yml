@@ -1,4 +1,5 @@
 steps:
+  # Install aqtinstall
   - task: UsePythonVersion@0
     inputs:
       versionSpec: $(PYTHON_VERSION)
@@ -14,12 +15,13 @@ steps:
       arguments: sdist bdist_wheel
       workingDirectory: $(Build.SourcesDirectory)
     displayName: build package
-  #
-  # Install aqtinstall
   - powershell: |
       $aqtVersion = & python $(Build.SourcesDirectory)/setup.py --version | Out-String -Stream
       pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
     displayName: install package
+
+  # Run Aqt
+  ##----------------------------------------------------
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
@@ -36,8 +38,9 @@ steps:
       workingDirectory: $(Build.BinariesDirectory)
     condition: and(variables['QT_BASE_MIRROR'], not(variables['TOOL_NAME']))
     displayName: Run Aqt (Base URL Set)
-  #
-  # Test installation results
+
+  # Test installation environments
+  ##----------------------------------------------------
   # for Android on linux
   - script: |
       wget https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip
@@ -55,7 +58,10 @@ steps:
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/accelbubble/ && make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: Build accelbubble example application to test for android
-  # for desktop application
+
+  ##----------------------------------------------------
+  # Test build on Windows/Linux and Mac
+  # determine Windows build system
   - powershell: |
       Install-PackageProvider NuGet -Force
       Import-PackageProvider NuGet -Force
@@ -79,28 +85,28 @@ steps:
         echo '##vso[task.setvariable variable=VSVER]2015'
       }
     condition: eq( variables['Agent.OS'], 'Windows_NT')
+  # build sample project
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/helloworld
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'))
     displayName: build test with qmake with MSVC
   - script: |
       sudo apt-get install libgl1-mesa-dev
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/helloworld
       make
-    condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    condition: and(eq( variables['TARGET'], 'desktop' ), not(eq( variables['ARCH'], 'wasm_32' )), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: Build test with qmake for Linux and macOS
+
+  ##----------------------------------------------------
   # for ios
   - script: echo Currently not implemented.
     condition: and(eq(variables['TARGET'], 'ios'), eq(variables['Agent.OS'], 'Darwin'))
     displayName: Build test with qmake for ios
-  #
-  # Install aqtinstall
-  - powershell: |
-      $aqtVersion = & python $(Build.SourcesDirectory)/setup.py --version | Out-String -Stream
-      pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
-    displayName: install package
+
+  ##----------------------------------------------------
+  # Tools Support
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
@@ -109,10 +115,26 @@ steps:
       workingDirectory: $(Build.BinariesDirectory)
     condition: variables['TOOL_NAME']
     displayName: Run Aqt (Tool)
-  #
   # Test installation results
-  # for OpenSSL on linux
   - script: |
       $(Build.BinariesDirectory)/Qt/Tools/$(TEST_EXECUTABLE) $(TEST_COMMAND)
     condition: variables['TOOL_NAME']
     displayName: Tool test
+  ##----------------------------------------------------
+
+  ##----------------------------------------------------
+  # wasm_32 on linux and mac
+  - script: |
+      git clone https://github.com/emscripten-core/emsdk.git
+      cd emsdk
+      ./emsdk install sdk-1.38.27-64bit
+      ./emsdk activate --embedded sdk-1.38.27-64bit
+    workingDirectory: $(Build.BinariesDirectory)
+    condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    displayName: 'Install Emscripten SDK'
+  - script: |
+      source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/openglwindow && make
+    workingDirectory: $(Build.BinariesDirectory)
+    condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    displayName: 'Build WebAssembler sample project'

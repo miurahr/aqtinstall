@@ -148,12 +148,13 @@ class Cli():
         install_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
         install_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
         install_parser.add_argument('target', choices=['desktop', 'winrt', 'android', 'ios'], help="target sdk")
-        install_parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64"
-                                    "\ntarget mac/desktop:   clang_64"
+        install_parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64, wasm_32"
+                                    "\ntarget mac/desktop:   clang_64, wasm_32"
                                     "\ntarget mac/ios:       ios"
                                     "\nwindows/desktop:      win64_msvc2017_64, win64_msvc2015_64"
                                     "\n                      win32_msvc2015, win32_mingw53"
                                     "\n                      win64_mingw73, win32_mingw73"
+                                    "\n                      wasm_32"
                                     "\nwindows/winrt:        win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
                                     "\n                      win64_msvc2017_winrt_armv7"
                                     "\nandroid:              android_x86, android_armv7")

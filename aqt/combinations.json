@@ -1,8 +1,10 @@
 [{"qt": [
   {"os_name": "linux",   "target": "desktop", "arch": "gcc_64"},
+  {"os_name": "linux",   "target": "desktop", "arch": "wasm_32"},
   {"os_name": "linux",   "target": "android", "arch": "android_x86"},
   {"os_name": "linux",   "target": "android", "arch": "android_armv7"},
   {"os_name": "mac",     "target": "desktop", "arch": "clang_64"},
+  {"os_name": "mac",     "target": "desktop", "arch": "wasm_32"},
   {"os_name": "mac",     "target": "ios",     "arch": "ios"},
   {"os_name": "windows", "target": "desktop", "arch": "win64_msvc2017_64"},
   {"os_name": "windows", "target": "desktop", "arch": "win32_msvc2017"},
@@ -15,6 +17,7 @@
   {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2017_winrt_x64"},
   {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2017_winrt_x86"},
   {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2017_winrt_armv7"},
+  {"os_name": "windows", "target": "desktop", "arch": "wasm_32"},
   {"os_name": "windows", "target": "android", "arch": "android_x86"},
   {"os_name": "windows", "target": "android", "arch": "android_armv7"}
 ], "tools": [
