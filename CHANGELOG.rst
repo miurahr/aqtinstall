@@ -14,11 +14,17 @@ Current changes
 Added
 -----
 
+* More build test with sample project which uses an extra module.(#56)
+
 Changed
 -------
 
+* Optional modules are installed explicitly. Users need to specify extra modules with -m option.(#52, #56)
+
 Fixed
 -----
+
+* Dependency for py7zr only for python > 3.5. Now it works with python2.7.
 
 Deprecated
 ----------
