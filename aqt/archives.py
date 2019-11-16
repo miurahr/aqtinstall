@@ -62,6 +62,7 @@ class QtArchives:
         self.target = target
         self.arch = arch
         self.mirror = mirror
+        self.os_name = os_name
         if mirror is not None:
             self.has_mirror = True
             self.base = mirror + '/online/qtsdkrepository/'
@@ -75,15 +76,16 @@ class QtArchives:
         for m in modules if modules is not None else []:
             fqmn = "qt.qt5.{}.{}.{}".format(self.qt_ver_num, m, arch)
             self.mod_list.append(fqmn)
-        self._get_archives(os_name)
+        self._get_archives()
 
-    def _get_archives(self, os_name):
-        if os_name == 'windows':
-            archive_url = self.base + os_name + '_x86/' + self.target + '/' + 'qt5_' + self.qt_ver_num + '/'
-        else:
-            archive_url = self.base + os_name + '_x64/' + self.target + '/' + 'qt5_' + self.qt_ver_num + '/'
+    def _get_archives(self):
+        qt_ver_num = self.version.replace(".", "")
 
         # Get packages index
+        archive_url = "{0}{1}{2}{3}/qt5_{4}{5}".format(self.base, self.os_name,
+                                                       '_x86/' if self.os_name == 'windows' else '_x64/',
+                                                       self.target, qt_ver_num,
+                                                       '_wasm/' if self.arch == 'wasm_32' else '/')
         update_xml_url = "{0}Updates.xml".format(archive_url)
         try:
             r = requests.get(update_xml_url)
@@ -91,31 +93,27 @@ class QtArchives:
             self.logger.error('Download error: %s\n' % e.args, exc_info=True)
             raise e
         else:
+            target_packages = []
+            target_packages.append("qt.qt5.{}.{}".format(qt_ver_num, self.arch))
+            target_packages.append("qt.{}.{}".format(qt_ver_num, self.arch))
+            if self.arch == 'wasm_32':
+                for m in ('qtcharts', 'qtdatavis3d', 'qtlottie', 'qtnetworkauth', 'qtpurchasing', 'qtquicktimeline',
+                          'qtscript', 'qtvirtualkeyboard', 'qtwebglplugin'):
+                    target_packages.append("qt.qt5.{}.{}.{}".format(qt_ver_num, m, self.arch))
+            target_packages.extend(self.mod_list)
             self.update_xml = ElementTree.fromstring(r.text)
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
-                if name.split(".")[-1] != self.arch:
-                    continue
-                if name.split(".")[-2] == "debug_info":
-                    continue
                 if packageupdate.find("DownloadableArchives").text is None:
                     continue
-                if name == "qt.qt5.{}.{}".format(self.qt_ver_num, self.arch):
-                    pass
-                elif name == "qt.{}.{}".format(self.qt_ver_num, self.arch):
-                    pass
-                elif name in self.mod_list:
-                    pass
-                else:
-                    continue
-                downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
-                full_version = packageupdate.find("Version").text
-                package_desc = packageupdate.find("Description").text
-                for archive in downloadable_archives:
-                    package_url = archive_url + name + "/" + full_version + archive
-                    self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                   has_mirror=self.has_mirror))
-
+                if name in target_packages:
+                    downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+                    full_version = packageupdate.find("Version").text
+                    package_desc = packageupdate.find("Description").text
+                    for archive in downloadable_archives:
+                        package_url = archive_url + name + "/" + full_version + archive
+                        self.archives.append(QtPackage(name, package_url, archive, package_desc,
+                                                       has_mirror=self.has_mirror))
         if len(self.archives) == 0:
             print("Error while parsing package information!")
             exit(1)
@@ -137,13 +135,14 @@ class ToolArchives(QtArchives):
 
     def __init__(self, os_name, tool_name, version, arch, mirror=None, logging=None):
         self.tool_name = tool_name
+        self.os_name = os_name
         super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, mirror=mirror, logging=logging)
 
-    def _get_archives(self, os_name):
-        if os_name == 'windows':
-            archive_url = self.base + os_name + '_x86/' + self.target + '/'
+    def _get_archives(self):
+        if self.os_name == 'windows':
+            archive_url = self.base + self.os_name + '_x86/' + self.target + '/'
         else:
-            archive_url = self.base + os_name + '_x64/' + self.target + '/'
+            archive_url = self.base + self.os_name + '_x64/' + self.target + '/'
         update_xml_url = "{0}{1}/Updates.xml".format(archive_url, self.tool_name)
         try:
             r = requests.get(update_xml_url)

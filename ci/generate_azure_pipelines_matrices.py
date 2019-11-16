@@ -27,8 +27,8 @@ python_versions = [
 ]
 
 qt_versions = [
-    '5.12.5',
-    '5.13.1',
+    '5.12.6',
+    '5.13.2',
     '5.14.0'
 ]
 
@@ -43,14 +43,17 @@ all_platform_build_jobs = [
 ]
 
 # Linux Desktop
-
 for qt_version in qt_versions:
     linux_build_jobs.append(
         BuildJob(qt_version, 'linux', 'desktop', 'gcc_64', 'gcc_64')
     )
 
-# Mac Desktop
+# WASM
+linux_build_jobs.append(
+    BuildJob('5.13.2', 'linux', 'desktop', 'wasm_32', "wasm_32")
+)
 
+# Mac Desktop
 for qt_version in qt_versions:
     mac_build_jobs.append(
         BuildJob(qt_version, 'mac', 'desktop', 'clang_64', "clang_64")
@@ -58,7 +61,12 @@ for qt_version in qt_versions:
 
 # Mac iOS
 mac_build_jobs.append(
-    BuildJob('5.13.0', 'mac', 'ios', 'ios', 'ios')
+    BuildJob('5.13.2', 'mac', 'ios', 'ios', 'ios')
+)
+
+# WASM
+mac_build_jobs.append(
+    BuildJob('5.13.2', 'mac', 'desktop', 'wasm_32', "wasm_32")
 )
 
 # Windows Desktop
@@ -67,6 +75,11 @@ windows_build_jobs.extend(
         BuildJob('5.12.5', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
         BuildJob('5.12.5', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
     ]
+)
+
+# WASM
+windows_build_jobs.append(
+    BuildJob('5.13.2', 'windows', 'desktop', 'wasm_32', "wasm_32")
 )
 
 windows_build_jobs.extend(
