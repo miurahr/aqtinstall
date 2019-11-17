@@ -126,14 +126,16 @@ class QtInstaller:
             with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
                 f.write("[Paths]\n")
                 f.write("Prefix=..\n")
-            # prepare qtconfig.pri
+            # update qtconfig.pri only as OpenSource
             with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
                 lines = f.readlines()
                 f.seek(0)
                 f.truncate()
                 for line in lines:
-                    if 'QT_EDITION' in line:
-                        line = 'QT_EDITION = OpenSource'
+                    if line.startswith('QT_EDITION ='):
+                        line = 'QT_EDITION = OpenSource\n'
+                    if line.startswith('QT_LICHECK ='):
+                        line = 'QT_LICHECK =\n'
                     f.write(line)
         except IOError as e:
             self.logger.error("Configuration file generation error: %s\n", e.args, exc_info=True)
