@@ -142,7 +142,7 @@ Use cases
 
 * https://github.com/kashimotoxiang/ankimousereview
 
-
+* GitHub Actions with AqtInstall: https://github.com/jurplel/install-qt-action
 
 License and copyright
 ---------------------
