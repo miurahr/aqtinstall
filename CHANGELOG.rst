@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.5.2`_ (17, Nov., 2019)
+========================
+
+Fixed
+-----
+
+* Add missing pyyaml dependency in setup.py.
+
+
 `v0.5.1`_ (17, Nov., 2019)
 ========================
 
@@ -258,7 +267,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.5.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.5.2...HEAD
+.. _v0.5.2: https://github.com/miurahr/aqtinstall/compare/v0.5.1...v0.5.2
 .. _v0.5.1: https://github.com/miurahr/aqtinstall/compare/v0.5b2...v0.5.1
 .. _v0.5b2: https://github.com/miurahr/aqtinstall/compare/v0.5b1...v0.5b2
 .. _v0.5b1: https://github.com/miurahr/aqtinstall/compare/v0.4.3...v0.5b1
