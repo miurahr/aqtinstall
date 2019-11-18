@@ -14,6 +14,8 @@ Current changes
 Added
 -----
 
+* Test: Unit test against command line.
+
 Changed
 -------
 
@@ -30,7 +32,7 @@ Security
 --------
 
 `v0.6a1`_ (17, Nov., 2019)
-=========================
+==========================
 
 Added
 -----
@@ -50,7 +52,7 @@ Fixed
 * Dependency for py7zr only for python > 3.5. Now it works with python2.7.
 
 `v0.5`_ (10, Nov., 2019)
-=========================
+========================
 
 Changed
 -------
@@ -163,7 +165,7 @@ Fixed
 
 
 `v0.3.1`_ (15, March, 2019)
-==========================
+===========================
 
 Added
 -----
@@ -240,7 +242,7 @@ Changed
 * Support  multiprocess concurrent download and installation.
 
 `v0.0.2`_ (4, March, 2019)
-========================
+==========================
 
 Added
 =====
