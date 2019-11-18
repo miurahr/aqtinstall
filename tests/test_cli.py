@@ -24,4 +24,3 @@ def test_cli_help(capsys):
     cli.run(["help"])
     out, err = capsys.readouterr()
     assert out == expected
-
