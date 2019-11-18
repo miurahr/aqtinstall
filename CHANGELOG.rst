@@ -14,6 +14,27 @@ Current changes
 Added
 -----
 
+Changed
+-------
+
+Fixed
+-----
+
+Deprecated
+----------
+
+Removed
+-------
+
+Security
+--------
+
+`v0.6a2`_ (19, Nov., 2019)
+==========================
+
+Added
+-----
+
 * Test: Unit test against command line.
 * Android target variants.
 
@@ -27,17 +48,11 @@ Fixed
 
 * qconfig.pri: fix QT_LICHECK line.
 
-Deprecated
-----------
-
 Removed
 -------
 
 * Logging configuration file logging.yml
 * Drop dependency for pyyaml.
-
-Security
---------
 
 `v0.6a1`_ (17, Nov., 2019)
 ==========================
