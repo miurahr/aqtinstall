@@ -29,6 +29,7 @@ import platform
 import sys
 
 import yaml
+
 from aqt.archives import QtArchives, ToolArchives
 from aqt.installer import QtInstaller
 
@@ -142,6 +143,7 @@ class Cli():
         parser.add_argument('--logging-conf', type=argparse.FileType('r'),
                             nargs=1, help="Specify logging configuration YAML file.")
         parser.add_argument('--logger', nargs=1, help="Specify logger name")
+        parser.add_argument('--dry-run', action='store_true', help='Dry run operations.')
         subparsers = parser.add_subparsers(title='subcommands', description='Valid subcommands',
                                            help='subcommand for aqt Qt installer')
         install_parser = subparsers.add_parser('install')
@@ -208,4 +210,5 @@ class Cli():
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
         self._setup_logging(args)
+        self.dry_run = args.dry_run
         args.func(args)

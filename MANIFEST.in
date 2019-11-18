@@ -29,3 +29,4 @@ recursive-include tests *.h
 recursive-include tests *.pri
 recursive-include tests *.png
 recursive-include tests *.qdoc
+recursive-include tests *.py
