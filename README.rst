@@ -62,8 +62,12 @@ General usage looks like this:
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
 * Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)
-* For android and windows you also need to specify an arch: `win64_msvc2017_64`,
-  `win64_msvc2015_64`, `win32_msvc2015`, `win32_mingw53`, `win64_mingw73`, `android_x86`, `android_armv7`
+* For some platforms you also need to specify an arch:
+    * For windows, choose one of: `win64_msvc2017_64`, `win32_msvc2017`, `win64_msvc2015_64`, `win32_msvc2015`, 
+      `win64_mingw73`, `win32_mingw73`, `win64_mingw53`, `win32_mingw53`, `win64_msvc2017_winrt_x64`, 
+      `win64_msvc2017_winrt_x86`, `win64_msvc2017_winrt_armv7`
+    * For android and Qt 5.13 or below, choose one of: `android_x86_64`, `android_arm64_v8a`, `android_x86`, 
+      `android_armv7`
 * You can also use internal 7zip extractor instead of external 7zip command.
 * You can specify external 7zip command path.
 

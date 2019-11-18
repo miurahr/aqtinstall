@@ -29,6 +29,7 @@ import platform
 import sys
 
 import yaml
+from packaging.version import Version, parse
 
 from aqt.archives import QtArchives, ToolArchives
 from aqt.installer import QtInstaller
@@ -75,7 +76,7 @@ class Cli():
                 exit(1)
         return sevenzip
 
-    def _set_arch(self, args, oarch, os_name, target):
+    def _set_arch(self, args, oarch, os_name, target, qt_version):
         arch = oarch
         if arch is None:
             if os_name == "linux" and target == "desktop":
@@ -84,6 +85,8 @@ class Cli():
                 arch = "clang_64"
             elif os_name == "mac" and target == "ios":
                 arch = "ios"
+            elif target == "android" and parse(qt_version) >= Version('5.14.0'):
+                arch = "android"
         if arch == "":
             print("Please supply a target architecture.")
             args.print_help()
@@ -102,12 +105,12 @@ class Cli():
         arch = args.arch
         target = args.target
         os_name = args.host
+        qt_version = args.qt_version
         output_dir = args.outputdir
-        arch = self._set_arch(args, arch, os_name, target)
+        arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
         mirror = self._check_mirror(args)
-        qt_version = args.qt_version
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
             exit(1)
@@ -160,7 +163,9 @@ class Cli():
                                     "\n                      wasm_32"
                                     "\nwindows/winrt:        win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
                                     "\n                      win64_msvc2017_winrt_armv7"
-                                    "\nandroid:              android_x86, android_armv7")
+                                    "\nandroid:              Qt 5.14:          android (optional)"
+                                    "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
+                                    "\n                                        android_x86, android_armv7")
         install_parser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")
         install_parser.add_argument('-O', '--outputdir', nargs='?',
                                     help='Target output directory(default current directory)')

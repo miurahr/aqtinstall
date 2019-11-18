@@ -51,18 +51,18 @@ steps:
   ##----------------------------------------------------
   # for Android on linux
   - script: |
-      wget https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip
-      unzip android-ndk-r19c-linux-x86_64.zip
+      wget https://dl.google.com/android/repository/android-ndk-r20b-linux-x86_64.zip
+      unzip android-ndk-r20b-linux-x86_64.zip
     condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Linux'))
     displayName: Download and extract Android NDK
   # for Android on mac
   - script: |
-      wget https://dl.google.com/android/repository/android-ndk-r19c-darwin-x86_64.zip
-      unzip android-ndk-r19c-darwin-x86_64.zip
+      wget https://dl.google.com/android/repository/android-ndk-r20b-darwin-x86_64.zip
+      unzip android-ndk-r20b-darwin-x86_64.zip
     condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Darwin'))
     displayName: Download and extract Android NDK
   - script: |
-      export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r19c
+      export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r20b
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/tests/accelbubble/ && make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: Build accelbubble example application to test for android
