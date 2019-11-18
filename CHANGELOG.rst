@@ -15,18 +15,26 @@ Added
 -----
 
 * Test: Unit test against command line.
+* Android target variants.
 
 Changed
 -------
 
+* Use logging configuration with logging.ini
+
 Fixed
 -----
+
+* qconfig.pri: fix QT_LICHECK line.
 
 Deprecated
 ----------
 
 Removed
 -------
+
+* Logging configuration file logging.yml
+* Drop dependency for pyyaml.
 
 Security
 --------
