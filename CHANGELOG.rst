@@ -297,8 +297,9 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.6a1...HEAD
-.. _v0.6b1: https://github.com/miurahr/aqtinstall/compare/v0.5...v0.6a1
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.6a2...HEAD
+.. _v0.6a2: https://github.com/miurahr/aqtinstall/compare/v0.6a1...v0.6a2
+.. _v0.6a1: https://github.com/miurahr/aqtinstall/compare/v0.5...v0.6a1
 .. _v0.5: https://github.com/miurahr/aqtinstall/compare/v0.5b2...v0.5
 .. _v0.5b2: https://github.com/miurahr/aqtinstall/compare/v0.5b1...v0.5b2
 .. _v0.5b1: https://github.com/miurahr/aqtinstall/compare/v0.4.3...v0.5b1
