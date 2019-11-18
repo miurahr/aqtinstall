@@ -72,8 +72,8 @@ mac_build_jobs.append(
 # Windows Desktop
 windows_build_jobs.extend(
     [
-        BuildJob('5.12.5', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.12.5', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
+        BuildJob('5.12.6', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
+        BuildJob('5.12.6', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
     ]
 )
 
@@ -84,11 +84,11 @@ windows_build_jobs.append(
 
 windows_build_jobs.extend(
     [
-        BuildJob('5.13.1', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.13.1', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
-        BuildJob('5.13.1', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
-        BuildJob('5.13.1', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
-        BuildJob('5.13.1', 'windows', 'desktop', 'win32_mingw73', 'mingw73_32'),
+        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
+        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
+        BuildJob('5.13.2', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
+        BuildJob('5.13.2', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
+        BuildJob('5.13.2', 'windows', 'desktop', 'win32_mingw73', 'mingw73_32'),
     ]
 )
 
@@ -104,20 +104,23 @@ windows_build_jobs.extend(
 # Users might develop on Win/Mac, but are most likely to use Linux for CI/CD with
 # the Android ecosystem.
 
-for android_arch in ['android_x86', 'android_armv7']:
+for android_arch in ['android_x86_64', 'android_arm64_v8a', 'android_x86', 'android_armv7']:
     linux_build_jobs.append(
-        BuildJob('5.13.1', 'linux', 'android', android_arch, android_arch)
+        BuildJob('5.13.2', 'linux', 'android', android_arch, android_arch)
     )
+linux_build_jobs.append(
+    BuildJob('5.14.0', 'linux', 'android', 'android', 'android')
+)
 
 # Extra modules test
 linux_build_jobs.append(
-    BuildJob('5.13.1', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='qtnetworkauth')
+    BuildJob('5.13.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='qtnetworkauth')
 )
 mac_build_jobs.append(
-    BuildJob('5.13.1', 'mac', 'desktop', 'clang_64', 'clang_64', module='qtnetworkauth')
+    BuildJob('5.13.2', 'mac', 'desktop', 'clang_64', 'clang_64', module='qtnetworkauth')
 )
 windows_build_jobs.append(
-    BuildJob('5.13.1', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64', module='qtnetworkauth')
+    BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64', module='qtnetworkauth')
 )
 
 
