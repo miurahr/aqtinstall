@@ -28,7 +28,6 @@ import os
 import platform
 import sys
 
-import yaml
 from packaging.version import Version, parse
 
 from aqt.archives import QtArchives, ToolArchives
@@ -144,7 +143,7 @@ class Cli():
         parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
                                          formatter_class=argparse.RawTextHelpFormatter, add_help=True)
         parser.add_argument('--logging-conf', type=argparse.FileType('r'),
-                            nargs=1, help="Specify logging configuration YAML file.")
+                            nargs=1, help="Logging configuration ini file.")
         parser.add_argument('--logger', nargs=1, help="Specify logger name")
         parser.add_argument('--dry-run', action='store_true', help='Dry run operations.')
         subparsers = parser.add_subparsers(title='subcommands', description='Valid subcommands',
@@ -203,10 +202,8 @@ class Cli():
         elif envconf is not None:
             conf = envconf
         if conf is None or not os.path.exists(conf):
-            conf = os.path.join(os.path.dirname(__file__), 'logging.yml')
-        with open(conf, 'r') as f:
-            log_config = yaml.safe_load(f.read())
-            logging.config.dictConfig(log_config)
+            conf = os.path.join(os.path.dirname(__file__), 'logging.ini')
+        logging.config.fileConfig(conf)
         if args.logger is not None:
             self.logger = logging.getLogger(args.logger)
         else:

@@ -11,7 +11,7 @@ def test_cli_help(capsys):
                         "optional arguments:\n",
                         "  -h, --help            show this help message and exit\n",
                         "  --logging-conf LOGGING_CONF\n",
-                        "                        Specify logging configuration YAML file.\n",
+                        "                        Logging configuration ini file.\n",
                         "  --logger LOGGER       Specify logger name\n",
                         "  --dry-run             Dry run operations.\n",
                         "\n",
