@@ -1,3 +1,5 @@
+import pytest
+
 import aqt
 
 
@@ -25,3 +27,23 @@ def test_cli_help(capsys):
     out, err = capsys.readouterr()
     assert out == expected
 
+
+def test_cli_license_agreement(capsys, monkeypatch):
+
+    def mockinput(prompt):
+        print(prompt, end='')
+        return "yes\n"
+
+    monkeypatch.setattr('builtins.input', mockinput)
+
+    expected = ['Please agree with Qt license: GPLv3 and LGPL\n',
+                'The terms is in https://www.qt.io/download-open-source\n',
+                'Do you agree upon the terms? (yes/no): ']
+    expected_str = ''.join(expected)
+    cli = aqt.cli.Cli()
+    with pytest.raises(SystemExit) as e:
+        cli.run(["--dry-run", "install", "5.14.0", "linux", "desktop"])
+    assert e.type == SystemExit
+    assert e.value.code == 0
+    out, err = capsys.readouterr()
+    assert out == expected_str

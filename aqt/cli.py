@@ -98,6 +98,14 @@ class Cli():
                 exit(1)
         return mirror
 
+    def confirm_terms(self):
+        print('Please agree with Qt license: GPLv3 and LGPL')
+        print('The terms is in https://www.qt.io/download-open-source')
+        ask = input('Do you agree upon the terms? (yes/no): ')
+        if not ask.capitalize().startswith('YES'):
+            exit(0)
+        return
+
     def run_install(self, args):
         arch = args.arch
         target = args.target
@@ -111,6 +119,10 @@ class Cli():
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
             exit(1)
+        if not args.agree_gpl:
+            self.confirm_terms()
+        if self.dry_run:
+            return
         QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
         sys.stdout.write("\033[K")
@@ -127,6 +139,10 @@ class Cli():
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
             exit(1)
+        if not args.agree_gpl:
+            self.confirm_terms()
+        if self.dry_run:
+            return
         QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
 
@@ -170,6 +186,7 @@ class Cli():
         install_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
         if sys.version_info >= (3, 5):
             install_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
+        install_parser.add_argument('--agree-gpl', nargs="?", help='Explicit agreement of GPL license terms.')
         tools_parser = subparsers.add_parser('tool')
         tools_parser.set_defaults(func=self.run_tool)
         tools_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
@@ -183,6 +200,7 @@ class Cli():
                                        "where 'online' folder exist.")
         tools_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
         tools_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
+        tools_parser.add_argument('--agree-gpl', nargs="?", help='Explicit agreement of GPL license terms.')
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
