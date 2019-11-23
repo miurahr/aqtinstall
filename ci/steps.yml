@@ -174,8 +174,9 @@ steps:
   - script: |
       source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
       mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory/tests; 7zr x $(Build.SourcesDirectory)/ci/openglwindow.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/openglwindow && make
+      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/openglwindow.7z)
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/openglwindow
+      make
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: 'Build WebAssembler sample project'
