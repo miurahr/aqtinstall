@@ -29,6 +29,17 @@ Removed
 Security
 --------
 
+`v0.6a3`_ (23, Nov., 2019)
+==========================
+
+Changed
+-------
+
+* Just warn when argument combination check is failed.
+* CI: Compress sample project for build test with 7zip.
+* CI: Place sample script in ci directory.
+
+
 `v0.6a2`_ (19, Nov., 2019)
 ==========================
 
@@ -297,7 +308,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.6a2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.6a3...HEAD
+.. _v0.6a3: https://github.com/miurahr/aqtinstall/compare/v0.6a1...v0.6a3
 .. _v0.6a2: https://github.com/miurahr/aqtinstall/compare/v0.6a1...v0.6a2
 .. _v0.6a1: https://github.com/miurahr/aqtinstall/compare/v0.5...v0.6a1
 .. _v0.5: https://github.com/miurahr/aqtinstall/compare/v0.5b2...v0.5
