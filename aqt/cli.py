@@ -111,8 +111,7 @@ class Cli():
         sevenzip = self._set_sevenzip(args)
         mirror = self._check_mirror(args)
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
-            self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
-            exit(1)
+            self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
         QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
         sys.stdout.write("\033[K")
@@ -127,10 +126,11 @@ class Cli():
         version = args.version
         mirror = self._check_mirror(args)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
-            self.logger.error("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
-            exit(1)
+            self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
+    sys.stdout.write("\033[K")
+    print("Finished installation")
 
     def run_list(self, args):
         print('List Qt packages for %s' % args.qt_version)
