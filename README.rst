@@ -35,6 +35,20 @@ Linux binaries on Linux; you could also download iOS binaries).
 It's working with Python > 3.5 on Linux, OS X and Windows.
 It is required to install 7zip utility in your platform.
 
+License and copyright
+---------------------
+
+This program is distributed under MIT license.
+
+Qt SDK and its related files are under its licenses. When using aqtinstall, you are considered
+to agree upon Qt licenses. **aqtinstall installs Qt SDK as of a (L)GPL Free Software.**
+
+For details see `Qt licensing`_ and `Licenses used in Qt5`_
+
+.. _`Qt licensing`: https://www.qt.io/licensing/
+
+.. _`Licenses used in Qt5`: https://doc.qt.io/qt-5/licenses-used-in-qt.html
+
 Install
 -------
 
@@ -148,18 +162,6 @@ Use cases
 
 * GitHub Actions with AqtInstall: https://github.com/jurplel/install-qt-action
 
-License and copyright
----------------------
-
-This program is distributed under MIT license.
-
-Qt SDK and its related files are under its licenses. When using the utility, you are considered
-to agree upon Qt licenses.
-For details see `Qt licensing`_ and `Licenses used in Qt5`_
-
-.. _`Qt licensing`: https://www.qt.io/licensing/
-
-.. _`Licenses used in Qt5`: https://doc.qt.io/qt-5/licenses-used-in-qt.html
 
 History
 -------
