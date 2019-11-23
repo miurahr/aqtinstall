@@ -26,6 +26,7 @@ Changed
   This will speed-up installation process.
 * Now don't install extra modules when installing 'wasm_32' arch.
   You should explicitly specify it with '-m' option.
+* Replace 'requests' to 'aiohttp' to introduce 'asyncio' for concurrency.
 
 Fixed
 -----
@@ -34,6 +35,9 @@ Fixed
 
 Deprecated
 ----------
+
+* Drop support for Python2.7, 3.3, 3.4 and 3.5
+* Don't use external 7zip command.
 
 Removed
 -------

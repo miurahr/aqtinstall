@@ -32,7 +32,7 @@ Another Qt installer(aqt)
 This is an utility replacing the official graphical Qt installer. It can
 automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
-It's working with Python > 3.5 on Linux, OS X and Windows.
+It's working with **Python >= 3.7** on Linux, OS X and Windows.
 It is required to install 7zip utility in your platform.
 
 License and copyright

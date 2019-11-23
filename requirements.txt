@@ -1,8 +1,8 @@
-six
-requests
+aiofiles
+aiohttp
+py7zr>=0.4.1
 pytest
 pytest-pep8
 flake8
 wheel
 twine
-py7zr>=0.4.1 ; python_version > '3.5'

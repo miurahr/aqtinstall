@@ -20,20 +20,14 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import functools
+import asyncio
 import os
-import sys
 from logging import getLogger
-from multiprocessing.dummy import Pool
-from operator import and_
-from subprocess import run
 
-import requests
+import aiohttp
 
-if sys.version_info > (3, 5):
-    import py7zr
-
-NUM_PROCESS = 3
+import aiofiles
+from aqt.helper import aio7zr, aio_is_7zip, aiounlink
 
 
 class BadPackageFile(Exception):
@@ -52,79 +46,41 @@ class QtInstaller:
         else:
             self.logger = getLogger('aqt')
 
-    @staticmethod
-    def retrieve_archive(package, path=None, command=None):
+    async def retrieve_archive(self, package, session, path=None):
         archive = package.archive
         url = package.url
         print("-Downloading {}...".format(url))
-        try:
-            r = requests.get(url, stream=True)
-        except requests.exceptions.ConnectionError as e:
-            print("Caught download error: %s" % e.args)
-            return False
-        else:
-            with open(archive, 'wb') as fd:
-                for chunk in r.iter_content(chunk_size=8196):
-                    fd.write(chunk)
-            print("-Extracting {}...".format(archive))
-
-            if sys.version_info > (3, 5):
-                if not py7zr.is_7zfile(archive):
-                    raise BadPackageFile
-            if command is None:
-                py7zr.SevenZipFile(archive).extractall(path=path)
-            else:
-                if path is not None:
-                    run([command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(path), archive])
-                else:
-                    run([command, 'x', '-aoa', '-bd', '-y', archive])
-            os.unlink(archive)
+        async with session.get(url) as resp:
+            async with aiofiles.open(archive, 'wb') as fd:
+                while True:
+                    chunk = await resp.content.read(4096)
+                    if not chunk:
+                        break
+                    await fd.write(chunk)
+        print("-Extracting {}...".format(archive))
+        if not aio_is_7zip(archive):
+            raise BadPackageFile
+        await aio7zr(archive, path)
+        await aiounlink(archive)
         return True
 
-    def install(self, command=None, target_dir=None):
-        qt_version, target, arch = self.qt_archives.get_target_config()
+    async def _bound_retrieve_archive(self, semaphore, archive, session, path):
+        async with semaphore:
+            return await self.retrieve_archive(archive, session, path)
+
+    async def install(self, target_dir=None):
         if target_dir is None:
             base_dir = os.getcwd()
         else:
             base_dir = target_dir
         archives = self.qt_archives.get_archives()
-        p = Pool(NUM_PROCESS)
-        ret_arr = p.map(functools.partial(self.retrieve_archive, command=command, path=base_dir), archives)
-        ret = functools.reduce(and_, ret_arr)
-        if not ret:  # fails to install
-            self.logger.error("Failed to install.")
-            exit(1)
-        if qt_version == "Tools":  # tools installation
-            return
-        # finalize
-        if arch.startswith('win64_mingw'):
-            arch_dir = arch[6:] + '_64'
-        elif arch.startswith('win32_mingw'):
-            arch_dir = arch[6:] + '_32'
-        elif arch.startswith('win'):
-            arch_dir = arch[6:]
-        else:
-            arch_dir = arch
-        self.make_conf_files(base_dir, qt_version, arch_dir)
-
-    def make_conf_files(self, base_dir, qt_version, arch_dir):
-        """Make Qt configuration files, qt.conf and qtconfig.pri"""
-        try:
-            # prepare qt.conf
-            with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
-                f.write("[Paths]\n")
-                f.write("Prefix=..\n")
-            # update qtconfig.pri only as OpenSource
-            with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
-                lines = f.readlines()
-                f.seek(0)
-                f.truncate()
-                for line in lines:
-                    if line.startswith('QT_EDITION ='):
-                        line = 'QT_EDITION = OpenSource\n'
-                    if line.startswith('QT_LICHECK ='):
-                        line = 'QT_LICHECK =\n'
-                    f.write(line)
-        except IOError as e:
-            self.logger.error("Configuration file generation error: %s\n", e.args, exc_info=True)
-            raise e
+        tasks = []
+        semaphore = asyncio.Semaphore(1)
+        timeout = aiohttp.ClientTimeout(total=300)
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit_per_host=4, ssl=True),
+                                         timeout=timeout) as session:
+            for archive in archives:
+                task = asyncio.ensure_future(self._bound_retrieve_archive(semaphore, archive, session, path=base_dir))
+                tasks.append(task)
+            rets = await asyncio.gather(*tasks)
+        return rets

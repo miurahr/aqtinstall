@@ -20,13 +20,11 @@ Archives module
 Installer module
 ----------------
 
-.. autoclass:: aqt.installer.QtInstaller
+.. automodule:: aqt.installer
     :members:
-
-.. autoexception:: aqt.installer.BadPackageFile
-
-.. autoclass:: aqt.installer.Metalink
-    :members:
+    :undoc-members:
+    :inherited-members:
+    :sohw-inheritance:
 
 
 Cli module

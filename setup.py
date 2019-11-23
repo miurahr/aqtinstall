@@ -12,7 +12,7 @@ def readme():
 
 
 setup(name='aqtinstall',
-      version='0.6b1',
+      version='0.7a1',
       description='Another unofficial Qt installer',
       url='http://github.com/miurahr/aqtinstall',
       license='MIT',
@@ -21,7 +21,7 @@ setup(name='aqtinstall',
       author_email='miurahr@linux.com',
       packages=["aqt"],
       package_data={'aqt': ['*.yml', "*.json", "*.ini"]},
-      install_requires=['requests', 'six', 'py7zr', 'packaging'],
+      install_requires=['aiofiles', 'aiohttp', 'packaging', 'py7zr'],
       extras_require={'dev': ['pytest', 'pytest-pep8', 'pytest-cov', 'flake8']},
       scripts=["bin/aqt"],
       classifiers=[

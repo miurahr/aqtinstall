@@ -21,11 +21,11 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import asyncio
 import logging
 import logging.config
 import os
-import platform
-import sys
+import pathlib
 
 from packaging.version import Version, parse
 
@@ -56,26 +56,6 @@ class Cli():
                 return True
         return False
 
-    def _set_sevenzip(self, args):
-        sevenzip = None
-        if sys.version_info > (3, 5):
-            use_py7zr = args.internal
-        else:
-            use_py7zr = False
-        if not use_py7zr:
-            sevenzip = args.external
-            if sevenzip is None:
-                if platform.system() == 'Windows':
-                    sevenzip = r'C:\Program Files\7-Zip\7z.exe'
-                else:
-                    sevenzip = r'7zr'
-            elif os.path.exists(sevenzip):
-                pass
-            else:
-                print('Specified external 7zip command is not exist.')
-                exit(1)
-        return sevenzip
-
     def _set_arch(self, args, oarch, os_name, target, qt_version):
         arch = oarch
         if arch is None:
@@ -95,7 +75,10 @@ class Cli():
 
     def _check_mirror(self, mirror):
         if mirror is None:
-            new_url = altlink('https://download.qt.io/timestamp.txt', blacklist=self.settings.blacklist)
+            loop = asyncio.get_event_loop()
+            future = asyncio.ensure_future(altlink('https://download.qt.io/timestamp.txt',
+                                                   blacklist=self.settings.blacklist))
+            new_url = loop.run_until_complete(future)
             mirror = new_url[:-14]
         elif mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
             pass
@@ -120,31 +103,35 @@ class Cli():
         output_dir = args.outputdir
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
-        sevenzip = self._set_sevenzip(args)
         mirror = self._check_mirror(args.base)
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
         if not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
-        QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger),
-                    logging=self.logger).install(command=sevenzip, target_dir=output_dir)
-        sys.stdout.write("\033[K")
-        print("Finished installation")
+        installer = QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror,
+                                           logging=self.logger))
+        results = self.asyncrun(installer.install(target_dir=output_dir))
+        if all(results):
+            self.make_conf_files(qt_version, arch, base_dir=output_dir)
+            print("Finished installation")
+        else:
+            self.logger.error("Fails to installation.")
 
     def run_tool(self, args):
         arch = args.arch
         tool_name = args.tool_name
         os_name = args.host
         output_dir = args.outputdir
-        sevenzip = self._set_sevenzip(args)
         version = args.version
         mirror = self._check_mirror(args.base)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
-        QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
-                    logging=self.logger).install(command=sevenzip, target_dir=output_dir)
-    sys.stdout.write("\033[K")
-    print("Finished installation")
+        installer = QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger))
+        results = self.asyncrun(installer.install(target_dir=output_dir))
+        if all(results):
+            print("Finished installation")
+        else:
+            self.logger.error("Fails to installation.")
 
     def run_list(self, args):
         print('List Qt packages for %s' % args.qt_version)
@@ -184,9 +171,6 @@ class Cli():
         install_parser.add_argument('-b', '--base', nargs='?',
                                     help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                          "where 'online' folder exist.")
-        install_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
-        if sys.version_info >= (3, 5):
-            install_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
         tools_parser = subparsers.add_parser('tool')
         tools_parser.set_defaults(func=self.run_tool)
         tools_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
@@ -198,8 +182,6 @@ class Cli():
         tools_parser.add_argument('-b', '--base', nargs='?',
                                   help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                        "where 'online' folder exist.")
-        tools_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
-        tools_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
@@ -226,3 +208,46 @@ class Cli():
         args = self.parser.parse_args(arg)
         self._setup_logging(args)
         args.func(args)
+
+    def asyncrun(self, arg):
+        loop = asyncio.get_event_loop()
+        result = loop.run_until_complete(arg)
+        loop.run_until_complete(asyncio.sleep(0.250))
+        return result
+
+    def make_conf_files(self, qt_version, arch, base_dir):
+        """Make Qt configuration files, qt.conf and qtconfig.pri"""
+        if arch.startswith('win64_mingw'):
+            arch_dir = arch[6:] + '_64'
+        elif arch.startswith('win32_mingw'):
+            arch_dir = arch[6:] + '_32'
+        elif arch.startswith('win'):
+            arch_dir = arch[6:]
+        else:
+            arch_dir = arch
+
+        if isinstance(base_dir, str):
+            target_base = pathlib.Path(base_dir)
+        elif isinstance(base_dir, pathlib.Path):
+            target_base = base_dir
+        else:
+            target_base = pathlib.Path('.')
+        try:
+            # prepare qt.conf
+            with target_base.joinpath(qt_version, arch_dir, 'bin', 'qt.conf').open('w') as f:
+                f.write("[Paths]\n")
+                f.write("Prefix=..\n")
+            # update qtconfig.pri only as OpenSource
+            with target_base.joinpath(qt_version, arch_dir, 'mkspecs', 'qconfig.pri').open('r+') as f:
+                lines = f.readlines()
+                f.seek(0)
+                f.truncate()
+                for line in lines:
+                    if line.startswith('QT_EDITION ='):
+                        line = 'QT_EDITION = OpenSource\n'
+                    if line.startswith('QT_LICHECK ='):
+                        line = 'QT_LICHECK =\n'
+                    f.write(line)
+        except IOError as e:
+            self.logger.error("Configuration file generation error: %s\n", e.args, exc_info=True)
+            raise e

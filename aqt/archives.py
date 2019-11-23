@@ -20,10 +20,12 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import asyncio
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 
-import requests
+import aiohttp
+from aiohttp import ClientError
 
 
 class QtPackage:
@@ -48,18 +50,13 @@ class QtPackage:
 class QtArchives:
     """Hold Qt archive packages list."""
 
+    __slots__ = ['archives', 'base', 'has_mirror', 'version', 'qt_ver_num', 'target', 'arch', 'mod_list',
+                 'mirror', 'os_name', 'logger', 'update_xml']
+
     BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
-    archives = []
-    base = None
-    has_mirror = False
-    version = None
-    qt_ver_num = None
-    target = None
-    arch = None
-    mod_list = []
-    mirror = None
 
     def __init__(self, os_name, target, version, arch, modules=None, mirror=None, logging=None):
+        self.archives = []
         self.version = version
         self.qt_ver_num = self.version.replace(".", "")
         self.target = target
@@ -76,10 +73,28 @@ class QtArchives:
             self.logger = logging
         else:
             self.logger = getLogger('aqt')
+        self.mod_list = []
         for m in modules if modules is not None else []:
             fqmn = "qt.qt5.{}.{}.{}".format(self.qt_ver_num, m, arch)
             self.mod_list.append(fqmn)
+        self.update_xml = None
         self._get_archives()
+
+    def asyncrun(self, arg):
+        loop = asyncio.get_event_loop()
+        result = loop.run_until_complete(arg)
+        loop.run_until_complete(asyncio.sleep(0.250))
+        return result
+
+    async def get_update_xml(self, url):
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=True)) as client:
+            try:
+                resp = await client.get(url)
+            except ClientError as e:
+                self.logger.error('Download error: %s\n' % e.args, exc_info=True)
+                raise e
+            else:
+                self.update_xml = ElementTree.fromstring(await resp.text())
 
     def _get_archives(self):
         qt_ver_num = self.version.replace(".", "")
@@ -91,29 +106,21 @@ class QtArchives:
                                                      '_wasm/' if self.arch == 'wasm_32' else '/')
         update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
         archive_url = "{0}{1}".format(self.base, archive_path)
-        try:
-            r = requests.get(update_xml_url)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise e
-        else:
-            target_packages = []
-            target_packages.append("qt.qt5.{}.{}".format(qt_ver_num, self.arch))
-            target_packages.append("qt.{}.{}".format(qt_ver_num, self.arch))
-            target_packages.extend(self.mod_list)
-            self.update_xml = ElementTree.fromstring(r.text)
-            for packageupdate in self.update_xml.iter("PackageUpdate"):
-                name = packageupdate.find("Name").text
-                if packageupdate.find("DownloadableArchives").text is None:
-                    continue
-                if name in target_packages:
-                    downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
-                    full_version = packageupdate.find("Version").text
-                    package_desc = packageupdate.find("Description").text
-                    for archive in downloadable_archives:
-                        package_url = archive_url + name + "/" + full_version + archive
-                        self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                       has_mirror=self.has_mirror))
+        self.asyncrun(self.get_update_xml(update_xml_url))
+        target_packages = ["qt.qt5.{}.{}".format(qt_ver_num, self.arch), "qt.{}.{}".format(qt_ver_num, self.arch)]
+        target_packages.extend(self.mod_list)
+        for packageupdate in self.update_xml.iter("PackageUpdate"):
+            name = packageupdate.find("Name").text
+            if packageupdate.find("DownloadableArchives").text is None:
+                continue
+            if name in target_packages:
+                downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+                full_version = packageupdate.find("Version").text
+                package_desc = packageupdate.find("Description").text
+                for archive in downloadable_archives:
+                    package_url = archive_url + name + "/" + full_version + archive
+                    self.archives.append(QtPackage(name, package_url, archive, package_desc,
+                                                   has_mirror=self.has_mirror))
         if len(self.archives) == 0:
             print("Error while parsing package information!")
             exit(1)
@@ -146,7 +153,6 @@ class ToolArchives(QtArchives):
 
     def __init__(self, os_name, tool_name, version, arch, mirror=None, logging=None):
         self.tool_name = tool_name
-        self.os_name = os_name
         super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, mirror=mirror, logging=logging)
 
     def _get_archives(self):
@@ -155,29 +161,26 @@ class ToolArchives(QtArchives):
         else:
             archive_url = self.base + self.os_name + '_x64/' + self.target + '/'
         update_xml_url = "{0}{1}/Updates.xml".format(archive_url, self.tool_name)
-        try:
-            r = requests.get(update_xml_url)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise e
-        else:
-            self.update_xml = ElementTree.fromstring(r.text)
-            for packageupdate in self.update_xml.iter("PackageUpdate"):
-                name = packageupdate.find("Name").text
-                downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
-                full_version = packageupdate.find("Version").text
-                if full_version != self.version:
-                    continue
-                if "-" in full_version:
-                    split_version = full_version.split("-")
-                    named_version = split_version[0] + "-" + split_version[1]
-                else:
-                    named_version = full_version
-                package_desc = packageupdate.find("Description").text
-                for archive in downloadable_archives:
-                    package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
-                    self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                   has_mirror=(self.mirror is not None)))
+        self.asyncrun(self.get_update_xml(update_xml_url))
+        for packageupdate in self.update_xml.iter("PackageUpdate"):
+            name = packageupdate.find("Name").text
+            downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+            full_version = packageupdate.find("Version").text
+            if full_version != self.version:
+                continue
+            if "-" in full_version:
+                split_version = full_version.split("-")
+                named_version = split_version[0] + "-" + split_version[1]
+            else:
+                named_version = full_version
+            package_desc = packageupdate.find("Description").text
+            for archive in downloadable_archives:
+                package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
+                self.archives.append(QtPackage(name, package_url, archive, package_desc,
+                                               has_mirror=(self.mirror is not None)))
+        if len(self.archives) == 0:
+            print("Error while parsing package information!")
+            exit(1)
 
     def get_target_config(self):
         """Get target configuration.

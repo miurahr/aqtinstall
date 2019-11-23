@@ -26,7 +26,7 @@ steps:
     inputs:
       scriptSource: filePath
       scriptPath: $(Build.SourcesDirectory)/bin/aqt
-      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) --internal
+      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
       workingDirectory: $(Build.BinariesDirectory)
     condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), eq(variables['MODULE'], ''))
     displayName: Run Aqt (No Base URL Set)
@@ -42,7 +42,7 @@ steps:
     inputs:
       scriptSource: filePath
       scriptPath: $(Build.SourcesDirectory)/bin/aqt
-      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE) --internal
+      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE)
       workingDirectory: $(Build.BinariesDirectory)
     condition: and(not(variables['TOOL_NAME']), ne(variables['MODULE'], ''))
     displayName: Run Aqt (With modules)
@@ -150,7 +150,7 @@ steps:
     inputs:
       scriptSource: filePath
       scriptPath: $(Build.SourcesDirectory)/bin/aqt
-      arguments: tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH) --internal
+      arguments: tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH)
       workingDirectory: $(Build.BinariesDirectory)
     condition: variables['TOOL_NAME']
     displayName: Run Aqt (Tool)
