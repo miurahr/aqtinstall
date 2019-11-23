@@ -64,7 +64,7 @@ steps:
   - script: |
       export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r20b
       mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/tests/accelbubble.7z)
+      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/accelbubble && make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: Build accelbubble example application to test for android
@@ -106,7 +106,7 @@ steps:
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       mkdir $(Build.BinariesDirectory)/tests
       cd $(Build.BinariesDirectory)/tests
-      7z x $(Build.SourcesDirectory)/tests/helloworld.7z
+      7z x $(Build.SourcesDirectory)/ci/helloworld.7z
       cd ..
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/helloworld
       nmake
@@ -114,7 +114,7 @@ steps:
     displayName: build test with qmake with MSVC w/o extra module
   - script: |
       mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/tests/helloworld.7z)
+      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/helloworld.7z)
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/helloworld
       make
     condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''))
@@ -124,7 +124,7 @@ steps:
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       mkdir $(Build.BinariesDirectory)/tests
       cd $(Build.BinariesDirectory)/tests
-      7z x $(Build.SourcesDirectory)/tests/redditclient.7z
+      7z x $(Build.SourcesDirectory)/ci/redditclient.7z
       cd ..
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/redditclient
       nmake
@@ -132,7 +132,7 @@ steps:
     displayName: build test with qmake with MSVC with extra module
   - script: |
       mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/tests/redditclient.7z)
+      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/redditclient
       make
     condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
@@ -174,7 +174,7 @@ steps:
   - script: |
       source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
       mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory/tests; 7zr x $(Build.SourcesDirectory)/tests/openglwindow.7z)
+      (cd $(Build.BinariesDirectory/tests; 7zr x $(Build.SourcesDirectory)/ci/openglwindow.7z)
       $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/openglwindow && make
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))

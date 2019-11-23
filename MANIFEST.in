@@ -8,6 +8,7 @@ include tox.ini
 recursive-include aqt *.ini
 recursive-include aqt *.json
 recursive-include aqt *.yml
+recursive-include ci *.7z
 recursive-include ci *.py
 recursive-include ci *.yml
 recursive-include docs *.bat
@@ -19,14 +20,4 @@ recursive-include docs *.svg
 recursive-include docs *.html
 recursive-include docs *.txt
 recursive-include docs Makefile
-recursive-include tests *.conf
-recursive-include tests *.cpp
-recursive-include tests *.pro
-recursive-include tests *.qml
-recursive-include tests *.qrc
-recursive-include tests *.svg
-recursive-include tests *.h
-recursive-include tests *.pri
-recursive-include tests *.png
-recursive-include tests *.qdoc
 recursive-include tests *.py
