@@ -85,11 +85,12 @@ class QtArchives:
         qt_ver_num = self.version.replace(".", "")
 
         # Get packages index
-        archive_url = "{0}{1}{2}{3}/qt5_{4}{5}".format(self.base, self.os_name,
+        archive_path = "{0}{1}{2}/qt5_{3}{4}".format(self.os_name,
                                                        '_x86/' if self.os_name == 'windows' else '_x64/',
                                                        self.target, qt_ver_num,
                                                        '_wasm/' if self.arch == 'wasm_32' else '/')
-        update_xml_url = "{0}Updates.xml".format(archive_url)
+        update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
+        archive_url = "{0}{1}".format(self.base, archive_path)
         try:
             r = requests.get(update_xml_url)
         except requests.exceptions.ConnectionError as e:
