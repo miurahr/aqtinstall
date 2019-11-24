@@ -27,6 +27,8 @@ from logging import getLogger
 import aiohttp
 from aiohttp import ClientError
 
+from aqt.helper import altlink
+
 
 class QtPackage:
     """
@@ -51,7 +53,7 @@ class QtArchives:
     """Hold Qt archive packages list."""
 
     __slots__ = ['archives', 'base', 'has_mirror', 'version', 'qt_ver_num', 'target', 'arch', 'mod_list',
-                 'mirror', 'os_name', 'logger', 'update_xml']
+                 'mirror', 'os_name', 'logger', 'update_xml', 'mirror_update_xml', 'archive_path_len']
 
     BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
 
@@ -89,12 +91,18 @@ class QtArchives:
     async def get_update_xml(self, url):
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=True)) as client:
             try:
-                resp = await client.get(url)
+                new_url = url
+                resp = await client.get(url, allow_redirects=False)
+                if resp.status == 302:
+                    new_url = altlink(resp.headers['Location'])
+                    resp = await client.get(new_url)
             except ClientError as e:
                 self.logger.error('Download error: %s\n' % e.args, exc_info=True)
                 raise e
             else:
                 self.update_xml = ElementTree.fromstring(await resp.text())
+            if not self.has_mirror:
+                self.base = new_url[:-(self.archive_path_len + 11)]
 
     def _get_archives(self):
         qt_ver_num = self.version.replace(".", "")
@@ -104,11 +112,12 @@ class QtArchives:
                                                      '_x86/' if self.os_name == 'windows' else '_x64/',
                                                      self.target, qt_ver_num,
                                                      '_wasm/' if self.arch == 'wasm_32' else '/')
-        update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
-        archive_url = "{0}{1}".format(self.base, archive_path)
+        self.archive_path_len = len(archive_path)
+        update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
         self.logger.debug("- Start retrieving Update.xml from {}...".format(update_xml_url))
         self.asyncrun(self.get_update_xml(update_xml_url))
         self.logger.debug("- Finish retrieving Update.xml from {}".format(update_xml_url))
+        archive_url = "{0}{1}".format(self.base, archive_path)
         target_packages = ["qt.qt5.{}.{}".format(qt_ver_num, self.arch), "qt.{}.{}".format(qt_ver_num, self.arch)]
         target_packages.extend(self.mod_list)
         for packageupdate in self.update_xml.iter("PackageUpdate"):

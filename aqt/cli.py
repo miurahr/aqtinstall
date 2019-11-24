@@ -30,7 +30,6 @@ import pathlib
 from packaging.version import Version, parse
 
 from aqt.archives import QtArchives, ToolArchives
-from aqt.helper import altlink
 from aqt.installer import QtInstaller
 from aqt.settings import Settings
 
@@ -75,17 +74,13 @@ class Cli():
 
     def _check_mirror(self, mirror):
         if mirror is None:
-            loop = asyncio.get_event_loop()
-            future = asyncio.ensure_future(altlink('https://download.qt.io/timestamp.txt',
-                                                   blacklist=self.settings.blacklist))
-            new_url = loop.run_until_complete(future)
-            mirror = new_url[:-14]
-        elif mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
+            return True
+        if mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
             pass
         else:
             self.parser.print_help()
             exit(1)
-        return mirror
+        return True
 
     def _check_modules_arg(self, qt_version, modules):
         if modules is None:
@@ -103,7 +98,8 @@ class Cli():
         output_dir = args.outputdir
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
-        mirror = self._check_mirror(args.base)
+        mirror = args.base
+        self._check_mirror(mirror)
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
         if not self._check_modules_arg(qt_version, modules):

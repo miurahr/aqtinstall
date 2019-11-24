@@ -7,6 +7,7 @@ from logging import getLogger
 import aiohttp
 
 import py7zr
+from aqt.settings import Settings
 
 
 def async_wrap(func):
@@ -46,7 +47,9 @@ def aio_is_7zip(archive):
     return result
 
 
-async def altlink(url, blacklist=None):
+async def altlink(url):
+    settings = Settings()
+    blacklist = settings.blacklist
     mirrors = {}
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=True)) as session:
         async with session.get(url + '.meta4') as resp:
