@@ -99,10 +99,6 @@ class QtArchives:
             target_packages = []
             target_packages.append("qt.qt5.{}.{}".format(qt_ver_num, self.arch))
             target_packages.append("qt.{}.{}".format(qt_ver_num, self.arch))
-            if self.arch == 'wasm_32':
-                for m in ('qtcharts', 'qtdatavis3d', 'qtlottie', 'qtnetworkauth', 'qtpurchasing', 'qtquicktimeline',
-                          'qtscript', 'qtvirtualkeyboard', 'qtwebglplugin'):
-                    target_packages.append("qt.qt5.{}.{}.{}".format(qt_ver_num, m, self.arch))
             target_packages.extend(self.mod_list)
             self.update_xml = ElementTree.fromstring(r.text)
             for packageupdate in self.update_xml.iter("PackageUpdate"):
