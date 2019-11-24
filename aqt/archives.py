@@ -106,7 +106,9 @@ class QtArchives:
                                                      '_wasm/' if self.arch == 'wasm_32' else '/')
         update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
         archive_url = "{0}{1}".format(self.base, archive_path)
+        self.logger.debug("- Start retrieving Update.xml from {}...".format(update_xml_url))
         self.asyncrun(self.get_update_xml(update_xml_url))
+        self.logger.debug("- Finish retrieving Update.xml from {}".format(update_xml_url))
         target_packages = ["qt.qt5.{}.{}".format(qt_ver_num, self.arch), "qt.{}.{}".format(qt_ver_num, self.arch)]
         target_packages.extend(self.mod_list)
         for packageupdate in self.update_xml.iter("PackageUpdate"):
@@ -122,7 +124,7 @@ class QtArchives:
                     self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                    has_mirror=self.has_mirror))
         if len(self.archives) == 0:
-            print("Error while parsing package information!")
+            self.logger.error("Error while parsing package information!")
             exit(1)
 
     def get_archives(self):
@@ -179,7 +181,7 @@ class ToolArchives(QtArchives):
                 self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                has_mirror=(self.mirror is not None)))
         if len(self.archives) == 0:
-            print("Error while parsing package information!")
+            self.logger.error("Error while parsing package information!")
             exit(1)
 
     def get_target_config(self):
