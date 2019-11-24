@@ -27,7 +27,7 @@ from logging import getLogger
 import aiohttp
 
 import aiofiles
-from aqt.helper import aio7zr, aio_is_7zip, aiounlink
+from aqt.helper import aio7zr, aiounlink
 from aqt.settings import Settings
 
 
@@ -54,20 +54,21 @@ class QtInstaller:
         self.logger.info("-Downloading {}...".format(url))
         async with session.get(url) as resp:
             assert resp.status == 200
+            # TODO: if status is not 200, we can change mirror site and retry.
             async with aiofiles.open(archive, 'wb') as fd:
                 while True:
                     chunk = await resp.content.read(4096)
                     if not chunk:
+                        await fd.flush()
                         break
                     await fd.write(chunk)
-                await fd.flush()
-            self.logger.debug("-Finished downloading {}".format(url))
-        self.logger.info("-Extracting {}...".format(archive))
-        if not aio_is_7zip(archive):
-            raise BadPackageFile
+            self.logger.debug("Finished downloading {}".format(url))
+        await asyncio.sleep(0.01)
+        self.logger.info("Extracting {}...".format(archive))
         await aio7zr(archive, path)
-        self.logger.debug("-Finished extraction {}".format(archive))
+        await asyncio.sleep(0.25)
         await aiounlink(archive)
+        self.logger.debug("Finished extraction {}".format(archive))
         return True
 
     async def _bound_retrieve_archive(self, semaphore, archive, session, path):
@@ -81,7 +82,7 @@ class QtInstaller:
             base_dir = target_dir
         archives = self.qt_archives.get_archives()
         tasks = []
-        self.logger.debug("- Start aiohttp session")
+        self.logger.debug("Start aiohttp session")
         semaphore = asyncio.Semaphore(self.settings.concurrency)
         timeout = aiohttp.ClientTimeout(total=self.settings.total_timeout)
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit_per_host=self.settings.limit_per_host,
@@ -90,6 +91,6 @@ class QtInstaller:
             for archive in archives:
                 task = asyncio.ensure_future(self._bound_retrieve_archive(semaphore, archive, session, path=base_dir))
                 tasks.append(task)
-            self.logger.debug("- await retrieve_archive gathering")
+            self.logger.debug("Await retrieve_archive gathering")
             rets = await asyncio.gather(*tasks)
         return rets

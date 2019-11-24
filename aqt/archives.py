@@ -94,7 +94,7 @@ class QtArchives:
                 new_url = url
                 resp = await client.get(url, allow_redirects=False)
                 if resp.status == 302:
-                    new_url = altlink(resp.headers['Location'])
+                    new_url = await altlink(resp.headers['Location'])
                     resp = await client.get(new_url)
             except ClientError as e:
                 self.logger.error('Download error: %s\n' % e.args, exc_info=True)
@@ -168,11 +168,13 @@ class ToolArchives(QtArchives):
 
     def _get_archives(self):
         if self.os_name == 'windows':
-            archive_url = self.base + self.os_name + '_x86/' + self.target + '/'
+            archive_path = self.os_name + '_x86/' + self.target + '/' + self.tool_name
         else:
-            archive_url = self.base + self.os_name + '_x64/' + self.target + '/'
-        update_xml_url = "{0}{1}/Updates.xml".format(archive_url, self.tool_name)
+            archive_path = self.os_name + '_x64/' + self.target + '/' + self.tool_name
+        self.archive_path_len = len(archive_path)
+        update_xml_url = "{0}{1}/Updates.xml".format(self.base, archive_path)
         self.asyncrun(self.get_update_xml(update_xml_url))
+        archive_url = "{0}{1}".format(self.base, archive_path)
         for packageupdate in self.update_xml.iter("PackageUpdate"):
             name = packageupdate.find("Name").text
             downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
@@ -186,7 +188,7 @@ class ToolArchives(QtArchives):
                 named_version = full_version
             package_desc = packageupdate.find("Description").text
             for archive in downloadable_archives:
-                package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
+                package_url = archive_url + "/" + name + "/" + named_version + archive
                 self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                has_mirror=(self.mirror is not None)))
         if len(self.archives) == 0:

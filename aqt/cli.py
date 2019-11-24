@@ -119,7 +119,8 @@ class Cli():
         os_name = args.host
         output_dir = args.outputdir
         version = args.version
-        mirror = self._check_mirror(args.base)
+        mirror = args.base
+        self._check_mirror(mirror)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         installer = QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger))
@@ -206,11 +207,11 @@ class Cli():
         args.func(args)
 
     def asyncrun(self, arg):
-        self.logger.debug("- Start execution {}...".format(arg))
+        self.logger.debug("Start execution {}...".format(arg))
         loop = asyncio.get_event_loop()
         result = loop.run_until_complete(arg)
         loop.run_until_complete(asyncio.sleep(0.250))
-        self.logger.debug("- End execution {}...".format(arg))
+        self.logger.debug("End execution {}...".format(arg))
         return result
 
     def make_conf_files(self, qt_version, arch, base_dir):
