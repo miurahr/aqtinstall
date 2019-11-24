@@ -105,6 +105,8 @@ class Cli():
         return mirror
 
     def _check_modules_arg(self, qt_version, modules):
+        if modules is None:
+            return True
         result = True
         available = self.settings.available_modules(qt_version)
         for m in modules:
