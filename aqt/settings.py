@@ -74,8 +74,8 @@ class Settings(object):
         :rtype: List[str]
         """
         modules = self._combinations['modules']
-        major, minor, _ = qt_version.split('.')
-        version = "{}.{}".format(major, minor)
+        versions = qt_version.split('.')
+        version = "{}.{}".format(versions[0], versions[1])
         result = None
         for record in modules:
             if record["qt_version"] == version:

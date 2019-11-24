@@ -107,13 +107,10 @@ class Cli():
     def _check_modules_arg(self, qt_version, modules):
         if modules is None:
             return True
-        result = True
         available = self.settings.available_modules(qt_version)
-        for m in modules:
-            if m not in available:
-                result = False
-                break
-        return result
+        if available is None:
+            return False
+        return all([m in available for m in modules])
 
     def run_install(self, args):
         arch = args.arch

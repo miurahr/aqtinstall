@@ -24,3 +24,11 @@ def test_cli_help(capsys):
     cli.run(["help"])
     out, err = capsys.readouterr()
     assert out == expected
+
+
+def test_cli_check_module():
+    cli = aqt.cli.Cli()
+    assert cli._check_modules_arg('5.11.3', ['qtcharts', 'qtwebengine'])
+    assert not cli._check_modules_arg('5.7', ['not_exist'])
+    assert cli._check_modules_arg('5.14.0', None)
+    assert not cli._check_modules_arg('5.15.0', ["Unknown"])
