@@ -59,3 +59,12 @@ long options may be truncated to the shortest unambiguous abbreviation.
 
     specify mirror site base url such as  -b 'http://mirrors.ocf.berkeley.edu/qt/'
     where 'online' folder exist.
+
+.. option:: --modules, -m <list of modules>
+
+    specify extra modules to install as a list.
+
+.. code-block::
+
+    -m qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript qtvirtualkeyboard qtwebglplugin
+
