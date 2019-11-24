@@ -68,4 +68,25 @@
   {"os_name": "windows", "target": "desktop", "tool_name": "tools_qtcreator", "arch": "qt.tools.qtcreator"},
   {"os_name": "windows", "target": "desktop", "tool_name": "tools_qt3dstudio", "arch": "qt.tools.qt3dstudio"},
   {"os_name": "windows", "target": "desktop", "tool_name": "tools_telemetry", "arch": "qt.tools.qtcreator.telemetry"}
+], "modules": [
+  {"qt_version": "5.5", "moduels": ["qtquick1", "qtquickcontrols", "qtlocation", "qtcanvas3d", "qt3d",
+    "qtscript", "qtwebengine"]},
+  {"qt_version": "5.6", "moduels": ["qtquickcontrols2", "qtquickcontrols", "qtlocation", "qtcanvas3d", "qt3d",
+    "qtscript", "qtserialbus", "qtwebengine", "qtwebview"]},
+  {"qt_version": "5.7", "moduels": ["qtcharts", "qtgamepad", "qtquick2drenderer", "qtscxml", "qtpurchasing", "qtscript",
+    "qtserialbus", "qtvirtualkeyboard", "qtwebengine"]},
+  {"qt_version": "5.8", "moduels": ["qtcharts", "qtgamepad", "qtnetworkauth", "qtpurchasing", "qtdatavis3d",
+    "qtscript", "qtspeech", "qtvirtualkeyboard", "qtwebengine"]},
+  {"qt_version": "5.9", "moduels": ["qtcharts", "qtnetworkauth", "qtpurchasing", "qtdatavis3d", "qtremoteobjects",
+    "qtscript", "qtspeech", "qtvirtualkeyboard", "qtwebengine"]},
+  {"qt_version": "5.10", "moduels": ["qtcharts", "qtnetworkauth", "qtpurchasing", "qtdatavis3d", "qtremoteobjects",
+    "qtscript", "qtvirtualkeyboard", "qtwebengine", "qtwebglplugin"]},
+  {"qt_version": "5.11", "moduels": ["qtcharts", "qtnetworkauth", "qtpurchasing", "qtdatavis3d", "qtremoteobjects",
+    "qtscript", "qtvirtualkeyboard", "qtwebengine","qtwebglplugin"]},
+  {"qt_version": "5.12", "moduels": ["qtcharts", "qtnetworkauth", "qtpurchasing", "qtdatavis3d",
+    "qtscript", "qtvirtualkeyboard", "qtwebengine","qtwebglplugin"]},
+  {"qt_version": "5.13", "moduels": ["qtcharts", "qtlottie", "qtnetworkauth", "qtpurchasing", "qtdatavis3d",
+    "qtquicktimeline", "qtscript", "qtvirtualkeyboard", "qtwebglplugin"]},
+  {"qt_version": "5.14", "moduels": ["qtcharts", "qtlottie", "qtnetworkauth", "qtpurchasing", "qtdatavis3d",
+    "qtquick3d", "qtquicktimeline", "qtscript", "qtvirtualkeyboard", "qtwebglplugin"]}
 ]}]

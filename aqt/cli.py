@@ -21,7 +21,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
-import json
 import logging
 import logging.config
 import os
@@ -32,6 +31,7 @@ from packaging.version import Version, parse
 
 from aqt.archives import QtArchives, ToolArchives
 from aqt.installer import QtInstaller
+from aqt.settings import Settings
 
 
 class Cli():
@@ -40,18 +40,17 @@ class Cli():
     __slot__ = ['parser', 'combinations', 'logger']
 
     def __init__(self):
-        with open(os.path.join(os.path.dirname(__file__), 'combinations.json'), 'r') as j:
-            self.combinations = json.load(j)[0]
+        self.settings = Settings()
         self._create_parser()
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
-        for c in self.combinations['tools']:
+        for c in self.settings.tools_combinations:
             if c['os_name'] == os_name and c['tool_name'] == tool_name and c['arch'] == arch:
                 return True
         return False
 
     def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
-        for c in self.combinations['qt']:
+        for c in self.settings.qt_combinations:
             if c['os_name'] == os_name and c['target'] == target and c['arch'] == arch:
                 return True
         return False
@@ -101,6 +100,15 @@ class Cli():
                 exit(1)
         return mirror
 
+    def _check_modules_arg(self, qt_version, modules):
+        result = True
+        available = self.settings.available_modules(qt_version)
+        for m in modules:
+            if m not in available:
+                result = False
+                break
+        return result
+
     def run_install(self, args):
         arch = args.arch
         target = args.target
@@ -113,6 +121,8 @@ class Cli():
         mirror = self._check_mirror(args)
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
+        if not self._check_modules_arg(qt_version, modules):
+            self.logger.warning("Some of specified modules are unknown.")
         QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
         sys.stdout.write("\033[K")
