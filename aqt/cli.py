@@ -30,6 +30,7 @@ import sys
 from packaging.version import Version, parse
 
 from aqt.archives import QtArchives, ToolArchives
+from aqt.helper import altlink
 from aqt.installer import QtInstaller
 from aqt.settings import Settings
 
@@ -98,6 +99,9 @@ class Cli():
             if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
                 args.print_help()
                 exit(1)
+        else:
+            new_url = altlink('https://download.qt.io/timestamp.txt', blacklist=self.settings.blacklist)
+            mirror = new_url[:-14]
         return mirror
 
     def _check_modules_arg(self, qt_version, modules):

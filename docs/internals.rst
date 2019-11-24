@@ -29,8 +29,15 @@ Installer module
     :members:
 
 
-Cli modules
------------
+Cli module
+----------
 
 .. autoclass:: aqt.cli.Cli
+    :members:
+
+
+Helper module
+-------------
+
+.. automodule:: aqt.helper
     :members:

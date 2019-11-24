@@ -14,8 +14,19 @@ Current changes
 Added
 -----
 
+* Introduce helper module.
+
+* Introduce 'settings.ini' file which has a configuration for
+  aqt module.
+
 Changed
 -------
+
+* Select mirror site before accessing repository database.
+  This will speed-up installation process.
+
+* Now don't install extra modules when installing 'wasm_32' arch.
+  You should explicitly specify it with '-m' option.
 
 Fixed
 -----

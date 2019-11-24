@@ -23,7 +23,6 @@
 import functools
 import os
 import sys
-import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from multiprocessing.dummy import Pool
 from operator import and_
@@ -35,9 +34,6 @@ if sys.version_info > (3, 5):
     import py7zr
 
 NUM_PROCESS = 3
-blacklist = ['http://mirrors.ustc.edu.cn',
-             'http://mirrors.tuna.tsinghua.edu.cn',
-             'http://mirrors.geekpie.club']
 
 
 class BadPackageFile(Exception):
@@ -62,15 +58,7 @@ class QtInstaller:
         url = package.url
         print("-Downloading {}...".format(url))
         try:
-            r = requests.get(url, stream=True, allow_redirects=False)
-            if r.status_code == 302:
-                # tsinghua.edu.cn is problematic and it prohibit service to specific geo location.
-                # we will use another redirected location for that.
-                newurl = r.headers['Location']
-                mml = Metalink(url)
-                newurl = mml.altlink(blacklist=blacklist)
-                print('Redirected to new URL: {}'.format(newurl))
-                r = requests.get(newurl, stream=True, allow_redirects=True)
+            r = requests.get(url, stream=True)
         except requests.exceptions.ConnectionError as e:
             print("Caught download error: %s" % e.args)
             return False
@@ -140,44 +128,3 @@ class QtInstaller:
         except IOError as e:
             self.logger.error("Configuration file generation error: %s\n", e.args, exc_info=True)
             raise e
-
-
-class Metalink:
-    '''Download .meta4 metalink version4 xml file and parse it.'''
-
-    def __init__(self, url):
-        self.mirrors = {}
-        self.url = url
-        try:
-            m = requests.get(url + '.meta4')
-        except requests.exceptions.ConnectionError:
-            return
-        else:
-            mirror_xml = ElementTree.fromstring(m.text)
-            for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
-                for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
-                    pri = u.attrib['priority']
-                    self.mirrors[pri] = u.text
-
-    def altlink(self, priority=None, blacklist=None):
-        if len(self.mirrors) == 0:
-            # no alternative
-            return self.url
-        if priority is None:
-            if blacklist is not None:
-                for ind in range(len(self.mirrors)):
-                    mirror = self.mirrors[str(ind + 1)]
-                    black = False
-                    for b in blacklist:
-                        if mirror.startswith(b):
-                            black = True
-                            continue
-                    if black:
-                        continue
-                    return mirror
-            else:
-                for ind in range(len(self.mirrors)):
-                    mirror = self.mirrors[str(ind + 1)]
-                    return mirror
-        else:
-            return self.mirrors[str(priority)]
