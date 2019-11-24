@@ -76,7 +76,11 @@ class Settings(object):
         modules = self._combinations['modules']
         major, minor, _ = qt_version.split('.')
         version = "{}.{}".format(major, minor)
-        return modules.get(version, None)
+        result = None
+        for record in modules:
+            if record["qt_version"] == version:
+                result = record["modules"]
+        return result
 
     @property
     def concurrency(self):
