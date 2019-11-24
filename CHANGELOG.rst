@@ -31,6 +31,8 @@ Changed
 Fixed
 -----
 
+* Error when mirror site is not http, but https and ftp.
+
 Deprecated
 ----------
 
