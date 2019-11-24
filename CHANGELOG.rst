@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.6b2`_ (24, Nov., 2019)
+==========================
+
+Changed
+-------
+
+* Now don't install extra modules when installing 'wasm_32' arch.
+  You should explicitly specify it with '-m' option.
+
 `v0.6b1`_ (23, Nov., 2019)
 ==========================
 
@@ -308,7 +317,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.6b1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.6b2...HEAD
+.. _v0.6b2: https://github.com/miurahr/aqtinstall/compare/v0.6b1...v0.6b2
 .. _v0.6b1: https://github.com/miurahr/aqtinstall/compare/v0.6a2...v0.6b1
 .. _v0.6a2: https://github.com/miurahr/aqtinstall/compare/v0.6a1...v0.6a2
 .. _v0.6a1: https://github.com/miurahr/aqtinstall/compare/v0.5...v0.6a1
