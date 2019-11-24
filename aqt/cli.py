@@ -93,15 +93,15 @@ class Cli():
             exit(1)
         return arch
 
-    def _check_mirror(self, args):
-        mirror = args.base
-        if mirror is not None:
-            if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
-                args.print_help()
-                exit(1)
-        else:
+    def _check_mirror(self, mirror):
+        if mirror is None:
             new_url = altlink('https://download.qt.io/timestamp.txt', blacklist=self.settings.blacklist)
             mirror = new_url[:-14]
+        elif mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
+            pass
+        else:
+            self.parser.print_help()
+            exit(1)
         return mirror
 
     def _check_modules_arg(self, qt_version, modules):
@@ -121,7 +121,7 @@ class Cli():
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
-        mirror = self._check_mirror(args)
+        mirror = self._check_mirror(args.base)
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
         if not self._check_modules_arg(qt_version, modules):
@@ -138,7 +138,7 @@ class Cli():
         output_dir = args.outputdir
         sevenzip = self._set_sevenzip(args)
         version = args.version
-        mirror = self._check_mirror(args)
+        mirror = self._check_mirror(args.base)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
@@ -159,7 +159,6 @@ class Cli():
         parser.add_argument('--logging-conf', type=argparse.FileType('r'),
                             nargs=1, help="Logging configuration ini file.")
         parser.add_argument('--logger', nargs=1, help="Specify logger name")
-        parser.add_argument('--dry-run', action='store_true', help='Dry run operations.')
         subparsers = parser.add_subparsers(title='subcommands', description='Valid subcommands',
                                            help='subcommand for aqt Qt installer')
         install_parser = subparsers.add_parser('install')
@@ -226,5 +225,4 @@ class Cli():
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
         self._setup_logging(args)
-        self.dry_run = args.dry_run
         args.func(args)

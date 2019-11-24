@@ -3,7 +3,7 @@ import aqt
 
 def test_cli_help(capsys):
     expected = "".join(["show help\n",
-                        "usage: aqt [-h] [--logging-conf LOGGING_CONF] [--logger LOGGER] [--dry-run]\n",
+                        "usage: aqt [-h] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
                         "           {install,tool,list,help} ...\n",
                         "\n",
                         "Installer for Qt SDK.\n",
@@ -13,7 +13,6 @@ def test_cli_help(capsys):
                         "  --logging-conf LOGGING_CONF\n",
                         "                        Logging configuration ini file.\n",
                         "  --logger LOGGER       Specify logger name\n",
-                        "  --dry-run             Dry run operations.\n",
                         "\n",
                         "subcommands:\n",
                         "  Valid subcommands\n",
@@ -32,3 +31,19 @@ def test_cli_check_module():
     assert not cli._check_modules_arg('5.7', ['not_exist'])
     assert cli._check_modules_arg('5.14.0', None)
     assert not cli._check_modules_arg('5.15.0', ["Unknown"])
+
+
+def test_cli_check_combination():
+    cli = aqt.cli.Cli()
+    assert cli._check_qt_arg_combination('5.11.3', 'linux', 'desktop', 'gcc_64')
+    assert cli._check_qt_arg_combination('5.11.3', 'mac', 'desktop', 'clang_64')
+    assert not cli._check_qt_arg_combination('5.14.0', 'android', 'desktop', 'clang_64')
+
+
+def test_cli_check_mirror():
+    cli = aqt.cli.Cli()
+    assert cli._check_mirror(None)
+    arg = ['install', '5.11.3', 'linux', 'desktop', '-b', "https://download.qt.io/"]
+    args = cli.parser.parse_args(arg)
+    assert args.base == 'https://download.qt.io/'
+    assert cli._check_mirror(args.base)
