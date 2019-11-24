@@ -52,21 +52,20 @@ class QtInstaller:
         else:
             self.logger = getLogger('aqt')
 
-    @staticmethod
-    def retrieve_archive(package, path=None, command=None):
+    def retrieve_archive(self, package, path=None, command=None):
         archive = package.archive
         url = package.url
-        print("-Downloading {}...".format(url))
+        self.logger.info("-Downloading {}...".format(url))
         try:
             r = requests.get(url, stream=True)
         except requests.exceptions.ConnectionError as e:
-            print("Caught download error: %s" % e.args)
+            self.logger.warning("Caught download error: %s" % e.args)
             return False
         else:
             with open(archive, 'wb') as fd:
                 for chunk in r.iter_content(chunk_size=8196):
                     fd.write(chunk)
-            print("-Extracting {}...".format(archive))
+            self.logger.info("-Extracting {}...".format(archive))
 
             if sys.version_info > (3, 5):
                 if not py7zr.is_7zfile(archive):

@@ -25,6 +25,8 @@ from logging import getLogger
 
 import requests
 
+from aqt.helper import altlink
+
 
 class QtPackage:
     """
@@ -92,7 +94,10 @@ class QtArchives:
         update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
         archive_url = "{0}{1}".format(self.base, archive_path)
         try:
-            r = requests.get(update_xml_url)
+            r = requests.get(update_xml_url, allow_redirects=False)
+            if r.status_code == 302:
+                new_url = altlink(update_xml_url)
+                self.base = new_url[:-len(archive_path)-11]
         except requests.exceptions.ConnectionError as e:
             self.logger.error('Download error: %s\n' % e.args, exc_info=True)
             raise e
@@ -115,7 +120,7 @@ class QtArchives:
                         self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                        has_mirror=self.has_mirror))
         if len(self.archives) == 0:
-            print("Error while parsing package information!")
+            self.logger.error("Error while parsing package information!")
             exit(1)
 
     def get_archives(self):

@@ -30,7 +30,6 @@ import sys
 from packaging.version import Version, parse
 
 from aqt.archives import QtArchives, ToolArchives
-from aqt.helper import altlink
 from aqt.installer import QtInstaller
 from aqt.settings import Settings
 
@@ -95,8 +94,7 @@ class Cli():
 
     def _check_mirror(self, mirror):
         if mirror is None:
-            new_url = altlink('https://download.qt.io/timestamp.txt', blacklist=self.settings.blacklist)
-            mirror = new_url[:-14]
+            return
         elif mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
             pass
         else:
@@ -121,7 +119,8 @@ class Cli():
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
-        mirror = self._check_mirror(args.base)
+        mirror = args.base
+        self._check_mirror(mirror)
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
         if not self._check_modules_arg(qt_version, modules):
@@ -138,7 +137,8 @@ class Cli():
         output_dir = args.outputdir
         sevenzip = self._set_sevenzip(args)
         version = args.version
-        mirror = self._check_mirror(args.base)
+        mirror = args.base
+        self._check_mirror(mirror)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
@@ -150,7 +150,6 @@ class Cli():
         print('List Qt packages for %s' % args.qt_version)
 
     def show_help(self, args):
-        print("show help")
         self.parser.print_help()
 
     def _create_parser(self):
