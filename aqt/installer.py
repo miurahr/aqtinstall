@@ -53,6 +53,7 @@ class QtInstaller:
         url = package.url
         self.logger.info("-Downloading {}...".format(url))
         async with session.get(url) as resp:
+            assert resp.status == 200
             async with aiofiles.open(archive, 'wb') as fd:
                 while True:
                     chunk = await resp.content.read(4096)
