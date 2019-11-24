@@ -27,6 +27,9 @@ import requests
 
 
 class QtPackage:
+    """
+      Hold package information.
+    """
     name = ""
     url = ""
     archive = ""
@@ -43,7 +46,7 @@ class QtPackage:
 
 
 class QtArchives:
-    """Hold Qt archive packages list"""
+    """Hold Qt archive packages list."""
 
     BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
     archives = []
@@ -119,9 +122,20 @@ class QtArchives:
             exit(1)
 
     def get_archives(self):
+        """
+          It returns an archive package list.
+
+         :return package list
+         :rtype: List[QtPackage]
+         """
         return self.archives
 
     def get_target_config(self):
+        """Get target configuration
+
+        :return: configured target and its version with arch
+        :rtype: tuple(version, target, arch)
+        """
         return self.version, self.target, self.arch
 
 
@@ -169,4 +183,8 @@ class ToolArchives(QtArchives):
                                                    has_mirror=(self.mirror is not None)))
 
     def get_target_config(self):
+        """Get target configuration.
+
+        :return tuple of three parameter, "Tools", target and arch
+        """
         return "Tools", self.target, self.arch

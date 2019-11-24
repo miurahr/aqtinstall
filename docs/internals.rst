@@ -10,11 +10,11 @@ Internals
 Archives module
 ---------------
 
-.. autoclass:: aqt.archives.QtPackage
+.. automodule:: aqt.archives
     :members:
-
-.. autoclass:: aqt.archives.QtArchives
-    :members:
+    :undoc-members:
+    :inherited-members:
+    :show-inheritance:
 
 
 Installer module
@@ -23,7 +23,10 @@ Installer module
 .. autoclass:: aqt.installer.QtInstaller
     :members:
 
-.. autoclass:: aqt.installer.BadPackageFile
+.. autoexception:: aqt.installer.BadPackageFile
+
+.. autoclass:: aqt.installer.Metalink
+    :members:
 
 
 Cli modules

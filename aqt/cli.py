@@ -35,6 +35,7 @@ from aqt.installer import QtInstaller
 
 
 class Cli():
+    """CLI main class to parse command line argument and launch proper functions."""
 
     __slot__ = ['parser', 'combinations', 'logger']
 
