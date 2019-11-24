@@ -66,12 +66,12 @@ General usage looks like this:
 .. code-block:: bash
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        [--internal] install <qt-version> <host> <target> [<arch>]
+        [--internal] install <qt-version> <host> <target> [<arch>] -m [extra module] [extra module]...
 
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        [--internal] install <qt-version> <host> <target> [<arch>]
+        [--internal] install <qt-version> <host> <target> [<arch>] -m [extra module] [extra module]...
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
@@ -88,7 +88,7 @@ General usage looks like this:
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        [--internal] tool <host> <tool_name> <tool-version> <arch>
+        [--internal] tool <host> <tool_name> <tool-version> <arch> -m [extra module] [extra module]...
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
 * arch is full qualified tool name such as `qt.tools.ifw.31`
@@ -103,12 +103,12 @@ run such as follows:
     C:\> aqt install --outputdir c:\Qt 5.11.3 windows desktop win64_msvc2017_64
 
 
-Example: Installing Qt 5.12.0 for Linux:
+Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 
 .. code-block:: bash
 
     pip install aqtinstall
-    sudo aqt install --outputdir /opt 5.12.0 linux desktop
+    sudo aqt install --outputdir /opt 5.12.0 linux desktop -m qcharts qtnetworkauth
 
 
 Example: Installing Android (armv7) Qt 5.10.2:
