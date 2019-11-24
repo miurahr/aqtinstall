@@ -66,5 +66,5 @@ long options may be truncated to the shortest unambiguous abbreviation.
 
 .. code-block::
 
-    -m qtcharts,qtdatavis3d,qtlottie,qtnetworkauth,qtpurchasing,qtquicktimeline,qtscript,qtvirtualkeyboard,qtwebglplugin
+    -m qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript qtvirtualkeyboard qtwebglplugin
 
