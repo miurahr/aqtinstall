@@ -95,7 +95,9 @@ class Cli():
     def _check_mirror(self, args):
         mirror = args.base
         if mirror is not None:
-            if not mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
+            if mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
+                pass
+            else:
                 args.print_help()
                 exit(1)
         return mirror

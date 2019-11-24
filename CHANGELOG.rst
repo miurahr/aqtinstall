@@ -38,6 +38,11 @@ Changed
 * Now don't install extra modules when installing 'wasm_32' arch.
   You should explicitly specify it with '-m' option.
 
+Fixed
+-----
+
+* Fix error when mirror option specified other than http such as https, ftp.
+
 `v0.6b1`_ (23, Nov., 2019)
 ==========================
 
