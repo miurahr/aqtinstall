@@ -92,6 +92,24 @@ class Settings(object):
         return self._config.getint("aqt", "concurrency")
 
     @property
+    def total_timeout(self):
+        """total timeout of TCP connection.
+
+        :return: timeout(sec)
+        :rtype: int
+        """
+        return self._config.getint("aqt", "total_timeout")
+
+    @property
+    def limit_per_host(self):
+        """limit per host number of TCP connection.
+
+        :return: limit_per_host
+        :rtype: int
+        """
+        return self._config.getint("aqt", "limit_per_host")
+
+    @property
     def blacklist(self):
         """list of sites in a blacklist
 

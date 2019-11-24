@@ -28,6 +28,7 @@ import aiohttp
 
 import aiofiles
 from aqt.helper import aio7zr, aio_is_7zip, aiounlink
+from aqt.settings import Settings
 
 
 class BadPackageFile(Exception):
@@ -45,6 +46,7 @@ class QtInstaller:
             self.logger = logging
         else:
             self.logger = getLogger('aqt')
+        self.settings = Settings()
 
     async def retrieve_archive(self, package, session, path=None):
         archive = package.archive
@@ -75,9 +77,10 @@ class QtInstaller:
             base_dir = target_dir
         archives = self.qt_archives.get_archives()
         tasks = []
-        semaphore = asyncio.Semaphore(1)
-        timeout = aiohttp.ClientTimeout(total=300)
-        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit_per_host=4, ssl=True),
+        semaphore = asyncio.Semaphore(self.settings.concurrency)
+        timeout = aiohttp.ClientTimeout(total=self.settings.total_timeout)
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit_per_host=self.settings.limit_per_host,
+                                                                        ssl=True),
                                          timeout=timeout) as session:
             for archive in archives:
                 task = asyncio.ensure_future(self._bound_retrieve_archive(semaphore, archive, session, path=base_dir))
