@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    cli
+   internals
    changes
    devguide
    authors
