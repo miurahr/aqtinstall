@@ -86,9 +86,9 @@ class QtArchives:
 
         # Get packages index
         archive_path = "{0}{1}{2}/qt5_{3}{4}".format(self.os_name,
-                                                       '_x86/' if self.os_name == 'windows' else '_x64/',
-                                                       self.target, qt_ver_num,
-                                                       '_wasm/' if self.arch == 'wasm_32' else '/')
+                                                     '_x86/' if self.os_name == 'windows' else '_x64/',
+                                                     self.target, qt_ver_num,
+                                                     '_wasm/' if self.arch == 'wasm_32' else '/')
         update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
         archive_url = "{0}{1}".format(self.base, archive_path)
         try:
