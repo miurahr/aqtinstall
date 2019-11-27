@@ -33,8 +33,7 @@ def aio7zr(archive, path):
     sevenzip = py7zr.SevenZipFile(archive)
     partial_py7zr = functools.partial(sevenzip.extractall, path=path)
     loop.run_in_executor(None, partial_py7zr)
-    partial_close = functools.partial(sevenzip.close, path=path)
-    loop.run_in_executor(None, partial_close)
+    loop.run_in_executor(None, sevenzip.close)
     logger.debug("Finish uncompress 7zip archive {}".format(archive))
 
 
