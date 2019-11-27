@@ -51,7 +51,7 @@ class QtInstaller:
     async def retrieve_archive(self, package, session, path=None):
         archive = package.archive
         url = package.url
-        self.logger.info("-Downloading {}...".format(url))
+        self.logger.info("Downloading {}...".format(url))
         async with session.get(url) as resp:
             assert resp.status == 200
             # TODO: if status is not 200, we can change mirror site and retry.

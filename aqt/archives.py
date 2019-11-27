@@ -114,7 +114,7 @@ class QtArchives:
                                                      '_wasm/' if self.arch == 'wasm_32' else '/')
         self.archive_path_len = len(archive_path)
         update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
-        self.logger.debug("- Start retrieving Update.xml from {}...".format(update_xml_url))
+        self.logger.debug("Start retrieving Update.xml from {}...".format(update_xml_url))
         self.asyncrun(self.get_update_xml(update_xml_url))
         self.logger.debug("- Finish retrieving Update.xml from {}".format(update_xml_url))
         archive_url = "{0}{1}".format(self.base, archive_path)

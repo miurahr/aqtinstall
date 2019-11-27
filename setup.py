@@ -21,7 +21,7 @@ setup(name='aqtinstall',
       author_email='miurahr@linux.com',
       packages=["aqt"],
       package_data={'aqt': ['*.yml', "*.json", "*.ini"]},
-      install_requires=['aiofiles', 'aiohttp', 'packaging', 'py7zr'],
+      install_requires=['aiofiles', 'aiohttp', 'packaging', 'py7zr>=0.4.3'],
       extras_require={'dev': ['pytest', 'pytest-pep8', 'pytest-cov', 'flake8']},
       scripts=["bin/aqt"],
       classifiers=[
