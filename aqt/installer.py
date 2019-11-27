@@ -66,7 +66,7 @@ class QtInstaller:
         await asyncio.sleep(0.01)
         self.logger.info("Extracting {}...".format(archive))
         await aio7zr(archive, path)
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(1.25)
         await aiounlink(archive)
         self.logger.debug("Finished extraction {}".format(archive))
         return True

@@ -168,11 +168,11 @@ class ToolArchives(QtArchives):
 
     def _get_archives(self):
         if self.os_name == 'windows':
-            archive_path = self.os_name + '_x86/' + self.target + '/' + self.tool_name
+            archive_path = self.os_name + '_x86/' + self.target + '/' + self.tool_name + '/'
         else:
-            archive_path = self.os_name + '_x64/' + self.target + '/' + self.tool_name
+            archive_path = self.os_name + '_x64/' + self.target + '/' + self.tool_name + '/'
         self.archive_path_len = len(archive_path)
-        update_xml_url = "{0}{1}/Updates.xml".format(self.base, archive_path)
+        update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
         self.asyncrun(self.get_update_xml(update_xml_url))
         archive_url = "{0}{1}".format(self.base, archive_path)
         for packageupdate in self.update_xml.iter("PackageUpdate"):
