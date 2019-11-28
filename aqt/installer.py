@@ -77,10 +77,10 @@ class QtInstaller:
         return True
 
     async def _bound_retrieve_archive(self, semaphore, archive, session, path):
+        res = True
         async with semaphore:
-            res = await self.retrieve_archive(archive, session, path)
-        res &= await self.extract_archive(archive, path)
-        return res
+            res &= await self.retrieve_archive(archive, session, path)
+        return res & await self.extract_archive(archive, path)
 
     async def install(self, target_dir=None):
         if target_dir is None:
