@@ -207,11 +207,9 @@ class Cli():
         args.func(args)
 
     def asyncrun(self, arg):
-        self.logger.debug("Start execution {}...".format(arg))
         loop = asyncio.get_event_loop()
         result = loop.run_until_complete(arg)
         loop.run_until_complete(asyncio.sleep(0.250))
-        self.logger.debug("End execution {}...".format(arg))
         return result
 
     def make_conf_files(self, qt_version, arch, base_dir):

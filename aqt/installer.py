@@ -27,7 +27,7 @@ from logging import getLogger
 import aiohttp
 
 import aiofiles
-from aqt.helper import aio7zr, aiounlink
+import py7zr
 from aqt.settings import Settings
 
 
@@ -48,14 +48,14 @@ class QtInstaller:
             self.logger = getLogger('aqt')
         self.settings = Settings()
 
-    async def retrieve_archive(self, package, session, path=None):
-        archive = package.archive
-        url = package.url
+    async def retrieve_archive(self, archive, session):
+        package = archive.archive
+        url = archive.url
         self.logger.info("Downloading {}...".format(url))
         async with session.get(url) as resp:
             if resp.status != 200:
                 return False
-            async with aiofiles.open(archive, 'wb') as fd:
+            async with aiofiles.open(package, 'wb') as fd:
                 while True:
                     chunk = await resp.content.read(4096)
                     if not chunk:
@@ -65,24 +65,18 @@ class QtInstaller:
             self.logger.debug("Finished downloading {}".format(url))
             return True
 
-    async def extract_archive(self, package, path):
-        archive = package.archive
-        self.logger.info("Extracing {}...".format(archive))
+    def extract_archive(self, archive, path):
+        package = archive.archive
+        self.logger.info("Extracing {}...".format(package))
         try:
-            await asyncio.sleep(0.05)
-            await aio7zr(archive, path)
-            await asyncio.sleep(5.0)
-            await aiounlink(archive)
+            sevenzip = py7zr.SevenZipFile(package)
+            sevenzip.extractall(path=path)
+            sevenzip.close()
+            os.unlink(package)
         except Exception:
             return False
-        self.logger.debug("Finished extraction {}".format(archive))
+        self.logger.debug("Finished extraction {}".format(package))
         return True
-
-    async def _bound_retrieve_archive(self, semaphore, package, session, path):
-        res = True
-        async with semaphore:
-            res &= await self.retrieve_archive(package, session, path)
-        return res & await self.extract_archive(package, path)
 
     async def install(self, target_dir=None):
         if target_dir is None:
@@ -95,10 +89,14 @@ class QtInstaller:
         semaphore = asyncio.Semaphore(self.settings.concurrency)
         timeout = aiohttp.ClientTimeout(total=self.settings.total_timeout)
         conn = aiohttp.TCPConnector(limit_per_host=self.settings.limit_per_host, ssl=True)
-        async with aiohttp.ClientSession(connector=conn, timeout=timeout) as session:
-            for archive in archives:
-                task = asyncio.ensure_future(self._bound_retrieve_archive(semaphore, archive, session, path=base_dir))
-                tasks.append(task)
-            self.logger.debug("Await retrieve_archive gathering")
-            rets = await asyncio.gather(*tasks)
+        async with semaphore:
+            async with aiohttp.ClientSession(connector=conn, timeout=timeout) as session:
+                for archive in archives:
+                    task = asyncio.ensure_future(self.retrieve_archive(archive, session))
+                    tasks.append(task)
+                self.logger.debug("Await retrieve_archive gathering")
+                rets = await asyncio.gather(*tasks)
+        self.logger.debug("--------------Start extractions")
+        for archive in archives:
+            self.extract_archive(archive, base_dir)
         return rets
