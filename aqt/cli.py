@@ -134,7 +134,6 @@ class Cli():
         print('List Qt packages for %s' % args.qt_version)
 
     def show_help(self, args):
-        print("show help")
         self.parser.print_help()
 
     def _create_parser(self):

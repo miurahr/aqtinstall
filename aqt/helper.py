@@ -8,6 +8,7 @@ from aqt.settings import Settings
 
 async def altlink(url):
     settings = Settings()
+    logger = getLogger('aqt')
     blacklist = settings.blacklist
     mirrors = {}
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=True)) as session:
@@ -18,7 +19,6 @@ async def altlink(url):
                 for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
                     pri = u.attrib['priority']
                     mirrors[pri] = u.text
-    logger = getLogger('aqt')
     if len(mirrors) == 0:
         # no alternative
         return url
