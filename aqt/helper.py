@@ -11,9 +11,8 @@ from aqt.settings import Settings
 
 
 def async_wrap(func):
-    @asyncio.coroutine
     @functools.wraps(func)
-    def run(*args, loop=None, executor=None, **kwargs):
+    async def run(*args, loop=None, executor=None, **kwargs):
         if loop is None:
             loop = asyncio.get_event_loop()
         partial_func = functools.partial(func, *args, **kwargs)
@@ -25,8 +24,7 @@ def async_wrap(func):
 aiounlink = async_wrap(os.unlink)
 
 
-@asyncio.coroutine
-def aio7zr(archive, path):
+async def aio7zr(archive, path):
     logger = getLogger('aqt')
     logger.debug("Start uncompress 7zip archive {}".format(archive))
     loop = asyncio.get_event_loop()
