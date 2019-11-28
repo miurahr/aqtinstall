@@ -65,8 +65,9 @@ class QtInstaller:
             self.logger.debug("Finished downloading {}".format(url))
             return True
 
-    async def extract_archive(self, archive, path):
-        self.logger.info("Extracting {}...".format(archive))
+    async def extract_archive(self, package, path):
+        archive = package.archive
+        self.logger.info("Extracing {}...".format(archive))
         try:
             await asyncio.sleep(0.05)
             await aio7zr(archive, path)
@@ -77,11 +78,11 @@ class QtInstaller:
         self.logger.debug("Finished extraction {}".format(archive))
         return True
 
-    async def _bound_retrieve_archive(self, semaphore, archive, session, path):
+    async def _bound_retrieve_archive(self, semaphore, package, session, path):
         res = True
         async with semaphore:
-            res &= await self.retrieve_archive(archive, session, path)
-        return res & await self.extract_archive(archive, path)
+            res &= await self.retrieve_archive(package, session, path)
+        return res & await self.extract_archive(package, path)
 
     async def install(self, target_dir=None):
         if target_dir is None:
