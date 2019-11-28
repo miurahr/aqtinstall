@@ -63,17 +63,24 @@ class QtInstaller:
                         break
                     await fd.write(chunk)
             self.logger.debug("Finished downloading {}".format(url))
-        await asyncio.sleep(0.01)
+
+    async def extract_archive(self, archive, path):
         self.logger.info("Extracting {}...".format(archive))
-        await aio7zr(archive, path)
-        await asyncio.sleep(0.25)
-        await aiounlink(archive)
+        try:
+            await asyncio.sleep(0.05)
+            await aio7zr(archive, path)
+            await asyncio.sleep(5.0)
+            await aiounlink(archive)
+        except Exception:
+            return False
         self.logger.debug("Finished extraction {}".format(archive))
         return True
 
     async def _bound_retrieve_archive(self, semaphore, archive, session, path):
         async with semaphore:
-            return await self.retrieve_archive(archive, session, path)
+            res = await self.retrieve_archive(archive, session, path)
+        res &= await self.extract_archive(archive, path)
+        return res
 
     async def install(self, target_dir=None):
         if target_dir is None:
@@ -85,9 +92,8 @@ class QtInstaller:
         self.logger.debug("Start aiohttp session")
         semaphore = asyncio.Semaphore(self.settings.concurrency)
         timeout = aiohttp.ClientTimeout(total=self.settings.total_timeout)
-        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit_per_host=self.settings.limit_per_host,
-                                                                        ssl=True),
-                                         timeout=timeout) as session:
+        conn = aiohttp.TCPConnector(limit_per_host=self.settings.limit_per_host, ssl=True)
+        async with aiohttp.ClientSession(connector=conn, timeout=timeout) as session:
             for archive in archives:
                 task = asyncio.ensure_future(self._bound_retrieve_archive(semaphore, archive, session, path=base_dir))
                 tasks.append(task)

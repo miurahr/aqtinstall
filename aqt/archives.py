@@ -91,18 +91,14 @@ class QtArchives:
     async def get_update_xml(self, url):
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=True)) as client:
             try:
-                new_url = url
-                resp = await client.get(url, allow_redirects=False)
-                if resp.status == 302:
-                    new_url = await altlink(resp.headers['Location'])
-                    resp = await client.get(new_url)
+                resp = await client.get(url, allow_redirects=True)
             except ClientError as e:
                 self.logger.error('Download error: %s\n' % e.args, exc_info=True)
                 raise e
             else:
                 self.update_xml = ElementTree.fromstring(await resp.text())
             if not self.has_mirror:
-                self.base = new_url[:-(self.archive_path_len + 11)]
+                self.base = str(resp.url)[:-(self.archive_path_len + 11)]
 
     def _get_archives(self):
         qt_ver_num = self.version.replace(".", "")
