@@ -27,8 +27,6 @@ from logging import getLogger
 import aiohttp
 from aiohttp import ClientError
 
-from aqt.helper import altlink
-
 
 class QtPackage:
     """
