@@ -53,8 +53,8 @@ class QtInstaller:
         url = package.url
         self.logger.info("Downloading {}...".format(url))
         async with session.get(url) as resp:
-            assert resp.status == 200
-            # TODO: if status is not 200, we can change mirror site and retry.
+            if resp.status != 200:
+                return False
             async with aiofiles.open(archive, 'wb') as fd:
                 while True:
                     chunk = await resp.content.read(4096)
@@ -63,6 +63,7 @@ class QtInstaller:
                         break
                     await fd.write(chunk)
             self.logger.debug("Finished downloading {}".format(url))
+            return True
 
     async def extract_archive(self, archive, path):
         self.logger.info("Extracting {}...".format(archive))
