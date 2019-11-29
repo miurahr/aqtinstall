@@ -97,7 +97,7 @@ class QtArchives:
             r = requests.get(update_xml_url, allow_redirects=False)
             if r.status_code == 302:
                 new_url = altlink(update_xml_url)
-                self.base = new_url[:-len(archive_path)-11]
+                self.base = new_url[:-(len(archive_path) + 11)]
         except requests.exceptions.ConnectionError as e:
             self.logger.error('Download error: %s\n' % e.args, exc_info=True)
             raise e
