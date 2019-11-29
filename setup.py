@@ -12,7 +12,7 @@ def readme():
 
 
 setup(name='aqtinstall',
-      version='0.6b1',
+      use_scm_version=True,
       description='Another unofficial Qt installer',
       url='http://github.com/miurahr/aqtinstall',
       license='MIT',
@@ -22,6 +22,7 @@ setup(name='aqtinstall',
       packages=["aqt"],
       package_data={'aqt': ['*.yml', "*.json", "*.ini"]},
       install_requires=['requests', 'six', 'py7zr', 'packaging'],
+      setup_requires=['setuptools-scm>=3.3.3', 'setuptools>=42.0'],
       extras_require={'dev': ['pytest', 'pytest-pep8', 'pytest-cov', 'flake8']},
       scripts=["bin/aqt"],
       classifiers=[
