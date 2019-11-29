@@ -30,6 +30,8 @@ from subprocess import run
 
 import requests
 
+from aqt.helper import altlink
+
 if sys.version_info > (3, 5):
     import py7zr
 
@@ -57,7 +59,12 @@ class QtInstaller:
         url = package.url
         self.logger.info("-Downloading {}...".format(url))
         try:
-            r = requests.get(url, stream=True)
+            r = requests.get(url, allow_redirects=False, stream=True)
+            if r.status_code == 302:
+                newurl = altlink(r.url)
+                # newurl = r.headers['Location']
+                self.logger.info('Redirected to new URL: {}'.format(newurl))
+                r = requests.get(newurl, stream=True)
         except requests.exceptions.ConnectionError as e:
             self.logger.warning("Caught download error: %s" % e.args)
             return False
