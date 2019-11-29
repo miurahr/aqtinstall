@@ -14,23 +14,11 @@ Current changes
 Added
 -----
 
-* Introduce helper module.
-* Introduce 'settings.ini' file which has a configuration for
-  aqt module.
-
 Changed
 -------
 
-* Use original site for downloading Update.xml
-* Select mirror site before accessing repository database.
-  This will speed-up installation process.
-* Now don't install extra modules when installing 'wasm_32' arch.
-  You should explicitly specify it with '-m' option.
-
 Fixed
 -----
-
-* Error when mirror site is not http, but https and ftp.
 
 Deprecated
 ----------
@@ -40,6 +28,28 @@ Removed
 
 Security
 --------
+
+`v0.7a1`_ (29, Nov., 2019)
+==========================
+
+Added
+-----
+
+* Introduce helper module.
+* Introduce 'settings.ini' file which has a configuration for
+  aqt module.
+
+Changed
+-------
+
+* Version numbering with setuptools_scm.
+* Now don't install extra modules when installing 'wasm_32' arch.
+  You should explicitly specify it with '-m' option.
+
+Fixed
+-----
+
+* Error when mirror site is not http, but https and ftp.
 
 `v0.6b1`_ (23, Nov., 2019)
 ==========================
@@ -320,7 +330,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.6b1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7a1...HEAD
+.. _v0.7a1: https://github.com/miurahr/aqtinstall/compare/v0.6b1...v0.7a1
 .. _v0.6b1: https://github.com/miurahr/aqtinstall/compare/v0.6a2...v0.6b1
 .. _v0.6a2: https://github.com/miurahr/aqtinstall/compare/v0.6a1...v0.6a2
 .. _v0.6a1: https://github.com/miurahr/aqtinstall/compare/v0.5...v0.6a1
