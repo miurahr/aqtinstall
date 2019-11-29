@@ -2,8 +2,7 @@ import aqt
 
 
 def test_cli_help(capsys):
-    expected = "".join(["show help\n",
-                        "usage: aqt [-h] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
+    expected = "".join(["usage: aqt [-h] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
                         "           {install,tool,list,help} ...\n",
                         "\n",
                         "Installer for Qt SDK.\n",

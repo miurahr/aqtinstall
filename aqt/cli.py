@@ -94,13 +94,12 @@ class Cli():
 
     def _check_mirror(self, mirror):
         if mirror is None:
-            return
+            pass
         elif mirror.startswith('http://') or mirror.startswith('https://') or mirror.startswith('ftp://'):
             pass
         else:
-            self.parser.print_help()
-            exit(1)
-        return mirror
+            return False
+        return True
 
     def _check_modules_arg(self, qt_version, modules):
         if modules is None:
@@ -120,7 +119,9 @@ class Cli():
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
         mirror = args.base
-        self._check_mirror(mirror)
+        if not self._check_mirror(mirror):
+            self.parser.print_help()
+            exit(1)
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
         if not self._check_modules_arg(qt_version, modules):
