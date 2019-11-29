@@ -3,6 +3,7 @@ include *.txt
 include *.cfg
 include *.yml
 include LICENSE
+include pyproject.toml
 include tox.ini
 recursive-include aqt *.ini
 recursive-include aqt *.json

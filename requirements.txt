@@ -3,6 +3,8 @@ requests
 pytest
 pytest-pep8
 flake8
+setuptools>=42
+setuptools-scm>=3.3.3
 wheel
 twine
 py7zr>=0.4.1 ; python_version > '3.5'
