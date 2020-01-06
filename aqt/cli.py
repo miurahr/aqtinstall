@@ -124,9 +124,11 @@ class Cli():
             exit(1)
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
-        if not self._check_modules_arg(qt_version, modules):
+        all_extra = True if 'all' in modules else False
+        if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
-        QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger),
+        QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger,
+                               all_extra=all_extra),
                     logging=self.logger).install(command=sevenzip, target_dir=output_dir)
         sys.stdout.write("\033[K")
         print("Finished installation")
