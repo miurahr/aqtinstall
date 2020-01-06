@@ -20,6 +20,8 @@ Changed
 Fixed
 -----
 
+* CI conditions, update target version.
+
 Deprecated
 ----------
 
