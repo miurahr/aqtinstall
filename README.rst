@@ -2,7 +2,7 @@ Another Qt installer(aqt)
 =========================
 
 
-.. |pypi| image:: https://badge.fury.io/py/aqtinstall.png
+.. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
 .. |docs| image:: https://readthedocs.org/projects/aqtinstall/badge/?version=latest
    :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
