@@ -50,7 +50,7 @@ for qt_version in qt_versions:
 
 # WASM
 linux_build_jobs.append(
-    BuildJob('5.13.2', 'linux', 'desktop', 'wasm_32', "wasm_32")
+    BuildJob('5.14.0', 'linux', 'desktop', 'wasm_32', "wasm_32")
 )
 
 # Mac Desktop
@@ -66,7 +66,7 @@ mac_build_jobs.append(
 
 # WASM
 mac_build_jobs.append(
-    BuildJob('5.13.2', 'mac', 'desktop', 'wasm_32', "wasm_32")
+    BuildJob('5.14.0', 'mac', 'desktop', 'wasm_32', "wasm_32")
 )
 
 # Windows Desktop
@@ -79,7 +79,7 @@ windows_build_jobs.extend(
 
 # WASM
 windows_build_jobs.append(
-    BuildJob('5.13.2', 'windows', 'desktop', 'wasm_32', "wasm_32")
+    BuildJob('5.14.0', 'windows', 'desktop', 'wasm_32', "wasm_32")
 )
 
 windows_build_jobs.extend(
