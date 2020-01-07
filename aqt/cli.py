@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2020 Hiroshi Miura <miurahr@linux.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -56,23 +56,14 @@ class Cli():
         return False
 
     def _set_sevenzip(self, args):
-        sevenzip = None
-        if sys.version_info > (3, 5):
-            use_py7zr = args.internal
+        sevenzip = args.external
+        if sevenzip is None:
+            return None
+        elif os.path.exists(sevenzip):
+            pass
         else:
-            use_py7zr = False
-        if not use_py7zr:
-            sevenzip = args.external
-            if sevenzip is None:
-                if platform.system() == 'Windows':
-                    sevenzip = r'C:\Program Files\7-Zip\7z.exe'
-                else:
-                    sevenzip = r'7zr'
-            elif os.path.exists(sevenzip):
-                pass
-            else:
-                print('Specified external 7zip command is not exist.')
-                exit(1)
+            print('Specified 7zip command executable is not exist.')
+            exit(1)
         return sevenzip
 
     def _set_arch(self, args, oarch, os_name, target, qt_version):
@@ -187,8 +178,6 @@ class Cli():
                                     help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                          "where 'online' folder exist.")
         install_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
-        if sys.version_info >= (3, 5):
-            install_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
         tools_parser = subparsers.add_parser('tool')
         tools_parser.set_defaults(func=self.run_tool)
         tools_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")

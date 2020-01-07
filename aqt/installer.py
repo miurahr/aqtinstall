@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2020 Hiroshi Miura <miurahr@linux.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -22,18 +22,15 @@
 
 import functools
 import os
-import sys
 from logging import getLogger
 from multiprocessing.dummy import Pool
 from operator import and_
 from subprocess import run
 
 import requests
+import py7zr
 
 from aqt.helper import altlink
-
-if sys.version_info > (3, 5):
-    import py7zr
 
 NUM_PROCESS = 3
 
@@ -74,9 +71,8 @@ class QtInstaller:
                     fd.write(chunk)
             self.logger.info("-Extracting {}...".format(archive))
 
-            if sys.version_info > (3, 5):
-                if not py7zr.is_7zfile(archive):
-                    raise BadPackageFile
+            if not py7zr.is_7zfile(archive):
+                raise BadPackageFile
             if command is None:
                 py7zr.SevenZipFile(archive).extractall(path=path)
             else:
