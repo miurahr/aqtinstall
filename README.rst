@@ -66,12 +66,12 @@ General usage looks like this:
 .. code-block:: bash
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        [--internal] install <qt-version> <host> <target> [<arch>] -m [extra module] [extra module]...
+        [--internal] install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
 
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        [--internal] install <qt-version> <host> <target> [<arch>] -m [extra module] [extra module]...
+        [--internal] install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
@@ -84,6 +84,7 @@ General usage looks like this:
       `android_armv7`
 * You can also use internal 7zip extractor instead of external 7zip command.
 * You can specify external 7zip command path.
+* When specify all for extra modules option '-m' all extra modules are installed.
 
 .. code-block:: bash
 
