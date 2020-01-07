@@ -14,15 +14,11 @@ Current changes
 Added
 -----
 
-* Add special module name 'all' for extra module option.
-
 Changed
 -------
 
 Fixed
 -----
-
-* CI conditions, update target version.
 
 Deprecated
 ----------
@@ -32,6 +28,19 @@ Removed
 
 Security
 --------
+
+`v0.7a2`_ (7, Jan., 2020)
+==========================
+
+Added
+-----
+
+* Add special module name 'all' for extra module option.
+
+Fixed
+-----
+
+* CI conditions, update target version.
 
 `v0.7a1`_ (29, Nov., 2019)
 ==========================
@@ -334,7 +343,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7a1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7a2...HEAD
+.. _v0.7a2: https://github.com/miurahr/aqtinstall/compare/v0.7a1...v0.7a2
 .. _v0.7a1: https://github.com/miurahr/aqtinstall/compare/v0.6b1...v0.7a1
 .. _v0.6b1: https://github.com/miurahr/aqtinstall/compare/v0.6a2...v0.6b1
 .. _v0.6a2: https://github.com/miurahr/aqtinstall/compare/v0.6a1...v0.6a2
