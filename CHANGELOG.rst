@@ -14,6 +14,8 @@ Current changes
 Added
 -----
 
+* Add special module name 'all' for extra module option.
+
 Changed
 -------
 
