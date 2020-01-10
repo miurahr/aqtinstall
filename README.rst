@@ -66,12 +66,12 @@ General usage looks like this:
 .. code-block:: bash
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        [--internal] install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
+        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
 
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        [--internal] install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
+        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
@@ -82,14 +82,13 @@ General usage looks like this:
       `win64_msvc2017_winrt_x86`, `win64_msvc2017_winrt_armv7`
     * For android and Qt 5.13 or below, choose one of: `android_x86_64`, `android_arm64_v8a`, `android_x86`, 
       `android_armv7`
-* You can also use internal 7zip extractor instead of external 7zip command.
-* You can specify external 7zip command path.
+* You can specify external 7zip command path instead of built-in extractor.
 * When specify all for extra modules option '-m' all extra modules are installed.
 
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        [--internal] tool <host> <tool_name> <tool-version> <arch> -m [extra module] [extra module]...
+        tool <host> <tool_name> <tool-version> <arch>
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
 * arch is full qualified tool name such as `qt.tools.ifw.31`
