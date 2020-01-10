@@ -24,7 +24,6 @@ import argparse
 import logging
 import logging.config
 import os
-import platform
 import sys
 
 from packaging.version import Version, parse
