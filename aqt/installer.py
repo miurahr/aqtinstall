@@ -28,8 +28,8 @@ from operator import and_
 from subprocess import run
 
 import requests
-import py7zr
 
+import py7zr
 from aqt.helper import altlink
 
 NUM_PROCESS = 3
