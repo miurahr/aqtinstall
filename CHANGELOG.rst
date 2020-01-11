@@ -29,6 +29,17 @@ Removed
 Security
 --------
 
+`v0.7b1`_ (10, Jan., 2020)
+==========================
+
+Changed
+-------
+
+* Bamp up dependency py7zr >=v0.5b5.
+* Use py7zr in default to extract packages.
+* Drop --internal command line option.
+
+
 `v0.7a2`_ (7, Jan., 2020)
 ==========================
 
