@@ -29,10 +29,24 @@ Removed
 Security
 --------
 
+
+`v0.7.1`_ (13, Jan., 2020)
+==========================
+
+Fixed
+-----
+
+* Fix installation of extra modules for Qt5.9.
+
+
 `v0.7`_ (13, Jan., 2020)
 ==========================
 
+Changed
+-------
+
 * Move project metadata to setup.cfg from setup.py.
+
 
 `v0.7b1`_ (10, Jan., 2020)
 ==========================
@@ -359,7 +373,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.1...HEAD
+.. _v0.7.1: https://github.com/miurahr/aqtinstall/compare/v0.7...v0.7.1
 .. _v0.7: https://github.com/miurahr/aqtinstall/compare/v0.7b1...v0.7
 .. _v0.7b1: https://github.com/miurahr/aqtinstall/compare/v0.7a2...v0.7b1
 .. _v0.7a2: https://github.com/miurahr/aqtinstall/compare/v0.7a1...v0.7a2
