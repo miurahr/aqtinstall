@@ -81,8 +81,8 @@ class QtArchives:
             self.all_extra = True
         else:
             for m in modules if modules is not None else []:
-                fqmn = "qt.qt5.{}.{}.{}".format(self.qt_ver_num, m, arch)
-                self.mod_list.append(fqmn)
+                self.mod_list.append("qt.qt5.{}.{}.{}".format(self.qt_ver_num, m, arch))
+                self.mod_list.append("qt.{}.{}.{}".format(self.qt_ver_num, m, arch))
         self._get_archives()
 
     def _get_archives(self):
