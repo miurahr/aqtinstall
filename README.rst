@@ -91,7 +91,8 @@ General usage looks like this:
         tool <host> <tool_name> <tool-version> <arch>
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
-* arch is full qualified tool name such as `qt.tools.ifw.31`
+* arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
+  This is a quite experimental feature, may not work and please use it with your understanding of what you are doing.
 
 The Qt packages are installed under current directory as such `Qt/<ver>/gcc_64/`
 If you want to install it in `C:\Qt` as same as standard gui installer default,
