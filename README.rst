@@ -85,14 +85,29 @@ General usage looks like this:
 * You can specify external 7zip command path instead of built-in extractor.
 * When specify all for extra modules option '-m' all extra modules are installed.
 
+
+Installing tool and utility(Experimental)
+---------------------------
+
+You can install tools and utilities using following syntax;
+
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
         tool <host> <tool_name> <tool-version> <arch>
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
-* arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
+* arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on Qt `archive_site`_
   This is a quite experimental feature, may not work and please use it with your understanding of what you are doing.
+* It does not recognize 'installscript.qs'. When using tools which depends on a qt script, you should do something by yourself.
+
+.. _`archive_site`: https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
+
+
+Target directory
+----------------
+
+aqt can take option '--outputdir' or '-O' that specify a target directory.
 
 The Qt packages are installed under current directory as such `Qt/<ver>/gcc_64/`
 If you want to install it in `C:\Qt` as same as standard gui installer default,
@@ -148,20 +163,19 @@ Example: Show help message
     aqt help
 
 
-
 Supported CI platform
 ---------------------
 
 There are no limitation for CI platform but currently it is tested on Azure Pipelines.
-
+If you want to use it with Github actions, please see `install-qt`_ action.
 
 
 Use cases
 ---------
 
-* https://github.com/kashimotoxiang/ankimousereview
+* GitHub Actions: `install_qt`_
 
-* GitHub Actions with AqtInstall: https://github.com/jurplel/install-qt-action
+.. _`install-qt`: https://github.com/jurplel/install-qt-action
 
 
 History
