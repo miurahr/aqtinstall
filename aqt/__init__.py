@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019, 2020 Hiroshi Miura <miurahr@linux.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
