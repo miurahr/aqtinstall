@@ -21,10 +21,12 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import concurrent.futures
+import functools
 import os
-import sys
 from logging import getLogger
+from operator import and_
 from subprocess import run
+from time import sleep
 
 import requests
 
@@ -77,12 +79,10 @@ class QtInstaller:
         return archive
 
     def extract_archive(self, archive):
-        self.logger.info("-Extracting {}...".format(archive))
         py7zr.SevenZipFile(archive).extractall(path=self.base_dir)
         os.unlink(archive)
 
     def extract_archive_ext(self, archive):
-        self.logger.info("-Extracting {}...".format(archive))
         if self.base_dir is not None:
             run([self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive])
         else:
@@ -98,19 +98,34 @@ class QtInstaller:
         archives = self.qt_archives.get_archives()
 
         # retrieve files from download site
-        download_task = []
-        with concurrent.futures.ThreadPoolExecutor() as texec:
-            for ar in archives:
-                self.logger.info("-Downloading {}...".format(ar.url))
-                download_task.append(texec.submit(self.retrieve_archive, ar))
+        with concurrent.futures.ProcessPoolExecutor() as pexec:
+            download_task = []
+            completed_downloads = []
             extract_task = []
-            with concurrent.futures.ProcessPoolExecutor() as pexec:
-                for t in download_task:
-                    archive = t.result()
-                    if archive is None:
-                        self.logger.error("Failed to download.")
-                        exit(1)
-                    extract_task.append(pexec.submit(extractor, t.result()))
+            with concurrent.futures.ThreadPoolExecutor() as texec:
+                for ar in archives:
+                    self.logger.info("-Downloading {}...".format(ar.url))
+                    download_task.append(texec.submit(self.retrieve_archive, ar))
+                    completed_downloads.append(False)
+                while True:
+                    for i, t in enumerate(download_task):
+                        if completed_downloads[i] or t.running():
+                            continue
+                        if t.done():
+                            archive = t.result()
+                            if archive is None:
+                                self.logger.error("Failed to download.")
+                                exit(1)
+                            completed_downloads[i] = True
+                            self.logger.info("-Extracting {}...".format(archive))
+                            extract_task.append(pexec.submit(extractor, archive))
+                    if functools.reduce(and_, completed_downloads):
+                        self.logger.info("Completed downloads.")
+                        break
+                    else:
+                        sleep(0.05)
+            concurrent.futures.wait(extract_task)
+
             # finalize
             if qt_version != "Tools":  # tools installation
                 if arch.startswith('win64_mingw'):
@@ -122,8 +137,7 @@ class QtInstaller:
                 else:
                     arch_dir = arch
                 self.make_conf_files(qt_version, arch_dir)
-            sys.stdout.write("\033[K")
-            print("Finished installation")
+            self.logger.info("Finished installation")
 
     def make_conf_files(self, qt_version, arch_dir):
         """Make Qt configuration files, qt.conf and qtconfig.pri"""
