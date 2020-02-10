@@ -117,7 +117,7 @@ class QtInstaller:
                         if completed_downloads[i]:
                             if not completed_extract[i] and i < len(extract_task) and extract_task[i].done():
                                 (archive, elapsed) = extract_task[i].result()
-                                self.logger.info("Done {} extraction in {.8f}.".format(archive, elapsed))
+                                self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
                                 completed_extract[i] = True
                         elif t.done():
                             archive = t.result()
@@ -134,14 +134,14 @@ class QtInstaller:
                         for i, t in enumerate(extract_task):
                             if not completed_extract[i] and t.done():
                                 (archive, elapsed) = t.result()
-                                self.logger.info("Done {} extraction in {.8f}.".format(archive, elapsed))
+                                self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
                                 completed_extract[i] = True
                         sleep(0.05)
             while True:
                 for i, t in enumerate(extract_task):
                     if not completed_extract[i] and t.done():
                         (archive, elapsed) = t.result()
-                        self.logger.info("Done {} extraction in {.8f}.".format(archive, elapsed))
+                        self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
                         completed_extract[i] = True
                 if functools.reduce(and_, completed_extract):
                     break
