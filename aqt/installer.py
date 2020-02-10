@@ -103,43 +103,36 @@ class QtInstaller:
         with concurrent.futures.ProcessPoolExecutor() as pexec:
             download_task = []
             completed_downloads = []
-            extract_task = []
-            completed_extract = []
+            self.extract_task = []
+            self.completed_extract = []
             with concurrent.futures.ThreadPoolExecutor() as texec:
                 for ar in archives:
                     self.logger.info("Downloading {}...".format(ar.url))
                     download_task.append(texec.submit(self.retrieve_archive, ar))
                     completed_downloads.append(False)
-                    completed_extract.append(False)
+                    self.completed_extract.append(False)
                 while True:
                     for i, t in enumerate(download_task):
                         if completed_downloads[i]:
-                            if not completed_extract[i] and i < len(extract_task) and extract_task[i].done():
-                                self.logger.info("Extraction {} done.".format(extract_task[i].result()))
-                                completed_extract[i] = True
+                            if not self.completed_extract[i] and i < len(self.extract_task) and self.extract_task[i].done():
+                                self.print_ext_done(i, self.extract_task[i].result())
                         elif t.done():
                             archive = t.result()
                             if archive is None:
                                 self.logger.error("Failed to download.")
                                 exit(1)
                             self.logger.info("Extracting {}...".format(archive))
-                            extract_task.append(pexec.submit(extractor, archive))
+                            self.extract_task.append(pexec.submit(extractor, archive))
                             completed_downloads[i] = True
                     if functools.reduce(and_, completed_downloads):
                         self.logger.info("Downloads are Completed.")
                         break
                     else:
-                        for i, t in enumerate(extract_task):
-                            if not completed_extract[i] and t.done():
-                                self.logger.info("Extraction {} done.".format(t.result()))
-                                completed_extract[i] = True
+                        self.check_ext_done()
                         sleep(0.05)
             while True:
-                for i, t in enumerate(extract_task):
-                    if t.done():
-                        self.logger.info("Extract {} done.".format(t.result()))
-                        completed_extract[i] = True
-                if functools.reduce(and_, completed_extract):
+                self.check_ext_done()
+                if functools.reduce(and_, self.completed_extract):
                     break
                 else:
                     sleep(0.5)
@@ -155,6 +148,15 @@ class QtInstaller:
                     arch_dir = arch
                 self.make_conf_files(qt_version, arch_dir)
             self.logger.info("Finished installation")
+
+    def check_ext_done(self):
+        for i, t in enumerate(self.extract_task):
+            if not self.completed_extract[i] and t.done():
+                self.print_ext_done(i, t.result())
+
+    def print_ext_done(self, i, archive):
+        self.logger.info("Extraction {} done.".format(archive))
+        self.completed_extract[i] = True
 
     def make_conf_files(self, qt_version, arch_dir):
         """Make Qt configuration files, qt.conf and qtconfig.pri"""
