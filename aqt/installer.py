@@ -136,8 +136,8 @@ class QtInstaller:
                         sleep(0.05)
             while True:
                 for i, t in enumerate(extract_task):
-                    if t.done():
-                        self.logger.info("Extract {} done.".format(t.result()))
+                    if not completed_extract[i] and t.done():
+                        self.logger.info("Extraction {} done.".format(t.result()))
                         completed_extract[i] = True
                 if functools.reduce(and_, completed_extract):
                     break
