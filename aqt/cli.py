@@ -100,6 +100,7 @@ class Cli():
         return all([m in available for m in modules])
 
     def run_install(self, args):
+        start_time = time.perf_counter()
         arch = args.arch
         target = args.target
         os_name = args.host
@@ -120,9 +121,10 @@ class Cli():
         QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger,
                                all_extra=all_extra),
                     logging=self.logger, command=sevenzip, target_dir=output_dir).install()
-        self.logger.info("Time elasped: {time:.8f} second".format(time=time.process_time()))
+        self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_tool(self, args):
+        start_time = time.perf_counter()
         arch = args.arch
         tool_name = args.tool_name
         os_name = args.host
@@ -135,7 +137,7 @@ class Cli():
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
                     logging=self.logger, command=sevenzip, target_dir=output_dir).install()
-        self.logger.info("Time elasped: {time:.8f} second".format(time=time.process_time()))
+        self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_list(self, args):
         print('List Qt packages for %s' % args.qt_version)

@@ -23,9 +23,10 @@
 import concurrent.futures
 import functools
 import os
+import subprocess
+import time
 from logging import getLogger
 from operator import and_
-from subprocess import run
 from time import sleep
 
 import requests
@@ -81,15 +82,15 @@ class QtInstaller:
     def extract_archive(self, archive):
         py7zr.SevenZipFile(archive).extractall(path=self.base_dir)
         os.unlink(archive)
-        return archive
+        return archive, time.process_time()
 
     def extract_archive_ext(self, archive):
         if self.base_dir is not None:
-            run([self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive])
+            subprocess.run([self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive])
         else:
-            run([self.command, 'x', '-aoa', '-bd', '-y', archive])
+            subprocess.run([self.command, 'x', '-aoa', '-bd', '-y', archive])
         os.unlink(archive)
-        return archive
+        return archive, 0
 
     def install(self):
         qt_version, target, arch = self.qt_archives.get_target_config()
@@ -115,7 +116,8 @@ class QtInstaller:
                     for i, t in enumerate(download_task):
                         if completed_downloads[i]:
                             if not completed_extract[i] and i < len(extract_task) and extract_task[i].done():
-                                self.logger.info("Extraction {} done.".format(extract_task[i].result()))
+                                (archive, elapsed) = extract_task[i].result()
+                                self.logger.info("Done {} extraction in {.8f}.".format(archive, elapsed))
                                 completed_extract[i] = True
                         elif t.done():
                             archive = t.result()
@@ -131,13 +133,15 @@ class QtInstaller:
                     else:
                         for i, t in enumerate(extract_task):
                             if not completed_extract[i] and t.done():
-                                self.logger.info("Extraction {} done.".format(t.result()))
+                                (archive, elapsed) = t.result()
+                                self.logger.info("Done {} extraction in {.8f}.".format(archive, elapsed))
                                 completed_extract[i] = True
                         sleep(0.05)
             while True:
                 for i, t in enumerate(extract_task):
                     if not completed_extract[i] and t.done():
-                        self.logger.info("Extraction {} done.".format(t.result()))
+                        (archive, elapsed) = t.result()
+                        self.logger.info("Done {} extraction in {.8f}.".format(archive, elapsed))
                         completed_extract[i] = True
                 if functools.reduce(and_, completed_extract):
                     break
