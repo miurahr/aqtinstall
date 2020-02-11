@@ -17,6 +17,10 @@ Added
 Changed
 -------
 
+* Replace 'multiprocessing.dummy' with 'concurrent.futures'.
+    - download with multi-threading(I/O bound)
+    - extract with multi-processing(CPU bound)
+
 Fixed
 -----
 
