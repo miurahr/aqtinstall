@@ -86,9 +86,9 @@ windows_build_jobs.extend(
     [
         BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
         BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
+        # BuildJob('5.13.2', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
         BuildJob('5.13.2', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win32_mingw73', 'mingw73_32'),
+        # BuildJob('5.13.2', 'windows', 'desktop', 'win32_mingw73', 'mingw73_32'),
     ]
 )
 
