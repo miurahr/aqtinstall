@@ -17,14 +17,8 @@ Added
 Changed
 -------
 
-* Replace 'multiprocessing.dummy' with 'concurrent.futures'.
-    - download with multi-threading(I/O bound)
-    - extract with multi-processing(CPU bound)
-
 Fixed
 -----
-
-* '-E | --external' option handling which cause path is not str error.
 
 Deprecated
 ----------
@@ -34,6 +28,23 @@ Removed
 
 Security
 --------
+
+`v0.7.2`_ (11, Feb., 2020)
+==========================
+
+
+Changed
+-------
+
+* Replace 'multiprocessing.dummy' with 'concurrent.futures'.
+    - download with multi-threading(I/O bound)
+    - extract with multi-processing(CPU bound)
+
+Fixed
+-----
+
+* '-E | --external' option handling which cause path is not str error.
+
 
 
 `v0.7.1`_ (13, Jan., 2020)
@@ -379,7 +390,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.2...HEAD
+.. _v0.7.2: https://github.com/miurahr/aqtinstall/compare/v0.7...v0.7.2
 .. _v0.7.1: https://github.com/miurahr/aqtinstall/compare/v0.7...v0.7.1
 .. _v0.7: https://github.com/miurahr/aqtinstall/compare/v0.7b1...v0.7
 .. _v0.7b1: https://github.com/miurahr/aqtinstall/compare/v0.7a2...v0.7b1
