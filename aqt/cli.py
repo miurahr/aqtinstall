@@ -176,7 +176,7 @@ class Cli():
         install_parser.add_argument('-b', '--base', nargs='?',
                                     help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                          "where 'online' folder exist.")
-        install_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
+        install_parser.add_argument('-E', '--external', nargs='?', help='Specify external 7zip command path.')
         tools_parser = subparsers.add_parser('tool')
         tools_parser.set_defaults(func=self.run_tool)
         tools_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
@@ -188,7 +188,7 @@ class Cli():
         tools_parser.add_argument('-b', '--base', nargs='?',
                                   help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                        "where 'online' folder exist.")
-        tools_parser.add_argument('-E', '--external', nargs=1, help='Specify external 7zip command path.')
+        tools_parser.add_argument('-E', '--external', nargs='?', help='Specify external 7zip command path.')
         tools_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
