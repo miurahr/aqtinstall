@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2020 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019,2020 Hiroshi Miura <miurahr@linux.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -20,19 +20,19 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import concurrent.futures
 import functools
 import os
+import subprocess
+import time
 from logging import getLogger
-from multiprocessing.dummy import Pool
 from operator import and_
-from subprocess import run
+from time import sleep
 
 import requests
 
 import py7zr
 from aqt.helper import altlink
-
-NUM_PROCESS = 3
 
 
 class BadPackageFile(Exception):
@@ -44,17 +44,21 @@ class QtInstaller:
     Installer class to download packages and extract it.
     """
 
-    def __init__(self, qt_archives, logging=None):
+    def __init__(self, qt_archives, logging=None, command=None, target_dir=None):
         self.qt_archives = qt_archives
         if logging:
             self.logger = logging
         else:
             self.logger = getLogger('aqt')
+        self.command = command
+        if target_dir is None:
+            self.base_dir = os.getcwd()
+        else:
+            self.base_dir = target_dir
 
-    def retrieve_archive(self, package, path=None, command=None):
+    def retrieve_archive(self, package):
         archive = package.archive
         url = package.url
-        self.logger.info("-Downloading {}...".format(url))
         try:
             r = requests.get(url, allow_redirects=False, stream=True)
             if r.status_code == 302:
@@ -64,60 +68,107 @@ class QtInstaller:
                 r = requests.get(newurl, stream=True)
         except requests.exceptions.ConnectionError as e:
             self.logger.warning("Caught download error: %s" % e.args)
-            return False
+            return None
         else:
-            with open(archive, 'wb') as fd:
-                for chunk in r.iter_content(chunk_size=8196):
-                    fd.write(chunk)
-            self.logger.info("-Extracting {}...".format(archive))
+            try:
+                with open(archive, 'wb') as fd:
+                    for chunk in r.iter_content(chunk_size=8196):
+                        fd.write(chunk)
+            except Exception as e:
+                self.logger.warning("Caught download error: %s" % e.args)
+                return None
+        return archive
 
-            if not py7zr.is_7zfile(archive):
-                raise BadPackageFile
-            if command is None:
-                py7zr.SevenZipFile(archive).extractall(path=path)
-            else:
-                if path is not None:
-                    run([command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(path), archive])
-                else:
-                    run([command, 'x', '-aoa', '-bd', '-y', archive])
-            os.unlink(archive)
-        return True
+    def extract_archive(self, archive):
+        py7zr.SevenZipFile(archive).extractall(path=self.base_dir)
+        os.unlink(archive)
+        return archive, time.process_time()
 
-    def install(self, command=None, target_dir=None):
+    def extract_archive_ext(self, archive):
+        if self.base_dir is not None:
+            subprocess.run([self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive])
+        else:
+            subprocess.run([self.command, 'x', '-aoa', '-bd', '-y', archive])
+        os.unlink(archive)
+        return archive, 0
+
+    def install(self):
         qt_version, target, arch = self.qt_archives.get_target_config()
-        if target_dir is None:
-            base_dir = os.getcwd()
+        if self.command is None:
+            extractor = self.extract_archive
         else:
-            base_dir = target_dir
+            extractor = self.extract_archive_ext
         archives = self.qt_archives.get_archives()
-        p = Pool(NUM_PROCESS)
-        ret_arr = p.map(functools.partial(self.retrieve_archive, command=command, path=base_dir), archives)
-        ret = functools.reduce(and_, ret_arr)
-        if not ret:  # fails to install
-            self.logger.error("Failed to install.")
-            exit(1)
-        if qt_version == "Tools":  # tools installation
-            return
-        # finalize
-        if arch.startswith('win64_mingw'):
-            arch_dir = arch[6:] + '_64'
-        elif arch.startswith('win32_mingw'):
-            arch_dir = arch[6:] + '_32'
-        elif arch.startswith('win'):
-            arch_dir = arch[6:]
-        else:
-            arch_dir = arch
-        self.make_conf_files(base_dir, qt_version, arch_dir)
 
-    def make_conf_files(self, base_dir, qt_version, arch_dir):
+        # retrieve files from download site
+        with concurrent.futures.ProcessPoolExecutor() as pexec:
+            download_task = []
+            completed_downloads = []
+            extract_task = []
+            completed_extract = []
+            with concurrent.futures.ThreadPoolExecutor() as texec:
+                for ar in archives:
+                    self.logger.info("Downloading {}...".format(ar.url))
+                    download_task.append(texec.submit(self.retrieve_archive, ar))
+                    completed_downloads.append(False)
+                    completed_extract.append(False)
+                while True:
+                    for i, t in enumerate(download_task):
+                        if completed_downloads[i]:
+                            if not completed_extract[i] and i < len(extract_task) and extract_task[i].done():
+                                (archive, elapsed) = extract_task[i].result()
+                                self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
+                                completed_extract[i] = True
+                        elif t.done():
+                            archive = t.result()
+                            if archive is None:
+                                self.logger.error("Failed to download.")
+                                exit(1)
+                            self.logger.info("Extracting {}...".format(archive))
+                            extract_task.append(pexec.submit(extractor, archive))
+                            completed_downloads[i] = True
+                    if functools.reduce(and_, completed_downloads):
+                        self.logger.info("Downloads are Completed.")
+                        break
+                    else:
+                        for i, t in enumerate(extract_task):
+                            if not completed_extract[i] and t.done():
+                                (archive, elapsed) = t.result()
+                                self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
+                                completed_extract[i] = True
+                        sleep(0.05)
+            while True:
+                for i, t in enumerate(extract_task):
+                    if not completed_extract[i] and t.done():
+                        (archive, elapsed) = t.result()
+                        self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
+                        completed_extract[i] = True
+                if functools.reduce(and_, completed_extract):
+                    break
+                else:
+                    sleep(0.5)
+            # finalize
+            if qt_version != "Tools":  # tools installation
+                if arch.startswith('win64_mingw'):
+                    arch_dir = arch[6:] + '_64'
+                elif arch.startswith('win32_mingw'):
+                    arch_dir = arch[6:] + '_32'
+                elif arch.startswith('win'):
+                    arch_dir = arch[6:]
+                else:
+                    arch_dir = arch
+                self.make_conf_files(qt_version, arch_dir)
+            self.logger.info("Finished installation")
+
+    def make_conf_files(self, qt_version, arch_dir):
         """Make Qt configuration files, qt.conf and qtconfig.pri"""
         try:
             # prepare qt.conf
-            with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
+            with open(os.path.join(self.base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
                 f.write("[Paths]\n")
                 f.write("Prefix=..\n")
             # update qtconfig.pri only as OpenSource
-            with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
+            with open(os.path.join(self.base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
                 lines = f.readlines()
                 f.seek(0)
                 f.truncate()
