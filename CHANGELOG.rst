@@ -20,6 +20,8 @@ Changed
 Fixed
 -----
 
+* '-E | --external' option handling which cause path is not str error.
+
 Deprecated
 ----------
 
