@@ -17,6 +17,8 @@ Added
 Changed
 -------
 
+* Update requirement py7zr >=0.5
+
 Fixed
 -----
 
