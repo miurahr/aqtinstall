@@ -12,13 +12,3 @@ install: pip install tox-travis
 
 script: tox
 
-deploy:
-- provider: pypi
-  user: miurahr
-  password:
-    secure: svKgwkUa3b/+zu99QDhuJUDgjoDY7Pd5hE5cGAkfil98xnq+CM5R5kLPaM7GIfh/jdUR5R4S/QH0A7baEmyoOHfVtP99UkmzsIoSUOYopsgROP6CG34FZUoQ/nknpcTw5xBDzm1Bnu3bBOtU+Avq6B2mAHqu0GFmgxOiZc9+4DECY/+dG/hTXFZb1fvWBWjCdg1LgqQomsgpDixUPAxeBkSsIbpkwrdSWAQWQ+SR7bpkv4yImJkX3hs+jEtmH0j7rYvVNzr72+WFAafKEigASxTVeFdph/hsnT69Bni2KMt5x0I3PXZ39Xx1qlyb04TxYK7rH8gg21ZMwXjA8XsjOy2NKcULub2scGKF7jM0v3EG5E6myNmYm0LFaIIQn6UjKebxADk481dx6y0hIDIJFVDyTIe3g6UkTZjW2skg5GouaIwM6bcX9DTdFQYvlby6CACFC6lte6wdlBKlVIihkimpilXw4zVibHjx0rmExstytzLw0O4NsMk2JIqQ34r5iwv1j27wuuQ9sbLPZpswTjp4PNbFgUozfink2sKldkRtY//Uzs74/t4tafnVb2UvS76fCzivzK25/0PVNQfvB8kbAUnjr2YXfDgpPfgSq4dei8X2VRaH7qM8aM/9lfaEnSQXLCryDB+jAnI4l8d4YyQmDvNClVgk1Svim2KBZao=
-  skip_existing: true
-  distributions: sdist bdist_wheel
-  on:
-    repo: miurahr/aqtinstall
-    tags: true
