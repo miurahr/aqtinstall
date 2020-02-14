@@ -87,7 +87,7 @@ General usage looks like this:
 
 
 Installing tool and utility(Experimental)
----------------------------
+-----------------------------------------
 
 You can install tools and utilities using following syntax;
 
