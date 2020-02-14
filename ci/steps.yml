@@ -158,7 +158,7 @@ steps:
   - task: PythonScript@0
     inputs:
       scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/bin/aqt
+      scriptPath: bin/aqt
       arguments: tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH)
       workingDirectory: $(Build.BinariesDirectory)
     condition: variables['TOOL_NAME']
