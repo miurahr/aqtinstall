@@ -14,13 +14,19 @@ Current changes
 Added
 -----
 
+* Github Actions workflows for publishing.
+
 Changed
 -------
 
+* Remove run script from source.
+  Now it is automatically generated when build.(#85)
 * Update requirement py7zr >=0.5
 
 Fixed
 -----
+
+* README: fix reStructured text syntax.
 
 Deprecated
 ----------
