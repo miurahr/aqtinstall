@@ -14,6 +14,27 @@ Current changes
 Added
 -----
 
+Changed
+-------
+
+Fixed
+-----
+
+Deprecated
+----------
+
+Removed
+-------
+
+Security
+--------
+
+`v0.7.3`_ (14, Feb., 2020)
+==========================
+
+Added
+-----
+
 * Github Actions workflows for publishing.
 
 Changed
@@ -28,14 +49,6 @@ Fixed
 
 * README: fix reStructured text syntax.
 
-Deprecated
-----------
-
-Removed
--------
-
-Security
---------
 
 `v0.7.2`_ (11, Feb., 2020)
 ==========================
