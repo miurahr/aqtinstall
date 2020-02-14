@@ -18,41 +18,24 @@ steps:
   - powershell: |
       $aqtVersion = & python $(Build.SourcesDirectory)/setup.py --version | Out-String -Stream
       pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
-      which aqt
     displayName: install package
 
   # Run Aqt
   ##----------------------------------------------------
-  - task: PythonScript@0
-    inputs:
-      scriptSource: filePath
-      scriptPath: aqt
-      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
-      workingDirectory: $(Build.BinariesDirectory)
+  - script: python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
+    workingDirectory: $(Build.BinariesDirectory)
     condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''))
     displayName: Run Aqt (No Base URL Set)
-  - task: PythonScript@0
-    inputs:
-      scriptSource: filePath
-      scriptPath: aqt
-      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
-      workingDirectory: $(Build.BinariesDirectory)
+  - script: python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
     condition: and(variables['QT_BASE_MIRROR'], not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''))
+    workingDirectory: $(Build.BinariesDirectory)
     displayName: Run Aqt (Base URL Set)
-  - task: PythonScript@0
-    inputs:
-      scriptSource: filePath
-      scriptPath: aqt
-      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE)
-      workingDirectory: $(Build.BinariesDirectory)
+  - script: python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE)
+    workingDirectory: $(Build.BinariesDirectory)
     condition: and(not(variables['TOOL_NAME']), not(variables['EXTERNAL']), ne(variables['MODULE'], ''))
     displayName: Run Aqt (With modules)
-  - task: PythonScript@0
-    inputs:
-      scriptSource: filePath
-      scriptPath: aqt
-      arguments: install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
-      workingDirectory: $(Build.BinariesDirectory)
+  - script: python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
+    workingDirectory: $(Build.BinariesDirectory)
     condition: and(not(variables['TOOL_NAME']), variables['EXTERNAL'])
     displayName: Run Aqt (With external 7zip)
 
@@ -155,12 +138,8 @@ steps:
 
   ##----------------------------------------------------
   # Tools Support
-  - task: PythonScript@0
-    inputs:
-      scriptSource: filePath
-      scriptPath: bin/aqt
-      arguments: tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH)
-      workingDirectory: $(Build.BinariesDirectory)
+    script: python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH)
+    workingDirectory: $(Build.BinariesDirectory)
     condition: variables['TOOL_NAME']
     displayName: Run Aqt (Tool)
   # Test installation results
