@@ -138,7 +138,7 @@ steps:
 
   ##----------------------------------------------------
   # Tools Support
-    script: python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH)
+  - script: python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH)
     workingDirectory: $(Build.BinariesDirectory)
     condition: variables['TOOL_NAME']
     displayName: Run Aqt (Tool)
