@@ -167,7 +167,7 @@ Supported CI platform
 ---------------------
 
 There are no limitation for CI platform but currently it is tested on Azure Pipelines.
-If you want to use it with Github actions, please see `install-qt`_ action.
+If you want to use it with Github actions, please see `install_qt`_ action.
 
 
 Use cases
@@ -175,7 +175,7 @@ Use cases
 
 * GitHub Actions: `install_qt`_
 
-.. _`install-qt`: https://github.com/jurplel/install-qt-action
+.. _`install_qt`: https://github.com/jurplel/install-qt-action
 
 
 History
