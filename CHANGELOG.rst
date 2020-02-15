@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.7.4`_ (15, Feb., 2020)
+==========================
+
+Changed
+-------
+
+* requirement of py7zr version become >0.6b2 which fixed a multiprocessing problem.
+
+
 `v0.7.3`_ (14, Feb., 2020)
 ==========================
 
@@ -411,7 +420,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.4...HEAD
+.. _v0.7.4: https://github.com/miurahr/aqtinstall/compare/v0.7.3...v0.7.4
 .. _v0.7.3: https://github.com/miurahr/aqtinstall/compare/v0.7.2...v0.7.3
 .. _v0.7.2: https://github.com/miurahr/aqtinstall/compare/v0.7.1...v0.7.2
 .. _v0.7.1: https://github.com/miurahr/aqtinstall/compare/v0.7...v0.7.1
