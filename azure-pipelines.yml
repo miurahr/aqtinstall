@@ -50,7 +50,7 @@ jobs:
     TARGET: desktop
     ARCH: win64_mingw73
     ARCHDIR: mingw73_64
-    EXTERNAL: 'C:\Program Files\7-Zip\7z.exe'
+    # EXTERNAL: 'C:\Program Files\7-Zip\7z.exe'
   pool:
     vmImage: 'vs2017-win2016'
   steps:
