@@ -20,14 +20,10 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import concurrent.futures
-import functools
 import os
 import subprocess
-import time
+import threading
 from logging import getLogger
-from operator import and_
-from time import sleep
 
 import requests
 
@@ -55,11 +51,14 @@ class QtInstaller:
             self.base_dir = os.getcwd()
         else:
             self.base_dir = target_dir
+        # Limit the number of threads.
+        self.pool = threading.BoundedSemaphore(3)
 
     def retrieve_archive(self, package):
         archive = package.archive
         url = package.url
         try:
+            self.pool.acquire(blocking=True)
             r = requests.get(url, allow_redirects=False, stream=True)
             if r.status_code == 302:
                 newurl = altlink(r.url)
@@ -68,6 +67,7 @@ class QtInstaller:
                 r = requests.get(newurl, stream=True)
         except requests.exceptions.ConnectionError as e:
             self.logger.warning("Caught download error: %s" % e.args)
+            self.pool.release()
             return None
         else:
             try:
@@ -76,13 +76,14 @@ class QtInstaller:
                         fd.write(chunk)
             except Exception as e:
                 self.logger.warning("Caught download error: %s" % e.args)
+                self.pool.release()
                 return None
-        return archive
+            else:
+                self.pool.release()
 
     def extract_archive(self, archive):
         py7zr.SevenZipFile(archive).extractall(path=self.base_dir)
         os.unlink(archive)
-        return archive, time.process_time()
 
     def extract_archive_ext(self, archive):
         if self.base_dir is not None:
@@ -93,7 +94,6 @@ class QtInstaller:
             with subprocess.Popen([self.command, 'x', '-aoa', '-bd', '-y', archive], stdout=subprocess.PIPE) as proc:
                 self.logger.debug(proc.stdout.read())
         os.unlink(archive)
-        return archive, 0
 
     def install(self):
         qt_version, target, arch = self.qt_archives.get_target_config()
@@ -102,66 +102,47 @@ class QtInstaller:
         else:
             extractor = self.extract_archive_ext
         archives = self.qt_archives.get_archives()
-
         # retrieve files from download site
-        with concurrent.futures.ProcessPoolExecutor() as pexec:
-            download_task = []
-            completed_downloads = []
-            extract_task = []
-            completed_extract = []
-            with concurrent.futures.ThreadPoolExecutor() as texec:
-                for ar in archives:
-                    self.logger.info("Downloading {}...".format(ar.url))
-                    download_task.append(texec.submit(self.retrieve_archive, ar))
-                    completed_downloads.append(False)
-                    completed_extract.append(False)
-                while True:
-                    for i, t in enumerate(download_task):
-                        if completed_downloads[i]:
-                            if not completed_extract[i] and i < len(extract_task) and extract_task[i].done():
-                                (archive, elapsed) = extract_task[i].result()
-                                self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
-                                completed_extract[i] = True
-                        elif t.done():
-                            archive = t.result()
-                            if archive is None:
-                                self.logger.error("Failed to download.")
-                                exit(1)
-                            self.logger.info("Extracting {}...".format(archive))
-                            extract_task.append(pexec.submit(extractor, archive))
-                            completed_downloads[i] = True
-                    if functools.reduce(and_, completed_downloads):
-                        self.logger.info("Downloads are Completed.")
-                        break
+        download_threads = []
+        extract_processes = []
+        completed_downloads = []
+        for pkg in archives:
+            self.logger.info("Downloading {}...".format(pkg.url))
+            t = threading.Thread(target=self.retrieve_archive, args=(pkg,))
+            download_threads.append((t, pkg.archive))
+            completed_downloads.append(False)
+            t.start()
+        while True:
+            all_done = True
+            for i, (t, a) in enumerate(download_threads):
+                if not completed_downloads[i]:
+                    t.join(0.05)
+                    if not t.is_alive():
+                        completed_downloads[i] = True
+                        self.logger.info("Extracting {}...".format(a))
+                        p = threading.Thread(target=extractor, args=(a,))
+                        extract_processes.append(p)
+                        p.start()
                     else:
-                        for i, t in enumerate(extract_task):
-                            if not completed_extract[i] and t.done():
-                                (archive, elapsed) = t.result()
-                                self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
-                                completed_extract[i] = True
-                        sleep(0.05)
-            while True:
-                for i, t in enumerate(extract_task):
-                    if not completed_extract[i] and t.done():
-                        (archive, elapsed) = t.result()
-                        self.logger.info("Done {} extraction in {:.8f}.".format(archive, elapsed))
-                        completed_extract[i] = True
-                if functools.reduce(and_, completed_extract):
-                    break
-                else:
-                    sleep(0.5)
-            # finalize
-            if qt_version != "Tools":  # tools installation
-                if arch.startswith('win64_mingw'):
-                    arch_dir = arch[6:] + '_64'
-                elif arch.startswith('win32_mingw'):
-                    arch_dir = arch[6:] + '_32'
-                elif arch.startswith('win'):
-                    arch_dir = arch[6:]
-                else:
-                    arch_dir = arch
-                self.make_conf_files(qt_version, arch_dir)
-            self.logger.info("Finished installation")
+                        all_done = False
+            if all_done:
+                break
+        for p in extract_processes:
+            p.join()
+        self.logger.info("Done extraction.")
+
+        # finalize
+        if qt_version != "Tools":  # tools installation
+            if arch.startswith('win64_mingw'):
+                arch_dir = arch[6:] + '_64'
+            elif arch.startswith('win32_mingw'):
+                arch_dir = arch[6:] + '_32'
+            elif arch.startswith('win'):
+                arch_dir = arch[6:]
+            else:
+                arch_dir = arch
+            self.make_conf_files(qt_version, arch_dir)
+        self.logger.info("Finished installation")
 
     def make_conf_files(self, qt_version, arch_dir):
         """Make Qt configuration files, qt.conf and qtconfig.pri"""
