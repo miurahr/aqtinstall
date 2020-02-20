@@ -3,7 +3,8 @@ pytest
 pytest-pep8
 flake8
 setuptools>=42
-setuptools-scm>=3.3.3
+setuptools-scm>=3.5.0
+pep517
 wheel
 twine
 py7zr>=0.6b2,<0.7

@@ -3,4 +3,4 @@
 from setuptools import setup
 
 setup(use_scm_version={"local_scheme": "no-local-version"},
-      setup_requires=['setuptools-scm>=3.3.3', 'setuptools>=42.0'])
+      setup_requires=['setuptools-scm>=3.5.0', 'setuptools>=42.0'])
