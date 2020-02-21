@@ -53,6 +53,7 @@ class QtInstaller:
             self.base_dir = target_dir
         # Limit the number of threads.
         self.pool = threading.BoundedSemaphore(3)
+        self.ex_pool = threading.BoundedSemaphore(4)
 
     def retrieve_archive(self, package):
         archive = package.archive
@@ -82,8 +83,10 @@ class QtInstaller:
                 self.pool.release()
 
     def extract_archive(self, archive):
+        self.ex_pool.acquire()
         py7zr.SevenZipFile(archive).extractall(path=self.base_dir)
         os.unlink(archive)
+        self.ex_pool.release()
 
     def extract_archive_ext(self, archive):
         if self.base_dir is not None:
