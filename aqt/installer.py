@@ -86,9 +86,12 @@ class QtInstaller:
 
     def extract_archive_ext(self, archive):
         if self.base_dir is not None:
-            subprocess.run([self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive])
+            with subprocess.Popen([self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive],
+                                  stdout=subprocess.PIPE) as proc:
+                self.logger.debug(proc.stdout.read())
         else:
-            subprocess.run([self.command, 'x', '-aoa', '-bd', '-y', archive])
+            with subprocess.Popen([self.command, 'x', '-aoa', '-bd', '-y', archive], stdout=subprocess.PIPE) as proc:
+                self.logger.debug(proc.stdout.read())
         os.unlink(archive)
         return archive, 0
 
