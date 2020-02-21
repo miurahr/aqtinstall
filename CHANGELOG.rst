@@ -29,13 +29,13 @@ Removed
 Security
 --------
 
-`v0.7.4`_ (15, Feb., 2020)
+`v0.7.4`_ (21, Feb., 2020)
 ==========================
 
 Changed
 -------
 
-* requirement of py7zr version become >0.6b2 which fixed a multiprocessing problem.
+* Limit requirement of py7zr version to 0.5.*. Try to fix issue #86.
 
 
 `v0.7.3`_ (14, Feb., 2020)
