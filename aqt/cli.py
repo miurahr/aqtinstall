@@ -24,6 +24,7 @@ import argparse
 import logging
 import logging.config
 import os
+import subprocess
 import time
 
 from packaging.version import Version, parse
@@ -58,11 +59,12 @@ class Cli():
         sevenzip = args.external
         if sevenzip is None:
             return None
-        elif os.path.exists(sevenzip):
-            pass
-        else:
-            print('Specified 7zip command executable is not exist.')
-            exit(1)
+
+        try:
+            subprocess.run([sevenzip, '--help'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except FileNotFoundError as e:
+            raise Exception('Specified 7zip command executable does not exist: {!r}'.format(sevenzip)) from e
+
         return sevenzip
 
     def _set_arch(self, args, oarch, os_name, target, qt_version):
