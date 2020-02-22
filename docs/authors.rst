@@ -11,5 +11,8 @@ Original qli-installer is written by Linus Jahn
 
 Contributors, listed alphabetically, are:
 
+* Kyle Altendorf (7z binary path search)
+* Martin Delille
 * Nelson Chen (CI tests)
 * Skycoder42 (Explicit extra module installation)
+* Thomas Grainger

@@ -17,6 +17,8 @@ Added
 Changed
 -------
 
+* Allow path search for 7z (#96)
+
 Fixed
 -----
 
