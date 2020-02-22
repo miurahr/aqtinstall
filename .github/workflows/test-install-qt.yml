@@ -38,7 +38,7 @@ jobs:
             args = [os.environ["qtver"], "linux", "desktop", "gcc_64"]
           command_line.extend(args)
           try:
-            subprocess.run(command_line, check=True)
+            subprocess.run(command_line, timeout=120, check=True)
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
         shell: python
