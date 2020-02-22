@@ -35,10 +35,12 @@ jobs:
           if platform == "windows-latest":
             args = [os.environ["qtver"], "windows", "desktop", "win64_mingw73"]
           elif platform == "macOS-latest":
-            args = [os.environ["qtver"], "macos", "desktop", "clang_64"]
+            args = [os.environ["qtver"], "mac", "desktop", "clang_64"]
           else:
             args = [os.environ["qtver"], "linux", "desktop", "gcc_64"]
           command_line.extend(args)
-          subprocess.run(command_line)
+          try:
+            subprocess.run(command_line, check=True)
+          except subprocess.CalledProcessError as cpe:
+            exit(cpe.returncode)
         shell: python
-
