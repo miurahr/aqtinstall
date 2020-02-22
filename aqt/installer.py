@@ -83,7 +83,7 @@ class QtInstaller:
                 self.pool.release()
 
     def extract_archive(self, archive):
-        self.ex_pool.acquire()
+        self.ex_pool.acquire(blocking=True)
         py7zr.SevenZipFile(archive).extractall(path=self.base_dir)
         os.unlink(archive)
         self.ex_pool.release()

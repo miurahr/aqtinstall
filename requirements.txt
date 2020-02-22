@@ -7,4 +7,4 @@ setuptools-scm>=3.5.0
 pep517
 wheel
 twine
-py7zr>=0.5.2,<0.6
+py7zr>=0.6,<0.7
