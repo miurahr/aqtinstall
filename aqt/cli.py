@@ -24,6 +24,7 @@ import argparse
 import logging
 import logging.config
 import os
+import shutil
 import time
 
 from packaging.version import Version, parse
@@ -58,12 +59,17 @@ class Cli():
         sevenzip = args.external
         if sevenzip is None:
             return None
-        elif os.path.exists(sevenzip):
-            pass
-        else:
-            print('Specified 7zip command executable is not exist.')
-            exit(1)
-        return sevenzip
+
+        if os.path.exists(sevenzip):
+            return sevenzip
+
+        which = shutil.which(sevenzip)
+
+        if which is not None:
+            return which
+
+        print('Specified 7zip command executable is not exist: {!r}'.format(sevenzip))
+        exit(1)
 
     def _set_arch(self, args, oarch, os_name, target, qt_version):
         arch = oarch
