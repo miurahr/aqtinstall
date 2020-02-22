@@ -68,7 +68,7 @@ class Cli():
         if which is not None:
             return which
 
-        print('Specified 7zip command executable is not exist: {!r}'.format(sevenzip))
+        print('Specified 7zip command executable does not exist: {!r}'.format(sevenzip))
         exit(1)
 
     def _set_arch(self, args, oarch, os_name, target, qt_version):
