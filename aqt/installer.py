@@ -22,16 +22,22 @@
 
 import os
 import subprocess
+import sys
 import threading
 from logging import getLogger
 
 import requests
 
 import py7zr
+from aqt.archives import QtPackage
 from aqt.helper import altlink
 
 
-class BadPackageFile(Exception):
+class DownloadFailure(Exception):
+    pass
+
+
+class ExtractionFailure(Exception):
     pass
 
 
@@ -55,7 +61,7 @@ class QtInstaller:
         self.pool = threading.BoundedSemaphore(3)
         self.ex_pool = threading.BoundedSemaphore(4)
 
-    def retrieve_archive(self, package):
+    def retrieve_archive(self, package: QtPackage, results: dict):
         archive = package.archive
         url = package.url
         try:
@@ -67,35 +73,54 @@ class QtInstaller:
                 self.logger.info('Redirected to new URL: {}'.format(newurl))
                 r = requests.get(newurl, stream=True)
         except requests.exceptions.ConnectionError as e:
-            self.logger.warning("Caught download error: %s" % e.args)
+            self.logger.error("Caught download error: %s" % e.args)
             self.pool.release()
-            return None
+            results[archive] = False
         else:
             try:
                 with open(archive, 'wb') as fd:
                     for chunk in r.iter_content(chunk_size=8196):
                         fd.write(chunk)
-            except Exception as e:
-                self.logger.warning("Caught download error: %s" % e.args)
+            except Exception:
+                exc = sys.exc_info()
+                self.logger.error("Caught extraction error: %s" % exc[1])
                 self.pool.release()
-                return None
+                results[archive] = False
             else:
                 self.pool.release()
+                results[archive] = True
 
-    def extract_archive(self, archive):
+    def extract_archive(self, archive, results: dict):
         self.ex_pool.acquire(blocking=True)
-        py7zr.SevenZipFile(archive).extractall(path=self.base_dir)
-        os.unlink(archive)
+        try:
+            szf = py7zr.SevenZipFile(archive)
+            szf.extractall(path=self.base_dir)
+            os.unlink(archive)
+        except Exception:
+            exc = sys.exc_info()
+            self.logger.error("Caught extraction error: %s" % exc[1])
+            results[archive] = False
+        else:
+            results[archive] = True
         self.ex_pool.release()
 
-    def extract_archive_ext(self, archive):
+    def extract_archive_ext(self, archive, results: dict):
         if self.base_dir is not None:
-            with subprocess.Popen([self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive],
-                                  stdout=subprocess.PIPE) as proc:
-                self.logger.debug(proc.stdout.read())
+            command_args = [self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive]
         else:
-            with subprocess.Popen([self.command, 'x', '-aoa', '-bd', '-y', archive], stdout=subprocess.PIPE) as proc:
+            command_args = [self.command, 'x', '-aoa', '-bd', '-y', archive]
+        try:
+            with subprocess.run(command_args, stdout=subprocess.PIPE, check=True) as proc:
                 self.logger.debug(proc.stdout.read())
+        except subprocess.CalledProcessError as cpe:
+            self.logger.warning("Caught extraction error: %d" % cpe.returncode)
+            if cpe.stdout is not None:
+                self.logger.error(cpe.stdout)
+            if cpe.stderr is not None:
+                self.logger.error(cpe.stderr)
+            results[archive] = False
+        else:
+            results[archive] = True
         os.unlink(archive)
 
     def install(self):
@@ -107,31 +132,47 @@ class QtInstaller:
         archives = self.qt_archives.get_archives()
         # retrieve files from download site
         download_threads = []
-        extract_processes = []
+        download_results = {}
+        extract_threads = []
+        extract_results = {}
         completed_downloads = []
         for pkg in archives:
             self.logger.info("Downloading {}...".format(pkg.url))
-            t = threading.Thread(target=self.retrieve_archive, args=(pkg,))
+            t = threading.Thread(target=self.retrieve_archive, args=(pkg, download_results))
             download_threads.append((t, pkg.archive))
             completed_downloads.append(False)
             t.start()
         while True:
             all_done = True
             for i, (t, a) in enumerate(download_threads):
-                if not completed_downloads[i]:
-                    t.join(0.05)
+                if completed_downloads[i]:
+                    if len(extract_threads) > i:
+                        p, a = extract_threads[i]
+                        p.join(0.005)
+                        if not p.is_alive():
+                            if not extract_results[a]:
+                                self.logger.error("Failed to extract {}".format(a))
+                                raise ExtractionFailure()
+                else:
+                    t.join(0.005)
                     if not t.is_alive():
+                        if not download_results[a]:
+                            self.logger.error("Failed to download {}".format(a))
+                            raise DownloadFailure()
                         completed_downloads[i] = True
                         self.logger.info("Extracting {}...".format(a))
-                        p = threading.Thread(target=extractor, args=(a,))
-                        extract_processes.append(p)
+                        p = threading.Thread(target=extractor, args=(a, extract_results))
+                        extract_threads.append((p, a))
                         p.start()
                     else:
                         all_done = False
             if all_done:
                 break
-        for p in extract_processes:
+        for p, a in extract_threads:
             p.join()
+            if not extract_results[a]:
+                self.logger.error("Failed to extract {}".format(a))
+                raise ExtractionFailure()
         self.logger.info("Done extraction.")
 
         # finalize
