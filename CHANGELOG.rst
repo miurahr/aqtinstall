@@ -22,6 +22,8 @@ Changed
 Fixed
 -----
 
+* Detect exception on each download and extraction threads.
+
 Deprecated
 ----------
 
