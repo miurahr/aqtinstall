@@ -24,6 +24,7 @@ import os
 import subprocess
 import sys
 import threading
+import time
 from logging import getLogger
 
 import requests
@@ -59,7 +60,7 @@ class QtInstaller:
             self.base_dir = target_dir
         # Limit the number of threads.
         self.pool = threading.BoundedSemaphore(3)
-        self.ex_pool = threading.BoundedSemaphore(4)
+        self.ex_pool = threading.BoundedSemaphore(6)
 
     def retrieve_archive(self, package: QtPackage, results: dict):
         archive = package.archive
@@ -110,8 +111,8 @@ class QtInstaller:
         else:
             command_args = [self.command, 'x', '-aoa', '-bd', '-y', archive]
         try:
-            with subprocess.run(command_args, stdout=subprocess.PIPE, check=True) as proc:
-                self.logger.debug(proc.stdout.read())
+            proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+            self.logger.debug(proc.stdout)
         except subprocess.CalledProcessError as cpe:
             self.logger.warning("Caught extraction error: %d" % cpe.returncode)
             if cpe.stdout is not None:
@@ -136,21 +137,26 @@ class QtInstaller:
         extract_threads = []
         extract_results = {}
         completed_downloads = []
+        completed_extracts = []
         for pkg in archives:
             self.logger.info("Downloading {}...".format(pkg.url))
             t = threading.Thread(target=self.retrieve_archive, args=(pkg, download_results))
             download_threads.append((t, pkg.archive))
             completed_downloads.append(False)
+            extract_threads.append(None)
+            completed_extracts.append(False)
             t.start()
         while True:
             all_done = True
             for i, (t, a) in enumerate(download_threads):
-                if completed_downloads[i]:
-                    if len(extract_threads) > i:
+                if completed_downloads[i] and not completed_extracts[i]:
+                    if extract_threads[i] is not None:
                         p, a = extract_threads[i]
                         p.join(0.005)
                         if not p.is_alive():
-                            if not extract_results[a]:
+                            if extract_results[a]:
+                                completed_extracts[i] = True
+                            else:
                                 self.logger.error("Failed to extract {}".format(a))
                                 raise ExtractionFailure()
                 else:
@@ -162,17 +168,21 @@ class QtInstaller:
                         completed_downloads[i] = True
                         self.logger.info("Extracting {}...".format(a))
                         p = threading.Thread(target=extractor, args=(a, extract_results))
-                        extract_threads.append((p, a))
+                        extract_threads[i] = (p, a)
                         p.start()
                     else:
                         all_done = False
             if all_done:
                 break
-        for p, a in extract_threads:
-            p.join()
-            if not extract_results[a]:
-                self.logger.error("Failed to extract {}".format(a))
-                raise ExtractionFailure()
+            time.sleep(0.5)
+        for i, (p, a) in enumerate(extract_threads):
+            if not completed_extracts[i]:
+                p.join()
+                if not extract_results[a]:
+                    self.logger.error("Failed to extract {}".format(a))
+                    raise ExtractionFailure()
+                else:
+                    completed_extracts[i] = True
         self.logger.info("Done extraction.")
 
         # finalize
