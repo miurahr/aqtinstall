@@ -132,57 +132,69 @@ class QtInstaller:
             extractor = self.extract_archive_ext
         archives = self.qt_archives.get_archives()
         # retrieve files from download site
-        download_threads = []
+        download_threads = {}
         download_results = {}
-        extract_threads = []
+        extract_threads = {}
         extract_results = {}
-        completed_downloads = []
-        completed_extracts = []
+        completed_downloads = {}
+        completed_extracts = {}
         for pkg in archives:
             self.logger.info("Downloading {}...".format(pkg.url))
             t = threading.Thread(target=self.retrieve_archive, args=(pkg, download_results))
-            download_threads.append((t, pkg.archive))
-            completed_downloads.append(False)
-            extract_threads.append(None)
-            completed_extracts.append(False)
+            a = pkg.archive
+            download_threads[a] = t
+            completed_downloads[a] = False
+            extract_threads[a] = None
+            completed_extracts[a] = False
             t.start()
         while True:
             all_done = True
-            for i, (t, a) in enumerate(download_threads):
-                if completed_downloads[i] and not completed_extracts[i]:
-                    if extract_threads[i] is not None:
-                        p, a = extract_threads[i]
-                        p.join(0.005)
-                        if not p.is_alive():
-                            if extract_results[a]:
-                                completed_extracts[i] = True
-                            else:
-                                self.logger.error("Failed to extract {}".format(a))
-                                raise ExtractionFailure()
-                else:
+            for a in download_threads:
+                if not completed_downloads[a]:
+                    # check download completion
+                    t = download_threads[a]
                     t.join(0.005)
                     if not t.is_alive():
+                        # download is completed, check result
                         if not download_results[a]:
                             self.logger.error("Failed to download {}".format(a))
                             raise DownloadFailure()
-                        completed_downloads[i] = True
+                        completed_downloads[a] = True
+                        # start extraction
                         self.logger.info("Extracting {}...".format(a))
                         p = threading.Thread(target=extractor, args=(a, extract_results))
-                        extract_threads[i] = (p, a)
                         p.start()
+                        extract_threads[a] = p
                     else:
                         all_done = False
+                elif extract_threads[a] is None or completed_extracts[a]:
+                    # not started or already done
+                    pass
+                else:
+                    # check extraction status
+                    p = extract_threads[a]
+                    p.join(0.005)
+                    if not p.is_alive():
+                        if extract_results[a]:
+                            completed_extracts[a] = True
+                        else:
+                            self.logger.error("Failed to extract {}".format(a))
+                            raise ExtractionFailure()
+                    else:
+                        # still running decompression
+                        pass
             if all_done:
                 break
             time.sleep(0.5)
-        for i, (p, a) in enumerate(extract_threads):
-            if not completed_extracts[i]:
+        for a in extract_threads:
+            if not completed_extracts[a]:
+                p = extract_threads[a]
                 p.join()
                 if not extract_results[a]:
                     self.logger.error("Failed to extract {}".format(a))
                     raise ExtractionFailure()
                 else:
-                    completed_extracts[i] = True
+                    completed_extracts[a] = True
         self.logger.info("Done extraction.")
 
         # finalize
