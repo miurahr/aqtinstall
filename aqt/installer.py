@@ -20,12 +20,14 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import concurrent.futures
+import functools
 import os
 import subprocess
 import sys
-import threading
 import time
 from logging import getLogger
+from operator import and_
 
 import requests
 
@@ -49,6 +51,7 @@ class QtInstaller:
 
     def __init__(self, qt_archives, logging=None, command=None, target_dir=None):
         self.qt_archives = qt_archives
+        self.archive_files = qt_archives.get_archives()
         if logging:
             self.logger = logging
         else:
@@ -58,15 +61,11 @@ class QtInstaller:
             self.base_dir = os.getcwd()
         else:
             self.base_dir = target_dir
-        # Limit the number of threads.
-        self.pool = threading.BoundedSemaphore(3)
-        self.ex_pool = threading.BoundedSemaphore(6)
 
-    def retrieve_archive(self, package: QtPackage, results: dict):
+    def retrieve_archive(self, package: QtPackage):
         archive = package.archive
         url = package.url
         try:
-            self.pool.acquire(blocking=True)
             r = requests.get(url, allow_redirects=False, stream=True)
             if r.status_code == 302:
                 newurl = altlink(r.url)
@@ -76,7 +75,7 @@ class QtInstaller:
         except requests.exceptions.ConnectionError as e:
             self.logger.error("Caught download error: %s" % e.args)
             self.pool.release()
-            results[archive] = False
+            return False, None
         else:
             try:
                 with open(archive, 'wb') as fd:
@@ -85,14 +84,10 @@ class QtInstaller:
             except Exception:
                 exc = sys.exc_info()
                 self.logger.error("Caught extraction error: %s" % exc[1])
-                self.pool.release()
-                results[archive] = False
-            else:
-                self.pool.release()
-                results[archive] = True
+                return False, None
+        return True, time.process_time()
 
-    def extract_archive(self, archive, results: dict):
-        self.ex_pool.acquire(blocking=True)
+    def extract_archive(self, archive):
         try:
             szf = py7zr.SevenZipFile(archive)
             szf.extractall(path=self.base_dir)
@@ -100,12 +95,10 @@ class QtInstaller:
         except Exception:
             exc = sys.exc_info()
             self.logger.error("Caught extraction error: %s" % exc[1])
-            results[archive] = False
-        else:
-            results[archive] = True
-        self.ex_pool.release()
+            return False, None
+        return True, time.process_time()
 
-    def extract_archive_ext(self, archive, results: dict):
+    def extract_archive_ext(self, archive):
         if self.base_dir is not None:
             command_args = [self.command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(self.base_dir), archive]
         else:
@@ -119,85 +112,79 @@ class QtInstaller:
                 self.logger.error(cpe.stdout)
             if cpe.stderr is not None:
                 self.logger.error(cpe.stderr)
-            results[archive] = False
-        else:
-            results[archive] = True
+            return False, None
         os.unlink(archive)
+        return True, time.process_time()
 
     def install(self):
-        qt_version, target, arch = self.qt_archives.get_target_config()
         if self.command is None:
             extractor = self.extract_archive
         else:
             extractor = self.extract_archive_ext
-        archives = self.qt_archives.get_archives()
-        # retrieve files from download site
-        download_threads = {}
-        download_results = {}
-        extract_threads = {}
-        extract_results = {}
-        completed_downloads = {}
-        completed_extracts = {}
-        for pkg in archives:
-            self.logger.info("Downloading {}...".format(pkg.url))
-            t = threading.Thread(target=self.retrieve_archive, args=(pkg, download_results))
-            a = pkg.archive
-            download_threads[a] = t
-            completed_downloads[a] = False
-            extract_threads[a] = None
-            completed_extracts[a] = False
-            t.start()
-        while True:
-            all_done = True
-            for a in download_threads:
-                if not completed_downloads[a]:
-                    # check download completion
-                    t = download_threads[a]
-                    t.join(0.005)
-                    if not t.is_alive():
-                        # download is completed, check result
-                        if not download_results[a]:
-                            self.logger.error("Failed to download {}".format(a))
-                            raise DownloadFailure()
-                        completed_downloads[a] = True
-                        # start extraction
-                        self.logger.info("Extracting {}...".format(a))
-                        p = threading.Thread(target=extractor, args=(a, extract_results))
-                        p.start()
-                        extract_threads[a] = p
+        download_task = []
+        extract_task = []
+        completed_downloads = []
+        completed_extracts = []
+        with concurrent.futures.ThreadPoolExecutor() as texec:
+            for i, ar in enumerate(self.archive_files):
+                self.logger.info("Downloading {}...".format(ar.url))
+                download_task.append(texec.submit(self.retrieve_archive, ar))
+                extract_task.append(None)
+                completed_downloads.append(False)
+                completed_extracts.append(False)
+            while True:
+                for i, ar in enumerate(self.archive_files):
+                    if completed_downloads[i]:
+                        # check extraction has been already started.
+                        if extract_task[i] is None:
+                            # start extraction
+                            self.logger.info("Extracting {}...".format(ar.archive))
+                            extract_task[i] = texec.submit(extractor, ar.archive)
                     else:
-                        all_done = False
-                elif extract_threads[a] is None or completed_extracts[a]:
-                    # not started or already done
-                    pass
+                        # check download status
+                        t = download_task[i]
+                        if t.done():
+                            (res, elapsed) = t.result()
+                            if not res:
+                                self.logger.error("Failed to download {}".format(ar.archive))
+                                raise DownloadFailure()
+                            completed_downloads[i] = True
+                            # start extraction
+                            self.logger.info("Extracting {}...".format(ar.archive))
+                            extract_task[i] = texec.submit(extractor, ar.archive)
+                if functools.reduce(and_, completed_downloads):
+                    self.logger.info("Downloads are Completed.")
+                    break
                 else:
-                    # check extraction status
-                    p = extract_threads[a]
-                    p.join(0.005)
-                    if not p.is_alive():
-                        if extract_results[a]:
-                            completed_extracts[a] = True
-                        else:
-                            self.logger.error("Failed to extract {}".format(a))
-                            raise ExtractionFailure()
-                    else:
-                        # still running decompression
-                        pass
-            if all_done:
-                break
-            time.sleep(0.5)
-        for a in extract_threads:
-            if not completed_extracts[a]:
-                p = extract_threads[a]
-                p.join()
-                if not extract_results[a]:
-                    self.logger.error("Failed to extract {}".format(a))
-                    raise ExtractionFailure()
+                    for j, arc in enumerate(self.archive_files):
+                        task = extract_task[j]
+                        if task is None:
+                            continue
+                        if task.done():
+                            (res, elapsed) = task.result()
+                            if not res:
+                                self.logger.error("Failed to extract {}".format(arc.archive))
+                                raise ExtractionFailure()
+                            self.logger.info("Done {} extraction in {:.8f}.".format(arc.archive, elapsed))
+                            completed_extracts[j] = True
+                time.sleep(0.05)
+            while True:
+                for i, ar in enumerate(self.archive_files):
+                    if not completed_extracts[i]:
+                        task = extract_task[i]
+                        if task is None:
+                            raise Exception()
+                        if task.done():
+                            (res, elapsed) = task.result()
+                            self.logger.info("Done {} extraction in {:.8f}.".format(ar.archive, elapsed))
+                            completed_extracts[i] = True
+                if functools.reduce(and_, completed_extracts):
+                    break
                 else:
-                    completed_extracts[a] = True
-        self.logger.info("Done extraction.")
+                    time.sleep(0.5)
 
         # finalize
+        qt_version, target, arch = self.qt_archives.get_target_config()
         if qt_version != "Tools":  # tools installation
             if arch.startswith('win64_mingw'):
                 arch_dir = arch[6:] + '_64'
