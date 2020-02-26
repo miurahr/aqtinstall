@@ -22,6 +22,7 @@
 
 import concurrent.futures
 import os
+import pathlib
 import subprocess
 import sys
 import time
@@ -56,7 +57,7 @@ class QtInstaller:
             self.base_dir = target_dir
 
     def retrieve_archive(self, package: QtPackage):
-        archive = package.archive
+        archive = pathlib.Path(package.archive)
         url = package.url
         self.logger.info("Downloading {}...".format(url))
         try:
@@ -70,12 +71,12 @@ class QtInstaller:
             raise e
         else:
             try:
-                with open(archive, 'wb') as fd:
+                with archive.open(mode='wb') as fd:
                     for chunk in r.iter_content(chunk_size=8196):
                         fd.write(chunk)
                         fd.flush()
                 if self.command is None:
-                    with open(archive, 'rb') as fd:
+                    with archive.open(mode='rb') as fd:
                         self.extract_archive(fd)
             except Exception as e:
                 exc = sys.exc_info()
@@ -83,8 +84,8 @@ class QtInstaller:
                 raise e
             else:
                 if self.command is not None:
-                    self.extract_archive_ext(archive)
-                os.unlink(archive)
+                    self.extract_archive_ext(str(archive))
+                archive.unlink()
         self.logger.info("Finish installation of {} in {}".format(archive, time.process_time()))
 
     def extract_archive(self, archive):
