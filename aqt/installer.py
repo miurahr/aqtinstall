@@ -51,10 +51,6 @@ class QtInstaller:
             self.base_dir = target_dir
 
     def retrieve_archive(self, package: QtPackage):
-        if self.command is None:
-            extractor = self.extract_archive
-        else:
-            extractor = self.extract_archive_ext
         archive = package.archive
         url = package.url
         self.logger.info("Downloading {}...".format(url))
@@ -72,12 +68,17 @@ class QtInstaller:
                 with open(archive, 'wb') as fd:
                     for chunk in r.iter_content(chunk_size=8196):
                         fd.write(chunk)
+                    fd.seek(0)
+                    if self.command is None:
+                        self.extract_archive(fd)
             except Exception as e:
                 exc = sys.exc_info()
                 self.logger.error("Download error: %s" % exc[1])
                 raise e
-        extractor(archive)
-        os.unlink(archive)
+            else:
+                if self.command is not None:
+                    self.extract_archive_ext(archive)
+                os.unlink(archive)
         self.logger.info("Finish installation of {} in {}".format(archive, time.process_time()))
 
     def extract_archive(self, archive):
