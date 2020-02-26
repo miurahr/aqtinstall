@@ -58,6 +58,7 @@ class QtInstaller:
     def retrieve_archive(self, package: QtPackage):
         archive = package.archive
         url = package.url
+        cwd = os.getcwd()
         self.logger.info("Downloading {}...".format(url))
         try:
             r = requests.get(url, allow_redirects=False, stream=True)
@@ -84,7 +85,9 @@ class QtInstaller:
             else:
                 if self.command is not None:
                     self.extract_archive_ext(archive)
-                os.unlink(archive)
+        # work around for extractor bug that may change current working directory
+        os.chdir(cwd)
+        os.unlink(archive)
         self.logger.info("Finish installation of {} in {}".format(archive, time.process_time()))
 
     def extract_archive(self, archive):
