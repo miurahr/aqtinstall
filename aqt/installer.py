@@ -30,8 +30,13 @@ from logging import getLogger
 import requests
 
 import py7zr
+
 from aqt.archives import QtPackage
 from aqt.helper import altlink
+
+
+class ExtractionError(Exception):
+    pass
 
 
 class QtInstaller:
@@ -68,8 +73,9 @@ class QtInstaller:
                 with open(archive, 'wb') as fd:
                     for chunk in r.iter_content(chunk_size=8196):
                         fd.write(chunk)
-                    fd.seek(0)
-                    if self.command is None:
+                        fd.flush()
+                if self.command is None:
+                    with open(archive, 'rb') as fd:
                         self.extract_archive(fd)
             except Exception as e:
                 exc = sys.exc_info()
@@ -82,13 +88,9 @@ class QtInstaller:
         self.logger.info("Finish installation of {} in {}".format(archive, time.process_time()))
 
     def extract_archive(self, archive):
-        try:
-            szf = py7zr.SevenZipFile(archive)
-            szf.extractall(path=self.base_dir)
-        except Exception as e:
-            exc = sys.exc_info()
-            self.logger.error("Extraction error: %s" % exc[1])
-            raise e
+        szf = py7zr.SevenZipFile(archive)
+        szf.extractall(path=self.base_dir)
+        szf.close()
 
     def extract_archive_ext(self, archive):
         if self.base_dir is not None:
