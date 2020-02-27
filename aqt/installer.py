@@ -30,7 +30,6 @@ from logging import getLogger
 import requests
 
 import py7zr
-
 from aqt.archives import QtPackage
 from aqt.helper import altlink
 
