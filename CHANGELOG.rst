@@ -17,12 +17,8 @@ Added
 Changed
 -------
 
-* Allow path search for 7z (#96)
-
 Fixed
 -----
-
-* Detect exception on each download and extraction threads.
 
 Deprecated
 ----------
@@ -32,6 +28,23 @@ Removed
 
 Security
 --------
+
+
+`v0.8a1`_ (28, Feb., 2020)
+==========================
+
+Changed
+-------
+
+* Allow path search for 7z (#96)
+* Simplify multithreading using concurrent.futures.ThreadPoolExecutor().
+
+Fixed
+-----
+
+* Detect exception on each download and extraction threads.
+* Race condition error happend on py7zr. require py7zr>=0.5.3.(#97)
+
 
 `v0.7.4`_ (15, Feb., 2020)
 ==========================
