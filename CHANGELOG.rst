@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.7.5`_ (27, Feb., 2020)
+==========================
+
+Changed
+-------
+
+* Requirements of py7zr is v0.5.3 or later, which include no more os.chdir() patch.
+
+
 `v0.7.4`_ (21, Feb., 2020)
 ==========================
 
