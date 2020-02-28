@@ -67,6 +67,10 @@ class Settings(object):
     def tools_combinations(self):
         return self._combinations['tools']
 
+    @property
+    def available_versions(self):
+        return self._combinations['versions']
+
     def available_modules(self, qt_version):
         """Known module names
 

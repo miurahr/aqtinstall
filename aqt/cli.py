@@ -55,6 +55,12 @@ class Cli():
                 return True
         return False
 
+    def _check_qt_arg_versions(self, qt_version):
+        for ver in self.settings.available_versions:
+            if ver == qt_version:
+                return True
+        return False
+
     def _set_sevenzip(self, args):
         sevenzip = args.external
         if sevenzip is None:
@@ -115,8 +121,11 @@ class Cli():
         if not self._check_mirror(mirror):
             self.parser.print_help()
             exit(1)
+        if not self._check_qt_arg_versions(qt_version):
+            self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
-            self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, target, arch))
+            self.logger.warning("Specified target combination is not valid or unknown: {} {} {}".format(os_name,
+                                                                                                        target, arch))
         all_extra = True if modules is not None and 'all' in modules else False
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
