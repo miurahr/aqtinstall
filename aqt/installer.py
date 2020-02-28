@@ -24,7 +24,6 @@ import functools
 import multiprocessing.dummy
 import os
 import subprocess
-import time
 from logging import getLogger
 from operator import and_
 
