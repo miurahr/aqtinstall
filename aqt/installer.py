@@ -133,7 +133,8 @@ class QtInstaller:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = [executor.submit(self.retrieve_archive, ar) for ar in self.qt_archives.get_archives()]
             for future in concurrent.futures.as_completed(futures):
-                future.result()
+                if not future.result():
+                    raise ExtractionError("Extraction error.")
 
         # finalize
         qt_version, target, arch = self.qt_archives.get_target_config()
