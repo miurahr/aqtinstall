@@ -57,6 +57,7 @@ class QtInstaller:
     def retrieve_archive(self, package: QtPackage):
         archive = package.archive
         url = package.url
+        start_time = time.perf_counter()
         self.logger.info("Downloading {}...".format(url))
         try:
             r = requests.get(url, allow_redirects=False, stream=True)
@@ -84,8 +85,7 @@ class QtInstaller:
                 if self.command is not None:
                     self.extract_archive_ext(archive)
         os.unlink(archive)
-        self.logger.info("Finish installation of {} in {}".format(archive, time.process_time()))
-        return True
+        self.logger.info("Finish installation of {} in {}".format(archive, time.perf_counter() - start_time))
 
     def extract_archive(self, archive):
         szf = py7zr.SevenZipFile(archive)
@@ -133,9 +133,10 @@ class QtInstaller:
     def install(self):
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = [executor.submit(self.retrieve_archive, ar) for ar in self.qt_archives.get_archives()]
-            for future in concurrent.futures.as_completed(futures):
-                if not future.result():
-                    raise ExtractionError("Extraction error.")
+            done, not_done = concurrent.futures.wait(futures, return_when=concurrent.futures.FIRST_EXCEPTION)
+            if len(not_done) > 0:
+                self.logger.error("Installation error detected.")
+                exit(1)
 
         # finalize
         qt_version, target, arch = self.qt_archives.get_target_config()
