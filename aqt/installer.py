@@ -85,6 +85,7 @@ class QtInstaller:
                     self.extract_archive_ext(archive)
         os.unlink(archive)
         self.logger.info("Finish installation of {} in {}".format(archive, time.process_time()))
+        return True
 
     def extract_archive(self, archive):
         szf = py7zr.SevenZipFile(archive)
