@@ -112,8 +112,8 @@ class QtArchives:
                 exit(1)
         try:
             self.update_xml = ElementTree.fromstring(r.text)
-        except Exception as e:
-            self.logger.error("Downloaded metadata is corrupted.")
+        except ElementTree.ParseError as perror:
+            self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
             exit(1)
         else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
