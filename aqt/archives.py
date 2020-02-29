@@ -110,8 +110,12 @@ class QtArchives:
                                   'Server response code: {}, reason: {}'.format(update_xml_url,
                                                                                 r.status_code, r.reason))
                 exit(1)
-            else:
-                self.update_xml = ElementTree.fromstring(r.text)
+        try:
+            self.update_xml = ElementTree.fromstring(r.text)
+        except Exception as e:
+            self.logger.error("Downloaded metadata is corrupted.")
+            exit(1)
+        else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
                 if self.all_extra or name in target_packages:
