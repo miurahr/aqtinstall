@@ -39,6 +39,12 @@ def test_cli_check_combination():
     assert not cli._check_qt_arg_combination('5.14.0', 'android', 'desktop', 'clang_64')
 
 
+def test_cli_check_version():
+    cli = aqt.cli.Cli()
+    assert cli._check_qt_arg_versions('5.12.0')
+    assert not cli._check_qt_arg_versions('5.12')
+
+
 def test_cli_check_mirror():
     cli = aqt.cli.Cli()
     assert cli._check_mirror(None)

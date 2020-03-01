@@ -105,7 +105,17 @@ class QtArchives:
             self.logger.error('Download error: %s\n' % e.args, exc_info=True)
             raise e
         else:
+            if r.status_code != 200:
+                self.logger.error('Download error when access to {}\n'
+                                  'Server response code: {}, reason: {}'.format(update_xml_url,
+                                                                                r.status_code, r.reason))
+                exit(1)
+        try:
             self.update_xml = ElementTree.fromstring(r.text)
+        except ElementTree.ParseError as perror:
+            self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
+            exit(1)
+        else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
                 if self.all_extra or name in target_packages:
@@ -117,9 +127,9 @@ class QtArchives:
                             package_url = archive_url + name + "/" + full_version + archive
                             self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                            has_mirror=self.has_mirror))
-        if len(self.archives) == 0:
-            self.logger.error("Error while parsing package information!")
-            exit(1)
+            if len(self.archives) == 0:
+                self.logger.error("Error while parsing package information!")
+                exit(1)
 
     def get_archives(self):
         """

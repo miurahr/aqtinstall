@@ -1,6 +1,7 @@
 requests
 pytest
 pytest-pep8
+pytest-remotedata
 flake8
 setuptools>=42
 setuptools-scm>=3.5.0
