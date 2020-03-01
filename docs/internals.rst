@@ -23,10 +23,7 @@ Installer module
 .. autoclass:: aqt.installer.QtInstaller
     :members:
 
-.. autoexception:: aqt.installer.BadPackageFile
-
-.. autoclass:: aqt.installer.Metalink
-    :members:
+.. autoexception:: aqt.installer.ExtractionError
 
 
 Cli module
