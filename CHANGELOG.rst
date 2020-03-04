@@ -37,7 +37,7 @@ Fixed
 
 * Work around for http://download.qt.io returns wrong meta4 data.
 
--
+
 `v0.7.5`_ (27, Feb., 2020)
 ==========================
 
