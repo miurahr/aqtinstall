@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.7.6`_ (4, Mar., 2020)
+==========================
+
+Fixed
+-----
+
+* Work around for http://download.qt.io returns wrong meta4 data.
+
+-
 `v0.7.5`_ (27, Feb., 2020)
 ==========================
 
@@ -429,7 +438,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.5...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.6...HEAD
+.. _v0.7.6: https://github.com/miurahr/aqtinstall/compare/v0.7.4...v0.7.6
 .. _v0.7.5: https://github.com/miurahr/aqtinstall/compare/v0.7.4...v0.7.5
 .. _v0.7.4: https://github.com/miurahr/aqtinstall/compare/v0.7.3...v0.7.4
 .. _v0.7.3: https://github.com/miurahr/aqtinstall/compare/v0.7.2...v0.7.3
