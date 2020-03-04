@@ -25,6 +25,7 @@ import logging
 import logging.config
 import os
 import subprocess
+import sys
 import time
 
 from packaging.version import Version, parse
@@ -32,6 +33,11 @@ from packaging.version import Version, parse
 from aqt.archives import QtArchives, ToolArchives
 from aqt.installer import QtInstaller
 from aqt.settings import Settings
+
+try:
+    from importlib import metadata as importlib_metadata  # noqa
+except ImportError:
+    import importlib_metadata
 
 
 class Cli():
@@ -118,6 +124,7 @@ class Cli():
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
         mirror = args.base
+        self.show_aqt_version()
         if not self._check_mirror(mirror):
             self.parser.print_help()
             exit(1)
@@ -143,6 +150,7 @@ class Cli():
         sevenzip = self._set_sevenzip(args)
         version = args.version
         mirror = args.base
+        self.show_aqt_version()
         self._check_mirror(mirror)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
@@ -151,10 +159,17 @@ class Cli():
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_list(self, args):
+        self.show_aqt_version()
         print('List Qt packages for %s' % args.qt_version)
 
     def show_help(self, args):
         self.parser.print_help()
+
+    def show_aqt_version(self):
+        dist = importlib_metadata.distribution('aqtinstall')
+        module_name = dist.entry_points[0].name
+        python_version = sys.version
+        print("aqtinstall({}) {} on Python {}".format(module_name, dist.version, python_version))
 
     def _create_parser(self):
         parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
