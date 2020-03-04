@@ -29,14 +29,14 @@ Removed
 Security
 --------
 
-`v0.7.7`_ (4, Mar., 2020)
-==========================
+`v0.7.8`_ (5, Mar., 2020)
+=========================
 
 * Same as v0.7.6
 
 
 `v0.7.6`_ (4, Mar., 2020)
-==========================
+=========================
 
 Fixed
 -----
@@ -444,8 +444,9 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.7...HEAD
-.. _v0.7.7: https://github.com/miurahr/aqtinstall/compare/v0.7.4...v0.7.7
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.8...HEAD
+.. _v0.7.8: https://github.com/miurahr/aqtinstall/compare/v0.7.6...v0.7.8
+.. _v0.7.6: https://github.com/miurahr/aqtinstall/compare/v0.7.5...v0.7.6
 .. _v0.7.5: https://github.com/miurahr/aqtinstall/compare/v0.7.4...v0.7.5
 .. _v0.7.4: https://github.com/miurahr/aqtinstall/compare/v0.7.3...v0.7.4
 .. _v0.7.3: https://github.com/miurahr/aqtinstall/compare/v0.7.2...v0.7.3
