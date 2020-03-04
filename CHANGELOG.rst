@@ -29,6 +29,19 @@ Removed
 Security
 --------
 
+`v0.8a2`_ (4, Mar., 2020)
+==========================
+
+Changed
+-------
+
+* Improve error messages when command argument is wrong.
+
+Fixed
+-----
+
+* Work around for http://download.qt.io/ returns wrong metalink xml data.(#105, #106)
+
 
 `v0.8a1`_ (28, Feb., 2020)
 ==========================
