@@ -8,6 +8,15 @@ import requests
 from aqt.settings import Settings
 
 
+def _get_meta(url: str):
+    return requests.get(url + '.meta4')
+
+
+def _check_content_type(ct: str) -> bool:
+    candidate = ['application/metalink4+xml', 'text/plain']
+    return any(ct.startswith(t) for t in candidate)
+
+
 def altlink(url: str, alt: str, logger=None):
     '''Blacklisting redirected(alt) location based on Settings.blacklist configuration.
      When found black url, then try download a url + .meta4 that is a metalink version4
@@ -18,13 +27,13 @@ def altlink(url: str, alt: str, logger=None):
     if blacklist is None or not any(alt.startswith(b) for b in blacklist):
         return alt
     try:
-        m = requests.get(url + '.meta4')
+        m = _get_meta(url)
     except requests.exceptions.ConnectionError:
         logger.error("Got connection error. Fall back to recovery plan...")
         return alt
     else:
         # Expected response->'application/metalink4+xml; charset=utf-8'
-        if not m.headers['content-type'].startswith('application/metalink4+xml'):
+        if not _check_content_type(m.headers['content-type']):
             logger.error("Unexpected meta4 response;content-type: {}".format(m.headers['content-type']))
             return alt
         try:
