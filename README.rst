@@ -16,6 +16,8 @@ Another Qt installer(aqt)
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |ext| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux%20(Specific%20Mirror)
    :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
+.. |gha| image:: https://github.com/miurahr/aqtinstall/workflows/Test%20on%20GH%20actions%20environment/badge.svg
+   :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
 
 +--------+-----------+---------+
 | Jobs   | Mac       | Release |   
@@ -27,6 +29,7 @@ Another Qt installer(aqt)
 |        | |ubuntu|  | |pep8|  |
 |        | |windows| | |docs|  |
 |        | |ext|     |         |
+|        | |gha|     |         |
 +--------+-----------+---------+
 
 This is an utility replacing the official graphical Qt installer. It can
