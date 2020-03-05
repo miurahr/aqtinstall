@@ -24,8 +24,8 @@ import argparse
 import logging
 import logging.config
 import os
+import platform
 import subprocess
-import sys
 import time
 
 from packaging.version import Version, parse
@@ -168,8 +168,11 @@ class Cli():
     def show_aqt_version(self):
         dist = importlib_metadata.distribution('aqtinstall')
         module_name = dist.entry_points[0].name
-        python_version = sys.version
-        print("aqtinstall({}) {} on Python {}".format(module_name, dist.version, python_version))
+        py_version = platform.python_version()
+        py_impl = platform.python_implementation()
+        py_build = platform.python_compiler()
+        self.logger.info("aqtinstall({}) v{} on Python {} [{} {}]".format(module_name, dist.version,
+                                                                          py_version, py_impl, py_build))
 
     def _create_parser(self):
         parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
