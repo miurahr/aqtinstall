@@ -1,51 +1,44 @@
+import logging
+import sys
 import xml.etree.ElementTree as ElementTree
+from typing import List, Optional
 
 import requests
 
 from aqt.settings import Settings
 
 
-def altlink(url, alt, priority=None):
-    '''Download .meta4 metalink version4 xml file and parse it.'''
-    settings = Settings()
-    black = False
-    for site in settings.blacklist:
-        if alt.startswith(site):
-            black = True
-    if not black:
+def altlink(url: str, alt: str, logger=None):
+    '''Blacklisting redirected(alt) location based on Settings.blacklist configuration.
+     When found black url, then try download a url + .meta4 that is a metalink version4
+     xml file, parse it and retrieve best alternative url.'''
+    if logger is None:
+        logger = logging.getLogger(__name__)
+    blacklist = Settings().blacklist  # type: Optional[List[str]]
+    if blacklist is None or not any(alt.startswith(b) for b in blacklist):
         return alt
-    # specified mirror is black, try select another.
-    mirrors = {}
     try:
         m = requests.get(url + '.meta4')
     except requests.exceptions.ConnectionError:
-        return
+        logger.error("Got connection error. Fall back to recovery plan...")
+        return alt
     else:
-        if m.headers['content-type'] == 'application/metalink4+xml':
+        # Expected response->'application/metalink4+xml; charset=utf-8'
+        if not m.headers['content-type'].startswith('application/metalink4+xml'):
+            logger.error("Unexpected meta4 response;content-type: {}".format(m.headers['content-type']))
+            return alt
+        try:
             mirror_xml = ElementTree.fromstring(m.text)
+            meta_urls = {}
             for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
                 for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
-                    pri = u.attrib['priority']
-                    mirrors[pri] = u.text
-        if len(mirrors) == 0:
-            # there is no valuable data.
+                    meta_urls[u.attrib['priority']] = u.text
+            mirrors = [meta_urls[i] for i in sorted(meta_urls.keys(), key=lambda x: int(x))]
+        except Exception:
+            exc_info = sys.exc_info()
+            logger.error("Unexpected meta4 file; parse error: {}".format(exc_info[1]))
             return alt
-
-    if priority is None:
-        if settings.blacklist is not None:
-            for ind in range(len(mirrors)):
-                mirror = mirrors[str(ind + 1)]
-                black = False
-                for b in settings.blacklist:
-                    if mirror.startswith(b):
-                        black = True
-                        continue
-                if black:
-                    continue
-                return mirror
         else:
-            for ind in range(len(mirrors)):
-                mirror = mirrors[str(ind + 1)]
-                return mirror
-    else:
-        return mirrors[str(priority)]
+            # Return first priority item which is not blacklist in mirrors list,
+            # if not found then return alt in default
+            return next(filter(lambda mirror: not any(mirror.startswith(b) for b in blacklist), mirrors), alt)
