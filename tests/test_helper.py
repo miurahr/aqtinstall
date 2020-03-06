@@ -7,8 +7,7 @@ from aqt import helper
 def test_helper_altlink(monkeypatch):
 
     class Message:
-        headers = {'content-type': 'text/plain',
-             'length': 300,}
+        headers = {'content-type': 'text/plain', 'length': 300}
         text = '''<?xml version="1.0" encoding="UTF-8"?>
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <generator>MirrorBrain/2.17.0</generator>
