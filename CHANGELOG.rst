@@ -20,8 +20,6 @@ Changed
 Fixed
 -----
 
-* Import-metadata package is required in python version < 3.8 not 3.7.
-
 Deprecated
 ----------
 
@@ -30,6 +28,15 @@ Removed
 
 Security
 --------
+
+`v0.8a4`_ (6, Mar., 2020)
+=========================
+
+Fixed
+-----
+
+* Import-metadata package is required in python version < 3.8 not 3.7.
+* Refactoring redirect helper function to improve connection error checks and error message.(#109)
 
 `v0.8a3`_ (5, Mar., 2020)
 =========================
@@ -452,7 +459,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.8a3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.8a4...HEAD
+.. _v0.8a4: https://github.com/miurahr/aqtinstall/compare/v0.8a3...v0.8a4
 .. _v0.8a3: https://github.com/miurahr/aqtinstall/compare/v0.8a1...v0.8a3
 .. _v0.8a1: https://github.com/miurahr/aqtinstall/compare/v0.7.4...v0.8a1
 .. _v0.7.4: https://github.com/miurahr/aqtinstall/compare/v0.7.3...v0.7.4

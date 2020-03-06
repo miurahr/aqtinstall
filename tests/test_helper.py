@@ -3,7 +3,6 @@ import pytest
 from aqt import helper
 
 
-@pytest.mark.unit
 def test_helper_altlink(monkeypatch):
 
     class Message:
