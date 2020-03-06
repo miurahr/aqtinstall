@@ -1,5 +1,3 @@
-import pytest
-
 from aqt import helper
 
 
