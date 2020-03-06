@@ -88,7 +88,7 @@ class Settings(object):
 
     @property
     def concurrency(self):
-        """concurrency configuraiton.
+        """concurrency configuration.
 
         :return: concurrency
         :rtype: int
