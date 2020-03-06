@@ -61,7 +61,7 @@ class QtInstaller:
         try:
             r = requests.get(url, allow_redirects=False, stream=True)
             if r.status_code == 302:
-                newurl = altlink(r.url)
+                newurl = altlink(r.url, r.headers['Location'])
                 self.logger.info('Redirected to new URL: {}'.format(newurl))
                 r = requests.get(newurl, stream=True)
         except requests.exceptions.ConnectionError as e:
