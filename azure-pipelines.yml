@@ -1,8 +1,19 @@
 trigger:
   branches:
     include:
+    - releases/*
+  paths:
+    include:
+    - aqt/*
+
+pr:
+  branches:
+    include:
     - master
-    - rel-*
+    - releases/*
+  paths:
+    include:
+    - aqt/*
 
 jobs:
 - job: MatricesGenerator
