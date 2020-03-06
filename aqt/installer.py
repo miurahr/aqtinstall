@@ -28,6 +28,8 @@ import time
 from logging import getLogger
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 import py7zr
 from aqt.archives import QtPackage
@@ -59,12 +61,17 @@ class QtInstaller:
         url = package.url
         start_time = time.perf_counter()
         self.logger.info("Downloading {}...".format(url))
+        session = requests.Session()
+        retry = Retry(connect=5, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
         try:
-            r = requests.get(url, allow_redirects=False, stream=True)
+            r = session.get(url, allow_redirects=False, stream=True)
             if r.status_code == 302:
                 newurl = altlink(r.url, r.headers['Location'], logger=self.logger)
                 self.logger.info('Redirected to new URL: {}'.format(newurl))
-                r = requests.get(newurl, stream=True)
+                r = session.get(newurl, stream=True)
         except requests.exceptions.ConnectionError as e:
             self.logger.error("Connection error: %s" % e.args)
             raise e
