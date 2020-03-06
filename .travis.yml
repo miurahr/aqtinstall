@@ -7,12 +7,11 @@ matrix:
       env: TOXENV=check
     - python: 3.7
       env: TOXENV=docs
-    - python: 3.6
+    - python: 3.7
       env:
-        TOXENV=py36
+        TOXENV=py37
         PYTEST_ADDOPTS="--remote-data"
 
 install: pip install tox-travis
 
 script: tox
-
