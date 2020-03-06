@@ -1,3 +1,9 @@
+trigger:
+  branches:
+    include:
+    - master
+    - rel-*
+
 jobs:
 - job: MatricesGenerator
   displayName: Matrices Generator
