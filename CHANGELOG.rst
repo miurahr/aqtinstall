@@ -20,6 +20,8 @@ Changed
 Fixed
 -----
 
+* Import-metadata package is required in python version < 3.8 not 3.7.
+
 Deprecated
 ----------
 
