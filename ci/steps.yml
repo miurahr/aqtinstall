@@ -9,7 +9,7 @@ steps:
       python -m pep517.build ./
       pip install ./dist/aqtinstall-`python setup.py --version`-py2.py3-none-any.whl
     workingDirectory: $(Build.SourcesDirectory)
-    displayName: Install
+    displayName: Install aqtinstall
 
   # Run Aqt
   ##----------------------------------------------------
@@ -62,18 +62,6 @@ steps:
 
   # Test installation environments
   ##----------------------------------------------------
-  # for Android
-  - bash: |
-      wget https://dl.google.com/android/repository/android-ndk-r20b-{$(Agent.OS),,}-x86_64.zip
-      unzip android-ndk-r20b-{$(Agent.OS),,}-x86_64.zip
-      export ANDROID_NDK_ROOT=$(Build.BinariesDirectory)/android-ndk-r20b
-      (cd $(Build.SourcesDirectory)/ci; python -m py7zr x accelbubble.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/ci/accelbubble && make
-    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
-    workingDirectory: $(Build.BinariesDirectory)
-    displayName: Build accelbubble example application to test for android with Android NDK
-
-  ##----------------------------------------------------
   # Test build on Windows/Linux and Mac
   # determine Windows build system
   - powershell: |
@@ -103,9 +91,23 @@ steps:
     displayName: Set PATH and detect toolchain for Windows
   - bash: |
       sudo apt-get install libgl1-mesa-dev
+    condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'))
+    displayName: Install test dependency for Linux
+  - bash: |
       echo "##vso[task.setvariable variable=PATH]${PATH}:$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/"
-    condition: and(eq( variables['TARGET'], 'desktop' ), eq(variables['Agent.OS'], 'Linux'))
-    displayName: Set PATH and install test dependency for Linux
+    condition: or(eq(variables['Agent.OS'], 'Darwin'), eq(variables['Agent.OS'], 'Linux'))
+    displayName: Set PATH
+
+  # for Android
+  - bash: |
+      wget https://dl.google.com/android/repository/android-ndk-r20b-{$(Agent.OS),,}-x86_64.zip
+      unzip android-ndk-r20b-{$(Agent.OS),,}-x86_64.zip
+      export ANDROID_NDK_ROOT=$(Build.BinariesDirectory)/android-ndk-r20b
+      (cd $(Build.SourcesDirectory)/ci; python -m py7zr x accelbubble.7z)
+      qmake $(Build.SourcesDirectory)/ci/accelbubble && make
+    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    workingDirectory: $(Build.BinariesDirectory)
+    displayName: Build accelbubble example application to test for android with Android NDK
 
   # no modules
   - powershell: |
