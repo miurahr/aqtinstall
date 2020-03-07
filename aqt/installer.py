@@ -34,6 +34,7 @@ from urllib3.util.retry import Retry
 import py7zr
 from aqt.archives import QtPackage
 from aqt.helper import altlink
+from aqt.settings import Settings
 
 
 class ExtractionError(Exception):
@@ -55,6 +56,7 @@ class QtInstaller:
             self.base_dir = os.getcwd()
         else:
             self.base_dir = target_dir
+        self.settings = Settings()
 
     def retrieve_archive(self, package: QtPackage):
         archive = package.archive
@@ -138,7 +140,7 @@ class QtInstaller:
             raise e
 
     def install(self):
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with concurrent.futures.ThreadPoolExecutor(self.settings.concurrency) as executor:
             futures = [executor.submit(self.retrieve_archive, ar) for ar in self.qt_archives.get_archives()]
             done, not_done = concurrent.futures.wait(futures, return_when=concurrent.futures.FIRST_EXCEPTION)
             if len(not_done) > 0:
