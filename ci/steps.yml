@@ -77,7 +77,6 @@ steps:
   # Test build on Windows/Linux and Mac
   # determine Windows build system
   - powershell: |
-      Write-Host "##vso[task.setvariable variable=PATH]$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin;${env:PATH}"
       Install-PackageProvider NuGet -Force
       Import-PackageProvider NuGet -Force
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
@@ -99,11 +98,14 @@ steps:
       } else {
         echo '##vso[task.setvariable variable=VSVER]2015'
       }
+      Write-Host "##vso[task.setvariable variable=PATH]$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin;${env:PATH}"
     condition: eq( variables['Agent.OS'], 'Windows_NT')
     displayName: Set PATH and detect toolchain for Windows
-  - bash: sudo apt-get install libgl1-mesa-dev
+  - bash: |
+      sudo apt-get install libgl1-mesa-dev
+      echo "##vso[task.setvariable variable=PATH]${PATH}:$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/"
     condition: and(eq( variables['TARGET'], 'desktop' ), eq(variables['Agent.OS'], 'Linux'))
-    displayName: Install test dependency for Linux
+    displayName: Set PATH and install test dependency for Linux
 
   # no modules
   - powershell: |
@@ -118,7 +120,7 @@ steps:
     displayName: build test with qmake with MSVC w/o extra module
   - bash: |
       (cd $(Build.SourcesDirectory)/ci; python -m py7zr x helloworld.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/ci/helloworld && make
+      qmake $(Build.SourcesDirectory)/ci/helloworld && make
     condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''))
     workingDirectory: $(Build.BinariesDirectory)
     displayName: Build test with qmake for Linux and macOS w/o extra module
@@ -135,7 +137,7 @@ steps:
     displayName: build test with qmake with MSVC with extra module
   - bash: |
       (cd $(Build.SourcesDirectory)/ci; python -m py7zr x redditclient.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/ci/redditclient && make
+      qmake $(Build.SourcesDirectory)/ci/redditclient && make
     condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
     workingDirectory: $(Build.BinariesDirectory)
     displayName: Build test with qmake for Linux and macOS with extra module
@@ -167,7 +169,7 @@ steps:
       (cd emsdk; ./emsdk activate --embedded  sdk-fastcomp-1.38.27-64bit)
       (cd $(Build.SourcesDirectory)/ci; python -m py7zr x openglwindow.7z)
       source ./emsdk/emsdk_env.sh
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/ci/openglwindow && make
+      qmake $(Build.SourcesDirectory)/ci/openglwindow && make
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: 'Build WebAssembler sample project'
