@@ -58,21 +58,6 @@ jobs:
   steps:
     - template: ci/steps.yml
 
-- job: Mingw
-  displayName: Mingw73 on Windows
-  variables:
-    PYTHON_VERSION: '3.7'
-    QT_VERSION: 5.13.2
-    HOST: windows
-    TARGET: desktop
-    ARCH: win64_mingw73
-    ARCHDIR: mingw73_64
-    EXTERNAL: 'C:\Program Files\7-Zip\7z.exe'
-  pool:
-    vmImage: 'vs2017-win2016'
-  steps:
-    - template: ci/steps.yml
-
 - job: LinuxSpecificMirror
   displayName: Linux (Specific Mirror)
   variables:

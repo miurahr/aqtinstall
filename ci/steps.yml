@@ -4,21 +4,12 @@ steps:
     inputs:
       versionSpec: $(PYTHON_VERSION)
       architecture: 'x64'
-  - script: |
-      cd $(Build.SourcesDirectory)
+  - bash: |
       python -m pip install -rrequirements.txt
-    displayName: 'Install dependency'
-  - task: PythonScript@0
-    inputs:
-      scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/setup.py
-      arguments: sdist bdist_wheel
-      workingDirectory: $(Build.SourcesDirectory)
-    displayName: build package
-  - powershell: |
-      $aqtVersion = & python $(Build.SourcesDirectory)/setup.py --version | Out-String -Stream
-      pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
-    displayName: install package
+      python -m pep517.build ./
+      pip install ./dist/aqtinstall-`python setup.py --version`-py2.py3-none-any.whl
+    workingDirectory: $(Build.SourcesDirectory)
+    displayName: Install
 
   # Run Aqt
   ##----------------------------------------------------
@@ -27,6 +18,7 @@ steps:
   - bash: |
       number=$RANDOM
       let "number %= 30"
+      echo sleep $number second
       sleep $number
       python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
     workingDirectory: $(Build.BinariesDirectory)
@@ -37,9 +29,7 @@ steps:
   - bash: |
       number=$RANDOM
       let "number %= 30"
-  - bash: |
-      number=$RANDOM
-      let "number %= 30"
+      echo sleep $number second
       sleep $number
       python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
     workingDirectory: $(Build.BinariesDirectory)
@@ -50,6 +40,7 @@ steps:
   - bash: |
       number=$RANDOM
       let "number %= 30"
+      echo sleep $number second
       sleep $number
       python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE)
     workingDirectory: $(Build.BinariesDirectory)
@@ -60,6 +51,7 @@ steps:
   - bash: |
       number=$RANDOM
       let "number %= 30"
+      echo sleep $number second
       sleep $number
       python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
     workingDirectory: $(Build.BinariesDirectory)
@@ -70,30 +62,22 @@ steps:
 
   # Test installation environments
   ##----------------------------------------------------
-  # for Android on linux
-  - script: |
-      wget https://dl.google.com/android/repository/android-ndk-r20b-linux-x86_64.zip
-      unzip android-ndk-r20b-linux-x86_64.zip
-    condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Linux'))
-    displayName: Download and extract Android NDK
-  # for Android on mac
-  - script: |
-      wget https://dl.google.com/android/repository/android-ndk-r20b-darwin-x86_64.zip
-      unzip android-ndk-r20b-darwin-x86_64.zip
-    condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Darwin'))
-    displayName: Download and extract Android NDK
-  - script: |
-      export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r20b
-      mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/accelbubble && make
+  # for Android
+  - bash: |
+      wget https://dl.google.com/android/repository/android-ndk-r20b-{$(Agent.OS),,}-x86_64.zip
+      unzip android-ndk-r20b-{$(Agent.OS),,}-x86_64.zip
+      export ANDROID_NDK_ROOT=$(Build.BinariesDirectory)/android-ndk-r20b
+      (cd $(Build.SourcesDirectory)/ci; python -m py7zr x accelbubble.7z)
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/ci/accelbubble && make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
-    displayName: Build accelbubble example application to test for android
+    workingDirectory: $(Build.BinariesDirectory)
+    displayName: Build accelbubble example application to test for android with Android NDK
 
   ##----------------------------------------------------
   # Test build on Windows/Linux and Mac
   # determine Windows build system
   - powershell: |
+      Write-Host "##vso[task.setvariable variable=PATH]$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin;${env:PATH}"
       Install-PackageProvider NuGet -Force
       Import-PackageProvider NuGet -Force
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
@@ -116,47 +100,44 @@ steps:
         echo '##vso[task.setvariable variable=VSVER]2015'
       }
     condition: eq( variables['Agent.OS'], 'Windows_NT')
-    displayName: detect toolchain for Windows
-  - script: |
-      sudo apt-get install libgl1-mesa-dev
+    displayName: Set PATH and detect toolchain for Windows
+  - bash: sudo apt-get install libgl1-mesa-dev
     condition: and(eq( variables['TARGET'], 'desktop' ), eq(variables['Agent.OS'], 'Linux'))
-    displayName: install test dependency for Linux
+    displayName: Install test dependency for Linux
 
   # no modules
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-      mkdir $(Build.BinariesDirectory)/tests
-      cd $(Build.BinariesDirectory)/tests
-      7z x $(Build.SourcesDirectory)/ci/helloworld.7z
-      cd ..
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/helloworld
+      cd $(Build.SourcesDirectory)/ci
+      python -m py7zr x helloworld.7z
+      cd $(Build.BinariesDirectory)
+      qmake $(Build.SourcesDirectory)/ci/helloworld
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), eq(variables['MODULE'], ''))
+    workingDirectory: $(Build.BinariesDirectory)
     displayName: build test with qmake with MSVC w/o extra module
-  - script: |
-      mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/helloworld.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/helloworld
-      make
+  - bash: |
+      (cd $(Build.SourcesDirectory)/ci; python -m py7zr x helloworld.7z)
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/ci/helloworld && make
     condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''))
+    workingDirectory: $(Build.BinariesDirectory)
     displayName: Build test with qmake for Linux and macOS w/o extra module
   # modules
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-      mkdir $(Build.BinariesDirectory)/tests
-      cd $(Build.BinariesDirectory)/tests
-      7z x $(Build.SourcesDirectory)/ci/redditclient.7z
-      cd ..
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/redditclient
+      cd $(Build.SourcesDirectory)/ci
+      python -m py7zr x redditclient.7z
+      cd $(Build.BinariesDirectory)
+      qmake $(Build.SourcesDirectory)/ci/redditclient
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''))
+    workingDirectory: $(Build.BinariesDirectory)
     displayName: build test with qmake with MSVC with extra module
-  - script: |
-      mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/redditclient
-      make
+  - bash: |
+      (cd $(Build.SourcesDirectory)/ci; python -m py7zr x redditclient.7z)
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/ci/redditclient && make
     condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
+    workingDirectory: $(Build.BinariesDirectory)
     displayName: Build test with qmake for Linux and macOS with extra module
 
   ##----------------------------------------------------
@@ -180,20 +161,13 @@ steps:
 
   ##----------------------------------------------------
   # wasm_32 on linux and mac
-  - script: |
+  - bash: |
       git clone https://github.com/emscripten-core/emsdk.git
-      cd emsdk
-      ./emsdk install sdk-fastcomp-1.38.27-64bit
-      ./emsdk activate --embedded  sdk-fastcomp-1.38.27-64bit
-    workingDirectory: $(Build.BinariesDirectory)
-    condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
-    displayName: 'Install Emscripten SDK'
-  - script: |
-      source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
-      mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/openglwindow.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/openglwindow
-      make
+      (cd emsdk; ./emsdk install sdk-fastcomp-1.38.27-64bit)
+      (cd emsdk; ./emsdk activate --embedded  sdk-fastcomp-1.38.27-64bit)
+      (cd $(Build.SourcesDirectory)/ci; python -m py7zr x openglwindow.7z)
+      source ./emsdk/emsdk_env.sh
+      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.SourcesDirectory)/ci/openglwindow && make
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: 'Build WebAssembler sample project'
