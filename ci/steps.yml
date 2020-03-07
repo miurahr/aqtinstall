@@ -100,9 +100,10 @@ steps:
 
   # for Android
   - bash: |
-      wget https://dl.google.com/android/repository/android-ndk-r20b-{$(Agent.OS),,}-x86_64.zip
-      unzip android-ndk-r20b-{$(Agent.OS),,}-x86_64.zip
-      export ANDROID_NDK_ROOT=$(Build.BinariesDirectory)/android-ndk-r20b
+      osname="${AGENT_OS,,}"
+      wget https://dl.google.com/android/repository/android-ndk-r20b-$osname-x86_64.zip
+      unzip android-ndk-r20b-$osname-x86_64.zip
+      export ANDROID_NDK_ROOT=$PWD/android-ndk-r20b
       (cd $(Build.SourcesDirectory)/ci; python -m py7zr x accelbubble.7z)
       qmake $(Build.SourcesDirectory)/ci/accelbubble && make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
