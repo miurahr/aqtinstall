@@ -45,8 +45,9 @@ class Cli():
 
     __slot__ = ['parser', 'combinations', 'logger']
 
-    def __init__(self):
-        self.settings = Settings()
+    def __init__(self, env_key='AQT_CONFIG'):
+        config = os.getenv(env_key, None)
+        self.settings = Settings(config=config)
         self._create_parser()
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
