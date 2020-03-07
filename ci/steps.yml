@@ -22,20 +22,49 @@ steps:
 
   # Run Aqt
   ##----------------------------------------------------
-  - script: python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
+  ## we insert sleep in random duration < 30sec to reduce
+  ## download server load.
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
     workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
     condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''))
     displayName: Run Aqt (No Base URL Set)
-  - script: python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
+    workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
     condition: and(variables['QT_BASE_MIRROR'], not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''))
-    workingDirectory: $(Build.BinariesDirectory)
     displayName: Run Aqt (Base URL Set)
-  - script: python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE)
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE)
     workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
     condition: and(not(variables['TOOL_NAME']), not(variables['EXTERNAL']), ne(variables['MODULE'], ''))
     displayName: Run Aqt (With modules)
-  - script: python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
     workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
     condition: and(not(variables['TOOL_NAME']), variables['EXTERNAL'])
     displayName: Run Aqt (With external 7zip)
 
