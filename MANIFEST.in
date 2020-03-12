@@ -9,6 +9,7 @@ recursive-include aqt *.ini
 recursive-include aqt *.json
 recursive-include aqt *.yml
 recursive-include ci *.7z
+recursive-include ci *.ini
 recursive-include ci *.py
 recursive-include ci *.yml
 recursive-include docs *.bat
