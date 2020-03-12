@@ -29,6 +29,19 @@ Removed
 Security
 --------
 
+`v0.8b1`_ (12, Mar. 2020)
+=========================
+
+Added
+-----
+
+* Support specifing config with environment variable AQT_CONFIG
+
+Fixed
+-----
+
+* Fix to use concurrency settings
+
 `v0.8a4`_ (6, Mar., 2020)
 =========================
 
@@ -459,7 +472,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.8a4...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.8b1...HEAD
+.. _v0.8b1: https://github.com/miurahr/aqtinstall/compare/v0.8a4...v0.8b1
 .. _v0.8a4: https://github.com/miurahr/aqtinstall/compare/v0.8a3...v0.8a4
 .. _v0.8a3: https://github.com/miurahr/aqtinstall/compare/v0.8a1...v0.8a3
 .. _v0.8a1: https://github.com/miurahr/aqtinstall/compare/v0.7.4...v0.8a1
