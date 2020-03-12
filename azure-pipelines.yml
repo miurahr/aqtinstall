@@ -1,10 +1,8 @@
 trigger:
   branches:
     include:
-    - releases/*
-  paths:
-    include:
-    - aqt/*
+      - releases/*
+      - refs/tags/v*
 
 pr:
   branches:
