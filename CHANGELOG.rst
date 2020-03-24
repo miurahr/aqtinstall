@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.7.9`_ (25, Mar., 2020)
+=========================
+
+Fixed
+-----
+
+* Reverted multiprocessing change on v0.7.2.(#101)
+  Use multiprocessing.dummy.Pool()
+
 `v0.7.8`_ (5, Mar., 2020)
 =========================
 
@@ -444,7 +453,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.8...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.7.9...HEAD
+.. _v0.7.9: https://github.com/miurahr/aqtinstall/compare/v0.7.8...v0.7.9
 .. _v0.7.8: https://github.com/miurahr/aqtinstall/compare/v0.7.6...v0.7.8
 .. _v0.7.6: https://github.com/miurahr/aqtinstall/compare/v0.7.5...v0.7.6
 .. _v0.7.5: https://github.com/miurahr/aqtinstall/compare/v0.7.4...v0.7.5
