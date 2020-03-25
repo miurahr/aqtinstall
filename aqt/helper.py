@@ -5,6 +5,11 @@ import requests
 from aqt.settings import Settings
 
 
+def _check_content_type(ct: str) -> bool:
+    candidate = ['application/metalink4+xml', 'text/plain']
+    return any(ct.startswith(t) for t in candidate)
+
+
 def altlink(url, alt, priority=None):
     '''Download .meta4 metalink version4 xml file and parse it.'''
     settings = Settings()
@@ -21,7 +26,7 @@ def altlink(url, alt, priority=None):
     except requests.exceptions.ConnectionError:
         return
     else:
-        if m.headers['content-type'] == 'application/metalink4+xml':
+        if _check_content_type(m.headers['content-type']):
             mirror_xml = ElementTree.fromstring(m.text)
             for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
                 for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):

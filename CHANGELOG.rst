@@ -37,6 +37,7 @@ Fixed
 
 * Reverted multiprocessing change on v0.7.2.(#101)
   Use multiprocessing.dummy.Pool()
+* Fix Mirror check logic about content-type.(backport #109)
 
 `v0.7.8`_ (5, Mar., 2020)
 =========================
