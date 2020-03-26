@@ -25,9 +25,6 @@ Installer module
 
 .. autoexception:: aqt.installer.BadPackageFile
 
-.. autoclass:: aqt.installer.Metalink
-    :members:
-
 
 Cli module
 ----------
