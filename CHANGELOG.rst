@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.8`_ (26, Mar. 2020)
+=======================
+
+Fixed
+-----
+
+* docs: fix broken link for qli-installer
+
+
 `v0.8b1`_ (12, Mar. 2020)
 =========================
 
@@ -472,7 +481,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.8b1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.8...HEAD
+.. _v0.8: https://github.com/miurahr/aqtinstall/compare/v0.8b1...v0.8
 .. _v0.8b1: https://github.com/miurahr/aqtinstall/compare/v0.8a4...v0.8b1
 .. _v0.8a4: https://github.com/miurahr/aqtinstall/compare/v0.8a3...v0.8a4
 .. _v0.8a3: https://github.com/miurahr/aqtinstall/compare/v0.8a1...v0.8a3
