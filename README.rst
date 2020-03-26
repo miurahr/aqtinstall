@@ -181,8 +181,8 @@ Use cases
 History
 -------
 
-This program is originally shown in `Kaidan`_ project as a name `qli-installer`.
+This program is originally shown in Kaidan project as a name `qli-installer`_.
 A project `aqtinstall` extend the original to run with standard python features with Linux, Mac and Windows,
 to be tested on CI platform, and to improve performance with a concurrent downloading.
 
-.. _`kaidan`: https://git.kaidan.im/lnj/qli-installer
+.. _`qli-installer`: https://lnj.gitlab.io/post/qli-installer

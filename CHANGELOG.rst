@@ -447,7 +447,7 @@ Fixed
 `v0.0.1`_ (2, March, 2019)
 ==========================
 
-* Fork from https://git.kaidan.im/lnj/qli-installer
+* Fork from qli-installer
 
 
 .. _py7zr: https://github.com/miurahr/py7zr
