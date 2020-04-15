@@ -9,6 +9,7 @@ jobs:
       matrix:
         os: [windows-latest, macOS-latest, ubuntu-latest]
         py: [3.6, 3.8]
+        qtver: [5.14.2, 5.15.0]
     steps:
       - uses: actions/checkout@v1
         with:
@@ -23,22 +24,22 @@ jobs:
           python -m pip install pep517 --user
           python -m pip install ./ --user
       - name: Run Aqt
-        env:
-          qtver: 5.14.0
         run: |
           import os
           import subprocess
+          timeout = 300
           command_line = ["python", "-m", "aqt", "install"]
           platform = "${{ matrix.os }}"
+          qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
-            args = [os.environ["qtver"], "windows", "desktop", "win64_mingw73"]
+            args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
           elif platform == "macOS-latest":
-            args = [os.environ["qtver"], "mac", "desktop", "clang_64"]
+            args = [qtver, "mac", "desktop", "clang_64"]
           else:
-            args = [os.environ["qtver"], "linux", "desktop", "gcc_64"]
+            args = [qtver, "linux", "desktop", "gcc_64"]
           command_line.extend(args)
           try:
-            subprocess.run(command_line, timeout=240, check=True)
+            subprocess.run(command_line, timeout=timeout, check=True)
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
         shell: python
