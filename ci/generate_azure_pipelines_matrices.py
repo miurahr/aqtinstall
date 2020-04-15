@@ -119,8 +119,11 @@ linux_build_jobs.extend(
         BuildJob('5.14.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='all')
     ]
 )
-mac_build_jobs.append(
-    BuildJob('5.13.2', 'mac', 'desktop', 'clang_64', 'clang_64', module='qcharts qtnetworkauth')
+mac_build_jobs.extend(
+    [
+    BuildJob('5.13.2', 'mac', 'desktop', 'clang_64', 'clang_64', module='qcharts qtnetworkauth'),
+    BuildJob('5.14.2', 'mac', 'desktop', 'clang_64', 'clang_64', module='qcharts qtnetworkauth')
+    ]
 )
 windows_build_jobs.append(
     BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64', module='qcharts qtnetworkauth')
