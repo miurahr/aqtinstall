@@ -99,6 +99,10 @@ class QtArchives:
         target_packages.append("qt.qt5.{}.{}".format(qt_ver_num, self.arch))
         target_packages.append("qt.{}.{}".format(qt_ver_num, self.arch))
         target_packages.extend(self.mod_list)
+        self._download_update_xml(update_xml_url)
+        self._parse_update_xml(target_packages, archive_url)
+
+    def _download_update_xml(self, update_xml_url):
         try:
             r = requests.get(update_xml_url)
         except requests.exceptions.ConnectionError as e:
@@ -110,8 +114,11 @@ class QtArchives:
                                   'Server response code: {}, reason: {}'.format(update_xml_url,
                                                                                 r.status_code, r.reason))
                 exit(1)
+            else:
+                self.update_xml_text = r.text
+
+    def _parse_update_xml(self, target_packages, archive_url):
         try:
-            self.update_xml_text = r.text
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
             self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
@@ -128,10 +135,10 @@ class QtArchives:
                             package_url = archive_url + name + "/" + full_version + archive
                             self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                            has_mirror=self.has_mirror))
-            if len(self.archives) == 0:
-                self.logger.error("Error while parsing package information!")
-                self.logger.debug(self.update_xml_text)
-                exit(1)
+        if len(self.archives) == 0:
+            self.logger.error("Error while parsing package information!")
+            self.logger.debug(self.update_xml_text)
+            exit(1)
 
     def get_archives(self):
         """

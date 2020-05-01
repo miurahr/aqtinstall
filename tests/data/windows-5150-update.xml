@@ -1,0 +1,1798 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <!-- PackageUpdate>
+  <Name>qt.qt5.5150.debug_info.win32_msvc2017</Name>
+  <DisplayName>Desktop MSVC 2017 Debug Information Files</DisplayName>
+  <Description>Qt 5.15.0 debug information files for Desktop MSVC 2017</Description>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.debug_info, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtconnectivity-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtactiveqt-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtmultimedia-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtsvg-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtdeclarative-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtwinextras-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtimageformats-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qttools-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtxmlpatterns-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtsensors-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtwebsockets-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtwebchannel-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtlocation-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtserialport-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtquickcontrols-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtquickcontrols2-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qt3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtwebview-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtserialbus-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtscxml-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtgamepad-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtspeech-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtcharts-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtdatavis3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtpurchasing-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtvirtualkeyboard-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtremoteobjects-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtscript-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtwebengine-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtnetworkauth-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtwebglplugin-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtlottie-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtquick3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z, qtquicktimeline-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="556090301" OS="Any" UncompressedSize="4605023648"/>
+  <SHA1>3a2a03fb913bbe6687b3177f644bd1ad8c7c7223</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.debug_info.win64_msvc2017_64</Name>
+  <DisplayName>Desktop MSVC 2017 64-bit debug information files</DisplayName>
+  <Description>Qt 5.15.0 debug information files for Desktop MSVC 2017 64-bit</Description>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.debug_info, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtconnectivity-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtactiveqt-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtmultimedia-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtsvg-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtdeclarative-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtwinextras-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtimageformats-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qttools-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtxmlpatterns-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtsensors-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebsockets-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebchannel-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtlocation-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialport-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtquickcontrols-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtquickcontrols2-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qt3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebview-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialbus-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtscxml-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtgamepad-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtspeech-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtcharts-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtdatavis3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtpurchasing-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtvirtualkeyboard-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtremoteobjects-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtscript-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebengine-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtnetworkauth-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebglplugin-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtlottie-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtquick3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z, qtquicktimeline-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="913942417" OS="Any" UncompressedSize="7520834976"/>
+  <SHA1>33aef58783420457cdc88496febfa3c7a69ed12b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win32_msvc2017</Name>
+  <DisplayName>Qt Charts for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="951756" OS="Any" UncompressedSize="9144915"/>
+  <SHA1>76cc336a8371b37998225033bc4b8f7852516e95</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win64_msvc2017_64</Name>
+  <DisplayName>Qt Charts for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1101855" OS="Any" UncompressedSize="10337249"/>
+  <SHA1>a540b20cf32d5a0c177c84cba095baf040ed69b0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win32_msvc2017</Name>
+  <DisplayName>Qt Data Visualization for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="787987" OS="Any" UncompressedSize="6413835"/>
+  <SHA1>29655e432166f285ab0656793672d35b7fa11dc0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win64_msvc2017_64</Name>
+  <DisplayName>Qt Data Visualization for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="886753" OS="Any" UncompressedSize="7223371"/>
+  <SHA1>fd966c3be733720614d18ac2e5975db5b047fad0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win32_msvc2017</Name>
+  <DisplayName>Qt Lottie Animation for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="177565" OS="Any" UncompressedSize="1109483"/>
+  <SHA1>c49538dfc139eeea8a0735e1ca7de5af158a8436</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win64_msvc2017_64</Name>
+  <DisplayName>Qt Lottie Animation for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="203353" OS="Any" UncompressedSize="1311193"/>
+  <SHA1>4f882d3d571a3448da11fb08375cbfe6bf48420f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win32_msvc2017</Name>
+  <DisplayName>Qt Network Authorization for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="112617" OS="Any" UncompressedSize="711549"/>
+  <SHA1>82c679a39712cdc2e62c43d74679ff91beffcd25</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win64_msvc2017_64</Name>
+  <DisplayName>Qt Network Authentication for MSVC 2017_64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="128438" OS="Any" UncompressedSize="831465"/>
+  <SHA1>76d790897877e15edfc0d62397b690a139cddc6c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win32_msvc2017</Name>
+  <DisplayName>Qt Purchasing for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="66934" OS="Any" UncompressedSize="400908"/>
+  <SHA1>657922135f867ff5c775968d094d9c5b82bd52a6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win64_msvc2017_64</Name>
+  <DisplayName>Qt Purchasing for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="73081" OS="Any" UncompressedSize="471898"/>
+  <SHA1>076f3ef0318263e0cf70732e5f3a9427eee076ce</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win32_msvc2017</Name>
+  <DisplayName>Qt Quick 3D for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="11110593" OS="Any" UncompressedSize="28832351"/>
+  <SHA1>2f25dd988c51387a8fcb35f727aa53c9fd0768c5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win64_msvc2017_64</Name>
+  <DisplayName>Qt Quick 3D for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="11603053" OS="Any" UncompressedSize="33055907"/>
+  <SHA1>febc34131e92ce54662415cba57526b902641c42</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win32_msvc2017</Name>
+  <DisplayName>Qt Quick Timeline for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="48416" OS="Any" UncompressedSize="311244"/>
+  <SHA1>643451696efee6c4ecd06ecf31945be481df982a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win64_msvc2017_64</Name>
+  <DisplayName>Qt Quick Timeline for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="54652" OS="Any" UncompressedSize="378316"/>
+  <SHA1>acd1362c919e192800885e8ac110f0cee2099f4a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win32_msvc2017</Name>
+  <DisplayName>Qt Script for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1212663" OS="Any" UncompressedSize="10601384"/>
+  <SHA1>4f8f09073edd439ab35b7a9d8223d650ff1468b3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win64_msvc2017_64</Name>
+  <DisplayName>Qt Script for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1284852" OS="Any" UncompressedSize="11144156"/>
+  <SHA1>3523db11a6800e4d3cc4df38a57f5bf2bf535e05</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win32_msvc2017</Name>
+  <DisplayName>Qt Virtual Keyboard for MSVC 2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2392046" OS="Any" UncompressedSize="13526636"/>
+  <SHA1>343f7b1c2dd9c564cedeb1c3d7291632cb3d0005</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win64_msvc2017_64</Name>
+  <DisplayName>Qt Virtual Keyboard for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2457158" OS="Any" UncompressedSize="14217452"/>
+  <SHA1>769bbd3c264369192ded7123b5fb96e70998f1a9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebengine.win32_msvc2017</Name>
+  <DisplayName>Qt WebEngine for msvc2017 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebengine, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebengine-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="76626780" OS="Any" UncompressedSize="286049423"/>
+  <SHA1>7a93f45e70306924db8a601250dd001378019618</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebengine.win64_msvc2017_64</Name>
+  <DisplayName>Qt WebEngine for MSVC 2017 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebengine, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebengine-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="89813978" OS="Any" UncompressedSize="371176401"/>
+  <SHA1>47c3b7913f79ad8c96d084adf4e48a0da53317cd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win32_msvc2017</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for MSVC 2017 32-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win32_msvc2017</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2017</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="319920" OS="Any" UncompressedSize="1685961"/>
+  <SHA1>495ca84e7fd9c42256e22fe631d23ff7855d2c25</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win64_msvc2017_64</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for msvc2017_64-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win64_msvc2017_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2017_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="363904" OS="Any" UncompressedSize="1987017"/>
+  <SHA1>63a2cf370f425254de272a940770ea4fa848ce70</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win32_msvc2017</Name>
+  <DisplayName>MSVC 2017 32-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MSVC 2017 32-bit</Description>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtconnectivity-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtactiveqt-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtmultimedia-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qttranslations-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtsvg-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtdeclarative-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtwinextras-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtimageformats-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qttools-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtxmlpatterns-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtsensors-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtwebsockets-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtwebchannel-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtlocation-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtserialport-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtquickcontrols-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtquickcontrols2-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qt3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtwebview-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtserialbus-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtscxml-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtgamepad-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtspeech-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, qtremoteobjects-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86.7z, d3dcompiler_47-x86.7z, opengl32sw-32-mesa_12_0_rc2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="82379786" OS="Any" UncompressedSize="560580027"/>
+  <SHA1>861a5b2a32304a171a77b0b2da0ab664733cce96</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win64_msvc2017_64</Name>
+  <DisplayName>MSVC 2017 64-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MSVC 2017 64-bit</Description>
+  <Version>5.15.0-0-202002260536</Version>
+  <ReleaseDate>2020-02-26</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtconnectivity-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtactiveqt-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtmultimedia-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qttranslations-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtsvg-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtdeclarative-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtwinextras-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtimageformats-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qttools-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtxmlpatterns-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtsensors-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtwebsockets-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtwebchannel-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtlocation-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtserialport-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtquickcontrols-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtquickcontrols2-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qt3d-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtwebview-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtserialbus-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtscxml-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtgamepad-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtspeech-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, qtremoteobjects-Windows-Windows_10-MSVC2017-Windows-Windows_10-X86_64.7z, d3dcompiler_47-x64.7z, opengl32sw-64-mesa_12_0_rc2.7z, qt-5.15.0-win32-msvc.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="98266375" OS="Any" UncompressedSize="655450063"/>
+  <SHA1>b716d2c1bae7c0c3d407f841ec5a9ec2a0cca0cb</SHA1>
+ </PackageUpdate -->
+ <!-- PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win32_mingw73</Name>
+  <DisplayName>Qt Charts for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="19443066" OS="Any" UncompressedSize="137380903"/>
+  <SHA1>7d32109f919b3de334e4f791a4c3363fddf07c2f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win64_mingw73</Name>
+  <DisplayName>Qt Charts for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="19746768" OS="Any" UncompressedSize="141874998"/>
+  <SHA1>4aa0fcaf0e168928918264118922d8e28a17f21d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win32_mingw73</Name>
+  <DisplayName>Qt Data Visualization for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="17730093" OS="Any" UncompressedSize="126604592"/>
+  <SHA1>717b55718c3d912133cd956e008ccf945daf52ce</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win64_mingw73</Name>
+  <DisplayName>Qt Data Visualization for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="17923150" OS="Any" UncompressedSize="130296355"/>
+  <SHA1>4ca3909f67703dd6623c81ac11a17211451eef45</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win32_mingw73</Name>
+  <DisplayName>Qt Lottie Animation for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4467196" OS="Any" UncompressedSize="27685784"/>
+  <SHA1>47ea7e0d623377ffcd787a7d91684a0fe8299b3a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win64_mingw73</Name>
+  <DisplayName>Qt Lottie Animation for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4558895" OS="Any" UncompressedSize="29520331"/>
+  <SHA1>7a26b27cdfdc5c7eb3c0e8ae03b9a65db4445aa0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win32_mingw73</Name>
+  <DisplayName>Qt Network Authorization for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2209845" OS="Any" UncompressedSize="13823644"/>
+  <SHA1>943da735e2c246bf21c9de6f71392fec190aca40</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win64_mingw73</Name>
+  <DisplayName>Qt Network Authorization for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2249363" OS="Any" UncompressedSize="15069639"/>
+  <SHA1>93959720cfb80d03699e1e942db2ef19089c9b37</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win32_mingw73</Name>
+  <DisplayName>Qt Purchasing for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1144378" OS="Any" UncompressedSize="7528326"/>
+  <SHA1>b2d5ddae566cddd1be1969176fd365968396c2bf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win64_mingw73</Name>
+  <DisplayName>Qt Purchasing for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1153331" OS="Any" UncompressedSize="7691604"/>
+  <SHA1>79d20399263a83ae9294db995f9baddbd083f6d5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win32_mingw73</Name>
+  <DisplayName>Qt Quick 3D for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="49573857" OS="Any" UncompressedSize="265960341"/>
+  <SHA1>1daf3ede0d98b9e6c510940d3c31b1c916fda0b1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win64_mingw73</Name>
+  <DisplayName>Qt Quick 3D for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="50128437" OS="Any" UncompressedSize="281934615"/>
+  <SHA1>de92a0c7a72e8f5dae5c0301c5c59801948a5603</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win32_mingw73</Name>
+  <DisplayName>Qt Quick Timeline for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1086605" OS="Any" UncompressedSize="6488748"/>
+  <SHA1>c3f5f3e6bd0497a7a7303e8fad9bf2930ee6f8fc</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win64_mingw73</Name>
+  <DisplayName>Qt Quick Timeline for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1098347" OS="Any" UncompressedSize="6653792"/>
+  <SHA1>3b1b3a67b05f1f94b3fdac36ace41d66691fecdd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win32_mingw73</Name>
+  <DisplayName>Qt Script for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="29438355" OS="Any" UncompressedSize="194720368"/>
+  <SHA1>42abc3f5005c4c3f9b552c7f4147aea01cbc1558</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win64_mingw73</Name>
+  <DisplayName>Qt Script for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="27178305" OS="Any" UncompressedSize="188808366"/>
+  <SHA1>7ecb6d277823482a6250d04ea9878cd00439da01</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win32_mingw73</Name>
+  <DisplayName>Qt Virtual Keyboard for MinGW 7.3.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12728694" OS="Any" UncompressedSize="79053205"/>
+  <SHA1>f3a1c7c0179c94f83c2e7d86e2fcdb9067dd382b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win64_mingw73</Name>
+  <DisplayName>Qt Virtual Keyboard for MinGW 7.3.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12802466" OS="Any" UncompressedSize="81406176"/>
+  <SHA1>df608a3e76bfce931949d5436a2a20d506fbe8c0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win32_mingw73</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for MinGW 7.3.0 32-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3762376" OS="Any" UncompressedSize="27753701"/>
+  <SHA1>df97a144882f38e4ce2b1fb488681102ee74620b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win64_mingw73</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for MinGW 7.3.0 64-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win64_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw73</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3790096" OS="Any" UncompressedSize="30674804"/>
+  <SHA1>8c40b4350043c3233e7649bbeee5cace6732a5cc</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win32_mingw73</Name>
+  <DisplayName>MinGW 7.3.0 32-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MinGW 7.3.0 32-bit</Description>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.tools.win32_mingw730, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtconnectivity-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtactiveqt-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtmultimedia-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qttranslations-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtgraphicaleffects-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtsvg-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtdeclarative-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtwinextras-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtimageformats-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qttools-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtsensors-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtwebsockets-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtwebchannel-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtlocation-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtserialport-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtquickcontrols-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtquickcontrols2-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qt3d-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtserialbus-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtscxml-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtgamepad-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtspeech-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtremoteobjects-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, i686-7.3.0-release-posix-dwarf-rt_v5-rev0-runtime.7z, d3dcompiler_47-x86.7z, opengl32sw-32-mesa_12_0_rc2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="905121181" OS="Any" UncompressedSize="5791650185"/>
+  <SHA1>94b65a7e3565ea85168921579973e535655c4c2f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win64_mingw73</Name>
+  <DisplayName>MinGW 7.3.0 64-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MinGW 7.3.0 64-bit</Description>
+  <Version>5.15.0-0-202004050131</Version>
+  <ReleaseDate>2020-04-05</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.tools.win64_mingw730, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtconnectivity-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtactiveqt-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtmultimedia-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qttranslations-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtgraphicaleffects-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtsvg-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtdeclarative-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtwinextras-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtimageformats-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qttools-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtxmlpatterns-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtsensors-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtwebsockets-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtwebchannel-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtlocation-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtserialport-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtquickcontrols-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtquickcontrols2-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qt3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtserialbus-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtscxml-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtgamepad-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtspeech-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtremoteobjects-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, x86_64-7.3.0-release-posix-seh-rt_v5-rev0-runtime.7z, d3dcompiler_47-x64.7z, opengl32sw-64-mesa_12_0_rc2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="922323172" OS="Any" UncompressedSize="6140384049"/>
+  <SHA1>96da93c23370b124ceec56dd0ea96531c480324f</SHA1>
+ </PackageUpdate -->
+ <PackageUpdate>
+  <Name>qt.qt5.5150.debug_info</Name>
+  <DisplayName>Qt Debug Information Files</DisplayName>
+  <Description>Qt 5.15.0 debug information files. Requires selection of target binary like gcc or MSVC.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>de58cbe8ca4cd4e227f86af45215f09d053fb299</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.debug_info.win32_msvc2019</Name>
+  <DisplayName>Desktop MSVC 2019 Debug Information Files</DisplayName>
+  <Description>Qt 5.15.0 debug information files for Desktop MSVC 2019</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.debug_info, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtconnectivity-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtactiveqt-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtmultimedia-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtsvg-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtdeclarative-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtwinextras-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtimageformats-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qttools-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtxmlpatterns-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtsensors-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtwebsockets-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtwebchannel-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtlocation-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtserialport-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtquickcontrols-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtquickcontrols2-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qt3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtwebview-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtserialbus-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtscxml-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtgamepad-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtspeech-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtcharts-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtdatavis3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtpurchasing-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtvirtualkeyboard-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtremoteobjects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtscript-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtwebengine-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtnetworkauth-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtwebglplugin-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtlottie-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtquick3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z, qtquicktimeline-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="874380159" OS="Any" UncompressedSize="7168456096"/>
+  <SHA1>ea92c4bc3765e67b60e7d0905859b83a3688352a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.debug_info.win64_msvc2015_64</Name>
+  <DisplayName>Desktop MSVC 2015 64-bit debug information files</DisplayName>
+  <Description>Qt 5.15.0 debug information files for Desktop MSVC 2015 64-bit</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.debug_info, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtconnectivity-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtactiveqt-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtmultimedia-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtsvg-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtdeclarative-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtwinextras-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtimageformats-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qttools-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtxmlpatterns-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtsensors-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebsockets-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebchannel-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtlocation-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialport-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtquickcontrols-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtquickcontrols2-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qt3d-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebview-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialbus-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtscxml-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtgamepad-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtspeech-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtcharts-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtdatavis3d-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtpurchasing-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtvirtualkeyboard-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtremoteobjects-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtscript-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtnetworkauth-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebglplugin-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtlottie-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtquick3d-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z, qtquicktimeline-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="473933349" OS="Any" UncompressedSize="3687757176"/>
+  <SHA1>4b575215bab76f655936e59e81b1c25c4e4d169c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.debug_info.win64_msvc2019_64</Name>
+  <DisplayName>Desktop MSVC 2019 64-bit debug information files</DisplayName>
+  <Description>Qt 5.15.0 debug information files for Desktop MSVC 2019 64-bit</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.debug_info, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtconnectivity-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtactiveqt-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtmultimedia-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtsvg-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtdeclarative-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwinextras-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtimageformats-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qttools-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtxmlpatterns-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtsensors-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebsockets-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebchannel-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtlocation-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialport-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtquickcontrols-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtquickcontrols2-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qt3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebview-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialbus-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtscxml-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtgamepad-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtspeech-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtcharts-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtdatavis3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtpurchasing-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtvirtualkeyboard-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtremoteobjects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtscript-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebengine-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtnetworkauth-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebglplugin-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtlottie-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtquick3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtquicktimeline-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="869057399" OS="Any" UncompressedSize="6943798688"/>
+  <SHA1>94a9d55467fbdc58e969a1fffddf46e982e810c7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>89</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtcharts, qt.qt5.5150.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>fc327679ade2fd101f49053dae59bc43abbaca26</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win32_mingw81</Name>
+  <DisplayName>Qt Charts for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="19441578" OS="Any" UncompressedSize="137380903"/>
+  <SHA1>b048b899da5c8e67629bd7d731ebf717a61637e8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win32_msvc2019</Name>
+  <DisplayName>Qt Charts for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1001672" OS="Any" UncompressedSize="9107389"/>
+  <SHA1>94185c9c5cf0ee81d2ed5bb93ddc14f3d25ecdd8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win64_mingw81</Name>
+  <DisplayName>Qt Charts for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="19748757" OS="Any" UncompressedSize="141874998"/>
+  <SHA1>3288268b47b1bf97e064faf0180049fd5a56c0be</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win64_msvc2015_64</Name>
+  <DisplayName>Qt Charts for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1081474" OS="Any" UncompressedSize="10218153"/>
+  <SHA1>788be090d6f7c34c79100a2090fa90cdcbfb2b6c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtcharts.win64_msvc2019_64</Name>
+  <DisplayName>Qt Charts for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtcharts, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1141599" OS="Any" UncompressedSize="10332491"/>
+  <SHA1>f9f9a1d9f31775fe33de8ead0886bab793882fd0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>88</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtdatavis3d, qt.qt5.5150.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>567edb83e4eb0a394350b0ceeadb462049a2f6b2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win32_mingw81</Name>
+  <DisplayName>Qt Data Visualization for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="17727151" OS="Any" UncompressedSize="126604592"/>
+  <SHA1>0819376deb865031c237f7c8650b88fa8c1b2748</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win32_msvc2019</Name>
+  <DisplayName>Qt Data Visualization for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="794987" OS="Any" UncompressedSize="6353291"/>
+  <SHA1>fcf844750c2b6767a99bccd2e1d6d6306c719a35</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win64_mingw81</Name>
+  <DisplayName>Qt Data Visualization for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="17923819" OS="Any" UncompressedSize="130296355"/>
+  <SHA1>7ff2c43f8754cd8febd9d6fae539fd96753a1e30</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win64_msvc2015_64</Name>
+  <DisplayName>Qt Data Visualization for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="851530" OS="Any" UncompressedSize="7045417"/>
+  <SHA1>04a202b91d6afeae1ebe41bf0a2427ce11f5081a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtdatavis3d.win64_msvc2019_64</Name>
+  <DisplayName>Qt Data Visualization for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtdatavis3d, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="887488" OS="Any" UncompressedSize="7183819"/>
+  <SHA1>3a4ac34a87e742614078954a69bda967c0730c17</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>88</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtlottie, qt.qt5.5150.examples.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ba7b9bea9de8eccbd8afd858e3d10eb37dbbbbbe</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win32_mingw81</Name>
+  <DisplayName>Qt Lottie Animation for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4468092" OS="Any" UncompressedSize="27685784"/>
+  <SHA1>7c3f80c3759ba2a567829b0acaf8a507b0c34c3e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win32_msvc2019</Name>
+  <DisplayName>Qt Lottie Animation for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="181270" OS="Any" UncompressedSize="1105897"/>
+  <SHA1>4efc73d6af17fa388375d3be99ee27a1796bc44b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win64_mingw81</Name>
+  <DisplayName>Qt Lottie Animation for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4557587" OS="Any" UncompressedSize="29520331"/>
+  <SHA1>93a9681ac682d1dd4165d3d9dec774715df6d468</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win64_msvc2015_64</Name>
+  <DisplayName>Qt Lottie Animation for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="198770" OS="Any" UncompressedSize="1261365"/>
+  <SHA1>f6e86c6ca1168ae2a822d9d15cd3df4ccd0ba05f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtlottie.win64_msvc2019_64</Name>
+  <DisplayName>Qt Lottie Animation for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtlottie, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="206285" OS="Any" UncompressedSize="1314775"/>
+  <SHA1>8ddb33f7570346b18c2e73b8ab415d814f7d0aea</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth</Name>
+  <DisplayName>Qt Network Authorization</DisplayName>
+  <Description>Qt Network Authorization is an add-on library that enables Qt applications to use different web authentication systems.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>10</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtnetworkauth, qt.qt5.5150.examples.qtnetworkauth</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>23d46cece4758c2b7659f946725e4fe0a9e4334a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win32_mingw81</Name>
+  <DisplayName>Qt Network Authorization for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2210482" OS="Any" UncompressedSize="13823644"/>
+  <SHA1>08065569fb2341af5792621c2fd769896abe9476</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win32_msvc2019</Name>
+  <DisplayName>Qt Network Authorization for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="114437" OS="Any" UncompressedSize="703217"/>
+  <SHA1>e39a06a11e55e3f249cbd73b9dd238a5374016d1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win64_mingw81</Name>
+  <DisplayName>Qt Network Authorization for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2249548" OS="Any" UncompressedSize="15069639"/>
+  <SHA1>bc127939a3483780bf7f4a323f4f2b4ee3a39077</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win64_msvc2015_64</Name>
+  <DisplayName>Qt Network Authorization for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="121616" OS="Any" UncompressedSize="800955"/>
+  <SHA1>e561b150288d5d92cce55414359415bcef5fb10d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtnetworkauth.win64_msvc2019_64</Name>
+  <DisplayName>Qt Network Authentication for MSVC 2019_64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtnetworkauth, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="130198" OS="Any" UncompressedSize="827229"/>
+  <SHA1>beceb0d32a1e63daea69d1155fac30e490e4b931</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing</Name>
+  <DisplayName>Qt Purchasing</DisplayName>
+  <Description>Qt Purchasing. Cross-platform APIs for handling in-app purchases on Android, iOS and macOS.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>87</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtpurchasing, qt.qt5.5150.examples.qtpurchasing</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7e069c52d18bc1b409fa67beb10941ddd44b6980</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win32_mingw81</Name>
+  <DisplayName>Qt Purchasing for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1145295" OS="Any" UncompressedSize="7528326"/>
+  <SHA1>af328ccfadffec4f438610f68391980461454db1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win32_msvc2019</Name>
+  <DisplayName>Qt Purchasing for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="67341" OS="Any" UncompressedSize="395134"/>
+  <SHA1>b623fb25bc3091bad0c952b1485f0e644fb297f0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win64_mingw81</Name>
+  <DisplayName>Qt Purchasing for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1152858" OS="Any" UncompressedSize="7691604"/>
+  <SHA1>b8dd0db2582d4c0521cad29c633fcc0b0660da68</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win64_msvc2015_64</Name>
+  <DisplayName>Qt Purchasing for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="71546" OS="Any" UncompressedSize="461354"/>
+  <SHA1>73c5049c670afb221620eaaf2152e79a1aedb38e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtpurchasing.win64_msvc2019_64</Name>
+  <DisplayName>Qt Purchasing for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtpurchasing, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="73298" OS="Any" UncompressedSize="473292"/>
+  <SHA1>c0781a899ad8ecc25098a15a26ca5d21d22e5217</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d</Name>
+  <DisplayName>Qt Quick 3D</DisplayName>
+  <Description>Qt Quick 3D provides high-level 3D API for Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>89</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtquick3d, qt.qt5.5150.examples.qtquick3d</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>62b5b72605d1c6970d0e94ab29a0edf5351cf4c3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win32_mingw81</Name>
+  <DisplayName>Qt Quick 3D for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="49799091" OS="Any" UncompressedSize="267337535"/>
+  <SHA1>95da8594b85471325ee1c63a5accfc708cfcc990</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win32_msvc2019</Name>
+  <DisplayName>Qt Quick 3D for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="10992200" OS="Any" UncompressedSize="27532174"/>
+  <SHA1>16e414d7505729c53e3f5a6f61285b97e3be9a78</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win64_mingw81</Name>
+  <DisplayName>Qt Quick 3D for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="50371270" OS="Any" UncompressedSize="283453408"/>
+  <SHA1>468d04c304b50ee700dc181f3490512c957d6593</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win64_msvc2015_64</Name>
+  <DisplayName>Qt Quick 3D for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="11701969" OS="Any" UncompressedSize="33889756"/>
+  <SHA1>45f880035c2a9feefe463812b912213dc32221fb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquick3d.win64_msvc2019_64</Name>
+  <DisplayName>Qt Quick 3D for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquick3d, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="11347498" OS="Any" UncompressedSize="30716678"/>
+  <SHA1>f1f2424fdb894fa1c084006fe888efb56c00d328</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline </DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>0</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtquicktimeline, qt.qt5.5150.examples.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ef52f3e5d832cf86fd8050abcf911c50e8fc9a96</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win32_mingw81</Name>
+  <DisplayName>Qt Quick Timeline for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1086930" OS="Any" UncompressedSize="6488748"/>
+  <SHA1>5f6e20bb807ddeebe52c0bbe82d961919842b3f0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win32_msvc2019</Name>
+  <DisplayName>Qt Quick Timeline for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="48119" OS="Any" UncompressedSize="310732"/>
+  <SHA1>04f524c7c44ea9b7b95129ef31b1a6056275999e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win64_mingw81</Name>
+  <DisplayName>Qt Quick Timeline for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1098187" OS="Any" UncompressedSize="6653792"/>
+  <SHA1>a03def02a6a2bb704e93f9aee697eeb8ef583410</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win64_msvc2015_64</Name>
+  <DisplayName>Qt Quick Timeline for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="54155" OS="Any" UncompressedSize="368076"/>
+  <SHA1>be4ea3aa55ff600aaef1d8ba49046b3d98f0f5e1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtquicktimeline.win64_msvc2019_64</Name>
+  <DisplayName>Qt Quick Timeline for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtquicktimeline, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="54134" OS="Any" UncompressedSize="381388"/>
+  <SHA1>68f6b14ce7507dfcc83f3a67e786fa6cdce978d8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript</Name>
+  <DisplayName>Qt Script (Deprecated)</DisplayName>
+  <Description>Qt Script (Deprecated) Prebuilt Components for Qt 5.15.0.&lt;br>&lt;br>This component contains Third-Party Content licensed under LGPLv2.0. Please note the additional requirements of the license.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtscript, qt.qt5.5150.examples.qtscript</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>42e9c6fa7c8f11f24d1d9e8540cff6f6089c30da</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win32_mingw81</Name>
+  <DisplayName>Qt Script for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="29438380" OS="Any" UncompressedSize="194720368"/>
+  <SHA1>07f2d72b6bbe170505da7076c98d771da37b2402</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win32_msvc2019</Name>
+  <DisplayName>Qt Script for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1219160" OS="Any" UncompressedSize="10600070"/>
+  <SHA1>3a8d82c28c331b0d2dc5365458c73f73870e0127</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win64_mingw81</Name>
+  <DisplayName>Qt Script for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="27174737" OS="Any" UncompressedSize="188808366"/>
+  <SHA1>0a8e7a6b1ae9d66283186e717a1b5a8a0e5b2172</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win64_msvc2015_64</Name>
+  <DisplayName>Qt Script for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1263191" OS="Any" UncompressedSize="9967490"/>
+  <SHA1>8d58b6eebe35de171908e8ce6c202ccef59f455d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtscript.win64_msvc2019_64</Name>
+  <DisplayName>Qt Script for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtscript, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1286808" OS="Any" UncompressedSize="11132090"/>
+  <SHA1>142c711aee1c85970ce8867599417ec5e38bdec4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your own layouts and styles.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>85</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtvirtualkeyboard, qt.qt5.5150.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6e849037dd0c5cac0b64587090c8ad9ab1d3e488</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win32_mingw81</Name>
+  <DisplayName>Qt Virtual Keyboard for MinGW 8.1.0 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12723808" OS="Any" UncompressedSize="79053205"/>
+  <SHA1>526aa9555d2dea2cf626bb35946ab2193acd995f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win32_msvc2019</Name>
+  <DisplayName>Qt Virtual Keyboard for MSVC 2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2399710" OS="Any" UncompressedSize="13521850"/>
+  <SHA1>7e330abe75db6ed13eca1abad9c7d8737740142c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win64_mingw81</Name>
+  <DisplayName>Qt Virtual Keyboard for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12802729" OS="Any" UncompressedSize="81406176"/>
+  <SHA1>f0799d195a3417db3fcfbbdb6d01c1fd3f16754f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win64_msvc2015_64</Name>
+  <DisplayName>Qt Virtual Keyboard for MSVC 2015 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2440737" OS="Any" UncompressedSize="14069676"/>
+  <SHA1>7906b44214b0624f0e42d79fc0d2aacbf6808de3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtvirtualkeyboard.win64_msvc2019_64</Name>
+  <DisplayName>Qt Virtual Keyboard for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtvirtualkeyboard, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2461313" OS="Any" UncompressedSize="14242382"/>
+  <SHA1>9ddbd86ef2d1d957d50ae46f1d9e5b0d7819e7e2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebengine</Name>
+  <DisplayName>Qt WebEngine</DisplayName>
+  <Description>The Qt WebEngine module integrates the fast moving Chromium web platform into Qt and provides a convenient API for both Qt Widgets and Qt Quick to utilize Chromium's web capabilities. Qt WebEngine takes full benefit of the whole Qt graphics stack integration allowing seamless mix and overlay of native Qt controls with web content and OpenGL shaders.&lt;br>&lt;br>On Windows, the module is only available under MSVC 2017 or MSVC2019.&lt;br>&lt;br>This component contains Third-Party Content licensed under LGPLv2.1. Please note the additional requirements of the license.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>13</SortingPriority>
+  <Dependencies>qt.qt5.5150.doc.qtwebengine, qt.qt5.5150.examples.qtwebengine</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8b2333ed91f92bde4492b11df094154a9eaca69c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebengine.win32_msvc2019</Name>
+  <DisplayName>Qt WebEngine for msvc2019 32-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebengine, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebengine-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="75262333" OS="Any" UncompressedSize="272071594"/>
+  <SHA1>ccf67d58aabc87b4f6c7f6959ad06896138d22da</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebengine.win64_msvc2019_64</Name>
+  <DisplayName>Qt WebEngine for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebengine, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebengine-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="88680767" OS="Any" UncompressedSize="352999790"/>
+  <SHA1>22fa2fa3f85799fc966874113b47293318726419</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin</Name>
+  <DisplayName>Qt WebGL Streaming Plugin</DisplayName>
+  <Description>The Qt WebGL Streaming Plugin is a Qt Platform Abstraction plugin which provides streaming of Qt Quick &amp; Qt OpenGL applications over the network to a WebGL capable browser.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>10</SortingPriority>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>fc7ce51df221ee4384ac69a671f120e14e79f898</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win32_mingw81</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for MinGW 8.1.0 32-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win32_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3762139" OS="Any" UncompressedSize="27754213"/>
+  <SHA1>ea74756c551c051f4ed0d6427fb7f98032652b06</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win32_msvc2019</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for MSVC 2019 32-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win32_msvc2019</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win32_msvc2019</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="319575" OS="Any" UncompressedSize="1696201"/>
+  <SHA1>91e1ff1af7ba9cee09cb0246520950164b3c01d9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win64_mingw81</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for MinGW 8.1.0 64-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3789516" OS="Any" UncompressedSize="30674804"/>
+  <SHA1>bbf8b42411c2d59cd1640bcd0b3c100ccebd51eb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win64_msvc2015_64</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for MSVC 2015 64-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win64_msvc2015_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2015_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="309450" OS="Any" UncompressedSize="1785289"/>
+  <SHA1>c839e78d00e2a626ea0a926ed9ece5e4955dc428</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.qtwebglplugin.win64_msvc2019_64</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for msvc2019_64-bit</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <AutoDependOn>qt.qt5.5150.qtwebglplugin, qt.qt5.5150.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt5.5150.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="364673" OS="Any" UncompressedSize="2001353"/>
+  <SHA1>c9c5a8fd73ae93b831c7c34fb7947423a1402339</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win32_mingw81</Name>
+  <DisplayName>MinGW 8.1.0 32-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MinGW 8.1.0 32-bit</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.tools.win32_mingw810, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtconnectivity-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtactiveqt-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtmultimedia-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qttranslations-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtgraphicaleffects-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtsvg-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtdeclarative-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtwinextras-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtimageformats-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qttools-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtsensors-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtwebsockets-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtwebchannel-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtlocation-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtserialport-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtquickcontrols-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtquickcontrols2-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qt3d-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtserialbus-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtscxml-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtgamepad-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtspeech-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, qtremoteobjects-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z, i686-8.1.0-release-posix-dwarf-rt_v6-rev0-runtime.7z, d3dcompiler_47-x86.7z, opengl32sw-32-mesa_12_0_rc2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="905347010" OS="Any" UncompressedSize="5793148169"/>
+  <SHA1>24db58231c7f912264e575bb31fb1c96f200e640</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win32_msvc2019</Name>
+  <DisplayName>MSVC 2019 32-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MSVC 2019 32-bit</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtconnectivity-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtactiveqt-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtmultimedia-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qttranslations-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtsvg-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtdeclarative-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtwinextras-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtimageformats-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qttools-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtxmlpatterns-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtsensors-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtwebsockets-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtwebchannel-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtlocation-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtserialport-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtquickcontrols-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtquickcontrols2-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qt3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtwebview-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtserialbus-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtscxml-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtgamepad-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtspeech-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, qtremoteobjects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86.7z, d3dcompiler_47-x86.7z, opengl32sw-32-mesa_12_0_rc2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="82797078" OS="Any" UncompressedSize="557077716"/>
+  <SHA1>2e34d95b6fb6f2ee202beb965cde43b35db613a1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win64_mingw81</Name>
+  <DisplayName>MinGW 8.1.0 64-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MinGW 8.1.0 64-bit</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.tools.win64_mingw810, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtconnectivity-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtactiveqt-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtmultimedia-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qttranslations-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtgraphicaleffects-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtsvg-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtdeclarative-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtwinextras-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtimageformats-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qttools-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtxmlpatterns-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtsensors-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtwebsockets-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtwebchannel-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtlocation-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtserialport-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtquickcontrols-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtquickcontrols2-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qt3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtserialbus-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtscxml-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtgamepad-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtspeech-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtremoteobjects-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, x86_64-8.1.0-release-posix-seh-rt_v6-rev0-runtime.7z, d3dcompiler_47-x64.7z, opengl32sw-64-mesa_12_0_rc2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="922550311" OS="Any" UncompressedSize="6141841506"/>
+  <SHA1>9b6cf1f47d3dc20246466ade56c1671858de794e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win64_msvc2015_64</Name>
+  <DisplayName>MSVC 2015 64-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MSVC 2015 64-bit</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtconnectivity-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtactiveqt-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtmultimedia-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qttranslations-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtsvg-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtdeclarative-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtwinextras-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtimageformats-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qttools-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtxmlpatterns-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtsensors-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtwebsockets-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtwebchannel-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtlocation-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtserialport-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtquickcontrols-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtquickcontrols2-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qt3d-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtwebview-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtserialbus-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtscxml-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtgamepad-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtspeech-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, qtremoteobjects-Windows-Windows_10-MSVC2015-Windows-Windows_10-X86_64.7z, d3dcompiler_47-x64.7z, opengl32sw-64-mesa_12_0_rc2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="96841606" OS="Any" UncompressedSize="648794545"/>
+  <SHA1>f6754f186686e89d0a7a01e4c853a17dcf472e76</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5150.win64_msvc2019_64</Name>
+  <DisplayName>MSVC 2019 64-bit</DisplayName>
+  <Description>Qt 5.15.0 Prebuilt Components for MSVC 2019 64-bit</Description>
+  <Version>5.15.0-0-202004160614</Version>
+  <ReleaseDate>2020-04-16</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt5.5150.doc, qt.qt5.5150.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtconnectivity-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtactiveqt-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtmultimedia-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qttranslations-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtgraphicaleffects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtsvg-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtdeclarative-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtwinextras-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtimageformats-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qttools-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtxmlpatterns-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtsensors-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtwebsockets-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtwebchannel-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtlocation-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtserialport-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtquickcontrols-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtquickcontrols2-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qt3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtwebview-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtserialbus-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtscxml-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtgamepad-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtspeech-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtremoteobjects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, d3dcompiler_47-x64.7z, opengl32sw-64-mesa_12_0_rc2.7z, qt-5.15.0-win32-msvc.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="97299379" OS="Any" UncompressedSize="645862884"/>
+  <SHA1>db6e39f2d93fe75960437156d408b9f33d0b1b69</SHA1>
+ </PackageUpdate>
+</Updates>
