@@ -1,5 +1,4 @@
 import os
-from logging import getLogger
 
 import pytest
 
