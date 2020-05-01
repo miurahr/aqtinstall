@@ -39,7 +39,7 @@ long options may be truncated to the shortest unambiguous abbreviation.
 
    * clang_64 for mac desktip
 
-   * win64_msvc2017_64, win64_msvc2015_64, in32_msvc2015, win32_mingw53 for windows desktop
+   * win64_msvc2019_64, win64_msvc2017_64, win64_msvc2015_64, in32_msvc2015, win32_mingw53 for windows desktop
 
    * android_x86, android_armv7 for android
 

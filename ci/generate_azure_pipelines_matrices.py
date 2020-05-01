@@ -72,6 +72,8 @@ mac_build_jobs.append(
 # Windows Desktop
 windows_build_jobs.extend(
     [
+        BuildJob('5.12.6', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64'),
+        BuildJob('5.12.6', 'windows', 'desktop', 'win32_msvc2019', 'msvc2019'),
         BuildJob('5.12.6', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
         BuildJob('5.12.6', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
     ]
@@ -84,6 +86,7 @@ windows_build_jobs.append(
 
 windows_build_jobs.extend(
     [
+        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64'),
         BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
         BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
         BuildJob('5.13.2', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
@@ -94,7 +97,10 @@ windows_build_jobs.extend(
 
 windows_build_jobs.extend(
     [
+        BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64'),
+        BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
         BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
+        BuildJob('5.14.0', 'windows', 'desktop', 'win32_msvc2019', 'msvc2019'),
         BuildJob('5.14.0', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
     ]
 )
@@ -123,7 +129,10 @@ mac_build_jobs.append(
     BuildJob('5.13.2', 'mac', 'desktop', 'clang_64', 'clang_64', module='qcharts qtnetworkauth')
 )
 windows_build_jobs.append(
+    BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64', module='qcharts qtnetworkauth')
     BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64', module='qcharts qtnetworkauth')
+    BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64', module='qcharts qtnetworkauth')
+    BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64', module='qcharts qtnetworkauth')
 )
 
 
