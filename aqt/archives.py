@@ -111,7 +111,8 @@ class QtArchives:
                                                                                 r.status_code, r.reason))
                 exit(1)
         try:
-            self.update_xml = ElementTree.fromstring(r.text)
+            self.update_xml_text = r.text
+            self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
             self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
             exit(1)
@@ -129,6 +130,7 @@ class QtArchives:
                                                            has_mirror=self.has_mirror))
             if len(self.archives) == 0:
                 self.logger.error("Error while parsing package information!")
+                self.logger.debug(self.update_xml_text)
                 exit(1)
 
     def get_archives(self):
