@@ -26,6 +26,9 @@ from logging import getLogger
 import requests
 
 
+class ArchiveListError(Exception):
+    pass
+
 class QtPackage:
     """
       Hold package information.
@@ -49,16 +52,6 @@ class QtArchives:
     """Hold Qt archive packages list."""
 
     BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
-    archives = []
-    base = None
-    has_mirror = False
-    version = None
-    qt_ver_num = None
-    target = None
-    arch = None
-    mod_list = []
-    mirror = None
-    all_extra = False
 
     def __init__(self, os_name, target, version, arch, modules=None, mirror=None, logging=None, all_extra=False):
         self.version = version
@@ -67,6 +60,7 @@ class QtArchives:
         self.arch = arch
         self.mirror = mirror
         self.os_name = os_name
+        self.all_extra = all_extra
         if mirror is not None:
             self.has_mirror = True
             self.base = mirror + '/online/qtsdkrepository/'
@@ -77,6 +71,8 @@ class QtArchives:
             self.logger = logging
         else:
             self.logger = getLogger('aqt')
+        self.archives = []
+        self.mod_list = []
         if all_extra:
             self.all_extra = True
         else:
@@ -138,7 +134,7 @@ class QtArchives:
         if len(self.archives) == 0:
             self.logger.error("Error while parsing package information!")
             self.logger.debug(self.update_xml_text)
-            exit(1)
+            raise ArchiveListError("Error while parsing package information!")
 
     def get_archives(self):
         """
