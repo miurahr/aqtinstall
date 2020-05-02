@@ -84,6 +84,7 @@ General usage looks like this:
         * `win64_msvc2019_64`, `win32_msvc2019`,
         * `win64_msvc2017_64`, `win32_msvc2017`,
         * `win64_msvc2015_64`, `win32_msvc2015`,
+        * `win64_mingw81`, `win32_mingw81`,
         * `win64_mingw73`, `win32_mingw73`,
         * `win64_mingw53`, `win32_mingw53`,
         * `win64_msvc2019_winrt_x64`, `win64_msvc2019_winrt_x86`, `win64_msvc2019_winrt_armv7`
