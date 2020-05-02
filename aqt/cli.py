@@ -30,7 +30,7 @@ import time
 
 from packaging.version import Version, parse
 
-from aqt.archives import QtArchives, ToolArchives
+from aqt.archives import QtArchives, ToolArchives, ArchiveDownloadError, ArchiveListError
 from aqt.installer import QtInstaller
 from aqt.settings import Settings
 
@@ -137,9 +137,14 @@ class Cli():
         all_extra = True if modules is not None and 'all' in modules else False
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
-        QtInstaller(QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror, logging=self.logger,
-                               all_extra=all_extra),
-                    logging=self.logger, command=sevenzip, target_dir=output_dir).install()
+        try:
+            qt_archives = QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror,
+                                     logging=self.logger, all_extra=all_extra)
+        except ArchiveDownloadError or ArchiveListError:
+            exit(1)
+        else:
+            installer = QtInstaller(qt_archives, logging=self.logger, command=sevenzip, target_dir=output_dir)
+            installer.install()
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_tool(self, args):

@@ -29,17 +29,15 @@ import requests
 class ArchiveListError(Exception):
     pass
 
+
+class ArchiveDownloadError(Exception):
+    pass
+
+
 class QtPackage:
     """
       Hold package information.
     """
-    name = ""
-    url = ""
-    archive = ""
-    desc = ""
-    mirror = None
-    has_mirror = False
-
     def __init__(self, name, archive_url, archive, package_desc, has_mirror=False):
         self.name = name
         self.url = archive_url
@@ -55,7 +53,6 @@ class QtArchives:
 
     def __init__(self, os_name, target, version, arch, modules=None, mirror=None, logging=None, all_extra=False):
         self.version = version
-        self.qt_ver_num = self.version.replace(".", "")
         self.target = target
         self.arch = arch
         self.mirror = mirror
@@ -73,17 +70,13 @@ class QtArchives:
             self.logger = getLogger('aqt')
         self.archives = []
         self.mod_list = []
+        qt_ver_num = self.version.replace(".", "")
         if all_extra:
             self.all_extra = True
         else:
             for m in modules if modules is not None else []:
-                self.mod_list.append("qt.qt5.{}.{}.{}".format(self.qt_ver_num, m, arch))
-                self.mod_list.append("qt.{}.{}.{}".format(self.qt_ver_num, m, arch))
-        self._get_archives()
-
-    def _get_archives(self):
-        qt_ver_num = self.version.replace(".", "")
-
+                self.mod_list.append("qt.qt5.{}.{}.{}".format(qt_ver_num, m, arch))
+                self.mod_list.append("qt.{}.{}.{}".format(qt_ver_num, m, arch))
         # Get packages index
         archive_path = "{0}{1}{2}/qt5_{3}{4}".format(self.os_name,
                                                      '_x86/' if self.os_name == 'windows' else '_x64/',
@@ -105,20 +98,20 @@ class QtArchives:
             self.logger.error('Download error: %s\n' % e.args, exc_info=True)
             raise e
         else:
-            if r.status_code != 200:
+            if r.status_code == 200:
+                self.update_xml_text = r.text
+            else:
                 self.logger.error('Download error when access to {}\n'
                                   'Server response code: {}, reason: {}'.format(update_xml_url,
                                                                                 r.status_code, r.reason))
-                exit(1)
-            else:
-                self.update_xml_text = r.text
+                raise ArchiveDownloadError("Download error!")
 
     def _parse_update_xml(self, target_packages, archive_url):
         try:
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
             self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
-            exit(1)
+            raise ArchiveListError("Downloaded metadata is corrupted.")
         else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
