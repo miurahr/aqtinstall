@@ -110,7 +110,9 @@ steps:
       } else {
         echo '##vso[task.setvariable variable=ARCHITECTURE]x86'
       }
-      if ('$(ARCH)' -like '*msvc2017*') {
+      if ('$(ARCH)' -like '*msvc2019*') {
+        echo '##vso[task.setvariable variable=VSVER]2019'
+      } elseif ('$(ARCH)' -like '*msvc2017*') {
         echo '##vso[task.setvariable variable=VSVER]2017'
       } else {
         echo '##vso[task.setvariable variable=VSVER]2015'

@@ -31,7 +31,7 @@ jobs:
           command_line = ["python", "-m", "aqt", "install"]
           platform = "${{ matrix.os }}"
           if platform == "windows-latest":
-            args = [os.environ["qtver"], "windows", "desktop", "win64_mingw73"]
+            args = [os.environ["qtver"], "windows", "desktop", "win64_msvc2019_64"]
           elif platform == "macOS-latest":
             args = [os.environ["qtver"], "mac", "desktop", "clang_64"]
           else:
