@@ -77,6 +77,9 @@ class QtArchives:
             for m in modules if modules is not None else []:
                 self.mod_list.append("qt.qt5.{}.{}.{}".format(qt_ver_num, m, arch))
                 self.mod_list.append("qt.{}.{}.{}".format(qt_ver_num, m, arch))
+        self._get_archives(qt_ver_num)
+
+    def _get_archives(self, qt_ver_num):
         # Get packages index
         archive_path = "{0}{1}{2}/qt5_{3}{4}".format(self.os_name,
                                                      '_x86/' if self.os_name == 'windows' else '_x64/',
@@ -96,7 +99,7 @@ class QtArchives:
             r = requests.get(update_xml_url)
         except requests.exceptions.ConnectionError as e:
             self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise e
+            raise ArchiveDownloadError("Download error!")
         else:
             if r.status_code == 200:
                 self.update_xml_text = r.text
@@ -160,35 +163,33 @@ class ToolArchives(QtArchives):
         self.os_name = os_name
         super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, mirror=mirror, logging=logging)
 
-    def _get_archives(self):
+    def _get_archives(self, qt_ver_num):
         if self.os_name == 'windows':
             archive_url = self.base + self.os_name + '_x86/' + self.target + '/'
         else:
             archive_url = self.base + self.os_name + '_x64/' + self.target + '/'
         update_xml_url = "{0}{1}/Updates.xml".format(archive_url, self.tool_name)
-        try:
-            r = requests.get(update_xml_url)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise e
-        else:
-            self.update_xml = ElementTree.fromstring(r.text)
-            for packageupdate in self.update_xml.iter("PackageUpdate"):
-                name = packageupdate.find("Name").text
-                downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
-                full_version = packageupdate.find("Version").text
-                if full_version != self.version:
-                    continue
-                if "-" in full_version:
-                    split_version = full_version.split("-")
-                    named_version = split_version[0] + "-" + split_version[1]
-                else:
-                    named_version = full_version
-                package_desc = packageupdate.find("Description").text
-                for archive in downloadable_archives:
-                    package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
-                    self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                   has_mirror=(self.mirror is not None)))
+        self._download_update_xml(update_xml_url)  # call super method.
+        self._parse_tool_update_xml(archive_url)
+
+    def _parse_tool_update_xml(self, archive_url):
+        self.update_xml = ElementTree.fromstring(self.update_xml_text)
+        for packageupdate in self.update_xml.iter("PackageUpdate"):
+            name = packageupdate.find("Name").text
+            downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+            full_version = packageupdate.find("Version").text
+            if full_version != self.version:
+                continue
+            if "-" in full_version:
+                split_version = full_version.split("-")
+                named_version = split_version[0] + "-" + split_version[1]
+            else:
+                named_version = full_version
+            package_desc = packageupdate.find("Description").text
+            for archive in downloadable_archives:
+                package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
+                self.archives.append(QtPackage(name, package_url, archive, package_desc,
+                                               has_mirror=(self.mirror is not None)))
 
     def get_target_config(self):
         """Get target configuration.
