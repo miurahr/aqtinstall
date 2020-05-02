@@ -20,6 +20,12 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.py }}
+      - name: Run pytest
+        run: |
+          python -m pip install tox-gh-actions
+          tox
+        env:
+          PYTEST_ADDOPTS: "--remote-data"
       - name: Build a binary wheel and install
         run: |
           python -m pip install pep517 --user
