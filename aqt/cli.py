@@ -30,7 +30,8 @@ import time
 
 from packaging.version import Version, parse
 
-from aqt.archives import QtArchives, ToolArchives, ArchiveDownloadError, ArchiveListError
+from aqt.archives import (ArchiveDownloadError, ArchiveListError, QtArchives,
+                          ToolArchives)
 from aqt.installer import QtInstaller
 from aqt.settings import Settings
 
