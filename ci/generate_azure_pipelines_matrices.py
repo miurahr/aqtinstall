@@ -27,7 +27,6 @@ python_versions = [
 ]
 
 qt_versions = [
-    '5.12.6',
     '5.13.2',
     '5.14.0'
 ]
@@ -48,11 +47,6 @@ for qt_version in qt_versions:
         BuildJob(qt_version, 'linux', 'desktop', 'gcc_64', 'gcc_64')
     )
 
-# WASM
-linux_build_jobs.append(
-    BuildJob('5.14.0', 'linux', 'desktop', 'wasm_32', "wasm_32")
-)
-
 # Mac Desktop
 for qt_version in qt_versions:
     mac_build_jobs.append(
@@ -64,45 +58,39 @@ mac_build_jobs.append(
     BuildJob('5.13.2', 'mac', 'ios', 'ios', 'ios')
 )
 
-# WASM
-mac_build_jobs.append(
-    BuildJob('5.14.0', 'mac', 'desktop', 'wasm_32', "wasm_32")
-)
-
 # Windows Desktop
 windows_build_jobs.extend(
     [
-        BuildJob('5.12.6', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64'),
-        BuildJob('5.12.6', 'windows', 'desktop', 'win32_msvc2019', 'msvc2019'),
-        BuildJob('5.12.6', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.12.6', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
+        BuildJob('5.14.2', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64'),
+        BuildJob('5.14.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
+        BuildJob('5.14.2', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
+        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
+        BuildJob('5.13.2', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
+        BuildJob('5.13.2', 'windows', 'desktop', 'win32_mingw73', 'mingw73_32'),
+        BuildJob('5.15.0', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64', module='qcharts qtnetworkauth'),
     ]
+)
+
+# Extra modules test
+linux_build_jobs.extend(
+    [
+        BuildJob('5.15.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='qcharts qtnetworkauth'),
+        BuildJob('5.14.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='all')
+    ]
+)
+mac_build_jobs.append(
+    BuildJob('5.14.2', 'mac', 'desktop', 'clang_64', 'clang_64', module='qcharts qtnetworkauth')
 )
 
 # WASM
+linux_build_jobs.append(
+    BuildJob('5.14.0', 'linux', 'desktop', 'wasm_32', "wasm_32")
+)
+mac_build_jobs.append(
+    BuildJob('5.14.0', 'mac', 'desktop', 'wasm_32', "wasm_32")
+)
 windows_build_jobs.append(
-    BuildJob('5.14.0', 'windows', 'desktop', 'wasm_32', "wasm_32")
-)
-
-windows_build_jobs.extend(
-    [
-        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win64_mingw73', 'mingw73_64'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win32_mingw73', 'mingw73_32'),
-    ]
-)
-
-windows_build_jobs.extend(
-    [
-        BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64'),
-        BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
-        BuildJob('5.14.0', 'windows', 'desktop', 'win32_msvc2019', 'msvc2019'),
-        BuildJob('5.14.0', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
-    ]
+    BuildJob('5.14.2', 'windows', 'desktop', 'wasm_32', "wasm_32")
 )
 
 # Androids for Linux platforms
@@ -114,29 +102,6 @@ for android_arch in ['android_x86_64', 'android_arm64_v8a', 'android_x86', 'andr
     linux_build_jobs.append(
         BuildJob('5.13.2', 'linux', 'android', android_arch, android_arch)
     )
-linux_build_jobs.append(
-    BuildJob('5.14.0', 'linux', 'android', 'android', 'android')
-)
-
-# Extra modules test
-linux_build_jobs.extend(
-    [
-        BuildJob('5.13.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='qcharts qtnetworkauth'),
-        BuildJob('5.14.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='all')
-    ]
-)
-mac_build_jobs.append(
-    BuildJob('5.13.2', 'mac', 'desktop', 'clang_64', 'clang_64', module='qcharts qtnetworkauth')
-)
-windows_build_jobs.extend(
-    [
-        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64', module='qcharts qtnetworkauth'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64', module='qcharts qtnetworkauth'),
-        BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64', module='qcharts qtnetworkauth'),
-        BuildJob('5.14.0', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64', module='qcharts qtnetworkauth')
-    ]
-)
-
 
 matrices = {}
 
