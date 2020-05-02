@@ -12,6 +12,8 @@ pr:
   paths:
     include:
     - aqt/*
+    - ci/*
+    - azure-pipelines.yml
 
 jobs:
 - job: MatricesGenerator

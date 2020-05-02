@@ -26,17 +26,18 @@ from logging import getLogger
 import requests
 
 
+class ArchiveListError(Exception):
+    pass
+
+
+class ArchiveDownloadError(Exception):
+    pass
+
+
 class QtPackage:
     """
       Hold package information.
     """
-    name = ""
-    url = ""
-    archive = ""
-    desc = ""
-    mirror = None
-    has_mirror = False
-
     def __init__(self, name, archive_url, archive, package_desc, has_mirror=False):
         self.name = name
         self.url = archive_url
@@ -49,24 +50,14 @@ class QtArchives:
     """Hold Qt archive packages list."""
 
     BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
-    archives = []
-    base = None
-    has_mirror = False
-    version = None
-    qt_ver_num = None
-    target = None
-    arch = None
-    mod_list = []
-    mirror = None
-    all_extra = False
 
     def __init__(self, os_name, target, version, arch, modules=None, mirror=None, logging=None, all_extra=False):
         self.version = version
-        self.qt_ver_num = self.version.replace(".", "")
         self.target = target
         self.arch = arch
         self.mirror = mirror
         self.os_name = os_name
+        self.all_extra = all_extra
         if mirror is not None:
             self.has_mirror = True
             self.base = mirror + '/online/qtsdkrepository/'
@@ -77,17 +68,18 @@ class QtArchives:
             self.logger = logging
         else:
             self.logger = getLogger('aqt')
+        self.archives = []
+        self.mod_list = []
+        qt_ver_num = self.version.replace(".", "")
         if all_extra:
             self.all_extra = True
         else:
             for m in modules if modules is not None else []:
-                self.mod_list.append("qt.qt5.{}.{}.{}".format(self.qt_ver_num, m, arch))
-                self.mod_list.append("qt.{}.{}.{}".format(self.qt_ver_num, m, arch))
-        self._get_archives()
+                self.mod_list.append("qt.qt5.{}.{}.{}".format(qt_ver_num, m, arch))
+                self.mod_list.append("qt.{}.{}.{}".format(qt_ver_num, m, arch))
+        self._get_archives(qt_ver_num)
 
-    def _get_archives(self):
-        qt_ver_num = self.version.replace(".", "")
-
+    def _get_archives(self, qt_ver_num):
         # Get packages index
         archive_path = "{0}{1}{2}/qt5_{3}{4}".format(self.os_name,
                                                      '_x86/' if self.os_name == 'windows' else '_x64/',
@@ -107,22 +99,22 @@ class QtArchives:
             r = requests.get(update_xml_url)
         except requests.exceptions.ConnectionError as e:
             self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise e
+            raise ArchiveDownloadError("Download error!")
         else:
-            if r.status_code != 200:
+            if r.status_code == 200:
+                self.update_xml_text = r.text
+            else:
                 self.logger.error('Download error when access to {}\n'
                                   'Server response code: {}, reason: {}'.format(update_xml_url,
                                                                                 r.status_code, r.reason))
-                exit(1)
-            else:
-                self.update_xml_text = r.text
+                raise ArchiveDownloadError("Download error!")
 
     def _parse_update_xml(self, target_packages, archive_url):
         try:
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
             self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
-            exit(1)
+            raise ArchiveListError("Downloaded metadata is corrupted.")
         else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
@@ -138,7 +130,7 @@ class QtArchives:
         if len(self.archives) == 0:
             self.logger.error("Error while parsing package information!")
             self.logger.debug(self.update_xml_text)
-            exit(1)
+            raise ArchiveListError("Error while parsing package information!")
 
     def get_archives(self):
         """
@@ -171,35 +163,33 @@ class ToolArchives(QtArchives):
         self.os_name = os_name
         super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, mirror=mirror, logging=logging)
 
-    def _get_archives(self):
+    def _get_archives(self, qt_ver_num):
         if self.os_name == 'windows':
             archive_url = self.base + self.os_name + '_x86/' + self.target + '/'
         else:
             archive_url = self.base + self.os_name + '_x64/' + self.target + '/'
         update_xml_url = "{0}{1}/Updates.xml".format(archive_url, self.tool_name)
-        try:
-            r = requests.get(update_xml_url)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise e
-        else:
-            self.update_xml = ElementTree.fromstring(r.text)
-            for packageupdate in self.update_xml.iter("PackageUpdate"):
-                name = packageupdate.find("Name").text
-                downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
-                full_version = packageupdate.find("Version").text
-                if full_version != self.version:
-                    continue
-                if "-" in full_version:
-                    split_version = full_version.split("-")
-                    named_version = split_version[0] + "-" + split_version[1]
-                else:
-                    named_version = full_version
-                package_desc = packageupdate.find("Description").text
-                for archive in downloadable_archives:
-                    package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
-                    self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                   has_mirror=(self.mirror is not None)))
+        self._download_update_xml(update_xml_url)  # call super method.
+        self._parse_tool_update_xml(archive_url)
+
+    def _parse_tool_update_xml(self, archive_url):
+        self.update_xml = ElementTree.fromstring(self.update_xml_text)
+        for packageupdate in self.update_xml.iter("PackageUpdate"):
+            name = packageupdate.find("Name").text
+            downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+            full_version = packageupdate.find("Version").text
+            if full_version != self.version:
+                continue
+            if "-" in full_version:
+                split_version = full_version.split("-")
+                named_version = split_version[0] + "-" + split_version[1]
+            else:
+                named_version = full_version
+            package_desc = packageupdate.find("Description").text
+            for archive in downloadable_archives:
+                package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
+                self.archives.append(QtPackage(name, package_url, archive, package_desc,
+                                               has_mirror=(self.mirror is not None)))
 
     def get_target_config(self):
         """Get target configuration.
