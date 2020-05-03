@@ -180,11 +180,13 @@ class ToolArchives(QtArchives):
             full_version = packageupdate.find("Version").text
             if full_version != self.version:
                 continue
-            if "-" in full_version:
-                split_version = full_version.split("-")
-                named_version = split_version[0] + "-" + split_version[1]
-            else:
-                named_version = full_version
+            # FIXME: rules
+            # if "-" in full_version:
+            #    split_version = full_version.split("-")
+            #    named_version = split_version[0] + "-" + split_version[1]
+            # else:
+            #    named_version = full_version
+            named_version = full_version
             package_desc = packageupdate.find("Description").text
             for archive in downloadable_archives:
                 package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
