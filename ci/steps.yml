@@ -116,7 +116,6 @@ steps:
       } else {
         Write-Host '##vso[task.setvariable variable=VSVER]2015'
       }
-      [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin", "Machine")
     condition: eq( variables['Agent.OS'], 'Windows_NT')
     displayName: Detect toolchain for Windows and update PATH
   - script: |
@@ -128,6 +127,8 @@ steps:
   # TODO: current PSCX release does not support VSVER 2019
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
+      $env:Path += ";$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin"
+      echo Add Qt to PATH: $env:PATH
       mkdir $(Build.BinariesDirectory)\tests
       cd $(Build.BinariesDirectory)\tests
       7z x $(Build.SourcesDirectory)\ci\helloworld.7z
@@ -148,11 +149,12 @@ steps:
   # TODO: current PSCX release does not support VSVER 2019
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
+      $env:Path += ";$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin"
+      echo Add Qt to PATH: $env:PATH
       mkdir $(Build.BinariesDirectory)/tests
       cd $(Build.BinariesDirectory)/tests
       7z x $(Build.SourcesDirectory)/ci/redditclient.7z
       cd ..
-      echo PATH: $env:PATH
       qmake $(Build.BinariesDirectory)\tests\redditclient
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''), ne(variables['VSVER'], '2019'))
