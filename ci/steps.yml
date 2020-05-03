@@ -65,8 +65,7 @@ steps:
       let "number %= 30"
       sleep $number
       mkdir Qt
-      cd Qt
-      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
+      python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
