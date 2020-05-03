@@ -127,6 +127,8 @@ class Cli():
         sevenzip = self._set_sevenzip(args)
         mirror = args.base
         self.show_aqt_version()
+        if output_dir is not None:
+            output_dir = os.path.normpath(output_dir)
         if not self._check_mirror(mirror):
             self.parser.print_help()
             exit(1)
