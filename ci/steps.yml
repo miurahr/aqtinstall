@@ -79,11 +79,13 @@ steps:
       unzip android-ndk-r20b-darwin-x86_64.zip
     condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Darwin'))
     displayName: Download and extract Android NDK
-  - script: |
+  - bash: |
       export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r20b
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/accelbubble && make
+      export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
+      qmake $(Build.BinariesDirectory)/tests/accelbubble
+      make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: Build accelbubble example application to test for android
 
@@ -97,28 +99,29 @@ steps:
       Install-Module Pscx -AllowClobber
       Install-Module VSSetup -Scope CurrentUser
       if ('$(ARCH)' -like '*msvc*') {
-        echo '##vso[task.setvariable variable=TOOLCHAIN]MSVC'
+        Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MSVC'
       }
       if ('$(ARCH)' -like '*mingw*') {
-        echo '##vso[task.setvariable variable=TOOLCHAIN]MINGW'
+        Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MINGW'
       }
       if ('$(ARCH)' -like 'win64_msvc*') {
-        echo '##vso[task.setvariable variable=ARCHITECTURE]amd64'
+        Write-Host '##vso[task.setvariable variable=ARCHITECTURE]amd64'
       } else {
-        echo '##vso[task.setvariable variable=ARCHITECTURE]x86'
+        Write-Host '##vso[task.setvariable variable=ARCHITECTURE]x86'
       }
       if ('$(ARCH)' -like '*msvc2019*') {
-        echo '##vso[task.setvariable variable=VSVER]2019'
+        Write-Host '##vso[task.setvariable variable=VSVER]2019'
       } elseif ('$(ARCH)' -like '*msvc2017*') {
-        echo '##vso[task.setvariable variable=VSVER]2017'
+        Write-Host '##vso[task.setvariable variable=VSVER]2017'
       } else {
-        echo '##vso[task.setvariable variable=VSVER]2015'
+        Write-Host '##vso[task.setvariable variable=VSVER]2015'
       }
+      [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin", "Machine")
     condition: eq( variables['Agent.OS'], 'Windows_NT')
-    displayName: detect toolchain for Windows
+    displayName: Detect toolchain for Windows and update PATH
   - script: |
       sudo apt-get install libgl1-mesa-dev
-    condition: and(eq( variables['TARGET'], 'desktop' ), eq(variables['Agent.OS'], 'Linux'))
+    condition: and(eq( variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'))
     displayName: install test dependency for Linux
 
   # no modules
@@ -128,14 +131,15 @@ steps:
       cd $(Build.BinariesDirectory)\tests
       7z x $(Build.SourcesDirectory)\ci\helloworld.7z
       cd ..
-      $(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin\qmake.exe $(Build.BinariesDirectory)\tests\helloworld
+      qmake $(Build.BinariesDirectory)\tests\helloworld
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), eq(variables['MODULE'], ''))
     displayName: build test with qmake with MSVC w/o extra module
   - script: |
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/helloworld.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/helloworld
+      export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
+      qmake $(Build.BinariesDirectory)/tests/helloworld
       make
     condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''))
     displayName: Build test with qmake for Linux and macOS w/o extra module
@@ -146,14 +150,15 @@ steps:
       cd $(Build.BinariesDirectory)/tests
       7z x $(Build.SourcesDirectory)/ci/redditclient.7z
       cd ..
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/redditclient
+      qmake $(Build.BinariesDirectory)\tests\redditclient
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''))
     displayName: build test with qmake with MSVC with extra module
-  - script: |
+  - bash: |
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/redditclient
+      export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
+      qmake $(Build.BinariesDirectory)/tests/redditclient
       make
     condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
     displayName: Build test with qmake for Linux and macOS with extra module
@@ -187,11 +192,12 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: 'Install Emscripten SDK'
-  - script: |
+  - bash: |
       source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/openglwindow.7z)
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/openglwindow
+      export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
+      qmake $(Build.BinariesDirectory)/tests/openglwindow
       make
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
