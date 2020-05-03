@@ -124,11 +124,11 @@ steps:
   # no modules
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-      mkdir $(Build.BinariesDirectory)/tests
-      cd $(Build.BinariesDirectory)/tests
-      7z x $(Build.SourcesDirectory)/ci/helloworld.7z
+      mkdir $(Build.BinariesDirectory)\tests
+      cd $(Build.BinariesDirectory)\tests
+      7z x $(Build.SourcesDirectory)\ci\helloworld.7z
       cd ..
-      $(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin/qmake $(Build.BinariesDirectory)/tests/helloworld
+      $(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin\qmake.exe $(Build.BinariesDirectory)\tests\helloworld
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), eq(variables['MODULE'], ''))
     displayName: build test with qmake with MSVC w/o extra module
