@@ -150,6 +150,7 @@ steps:
       cd $(Build.BinariesDirectory)/tests
       7z x $(Build.SourcesDirectory)/ci/redditclient.7z
       cd ..
+      echo PATH: $env:PATH
       qmake $(Build.BinariesDirectory)\tests\redditclient
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''))
