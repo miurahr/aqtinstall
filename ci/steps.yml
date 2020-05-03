@@ -155,6 +155,8 @@ steps:
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MINGW'), eq(variables['ARCH'], 'win32_mingw73'))
     displayName: Install Mingw73(wine32) from Qt distribution and set PATH
   - powershell: |
+      $env:Path += ";$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin"
+      $env:Path += ";$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin"
       mkdir $(Build.BinariesDirectory)\tests
       cd $(Build.BinariesDirectory)\tests
       7z x $(Build.SourcesDirectory)\ci\helloworld.7z
