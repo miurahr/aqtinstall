@@ -125,6 +125,7 @@ steps:
     displayName: install test dependency for Linux
 
   # no modules
+  # TODO: current PSCX release does not support VSVER 2019
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       mkdir $(Build.BinariesDirectory)\tests
@@ -133,7 +134,7 @@ steps:
       cd ..
       qmake $(Build.BinariesDirectory)\tests\helloworld
       nmake
-    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), eq(variables['MODULE'], ''))
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), eq(variables['MODULE'], ''), ne(variables['VSVER'], '2019'))
     displayName: build test with qmake with MSVC w/o extra module
   - script: |
       mkdir $(Build.BinariesDirectory)/tests
@@ -144,6 +145,7 @@ steps:
     condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''))
     displayName: Build test with qmake for Linux and macOS w/o extra module
   # modules
+  # TODO: current PSCX release does not support VSVER 2019
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       mkdir $(Build.BinariesDirectory)/tests
@@ -153,7 +155,7 @@ steps:
       echo PATH: $env:PATH
       qmake $(Build.BinariesDirectory)\tests\redditclient
       nmake
-    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''))
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''), ne(variables['VSVER'], '2019'))
     displayName: build test with qmake with MSVC with extra module
   - bash: |
       mkdir $(Build.BinariesDirectory)/tests
