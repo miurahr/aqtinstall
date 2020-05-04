@@ -143,6 +143,26 @@ steps:
       nmake
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), eq(variables['MODULE'], ''), ne(variables['VSVER'], '2019'))
     displayName: build test with qmake with MSVC w/o extra module
+  - powershell: |
+      python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810
+      [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_64\bin" + $env:Path, "Machine")
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MINGW'), eq(variables['ARCH'], 'win64_mingw81'))
+    displayName: Install Mingw81(win64) from Qt distribution and set PATH
+  - powershell: |
+      python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw 8.1.0-1-202004170606 qt.tools.win32_mingw810
+      [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_32\bin" + $env:Path, "Machine")
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MINGW'), eq(variables['ARCH'], 'win32_mingw81'))
+    displayName: Install Mingw81(win32) from Qt distribution and set PATH
+  - powershell: |
+      $env:Path = "$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin;$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin;" + $env:Path
+      mkdir $(Build.BinariesDirectory)\tests
+      cd $(Build.BinariesDirectory)\tests
+      7z x $(Build.SourcesDirectory)\ci\helloworld.7z
+      cd ..
+      qmake $(Build.BinariesDirectory)\tests\helloworld
+      mingw32-make
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MINGW'), eq(variables['MODULE'], ''))
+    displayName: build test with qmake with MINGW w/o extra module
   - script: |
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/helloworld.7z)
@@ -179,19 +199,6 @@ steps:
   - script: echo Currently not implemented.
     condition: and(eq(variables['TARGET'], 'ios'), eq(variables['Agent.OS'], 'Darwin'))
     displayName: Build test with qmake for ios
-
-  ##----------------------------------------------------
-  # Tools Support
-  - script: python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) $(TOOL_NAME) $(TOOL_VERSION) $(ARCH)
-    workingDirectory: $(Build.BinariesDirectory)
-    condition: variables['TOOL_NAME']
-    displayName: Run Aqt (Tool)
-  # Test installation results
-  - script: |
-      $(Build.BinariesDirectory)/Qt/Tools/$(TEST_EXECUTABLE) $(TEST_COMMAND)
-    condition: variables['TOOL_NAME']
-    displayName: Tool test
-  ##----------------------------------------------------
 
   ##----------------------------------------------------
   # wasm_32 on linux and mac

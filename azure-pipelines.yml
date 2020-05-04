@@ -58,21 +58,6 @@ jobs:
   steps:
     - template: ci/steps.yml
 
-- job: Mingw
-  displayName: Mingw73 on Windows
-  variables:
-    PYTHON_VERSION: '3.7'
-    QT_VERSION: 5.13.2
-    HOST: windows
-    TARGET: desktop
-    ARCH: win64_mingw73
-    ARCHDIR: mingw73_64
-    EXTERNAL: 'C:\Program Files\7-Zip\7z.exe'
-  pool:
-    vmImage: 'vs2017-win2016'
-  steps:
-    - template: ci/steps.yml
-
 - job: LinuxSpecificMirror
   displayName: Linux (Specific Mirror)
   variables:
@@ -83,21 +68,6 @@ jobs:
     ARCH: android_armv7
     ARCHDIR: android_armv7
     QT_BASE_MIRROR: http://mirrors.ocf.berkeley.edu/qt/
-  pool:
-    vmImage: 'ubuntu-16.04'
-  steps:
-    - template: ci/steps.yml
-
-- job: LinuxToolsOpenSSL
-  displayName: Tools(OpenSSL, Linux)
-  variables:
-    PYTHON_VERSION: '3.7'
-    HOST: linux
-    TOOL_NAME: tools_openssl_x64
-    TOOL_VERSION: 1.1.1-4
-    ARCH: qt.tools.openssl.gcc_64
-    TEST_EXECUTABLE: OpenSSL/binary/bin/openssl
-    TEST_COMMAND: version
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
