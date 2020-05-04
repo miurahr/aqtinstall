@@ -146,14 +146,14 @@ steps:
     displayName: build test with qmake with MSVC w/o extra module
   - powershell: |
       choco uninstall -y mingw
-      python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw  7.3.0-1-202004170606 qt.tools.win64_mingw730
-      [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw730_64\bin" + $env:Path, "Machine")
+      python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw  8.1.0-1-202004170606  qt.tools.win64_mingw810
+      [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_64\bin" + $env:Path, "Machine")
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MINGW'), eq(variables['ARCH'], 'win64_mingw73'))
     displayName: Install Mingw73(win64) from Qt distribution and set PATH
   - powershell: |
       choco uninstall -y mingw
-      python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw  7.3.0-1-202004170606 qt.tools.win32_mingw730
-      [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw730_32\bin" + $env:Path, "Machine")
+      python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw  8.1.0-1-202004170606  qt.tools.win32_mingw810
+      [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_32\bin" + $env:Path, "Machine")
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MINGW'), eq(variables['ARCH'], 'win32_mingw73'))
     displayName: Install Mingw73(wine32) from Qt distribution and set PATH
   - powershell: |
