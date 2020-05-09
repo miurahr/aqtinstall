@@ -1,23 +1,10 @@
 steps:
-  # Install aqtinstall
   - task: UsePythonVersion@0
     inputs:
       versionSpec: $(PYTHON_VERSION)
       architecture: 'x64'
-  - script: |
-      cd $(Build.SourcesDirectory)
-      python -m pip install -rrequirements.txt
-    displayName: 'Install dependency'
-  - task: PythonScript@0
-    inputs:
-      scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/setup.py
-      arguments: sdist bdist_wheel
-      workingDirectory: $(Build.SourcesDirectory)
-    displayName: build package
   - powershell: |
-      $aqtVersion = & python $(Build.SourcesDirectory)/setup.py --version | Out-String -Stream
-      pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
+      pip install -e .
     displayName: install package
 
   # Run Aqt
