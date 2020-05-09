@@ -27,11 +27,11 @@ import sys
 import time
 from logging import getLogger
 
+import py7zr
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-import py7zr
 from aqt.archives import QtPackage
 from aqt.helper import altlink
 from aqt.settings import Settings
