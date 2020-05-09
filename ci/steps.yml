@@ -1,21 +1,10 @@
 steps:
-  # Install aqtinstall
   - task: UsePythonVersion@0
     inputs:
       versionSpec: $(PYTHON_VERSION)
       architecture: 'x64'
-  - script: |
-      python -m pip install wheel setuptools setuptools_scm
-    displayName: 'Install dependency'
-  - task: PythonScript@0
-    inputs:
-      scriptSource: filePath
-      scriptPath: $(Build.SourcesDirectory)/setup.py
-      arguments: sdist bdist_wheel
-      workingDirectory: $(Build.SourcesDirectory)
-    displayName: build package
   - powershell: |
-      pip install $(Build.SourcesDirectory)/dist/aqtinstall-$aqtVersion-py2.py3-none-any.whl
+      pip install -e .
     displayName: install package
 
   # Run Aqt
