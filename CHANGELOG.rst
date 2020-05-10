@@ -14,6 +14,28 @@ Current changes
 Added
 -----
 
+Changed
+-------
+
+Fixed
+-----
+
+Deprecated
+----------
+
+Removed
+-------
+
+Security
+--------
+
+
+`v0.9.0b1`_ (10, May. 2020)
+===========================
+
+Added
+-----
+
 * Support installation of Qt version for msvc2019
 * Add knowlege of components combination on 5.14 and 5.15
 
@@ -30,17 +52,6 @@ Fixed
 
 * Tools: Fix mingw installation failure.
 * Fix --outputdir behavior about path separator on windows
-
-Deprecated
-----------
-
-Removed
--------
-
-Security
---------
-
-
 
 `v0.8`_ (26, Mar. 2020)
 =======================
@@ -494,7 +505,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.8...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.0b1...HEAD
+.. _v0.9.0b1: https://github.com/miurahr/aqtinstall/compare/v0.8...v0.9.0b1
 .. _v0.8: https://github.com/miurahr/aqtinstall/compare/v0.8b1...v0.8
 .. _v0.8b1: https://github.com/miurahr/aqtinstall/compare/v0.8a4...v0.8b1
 .. _v0.8a4: https://github.com/miurahr/aqtinstall/compare/v0.8a3...v0.8a4
