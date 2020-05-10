@@ -14,11 +14,22 @@ Current changes
 Added
 -----
 
+* Support installation of Qt version for msvc2019
+* Add knowlege of components combination on 5.14 and 5.15
+
 Changed
 -------
 
+* Show detailed diagnose message when error happend.
+* CI test with Qt 5.14.2 and 5.15.0
+* CI test with installed mingw tools compiler.
+* Depends on py7zr v0.7.0b2 and later.
+
 Fixed
 -----
+
+* Tools: Fix mingw installation failure.
+* Fix --outputdir behavior about path separator on windows
 
 Deprecated
 ----------
@@ -28,6 +39,8 @@ Removed
 
 Security
 --------
+
+
 
 `v0.8`_ (26, Mar. 2020)
 =======================
