@@ -177,12 +177,13 @@ Environment Variables
 
 It is users task to set some environment variables to fit your platform such as
 
-```
-export PATH=/path/to/qt/x.x.x/clang_64/bin/:$PATH
-export QT_PLUGIN_PATH=/path/to/qt/x.x.x/clang_64/plugins/
-export QML_IMPORT_PATH=/path/to/qt/x.x.x/clang_64/qml/
-export QML2_IMPORT_PATH=/path/to/qt/x.x.x/clang_64/qml/
-```
+
+.. code-block:: bash
+
+   export PATH=/path/to/qt/x.x.x/clang_64/bin/:$PATH
+   export QT_PLUGIN_PATH=/path/to/qt/x.x.x/clang_64/plugins/
+   export QML_IMPORT_PATH=/path/to/qt/x.x.x/clang_64/qml/
+   export QML2_IMPORT_PATH=/path/to/qt/x.x.x/clang_64/qml/
 
 aqtinstall never do it for you because not to break multiple installation versions.
 
