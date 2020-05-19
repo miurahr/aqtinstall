@@ -126,6 +126,7 @@ class Cli():
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
         mirror = args.base
+        archives = args.archives
         self.show_aqt_version()
         if output_dir is not None:
             output_dir = os.path.normpath(output_dir)
@@ -141,8 +142,8 @@ class Cli():
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
         try:
-            qt_archives = QtArchives(os_name, target, qt_version, arch, modules=modules, mirror=mirror,
-                                     logging=self.logger, all_extra=all_extra)
+            qt_archives = QtArchives(os_name, target, qt_version, arch, subarchives=archives, modules=modules,
+                                     mirror=mirror, logging=self.logger, all_extra=all_extra)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
@@ -213,6 +214,8 @@ class Cli():
                                     "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
                                     "\n                                        android_x86, android_armv7")
         install_parser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")
+        install_parser.add_argument('--archives', nargs='*',
+                                    help="Specify subset modules to install(Default: all standard modules).")
         install_parser.add_argument('-O', '--outputdir', nargs='?',
                                     help='Target output directory(default current directory)')
         install_parser.add_argument('-b', '--base', nargs='?',

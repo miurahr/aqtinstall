@@ -61,8 +61,10 @@ class QtInstaller:
     def retrieve_archive(self, package: QtPackage):
         archive = package.archive
         url = package.url
+        name = package.name
         start_time = time.perf_counter()
-        self.logger.info("Downloading {}...".format(url))
+        self.logger.info("Downloading {}...".format(name))
+        self.logger.debug("Download URL: {}".format(url))
         session = requests.Session()
         retry = Retry(connect=5, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
@@ -72,7 +74,7 @@ class QtInstaller:
             r = session.get(url, allow_redirects=False, stream=True)
             if r.status_code == 302:
                 newurl = altlink(r.url, r.headers['Location'], logger=self.logger)
-                self.logger.info('Redirected to new URL: {}'.format(newurl))
+                self.logger.info('Redirected URL: {}'.format(newurl))
                 r = session.get(newurl, stream=True)
         except requests.exceptions.ConnectionError as e:
             self.logger.error("Connection error: %s" % e.args)
