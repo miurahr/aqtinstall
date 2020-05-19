@@ -14,6 +14,10 @@ Current changes
 Added
 -----
 
+* CLI: '--archives' option: it takes multiple module names such as qtbase, qtsvg etc.
+  This is an advanced option to specify subset of target installation.
+  There is no guarantee it works. It is not recommended if you are unknown what is doing.
+
 Changed
 -------
 
