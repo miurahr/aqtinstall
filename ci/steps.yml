@@ -21,7 +21,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''))
+    condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''))
     displayName: Run Aqt (No Base URL Set)
   - bash: |
       number=$RANDOM
@@ -33,7 +33,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: and(variables['QT_BASE_MIRROR'], not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''))
+    condition: and(variables['QT_BASE_MIRROR'], not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''))
     displayName: Run Aqt (Base URL Set)
   - bash: |
       number=$RANDOM
@@ -45,7 +45,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: and(not(variables['TOOL_NAME']), not(variables['EXTERNAL']), ne(variables['MODULE'], ''))
+    condition: and(not(variables['TOOL_NAME']), not(variables['EXTERNAL']), ne(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''))
     displayName: Run Aqt (With modules)
   - bash: |
       number=$RANDOM
@@ -56,8 +56,20 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: and(not(variables['TOOL_NAME']), variables['EXTERNAL'])
+    condition: and(not(variables['TOOL_NAME']), variables['EXTERNAL'], eq(variables['SUBARCHIVES'], ''))
     displayName: Run Aqt (With external 7zip)
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      mkdir Qt
+      cd Qt
+      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) --archives $(SUBARCHIVES)
+    workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    condition: ne(variables['SUBARCHIVES'], '')
+    displayName: Run Aqt (sub arhives option)
 
   # Test installation environments
   ##----------------------------------------------------
