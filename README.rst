@@ -32,8 +32,9 @@ Another Qt installer(aqt)
 |        | |gha|     |         |
 +--------+-----------+---------+
 
-This is an utility replacing the official graphical Qt installer. It can
-automatically download prebuilt Qt binaries for any target (you're not bound to
+This is an utility alternative to the official graphical Qt installer, for using in CI environment where an inteactive UI is not usable such as Github Actions, Tavis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
+
+It can automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
 It's working with Python > 3.5 on Linux, OS X and Windows.
 It is required to install 7zip utility in your platform.
