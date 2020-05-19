@@ -171,10 +171,11 @@ Example: Show help message
 
     aqt help
 
+
 Environment Variables
 ---------------------
 
-It is users' work to set environment variables to fit your platform such as
+It is users task to set some environment variables to fit your platform such as
 
 ```
 export PATH=/path/to/qt/x.x.x/clang_64/bin/:$PATH
