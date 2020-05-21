@@ -66,16 +66,13 @@ jobs:
             arch_dir = 'clang_64'
           else:
             arch_dir = 'gcc_64'
-          qmakebin = pathlib.Path(base_dir) / qtver / arch_dir / "bin" / "qmake"
+          qt_prefix_path = pathlib.Path(base_dir) / qtver / arch_dir
           try:
-            res = run([str(qmakebin), "-query"], timeout=15, check=True, stdout=PIPE)
+            res = run([str(qt_prefix_path / "bin" / "qmake"), "-query"], timeout=15, check=True, stdout=PIPE)
           except CalledProcessError as cpe:
             exit(cpe.returncode)
           if res.returncode == 0:
-            for line in res.stdout.readlines():
-              if line.startswith('QT_INSTALL_PREFIX'):
-                assert line.split(':') == str(pathlib.Path(base_dir) / qtver / arch_dir)
-                exit(0)
-          # assertion failed
-          exit(1)
+            for line in res.stdout.splitlines():
+              if line.startswith(b'QT_INSTALL_PREFIX'):
+                assert qt_prefix_path.samefile(line[18:].decode('UTF-8'))
         shell: python
