@@ -206,4 +206,4 @@ class ToolArchives(QtArchives):
 
         :return tuple of three parameter, "Tools", target and arch
         """
-        return "Tools", self.target, self.arch
+        return TargetConfig("Tools", self.target, self.arch, self.os_name)

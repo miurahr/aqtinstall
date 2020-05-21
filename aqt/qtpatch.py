@@ -16,9 +16,10 @@ class Updater:
         framework_dir = self.prefix.joinpath("lib", "QtCore.framework")
         assert framework_dir.exists(), "Invalid installation prefix"
         for component in ["QtCore", "QtCore_debug"]:
-            qtcore_path = framework_dir.joinpath(component).resolve()
-            self.logger.info(f"Patching {qtcore_path}")
-            self._patch_file(qtcore_path, bytes(str(self.prefix), "ascii"))
+            if framework_dir.joinpath(component).exists():
+                qtcore_path = framework_dir.joinpath(component).resolve()
+                self.logger.info("Patching {}".format(qtcore_path))
+                self._patch_file(qtcore_path, bytes(str(self.prefix), "ascii"))
 
     def _patch_file(self, file: pathlib.Path, newpath: bytes):
         PREFIX_VAR = b"qt_prfxpath="
