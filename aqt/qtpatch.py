@@ -49,7 +49,9 @@ class Updater:
     def patch_qt(self, target):
         ''' patch works '''
         self.logger.info("Patching qmake")
-        if target.os_name == 'mac' and target.target != 'ios':
+        mac_exceptions = ['ios', 'android', 'wasm_32',
+                          'android_x86_64', 'android_arm64_v8a', 'android_x86', 'android_armv7']
+        if target.os_name == 'mac' and target.arch not in mac_exceptions:
             self._patch_qtcore()
         if self.qmake_path is not None:
             self._patch_file(self.qmake_path, bytes(str(self.prefix), 'UTF-8'))
