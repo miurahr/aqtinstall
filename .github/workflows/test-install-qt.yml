@@ -44,6 +44,7 @@ jobs:
           else:
             args = [qtver, "linux", "desktop", "gcc_64"]
           command_line.extend(args)
+          command_line.extend(["--archives", "qtbase", "icu", "qt"])
           try:
             res = subprocess.run(command_line, timeout=timeout, check=True)
           except subprocess.CalledProcessError as cpe:
