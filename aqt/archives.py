@@ -51,13 +51,15 @@ class QtArchives:
 
     BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
 
-    def __init__(self, os_name, target, version, arch, modules=None, mirror=None, logging=None, all_extra=False):
+    def __init__(self, os_name, target, version, arch, subarchives=None,
+                 modules=None, mirror=None, logging=None, all_extra=False):
         self.version = version
         self.target = target
         self.arch = arch
         self.mirror = mirror
         self.os_name = os_name
         self.all_extra = all_extra
+        all_archives = (subarchives is None)
         if mirror is not None:
             self.has_mirror = True
             self.base = mirror + '/online/qtsdkrepository/'
@@ -78,6 +80,8 @@ class QtArchives:
                 self.mod_list.append("qt.qt5.{}.{}.{}".format(qt_ver_num, m, arch))
                 self.mod_list.append("qt.{}.{}.{}".format(qt_ver_num, m, arch))
         self._get_archives(qt_ver_num)
+        if not all_archives:
+            self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
 
     def _get_archives(self, qt_ver_num):
         # Get packages index
@@ -124,8 +128,9 @@ class QtArchives:
                         full_version = packageupdate.find("Version").text
                         package_desc = packageupdate.find("Description").text
                         for archive in downloadable_archives:
+                            archive_name = archive.split('-', maxsplit=1)[0]
                             package_url = archive_url + name + "/" + full_version + archive
-                            self.archives.append(QtPackage(name, package_url, archive, package_desc,
+                            self.archives.append(QtPackage(archive_name, package_url, archive, package_desc,
                                                            has_mirror=self.has_mirror))
         if len(self.archives) == 0:
             self.logger.error("Error while parsing package information!")
