@@ -34,6 +34,14 @@ class ArchiveDownloadError(Exception):
     pass
 
 
+class TargetConfig:
+    def __init__(self, version, target, arch, os_name):
+        self.version = version
+        self.target = target
+        self.arch = arch
+        self.os_name = os_name
+
+
 class QtPackage:
     """
       Hold package information.
@@ -146,13 +154,13 @@ class QtArchives:
          """
         return self.archives
 
-    def get_target_config(self):
+    def get_target_config(self) -> TargetConfig:
         """Get target configuration
 
         :return: configured target and its version with arch
-        :rtype: tuple(version, target, arch)
+        :rtype: TargetConfig object
         """
-        return self.version, self.target, self.arch
+        return TargetConfig(self.version, self.target, self.arch, self.os_name)
 
 
 class ToolArchives(QtArchives):
@@ -198,9 +206,9 @@ class ToolArchives(QtArchives):
                 self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                has_mirror=(self.mirror is not None)))
 
-    def get_target_config(self):
+    def get_target_config(self) -> TargetConfig:
         """Get target configuration.
 
         :return tuple of three parameter, "Tools", target and arch
         """
-        return "Tools", self.target, self.arch
+        return TargetConfig("Tools", self.target, self.arch, self.os_name)

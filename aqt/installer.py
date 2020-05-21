@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
 # Copyright (C) 2019,2020 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2020, Aurélien Gâteau
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -22,6 +23,7 @@
 
 import concurrent.futures
 import os
+import pathlib
 import subprocess
 import sys
 import time
@@ -33,7 +35,8 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from aqt.archives import QtPackage
-from aqt.helper import altlink
+from aqt.helper import altlink, versiontuple
+from aqt.qtpatch import Updater
 from aqt.settings import Settings
 
 
@@ -119,8 +122,20 @@ class QtInstaller:
                 self.logger.error(cpe.stderr)
             raise cpe
 
-    def make_conf_files(self, qt_version, arch_dir):
+    def get_arch_dir(self, arch):
+        if arch.startswith('win64_mingw'):
+            arch_dir = arch[6:] + '_64'
+        elif arch.startswith('win32_mingw'):
+            arch_dir = arch[6:] + '_32'
+        elif arch.startswith('win'):
+            arch_dir = arch[6:]
+        else:
+            arch_dir = arch
+        return arch_dir
+
+    def make_conf_files(self, qt_version, arch):
         """Make Qt configuration files, qt.conf and qtconfig.pri"""
+        arch_dir = self.get_arch_dir(arch)
         try:
             # prepare qt.conf
             with open(os.path.join(self.base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
@@ -148,17 +163,14 @@ class QtInstaller:
             if len(not_done) > 0:
                 self.logger.error("Installation error detected.")
                 exit(1)
-
         # finalize
-        qt_version, target, arch = self.qt_archives.get_target_config()
-        if qt_version != "Tools":  # tools installation
-            if arch.startswith('win64_mingw'):
-                arch_dir = arch[6:] + '_64'
-            elif arch.startswith('win32_mingw'):
-                arch_dir = arch[6:] + '_32'
-            elif arch.startswith('win'):
-                arch_dir = arch[6:]
-            else:
-                arch_dir = arch
-            self.make_conf_files(qt_version, arch_dir)
+        target = self.qt_archives.get_target_config()
+        if target.version == "Tools":
+            pass
+        else:
+            self.make_conf_files(target.version, target.arch)
+            prefix = pathlib.Path(self.base_dir) / target.version / target.arch
+            updater = Updater(prefix, self.logger)
+            if versiontuple(target.version) < (5, 14, 2):
+                updater.patch_qt(target)
         self.logger.info("Finished installation")

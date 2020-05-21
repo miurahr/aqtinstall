@@ -51,3 +51,7 @@ def altlink(url: str, alt: str, logger=None):
             # Return first priority item which is not blacklist in mirrors list,
             # if not found then return alt in default
             return next(filter(lambda mirror: not any(mirror.startswith(b) for b in blacklist), mirrors), alt)
+
+
+def versiontuple(v: str):
+    return tuple(map(int, (v.split("."))))

@@ -53,9 +53,12 @@ for qt_version in qt_versions:
         BuildJob(qt_version, 'mac', 'desktop', 'clang_64', "clang_64")
     )
 
-# Mac iOS
-mac_build_jobs.append(
-    BuildJob('5.13.2', 'mac', 'ios', 'ios', 'ios')
+# Mac iOS, android
+mac_build_jobs.extend(
+    [
+        BuildJob('5.13.2', 'mac', 'ios', 'ios', 'ios'),
+        BuildJob('5.14.1', 'mac', 'android', 'android', 'android')
+    ]
 )
 
 # Windows Desktop
@@ -93,15 +96,10 @@ windows_build_jobs.append(
     BuildJob('5.14.2', 'windows', 'desktop', 'wasm_32', "wasm_32")
 )
 
-# Androids for Linux platforms
-# aqt is for CI/CD systems!
-# Users might develop on Win/Mac, but are most likely to use Linux for CI/CD with
-# the Android ecosystem.
-
-for android_arch in ['android_x86_64', 'android_arm64_v8a', 'android_x86', 'android_armv7']:
-    linux_build_jobs.append(
-        BuildJob('5.13.2', 'linux', 'android', android_arch, android_arch)
-    )
+# android
+linux_build_jobs.append(
+    BuildJob('5.14.1', 'linux', 'android', 'android', 'android')
+)
 
 matrices = {}
 
