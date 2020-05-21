@@ -9,6 +9,7 @@
   {"os_name": "mac",     "target": "desktop", "arch": "clang_64"},
   {"os_name": "mac",     "target": "desktop", "arch": "wasm_32"},
   {"os_name": "mac",     "target": "ios",     "arch": "ios"},
+  {"os_name": "mac",     "target": "android", "arch": "android"},
   {"os_name": "windows", "target": "desktop", "arch": "win64_msvc2019_64"},
   {"os_name": "windows", "target": "desktop", "arch": "win32_msvc2019"},
   {"os_name": "windows", "target": "desktop", "arch": "win64_msvc2017_64"},

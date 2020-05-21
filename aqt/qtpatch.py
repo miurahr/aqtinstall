@@ -49,7 +49,7 @@ class Updater:
     def patch_qt(self, target):
         ''' patch works '''
         self.logger.info("Patching qmake")
-        if target.os_name == 'mac':
+        if target.os_name == 'mac' and target.target != 'ios':
             self._patch_qtcore()
         if self.qmake_path is not None:
             self._patch_file(self.qmake_path, bytes(str(self.prefix), 'UTF-8'))

@@ -163,7 +163,7 @@ class QtInstaller:
                 exit(1)
         # finalize
         target = self.qt_archives.get_target_config()
-        if target.version == "Tools" or target.arch.startswith("wasm"):
+        if target.version == "Tools":
             pass
         else:
             self.make_conf_files(target.version, target.arch)
