@@ -17,11 +17,13 @@ Added
 Changed
 -------
 
-* Patch qmake when finishing installation.
+* Patch qmake when finishing installation.(#100)
   qmake has a hard-coded prefix path, and aqt modify binary in finish phase.
   it is not necessary for Qt 5.14.2, 5.15.0 and later.
-* Patch Framework.QtCore when finishing installation.
+  This behavior try to be as same as a Qt installer framework doing.
+* Patch Framework.QtCore when finishing installation.(#100)
   As same as qmake, framework also has a hard-coded prefix path.
+  (Suggestions from @agateau)
 
 Fixed
 -----
