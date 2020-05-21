@@ -1,6 +1,6 @@
 name: Test on GH actions environment
 
-on: [push, pull_request]
+on: push
 
 jobs:
   test:
@@ -56,29 +56,23 @@ jobs:
           from subprocess import CalledProcessError, PIPE, run
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
-          base_dir = "${{ github.workspace }}"
           if platform == "windows-latest":
-            qmake_bin = "qmake.exe"
             if qtver.startswith('5.15'):
               arch_dir = 'msvc2019_64'
             else:
               arch_dir = 'msvc2017_64'
           elif platform == "macOS-latest":
-            qmake_bin = "qmake"
             arch_dir = 'clang_64'
           else:
-            qmake_bin = "qmake"
             arch_dir = 'gcc_64'
-          qt_prefix_path = pathlib.Path(base_dir) / qtver / arch_dir
-          qmake_bin = qt_prefix_path.joinpath("bin", "qmake").as_posix()
           try:
-            print("Run {} -query".format(qmake_bin))
-            res = run([qmake_bin, "-query"], timeout=15, check=True, stdout=PIPE)
+            res = run([f"{qtver}/{arch_dir}/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
           except CalledProcessError as cpe:
             exit(cpe.returncode)
           if res.returncode == 0:
+            qt_prefix_path = pathlib.Path.cwd() / qtver / arch_dir
             for line in res.stdout.splitlines():
               if line.startswith(b'QT_INSTALL_PREFIX'):
-                result_prefix = line[18:].decode('UTF-8')
-                assert qt_prefix_path.samefile(result_prefix)
+                result = line[18:].decode('UTF-8')
+                assert qt_prefix_path.samefile(result)
         shell: python
