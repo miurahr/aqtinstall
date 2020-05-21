@@ -71,6 +71,7 @@ jobs:
             arch_dir = 'gcc_64'
           qt_prefix_path = pathlib.Path(base_dir) / qtver / arch_dir
           try:
+            print("Run {} -query".format(str(qt_prefix_path / "bin" / qmake_bin)))
             res = run([str(qt_prefix_path / "bin" / qmake_bin), "-query"], timeout=15, check=True, stdout=PIPE)
           except CalledProcessError as cpe:
             exit(cpe.returncode)
