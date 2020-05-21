@@ -17,14 +17,6 @@ Added
 Changed
 -------
 
-* Patch qmake when finishing installation.(#100)
-  qmake has a hard-coded prefix path, and aqt modify binary in finish phase.
-  it is not necessary for Qt 5.14.2, 5.15.0 and later.
-  This behavior try to be as same as a Qt installer framework doing.
-* Patch Framework.QtCore when finishing installation.(#100)
-  As same as qmake, framework also has a hard-coded prefix path.
-  (Suggestions from @agateau)
-
 Fixed
 -----
 
@@ -36,6 +28,20 @@ Removed
 
 Security
 --------
+
+`v0.9.0b3`_ (21, May. 2020)
+===========================
+
+Changed
+-------
+
+* Patch qmake when finishing installation.(#100)
+  qmake has a hard-coded prefix path, and aqt modify binary in finish phase.
+  it is not necessary for Qt 5.14.2, 5.15.0 and later.
+  This behavior try to be as same as a Qt installer framework doing.
+* Patch Framework.QtCore when finishing installation.(#100)
+  As same as qmake, framework also has a hard-coded prefix path.
+  (Suggestions from @agateau)
 
 `v0.9.0b2`_ (21, May. 2020)
 ===========================
@@ -522,7 +528,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.0b2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.0b3...HEAD
+.. _v0.9.0b3: https://github.com/miurahr/aqtinstall/compare/v0.9.0b2...v0.9.0b3
 .. _v0.9.0b2: https://github.com/miurahr/aqtinstall/compare/v0.9.0b1...v0.9.0b2
 .. _v0.9.0b1: https://github.com/miurahr/aqtinstall/compare/v0.8...v0.9.0b1
 .. _v0.8: https://github.com/miurahr/aqtinstall/compare/v0.8b1...v0.8
