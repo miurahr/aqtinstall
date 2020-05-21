@@ -149,7 +149,7 @@ class QtArchives:
          """
         return self.archives
 
-    def get_target_config(self)-> TargetConfig:
+    def get_target_config(self) -> TargetConfig:
         """Get target configuration
 
         :return: configured target and its version with arch
@@ -201,7 +201,7 @@ class ToolArchives(QtArchives):
                 self.archives.append(QtPackage(name, package_url, archive, package_desc,
                                                has_mirror=(self.mirror is not None)))
 
-    def get_target_config(self):
+    def get_target_config(self) -> TargetConfig:
         """Get target configuration.
 
         :return tuple of three parameter, "Tools", target and arch
