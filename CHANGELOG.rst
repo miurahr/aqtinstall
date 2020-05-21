@@ -14,10 +14,6 @@ Current changes
 Added
 -----
 
-* CLI: '--archives' option: it takes multiple module names such as qtbase, qtsvg etc.
-  This is an advanced option to specify subset of target installation.
-  There is no guarantee it works. It is not recommended if you are unknown what is doing.
-
 Changed
 -------
 
@@ -33,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.9.0b2`_ (21, May. 2020)
+===========================
+
+Added
+-----
+
+* CLI: '--archives' option: it takes multiple module names such as qtbase, qtsvg etc.
+  This is an advanced option to specify subset of target installation.
+  There is no guarantee it works. It is not recommended if you are unknown what is doing.
 
 `v0.9.0b1`_ (10, May. 2020)
 ===========================
@@ -509,7 +514,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.0b1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.0b2...HEAD
+.. _v0.9.0b2: https://github.com/miurahr/aqtinstall/compare/v0.9.0b1...v0.9.0b2
 .. _v0.9.0b1: https://github.com/miurahr/aqtinstall/compare/v0.8...v0.9.0b1
 .. _v0.8: https://github.com/miurahr/aqtinstall/compare/v0.8b1...v0.8
 .. _v0.8b1: https://github.com/miurahr/aqtinstall/compare/v0.8a4...v0.8b1
