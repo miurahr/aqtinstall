@@ -29,7 +29,6 @@ jobs:
           python -m pip install ./ --user
       - name: Run Aqt
         run: |
-          import os
           import subprocess
           timeout = 300
           command_line = ["python", "-m", "aqt", "install"]
@@ -38,25 +37,45 @@ jobs:
           if platform == "windows-latest":
             if qtver.startswith('5.15'):
               args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
-              arch_dir = 'msvc2019_64'
             else:
               args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
-              arch_dir = 'msvc2017_64'
           elif platform == "macOS-latest":
             args = [qtver, "mac", "desktop", "clang_64"]
-            arch_dir = 'clang_64'
           else:
             args = [qtver, "linux", "desktop", "gcc_64"]
-            arch_dir = 'gcc_64'
           command_line.extend(args)
           try:
             res = subprocess.run(command_line, timeout=timeout, check=True)
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
           assert res.returncode == 0
+        shell: python
+      - name: Test qmake -query
+        run: |
+          import pathlib
+          from subprocess import CalledProcessError, PIPE, run
+          platform = "${{ matrix.os }}"
+          qtver = "${{ matrix.qtver }}"
+          base_dir = "${{ github.workspace }}"
+          if platform == "windows-latest":
+            if qtver.startswith('5.15'):
+              arch_dir = 'msvc2019_64'
+            else:
+              arch_dir = 'msvc2017_64'
+          elif platform == "macOS-latest":
+            arch_dir = 'clang_64'
+          else:
+            arch_dir = 'gcc_64'
+          qmakebin = pathlib.Path(base_dir) / qtver / arch_dir / "bin" / "qmake"
           try:
-            res = subprocess.run([f"{qtver}/{arch_dir}/bin/qmake", "-query"], timeout=15, check=True)
-          except subprocess.CalledProcessError as cpe:
+            res = run([str(qmakebin), "-query"], timeout=15, check=True, stdout=PIPE)
+          except CalledProcessError as cpe:
             exit(cpe.returncode)
-          assert res.returncode == 0
+          if res.returncode == 0:
+            for line in res.stdout.readlines():
+              if line.startswith('QT_INSTALL_PREFIX'):
+                assert line.split(':') == str(pathlib.Path(base_dir) / qtver / arch_dir)
+                exit(0)
+          # assertion failed
+          exit(1)
         shell: python
