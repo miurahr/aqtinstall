@@ -70,13 +70,15 @@ jobs:
             qmake_bin = "qmake"
             arch_dir = 'gcc_64'
           qt_prefix_path = pathlib.Path(base_dir) / qtver / arch_dir
+          qmake_bin = qt_prefix_path.joinpath("bin", "qmake").as_posix()
           try:
-            print("Run {} -query".format(str(qt_prefix_path / "bin" / qmake_bin)))
-            res = run([str(qt_prefix_path / "bin" / qmake_bin), "-query"], timeout=15, check=True, stdout=PIPE)
+            print("Run {} -query".format(qmake_bin))
+            res = run([qmake_bin, "-query"], timeout=15, check=True, stdout=PIPE)
           except CalledProcessError as cpe:
             exit(cpe.returncode)
           if res.returncode == 0:
             for line in res.stdout.splitlines():
               if line.startswith(b'QT_INSTALL_PREFIX'):
-                assert qt_prefix_path.samefile(line[18:].decode('UTF-8'))
+                result_prefix = line[18:].decode('UTF-8')
+                assert qt_prefix_path.samefile(result_prefix)
         shell: python
