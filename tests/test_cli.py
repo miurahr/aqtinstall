@@ -52,3 +52,26 @@ def test_cli_check_mirror():
     args = cli.parser.parse_args(arg)
     assert args.base == 'https://download.qt.io/'
     assert cli._check_mirror(args.base)
+
+
+def test_cli_launch_with_no_argument(capsys):
+    expected = "".join(["usage: aqt [-h] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
+                        "           {install,tool,list,help} ...\n",
+                        "\n",
+                        "Installer for Qt SDK.\n",
+                        "\n",
+                        "optional arguments:\n",
+                        "  -h, --help            show this help message and exit\n",
+                        "  --logging-conf LOGGING_CONF\n",
+                        "                        Logging configuration ini file.\n",
+                        "  --logger LOGGER       Specify logger name\n",
+                        "\n",
+                        "subcommands:\n",
+                        "  Valid subcommands\n",
+                        "\n",
+                        "  {install,tool,list,help}\n",
+                        "                        subcommand for aqt Qt installer\n"])
+    cli = aqt.cli.Cli()
+    cli.run([])
+    out, err = capsys.readouterr()
+    assert out == expected
