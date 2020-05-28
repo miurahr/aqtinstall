@@ -260,4 +260,6 @@ class Cli():
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
         self._setup_logging(args)
-        args.func(args)
+        if getattr(args, 'func', None) is None:
+            return self.show_help(args)
+        return args.func(args)
