@@ -17,7 +17,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
+      python -m aqt -vv install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -29,7 +29,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
+      python -m aqt -vv install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -b $(QT_BASE_MIRROR)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -41,7 +41,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE)
+      python -m aqt -vv install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -52,7 +52,7 @@ steps:
       let "number %= 30"
       sleep $number
       mkdir Qt
-      python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
+      python -m aqt -vv install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -64,7 +64,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) --archives $(SUBARCHIVES)
+      python -m aqt -vv install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) --archives $(SUBARCHIVES)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -76,7 +76,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt src $(QT_VERSION) $(HOST) $(TARGET)
+      python -m aqt -vv src $(QT_VERSION) $(HOST) $(TARGET)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -88,7 +88,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt examples $(QT_VERSION) $(HOST) $(TARGET)
+      python -m aqt -vv examples $(QT_VERSION) $(HOST) $(TARGET)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -100,7 +100,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt doc $(QT_VERSION) $(HOST) $(TARGET)
+      python -m aqt -vv doc $(QT_VERSION) $(HOST) $(TARGET)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
