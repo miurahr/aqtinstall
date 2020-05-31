@@ -162,7 +162,7 @@ steps:
     displayName: Detect toolchain for Windows and update PATH
   - script: |
       sudo apt-get install libgl1-mesa-dev
-    condition: and(eq( variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'))
+    condition: and(eq( variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'), eq(variables['TOOL_NAME'], ''))
     displayName: install test dependency for Linux
 
   # no modules
@@ -204,7 +204,7 @@ steps:
       export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
       qmake $(Build.BinariesDirectory)/tests/helloworld
       make
-    condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''))
+    condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''), eq(variables['TOOL_NAME'], ''))
     displayName: Build test with qmake for Linux and macOS w/o extra module
   # modules
   # TODO: current PSCX release does not support VSVER 2019
@@ -226,7 +226,7 @@ steps:
       export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
       qmake $(Build.BinariesDirectory)/tests/redditclient
       make
-    condition: and(eq( variables['TARGET'], 'desktop' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
+    condition: and(eq( variables['TARGET'], 'desktop'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
     displayName: Build test with qmake for Linux and macOS with extra module
 
   ##----------------------------------------------------
