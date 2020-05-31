@@ -14,15 +14,11 @@ Current changes
 Added
 -----
 
-* New subcommand doc/src/example to install each components.(#137, 138)
-
 Changed
 -------
 
 Fixed
 -----
-
-* Show help when launched without any argument (#136)
 
 Deprecated
 ----------
@@ -32,6 +28,26 @@ Removed
 
 Security
 --------
+
+`v0.9.0`_ (31, May. 2020)
+=========================
+
+Added
+-----
+
+* New subcommand doc/src/example to install each components.(#137, 138)
+* Doc: Add CLI example for tools, doc, examples and src.
+
+Changed
+-------
+
+* Refactoring to reduce code duplication in archives.py
+* Explicitly call QtInstall.finalize() only when Qt library installation.
+
+Fixed
+-----
+
+* Show help when launched without any argument (#136)
 
 `v0.9.0b3`_ (21, May. 2020)
 ===========================
@@ -532,7 +548,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.0b3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.0...HEAD
+.. _v0.9.0: https://github.com/miurahr/aqtinstall/compare/v0.9.0b3...v0.9.0
 .. _v0.9.0b3: https://github.com/miurahr/aqtinstall/compare/v0.9.0b2...v0.9.0b3
 .. _v0.9.0b2: https://github.com/miurahr/aqtinstall/compare/v0.9.0b1...v0.9.0b2
 .. _v0.9.0b1: https://github.com/miurahr/aqtinstall/compare/v0.8...v0.9.0b1
