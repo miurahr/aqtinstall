@@ -69,13 +69,17 @@ General usage looks like this:
 
 .. code-block:: bash
 
-    aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
+    aqt [-h | --help][-q | --quiet][-v | -vv | --verbose][-O | --outputdir <directory>][-b | --base <mirror url>]
+        [-E | --external <7zip command>] \
+        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] \
+        [--archives subarchive [subarchive]]
 
 .. code-block:: bash
 
-    python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
+    python -m aqt [-h][--help][-q | --quiet][-v | -vv | --verbose][-O | --outputdir <directory>][-b | --base <mirror url>]
+        [-E | --external <7zip command>] \
+        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] \
+        [--archives subarchive [subarchive]]
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
@@ -94,6 +98,19 @@ General usage looks like this:
       `android_armv7`
 * You can specify external 7zip command path instead of built-in extractor.
 * When specify all for extra modules option '-m' all extra modules are installed.
+
+Installing document, examples and source package
+------------------------------------------------
+
+You can install document, examples and source package using following syntax, which use
+doc, src and examples sub command;
+
+.. code-block:: bash
+
+    python -m aqt [-h][--help][-q | --quiet][-v | -vv | --verbose][-O | --outputdir <directory>]
+        [-b | --base <mirror url>][-E | --external <7zip command>] \
+        doc | src | examples
+        <qt-version> <host> <target> [-m all | -m [extra module] [extra module]]
 
 
 Installing tool and utility(Experimental)
@@ -128,6 +145,9 @@ run such as follows:
     C:\> mkdir Qt
     C:\> aqt install --outputdir c:\Qt 5.11.3 windows desktop win64_msvc2019_64
 
+
+Command examples
+----------------
 
 Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 
