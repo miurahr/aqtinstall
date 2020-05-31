@@ -30,8 +30,8 @@ import time
 
 from packaging.version import Version, parse
 
-from aqt.archives import (ArchiveDownloadError, ArchiveListError, QtArchives,
-                          ToolArchives)
+from aqt.archives import (ArchiveDownloadError, ArchiveListError,
+                          SrcDocExamplesArchives, QtArchives, ToolArchives)
 from aqt.installer import QtInstaller
 from aqt.settings import Settings
 
@@ -115,6 +115,14 @@ class Cli():
             return False
         return all([m in available for m in modules])
 
+    def _run_common_part(self, output_dir=None, mirror=None):
+        self.show_aqt_version()
+        if output_dir is not None:
+            output_dir = os.path.normpath(output_dir)
+        if not self._check_mirror(mirror):
+            self.parser.print_help()
+            exit(1)
+
     def run_install(self, args):
         start_time = time.perf_counter()
         arch = args.arch
@@ -127,12 +135,7 @@ class Cli():
         sevenzip = self._set_sevenzip(args)
         mirror = args.base
         archives = args.archives
-        self.show_aqt_version()
-        if output_dir is not None:
-            output_dir = os.path.normpath(output_dir)
-        if not self._check_mirror(mirror):
-            self.parser.print_help()
-            exit(1)
+        self._run_common_part(output_dir, mirror)
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
@@ -151,6 +154,45 @@ class Cli():
             installer.install()
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
+    def _run_src_doc_examples(self, flavor, args):
+        start_time = time.perf_counter()
+        target = args.target
+        os_name = args.host
+        qt_version = args.qt_version
+        output_dir = args.outputdir
+        mirror = args.base
+        sevenzip = self._set_sevenzip(args)
+        if flavor in ['doc', 'examples']:
+            modules = args.modules
+            archives = args.archives
+        else:
+            modules = None
+            archives = None
+        self._run_common_part(output_dir, mirror)
+        all_extra = True if modules is not None and 'all' in modules else False
+        if not self._check_qt_arg_versions(qt_version):
+            self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
+        try:
+            srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version, subarchives=archives,
+                                                 modules=modules, mirror=mirror, logging=self.logger,
+                                                 all_extra=all_extra)
+        except ArchiveDownloadError or ArchiveListError:
+            exit(1)
+        else:
+            installer = QtInstaller(srcdocexamples_archives, logging=self.logger, command=sevenzip,
+                                    target_dir=output_dir)
+            installer.install()
+        self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
+
+    def run_src(self, args):
+        self._run_src_doc_examples('src', args)
+
+    def run_examples(self, args):
+        self._run_src_doc_examples('examples', args)
+
+    def run_doc(self, args):
+        self._run_src_doc_examples('doc',args)
+
     def run_tool(self, args):
         start_time = time.perf_counter()
         arch = args.arch
@@ -160,12 +202,16 @@ class Cli():
         sevenzip = self._set_sevenzip(args)
         version = args.version
         mirror = args.base
-        self.show_aqt_version()
-        self._check_mirror(mirror)
+        self._run_common_part(output_dir, mirror)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
-        QtInstaller(ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger),
-                    logging=self.logger, command=sevenzip, target_dir=output_dir).install()
+        try:
+            tool_archives = ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger)
+        except ArchiveDownloadError or ArchiveListError:
+            exit(1)
+        else:
+            installer = QtInstaller(tool_archives, logging=self.logger, command=sevenzip, target_dir=output_dir)
+            installer.install()
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_list(self, args):
@@ -184,6 +230,25 @@ class Cli():
         self.logger.info("aqtinstall({}) v{} on Python {} [{} {}]".format(module_name, dist.version,
                                                                           py_version, py_impl, py_build))
 
+    def _set_common_options(self, subparser):
+        subparser.add_argument('-O', '--outputdir', nargs='?',
+                               help='Target output directory(default current directory)')
+        subparser.add_argument('-b', '--base', nargs='?',
+                               help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
+                                    "where 'online' folder exist.")
+        subparser.add_argument('-E', '--external', nargs='?', help='Specify external 7zip command path.')
+        subparser.add_argument('--internal', action='store_true', help='Use internal extractor.')
+
+    def _set_module_options(self, subparser):
+        subparser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")
+        subparser.add_argument('--archives', nargs='*',
+                                    help="Specify subset modules to install(Default: all standard modules).")
+
+    def _set_common_argument(self, subparser):
+        subparser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
+        subparser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
+        subparser.add_argument('target', choices=['desktop', 'winrt', 'android', 'ios'], help="target sdk")
+
     def _create_parser(self):
         parser = argparse.ArgumentParser(prog='aqt', description='Installer for Qt SDK.',
                                          formatter_class=argparse.RawTextHelpFormatter, add_help=True)
@@ -194,9 +259,8 @@ class Cli():
                                            help='subcommand for aqt Qt installer')
         install_parser = subparsers.add_parser('install')
         install_parser.set_defaults(func=self.run_install)
-        install_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
-        install_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
-        install_parser.add_argument('target', choices=['desktop', 'winrt', 'android', 'ios'], help="target sdk")
+        self._set_common_argument(install_parser)
+        self._set_common_options(install_parser)
         install_parser.add_argument('arch', nargs='?', help="\ntarget linux/desktop: gcc_64, wasm_32"
                                     "\ntarget mac/desktop:   clang_64, wasm_32"
                                     "\ntarget mac/ios:       ios"
@@ -213,28 +277,33 @@ class Cli():
                                     "\nandroid:              Qt 5.14:          android (optional)"
                                     "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
                                     "\n                                        android_x86, android_armv7")
-        install_parser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")
-        install_parser.add_argument('--archives', nargs='*',
-                                    help="Specify subset modules to install(Default: all standard modules).")
-        install_parser.add_argument('-O', '--outputdir', nargs='?',
-                                    help='Target output directory(default current directory)')
-        install_parser.add_argument('-b', '--base', nargs='?',
-                                    help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
-                                         "where 'online' folder exist.")
-        install_parser.add_argument('-E', '--external', nargs='?', help='Specify external 7zip command path.')
+        self._set_module_options(install_parser)
+        #
+        doc_parser = subparsers.add_parser('doc')
+        doc_parser.set_defaults(func=self.run_doc)
+        self._set_common_argument(doc_parser)
+        self._set_common_options(doc_parser)
+        self._set_module_options(doc_parser)
+        #
+        examples_parser = subparsers.add_parser('examples')
+        examples_parser.set_defaults(func=self.run_examples)
+        self._set_common_argument(examples_parser)
+        self._set_common_options(examples_parser)
+        self._set_module_options(examples_parser)
+        #
+        src_parser = subparsers.add_parser('src')
+        src_parser.set_defaults(func=self.run_src)
+        self._set_common_argument(src_parser)
+        self._set_common_options(src_parser)
+        #
         tools_parser = subparsers.add_parser('tool')
         tools_parser.set_defaults(func=self.run_tool)
         tools_parser.add_argument('host', choices=['linux', 'mac', 'windows'], help="host os name")
         tools_parser.add_argument('tool_name', help="Name of tool such as tools_ifw, tools_mingw")
         tools_parser.add_argument("version", help="Tool version in the format of \"4.1.2\"")
         tools_parser.add_argument('arch', help="Name of full tool name such as qt.tools.ifw.31")
-        tools_parser.add_argument('-O', '--outputdir', nargs='?',
-                                  help='Target output directory(default current directory)')
-        tools_parser.add_argument('-b', '--base', nargs='?',
-                                  help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
-                                       "where 'online' folder exist.")
-        tools_parser.add_argument('-E', '--external', nargs='?', help='Specify external 7zip command path.')
-        tools_parser.add_argument('--internal', action='store_true', help='Use internal extractor.')
+        self._set_common_options(tools_parser)
+        #
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")

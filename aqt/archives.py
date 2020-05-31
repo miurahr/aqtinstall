@@ -163,6 +163,55 @@ class QtArchives:
         return TargetConfig(self.version, self.target, self.arch, self.os_name)
 
 
+class SrcDocExamplesArchives(QtArchives):
+    """Hold doc/src/example archive package list."""
+
+    def __init__(self, flavor, os_name, target, version, subarchives=None,
+                 modules=None, mirror=None, logging=None, all_extra=False):
+        self.flavor = flavor
+        self.target = target
+        self.os_name = os_name
+        self.archives = []
+        super(SrcDocExamplesArchives, self).__init__(os_name, target, version, self.flavor, subarchives=subarchives,
+                                                     modules=modules, mirror=mirror, logging=logging,
+                                                     all_extra=all_extra)
+
+    def _get_archives(self, qt_ver_num):
+        archive_path = "{0}{1}{2}/qt5_{3}{4}".format(self.os_name,
+                                                     '_x86/' if self.os_name == 'windows' else '_x64/',
+                                                     self.target, qt_ver_num, '_src_doc_examples/')
+        archive_url = "{0}{1}".format(self.base, archive_path)
+        update_xml_url = "{0}/Updates.xml".format(archive_url)
+        target_packages = []
+        target_packages.append("qt.qt5.{}.{}".format(qt_ver_num, self.flavor))
+        target_packages.extend(self.mod_list)
+        self._download_update_xml(update_xml_url)
+        self._parse_src_doc_examples_update_xml(target_packages, archive_url)
+        pass
+
+    def _parse_src_doc_examples_update_xml(self, target_packages, archive_url):
+        self.update_xml = ElementTree.fromstring(self.update_xml_text)
+        for packageupdate in self.update_xml.iter("PackageUpdate"):
+            name = packageupdate.find("Name").text
+            if self.all_extra or name in target_packages:
+                if packageupdate.find("DownloadableArchives").text is not None:
+                    downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+                    full_version = packageupdate.find("Version").text
+                    package_desc = packageupdate.find("Description").text
+                    for archive in downloadable_archives:
+                        archive_name = archive.split('-', maxsplit=1)[0]
+                        package_url = archive_url + name + "/" + full_version + archive
+                        self.archives.append(QtPackage(archive_name, package_url, archive, package_desc,
+                                                       has_mirror=self.has_mirror))
+
+    def get_target_config(self) -> TargetConfig:
+        """Get target configuration.
+
+        :return tuple of three parameter, "Tools", target and arch
+        """
+        return TargetConfig("src_doc_examples", self.target, self.arch, self.os_name)
+
+
 class ToolArchives(QtArchives):
     """Hold tool archive package list
         when installing mingw tool, argument would be

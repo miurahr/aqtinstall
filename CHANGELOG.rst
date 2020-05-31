@@ -14,11 +14,15 @@ Current changes
 Added
 -----
 
+* New subcommand doc/src/example to install each components.(#137, 138)
+
 Changed
 -------
 
 Fixed
 -----
+
+* Show help when launched without any argument (#136)
 
 Deprecated
 ----------
