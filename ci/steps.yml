@@ -70,6 +70,42 @@ steps:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
     condition: ne(variables['SUBARCHIVES'], '')
     displayName: Run Aqt (sub arhives option)
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      mkdir Qt
+      cd Qt
+      python -m aqt src $(QT_VERSION) $(HOST) $(TARGET)
+    workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    condition: eq(variables['TOOL_NAME'], 'src')
+    displayName: Run Aqt (source)
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      mkdir Qt
+      cd Qt
+      python -m aqt examples $(QT_VERSION) $(HOST) $(TARGET)
+    workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    condition: eq(variables['TOOL_NAME'], 'examples')
+    displayName: Run Aqt (examples)
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      mkdir Qt
+      cd Qt
+      python -m aqt doc $(QT_VERSION) $(HOST) $(TARGET)
+    workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    condition: eq(variables['TOOL_NAME'], 'doc')
+    displayName: Run Aqt (doc)
 
   # Test installation environments
   ##----------------------------------------------------
@@ -219,3 +255,4 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: 'Build WebAssembler sample project'
+
