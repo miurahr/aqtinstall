@@ -174,8 +174,8 @@ class Cli():
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         try:
             srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version, subarchives=archives,
-                                                 modules=modules, mirror=mirror, logging=self.logger,
-                                                 all_extra=all_extra)
+                                                             modules=modules, mirror=mirror, logging=self.logger,
+                                                             all_extra=all_extra)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
@@ -191,7 +191,7 @@ class Cli():
         self._run_src_doc_examples('examples', args)
 
     def run_doc(self, args):
-        self._run_src_doc_examples('doc',args)
+        self._run_src_doc_examples('doc', args)
 
     def run_tool(self, args):
         start_time = time.perf_counter()
@@ -242,7 +242,7 @@ class Cli():
     def _set_module_options(self, subparser):
         subparser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")
         subparser.add_argument('--archives', nargs='*',
-                                    help="Specify subset modules to install(Default: all standard modules).")
+                               help="Specify subset modules to install(Default: all standard modules).")
 
     def _set_common_argument(self, subparser):
         subparser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
