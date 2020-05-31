@@ -152,6 +152,8 @@ class Cli():
         else:
             installer = QtInstaller(qt_archives, logging=self.logger, command=sevenzip, target_dir=output_dir)
             installer.install()
+            installer.finalize()
+        self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args):
@@ -182,6 +184,7 @@ class Cli():
             installer = QtInstaller(srcdocexamples_archives, logging=self.logger, command=sevenzip,
                                     target_dir=output_dir)
             installer.install()
+        self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_src(self, args):
@@ -212,6 +215,7 @@ class Cli():
         else:
             installer = QtInstaller(tool_archives, logging=self.logger, command=sevenzip, target_dir=output_dir)
             installer.install()
+        self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_list(self, args):
