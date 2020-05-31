@@ -14,6 +14,8 @@ Current changes
 Added
 -----
 
+* CLI: Add --verbose, -v, -vv and -q --quiet option.
+
 Changed
 -------
 
