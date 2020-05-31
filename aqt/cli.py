@@ -259,6 +259,9 @@ class Cli():
         parser.add_argument('--logging-conf', type=argparse.FileType('r'),
                             nargs=1, help="Logging configuration ini file.")
         parser.add_argument('--logger', nargs=1, help="Specify logger name")
+        parser.add_argument('--verbose', '-v', action='count', default=0,
+                            help='Specify log verbosity[Default: ERROR, -v:INFO, -vv:DEBUG]')
+        parser.add_argument('--quiet', '-q', action='store_true', help='Quiet logging')
         subparsers = parser.add_subparsers(title='subcommands', description='Valid subcommands',
                                            help='subcommand for aqt Qt installer')
         install_parser = subparsers.add_parser('install')
@@ -329,6 +332,16 @@ class Cli():
             self.logger = logging.getLogger(args.logger)
         else:
             self.logger = logging.getLogger('aqt')
+        if args.quiet:
+            self.logger.setLevel(logging.ERROR)
+        elif args.verbose == 0:
+            pass  # default warning
+        elif args.verbose == 1:
+            self.logger.setLevel(logging.INFO)
+        elif args.verbose == 2:
+            self.logger.setLevel(logging.DEBUG)
+        else:
+            self.logger.setLevel(logging.DEBUG)
 
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
