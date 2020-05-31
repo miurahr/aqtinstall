@@ -144,7 +144,23 @@ Example: Installing Android (armv7) Qt 5.10.2:
     aqt install 5.10.2 linux android android_armv7
 
 
-Example: Install Install FrameWork(IFW):
+Example: Install examples, doc and source:
+
+.. code-block:: bash
+
+    C:\ aqt examples 5.15.0 windows desktop -m qtcharts qtnetworkauth
+    C:\ aqt doc 5.15.0 windows desktop -m qtcharts qtnetworkauth
+    C:\ aqt src 5.15.0 windows desktop
+
+
+Example: Install Web Assembly
+
+.. code-block:: bash
+
+    aqt install 5.15.0 linux desktop wasm_32
+
+
+Example: Install an Install FrameWork(IFW):
 
 .. code-block:: bash
 
@@ -159,11 +175,12 @@ Example: Install vcredist:
     C:\ .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
-Example: Install OpenSSL:
+Example: Install MinGW on Windows
 
 .. code-block:: bash
 
-    C:\ aqt tool windows tools_openssl 1.1.1-1 qt.tools.openssl.win_x64
+    C:\ aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
+    c:\ set PATH=C:\Qt\Tools\mingw810_64\bin
 
 
 Example: Show help message
