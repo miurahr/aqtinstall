@@ -3,7 +3,7 @@ import aqt
 
 def test_cli_help(capsys):
     expected = "".join(["usage: aqt [-h] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
-                        "           {install,tool,list,help} ...\n",
+                        "           {install,doc,examples,src,tool,list,help} ...\n",
                         "\n",
                         "Installer for Qt SDK.\n",
                         "\n",
@@ -16,7 +16,7 @@ def test_cli_help(capsys):
                         "subcommands:\n",
                         "  Valid subcommands\n",
                         "\n",
-                        "  {install,tool,list,help}\n",
+                        "  {install,doc,examples,src,tool,list,help}\n",
                         "                        subcommand for aqt Qt installer\n"])
     cli = aqt.cli.Cli()
     cli.run(["help"])
@@ -56,7 +56,7 @@ def test_cli_check_mirror():
 
 def test_cli_launch_with_no_argument(capsys):
     expected = "".join(["usage: aqt [-h] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
-                        "           {install,tool,list,help} ...\n",
+                        "           {install,doc,examples,src,tool,list,help} ...\n",
                         "\n",
                         "Installer for Qt SDK.\n",
                         "\n",
@@ -69,7 +69,7 @@ def test_cli_launch_with_no_argument(capsys):
                         "subcommands:\n",
                         "  Valid subcommands\n",
                         "\n",
-                        "  {install,tool,list,help}\n",
+                        "  {install,doc,examples,src,tool,list,help}\n",
                         "                        subcommand for aqt Qt installer\n"])
     cli = aqt.cli.Cli()
     cli.run([])
