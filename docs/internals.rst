@@ -20,10 +20,8 @@ Archives module
 Installer module
 ----------------
 
-.. autoclass:: aqt.installer.QtInstaller
+.. automodule:: aqt.installer
     :members:
-
-.. autoexception:: aqt.installer.ExtractionError
 
 
 Cli module
@@ -37,4 +35,11 @@ Helper module
 -------------
 
 .. automodule:: aqt.helper
+    :members:
+
+
+QtPatch module
+--------------
+
+.. automodule:: aqt.qtpatch
     :members:
