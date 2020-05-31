@@ -163,14 +163,11 @@ class QtInstaller:
             if len(not_done) > 0:
                 self.logger.error("Installation error detected.")
                 exit(1)
-        # finalize
+
+    def finalize(self):
         target = self.qt_archives.get_target_config()
-        if target.version == "Tools":
-            pass
-        else:
-            self.make_conf_files(target.version, target.arch)
-            prefix = pathlib.Path(self.base_dir) / target.version / target.arch
-            updater = Updater(prefix, self.logger)
-            if versiontuple(target.version) < (5, 14, 2):
-                updater.patch_qt(target)
-        self.logger.info("Finished installation")
+        self.make_conf_files(target.version, target.arch)
+        prefix = pathlib.Path(self.base_dir) / target.version / target.arch
+        updater = Updater(prefix, self.logger)
+        if versiontuple(target.version) < (5, 14, 2):
+            updater.patch_qt(target)

@@ -87,3 +87,42 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
     - template: ci/steps.yml
+
+- job: LinuxSrc
+  displayName: Linux (source)
+  variables:
+    PYTHON_VERSION: '3.7'
+    QT_VERSION: 5.15.0
+    HOST: linux
+    TARGET: desktop
+    TOOL_NAME: src
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+    - template: ci/steps.yml
+
+- job: LinuxExamples
+  displayName: Linux (Examples)
+  variables:
+    PYTHON_VERSION: '3.7'
+    QT_VERSION: 5.15.0
+    HOST: linux
+    TARGET: desktop
+    TOOL_NAME: examples
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+    - template: ci/steps.yml
+
+- job: LinuxDoc
+  displayName: Linux (doc)
+  variables:
+    PYTHON_VERSION: '3.7'
+    QT_VERSION: 5.15.0
+    HOST: linux
+    TARGET: desktop
+    TOOL_NAME: doc
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+    - template: ci/steps.yml
