@@ -31,7 +31,7 @@ jobs:
         run: |
           import subprocess
           timeout = 300
-          command_line = ["python", "-m", "aqt", "--vv", "install"]
+          command_line = ['python', '-m', 'aqt', '-vv', 'install']
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
