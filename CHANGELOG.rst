@@ -29,6 +29,18 @@ Removed
 Security
 --------
 
+
+`v0.9.1`_ (13, June. 2020)
+==========================
+
+
+Changed
+-------
+
+* Do not raise exception when specified combination is not found on downloaded meta data.
+* Update document for developers.
+
+
 `v0.9.0`_ (31, May. 2020)
 =========================
 
@@ -548,7 +560,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.1...HEAD
+.. _v0.9.1: https://github.com/miurahr/aqtinstall/compare/v0.9.0...v0.9.1
 .. _v0.9.0: https://github.com/miurahr/aqtinstall/compare/v0.9.0b3...v0.9.0
 .. _v0.9.0b3: https://github.com/miurahr/aqtinstall/compare/v0.9.0b2...v0.9.0b3
 .. _v0.9.0b2: https://github.com/miurahr/aqtinstall/compare/v0.9.0b1...v0.9.0b2
