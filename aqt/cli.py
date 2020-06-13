@@ -58,6 +58,9 @@ class Cli():
         return False
 
     def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
+        if qt_version.startswith('5.15.0') and os_name == 'windows' and target == 'desktop':
+            if arch in ['win64_msvc2017_64', 'win32_msvc2017', 'win64_mingw73', 'win32_mingw73']:
+                return False
         for c in self.settings.qt_combinations:
             if c['os_name'] == os_name and c['target'] == target and c['arch'] == arch:
                 return True

@@ -141,9 +141,8 @@ class QtArchives:
                             self.archives.append(QtPackage(archive_name, package_url, archive, package_desc,
                                                            has_mirror=self.has_mirror))
         if len(self.archives) == 0:
-            self.logger.error("Error while parsing package information!")
+            self.logger.error("Specified packages are not found while parsing XML of package information!")
             self.logger.debug(self.update_xml_text)
-            raise ArchiveListError("Error while parsing package information!")
 
     def get_archives(self):
         """
