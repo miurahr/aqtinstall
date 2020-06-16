@@ -14,6 +14,8 @@ Current changes
 Added
 -----
 
+* Add Qt6 as a known version.
+
 Changed
 -------
 
