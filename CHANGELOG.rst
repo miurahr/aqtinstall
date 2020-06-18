@@ -14,8 +14,6 @@ Current changes
 Added
 -----
 
-* Add Qt6 as a known version.
-
 Changed
 -------
 
@@ -30,6 +28,22 @@ Removed
 
 Security
 --------
+
+`v0.9.2`_ (19, June. 2020)
+==========================
+
+
+Added
+-----
+
+* Add Qt6 as a known version. (#144)
+
+
+Fixed
+-----
+
+* Support package directory 'qt6_*' as well as 'qt5_*' (#145)
+
 
 
 `v0.9.1`_ (13, June. 2020)
@@ -562,7 +576,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.2...HEAD
+.. _v0.9.2: https://github.com/miurahr/aqtinstall/compare/v0.9.1...v0.9.2
 .. _v0.9.1: https://github.com/miurahr/aqtinstall/compare/v0.9.0...v0.9.1
 .. _v0.9.0: https://github.com/miurahr/aqtinstall/compare/v0.9.0b3...v0.9.0
 .. _v0.9.0b3: https://github.com/miurahr/aqtinstall/compare/v0.9.0b2...v0.9.0b3
