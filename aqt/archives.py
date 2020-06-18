@@ -81,11 +81,12 @@ class QtArchives:
         self.archives = []
         self.mod_list = []
         qt_ver_num = self.version.replace(".", "")
+        self.qt_ver_base = self.version[0:1]
         if all_extra:
             self.all_extra = True
         else:
             for m in modules if modules is not None else []:
-                self.mod_list.append("qt.qt5.{}.{}.{}".format(qt_ver_num, m, arch))
+                self.mod_list.append("qt.qt{}.{}.{}.{}".format(self.qt_ver_base, qt_ver_num, m, arch))
                 self.mod_list.append("qt.{}.{}.{}".format(qt_ver_num, m, arch))
         self._get_archives(qt_ver_num)
         if not all_archives:
@@ -93,14 +94,14 @@ class QtArchives:
 
     def _get_archives(self, qt_ver_num):
         # Get packages index
-        archive_path = "{0}{1}{2}/qt5_{3}{4}".format(self.os_name,
-                                                     '_x86/' if self.os_name == 'windows' else '_x64/',
-                                                     self.target, qt_ver_num,
-                                                     '_wasm/' if self.arch == 'wasm_32' else '/')
+        archive_path = "{0}{1}{2}/qt{3}_{4}{5}".format(self.os_name,
+                                                       '_x86/' if self.os_name == 'windows' else '_x64/',
+                                                       self.target, self.qt_ver_base, qt_ver_num,
+                                                       '_wasm/' if self.arch == 'wasm_32' else '/')
         update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
         archive_url = "{0}{1}".format(self.base, archive_path)
         target_packages = []
-        target_packages.append("qt.qt5.{}.{}".format(qt_ver_num, self.arch))
+        target_packages.append("qt.qt{}.{}.{}".format(self.qt_ver_base, qt_ver_num, self.arch))
         target_packages.append("qt.{}.{}".format(qt_ver_num, self.arch))
         target_packages.extend(self.mod_list)
         self._download_update_xml(update_xml_url)
@@ -175,13 +176,14 @@ class SrcDocExamplesArchives(QtArchives):
                                                      all_extra=all_extra)
 
     def _get_archives(self, qt_ver_num):
-        archive_path = "{0}{1}{2}/qt5_{3}{4}".format(self.os_name,
-                                                     '_x86/' if self.os_name == 'windows' else '_x64/',
-                                                     self.target, qt_ver_num, '_src_doc_examples/')
+        archive_path = "{0}{1}{2}/qt{3}_{4}{5}".format(self.os_name,
+                                                       '_x86/' if self.os_name == 'windows' else '_x64/',
+                                                       self.target, self.qt_ver_base, qt_ver_num,
+                                                       '_src_doc_examples/')
         archive_url = "{0}{1}".format(self.base, archive_path)
         update_xml_url = "{0}/Updates.xml".format(archive_url)
         target_packages = []
-        target_packages.append("qt.qt5.{}.{}".format(qt_ver_num, self.flavor))
+        target_packages.append("qt.qt{}.{}.{}".format(self.qt_ver_base, qt_ver_num, self.flavor))
         target_packages.extend(self.mod_list)
         self._download_update_xml(update_xml_url)
         self._parse_update_xml(archive_url, target_packages)
