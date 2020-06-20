@@ -316,6 +316,7 @@ class Cli():
         list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
         help_parser = subparsers.add_parser('help')
         help_parser.set_defaults(func=self.show_help)
+        parser.set_defaults(func=self.show_help)
         self.parser = parser
 
     def _setup_logging(self, args, env_key='LOG_CFG'):
@@ -336,6 +337,4 @@ class Cli():
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
         self._setup_logging(args)
-        if getattr(args, 'func', None) is None:
-            return self.show_help(args)
         return args.func(args)
