@@ -227,6 +227,12 @@ Use cases
 
 .. _`pyqt5-tools`: https://github.com/altendky/pyqt5-tools
 
+Media and articles
+------------------
+
+* Mindflakes blogs: `mindflakes`_
+
+.. _`mindflkakes`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
 
 History
 -------
