@@ -71,10 +71,7 @@ General usage looks like this:
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
         install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
 
-.. code-block:: bash
-
-    python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
+You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
@@ -127,6 +124,8 @@ run such as follows:
     C:\> mkdir Qt
     C:\> aqt install --outputdir c:\Qt 5.11.3 windows desktop win64_msvc2019_64
 
+Command examples
+----------------
 
 Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 
@@ -206,11 +205,11 @@ aqtinstall never do it for you because not to break multiple installation versio
 
 
 
-Supported CI platform
----------------------
+Supported CI platforms
+----------------------
 
-There are no limitation for CI platform but currently it is tested on Azure Pipelines.
-If you want to use it with Github actions, please see `install_qt`_ action.
+There are no limitation for CI platform but currently it is tested on Azure Pipelines and Github actions.
+If you want to use it with Github actions, `install_qt`_ action will help you.
 
 
 Use cases
@@ -218,7 +217,15 @@ Use cases
 
 * GitHub Actions: `install_qt`_
 
+* Docker image: `docker aqtinstall`_
+
+* `pyqt5-tools`_
+
 .. _`install_qt`: https://github.com/jurplel/install-qt-action
+
+.. _`docker aqtinstall`: https://github.com/vslotman/docker-aqtinstall
+
+.. _`pyqt5-tools`: https://github.com/altendky/pyqt5-tools
 
 
 History
