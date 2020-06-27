@@ -237,7 +237,16 @@ Media and articles
 
 * Contributor Nelson's blog article: `Fast and lightweight headless Qt Installer from Qt Mirrors: aqtinstall`_
 
+* Lostdomain.org blog: `Using Azure DevOps Pipelines with Qt`_
+
+* Qt Forum: `Automatic installation for Travis CI (or any other CI)`_
+
+
 .. _`Fast and lightweight headless Qt Installer from Qt Mirrors: aqtinstall`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
+
+.. _`Using Azure DevOps Pipelines with Qt`: https://lostdomain.org/2019/12/27/using-azure-devops-pipelines-with-qt/
+
+.. _`Automatic installation for Travis CI (or any other CI)`: https://forum.qt.io/topic/114520/automatic-installation-for-travis-ci-or-any-other-ci/2
 
 
 History
