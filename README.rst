@@ -219,7 +219,9 @@ Use cases
 
 * Docker image: `docker aqtinstall`_
 
-* `pyqt5-tools`_
+* QyQt5 Tools: `pyqt5-tools`_
+
+* Yet another comic reader: `YACReader`_  utilize on Azure-Pipelines
 
 .. _`install_qt`: https://github.com/jurplel/install-qt-action
 
@@ -227,12 +229,16 @@ Use cases
 
 .. _`pyqt5-tools`: https://github.com/altendky/pyqt5-tools
 
+.. _`YACReader`: https://github.com/YACReader/yacreader
+
+
 Media and articles
 ------------------
 
-* Mindflakes blogs: `mindflakes`_
+* Contributor Nelson's blog article: `Fast and lightweight headless Qt Installer from Qt Mirrors: aqtinstall`_
 
-.. _`mindflkakes`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
+.. _`Fast and lightweight headless Qt Installer from Qt Mirrors: aqtinstall`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
+
 
 History
 -------
