@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: [windows-latest, macOS-latest, ubuntu-latest]
         py: [3.6, 3.8]
-        qtver: [5.14.1, 5.15.0]
+        qtver: [5.7, 5.14.1, 5.15.0]
     steps:
       - uses: actions/checkout@v1
         with:
@@ -37,8 +37,10 @@ jobs:
           if platform == "windows-latest":
             if qtver.startswith('5.15'):
               args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
-            else:
+            elif qtver.startswith('5.14'):
               args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
+            else:
+              args = [qtver, "windows", "desktop", "win64_msvc2015_64"]
           elif platform == "macOS-latest":
             args = [qtver, "mac", "desktop", "clang_64"]
           else:
@@ -60,8 +62,10 @@ jobs:
           if platform == "windows-latest":
             if qtver.startswith('5.15'):
               arch_dir = 'msvc2019_64'
-            else:
+            elif qtver.startswith('5.14'):
               arch_dir = 'msvc2017_64'
+            else:
+              arch_dir = 'msvc2015_64'
           elif platform == "macOS-latest":
             arch_dir = 'clang_64'
           else:
