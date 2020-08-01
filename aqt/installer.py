@@ -163,6 +163,11 @@ class QtInstaller:
             if len(not_done) > 0:
                 self.logger.error("Installation error detected.")
                 exit(1)
+            try:
+                for feature in done:
+                    feature.result()
+            except Exception:
+                exit(1)
 
     def finalize(self):
         target = self.qt_archives.get_target_config()
