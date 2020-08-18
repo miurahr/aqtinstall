@@ -227,7 +227,11 @@ class ToolArchives(QtArchives):
         else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
-                downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
+                _archives = packageupdate.find("DownloadableArchives").text
+                if _archives != None:
+                    downloadable_archives = _archives.split(", ")
+                else:
+                    downloadable_archives = []
                 full_version = packageupdate.find("Version").text
                 if full_version != self.version:
                     continue
