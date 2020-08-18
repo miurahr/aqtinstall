@@ -29,6 +29,17 @@ Removed
 Security
 --------
 
+
+
+`v0.9.5`_ (18, Aug. 2020)
+========================
+
+Fixed
+-----
+
+* Fix error when install tools_openssl_src (#153)
+
+
 `v0.9.4`_ (2, Aug. 2020)
 ========================
 
@@ -594,7 +605,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.4...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.5...HEAD
+.. _v0.9.5: https://github.com/miurahr/aqtinstall/compare/v0.9.4...v0.9.5
 .. _v0.9.4: https://github.com/miurahr/aqtinstall/compare/v0.9.3...v0.9.4
 .. _v0.9.3: https://github.com/miurahr/aqtinstall/compare/v0.9.2...v0.9.3
 .. _v0.9.2: https://github.com/miurahr/aqtinstall/compare/v0.9.1...v0.9.2
