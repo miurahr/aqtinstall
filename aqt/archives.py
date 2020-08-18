@@ -228,7 +228,7 @@ class ToolArchives(QtArchives):
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
                 _archives = packageupdate.find("DownloadableArchives").text
-                if _archives != None:
+                if _archives is not None:
                     downloadable_archives = _archives.split(", ")
                 else:
                     downloadable_archives = []
