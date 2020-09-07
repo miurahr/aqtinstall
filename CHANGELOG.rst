@@ -17,8 +17,6 @@ Added
 Changed
 -------
 
-* setup: set minimum required python version as >=3.6.
-
 Fixed
 -----
 
@@ -31,6 +29,13 @@ Removed
 Security
 --------
 
+`v0.9.6`_ (7, Sep. 2020)
+========================
+
+Changed
+-------
+
+* setup: set minimum required python version as >=3.6.
 
 
 `v0.9.5`_ (18, Aug. 2020)
@@ -607,7 +612,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.5...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.6...HEAD
+.. _v0.9.6: https://github.com/miurahr/aqtinstall/compare/v0.9.5...v0.9.6
 .. _v0.9.5: https://github.com/miurahr/aqtinstall/compare/v0.9.4...v0.9.5
 .. _v0.9.4: https://github.com/miurahr/aqtinstall/compare/v0.9.3...v0.9.4
 .. _v0.9.3: https://github.com/miurahr/aqtinstall/compare/v0.9.2...v0.9.3
