@@ -17,6 +17,8 @@ Added
 Changed
 -------
 
+* setup: set minimum required python version as >=3.6.
+
 Fixed
 -----
 
