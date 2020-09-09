@@ -131,6 +131,9 @@ class QtArchives:
         else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
+                name_split = name.split(".")
+                if len(name_split) > 4 and name_split[len(name_split)-1] != self.arch:
+                    continue
                 if self.all_extra or name in target_packages:
                     if packageupdate.find("DownloadableArchives").text is not None:
                         downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
