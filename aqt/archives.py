@@ -25,6 +25,8 @@ from logging import getLogger
 
 import requests
 
+from aqt.settings import Settings
+
 
 class ArchiveListError(Exception):
     pass
@@ -67,6 +69,7 @@ class QtArchives:
         self.mirror = mirror
         self.os_name = os_name
         self.all_extra = all_extra
+        self.arch_list = [item.get('arch') for item in Settings().qt_combinations]
         all_archives = (subarchives is None)
         if mirror is not None:
             self.has_mirror = True
@@ -131,8 +134,8 @@ class QtArchives:
         else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
-                name_split = name.split(".")
-                if len(name_split) > 4 and name_split[len(name_split)-1] != self.arch:
+                name_last_section = name.split(".")[-1]
+                if name_last_section in self.arch_list and self.arch != name_last_section:
                     continue
                 if self.all_extra or name in target_packages:
                     if packageupdate.find("DownloadableArchives").text is not None:
