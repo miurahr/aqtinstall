@@ -161,7 +161,8 @@ steps:
     condition: eq( variables['Agent.OS'], 'Windows_NT')
     displayName: Detect toolchain for Windows and update PATH
   - script: |
-      sudo apt-get install libgl1-mesa-dev
+      sudo apt-get update
+      sudo apt-get install -y libgl1-mesa-dev
     condition: and(eq( variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'), eq(variables['TOOL_NAME'], ''))
     displayName: install test dependency for Linux
 
