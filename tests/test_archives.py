@@ -51,3 +51,4 @@ def test_parse_update_xml_with_all_extra_modules(monkeypatch, os_name, version, 
 
     # Assert if list_diff contains urls without target specified
     assert len([item for item in list_diff if target not in item]) == 0
+    
