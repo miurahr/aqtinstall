@@ -10,8 +10,8 @@ Resources
 
 - Project owner: Hiroshi Miura
 - Bug Tracker:  Github issue `Tracker`_
-- Status: alpha
-- Activity: high
+- Status: Beta
+- Activity: moderate
 
 .. _`Tracker`: https://github.com/miurahr/aqtinstall/issues
 
