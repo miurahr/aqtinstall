@@ -29,6 +29,21 @@ Removed
 Security
 --------
 
+`v0.9.7`_ (12, Sep. 2020)
+=========================
+
+Added
+-----
+
+- Support Qt 5.15.1
+
+Fixed
+-----
+
+- When we start an installation, all packages are downloaded whatever the specified platform.(#159)
+
+
+
 `v0.9.6`_ (7, Sep. 2020)
 ========================
 
@@ -612,7 +627,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.6...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.7...HEAD
+.. _v0.9.7: https://github.com/miurahr/aqtinstall/compare/v0.9.6...v0.9.7
 .. _v0.9.6: https://github.com/miurahr/aqtinstall/compare/v0.9.5...v0.9.6
 .. _v0.9.5: https://github.com/miurahr/aqtinstall/compare/v0.9.4...v0.9.5
 .. _v0.9.4: https://github.com/miurahr/aqtinstall/compare/v0.9.3...v0.9.4
