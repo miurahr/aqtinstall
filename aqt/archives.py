@@ -87,7 +87,7 @@ class PackagesList:
 
         # Get packages index
         archive_path = "{0}{1}{2}/qt5_{3}/".format(self.os_name, '_x86/' if self.os_name == 'windows' else '_x64/',
-                                                     self.target, qt_ver_num)
+                                                   self.target, qt_ver_num)
         update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
         try:
             r = requests.get(update_xml_url)
