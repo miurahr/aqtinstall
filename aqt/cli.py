@@ -29,7 +29,6 @@ import subprocess
 import time
 
 from packaging.version import Version, parse
-
 from texttable import Texttable
 
 from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
