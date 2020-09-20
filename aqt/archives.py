@@ -56,6 +56,65 @@ class QtPackage:
         self.has_mirror = has_mirror
 
 
+class ListInfo:
+    """
+        Hold list information
+    """
+    def __init__(self, name, display_name, desc, virtual):
+        self.name = name
+        self.display_name = display_name
+        self.desc = desc
+        self.virtual = virtual
+
+
+class PackagesList:
+    """
+        Hold packages list information.
+    """
+
+    BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
+
+    def __init__(self, version, os_name, target):
+        self.version = version
+        self.os_name = os_name
+        self.target = target
+        self.base = self.BASE_URL
+        self.archives = []
+        self._get_archives()
+
+    def _get_archives(self):
+        qt_ver_num = self.version.replace(".", "")
+
+        # Get packages index
+        archive_path = "{0}{1}{2}/qt5_{3}/".format(self.os_name, '_x86/' if self.os_name == 'windows' else '_x64/',
+                                                   self.target, qt_ver_num)
+        update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
+        try:
+            r = requests.get(update_xml_url)
+        except requests.exceptions.ConnectionError as e:
+            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
+            raise e
+        else:
+            self.update_xml = ElementTree.fromstring(r.text)
+            for packageupdate in self.update_xml.iter("PackageUpdate"):
+                name = packageupdate.find("Name").text
+                if packageupdate.find("DownloadableArchives").text is not None:
+                    package_desc = packageupdate.findtext("Description")
+                    display_name = packageupdate.findtext("DisplayName")
+                    virtual_str = packageupdate.findtext("Virtual")
+                    if virtual_str is None or virtual_str == 'false':
+                        virtual = False
+                    else:
+                        virtual = True
+                    self.archives.append(ListInfo(name, display_name, package_desc, virtual))
+        if len(self.archives) == 0:
+            self.logger.error("Error while parsing package information!")
+            exit(1)
+
+    def get_list(self):
+        return self.archives
+
+
 class QtArchives:
     """Hold Qt archive packages list."""
 

@@ -29,9 +29,10 @@ import subprocess
 import time
 
 from packaging.version import Version, parse
+from texttable import Texttable
 
-from aqt.archives import (ArchiveDownloadError, ArchiveListError, QtArchives,
-                          SrcDocExamplesArchives, ToolArchives)
+from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
+                          QtArchives, SrcDocExamplesArchives, ToolArchives)
 from aqt.installer import QtInstaller
 from aqt.settings import Settings
 
@@ -223,7 +224,18 @@ class Cli():
 
     def run_list(self, args):
         self.show_aqt_version()
-        print('List Qt packages for %s' % args.qt_version)
+        pl = PackagesList(args.qt_version, args.host, args.target)
+        print('List Qt packages in %s for %s' % (args.qt_version, args.host))
+        table = Texttable()
+        table.set_deco(Texttable.HEADER)
+        table.set_cols_dtype(['t', 't'])
+        table.set_cols_align(["l", "l"])
+        table.header(["target type", "arch"])
+        for entry in pl.get_list():
+            if not entry.virtual:
+                name_list = entry.name.split('.')
+                table.add_row([entry.display_name, name_list[-1]])
+        print(table.draw())
 
     def show_help(self, args):
         self.parser.print_help()
@@ -313,7 +325,7 @@ class Cli():
         #
         list_parser = subparsers.add_parser('list')
         list_parser.set_defaults(func=self.run_list)
-        list_parser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
+        self._set_common_argument(list_parser)
         help_parser = subparsers.add_parser('help')
         help_parser.set_defaults(func=self.show_help)
         parser.set_defaults(func=self.show_help)
