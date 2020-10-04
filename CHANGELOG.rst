@@ -30,19 +30,18 @@ Security
 --------
 
 `v0.9.7`_ (4, Oct. 2020)
-=========================
+========================
 
 Added
 -----
 
-- Support Qt 5.15.1
+* Support Qt 5.15.1
 * Add list command. (#161)
 
 Fixed
 -----
 
-- When we start an installation, all packages are downloaded whatever the specified platform.(#159)
-
+* When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
 `v0.9.6`_ (7, Sep. 2020)
