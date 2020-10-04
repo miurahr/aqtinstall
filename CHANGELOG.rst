@@ -29,13 +29,14 @@ Removed
 Security
 --------
 
-`v0.9.7`_ (12, Sep. 2020)
+`v0.9.7`_ (4, Oct. 2020)
 =========================
 
 Added
 -----
 
 - Support Qt 5.15.1
+* Add list command. (#161)
 
 Fixed
 -----
