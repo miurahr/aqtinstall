@@ -57,7 +57,7 @@ long options may be truncated to the shortest unambiguous abbreviation.
 
 .. option:: --base, -b <base url>
 
-    specify mirror site base url such as  -b 'http://mirrors.ocf.berkeley.edu/qt/'
+    specify mirror site base url such as  -b 'https://mirrors.ocf.berkeley.edu/qt/'
     where 'online' folder exist.
 
 .. option:: --modules, -m <list of modules>
