@@ -3,13 +3,13 @@ sudo: false
 language: python
 matrix:
   include:
-    - python: 3.7
+    - python: 3.8
       env: TOXENV=check
-    - python: 3.7
+    - python: 3.8
       env: TOXENV=docs
-    - python: 3.7
+    - python: 3.8
       env:
-        TOXENV=py37
+        TOXENV=py38
         PYTEST_ADDOPTS="--remote-data"
 
 install: pip install tox-travis

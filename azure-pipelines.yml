@@ -19,11 +19,11 @@ jobs:
 - job: MatricesGenerator
   displayName: Matrices Generator
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.7'
+        versionSpec: '3.8'
         addToPath: true
     - bash: python ci/generate_azure_pipelines_matrices.py
       name: mtrx
@@ -52,7 +52,7 @@ jobs:
 - job: Linux
   dependsOn: MatricesGenerator
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.linux'] ]
   steps:
@@ -61,7 +61,7 @@ jobs:
 - job: LinuxSpecificMirror
   displayName: Linux (Specific Mirror)
   variables:
-    PYTHON_VERSION: '3.7'
+    PYTHON_VERSION: '3.8'
     QT_VERSION: 5.13.1
     HOST: linux
     TARGET: android
@@ -69,14 +69,14 @@ jobs:
     ARCHDIR: android_armv7
     QT_BASE_MIRROR: http://mirrors.ocf.berkeley.edu/qt/
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   steps:
     - template: ci/steps.yml
 
 - job: LinuxSubArchives
   displayName: Linux (subarchive spcified)
   variables:
-    PYTHON_VERSION: '3.7'
+    PYTHON_VERSION: '3.8'
     QT_VERSION: 5.15.0
     HOST: linux
     TARGET: desktop
@@ -84,45 +84,45 @@ jobs:
     ARCHDIR: gcc_64
     SUBARCHIVES: qtbase qttools qt icu
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   steps:
     - template: ci/steps.yml
 
 - job: LinuxSrc
   displayName: Linux (source)
   variables:
-    PYTHON_VERSION: '3.7'
+    PYTHON_VERSION: '3.8'
     QT_VERSION: 5.15.0
     HOST: linux
     TARGET: desktop
     TOOL_NAME: src
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   steps:
     - template: ci/steps.yml
 
 - job: LinuxExamples
   displayName: Linux (Examples)
   variables:
-    PYTHON_VERSION: '3.7'
+    PYTHON_VERSION: '3.8'
     QT_VERSION: 5.15.0
     HOST: linux
     TARGET: desktop
     TOOL_NAME: examples
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   steps:
     - template: ci/steps.yml
 
 - job: LinuxDoc
   displayName: Linux (doc)
   variables:
-    PYTHON_VERSION: '3.7'
+    PYTHON_VERSION: '3.8'
     QT_VERSION: 5.15.0
     HOST: linux
     TARGET: desktop
     TOOL_NAME: doc
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   steps:
     - template: ci/steps.yml
