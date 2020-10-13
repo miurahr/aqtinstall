@@ -32,7 +32,7 @@ Another Qt installer(aqt)
 |        | |gha|     |         |
 +--------+-----------+---------+
 
-This is an utility alternative to the official graphical Qt installer, for using in CI environment where an inteactive UI is not usable such as Github Actions, Tavis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
+This is a utility alternative to the official graphical Qt installer, for using in CI environment where an interactive UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
 
 It can automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
@@ -69,7 +69,7 @@ General usage looks like this:
 .. code-block:: bash
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...]
+        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal] [--archives archive]
 
 You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
 
@@ -89,11 +89,11 @@ You can also call with ``python -m aqt`` syntax as well as command script ``aqt`
     * For android and Qt 5.13 or below, choose one of: `android_x86_64`, `android_arm64_v8a`, `android_x86`,
       `android_armv7`
 * You can specify external 7zip command path instead of built-in extractor.
-* When specify all for extra modules option '-m' all extra modules are installed.
+* When specifying `all` for extra modules option `-m` all extra modules are installed.
 
 
-Installing tool and utility(Experimental)
------------------------------------------
+Installing tool and utility (Experimental)
+------------------------------------------
 
 You can install tools and utilities using following syntax;
 
@@ -158,7 +158,7 @@ Example: Install Web Assembly
     aqt install 5.15.0 linux desktop wasm_32
 
 
-Example: Install an Install FrameWork(IFW):
+Example: Install an Install FrameWork (IFW):
 
 .. code-block:: bash
 
@@ -219,7 +219,7 @@ Use cases
 
 * Docker image: `docker aqtinstall`_
 
-* QyQt5 Tools: `pyqt5-tools`_
+* PyQt5 Tools: `pyqt5-tools`_
 
 * Yet another comic reader: `YACReader`_  utilize on Azure-Pipelines
 
