@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+
+`v0.9.8`_ (4, Nov. 2020)
+========================
+
+Added
+-----
+
+* Added new combinations for tools_ifw
+
 `v0.9.7`_ (4, Oct. 2020)
 ========================
 
@@ -627,7 +636,8 @@ Fixed
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.7...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.8...HEAD
+.. _v0.9.8: https://github.com/miurahr/aqtinstall/compare/v0.9.7...v0.9.8
 .. _v0.9.7: https://github.com/miurahr/aqtinstall/compare/v0.9.6...v0.9.7
 .. _v0.9.6: https://github.com/miurahr/aqtinstall/compare/v0.9.5...v0.9.6
 .. _v0.9.5: https://github.com/miurahr/aqtinstall/compare/v0.9.4...v0.9.5
