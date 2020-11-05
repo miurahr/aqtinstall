@@ -162,7 +162,7 @@ Example: Install an Install FrameWork (IFW):
 
 .. code-block:: bash
 
-    aqt tool linux tools_ifw 3.1.1 qt.tools.ifw.31
+    aqt tool linux tools_ifw 4.0 qt.tools.ifw.40
 
 
 Example: Install vcredist:
