@@ -133,13 +133,11 @@ class Cli():
             base_dir = os.getcwd()
         else:
             base_dir = target_dir
-        target_config = qt_archives.get_target_config()
         tasks = []
         for arc in qt_archives.get_archives():
             tasks.append((arc, base_dir, sevenzip))
         pool = multiprocessing.Pool(self.settings.concurrency)
         pool.starmap(install, tasks)
-        finisher(target_config, base_dir, self.logger)
 
     def run_install(self, args):
         start_time = time.perf_counter()
@@ -148,6 +146,10 @@ class Cli():
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
+        if output_dir is None:
+            base_dir = os.getcwd()
+        else:
+            base_dir = output_dir
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
@@ -169,6 +171,8 @@ class Cli():
             exit(1)
         else:
             self.call_installer(qt_archives, output_dir, sevenzip)
+            target_config = qt_archives.get_target_config()
+            finisher(target_config, base_dir, self.logger)
         self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
