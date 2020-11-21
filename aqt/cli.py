@@ -34,7 +34,7 @@ from texttable import Texttable
 
 from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
                           QtArchives, SrcDocExamplesArchives, ToolArchives)
-from aqt.installer import install
+from aqt.installer import install, finisher
 from aqt.settings import Settings
 
 try:
@@ -128,13 +128,18 @@ class Cli():
             self.parser.print_help()
             exit(1)
 
-    def call_installer(self, qt_archives, output_dir, sevenzip):
+    def call_installer(self, qt_archives, target_dir, sevenzip):
+        if target_dir is None:
+            base_dir = os.getcwd()
+        else:
+            base_dir = target_dir
         target_config = qt_archives.get_target_config()
         tasks = []
         for arc in qt_archives.get_archives():
-            tasks.append((arc, target_config, output_dir, sevenzip))
+            tasks.append((arc, base_dir, sevenzip))
         pool = multiprocessing.Pool(self.settings.concurrency)
         pool.starmap(install, tasks)
+        finisher(target_config, base_dir, self.logger)
 
     def run_install(self, args):
         start_time = time.perf_counter()

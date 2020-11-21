@@ -41,11 +41,7 @@ class ExtractionError(Exception):
     pass
 
 
-def install(qt_archive, target, target_dir, command):
-    if target_dir is None:
-        base_dir = os.getcwd()
-    else:
-        base_dir = target_dir
+def install(qt_archive, base_dir, command):
     name = qt_archive.name
     url = qt_archive.url
     archive = qt_archive.archive
@@ -98,15 +94,12 @@ def install(qt_archive, target, target_dir, command):
                     raise cpe
     os.unlink(archive)
     logger.info("Finish installation of {} in {}".format(archive, time.perf_counter() - start_time))
-    make_conf_files(target.version, target.arch, base_dir)
-    prefix = pathlib.Path(base_dir) / target.version / target.arch
-    updater = Updater(prefix, logger)
-    if versiontuple(target.version) < (5, 14, 2):
-        updater.patch_qt(target)
 
 
-def make_conf_files(qt_version, arch, base_dir):
+def finisher(target, base_dir, logger):
     """Make Qt configuration files, qt.conf and qtconfig.pri"""
+    qt_version = target.version
+    arch = target.arch
     if arch.startswith('win64_mingw'):
         arch_dir = arch[6:] + '_64'
     elif arch.startswith('win32_mingw'):
@@ -133,3 +126,8 @@ def make_conf_files(qt_version, arch, base_dir):
                 f.write(line)
     except IOError as e:
         raise e
+    prefix = pathlib.Path(base_dir) / target.version / target.arch
+    updater = Updater(prefix, logger)
+    if versiontuple(target.version) < (5, 14, 2):
+        updater.patch_qt(target)
+
