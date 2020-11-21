@@ -22,7 +22,7 @@
 
 from pkg_resources import DistributionNotFound, get_distribution
 
-from aqt.cli import Cli
+from aqt.installer import Cli
 
 try:
     __version__ = get_distribution(__name__).version
