@@ -23,6 +23,7 @@
 import argparse
 import logging
 import logging.config
+import multiprocessing
 import os
 import platform
 import subprocess
@@ -33,7 +34,7 @@ from texttable import Texttable
 
 from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
                           QtArchives, SrcDocExamplesArchives, ToolArchives)
-from aqt.installer import QtInstaller
+from aqt.installer import finisher, install
 from aqt.settings import Settings
 
 try:
@@ -127,6 +128,17 @@ class Cli():
             self.parser.print_help()
             exit(1)
 
+    def call_installer(self, qt_archives, target_dir, sevenzip):
+        if target_dir is None:
+            base_dir = os.getcwd()
+        else:
+            base_dir = target_dir
+        tasks = []
+        for arc in qt_archives.get_archives():
+            tasks.append((arc, base_dir, sevenzip))
+        pool = multiprocessing.Pool(self.settings.concurrency)
+        pool.starmap(install, tasks)
+
     def run_install(self, args):
         start_time = time.perf_counter()
         arch = args.arch
@@ -134,6 +146,10 @@ class Cli():
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
+        if output_dir is None:
+            base_dir = os.getcwd()
+        else:
+            base_dir = output_dir
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
@@ -154,9 +170,9 @@ class Cli():
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
-            installer = QtInstaller(qt_archives, logging=self.logger, command=sevenzip, target_dir=output_dir)
-            installer.install()
-            installer.finalize()
+            self.call_installer(qt_archives, output_dir, sevenzip)
+            target_config = qt_archives.get_target_config()
+            finisher(target_config, base_dir, self.logger)
         self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -185,9 +201,7 @@ class Cli():
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
-            installer = QtInstaller(srcdocexamples_archives, logging=self.logger, command=sevenzip,
-                                    target_dir=output_dir)
-            installer.install()
+            self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
         self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -217,8 +231,7 @@ class Cli():
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
-            installer = QtInstaller(tool_archives, logging=self.logger, command=sevenzip, target_dir=output_dir)
-            installer.install()
+            self.call_installer(tool_archives, output_dir, sevenzip)
         self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
