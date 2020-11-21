@@ -130,4 +130,3 @@ def finisher(target, base_dir, logger):
     updater = Updater(prefix, logger)
     if versiontuple(target.version) < (5, 14, 2):
         updater.patch_qt(target)
-
