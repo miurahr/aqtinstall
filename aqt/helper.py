@@ -10,10 +10,7 @@ import sys
 import xml.etree.ElementTree as ElementTree
 from typing import List, Optional
 
-
 import requests
-
-from aqt.settings import Settings
 
 
 def _get_meta(url: str):

@@ -18,14 +18,14 @@ def test_cli_help(capsys):
                         "\n",
                         "  {install,doc,examples,src,tool,list,help}\n",
                         "                        subcommand for aqt Qt installer\n"])
-    cli = aqt.cli.Cli()
+    cli = aqt.installer.Cli()
     cli.run(["help"])
     out, err = capsys.readouterr()
     assert out == expected
 
 
 def test_cli_check_module():
-    cli = aqt.cli.Cli()
+    cli = aqt.installer.Cli()
     assert cli._check_modules_arg('5.11.3', ['qtcharts', 'qtwebengine'])
     assert not cli._check_modules_arg('5.7', ['not_exist'])
     assert cli._check_modules_arg('5.14.0', None)
@@ -33,20 +33,20 @@ def test_cli_check_module():
 
 
 def test_cli_check_combination():
-    cli = aqt.cli.Cli()
+    cli = aqt.installer.Cli()
     assert cli._check_qt_arg_combination('5.11.3', 'linux', 'desktop', 'gcc_64')
     assert cli._check_qt_arg_combination('5.11.3', 'mac', 'desktop', 'clang_64')
     assert not cli._check_qt_arg_combination('5.14.0', 'android', 'desktop', 'clang_64')
 
 
 def test_cli_check_version():
-    cli = aqt.cli.Cli()
+    cli = aqt.installer.Cli()
     assert cli._check_qt_arg_versions('5.12.0')
     assert not cli._check_qt_arg_versions('5.12')
 
 
 def test_cli_check_mirror():
-    cli = aqt.cli.Cli()
+    cli = aqt.installer.Cli()
     assert cli._check_mirror(None)
     arg = ['install', '5.11.3', 'linux', 'desktop', '-b', "https://download.qt.io/"]
     args = cli.parser.parse_args(arg)
@@ -71,7 +71,7 @@ def test_cli_launch_with_no_argument(capsys):
                         "\n",
                         "  {install,doc,examples,src,tool,list,help}\n",
                         "                        subcommand for aqt Qt installer\n"])
-    cli = aqt.cli.Cli()
+    cli = aqt.installer.Cli()
     cli.run([])
     out, err = capsys.readouterr()
     assert out == expected
