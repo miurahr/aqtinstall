@@ -42,8 +42,7 @@ from urllib3.util.retry import Retry
 
 from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
                           QtArchives, SrcDocExamplesArchives, ToolArchives)
-from aqt.helper import altlink, versiontuple
-from aqt.qtpatch import Updater
+from aqt.helper import Updater, altlink, versiontuple
 from aqt.settings import Settings
 
 try:

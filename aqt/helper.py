@@ -1,10 +1,15 @@
+import ast
+import configparser
+import json
 import logging
+import multiprocessing
 import os
 import pathlib
 import subprocess
 import sys
 import xml.etree.ElementTree as ElementTree
 from typing import List, Optional
+
 
 import requests
 
@@ -112,3 +117,81 @@ class Updater:
             self._patch_qtcore()
         if self.qmake_path is not None:
             self._patch_file(self.qmake_path, bytes(str(self.prefix), 'UTF-8'))
+
+
+class Settings(object):
+    """Class to hold configuration and settings.
+    Actual values are stored in 'settings.ini' file.
+    It also holds a combinations database.
+    """
+    # this class is Borg/Singleton
+    _shared_state = {
+        '_config': None,
+        '_combinations': None,
+        '_lock': multiprocessing.Lock()
+    }
+
+    def __init__(self, config=None):
+        self.__dict__ = self._shared_state
+        if self._config is None:
+            with self._lock:
+                if self._config is None:
+                    if config is None:
+                        self.inifile = os.path.join(os.path.dirname(__file__), 'settings.ini')
+                    else:
+                        self.inifile = config
+                    self._config = self.configParse(self.inifile)
+                    with open(os.path.join(os.path.dirname(__file__), 'combinations.json'), 'r') as j:
+                        self._combinations = json.load(j)[0]
+
+    def configParse(self, file_path):
+        if not os.path.exists(file_path):
+            raise IOError(file_path)
+        config = configparser.ConfigParser()
+        config.read(file_path)
+        return config
+
+    @property
+    def qt_combinations(self):
+        return self._combinations['qt']
+
+    @property
+    def tools_combinations(self):
+        return self._combinations['tools']
+
+    @property
+    def available_versions(self):
+        return self._combinations['versions']
+
+    def available_modules(self, qt_version):
+        """Known module names
+
+        :returns: dictionary of qt_version and module names
+        :rtype: List[str]
+        """
+        modules = self._combinations['modules']
+        versions = qt_version.split('.')
+        version = "{}.{}".format(versions[0], versions[1])
+        result = None
+        for record in modules:
+            if record["qt_version"] == version:
+                result = record["modules"]
+        return result
+
+    @property
+    def concurrency(self):
+        """concurrency configuration.
+
+        :return: concurrency
+        :rtype: int
+        """
+        return self._config.getint("aqt", "concurrency")
+
+    @property
+    def blacklist(self):
+        """list of sites in a blacklist
+
+        :returns: list of site URLs(scheme and host part)
+        :rtype: List[str]
+        """
+        return ast.literal_eval(self._config.get("mirrors", "blacklist"))
