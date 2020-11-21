@@ -34,7 +34,7 @@ from texttable import Texttable
 
 from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
                           QtArchives, SrcDocExamplesArchives, ToolArchives)
-from aqt.installer import install, finisher
+from aqt.installer import finisher, install
 from aqt.settings import Settings
 
 try:
