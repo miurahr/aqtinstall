@@ -42,8 +42,7 @@ from urllib3.util.retry import Retry
 
 from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
                           QtArchives, SrcDocExamplesArchives, ToolArchives)
-from aqt.helper import Updater, altlink, versiontuple
-from aqt.settings import Settings
+from aqt.helper import Settings, Updater, altlink, versiontuple
 
 try:
     from importlib import metadata as importlib_metadata  # noqa

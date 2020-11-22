@@ -25,7 +25,7 @@ from logging import getLogger
 
 import requests
 
-from aqt.settings import Settings
+from aqt.helper import Settings
 
 
 class ArchiveListError(Exception):
