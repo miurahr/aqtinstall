@@ -76,6 +76,18 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
+      python -m aqt src $(QT_VERSION) $(HOST) $(TARGET)
+    workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    condition: eq(variables['TOOL_NAME'], 'src')
+    displayName: Run Aqt (source)
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      mkdir Qt
+      cd Qt
       python -m aqt examples $(QT_VERSION) $(HOST) $(TARGET)
     workingDirectory: $(Build.BinariesDirectory)
     env:
