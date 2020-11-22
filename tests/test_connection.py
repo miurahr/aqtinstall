@@ -15,7 +15,7 @@ def test_cli_unknown_version(capsys):
                 " Server response code: 404, reason code: Not Found".format(wrong_url)
                 ]
     with pytest.raises(SystemExit) as pytest_wrapped_e:
-        cli = aqt.cli.Cli()
+        cli = aqt.installer.Cli()
         cli.run(["install", wrong_version, "mac", "desktop"])
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 1
