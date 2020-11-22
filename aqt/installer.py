@@ -196,12 +196,8 @@ class Cli:
         output_dir = args.outputdir
         mirror = args.base
         sevenzip = self._set_sevenzip(args)
-        if flavor in ['doc', 'examples']:
-            modules = args.modules
-            archives = args.archives
-        else:
-            modules = None
-            archives = None
+        modules = args.modules
+        archives = args.archives
         self._run_common_part(output_dir, mirror)
         all_extra = True if modules is not None and 'all' in modules else False
         if not self._check_qt_arg_versions(qt_version):
@@ -286,7 +282,7 @@ class Cli:
     def _set_module_options(self, subparser):
         subparser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")
         subparser.add_argument('--archives', nargs='*',
-                               help="Specify subset modules to install(Default: all standard modules).")
+                               help="Specify subset packages to install (Default: all standard and extra modules).")
 
     def _set_common_argument(self, subparser):
         subparser.add_argument("qt_version", help="Qt version in the format of \"5.X.Y\"")
@@ -339,6 +335,7 @@ class Cli:
         src_parser.set_defaults(func=self.run_src)
         self._set_common_argument(src_parser)
         self._set_common_options(src_parser)
+        self._set_module_options(src_parser)
         #
         tools_parser = subparsers.add_parser('tool')
         tools_parser.set_defaults(func=self.run_tool)

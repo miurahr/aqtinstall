@@ -100,7 +100,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt doc $(QT_VERSION) $(HOST) $(TARGET)
+      python -m aqt doc $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini

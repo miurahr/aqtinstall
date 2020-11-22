@@ -92,10 +92,11 @@ jobs:
   displayName: Linux (source)
   variables:
     PYTHON_VERSION: '3.8'
-    QT_VERSION: 5.15.0
+    QT_VERSION: 6.0.0
     HOST: linux
     TARGET: desktop
     TOOL_NAME: src
+    SUBARCHIVES: qtdoc
   pool:
     vmImage: 'ubuntu-18.04'
   steps:
