@@ -96,7 +96,7 @@ jobs:
     HOST: linux
     TARGET: desktop
     TOOL_NAME: src
-    SUBARCHIVES: qtdoc
+    SUBARCHIVES: qt
   pool:
     vmImage: 'ubuntu-18.04'
   steps:
@@ -123,6 +123,7 @@ jobs:
     HOST: linux
     TARGET: desktop
     TOOL_NAME: doc
+    SUBARCHIVES: qtdoc
   pool:
     vmImage: 'ubuntu-18.04'
   steps:

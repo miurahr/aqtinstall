@@ -68,7 +68,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: ne(variables['SUBARCHIVES'], '')
+    condition: and(ne(variables['SUBARCHIVES'], ''), eq(variables['TOOL_NAME'], '']
     displayName: Run Aqt (sub arhives option)
   - bash: |
       number=$RANDOM
@@ -76,7 +76,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      python -m aqt src $(QT_VERSION) $(HOST) $(TARGET)
+      python -m aqt src $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
