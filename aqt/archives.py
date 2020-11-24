@@ -200,7 +200,7 @@ class QtArchives:
                     if name_last_section in self.arch_list and self.arch != name_last_section:
                         continue
                     # Check doc/examples
-                    if self.arch in ['doc','examples']:
+                    if self.arch in ['doc', 'examples']:
                         if self.arch not in name:
                             continue
                 if self.all_extra or name in target_packages:
