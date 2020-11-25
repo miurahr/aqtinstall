@@ -1,0 +1,300 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt5.5152</Name>
+  <DisplayName>Qt 5.15.2</DisplayName>
+  <Description>Qt 5.15.2 &lt;br>&lt;br>sha1: 9b43a43ee96198674060c6b9591e515e2d27c28f</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Dependencies>qt.qt5.5152.doc, qt.qt5.5152.examples</Dependencies>
+  <AutoDependOn/>
+  <Virtual>false</Virtual>
+  <SortingPriority>5152</SortingPriority>
+  <DownloadableArchives>sha1s.txt.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="2311" OS="Any" CompressedSize="1608"/>
+  <SHA1>31af45760b8c8082852788ebad59c314aed0eada</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc</Name>
+  <DisplayName>Qt 5.15.2 Documentation</DisplayName>
+  <Description>Qt 5.15.2 documentation</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Dependencies>qt.tools</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>tqtc-qt5-documentation.7z, activeqt-documentation.7z, qdoc-documentation.7z, qmake-documentation.7z, qt3d-documentation.7z, qtandroidextras-documentation.7z, qtassistant-documentation.7z, qtbluetooth-documentation.7z, qtconcurrent-documentation.7z, qtcmake-documentation.7z, qtcore-documentation.7z, qtdbus-documentation.7z, qtdesigner-documentation.7z, qtdistancefieldgenerator-documentation.7z, qtdoc-documentation.7z, qtgamepad-documentation.7z, qtgraphicaleffects-documentation.7z, qtgui-documentation.7z, qthelp-documentation.7z, qtimageformats-documentation.7z, qtlabscalendar-documentation.7z, qtlabsplatform-documentation.7z, qtlinguist-documentation.7z, qtlocation-documentation.7z, qtmacextras-documentation.7z, qtmultimedia-documentation.7z, qtnetwork-documentation.7z, qtnfc-documentation.7z, qtopengl-documentation.7z, qtplatformheaders-documentation.7z, qtpositioning-documentation.7z, qtprintsupport-documentation.7z, qtqml-documentation.7z, qtqmlmodels-documentation.7z, qtqmltest-documentation.7z, qtquick-documentation.7z, qtquickcontrols-documentation.7z, qtquickcontrols1-documentation.7z, qtquickdialogs-documentation.7z, qtquickextras-documentation.7z, qtremoteobjects-documentation.7z, qtscxml-documentation.7z, qtsensors-documentation.7z, qtserialbus-documentation.7z, qtserialport-documentation.7z, qtspeech-documentation.7z, qtsql-documentation.7z, qtsvg-documentation.7z, qttestlib-documentation.7z, qtuitools-documentation.7z, qtwaylandcompositor-documentation.7z, qtwebchannel-documentation.7z, qtwebsockets-documentation.7z, qtwebview-documentation.7z, qtwidgets-documentation.7z, qtwinextras-documentation.7z, qtx11extras-documentation.7z, qtxml-documentation.7z, qtxmlpatterns-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="402906410" OS="Any" CompressedSize="134528625"/>
+  <SHA1>b02bb326163291a3547e66a1b0cb82747fa0b8f2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtcharts</Name>
+  <DisplayName>Documentation for Qt 5.15.2 GPLv3 components (QtCharts)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 GPLv3 components (QtCharts)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtcharts-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="16802053" OS="Any" CompressedSize="8714357"/>
+  <SHA1>e0e06f663cf7c772fc6d9998f240646e49a594e0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtdatavis3d</Name>
+  <DisplayName>Documentation for Qt 5.15.2 GPLv3 components (QtDataVisualization)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 GPLv3 components (QtDataVisualization)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtdatavisualization-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="12639590" OS="Any" CompressedSize="6098622"/>
+  <SHA1>a7a1f769c01a19ca3bbf1896143318ca05afad54</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtlottie</Name>
+  <DisplayName>Documentation for Qt 5.15.2 GPLv3 components (QtLottieAnimation)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 GPLv3 components (QtLottieAnimation)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtlottieanimation-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="440779" OS="Any" CompressedSize="52433"/>
+  <SHA1>373f73c7de9c1729f3ddede6709be33af99b5a3f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtnetworkauth</Name>
+  <DisplayName>Documentation for Qt Networkauth (Technology Preview)</DisplayName>
+  <Description>Documentation for Qt Networkauth (Technology Preview)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtnetworkauth-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="948777" OS="Any" CompressedSize="243257"/>
+  <SHA1>936f22ad718cbfc4f9213c12ba2d3d0f0c2fafd2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtpurchasing</Name>
+  <DisplayName>Documentation for Qt 5.15.2 GPLv3 components (QtPurchasing)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 GPLv3 components (QtPurchasing)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtpurchasing-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="864247" OS="Any" CompressedSize="288037"/>
+  <SHA1>6abc2ddb3648e8f5c5cef8b1e89298d5078607f7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtquick3d</Name>
+  <DisplayName>Documentation for Qt 5.15.2 GPLv3 components (QtQuick3D)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 GPLv3 components (QtQuick3D)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquick3d-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="18520851" OS="Any" CompressedSize="12060205"/>
+  <SHA1>974bfb768d2894c8c53eb0641130926b53e37155</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtquicktimeline</Name>
+  <DisplayName>Documentation for Qt Quick Timeline</DisplayName>
+  <Description>Documentation for Qt Quick Timeline</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquicktimeline-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="345361" OS="Any" CompressedSize="149430"/>
+  <SHA1>daf5c678da456a26b800db01408c770b89bea648</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtscript</Name>
+  <DisplayName>Documentation for Qt 5.15.2 Deprecated components (QtScript)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 Deprecated components (QtScript)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtscript-documentation.7z, qtscripttools-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="3679742" OS="Any" CompressedSize="684639"/>
+  <SHA1>2ee79a86e6a29db7ad41ffc62a3d9ef512f550b9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtvirtualkeyboard</Name>
+  <DisplayName>Documentation for Qt 5.15.2 GPLv3 components (QtVirtualKeyboard)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 GPLv3 components (QtVirtualKeyboard)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtvirtualkeyboard-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="4253361" OS="Any" CompressedSize="2034055"/>
+  <SHA1>9d31bb164d51322421a7ba9935434ca122d5aea4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtwebengine</Name>
+  <DisplayName>Documentation for QtWebEngine</DisplayName>
+  <Description>Documentation for QtWebEngine</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwebengine-documentation.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="9407273" OS="Any" CompressedSize="2981661"/>
+  <SHA1>09131b9d55bdd61ee7176f432b43ea7b749548b0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples</Name>
+  <DisplayName>Qt 5.15.2 Examples</DisplayName>
+  <Description>Qt 5.15.2 Examples</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Dependencies>qt.tools</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>tqtc-qt5-examples-5.15.2.7z, qt3d-examples-5.15.2.7z, qtactiveqt-examples-5.15.2.7z, qtandroidextras-examples-5.15.2.7z, qtbase-examples-5.15.2.7z, qtconnectivity-examples-5.15.2.7z, qtdeclarative-examples-5.15.2.7z, qtdoc-examples-5.15.2.7z, qtgamepad-examples-5.15.2.7z, qtgraphicaleffects-examples-5.15.2.7z, qtimageformats-examples-5.15.2.7z, qtlocation-examples-5.15.2.7z, qtmacextras-examples-5.15.2.7z, qtmultimedia-examples-5.15.2.7z, qtquickcontrols-examples-5.15.2.7z, qtquickcontrols2-examples-5.15.2.7z, qtremoteobjects-examples-5.15.2.7z, qtscxml-examples-5.15.2.7z, qtsensors-examples-5.15.2.7z, qtserialbus-examples-5.15.2.7z, qtserialport-examples-5.15.2.7z, qtspeech-examples-5.15.2.7z, qtsvg-examples-5.15.2.7z, qttools-examples-5.15.2.7z, qttranslations-examples-5.15.2.7z, qtwayland-examples-5.15.2.7z, qtwebchannel-examples-5.15.2.7z, qtwebsockets-examples-5.15.2.7z, qtwebview-examples-5.15.2.7z, qtwinextras-examples-5.15.2.7z, qtx11extras-examples-5.15.2.7z, qtxmlpatterns-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="150199927" OS="Any" CompressedSize="112807804"/>
+  <SHA1>db5d5fd6c30d2cd1695245336c3c6d4b1e953c7f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtcharts</Name>
+  <DisplayName>Examples for Qt 5.15.2 GPLv3 components (QtCharts)</DisplayName>
+  <Description>Examples for Qt 5.15.2 GPLv3 components (QtCharts)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtcharts-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="529204" OS="Any" CompressedSize="52276"/>
+  <SHA1>14933c664941702748a85a08b6a02681878d5e1b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtdatavis3d</Name>
+  <DisplayName>Examples for Qt 5.15.2 GPLv3 components (QtDataVisualization)</DisplayName>
+  <Description>Examples for Qt 5.15.2 GPLv3 components (QtDataVisualization)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtdatavis3d-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="5877518" OS="Any" CompressedSize="4081776"/>
+  <SHA1>ab48bab5082962d934937e9343912068659cea20</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtlottie</Name>
+  <DisplayName>Examples for Qt 5.15.2 GPLv3 components (QtLottieAnimation)</DisplayName>
+  <Description>Examples for Qt 5.15.2 GPLv3 components (QtLottieAnimation)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtlottie-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="40" OS="Any" CompressedSize="199"/>
+  <SHA1>4a52cdd4888d76a08d71b89636fc5d63dc033c88</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtnetworkauth</Name>
+  <DisplayName>Examples for Qt Networkauth (Technology Preview)</DisplayName>
+  <Description>Examples for Qt Networkauth (Technology Preview)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtnetworkauth-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="116153" OS="Any" CompressedSize="69876"/>
+  <SHA1>8316500ee83f0d741fa8817fa903020a9278a8e5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtpurchasing</Name>
+  <DisplayName>Examples for Qt 5.15.2 GPLv3 components (QtPurchasing)</DisplayName>
+  <Description>Examples for Qt 5.15.2 GPLv3 components (QtPurchasing)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtpurchasing-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="345077" OS="Any" CompressedSize="121425"/>
+  <SHA1>969f08e29ba3944dc8fa1c2b907044d068b5fb59</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtquick3d</Name>
+  <DisplayName>Examples for Qt 5.15.2 GPLv3 components (QtQuick3D)</DisplayName>
+  <Description>Examples for Qt 5.15.2 GPLv3 components (QtQuick3D)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquick3d-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="8314149" OS="Any" CompressedSize="5507182"/>
+  <SHA1>ac613fadfbaae950a49cbf53af9dc507911f7047</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtquicktimeline</Name>
+  <DisplayName>Examples for Qt Quick Timeline</DisplayName>
+  <Description>Examples for Qt Quick Timeline</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquicktimeline-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="40" OS="Any" CompressedSize="199"/>
+  <SHA1>178ceff551c8324aedc62d28b8d1398be2e60961</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtscript</Name>
+  <DisplayName>Examples for Qt 5.15.2 Deprecated components (QtScript)</DisplayName>
+  <Description>Examples for Qt 5.15.2 Deprecated components (QtScript)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtscript-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="315143" OS="Any" CompressedSize="63042"/>
+  <SHA1>da12f4df8c004c3a6e2c46fa40dbad589c557be9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtvirtualkeyboard</Name>
+  <DisplayName>Examples for Qt 5.15.2 GPLv3 components (QtVirtualKeyboard)</DisplayName>
+  <Description>Examples for Qt 5.15.2 GPLv3 components (QtVirtualKeyboard)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtvirtualkeyboard-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="38677" OS="Any" CompressedSize="6877"/>
+  <SHA1>d63e2782fbae45e1c990ad6d0dfd16e370477552</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.examples.qtwebengine</Name>
+  <DisplayName>Examples for QtWebEngine</DisplayName>
+  <Description>Examples for QtWebEngine</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwebengine-examples-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="2260862" OS="Any" CompressedSize="1302241"/>
+  <SHA1>6d563d0841934449e0d46b2f9e483d71b90ce8e8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.src</Name>
+  <DisplayName>Sources</DisplayName>
+  <Description>Qt 5.15.2 Source Components</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <SortingPriority>100</SortingPriority>
+  <DownloadableArchives>qtactiveqt-everywhere-src-5.15.2.7z, qtandroidextras-everywhere-src-5.15.2.7z, qtdoc-everywhere-src-5.15.2.7z, qtmacextras-everywhere-src-5.15.2.7z, qtwayland-everywhere-src-5.15.2.7z, qtwinextras-everywhere-src-5.15.2.7z, qtbase-everywhere-src-5.15.2.7z, qtconnectivity-everywhere-src-5.15.2.7z, qtx11extras-everywhere-src-5.15.2.7z, qtwebchannel-everywhere-src-5.15.2.7z, qtmultimedia-everywhere-src-5.15.2.7z, qttranslations-everywhere-src-5.15.2.7z, qtgraphicaleffects-everywhere-src-5.15.2.7z, qtsvg-everywhere-src-5.15.2.7z, qtdeclarative-everywhere-src-5.15.2.7z, qtwebsockets-everywhere-src-5.15.2.7z, qtimageformats-everywhere-src-5.15.2.7z, qttools-everywhere-src-5.15.2.7z, qtxmlpatterns-everywhere-src-5.15.2.7z, qtsensors-everywhere-src-5.15.2.7z, qtserialport-everywhere-src-5.15.2.7z, qtlocation-everywhere-src-5.15.2.7z, qtquickcontrols-everywhere-src-5.15.2.7z, qtquickcontrols2-everywhere-src-5.15.2.7z, qtremoteobjects-everywhere-src-5.15.2.7z, qt3d-everywhere-src-5.15.2.7z, qtwebview-everywhere-src-5.15.2.7z, qtserialbus-everywhere-src-5.15.2.7z, qtscxml-everywhere-src-5.15.2.7z, qtcharts-everywhere-src-5.15.2.7z, qtdatavis3d-everywhere-src-5.15.2.7z, qtpurchasing-everywhere-src-5.15.2.7z, qtvirtualkeyboard-everywhere-src-5.15.2.7z, qtwebengine-everywhere-src-5.15.2.7z, qtgamepad-everywhere-src-5.15.2.7z, qtscript-everywhere-src-5.15.2.7z, qtspeech-everywhere-src-5.15.2.7z, qtnetworkauth-everywhere-src-5.15.2.7z, qtwebglplugin-everywhere-src-5.15.2.7z, qtlottie-everywhere-src-5.15.2.7z, qtquick3d-everywhere-src-5.15.2.7z, qtquicktimeline-everywhere-src-5.15.2.7z, tqtc-qt5-everywhere-src-5.15.2.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="2938465693" OS="Any" CompressedSize="585068011"/>
+  <SHA1>604ca7933fd5f12d10a6c50cd532cf0dc0dec851</SHA1>
+ </PackageUpdate>
+ <SHA1>eb1c8c4d4c1e87c02ad23bd25917a1f96b42419a</SHA1>
+ <MetadataName>2020-11-13-0738_meta.7z</MetadataName>
+</Updates>

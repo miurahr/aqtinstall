@@ -193,9 +193,16 @@ class QtArchives:
         else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
-                name_last_section = name.split(".")[-1]
-                if name_last_section in self.arch_list and self.arch != name_last_section:
-                    continue
+                # Need to filter archives to download when we want all extra modules
+                if self.all_extra:
+                    # Check platform
+                    name_last_section = name.split(".")[-1]
+                    if name_last_section in self.arch_list and self.arch != name_last_section:
+                        continue
+                    # Check doc/examples
+                    if self.arch in ['doc', 'examples']:
+                        if self.arch not in name:
+                            continue
                 if self.all_extra or name in target_packages:
                     if packageupdate.find("DownloadableArchives").text is not None:
                         downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
