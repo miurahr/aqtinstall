@@ -14,6 +14,28 @@ Current changes
 Added
 -----
 
+Changed
+-------
+
+Fixed
+-----
+
+Deprecated
+----------
+
+Removed
+-------
+
+Security
+--------
+
+
+`v0.10.0`_ (25, Nov. 2020)
+==========================
+
+Added
+-----
+
 * Add v5.12.2, v6.0.0 as known versions.(#176, #177)
 * Support --archives option on src installation.
 
@@ -31,16 +53,6 @@ Fixed
 * When we used "-m all" to download doc or examples, Qt sources are also downloaded(@Gamso)(#182)
 
 
-Deprecated
-----------
-
-Removed
--------
-
-Security
---------
-
-
 v0.9.8 (4, Nov. 2020)
 =====================
 
@@ -56,4 +68,5 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.9.8...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.10.0...HEAD
+.. _v0.10.0: https://github.com/miurahr/aqtinstall/compare/v0.9.8...v0.10.0
