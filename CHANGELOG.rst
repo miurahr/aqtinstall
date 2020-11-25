@@ -23,9 +23,13 @@ Changed
 * Use multiprocessing.Pool instead of concurrent.futures(#178)
 * Refactoring whole modules. (#179)
 * Split old changelogs to CHNAGELOG_prerelease.rst
+* Drop an upper limitaion (<0.11) for py7zr.(#183)
 
 Fixed
 -----
+
+* When we used "-m all" to download doc or examples, Qt sources are also downloaded(@Gamso)(#182)
+
 
 Deprecated
 ----------
