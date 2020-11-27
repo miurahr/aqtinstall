@@ -52,6 +52,15 @@ For details see `Qt licensing`_ and `Licenses used in Qt5`_
 
 .. _`Licenses used in Qt5`: https://doc.qt.io/qt-5/licenses-used-in-qt.html
 
+Requirements
+------------
+
+- Minimum Python version:  3.6
+- Recommended Python version: 3.7.5 or later
+
+- Dependent libraries: requests, py7zr
+
+
 Install
 -------
 
