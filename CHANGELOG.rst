@@ -30,6 +30,23 @@ Security
 --------
 
 
+`v0.10.1`_ (11, Dec. 2020)
+==========================
+
+Added
+-----
+
+* Add LTS vresions as known version.(#188)
+
+Changed
+-------
+
+* Tool: Version comparison by startswith.
+  When specified 4.0 but download server hold 4.0.1, it catch 4.0.1.(related #187)
+* README: explicitly show python version requirements.
+
+
+
 `v0.10.0`_ (25, Nov. 2020)
 ==========================
 
@@ -68,5 +85,6 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.10.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.10.1...HEAD
+.. _v0.10.1: https://github.com/miurahr/aqtinstall/compare/v0.10.0...v0.10.1
 .. _v0.10.0: https://github.com/miurahr/aqtinstall/compare/v0.9.8...v0.10.0
