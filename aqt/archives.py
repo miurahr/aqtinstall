@@ -305,14 +305,8 @@ class ToolArchives(QtArchives):
                 else:
                     downloadable_archives = []
                 full_version = packageupdate.find("Version").text
-                if full_version != self.version:
+                if not full_version.startswith(self.version):
                     continue
-                # FIXME: rules
-                # if "-" in full_version:
-                #    split_version = full_version.split("-")
-                #    named_version = split_version[0] + "-" + split_version[1]
-                # else:
-                #    named_version = full_version
                 named_version = full_version
                 package_desc = packageupdate.find("Description").text
                 for archive in downloadable_archives:
