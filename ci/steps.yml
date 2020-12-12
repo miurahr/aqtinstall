@@ -68,7 +68,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: and(ne(variables['SUBARCHIVES'], ''), eq(variables['TOOL_NAME'], '']
+    condition: and(ne(variables['SUBARCHIVES'], ''), eq(variables['TOOL_NAME'], ''))
     displayName: Run Aqt (sub arhives option)
   - bash: |
       number=$RANDOM
