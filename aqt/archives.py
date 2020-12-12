@@ -299,6 +299,8 @@ class ToolArchives(QtArchives):
         else:
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
+                if name != self.arch:
+                    continue
                 _archives = packageupdate.find("DownloadableArchives").text
                 if _archives is not None:
                     downloadable_archives = _archives.split(", ")
@@ -306,6 +308,8 @@ class ToolArchives(QtArchives):
                     downloadable_archives = []
                 full_version = packageupdate.find("Version").text
                 if not full_version.startswith(self.version):
+                    self.logger.warning("Version {} differ from requested version {} -- skip.".format(full_version,
+                                                                                                      self.version))
                     continue
                 named_version = full_version
                 package_desc = packageupdate.find("Description").text
