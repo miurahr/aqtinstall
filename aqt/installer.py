@@ -425,7 +425,7 @@ def installer(qt_archive, base_dir, command):
                         logger.error(cpe.stderr)
                     raise cpe
     os.unlink(archive)
-    logger.info("Finish installation of {} in {}".format(archive, time.perf_counter() - start_time))
+    logger.info("Finished installation of {} in {}".format(archive, time.perf_counter() - start_time))
 
 
 def finisher(target, base_dir, logger):
