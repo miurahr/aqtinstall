@@ -41,7 +41,7 @@ from texttable import Texttable
 from urllib3.util.retry import Retry
 
 from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
-                          QtArchives, SrcDocExamplesArchives, ToolArchives)
+                          QtArchives, SrcDocExamplesArchives, ToolArchives, ArchiveConnectionError)
 from aqt.helper import Settings, Updater, altlink, versiontuple
 
 try:
@@ -165,6 +165,7 @@ class Cli:
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
         mirror = args.base
+        fallback = args.fallback
         archives = args.archives
         self._run_common_part(output_dir, mirror)
         if not self._check_qt_arg_versions(qt_version):
@@ -178,6 +179,17 @@ class Cli:
         try:
             qt_archives = QtArchives(os_name, target, qt_version, arch, subarchives=archives, modules=modules,
                                      mirror=mirror, logging=self.logger, all_extra=all_extra)
+        except ArchiveConnectionError:
+            if fallback is not None:
+                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
+                qt_archives = QtArchives(os_name, target, qt_version, arch, subarchives=archives, modules=modules,
+                                         mirror=fallback, logging=self.logger, all_extra=all_extra)
+                target_config = qt_archives.get_target_config()
+                self.call_installer(qt_archives, output_dir, sevenzip)
+                finisher(target_config, base_dir, self.logger)
+            else:
+                self.logger.error("Connection to the download site failed. Aborted...")
+                exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
@@ -194,6 +206,7 @@ class Cli:
         qt_version = args.qt_version
         output_dir = args.outputdir
         mirror = args.base
+        fallback = args.fallback
         sevenzip = self._set_sevenzip(args)
         modules = args.modules
         archives = args.archives
@@ -205,6 +218,18 @@ class Cli:
             srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version, subarchives=archives,
                                                              modules=modules, mirror=mirror, logging=self.logger,
                                                              all_extra=all_extra)
+        except ArchiveConnectionError:
+            if fallback is not None:
+                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
+                srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version,
+                                                                 subarchives=archives,
+                                                                 modules=modules, mirror=fallback, logging=self.logger,
+                                                                 all_extra=all_extra)
+                self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
+            else:
+                self.logger.error("Connection to the download site failed. Aborted...")
+                exit(1)
+
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
@@ -230,11 +255,17 @@ class Cli:
         sevenzip = self._set_sevenzip(args)
         version = args.version
         mirror = args.base
+        fallback = args.fallback
         self._run_common_part(output_dir, mirror)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         try:
             tool_archives = ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger)
+        except ArchiveConnectionError:
+            if fallback is not None:
+                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
+                tool_archives = ToolArchives(os_name, tool_name, version, arch, mirror=fallback, logging=self.logger)
+                self.call_installer(tool_archives, output_dir, sevenzip)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
@@ -275,6 +306,8 @@ class Cli:
         subparser.add_argument('-b', '--base', nargs='?',
                                help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                     "where 'online' folder exist.")
+        subparser.add_argument('--fallback', nargs='?',
+                               help="Specify fallback mirror site when main site is accidentally down.")
         subparser.add_argument('-E', '--external', nargs='?', help='Specify external 7zip command path.')
         subparser.add_argument('--internal', action='store_true', help='Use internal extractor.')
 
@@ -373,7 +406,7 @@ class Cli:
         return args.func(args)
 
 
-def installer(qt_archive, base_dir, command):
+def installer(qt_archive, base_dir, command, response_timeout=30):
     name = qt_archive.name
     url = qt_archive.url
     archive = qt_archive.archive
@@ -381,49 +414,50 @@ def installer(qt_archive, base_dir, command):
     logger = getLogger('aqt')
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
-    session = requests.Session()
-    retry = Retry(connect=5, backoff_factor=0.5)
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-    try:
-        r = session.get(url, allow_redirects=False, stream=True)
-        if r.status_code == 302:
-            newurl = altlink(r.url, r.headers['Location'], logger=logger)
-            logger.info('Redirected URL: {}'.format(newurl))
-            r = session.get(newurl, stream=True)
-    except requests.exceptions.ConnectionError as e:
-        logger.error("Connection error: %s" % e.args)
-        raise e
-    else:
+    timeout = (3.5, response_timeout)
+    with requests.Session() as session:
+        retry = Retry(connect=5, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
         try:
-            with open(archive, 'wb') as fd:
-                for chunk in r.iter_content(chunk_size=8196):
-                    fd.write(chunk)
-                    fd.flush()
-            if command is None:
-                with py7zr.SevenZipFile(archive, 'r') as szf:
-                    szf.extractall(path=base_dir)
-        except Exception as e:
-            exc = sys.exc_info()
-            logger.error("Download error: %s" % exc[1])
+            r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
+            if r.status_code == 302:
+                newurl = altlink(r.url, r.headers['Location'], logger=logger)
+                logger.info('Redirected URL: {}'.format(newurl))
+                r = session.get(newurl, stream=True, timeout=timeout)
+        except requests.exceptions.ConnectionError as e:
+            logger.error("Connection error: %s" % e.args)
             raise e
         else:
-            if command is not None:
-                if base_dir is not None:
-                    command_args = [command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(base_dir), archive]
-                else:
-                    command_args = [command, 'x', '-aoa', '-bd', '-y', archive]
-                try:
-                    proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
-                    logger.debug(proc.stdout)
-                except subprocess.CalledProcessError as cpe:
-                    logger.error("Extraction error: %d" % cpe.returncode)
-                    if cpe.stdout is not None:
-                        logger.error(cpe.stdout)
-                    if cpe.stderr is not None:
-                        logger.error(cpe.stderr)
-                    raise cpe
+            try:
+                with open(archive, 'wb') as fd:
+                    for chunk in r.iter_content(chunk_size=8196):
+                        fd.write(chunk)
+                        fd.flush()
+                if command is None:
+                    with py7zr.SevenZipFile(archive, 'r') as szf:
+                        szf.extractall(path=base_dir)
+            except Exception as e:
+                exc = sys.exc_info()
+                logger.error("Download error: %s" % exc[1])
+                raise e
+            else:
+                if command is not None:
+                    if base_dir is not None:
+                        command_args = [command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(base_dir), archive]
+                    else:
+                        command_args = [command, 'x', '-aoa', '-bd', '-y', archive]
+                    try:
+                        proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+                        logger.debug(proc.stdout)
+                    except subprocess.CalledProcessError as cpe:
+                        logger.error("Extraction error: %d" % cpe.returncode)
+                        if cpe.stdout is not None:
+                            logger.error(cpe.stdout)
+                        if cpe.stderr is not None:
+                            logger.error(cpe.stderr)
+                        raise cpe
     os.unlink(archive)
     logger.info("Finish installation of {} in {}".format(archive, time.perf_counter() - start_time))
 

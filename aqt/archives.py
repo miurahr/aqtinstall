@@ -28,6 +28,10 @@ import requests
 from aqt.helper import Settings
 
 
+class ArchiveConnectionError(Exception):
+    pass
+
+
 class ArchiveListError(Exception):
     pass
 
@@ -172,9 +176,8 @@ class QtArchives:
     def _download_update_xml(self, update_xml_url):
         try:
             r = requests.get(update_xml_url)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise ArchiveDownloadError("Download error!")
+        except (ConnectionResetError, requests.exceptions.ConnectionError) as e:
+            raise ArchiveConnectionError()
         else:
             if r.status_code == 200:
                 self.update_xml_text = r.text
