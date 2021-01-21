@@ -75,12 +75,13 @@ class PackagesList:
         Hold packages list information.
     """
 
-    def __init__(self, version, os_name, target, base):
+    def __init__(self, version, os_name, target, base, timeout=(5, 5)):
         self.version = version
         self.os_name = os_name
         self.target = target
         self.archives = []
         self.base = base
+        self.timeout = timeout
         self.logger = getLogger('aqt')
         self._get_archives()
 
@@ -91,7 +92,7 @@ class PackagesList:
         archive_path = "{0}{1}{2}/qt5_{3}/".format(self.os_name, '_x86/' if self.os_name == 'windows' else '_x64/',
                                                    self.target, qt_ver_num)
         update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
-        r = requests.get(update_xml_url)
+        r = requests.get(update_xml_url, timeout=self.timeout)
         self.update_xml = ElementTree.fromstring(r.text)
         for packageupdate in self.update_xml.iter("PackageUpdate"):
             name = packageupdate.find("Name").text
@@ -116,7 +117,7 @@ class QtArchives:
     """Hold Qt archive packages list."""
 
     def __init__(self, os_name, target, version, arch, base, subarchives=None,
-                 modules=None, logging=None, all_extra=False):
+                 modules=None, logging=None, all_extra=False, timeout=(5, 5)):
         self.version = version
         self.target = target
         self.arch = arch
@@ -139,6 +140,7 @@ class QtArchives:
             for m in modules if modules is not None else []:
                 self.mod_list.append("qt.qt{}.{}.{}.{}".format(self.qt_ver_base, qt_ver_num, m, arch))
                 self.mod_list.append("qt.{}.{}.{}".format(qt_ver_num, m, arch))
+        self.timeout = timeout
         self._get_archives(qt_ver_num)
         if not all_archives:
             self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
@@ -160,7 +162,7 @@ class QtArchives:
 
     def _download_update_xml(self, update_xml_url):
         try:
-            r = requests.get(update_xml_url)
+            r = requests.get(update_xml_url, timeout=self.timeout)
         except (ConnectionResetError, requests.exceptions.ConnectionError):
             raise ArchiveConnectionError()
         else:
