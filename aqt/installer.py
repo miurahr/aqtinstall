@@ -41,8 +41,9 @@ from requests.adapters import HTTPAdapter
 from texttable import Texttable
 from urllib3.util.retry import Retry
 
-from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
-                          QtArchives, SrcDocExamplesArchives, ToolArchives, ArchiveConnectionError)
+from aqt.archives import (ArchiveConnectionError, ArchiveDownloadError,
+                          ArchiveListError, PackagesList, QtArchives,
+                          SrcDocExamplesArchives, ToolArchives)
 from aqt.helper import Settings, Updater, altlink, versiontuple
 
 try:
@@ -174,7 +175,7 @@ class Cli:
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
         if args.base is not None:
-            base = args.base
+            base = args.base + '/online/qtsdkrepository/'
         else:
             base = BASE_URL
         archives = args.archives
@@ -196,18 +197,14 @@ class Cli:
                 qt_archives = QtArchives(os_name, target, qt_version, arch, random.choice(FALLBACK_URLS),
                                          subarchives=archives, modules=modules, logging=self.logger,
                                          all_extra=all_extra)
-                target_config = qt_archives.get_target_config()
-                self.call_installer(qt_archives, output_dir, sevenzip)
-                finisher(target_config, base_dir, self.logger)
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        else:
-            target_config = qt_archives.get_target_config()
-            self.call_installer(qt_archives, output_dir, sevenzip)
-            finisher(target_config, base_dir, self.logger)
+        target_config = qt_archives.get_target_config()
+        self.call_installer(qt_archives, output_dir, sevenzip)
+        finisher(target_config, base_dir, self.logger)
         self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -218,7 +215,7 @@ class Cli:
         qt_version = args.qt_version
         output_dir = args.outputdir
         if args.base is not None:
-            base = args.base
+            base = args.base + '/online/qtsdkrepository/'
         else:
             base = BASE_URL
         sevenzip = self._set_sevenzip(args)
@@ -239,14 +236,12 @@ class Cli:
                                                                  random.choice(FALLBACK_URLS),
                                                                  subarchives=archives, modules=modules,
                                                                  logging=self.logger, all_extra=all_extra)
-                self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        else:
-            self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
+        self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -267,22 +262,26 @@ class Cli:
         output_dir = args.outputdir
         sevenzip = self._set_sevenzip(args)
         version = args.version
-        mirror = args.base
-        fallback = args.fallback
-        self._run_common_part(output_dir, mirror)
+        if args.base is not None:
+            base = args.base + '/online/qtsdkrepository/'
+        else:
+            base = BASE_URL
+        self._run_common_part(output_dir, base)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         try:
-            tool_archives = ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger)
+            tool_archives = ToolArchives(os_name, tool_name, version, arch, base, logging=self.logger)
         except ArchiveConnectionError:
-            if fallback is not None:
+            try:
                 self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                tool_archives = ToolArchives(os_name, tool_name, version, arch, mirror=fallback, logging=self.logger)
-                self.call_installer(tool_archives, output_dir, sevenzip)
+                tool_archives = ToolArchives(os_name, tool_name, version, arch, random.choice(FALLBACK_URLS),
+                                             logging=self.logger)
+            except Exception:
+                self.logger.error("Connection to the download site failed. Aborted...")
+                exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        else:
-            self.call_installer(tool_archives, output_dir, sevenzip)
+        self.call_installer(tool_archives, output_dir, sevenzip)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
