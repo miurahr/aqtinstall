@@ -28,6 +28,7 @@ import multiprocessing
 import os
 import pathlib
 import platform
+import random
 import subprocess
 import sys
 import time
@@ -40,8 +41,9 @@ from requests.adapters import HTTPAdapter
 from texttable import Texttable
 from urllib3.util.retry import Retry
 
-from aqt.archives import (ArchiveDownloadError, ArchiveListError, PackagesList,
-                          QtArchives, SrcDocExamplesArchives, ToolArchives)
+from aqt.archives import (ArchiveConnectionError, ArchiveDownloadError,
+                          ArchiveListError, PackagesList, QtArchives,
+                          SrcDocExamplesArchives, ToolArchives)
 from aqt.helper import Settings, Updater, altlink, versiontuple
 
 try:
@@ -52,6 +54,14 @@ except ImportError:
 
 class ExtractionError(Exception):
     pass
+
+
+BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
+FALLBACK_URLS = ['https://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/',
+                 'https://ftp.jaist.ac.jp/pub/qtproject/online/qtsdkrepository/',
+                 'http://ftp1.nluug.nl/languages/qt/online/qtsdkrepository/',
+                 'https://mirrors.dotsrc.org/qtproject/online/qtsdkrepository/'
+                 ]
 
 
 class Cli:
@@ -164,9 +174,12 @@ class Cli:
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
-        mirror = args.base
+        if args.base is not None:
+            base = args.base + '/online/qtsdkrepository/'
+        else:
+            base = BASE_URL
         archives = args.archives
-        self._run_common_part(output_dir, mirror)
+        self._run_common_part(output_dir, base)
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
@@ -176,14 +189,22 @@ class Cli:
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
         try:
-            qt_archives = QtArchives(os_name, target, qt_version, arch, subarchives=archives, modules=modules,
-                                     mirror=mirror, logging=self.logger, all_extra=all_extra)
+            qt_archives = QtArchives(os_name, target, qt_version, arch, base, subarchives=archives, modules=modules,
+                                     logging=self.logger, all_extra=all_extra)
+        except ArchiveConnectionError:
+            try:
+                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
+                qt_archives = QtArchives(os_name, target, qt_version, arch, random.choice(FALLBACK_URLS),
+                                         subarchives=archives, modules=modules, logging=self.logger,
+                                         all_extra=all_extra)
+            except Exception:
+                self.logger.error("Connection to the download site failed. Aborted...")
+                exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        else:
-            target_config = qt_archives.get_target_config()
-            self.call_installer(qt_archives, output_dir, sevenzip)
-            finisher(target_config, base_dir, self.logger)
+        target_config = qt_archives.get_target_config()
+        self.call_installer(qt_archives, output_dir, sevenzip)
+        finisher(target_config, base_dir, self.logger)
         self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -193,24 +214,36 @@ class Cli:
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
-        mirror = args.base
+        if args.base is not None:
+            base = args.base + '/online/qtsdkrepository/'
+        else:
+            base = BASE_URL
         sevenzip = self._set_sevenzip(args)
         modules = args.modules
         archives = args.archives
-        self._run_common_part(output_dir, mirror)
+        self._run_common_part(output_dir, base)
         all_extra = True if modules is not None and 'all' in modules else False
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         try:
-            srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version, subarchives=archives,
-                                                             modules=modules, mirror=mirror, logging=self.logger,
+            srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version, base,
+                                                             subarchives=archives, modules=modules, logging=self.logger,
                                                              all_extra=all_extra)
+        except ArchiveConnectionError:
+            try:
+                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
+                srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version,
+                                                                 random.choice(FALLBACK_URLS),
+                                                                 subarchives=archives, modules=modules,
+                                                                 logging=self.logger, all_extra=all_extra)
+            except Exception:
+                self.logger.error("Connection to the download site failed. Aborted...")
+                exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        else:
-            self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
+        self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
         self.logger.info("Finished installation")
-        self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
+        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_src(self, args):
         self._run_src_doc_examples('src', args)
@@ -229,22 +262,35 @@ class Cli:
         output_dir = args.outputdir
         sevenzip = self._set_sevenzip(args)
         version = args.version
-        mirror = args.base
-        self._run_common_part(output_dir, mirror)
+        if args.base is not None:
+            base = args.base + '/online/qtsdkrepository/'
+        else:
+            base = BASE_URL
+        self._run_common_part(output_dir, base)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         try:
-            tool_archives = ToolArchives(os_name, tool_name, version, arch, mirror=mirror, logging=self.logger)
+            tool_archives = ToolArchives(os_name, tool_name, version, arch, base, logging=self.logger)
+        except ArchiveConnectionError:
+            try:
+                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
+                tool_archives = ToolArchives(os_name, tool_name, version, arch, random.choice(FALLBACK_URLS),
+                                             logging=self.logger)
+            except Exception:
+                self.logger.error("Connection to the download site failed. Aborted...")
+                exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        else:
-            self.call_installer(tool_archives, output_dir, sevenzip)
+        self.call_installer(tool_archives, output_dir, sevenzip)
         self.logger.info("Finished installation")
-        self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
+        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_list(self, args):
         self.show_aqt_version()
-        pl = PackagesList(args.qt_version, args.host, args.target)
+        try:
+            pl = PackagesList(args.qt_version, args.host, args.target, BASE_URL)
+        except requests.exceptions.ConnectionError:
+            pl = PackagesList(args.qt_version, args.host, args.target, random.choice(FALLBACK_URLS))
         print('List Qt packages in %s for %s' % (args.qt_version, args.host))
         table = Texttable()
         table.set_deco(Texttable.HEADER)
@@ -373,7 +419,7 @@ class Cli:
         return args.func(args)
 
 
-def installer(qt_archive, base_dir, command):
+def installer(qt_archive, base_dir, command, response_timeout=30):
     name = qt_archive.name
     url = qt_archive.url
     archive = qt_archive.archive
@@ -381,49 +427,50 @@ def installer(qt_archive, base_dir, command):
     logger = getLogger('aqt')
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
-    session = requests.Session()
-    retry = Retry(connect=5, backoff_factor=0.5)
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
-    try:
-        r = session.get(url, allow_redirects=False, stream=True)
-        if r.status_code == 302:
-            newurl = altlink(r.url, r.headers['Location'], logger=logger)
-            logger.info('Redirected URL: {}'.format(newurl))
-            r = session.get(newurl, stream=True)
-    except requests.exceptions.ConnectionError as e:
-        logger.error("Connection error: %s" % e.args)
-        raise e
-    else:
+    timeout = (3.5, response_timeout)
+    with requests.Session() as session:
+        retry = Retry(connect=5, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
         try:
-            with open(archive, 'wb') as fd:
-                for chunk in r.iter_content(chunk_size=8196):
-                    fd.write(chunk)
-                    fd.flush()
-            if command is None:
-                with py7zr.SevenZipFile(archive, 'r') as szf:
-                    szf.extractall(path=base_dir)
-        except Exception as e:
-            exc = sys.exc_info()
-            logger.error("Download error: %s" % exc[1])
+            r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
+            if r.status_code == 302:
+                newurl = altlink(r.url, r.headers['Location'], logger=logger)
+                logger.info('Redirected URL: {}'.format(newurl))
+                r = session.get(newurl, stream=True, timeout=timeout)
+        except requests.exceptions.ConnectionError as e:
+            logger.error("Connection error: %s" % e.args)
             raise e
         else:
-            if command is not None:
-                if base_dir is not None:
-                    command_args = [command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(base_dir), archive]
-                else:
-                    command_args = [command, 'x', '-aoa', '-bd', '-y', archive]
-                try:
-                    proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
-                    logger.debug(proc.stdout)
-                except subprocess.CalledProcessError as cpe:
-                    logger.error("Extraction error: %d" % cpe.returncode)
-                    if cpe.stdout is not None:
-                        logger.error(cpe.stdout)
-                    if cpe.stderr is not None:
-                        logger.error(cpe.stderr)
-                    raise cpe
+            try:
+                with open(archive, 'wb') as fd:
+                    for chunk in r.iter_content(chunk_size=8196):
+                        fd.write(chunk)
+                        fd.flush()
+                if command is None:
+                    with py7zr.SevenZipFile(archive, 'r') as szf:
+                        szf.extractall(path=base_dir)
+            except Exception as e:
+                exc = sys.exc_info()
+                logger.error("Download error: %s" % exc[1])
+                raise e
+            else:
+                if command is not None:
+                    if base_dir is not None:
+                        command_args = [command, 'x', '-aoa', '-bd', '-y', '-o{}'.format(base_dir), archive]
+                    else:
+                        command_args = [command, 'x', '-aoa', '-bd', '-y', archive]
+                    try:
+                        proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+                        logger.debug(proc.stdout)
+                    except subprocess.CalledProcessError as cpe:
+                        logger.error("Extraction error: %d" % cpe.returncode)
+                        if cpe.stdout is not None:
+                            logger.error(cpe.stdout)
+                        if cpe.stderr is not None:
+                            logger.error(cpe.stderr)
+                        raise cpe
     os.unlink(archive)
     logger.info("Finished installation of {} in {}".format(archive, time.perf_counter() - start_time))
 

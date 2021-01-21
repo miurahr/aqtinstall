@@ -28,6 +28,10 @@ import requests
 from aqt.helper import Settings
 
 
+class ArchiveConnectionError(Exception):
+    pass
+
+
 class ArchiveListError(Exception):
     pass
 
@@ -48,12 +52,11 @@ class QtPackage:
     """
       Hold package information.
     """
-    def __init__(self, name, archive_url, archive, package_desc, has_mirror=False):
+    def __init__(self, name, archive_url, archive, package_desc):
         self.name = name
         self.url = archive_url
         self.archive = archive
         self.desc = package_desc
-        self.has_mirror = has_mirror
 
 
 class ListInfo:
@@ -72,14 +75,13 @@ class PackagesList:
         Hold packages list information.
     """
 
-    BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
-
-    def __init__(self, version, os_name, target):
+    def __init__(self, version, os_name, target, base):
         self.version = version
         self.os_name = os_name
         self.target = target
-        self.base = self.BASE_URL
         self.archives = []
+        self.base = base
+        self.logger = getLogger('aqt')
         self._get_archives()
 
     def _get_archives(self):
@@ -88,25 +90,20 @@ class PackagesList:
         # Get packages index
         archive_path = "{0}{1}{2}/qt5_{3}/".format(self.os_name, '_x86/' if self.os_name == 'windows' else '_x64/',
                                                    self.target, qt_ver_num)
-        update_xml_url = "{0}{1}Updates.xml".format(self.BASE_URL, archive_path)
-        try:
-            r = requests.get(update_xml_url)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise e
-        else:
-            self.update_xml = ElementTree.fromstring(r.text)
-            for packageupdate in self.update_xml.iter("PackageUpdate"):
-                name = packageupdate.find("Name").text
-                if packageupdate.find("DownloadableArchives").text is not None:
-                    package_desc = packageupdate.findtext("Description")
-                    display_name = packageupdate.findtext("DisplayName")
-                    virtual_str = packageupdate.findtext("Virtual")
-                    if virtual_str is None or virtual_str == 'false':
-                        virtual = False
-                    else:
-                        virtual = True
-                    self.archives.append(ListInfo(name, display_name, package_desc, virtual))
+        update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
+        r = requests.get(update_xml_url)
+        self.update_xml = ElementTree.fromstring(r.text)
+        for packageupdate in self.update_xml.iter("PackageUpdate"):
+            name = packageupdate.find("Name").text
+            if packageupdate.find("DownloadableArchives").text is not None:
+                package_desc = packageupdate.findtext("Description")
+                display_name = packageupdate.findtext("DisplayName")
+                virtual_str = packageupdate.findtext("Virtual")
+                if virtual_str is None or virtual_str == 'false':
+                    virtual = False
+                else:
+                    virtual = True
+                self.archives.append(ListInfo(name, display_name, package_desc, virtual))
         if len(self.archives) == 0:
             self.logger.error("Error while parsing package information!")
             exit(1)
@@ -118,24 +115,16 @@ class PackagesList:
 class QtArchives:
     """Hold Qt archive packages list."""
 
-    BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
-
-    def __init__(self, os_name, target, version, arch, subarchives=None,
-                 modules=None, mirror=None, logging=None, all_extra=False):
+    def __init__(self, os_name, target, version, arch, base, subarchives=None,
+                 modules=None, logging=None, all_extra=False):
         self.version = version
         self.target = target
         self.arch = arch
-        self.mirror = mirror
         self.os_name = os_name
         self.all_extra = all_extra
         self.arch_list = [item.get('arch') for item in Settings().qt_combinations]
         all_archives = (subarchives is None)
-        if mirror is not None:
-            self.has_mirror = True
-            self.base = mirror + '/online/qtsdkrepository/'
-        else:
-            self.has_mirror = False
-            self.base = self.BASE_URL
+        self.base = base
         if logging:
             self.logger = logging
         else:
@@ -172,9 +161,8 @@ class QtArchives:
     def _download_update_xml(self, update_xml_url):
         try:
             r = requests.get(update_xml_url)
-        except requests.exceptions.ConnectionError as e:
-            self.logger.error('Download error: %s\n' % e.args, exc_info=True)
-            raise ArchiveDownloadError("Download error!")
+        except (ConnectionResetError, requests.exceptions.ConnectionError):
+            raise ArchiveConnectionError()
         else:
             if r.status_code == 200:
                 self.update_xml_text = r.text
@@ -211,8 +199,7 @@ class QtArchives:
                         for archive in downloadable_archives:
                             archive_name = archive.split('-', maxsplit=1)[0]
                             package_url = archive_url + name + "/" + full_version + archive
-                            self.archives.append(QtPackage(archive_name, package_url, archive, package_desc,
-                                                           has_mirror=self.has_mirror))
+                            self.archives.append(QtPackage(archive_name, package_url, archive, package_desc))
         if len(self.archives) == 0:
             self.logger.error("Specified packages are not found while parsing XML of package information!")
             self.logger.debug(self.update_xml_text)
@@ -238,13 +225,14 @@ class QtArchives:
 class SrcDocExamplesArchives(QtArchives):
     """Hold doc/src/example archive package list."""
 
-    def __init__(self, flavor, os_name, target, version, subarchives=None,
-                 modules=None, mirror=None, logging=None, all_extra=False):
+    def __init__(self, flavor, os_name, target, version, base, subarchives=None,
+                 modules=None, logging=None, all_extra=False):
         self.flavor = flavor
         self.target = target
         self.os_name = os_name
-        super(SrcDocExamplesArchives, self).__init__(os_name, target, version, self.flavor, subarchives=subarchives,
-                                                     modules=modules, mirror=mirror, logging=logging,
+        self.base = base
+        super(SrcDocExamplesArchives, self).__init__(os_name, target, version, self.flavor, base,
+                                                     subarchives=subarchives, modules=modules, logging=logging,
                                                      all_extra=all_extra)
 
     def _get_archives(self, qt_ver_num):
@@ -276,10 +264,10 @@ class ToolArchives(QtArchives):
         ToolArchive(linux, desktop, 3.1.1, ifw)
     """
 
-    def __init__(self, os_name, tool_name, version, arch, mirror=None, logging=None):
+    def __init__(self, os_name, tool_name, version, arch, base, logging=None):
         self.tool_name = tool_name
         self.os_name = os_name
-        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, mirror=mirror, logging=logging)
+        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, base, logging=logging)
 
     def _get_archives(self, qt_ver_num):
         if self.os_name == 'windows':
@@ -315,8 +303,7 @@ class ToolArchives(QtArchives):
                 package_desc = packageupdate.find("Description").text
                 for archive in downloadable_archives:
                     package_url = archive_url + self.tool_name + "/" + name + "/" + named_version + archive
-                    self.archives.append(QtPackage(name, package_url, archive, package_desc,
-                                                   has_mirror=(self.mirror is not None)))
+                    self.archives.append(QtPackage(name, package_url, archive, package_desc))
 
     def get_target_config(self) -> TargetConfig:
         """Get target configuration.
