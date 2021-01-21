@@ -29,8 +29,16 @@ Removed
 Security
 --------
 
+`v0.11.1`_ (21, Jan. 2021)
+==========================
 
-`v0.11.0`_ (11, Dec. 2020)
+Added
+-----
+
+* Add --timeout option to specify connection timeout (default 5.0 sec) (#197)
+
+
+`v0.11.0`_ (21, Jan. 2021)
 ==========================
 
 Added
@@ -94,7 +102,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.11.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.11.1...HEAD
+.. _v0.11.1: https://github.com/miurahr/aqtinstall/compare/v0.11.0...v0.11.1
 .. _v0.11.0: https://github.com/miurahr/aqtinstall/compare/v0.10.1...v0.11.0
 .. _v0.10.1: https://github.com/miurahr/aqtinstall/compare/v0.10.0...v0.10.1
 .. _v0.10.0: https://github.com/miurahr/aqtinstall/compare/v0.9.8...v0.10.0
