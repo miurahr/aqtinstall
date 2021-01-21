@@ -62,6 +62,7 @@ FALLBACK_URLS = ['https://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/',
                  'https://mirrors.dotsrc.org/qtproject/online/qtsdkrepository/'
                  ]
 
+
 class Cli:
     """CLI main class to parse command line argument and launch proper functions."""
 
@@ -192,8 +193,9 @@ class Cli:
         except ArchiveConnectionError:
             try:
                 self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                qt_archives = QtArchives(os_name, target, qt_version, arch, random.choice(FALLBACK_URLS), subarchives=archives,
-                                         modules=modules, logging=self.logger, all_extra=all_extra)
+                qt_archives = QtArchives(os_name, target, qt_version, arch, random.choice(FALLBACK_URLS),
+                                         subarchives=archives, modules=modules, logging=self.logger,
+                                         all_extra=all_extra)
                 target_config = qt_archives.get_target_config()
                 self.call_installer(qt_archives, output_dir, sevenzip)
                 finisher(target_config, base_dir, self.logger)
@@ -288,7 +290,7 @@ class Cli:
         self.show_aqt_version()
         try:
             pl = PackagesList(args.qt_version, args.host, args.target, BASE_URL)
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.ConnectionError:
             pl = PackagesList(args.qt_version, args.host, args.target, random.choice(FALLBACK_URLS))
         print('List Qt packages in %s for %s' % (args.qt_version, args.host))
         table = Texttable()

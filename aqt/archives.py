@@ -161,7 +161,7 @@ class QtArchives:
     def _download_update_xml(self, update_xml_url):
         try:
             r = requests.get(update_xml_url)
-        except (ConnectionResetError, requests.exceptions.ConnectionError) as e:
+        except (ConnectionResetError, requests.exceptions.ConnectionError):
             raise ArchiveConnectionError()
         else:
             if r.status_code == 200:
