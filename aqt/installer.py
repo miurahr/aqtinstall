@@ -171,6 +171,10 @@ class Cli:
             base_dir = os.getcwd()
         else:
             base_dir = output_dir
+        if args.timeout is not None:
+            timeout = (args.timeout, args.timeout)
+        else:
+            timeout = (5, 5)
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
@@ -190,13 +194,13 @@ class Cli:
             self.logger.warning("Some of specified modules are unknown.")
         try:
             qt_archives = QtArchives(os_name, target, qt_version, arch, base, subarchives=archives, modules=modules,
-                                     logging=self.logger, all_extra=all_extra)
+                                     logging=self.logger, all_extra=all_extra, timeout=timeout)
         except ArchiveConnectionError:
             try:
                 self.logger.warning("Connection to the download site failed and fallback to mirror site.")
                 qt_archives = QtArchives(os_name, target, qt_version, arch, random.choice(FALLBACK_URLS),
                                          subarchives=archives, modules=modules, logging=self.logger,
-                                         all_extra=all_extra)
+                                         all_extra=all_extra, timeout=timeout)
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
@@ -218,6 +222,10 @@ class Cli:
             base = args.base + '/online/qtsdkrepository/'
         else:
             base = BASE_URL
+        if args.timeout is not None:
+            timeout = (args.timeout, args.timeout)
+        else:
+            timeout = (5, 5)
         sevenzip = self._set_sevenzip(args)
         modules = args.modules
         archives = args.archives
@@ -228,14 +236,14 @@ class Cli:
         try:
             srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version, base,
                                                              subarchives=archives, modules=modules, logging=self.logger,
-                                                             all_extra=all_extra)
+                                                             all_extra=all_extra, timeout=timeout)
         except ArchiveConnectionError:
             try:
                 self.logger.warning("Connection to the download site failed and fallback to mirror site.")
                 srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version,
                                                                  random.choice(FALLBACK_URLS),
                                                                  subarchives=archives, modules=modules,
-                                                                 logging=self.logger, all_extra=all_extra)
+                                                                 logging=self.logger, all_extra=all_extra, timeout=timeout)
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
@@ -266,16 +274,20 @@ class Cli:
             base = args.base + '/online/qtsdkrepository/'
         else:
             base = BASE_URL
+        if args.timeout is not None:
+            timeout = (args.timeout, args.timeout)
+        else:
+            timeout = (5, 5)
         self._run_common_part(output_dir, base)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
         try:
-            tool_archives = ToolArchives(os_name, tool_name, version, arch, base, logging=self.logger)
+            tool_archives = ToolArchives(os_name, tool_name, version, arch, base, logging=self.logger, timeout=timeout)
         except ArchiveConnectionError:
             try:
                 self.logger.warning("Connection to the download site failed and fallback to mirror site.")
                 tool_archives = ToolArchives(os_name, tool_name, version, arch, random.choice(FALLBACK_URLS),
-                                             logging=self.logger)
+                                             logging=self.logger, timeout=timeout)
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
@@ -323,6 +335,8 @@ class Cli:
                                     "where 'online' folder exist.")
         subparser.add_argument('-E', '--external', nargs='?', help='Specify external 7zip command path.')
         subparser.add_argument('--internal', action='store_true', help='Use internal extractor.')
+        subparser.add_argument('--timeout', nargs='?', type=float,
+                               help="Specify connection timeout for download site.(default: 5 sec)")
 
     def _set_module_options(self, subparser):
         subparser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")

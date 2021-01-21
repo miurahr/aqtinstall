@@ -79,7 +79,7 @@ General usage looks like this:
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
         install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
-        [--archives archive]
+        [--archives <archive>[ <archive>...]] [--timeout <timeout(sec)>]
 
 You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
 
@@ -110,7 +110,7 @@ You can install tools and utilities using following syntax;
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        tool <host> <tool_name> <tool-version> <arch>
+        tool <host> <tool_name> <tool-version> <arch> [--timeout <timeout>]
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
 * arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on Qt `archive_site`_

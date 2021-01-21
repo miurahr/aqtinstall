@@ -266,10 +266,10 @@ class ToolArchives(QtArchives):
         ToolArchive(linux, desktop, 3.1.1, ifw)
     """
 
-    def __init__(self, os_name, tool_name, version, arch, base, logging=None):
+    def __init__(self, os_name, tool_name, version, arch, base, logging=None, timeout=(5, 5)):
         self.tool_name = tool_name
         self.os_name = os_name
-        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, base, logging=logging)
+        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, base, logging=logging, timeout=timeout)
 
     def _get_archives(self, qt_ver_num):
         if self.os_name == 'windows':
