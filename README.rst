@@ -1,6 +1,11 @@
 Another Qt installer(aqt)
 =========================
 
+- Release: |pypi|
+- Documents: |docs|
+- Check status: |pep8|
+- Installation test: |gha|
+
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
@@ -8,29 +13,8 @@ Another Qt installer(aqt)
    :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
 .. |pep8| image:: https://travis-ci.org/miurahr/aqtinstall.svg?branch=master
    :target: https://travis-ci.org/miurahr/aqtinstall
-.. |macos| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Mac
-   :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ubuntu| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux
-   :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |windows| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Windows
-   :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
-.. |ext| image:: https://dev.azure.com/miurahr/github/_apis/build/status/miurahr.aqtinstall?branchName=master&jobName=Linux%20(Specific%20Mirror)
-   :target: https://dev.azure.com/miurahr/github/_build/latest?definitionId=6&branchName=master
 .. |gha| image:: https://github.com/miurahr/aqtinstall/workflows/Test%20on%20GH%20actions%20environment/badge.svg
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
-
-+--------+-----------+---------+
-| Jobs   | Mac       | Release |
-|        | Linux     | Status  |
-|        | Windows   |         |
-|        | Mirror    |         |
-+--------+-----------+---------+
-| Status | |macos|   | |pypi|  |
-|        | |ubuntu|  | |pep8|  |
-|        | |windows| | |docs|  |
-|        | |ext|     |         |
-|        | |gha|     |         |
-+--------+-----------+---------+
 
 This is a utility alternative to the official graphical Qt installer, for using in CI environment where an interactive UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
 
