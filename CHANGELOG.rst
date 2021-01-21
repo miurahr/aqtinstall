@@ -30,6 +30,15 @@ Security
 --------
 
 
+`v0.11.0`_ (11, Dec. 2020)
+==========================
+
+Added
+-----
+
+* Automatically fallback to mirror site when main https://download.qt.io down.(#194, #196)
+
+
 `v0.10.1`_ (11, Dec. 2020)
 ==========================
 
