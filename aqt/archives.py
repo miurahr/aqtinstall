@@ -228,14 +228,14 @@ class SrcDocExamplesArchives(QtArchives):
     """Hold doc/src/example archive package list."""
 
     def __init__(self, flavor, os_name, target, version, base, subarchives=None,
-                 modules=None, logging=None, all_extra=False):
+                 modules=None, logging=None, all_extra=False, timeout=(5, 5)):
         self.flavor = flavor
         self.target = target
         self.os_name = os_name
         self.base = base
         super(SrcDocExamplesArchives, self).__init__(os_name, target, version, self.flavor, base,
                                                      subarchives=subarchives, modules=modules, logging=logging,
-                                                     all_extra=all_extra)
+                                                     all_extra=all_extra, timeout=timeout)
 
     def _get_archives(self, qt_ver_num):
         archive_path = "{0}{1}{2}/qt{3}_{4}{5}".format(self.os_name,
