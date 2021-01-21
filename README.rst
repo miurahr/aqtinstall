@@ -3,16 +3,13 @@ Another Qt installer(aqt)
 
 - Release: |pypi|
 - Documents: |docs|
-- Check status: |pep8|
-- Installation test: |gha|
+- Test status: |gha|
 
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
 .. |docs| image:: https://readthedocs.org/projects/aqtinstall/badge/?version=latest
    :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
-.. |pep8| image:: https://travis-ci.org/miurahr/aqtinstall.svg?branch=master
-   :target: https://travis-ci.org/miurahr/aqtinstall
 .. |gha| image:: https://github.com/miurahr/aqtinstall/workflows/Test%20on%20GH%20actions%20environment/badge.svg
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
 
