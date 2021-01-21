@@ -75,12 +75,13 @@ class PackagesList:
         Hold packages list information.
     """
 
-    def __init__(self, version, os_name, target, base):
+    def __init__(self, version, os_name, target, base, timeout=(5, 5)):
         self.version = version
         self.os_name = os_name
         self.target = target
         self.archives = []
         self.base = base
+        self.timeout = timeout
         self.logger = getLogger('aqt')
         self._get_archives()
 
@@ -91,7 +92,7 @@ class PackagesList:
         archive_path = "{0}{1}{2}/qt5_{3}/".format(self.os_name, '_x86/' if self.os_name == 'windows' else '_x64/',
                                                    self.target, qt_ver_num)
         update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
-        r = requests.get(update_xml_url)
+        r = requests.get(update_xml_url, timeout=self.timeout)
         self.update_xml = ElementTree.fromstring(r.text)
         for packageupdate in self.update_xml.iter("PackageUpdate"):
             name = packageupdate.find("Name").text
@@ -116,7 +117,7 @@ class QtArchives:
     """Hold Qt archive packages list."""
 
     def __init__(self, os_name, target, version, arch, base, subarchives=None,
-                 modules=None, logging=None, all_extra=False):
+                 modules=None, logging=None, all_extra=False, timeout=(5, 5)):
         self.version = version
         self.target = target
         self.arch = arch
@@ -139,6 +140,7 @@ class QtArchives:
             for m in modules if modules is not None else []:
                 self.mod_list.append("qt.qt{}.{}.{}.{}".format(self.qt_ver_base, qt_ver_num, m, arch))
                 self.mod_list.append("qt.{}.{}.{}".format(qt_ver_num, m, arch))
+        self.timeout = timeout
         self._get_archives(qt_ver_num)
         if not all_archives:
             self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
@@ -160,7 +162,7 @@ class QtArchives:
 
     def _download_update_xml(self, update_xml_url):
         try:
-            r = requests.get(update_xml_url)
+            r = requests.get(update_xml_url, timeout=self.timeout)
         except (ConnectionResetError, requests.exceptions.ConnectionError):
             raise ArchiveConnectionError()
         else:
@@ -226,14 +228,14 @@ class SrcDocExamplesArchives(QtArchives):
     """Hold doc/src/example archive package list."""
 
     def __init__(self, flavor, os_name, target, version, base, subarchives=None,
-                 modules=None, logging=None, all_extra=False):
+                 modules=None, logging=None, all_extra=False, timeout=(5, 5)):
         self.flavor = flavor
         self.target = target
         self.os_name = os_name
         self.base = base
         super(SrcDocExamplesArchives, self).__init__(os_name, target, version, self.flavor, base,
                                                      subarchives=subarchives, modules=modules, logging=logging,
-                                                     all_extra=all_extra)
+                                                     all_extra=all_extra, timeout=timeout)
 
     def _get_archives(self, qt_ver_num):
         archive_path = "{0}{1}{2}/qt{3}_{4}{5}".format(self.os_name,
@@ -264,10 +266,10 @@ class ToolArchives(QtArchives):
         ToolArchive(linux, desktop, 3.1.1, ifw)
     """
 
-    def __init__(self, os_name, tool_name, version, arch, base, logging=None):
+    def __init__(self, os_name, tool_name, version, arch, base, logging=None, timeout=(5, 5)):
         self.tool_name = tool_name
         self.os_name = os_name
-        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, base, logging=logging)
+        super(ToolArchives, self).__init__(os_name, 'desktop', version, arch, base, logging=logging, timeout=timeout)
 
     def _get_archives(self, qt_ver_num):
         if self.os_name == 'windows':
