@@ -21,7 +21,7 @@ def test_parse_update_xml(monkeypatch, os_name, version, target, datafile):
     assert qt_archives.archives is not None
 
     # Get packages with all extra modules
-    qt_archives_all_modules = QtArchives(os_name, 'desktop', version, target, None, ['all'], None, None, True)
+    qt_archives_all_modules = QtArchives(os_name, 'desktop', version, target, BASE_URL, None, ['all'], None, True)
     assert qt_archives_all_modules.archives is not None
 
     # Extract all urls
