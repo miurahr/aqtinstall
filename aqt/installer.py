@@ -28,6 +28,7 @@ import multiprocessing
 import os
 import pathlib
 import platform
+import random
 import subprocess
 import sys
 import time
@@ -53,6 +54,13 @@ except ImportError:
 class ExtractionError(Exception):
     pass
 
+
+BASE_URL = 'https://download.qt.io/online/qtsdkrepository/'
+FALLBACK_URLS = ['https://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/',
+                 'https://ftp.jaist.ac.jp/pub/qtproject/online/qtsdkrepository/',
+                 'http://ftp1.nluug.nl/languages/qt/online/qtsdkrepository/',
+                 'https://mirrors.dotsrc.org/qtproject/online/qtsdkrepository/'
+                 ]
 
 class Cli:
     """CLI main class to parse command line argument and launch proper functions."""
@@ -164,10 +172,12 @@ class Cli:
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args)
-        mirror = args.base
-        fallback = args.fallback
+        if args.base is not None:
+            base = args.base
+        else:
+            base = BASE_URL
         archives = args.archives
-        self._run_common_part(output_dir, mirror)
+        self._run_common_part(output_dir, base)
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
@@ -177,17 +187,17 @@ class Cli:
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
         try:
-            qt_archives = QtArchives(os_name, target, qt_version, arch, subarchives=archives, modules=modules,
-                                     mirror=mirror, logging=self.logger, all_extra=all_extra)
+            qt_archives = QtArchives(os_name, target, qt_version, arch, base, subarchives=archives, modules=modules,
+                                     logging=self.logger, all_extra=all_extra)
         except ArchiveConnectionError:
-            if fallback is not None:
+            try:
                 self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                qt_archives = QtArchives(os_name, target, qt_version, arch, subarchives=archives, modules=modules,
-                                         mirror=fallback, logging=self.logger, all_extra=all_extra)
+                qt_archives = QtArchives(os_name, target, qt_version, arch, random.choice(FALLBACK_URLS), subarchives=archives,
+                                         modules=modules, logging=self.logger, all_extra=all_extra)
                 target_config = qt_archives.get_target_config()
                 self.call_installer(qt_archives, output_dir, sevenzip)
                 finisher(target_config, base_dir, self.logger)
-            else:
+            except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
@@ -205,37 +215,38 @@ class Cli:
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
-        mirror = args.base
-        fallback = args.fallback
+        if args.base is not None:
+            base = args.base
+        else:
+            base = BASE_URL
         sevenzip = self._set_sevenzip(args)
         modules = args.modules
         archives = args.archives
-        self._run_common_part(output_dir, mirror)
+        self._run_common_part(output_dir, base)
         all_extra = True if modules is not None and 'all' in modules else False
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         try:
-            srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version, subarchives=archives,
-                                                             modules=modules, mirror=mirror, logging=self.logger,
+            srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version, base,
+                                                             subarchives=archives, modules=modules, logging=self.logger,
                                                              all_extra=all_extra)
         except ArchiveConnectionError:
-            if fallback is not None:
+            try:
                 self.logger.warning("Connection to the download site failed and fallback to mirror site.")
                 srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version,
-                                                                 subarchives=archives,
-                                                                 modules=modules, mirror=fallback, logging=self.logger,
-                                                                 all_extra=all_extra)
+                                                                 random.choice(FALLBACK_URLS),
+                                                                 subarchives=archives, modules=modules,
+                                                                 logging=self.logger, all_extra=all_extra)
                 self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
-            else:
+            except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
-
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
         else:
             self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
         self.logger.info("Finished installation")
-        self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
+        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_src(self, args):
         self._run_src_doc_examples('src', args)
@@ -271,11 +282,14 @@ class Cli:
         else:
             self.call_installer(tool_archives, output_dir, sevenzip)
         self.logger.info("Finished installation")
-        self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
+        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_list(self, args):
         self.show_aqt_version()
-        pl = PackagesList(args.qt_version, args.host, args.target)
+        try:
+            pl = PackagesList(args.qt_version, args.host, args.target, BASE_URL)
+        except requests.exceptions.ConnectionError as e:
+            pl = PackagesList(args.qt_version, args.host, args.target, random.choice(FALLBACK_URLS))
         print('List Qt packages in %s for %s' % (args.qt_version, args.host))
         table = Texttable()
         table.set_deco(Texttable.HEADER)
@@ -306,8 +320,6 @@ class Cli:
         subparser.add_argument('-b', '--base', nargs='?',
                                help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
                                     "where 'online' folder exist.")
-        subparser.add_argument('--fallback', nargs='?',
-                               help="Specify fallback mirror site when main site is accidentally down.")
         subparser.add_argument('-E', '--external', nargs='?', help='Specify external 7zip command path.')
         subparser.add_argument('--internal', action='store_true', help='Use internal extractor.')
 
