@@ -87,24 +87,32 @@ class PackagesList:
 
     def _get_archives(self):
         qt_ver_num = self.version.replace(".", "")
-
+        self.qt_ver_base = self.version[0:1]
         # Get packages index
-        archive_path = "{0}{1}{2}/qt5_{3}/".format(self.os_name, '_x86/' if self.os_name == 'windows' else '_x64/',
-                                                   self.target, qt_ver_num)
-        update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
-        r = requests.get(update_xml_url, timeout=self.timeout)
-        self.update_xml = ElementTree.fromstring(r.text)
-        for packageupdate in self.update_xml.iter("PackageUpdate"):
-            name = packageupdate.find("Name").text
-            if packageupdate.find("DownloadableArchives").text is not None:
-                package_desc = packageupdate.findtext("Description")
-                display_name = packageupdate.findtext("DisplayName")
-                virtual_str = packageupdate.findtext("Virtual")
-                if virtual_str is None or virtual_str == 'false':
-                    virtual = False
-                else:
-                    virtual = True
-                self.archives.append(ListInfo(name, display_name, package_desc, virtual))
+        if self.qt_ver_base == "6" and self.target == 'android':
+            arch_ext = ['_armv7/', '_x86/', '_x86_64/', '_arm64_v8a/']
+        elif self.qt_ver_base == '5' and int(qt_ver_num) >= 5130 and self.target == 'desktop':
+            arch_ext = ['/', '_wasm/']
+        else:
+            arch_ext = ['/']
+        for ext in arch_ext:
+            archive_path = "{0}{1}{2}/qt{3}_{4}{5}".format(self.os_name,
+                                                           '_x86/' if self.os_name == 'windows' else '_x64/',
+                                                           self.target, self.qt_ver_base, qt_ver_num, ext)
+            update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
+            r = requests.get(update_xml_url, timeout=self.timeout)
+            self.update_xml = ElementTree.fromstring(r.text)
+            for packageupdate in self.update_xml.iter("PackageUpdate"):
+                name = packageupdate.find("Name").text
+                if packageupdate.find("DownloadableArchives").text is not None:
+                    package_desc = packageupdate.findtext("Description")
+                    display_name = packageupdate.findtext("DisplayName")
+                    virtual_str = packageupdate.findtext("Virtual")
+                    if virtual_str == 'true':
+                        virtual = True
+                    else:
+                        virtual = False
+                    self.archives.append(ListInfo(name, display_name, package_desc, virtual))
         if len(self.archives) == 0:
             self.logger.error("Error while parsing package information!")
             exit(1)
@@ -147,10 +155,16 @@ class QtArchives:
 
     def _get_archives(self, qt_ver_num):
         # Get packages index
-        archive_path = "{0}{1}{2}/qt{3}_{4}{5}".format(self.os_name,
+        if self.arch == 'wasm_32':
+            arch_ext = '_wasm'
+        elif self.arch.startswith("android"):
+            arch_ext = self.arch.substring(8)
+        else:
+            arch_ext = ''
+        archive_path = "{0}{1}{2}/qt{3}_{4}{5}/".format(self.os_name,
                                                        '_x86/' if self.os_name == 'windows' else '_x64/',
                                                        self.target, self.qt_ver_base, qt_ver_num,
-                                                       '_wasm/' if self.arch == 'wasm_32' else '/')
+                                                       arch_ext)
         update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
         archive_url = "{0}{1}".format(self.base, archive_path)
         target_packages = []
