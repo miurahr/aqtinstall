@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v1.0.0b1`_ (27, Jan. 2021)
+==========================
+
+Fixed
+-----
+
+* Fix Qt6/Android installation handling.(#193, #200)
+
+
 `v0.11.1`_ (21, Jan. 2021)
 ==========================
 
@@ -53,7 +62,7 @@ Added
 Added
 -----
 
-* Add LTS vresions as known version.(#188)
+* Add LTS versions as known one.(#188)
 
 Changed
 -------
@@ -79,7 +88,7 @@ Changed
 * Use multiprocessing.Pool instead of concurrent.futures(#178)
 * Refactoring whole modules. (#179)
 * Split old changelogs to CHNAGELOG_prerelease.rst
-* Drop an upper limitaion (<0.11) for py7zr.(#183)
+* Drop an upper limitation (<0.11) for py7zr.(#183)
 
 Fixed
 -----
@@ -102,7 +111,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.11.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0b1...HEAD
+.. _v1.0.0b1: https://github.com/miurahr/aqtinstall/compare/v0.11.1...v1.0.0b1
 .. _v0.11.1: https://github.com/miurahr/aqtinstall/compare/v0.11.0...v0.11.1
 .. _v0.11.0: https://github.com/miurahr/aqtinstall/compare/v0.10.1...v0.11.0
 .. _v0.10.1: https://github.com/miurahr/aqtinstall/compare/v0.10.0...v0.10.1
