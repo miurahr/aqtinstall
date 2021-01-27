@@ -157,8 +157,8 @@ class QtArchives:
         # Get packages index
         if self.arch == 'wasm_32':
             arch_ext = '_wasm'
-        elif self.arch.startswith("android"):
-            arch_ext = self.arch[8:]
+        elif self.arch.startswith("android_") and qt_ver_num[0:1] == '6':
+            arch_ext = '{}'.format(self.arch[7:])
         else:
             arch_ext = ''
         archive_path = "{0}{1}{2}/qt{3}_{4}{5}/".format(self.os_name,
