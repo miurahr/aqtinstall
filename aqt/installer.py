@@ -299,20 +299,23 @@ class Cli:
 
     def run_list(self, args):
         self.show_aqt_version()
+        qt_version = args.qt_version
+        host = args.host
+        target = args.target
         try:
-            pl = PackagesList(args.qt_version, args.host, args.target, BASE_URL)
+            pl = PackagesList(qt_version, host, target, BASE_URL)
         except requests.exceptions.ConnectionError:
-            pl = PackagesList(args.qt_version, args.host, args.target, random.choice(FALLBACK_URLS))
+            pl = PackagesList(qt_version, host, target, random.choice(FALLBACK_URLS))
         print('List Qt packages in %s for %s' % (args.qt_version, args.host))
         table = Texttable()
         table.set_deco(Texttable.HEADER)
-        table.set_cols_dtype(['t', 't'])
-        table.set_cols_align(["l", "l"])
-        table.header(["target type", "arch"])
+        table.set_cols_dtype(['t', 't', 't'])
+        table.set_cols_align(['l', 'l', 'l'])
+        table.header(['target', 'arch', 'description'])
         for entry in pl.get_list():
-            if not entry.virtual:
-                name_list = entry.name.split('.')
-                table.add_row([entry.display_name, name_list[-1]])
+            if qt_version[0:1] == '6' or not entry.virtual:
+                archid = entry.name.split('.')[-1]
+                table.add_row([entry.display_name, archid, entry.desc])
         print(table.draw())
 
     def show_help(self, args):
