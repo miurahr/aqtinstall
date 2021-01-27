@@ -158,7 +158,7 @@ class QtArchives:
         if self.arch == 'wasm_32':
             arch_ext = '_wasm'
         elif self.arch.startswith("android"):
-            arch_ext = self.arch.substring(8)
+            arch_ext = self.arch[8:]
         else:
             arch_ext = ''
         archive_path = "{0}{1}{2}/qt{3}_{4}{5}/".format(self.os_name,
