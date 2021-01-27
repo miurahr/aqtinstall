@@ -44,7 +44,8 @@ from urllib3.util.retry import Retry
 from aqt.archives import (ArchiveConnectionError, ArchiveDownloadError,
                           ArchiveListError, PackagesList, QtArchives,
                           SrcDocExamplesArchives, ToolArchives)
-from aqt.helper import Settings, Updater, altlink, versiontuple
+from aqt.helper import Settings, altlink
+from aqt.updater import Updater
 
 try:
     from importlib import metadata as importlib_metadata  # noqa
@@ -521,5 +522,4 @@ def finisher(target, base_dir, logger):
         raise e
     prefix = pathlib.Path(base_dir) / target.version / target.arch
     updater = Updater(prefix, logger)
-    if versiontuple(target.version) < (5, 14, 2):
-        updater.patch_qt(target)
+    updater.qtpatch(target)
