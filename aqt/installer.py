@@ -118,9 +118,13 @@ class Cli:
                 arch = "ios"
             elif target == "android" and parse(qt_version) >= Version('5.14.0'):
                 arch = "android"
+            else:
+                print("Please supply a target architecture.")
+                self.show_help(args)
+                exit(1)
         if arch == "":
             print("Please supply a target architecture.")
-            args.print_help()
+            self.show_help(args)
             exit(1)
         return arch
 
@@ -496,7 +500,9 @@ def finisher(target, base_dir, logger):
     """Make Qt configuration files, qt.conf and qtconfig.pri"""
     qt_version = target.version
     arch = target.arch
-    if arch.startswith('win64_mingw'):
+    if arch is None:
+        arch_dir = ''
+    elif arch.startswith('win64_mingw'):
         arch_dir = arch[6:] + '_64'
     elif arch.startswith('win32_mingw'):
         arch_dir = arch[6:] + '_32'
