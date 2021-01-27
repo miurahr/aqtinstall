@@ -30,7 +30,7 @@ Security
 --------
 
 `v1.0.0b1`_ (27, Jan. 2021)
-==========================
+===========================
 
 Fixed
 -----
@@ -108,7 +108,6 @@ Fixed
 -----
 
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
-
 
 
 .. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0b1...HEAD
