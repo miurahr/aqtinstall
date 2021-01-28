@@ -1,6 +1,5 @@
 import os
 import pathlib
-import re
 import subprocess
 
 
@@ -74,11 +73,15 @@ class Updater:
         if target.arch not in ['ios', 'android', 'wasm_32', 'android_x86_64', 'android_arm64_v8a', 'android_x86',
                                'android_armv7']:
             if target.os_name == 'mac':
-                self.logger.info("Patching qtcore")
+                self.logger.info("Patching QtCore")
                 self._patch_qtcore(self.prefix.joinpath("lib", "QtCore.framework"), ["QtCore", "QtCore_debug"], "UTF-8")
             elif target.os_name == 'linux':
-                self.logger.info("Patching qtcore")
+                self.logger.info("Patching libQt(5|6)Core")
                 self._patch_qtcore(self.prefix.joinpath("lib"), ["libQt5Core.so", "libQt6Core.so"], "UTF-8")
+            elif target.os_name == 'windows':
+                self.logger.info("Patching Qt(5|6)Core.dll")
+                self._patch_qtcore(self.prefix.joinpath("bin"), ["Qt5Cored.dll", "Qt5Core.dll", "Qt6Core.dll",
+                                                                 "Qt6Cored.dll"], "UTF-8")
             else:
                 # no need to patch Qt5Core
                 pass
