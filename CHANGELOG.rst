@@ -29,6 +29,21 @@ Removed
 Security
 --------
 
+`v1.0.0b2`_ (28, Jan. 2021)
+===========================
+
+Added
+-----
+
+* Patch pkgconfig configurations(#199)
+* Patch libQt5Core and libQt6Core for linux(#201)
+
+Fixed
+-----
+
+* Catch exception on qmake -query execution(#201)
+
+
 `v1.0.0b1`_ (27, Jan. 2021)
 ===========================
 
@@ -110,7 +125,8 @@ Fixed
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0b1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0b2...HEAD
+.. _v1.0.0b2: https://github.com/miurahr/aqtinstall/compare/v1.0.0b1...v1.0.0b2
 .. _v1.0.0b1: https://github.com/miurahr/aqtinstall/compare/v0.11.1...v1.0.0b1
 .. _v0.11.1: https://github.com/miurahr/aqtinstall/compare/v0.11.0...v0.11.1
 .. _v0.11.0: https://github.com/miurahr/aqtinstall/compare/v0.10.1...v0.11.0
