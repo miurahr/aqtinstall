@@ -7,27 +7,28 @@ Internals
 
 .. _archives-objects:
 
-Archives module
----------------
-
-.. automodule:: aqt.archives
-    :members:
-    :undoc-members:
-    :inherited-members:
-    :show-inheritance:
-
-
 Installer module
 ----------------
 
 .. automodule:: aqt.installer
     :members:
+    :inherited-members:
+    :show-inheritance:
 
 
-Cli module
-----------
+Archives module
+---------------
 
-.. autoclass:: aqt.cli.Cli
+.. automodule:: aqt.archives
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+
+Updater module
+--------------
+
+.. automodule:: aqt.updater
     :members:
 
 
@@ -37,9 +38,3 @@ Helper module
 .. automodule:: aqt.helper
     :members:
 
-
-QtPatch module
---------------
-
-.. automodule:: aqt.qtpatch
-    :members:

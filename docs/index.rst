@@ -1,5 +1,5 @@
-Welcome to aqtinstall's documentation!
-======================================
+aqtinstall manual
+=================
 
 Contents:
 
@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    cli
+   available_versions
    internals
    changes
    devguide

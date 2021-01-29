@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2020 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2021 Hiroshi Miura <miurahr@linux.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -122,7 +122,10 @@ class PackagesList:
 
 
 class QtArchives:
-    """Hold Qt archive packages list."""
+    """Download and hold Qt archive packages list.
+    It access to download.qt.io site and get Update.xml file.
+    It parse XML file and store metadata into list of QtPackage object.
+    """
 
     def __init__(self, os_name, target, version, arch, base, subarchives=None,
                  modules=None, logging=None, all_extra=False, timeout=(5, 5)):
@@ -239,7 +242,8 @@ class QtArchives:
 
 
 class SrcDocExamplesArchives(QtArchives):
-    """Hold doc/src/example archive package list."""
+    """Hold doc/src/example archive package list.
+    """
 
     def __init__(self, flavor, os_name, target, version, base, subarchives=None,
                  modules=None, logging=None, all_extra=False, timeout=(5, 5)):
@@ -267,7 +271,7 @@ class SrcDocExamplesArchives(QtArchives):
     def get_target_config(self) -> TargetConfig:
         """Get target configuration.
 
-        :return tuple of three parameter, "Tools", target and arch
+        :return tuple of three parameter, "src_doc_examples", target and arch
         """
         return TargetConfig("src_doc_examples", self.target, self.arch, self.os_name)
 

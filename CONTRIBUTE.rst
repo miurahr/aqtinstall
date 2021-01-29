@@ -36,5 +36,5 @@ Here is small amount rule when you want to send patch the project;
 CI tests
 =========
 
-The project configured to use Azure Pipelines, Travis-CI and CoverAlls for regression test.
+The project configured to use Azure Pipelines, Github actions and Coveralls for regression test.
 You can see test results on badge and see details in a web page linked from badge.

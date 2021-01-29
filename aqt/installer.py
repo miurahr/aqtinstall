@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2020 Hiroshi Miura <miurahr@linux.com>
-# Copyright (C) 2020, Aurélien Gâteau#
+# Copyright (C) 2019-2021 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2020, Aurélien Gâteau
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -166,6 +166,7 @@ class Cli:
         pool.starmap(installer, tasks)
 
     def run_install(self, args):
+        """Run install subcommand"""
         start_time = time.perf_counter()
         arch = args.arch
         target = args.target
@@ -259,15 +260,19 @@ class Cli:
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_src(self, args):
+        """Run src subcommand"""
         self._run_src_doc_examples('src', args)
 
     def run_examples(self, args):
+        """Run example subcommand"""
         self._run_src_doc_examples('examples', args)
 
     def run_doc(self, args):
+        """Run doc subcommand"""
         self._run_src_doc_examples('doc', args)
 
     def run_tool(self, args):
+        """Run tool subcommand"""
         start_time = time.perf_counter()
         arch = args.arch
         tool_name = args.tool_name
@@ -303,6 +308,7 @@ class Cli:
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def run_list(self, args):
+        """Run list subcommand"""
         self.show_aqt_version()
         qt_version = args.qt_version
         host = args.host
@@ -324,9 +330,11 @@ class Cli:
         print(table.draw())
 
     def show_help(self, args):
+        """Display help message"""
         self.parser.print_help()
 
     def show_aqt_version(self):
+        """Display version information"""
         dist = importlib_metadata.distribution('aqtinstall')
         module_name = dist.entry_points[0].name
         py_version = platform.python_version()
@@ -442,6 +450,10 @@ class Cli:
 
 
 def installer(qt_archive, base_dir, command, response_timeout=30):
+    """
+    Installer function to download archive files and extract it.
+    It is called through multiprocessing.Pool()
+    """
     name = qt_archive.name
     url = qt_archive.url
     archive = qt_archive.archive
@@ -498,7 +510,10 @@ def installer(qt_archive, base_dir, command, response_timeout=30):
 
 
 def finisher(target, base_dir, logger):
-    """Make Qt configuration files, qt.conf and qtconfig.pri"""
+    """
+    Make Qt configuration files, qt.conf and qtconfig.pri.
+    Call updater to update pkgconfig and patch Qt5Core and qmake
+    """
     qt_version = target.version
     arch = target.arch
     if arch is None:
