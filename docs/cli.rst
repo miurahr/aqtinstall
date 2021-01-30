@@ -9,13 +9,17 @@ long options may be truncated to the shortest unambiguous abbreviation.
 
 .. program::  aqt
 
-.. option:: list
-
-    list available versions (not implemented yet)
-
 .. option:: help
 
     show generic help
+
+.. option:: list <Qt version> <target OS>
+
+    list available variations.
+    positional arguments:
+    qt_version            Qt version in the format of "5.X.Y"
+    {linux,mac,windows}   host os name
+    {desktop,winrt,android,ios} target sdk
 
 .. option:: install <Qt version> <target OS> <target variant> <target architecture>
 
@@ -98,4 +102,68 @@ long options may be truncated to the shortest unambiguous abbreviation.
     and tool variants name may be 'qt.tools.openssl.gcc_64', 'qt.tools.ninja',  'qt.tools.ifw.32', 'qt.tools.cmake'.
     You may need to looking for version number at  https://download.qt.io/online/qtsdkrepository/
 
+
+Command examples
+================
+
+
+Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
+
+.. code-block:: bash
+
+    pip install aqtinstall
+    sudo aqt install --outputdir /opt 5.12.0 linux desktop -m qtcharts qtnetworkauth
+
+
+Example: Installing Android (armv7) Qt 5.10.2:
+
+.. code-block:: bash
+
+    aqt install 5.10.2 linux android android_armv7
+
+
+Example: Install examples, doc and source:
+
+.. code-block:: bash
+
+    C:\ aqt examples 5.15.0 windows desktop -m qtcharts qtnetworkauth
+    C:\ aqt doc 5.15.0 windows desktop -m qtcharts qtnetworkauth
+    C:\ aqt src 5.15.0 windows desktop
+
+
+Example: Install Web Assembly
+
+.. code-block:: bash
+
+    aqt install 5.15.0 linux desktop wasm_32
+
+
+Example: Install an Install FrameWork (IFW):
+
+.. code-block:: bash
+
+    aqt tool linux tools_ifw 4.0 qt.tools.ifw.40
+
+
+Example: Install vcredist:
+
+.. code-block:: bash
+
+    C:\ aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
+    C:\ .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
+
+
+Example: Install MinGW on Windows
+
+.. code-block:: bash
+
+    C:\ aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
+    c:\ set PATH=C:\Qt\Tools\mingw810_64\bin
+
+
+Example: Show help message
+
+.. code-block:: bash
+
+    aqt help
 
