@@ -199,11 +199,8 @@ class Cli:
             else:
                 archives = modules
         else:
-            if modules is not None:
-                if archives is not None:
-                    archives.append(modules)
-                else:
-                    archives = modules
+            if modules is not None and archives is not None:
+                archives.append(modules)
         nopatch = args.noarchives or (archives is not None and 'qtbase' not in archives)  # type: bool
         self._run_common_part(output_dir, base)
         if not self._check_qt_arg_versions(qt_version):
