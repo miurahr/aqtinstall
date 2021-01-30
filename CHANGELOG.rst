@@ -32,6 +32,13 @@ Security
 `v1.0.0b3`_ (30, Jan. 2021)
 ===========================
 
+Added
+-----
+
+* Add --noarchives option to allow user to add modules to existed installation(#174,#204)
+* No patching when it does not install qtbase package by --noarchives and --archives option.(#204)
+* Azure: test with jom build on windows.
+
 Changed
 -------
 
