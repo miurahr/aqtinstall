@@ -81,6 +81,12 @@ long options may be truncated to the shortest unambiguous abbreviation.
     Main purpose is speed up CI/CD process by limiting installed modules.
     It can cause broken installation of Qt SDK.
 
+.. option:: --noarchives
+
+    [Advanced] Specify not to install all base packages.
+    This is advanced option and you should use with --modules option.
+    This allow you to add modules to existent Qt installation.
+
 .. option:: src <Qt version> <target OS> <target variant>
 
     install Qt sources specified version and target.
