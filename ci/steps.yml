@@ -159,7 +159,7 @@ steps:
         Write-Host '##vso[task.setvariable variable=VSVER]2015'
       }
       cd $(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin
-      Invoke-WebRequest -Uri https://download.qt.io/official_releases/jom/jom.zip -OutFile jom.zip
+      Invoke-WebRequest -Uri https://mirrors.ocf.berkeley.edu/qt/official_releases/jom/jom.zip -OutFile jom.zip
       unzip jom.zip
     condition: eq( variables['Agent.OS'], 'Windows_NT')
     displayName: Detect toolchain for Windows and update PATH
