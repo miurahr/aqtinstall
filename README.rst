@@ -13,11 +13,17 @@ Another Qt installer(aqt)
 .. |gha| image:: https://github.com/miurahr/aqtinstall/workflows/Test%20on%20GH%20actions%20environment/badge.svg
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
 
-This is a utility alternative to the official graphical Qt installer, for using in CI environment where an interactive UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
+This is a utility alternative to the official graphical Qt installer, for using in CI environment where an interactive
+UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
 
 It can automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
 It's working with Python > 3.5 on Linux, OS X and Windows.
+
+When installing QtBase package on proper platforms (eg. install linux package on linux),
+aqt update Qt binaries(eg. qmake, and libQt5Core.so/Qt5Core.dll/Freamework.QtCore),
+and change configurations(qt.conf, and qconfig.pri)
+to make it working well with installed directory(Qt prefix).
 
 License and copyright
 ---------------------
@@ -201,6 +207,7 @@ Supported CI platforms
 
 There are no limitation for CI platform but currently it is tested on Azure Pipelines and Github actions.
 If you want to use it with Github actions, `install_qt`_ action will help you.
+If you want to use it with Azure Pipelines, blog article `Using Azure DevOps Pipelines with Qt`_ may be informative.
 
 
 Use cases
@@ -223,21 +230,33 @@ Use cases
 .. _`YACReader`: https://github.com/YACReader/yacreader
 
 
-Media and articles
-------------------
+Media, slide, articles and discussions
+--------------------------------------
 
-* Contributor Nelson's blog article: `Fast and lightweight headless Qt Installer from Qt Mirrors: aqtinstall`_
+* Contributor Nelson's blog article: `Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`_
 
 * Lostdomain.org blog: `Using Azure DevOps Pipelines with Qt`_
 
+* Wincak's Weblog: `Using Azure CI for cross-platform Linux and Windows Qt application builds`_
+
 * Qt Forum: `Automatic installation for Travis CI (or any other CI)`_
 
+* Qt Form: `Qt silent, unattended install`_
 
-.. _`Fast and lightweight headless Qt Installer from Qt Mirrors: aqtinstall`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
+* Qt Study group presentation: `Another Qt CLI installer`_
+
+
+.. _`Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
 
 .. _`Using Azure DevOps Pipelines with Qt`: https://lostdomain.org/2019/12/27/using-azure-devops-pipelines-with-qt/
 
+.. _`Using Azure CI for cross-platform Linux and Windows Qt application builds`: https://www.wincak.name/programming/using-azure-ci-for-cross-platform-linux-and-windows-qt-application-builds/
+
 .. _`Automatic installation for Travis CI (or any other CI)`: https://forum.qt.io/topic/114520/automatic-installation-for-travis-ci-or-any-other-ci/2
+
+.. _`Qt silent, unattended install`: https://forum.qt.io/topic/122185/qt-silent-unattended-install
+
+.. _`Another Qt CLI installer`: https://www.slideshare.net/miurahr-nttdata/aqt-install-for-qt-tokyo-r-2-20196
 
 
 History
