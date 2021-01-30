@@ -29,6 +29,16 @@ Removed
 Security
 --------
 
+`v1.0.0b3`_ (30, Jan. 2021)
+===========================
+
+Changed
+-------
+
+* Update document to show available Qt versions
+* Update README to add more references.
+
+
 `v1.0.0b2`_ (28, Jan. 2021)
 ===========================
 
@@ -125,7 +135,8 @@ Fixed
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0b2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0b3...HEAD
+.. _v1.0.0b3: https://github.com/miurahr/aqtinstall/compare/v1.0.0b2...v1.0.0b3
 .. _v1.0.0b2: https://github.com/miurahr/aqtinstall/compare/v1.0.0b1...v1.0.0b2
 .. _v1.0.0b1: https://github.com/miurahr/aqtinstall/compare/v0.11.1...v1.0.0b1
 .. _v0.11.1: https://github.com/miurahr/aqtinstall/compare/v0.11.0...v0.11.1
