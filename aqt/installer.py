@@ -189,6 +189,22 @@ class Cli:
         else:
             base = BASE_URL
         archives = args.archives
+        if args.noarchives:
+            if modules is None:
+                print('When specified option --no-archives, an option --modules is mandatory.')
+                exit(1)
+            if archives is not None:
+                print('Option --archives and --no-archives  are conflicted. Aborting...')
+                exit(1)
+            else:
+                archives = modules
+        else:
+            if modules is not None:
+                if archives is not None:
+                    archives.append(modules)
+                else:
+                    archives = modules
+        nopatch = (archives is None or 'qtbase' not in archives)  # type: bool
         self._run_common_part(output_dir, base)
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
@@ -214,7 +230,8 @@ class Cli:
             exit(1)
         target_config = qt_archives.get_target_config()
         self.call_installer(qt_archives, output_dir, sevenzip)
-        finisher(target_config, base_dir, self.logger)
+        if not nopatch:
+            finisher(target_config, base_dir, self.logger)
         self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -393,6 +410,8 @@ class Cli:
                                     "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
                                     "\n                                        android_x86, android_armv7")
         self._set_module_options(install_parser)
+        install_parser.add_argument('--noarchives', action='store_true',
+                                    help='No base packages; allow mod amendment with --modules option.')
         #
         doc_parser = subparsers.add_parser('doc')
         doc_parser.set_defaults(func=self.run_doc)
