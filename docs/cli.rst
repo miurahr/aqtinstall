@@ -9,13 +9,17 @@ long options may be truncated to the shortest unambiguous abbreviation.
 
 .. program::  aqt
 
-.. option:: list
-
-    list available versions (not implemented yet)
-
 .. option:: help
 
     show generic help
+
+.. option:: list <Qt version> <target OS>
+
+    list available variations.
+    positional arguments:
+    qt_version            Qt version in the format of "5.X.Y"
+    {linux,mac,windows}   host os name
+    {desktop,winrt,android,ios} target sdk
 
 .. option:: install <Qt version> <target OS> <target variant> <target architecture>
 
