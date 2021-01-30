@@ -204,7 +204,7 @@ class Cli:
                     archives.append(modules)
                 else:
                     archives = modules
-        nopatch = (archives is None or 'qtbase' not in archives)  # type: bool
+        nopatch = args.noarchives or (archives is not None and 'qtbase' not in archives)  # type: bool
         self._run_common_part(output_dir, base)
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
