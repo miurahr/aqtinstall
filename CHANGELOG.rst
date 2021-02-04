@@ -29,8 +29,8 @@ Removed
 Security
 --------
 
-`v1.0.0b3`_ (30, Jan. 2021)
-===========================
+`v1.0.0`_ (4, Feb. 2021)
+========================
 
 Added
 -----
@@ -38,35 +38,21 @@ Added
 * Add --noarchives option to allow user to add modules to existed installation(#174,#204)
 * No patching when it does not install qtbase package by --noarchives and --archives option.(#204)
 * Azure: test with jom build on windows.
+* Patch pkgconfig configurations(#199)
+* Patch libQt5Core and libQt6Core for linux(#201)
 
 Changed
 -------
 
 * Update document to show available Qt versions
 * Update README to add more references.
+* Suppress debug log and exist silently when specified package not found.
 
-
-`v1.0.0b2`_ (28, Jan. 2021)
-===========================
-
-Added
------
-
-* Patch pkgconfig configurations(#199)
-* Patch libQt5Core and libQt6Core for linux(#201)
 
 Fixed
 -----
 
 * Catch exception on qmake -query execution(#201)
-
-
-`v1.0.0b1`_ (27, Jan. 2021)
-===========================
-
-Fixed
------
-
 * Fix Qt6/Android installation handling.(#193, #200)
 
 
@@ -142,10 +128,8 @@ Fixed
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0b3...HEAD
-.. _v1.0.0b3: https://github.com/miurahr/aqtinstall/compare/v1.0.0b2...v1.0.0b3
-.. _v1.0.0b2: https://github.com/miurahr/aqtinstall/compare/v1.0.0b1...v1.0.0b2
-.. _v1.0.0b1: https://github.com/miurahr/aqtinstall/compare/v0.11.1...v1.0.0b1
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0...HEAD
+.. _v1.0.0: https://github.com/miurahr/aqtinstall/compare/v0.11.1...v1.0.0
 .. _v0.11.1: https://github.com/miurahr/aqtinstall/compare/v0.11.0...v0.11.1
 .. _v0.11.0: https://github.com/miurahr/aqtinstall/compare/v0.10.1...v0.11.0
 .. _v0.10.1: https://github.com/miurahr/aqtinstall/compare/v0.10.0...v0.10.1
