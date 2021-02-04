@@ -29,6 +29,15 @@ Removed
 Security
 --------
 
+`v0.11.2`_ (5, Feb. 2021)
+==========================
+
+Fixed
+-----
+
+* Fix Qt6/Android installation handling.(#193, #200)
+
+
 `v0.11.1`_ (21, Jan. 2021)
 ==========================
 
@@ -101,8 +110,8 @@ Fixed
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
-
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.11.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v0.11.2...HEAD
+.. _v0.11.2: https://github.com/miurahr/aqtinstall/compare/v0.11.1...v0.11.2
 .. _v0.11.1: https://github.com/miurahr/aqtinstall/compare/v0.11.0...v0.11.1
 .. _v0.11.0: https://github.com/miurahr/aqtinstall/compare/v0.10.1...v0.11.0
 .. _v0.10.1: https://github.com/miurahr/aqtinstall/compare/v0.10.0...v0.10.1
