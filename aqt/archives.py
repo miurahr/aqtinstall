@@ -40,6 +40,10 @@ class ArchiveDownloadError(Exception):
     pass
 
 
+class NoPackageFound(Exception):
+    pass
+
+
 class TargetConfig:
     def __init__(self, version, target, arch, os_name):
         self.version = version
@@ -221,7 +225,7 @@ class QtArchives:
                             self.archives.append(QtPackage(archive_name, package_url, archive, package_desc))
         if len(self.archives) == 0:
             self.logger.error("Specified packages are not found while parsing XML of package information!")
-            self.logger.debug(self.update_xml_text)
+            raise NoPackageFound
 
     def get_archives(self):
         """

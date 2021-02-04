@@ -43,7 +43,7 @@ from urllib3.util.retry import Retry
 
 from aqt.archives import (ArchiveConnectionError, ArchiveDownloadError,
                           ArchiveListError, PackagesList, QtArchives,
-                          SrcDocExamplesArchives, ToolArchives)
+                          SrcDocExamplesArchives, ToolArchives, NoPackageFound)
 from aqt.helper import Settings, altlink
 from aqt.updater import Updater
 
@@ -223,7 +223,7 @@ class Cli:
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
-        except ArchiveDownloadError or ArchiveListError:
+        except ArchiveDownloadError or ArchiveListError or NoPackageFound:
             exit(1)
         target_config = qt_archives.get_target_config()
         self.call_installer(qt_archives, output_dir, sevenzip)
