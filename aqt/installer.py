@@ -562,4 +562,9 @@ def finisher(target, base_dir, logger):
         raise e
     prefix = pathlib.Path(base_dir) / target.version / target.arch
     updater = Updater(prefix, logger)
+    if target.arch.startswith('android'):
+        # TODO: handle android qmake shell script
+        pass
+    else:
+        updater.detect_qmake(prefix)
     updater.qtpatch(target)

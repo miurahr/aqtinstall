@@ -31,7 +31,6 @@ class Updater:
         self.prefix = prefix
         self.qmake_path = None
         self.qconfigs = {}
-        self._detect_qmake(prefix)
 
     def _patch_qtcore(self, lib_dir, components, encoding):
         for component in components:
@@ -65,7 +64,7 @@ class Updater:
         file.write_text(data, "UTF-8")
         os.chmod(str(file), st.st_mode)
 
-    def _detect_qmake(self, prefix):
+    def detect_qmake(self, prefix):
         """ detect Qt configurations from qmake
         """
         for qmake_path in [prefix.joinpath('bin', 'qmake'), prefix.joinpath('bin', 'qmake.exe')]:
