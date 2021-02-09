@@ -97,8 +97,11 @@ windows_build_jobs.append(
 )
 
 # android
-linux_build_jobs.append(
-    BuildJob('5.14.1', 'linux', 'android', 'android', 'android')
+linux_build_jobs.extend(
+    [
+        BuildJob('5.14.1', 'linux', 'android', 'android', 'android'),
+        BuildJob('6.0.1', 'linux', 'android', 'android_armv7', 'android_armv7'),
+    ]
 )
 
 matrices = {}
