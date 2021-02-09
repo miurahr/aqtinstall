@@ -228,7 +228,7 @@ class Cli:
         target_config = qt_archives.get_target_config()
         self.call_installer(qt_archives, output_dir, sevenzip)
         if not nopatch:
-            finisher(target_config, base_dir, self.logger)
+            Updater.update(target_config, base_dir, self.logger)
         self.logger.info("Finished installation")
         self.logger.info("Time elasped: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -523,48 +523,3 @@ def installer(qt_archive, base_dir, command, response_timeout=30):
                         raise cpe
     os.unlink(archive)
     logger.info("Finished installation of {} in {}".format(archive, time.perf_counter() - start_time))
-
-
-def finisher(target, base_dir, logger):
-    """
-    Make Qt configuration files, qt.conf and qtconfig.pri.
-    Call updater to update pkgconfig and patch Qt5Core and qmake
-    """
-    qt_version = target.version
-    arch = target.arch
-    if arch is None:
-        arch_dir = ''
-    elif arch.startswith('win64_mingw'):
-        arch_dir = arch[6:] + '_64'
-    elif arch.startswith('win32_mingw'):
-        arch_dir = arch[6:] + '_32'
-    elif arch.startswith('win'):
-        arch_dir = arch[6:]
-    else:
-        arch_dir = arch
-    try:
-        # prepare qt.conf
-        with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
-            f.write("[Paths]\n")
-            f.write("Prefix=..\n")
-        # update qtconfig.pri only as OpenSource
-        with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
-            lines = f.readlines()
-            f.seek(0)
-            f.truncate()
-            for line in lines:
-                if line.startswith('QT_EDITION ='):
-                    line = 'QT_EDITION = OpenSource\n'
-                if line.startswith('QT_LICHECK ='):
-                    line = 'QT_LICHECK =\n'
-                f.write(line)
-    except IOError as e:
-        raise e
-    prefix = pathlib.Path(base_dir) / target.version / target.arch
-    updater = Updater(prefix, logger)
-    if target.arch.startswith('android'):
-        # TODO: handle android qmake shell script
-        pass
-    else:
-        updater.detect_qmake(prefix)
-    updater.qtpatch(target)
