@@ -58,7 +58,7 @@ class Updater:
             self._patch_textfile(pcfile, "prefix=/home/qt/work/install", 'prefix={}'.format(str(self.prefix)))
 
     def _patch_textfile(self, file: pathlib.Path, old: str, new: str):
-        self.logger.info("Patching {}".format(file))
+        self.logger.info("Patching {}".format(str(file)))
         st = file.stat()
         data = file.read_text("UTF-8")
         data = data.replace(old, new)
