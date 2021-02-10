@@ -164,7 +164,7 @@ class Updater:
         else:
             arch_dir = arch
         try:
-            prefix = pathlib.Path(base_dir) / target.version / target.arch
+            prefix = pathlib.Path(base_dir) / target.version / arch_dir
             updater = Updater(prefix, logger)
             updater.set_license(base_dir, qt_version, arch_dir)
             if target.arch not in ['ios', 'android', 'wasm_32', 'android_x86_64', 'android_arm64_v8a', 'android_x86',
