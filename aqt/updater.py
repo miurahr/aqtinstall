@@ -171,9 +171,9 @@ class Updater:
                                    'android_armv7']:  # desktop version
                 updater.make_qtconf(base_dir, qt_version, arch_dir)
                 updater.qtpatch(target)
-                updater.patch_qmake(target)
+                updater.patch_qmake()
             elif qt_version.startswith('5.'):  # qt5 non-desktop
-                updater.patch_qmake(target)
+                updater.patch_qmake()
             else:  # qt6 non-desktop
                 updater.patch_qmake_script(base_dir, qt_version, target.os_name)
         except IOError as e:
