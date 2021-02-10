@@ -99,7 +99,7 @@ jobs:
           else:
             arch_dir = 'gcc_64'
           try:
-            res = run([f"{qtver}/{arch_dir}/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
+            res = run([f"{qtver}/{arch_dir}/bin/qmake", "-query"], timeout=15, check=True)
           except CalledProcessError as cpe:
             exit(cpe.returncode)
           if res.returncode == 0:
@@ -110,7 +110,7 @@ jobs:
                 assert qt_prefix_path.samefile(result)
             if qtver.startswith('6'):
               try:
-                res = run([f"{qtver}/android_armv7/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
+                res = run([f"{qtver}/android_armv7/bin/qmake", "-query"], timeout=15, check=True)
               except CalledProcessError as cpe:
                 exit(cpe.returncode)
             assert res.returncode == 0

@@ -58,6 +58,7 @@ class Updater:
             self._patch_textfile(pcfile, "prefix=/home/qt/work/install", 'prefix={}'.format(str(self.prefix)))
 
     def _patch_textfile(self, file: pathlib.Path, old: str, new: str):
+        self.logger.info("Patching {}".format(file))
         st = file.stat()
         data = file.read_text("UTF-8")
         data = data.replace(old, new)
@@ -111,15 +112,11 @@ class Updater:
     def qtpatch(self, target):
         """ patch to QtCore"""
         if target.os_name == 'mac':
-            self.logger.info("Patching QtCore")
             self._patch_qtcore(self.prefix.joinpath("lib", "QtCore.framework"), ["QtCore", "QtCore_debug"], "UTF-8")
         elif target.os_name == 'linux':
-            self.logger.info("Patching pkgconfig configurations")
             self._patch_pkgconfig(self.prefix.joinpath("lib", "pkgconfig"))
-            self.logger.info("Patching libQt(5|6)Core")
             self._patch_qtcore(self.prefix.joinpath("lib"), ["libQt5Core.so", "libQt6Core.so"], "UTF-8")
         elif target.os_name == 'windows':
-            self.logger.info("Patching Qt(5|6)Core.dll")
             self._patch_qtcore(self.prefix.joinpath("bin"), ["Qt5Cored.dll", "Qt5Core.dll", "Qt6Core.dll",
                                                              "Qt6Cored.dll"], "UTF-8")
         else:
