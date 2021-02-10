@@ -8,16 +8,19 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macOS-latest, ubuntu-latest]
-        py: [3.6, 3.8]
+        py: [3.6, 3.9]
         qtver: [5.9.9, 5.12.8, 5.15.2]
         include:
           - os: ubuntu-20.04
-            py: 3.8
+            py: 3.9
+            qtver: 6.0.1
+          - os: windows-latest
+            py: 3.9
             qtver: 6.0.1
         exclude:
           - os: windows-latest
             py: 3.6
-            qtver: 5.15.1
+            qtver: 5.15.2
     steps:
       - uses: actions/checkout@v1
         with:
@@ -47,6 +50,8 @@ jobs:
               args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
             elif qtver.startswith('5.14'):
               args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
+            elif qtver.startswith('6.0'):
+              args = [qtver, "windows", "desktop", "win64_mingw81"]
             else:
               args = [qtver, "windows", "desktop", "win64_msvc2015_64"]
           elif platform == "macOS-latest":
@@ -61,7 +66,12 @@ jobs:
             exit(cpe.returncode)
           assert res.returncode == 0
           if qtver.startswith('6.0'):
-            command_line = ["python", "-m", "aqt", "install", qtver, "linux", "android", "android_armv7"]
+            if platform == 'ubuntu-20.04':
+              command_line = ["python", "-m", "aqt", "install", qtver, "linux", "android", "android_armv7"]
+            elif platform == "macOS-latest":
+              command_line = ["python", "-m", "aqt", "install", qtver, "mac", "ios", "ios"]
+            else:
+              command_line = ["python", "-m", "aqt", "install", qtver, "windows", "android", "android_armv7"]
             try:
               res = subprocess.run(command_line, timeout=timeout, check=True)
             except subprocess.CalledProcessError as cpe:

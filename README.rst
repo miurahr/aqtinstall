@@ -83,7 +83,7 @@ You can also call with ``python -m aqt`` syntax as well as command script ``aqt`
         * `win64_mingw53`, `win32_mingw53`,
         * `win64_msvc2019_winrt_x64`, `win64_msvc2019_winrt_x86`, `win64_msvc2019_winrt_armv7`
         * `win64_msvc2017_winrt_x64`, `win64_msvc2017_winrt_x86`, `win64_msvc2017_winrt_armv7`
-    * For android and Qt 5.13 or below, choose one of: `android_x86_64`, `android_arm64_v8a`, `android_x86`,
+    * For android and Qt 6 or Qt 5.13 and below, choose one of: `android_x86_64`, `android_arm64_v8a`, `android_x86`,
       `android_armv7`
 * You can specify external 7zip command path instead of built-in extractor.
 * When specifying `all` for extra modules option `-m` all extra modules are installed.
@@ -139,6 +139,13 @@ Example: Installing Android (armv7) Qt 5.10.2:
     aqt install 5.10.2 linux android android_armv7
 
 
+Example: Installing Android Qt 5.15.2:
+
+.. code-block:: bash
+
+    aqt install 5.15.2 linux android android
+
+
 Example: Install examples, doc and source:
 
 .. code-block:: bash
@@ -148,7 +155,7 @@ Example: Install examples, doc and source:
     C:\ aqt src 5.15.0 windows desktop
 
 
-Example: Install Web Assembly
+Example: Install Web Assembly for Qt5
 
 .. code-block:: bash
 
@@ -176,6 +183,15 @@ Example: Install MinGW on Windows
 
     C:\ aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
     c:\ set PATH=C:\Qt\Tools\mingw810_64\bin
+
+
+Example: Install Qt6 for android
+
+.. code-block:: bash
+
+    aqt install -O qt 6.1.0 linux desktop
+    aqt install -O qt 6.1.0 linux android android_armv7
+    qt/6.1.0/android_armv7/bin/qmake -query
 
 
 Example: Show help message
