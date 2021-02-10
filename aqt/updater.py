@@ -58,7 +58,6 @@ class Updater:
             self._patch_textfile(pcfile, "prefix=/home/qt/work/install", 'prefix={}'.format(str(self.prefix)))
 
     def _patch_textfile(self, file: pathlib.Path, old: str, new: str):
-        self.logger.info("Patching {}".format(str(file)))
         st = file.stat()
         data = file.read_text("UTF-8")
         data = data.replace(old, new)
@@ -69,7 +68,7 @@ class Updater:
         """detect Qt configurations from qmake."""
         for qmake_path in [self.prefix.joinpath('bin', 'qmake'), self.prefix.joinpath('bin', 'qmake.exe')]:
             if not qmake_path.exists():
-                return False
+                continue
             try:
                 result = subprocess.run([str(qmake_path), '-query'], stdout=subprocess.PIPE)
             except subprocess.SubprocessError:
@@ -80,8 +79,7 @@ class Updater:
                     vals = line.decode('UTF-8').split(':')
                     self.qconfigs[vals[0]] = vals[1]
                 return True
-            else:
-                return False
+        return False
 
     def _versiontuple(self, v: str):
         return tuple(map(int, (v.split("."))))
