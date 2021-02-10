@@ -62,7 +62,7 @@ jobs:
   displayName: Linux (Specific Mirror)
   variables:
     PYTHON_VERSION: '3.8'
-    QT_VERSION: 5.13.1
+    QT_VERSION: 5.14.2
     HOST: linux
     TARGET: android
     ARCH: android_armv7
