@@ -403,6 +403,7 @@ class Cli:
                                     "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
                                     "\n                      win64_msvc2017_64, win32_msvc2017"
                                     "\n                      win64_msvc2015_64, win32_msvc2015"
+                                    "\n                      win64_mingw81, win32_mingw81"
                                     "\n                      win64_mingw73, win32_mingw73"
                                     "\n                      win32_mingw53"
                                     "\n                      wasm_32"

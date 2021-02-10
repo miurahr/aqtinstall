@@ -20,7 +20,6 @@
   {"os_name": "windows", "target": "desktop", "arch": "win32_mingw81"},
   {"os_name": "windows", "target": "desktop", "arch": "win64_mingw73"},
   {"os_name": "windows", "target": "desktop", "arch": "win32_mingw73"},
-  {"os_name": "windows", "target": "desktop", "arch": "win64_mingw53"},
   {"os_name": "windows", "target": "desktop", "arch": "win32_mingw53"},
   {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2019_winrt_x64"},
   {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2019_winrt_x86"},
