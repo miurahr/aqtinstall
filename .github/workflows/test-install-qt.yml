@@ -9,11 +9,11 @@ jobs:
       matrix:
         os: [windows-latest, macOS-latest, ubuntu-latest]
         py: [3.6, 3.8]
-        qtver: [5.9.9, 5.12.8, 5.15.1]
+        qtver: [5.9.9, 5.12.8, 5.15.2]
         include:
           - os: ubuntu-20.04
             py: 3.8
-            qtver: 6.0.0
+            qtver: 6.0.1
         exclude:
           - os: windows-latest
             py: 3.6
@@ -60,6 +60,13 @@ jobs:
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
           assert res.returncode == 0
+          if qtver.startswith('6.0'):
+            command_line = ["python", "-m", "aqt", "install", qtver, "linux", "android", "android_armv7"]
+            try:
+              res = subprocess.run(command_line, timeout=timeout, check=True)
+            except subprocess.CalledProcessError as cpe:
+              exit(cpe.returncode)
+            assert res.returncode == 0
         shell: python
       - name: Test qmake -query
         run: |
@@ -88,4 +95,10 @@ jobs:
               if line.startswith(b'QT_INSTALL_PREFIX'):
                 result = line[18:].decode('UTF-8')
                 assert qt_prefix_path.samefile(result)
+            if qtver.startswith('6.0'):
+              try:
+                res = run([f"{qtver}/android_armv7/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
+              except CalledProcessError as cpe:
+                exit(cpe.returncode)
+            assert res.returncode == 0
         shell: python
