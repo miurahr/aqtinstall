@@ -50,7 +50,7 @@ jobs:
               args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
             elif qtver.startswith('5.14'):
               args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
-            elif qtver.startswith('6.0'):
+            elif qtver.startswith('6'):
               args = [qtver, "windows", "desktop", "win64_mingw81"]
             else:
               args = [qtver, "windows", "desktop", "win64_msvc2015_64"]
@@ -65,7 +65,7 @@ jobs:
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
           assert res.returncode == 0
-          if qtver.startswith('6.0'):
+          if qtver.startswith('6'):
             if platform == 'ubuntu-20.04':
               command_line = ["python", "-m", "aqt", "install", qtver, "linux", "android", "android_armv7"]
             elif platform == "macOS-latest":
@@ -89,6 +89,8 @@ jobs:
               arch_dir = 'msvc2019_64'
             elif qtver.startswith('5.14'):
               arch_dir = 'msvc2017_64'
+            elif qtver.startswith('6'):
+              arch_dir = 'mingw81_64'
             else:
               arch_dir = 'msvc2015_64'
           elif platform == "macOS-latest":
