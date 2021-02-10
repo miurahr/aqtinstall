@@ -110,8 +110,12 @@ jobs:
                 assert qt_prefix_path.samefile(result)
             print('PREFIX {}'.format(result))
             if qtver.startswith('6'):
+              if platform == "windows-latest":
+                qmake = f"{qtver}/android_armv7/bin/qmake.bat"
+              else:
+                qmake = f"{qtver}/android_armv7/bin/qmake"
               try:
-                res = run([f"{qtver}/android_armv7/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
+                res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
               except CalledProcessError as cpe:
                 exit(cpe.returncode)
               assert res.returncode == 0
