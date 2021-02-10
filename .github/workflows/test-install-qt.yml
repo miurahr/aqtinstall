@@ -81,6 +81,7 @@ jobs:
         shell: python
       - name: Test qmake -query
         run: |
+          import os
           import pathlib
           from subprocess import CalledProcessError, PIPE, run
           platform = "${{ matrix.os }}"
@@ -111,9 +112,9 @@ jobs:
             print('PREFIX {}'.format(result))
             if qtver.startswith('6'):
               if platform == "windows-latest" and qtver.startswith('6'):
-                qmake = f"{qtver}/android_armv7/bin/qmake.bat"
+                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
               else:
-                qmake = f"{qtver}/android_armv7/bin/qmake"
+                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
               try:
                 res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
               except CalledProcessError as cpe:
