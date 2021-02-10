@@ -117,5 +117,5 @@ jobs:
               for line in result.stdout.splitlines():
                 if line.startswith(b'QT_INSTALL_PREFIX'):
                   result = line[18:].decode('UTF-8')
-                  print('PREFIX {}'.format(qt_prefix_path.samefile(result))
+              print('PREFIX {}'.format(result))
         shell: python
