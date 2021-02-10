@@ -114,7 +114,7 @@ jobs:
               except CalledProcessError as cpe:
                 exit(cpe.returncode)
               assert res.returncode == 0
-              for line in result.stdout.splitlines():
+              for line in res.stdout.splitlines():
                 if line.startswith(b'QT_INSTALL_PREFIX'):
                   result = line[18:].decode('UTF-8')
               print('PREFIX {}'.format(result))
