@@ -59,7 +59,6 @@ jobs:
           else:
             args = [qtver, "linux", "desktop", "gcc_64"]
           command_line.extend(args)
-          command_line.extend(["--archives", "qtbase", "icu", "qt"])
           try:
             res = subprocess.run(command_line, timeout=timeout, check=True)
           except subprocess.CalledProcessError as cpe:
@@ -107,7 +106,7 @@ jobs:
               if line.startswith(b'QT_INSTALL_PREFIX'):
                 result = line[18:].decode('UTF-8')
                 assert qt_prefix_path.samefile(result)
-            if qtver.startswith('6.0'):
+            if qtver.startswith('6'):
               try:
                 res = run([f"{qtver}/android_armv7/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
               except CalledProcessError as cpe:
