@@ -110,7 +110,7 @@ jobs:
                 assert qt_prefix_path.samefile(result)
             print('PREFIX {}'.format(result))
             if qtver.startswith('6'):
-              if platform == "windows-latest":
+              if platform == "windows-latest" and qtver.startswith('6'):
                 qmake = f"{qtver}/android_armv7/bin/qmake.bat"
               else:
                 qmake = f"{qtver}/android_armv7/bin/qmake"
