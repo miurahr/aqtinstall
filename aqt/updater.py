@@ -89,20 +89,22 @@ class Updater:
     def patch_qmake(self):
         """Patch to qmake binary"""
         if self._detect_qmake():
-            self.logger.info("Patching qmake binary")
+            self.logger.info("Patching {}".format(str(self.qmake_path)))
             self._patch_binfile(self.qmake_path, key=b"qt_prfxpath=", newpath=bytes(str(self.prefix), 'UTF-8'))
 
     def patch_qmake_script(self, base_dir, qt_version, os_name):
-        self.logger.info("Patching qmake script")
         if os_name == 'linux':
+            self.logger.info("Patching {}/bin/qmake".format(self.prefix))
             self._patch_textfile(self.prefix / 'bin' / 'qmake',
                                  '/home/qt/work/install/bin',
                                  '{}/{}/{}/bin'.format(base_dir, qt_version, 'gcc_64'))
         elif os_name == 'mac':
+            self.logger.info("Patching {}/bin/qmake".format(self.prefix))
             self._patch_textfile(self.prefix / 'bin' / 'qmake',
                          '/Users/qt/work/install/bin',
                          '{}/{}/{}/bin'.format(base_dir, qt_version, 'clang_64'))
         elif os_name == 'windows':
+            self.logger.info("Patching {}/bin/qmake.bat".format(self.prefix))
             self._patch_textfile(self.prefix / 'bin' / 'qmake.bat',
                                  '/Users/qt/work/install/bin',
                                  '{}\\{}\\{}\\bin'.format(base_dir, qt_version, 'mingw81_64'))
