@@ -100,7 +100,7 @@ windows_build_jobs.append(
 linux_build_jobs.extend(
     [
         BuildJob('5.14.1', 'linux', 'android', 'android', 'android'),
-        BuildJob('6.0.1', 'linux', 'android', 'android_armv7', 'android_armv7'),
+        BuildJob('6.0.1', 'linux', 'android', 'android_armv7', 'android_armv7')
     ]
 )
 

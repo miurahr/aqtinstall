@@ -85,11 +85,31 @@ class Updater:
     def _versiontuple(self, v: str):
         return tuple(map(int, (v.split("."))))
 
-    def qtpatch(self, target):
-        """ patch works """
+    def patch_qmake(self):
+        """Patch to qmake binary"""
         if self._detect_qmake():
-            self.logger.info("Patching qmake")
+            self.logger.info("Patching qmake binary")
             self._patch_binfile(self.qmake_path, key=b"qt_prfxpath=", newpath=bytes(str(self.prefix), 'UTF-8'))
+
+    def patch_qmake_script(self, base_dir, qt_version, os_name):
+        self.logger.info("Patching qmake script")
+        if os_name == 'linux':
+            self._patch_textfile(self.prefix / 'bin' / 'qmake',
+                                 '/home/qt/work/install/bin',
+                                 '{}/{}/{}/bin'.format(base_dir, qt_version, 'gcc_64'))
+        elif os_name == 'mac':
+            self._patch_textfile(self.prefix / 'bin' / 'qmake',
+                         '/Users/qt/work/install/bin',
+                         '{}/{}/{}/bin'.format(base_dir, qt_version, 'clang_64'))
+        elif os_name == 'windows':
+            self._patch_textfile(self.prefix / 'bin' / 'qmake.bat',
+                                 '/Users/qt/work/install/bin',
+                                 '{}\\{}\\{}\\bin'.format(base_dir, qt_version, 'mingw81_64'))
+        else:
+            pass
+
+    def qtpatch(self, target):
+        """ patch to QtCore"""
         if target.os_name == 'mac':
             self.logger.info("Patching QtCore")
             self._patch_qtcore(self.prefix.joinpath("lib", "QtCore.framework"), ["QtCore", "QtCore_debug"], "UTF-8")
@@ -106,14 +126,14 @@ class Updater:
             # no need to patch Qt5Core
             pass
 
-    def mkqtconf(self, base_dir, qt_version, arch_dir):
-        # prepare qt.conf
+    def make_qtconf(self, base_dir, qt_version, arch_dir):
+        """Prepare qt.conf"""
         with open(os.path.join(base_dir, qt_version, arch_dir, 'bin', 'qt.conf'), 'w') as f:
             f.write("[Paths]\n")
             f.write("Prefix=..\n")
 
-    def qtconfig(self, base_dir, qt_version, arch_dir):
-        # update qtconfig.pri only as OpenSource
+    def set_license(self, base_dir, qt_version, arch_dir):
+        """Update qtconfig.pri as OpenSource"""
         with open(os.path.join(base_dir, qt_version, arch_dir, 'mkspecs', 'qconfig.pri'), 'r+') as f:
             lines = f.readlines()
             f.seek(0)
@@ -146,10 +166,15 @@ class Updater:
         try:
             prefix = pathlib.Path(base_dir) / target.version / target.arch
             updater = Updater(prefix, logger)
-            updater.qtconfig(base_dir, qt_version, arch_dir)
+            updater.set_license(base_dir, qt_version, arch_dir)
             if target.arch not in ['ios', 'android', 'wasm_32', 'android_x86_64', 'android_arm64_v8a', 'android_x86',
-                                   'android_armv7']:
+                                   'android_armv7']:  # desktop version
+                updater.make_qtconf(base_dir, qt_version, arch_dir)
                 updater.qtpatch(target)
-                updater.mkqtconf(base_dir, qt_version, arch_dir)
+                updater.patch_qmake(target)
+            elif qt_version.startswith('5.'):  # qt5 non-desktop
+                updater.patch_qmake(target)
+            else:  # qt6 non-desktop
+                updater.patch_qmake_script(base_dir, qt_version, target.os_name)
         except IOError as e:
             raise e
