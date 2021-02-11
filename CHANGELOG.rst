@@ -29,6 +29,28 @@ Removed
 Security
 --------
 
+`v1.1.0`_ (12, Feb. 2021)
+========================
+
+Added
+-----
+
+* Patching android installation for Qt6
+  - patch target_qt.conf
+
+Changed
+-------
+
+* CI test with Qt6
+* Docs: update avaiable conbinations
+
+Fixed
+-----
+
+* Skip QtCore patching for 5.14.0 and later(Fix regression)(#211)
+
+
+
 `v1.0.0`_ (4, Feb. 2021)
 ========================
 
@@ -128,7 +150,8 @@ Fixed
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.0.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.0...HEAD
+.. _v1.1.0: https://github.com/miurahr/aqtinstall/compare/v1.0.0...v1.1.0
 .. _v1.0.0: https://github.com/miurahr/aqtinstall/compare/v0.11.1...v1.0.0
 .. _v0.11.1: https://github.com/miurahr/aqtinstall/compare/v0.11.0...v0.11.1
 .. _v0.11.0: https://github.com/miurahr/aqtinstall/compare/v0.10.1...v0.11.0
