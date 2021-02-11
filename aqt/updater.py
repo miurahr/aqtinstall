@@ -52,11 +52,6 @@ class Updater:
         file.write_bytes(data)
         os.chmod(str(file), st.st_mode)
 
-    def _patch_pkgconfig(self, file: pathlib.Path):
-        for pcfile in file.glob("*.pc"):
-            self.logger.info("Patching {}".format(pcfile))
-            self._patch_textfile(pcfile, "prefix=/home/qt/work/install", 'prefix={}'.format(str(self.prefix)))
-
     def _patch_textfile(self, file: pathlib.Path, old: str, new: str):
         st = file.stat()
         data = file.read_text("UTF-8")
@@ -81,8 +76,10 @@ class Updater:
                 return True
         return False
 
-    def _versiontuple(self, v: str):
-        return tuple(map(int, (v.split("."))))
+    def patch_pkgconfig(self):
+        for pcfile in self.prefix.joinpath("lib", "pkgconfig").glob("*.pc"):
+            self.logger.info("Patching {}".format(pcfile))
+            self._patch_textfile(pcfile, "prefix=/home/qt/work/install", 'prefix={}'.format(str(self.prefix)))
 
     def patch_qmake(self):
         """Patch to qmake binary"""
@@ -109,16 +106,14 @@ class Updater:
         else:
             pass
 
-    def qtpatch(self, target):
+    def patch_qtcore(self, target):
         """ patch to QtCore"""
         if target.os_name == 'mac':
             self._patch_qtcore(self.prefix.joinpath("lib", "QtCore.framework"), ["QtCore", "QtCore_debug"], "UTF-8")
         elif target.os_name == 'linux':
-            self._patch_pkgconfig(self.prefix.joinpath("lib", "pkgconfig"))
-            self._patch_qtcore(self.prefix.joinpath("lib"), ["libQt5Core.so", "libQt6Core.so"], "UTF-8")
+            self._patch_qtcore(self.prefix.joinpath("lib"), ["libQt5Core.so"], "UTF-8")
         elif target.os_name == 'windows':
-            self._patch_qtcore(self.prefix.joinpath("bin"), ["Qt5Cored.dll", "Qt5Core.dll", "Qt6Core.dll",
-                                                             "Qt6Cored.dll"], "UTF-8")
+            self._patch_qtcore(self.prefix.joinpath("bin"), ["Qt5Cored.dll", "Qt5Core.dll"], "UTF-8")
         else:
             # no need to patch Qt5Core
             pass
@@ -167,11 +162,17 @@ class Updater:
             if target.arch not in ['ios', 'android', 'wasm_32', 'android_x86_64', 'android_arm64_v8a', 'android_x86',
                                    'android_armv7']:  # desktop version
                 updater.make_qtconf(base_dir, qt_version, arch_dir)
-                updater.qtpatch(target)
                 updater.patch_qmake()
+                if target.os_name == 'linux':
+                    updater.patch_pkgconfig()
+                if versiontuple(target.version) < (5, 14, 0):
+                    updater.patch_qtcore(target)
             elif qt_version.startswith('5.'):  # qt5 non-desktop
                 updater.patch_qmake()
             else:  # qt6 non-desktop
                 updater.patch_qmake_script(base_dir, qt_version, target.os_name)
         except IOError as e:
             raise e
+
+def versiontuple(v: str):
+    return tuple(map(int, (v.split("."))))
