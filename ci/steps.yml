@@ -18,8 +18,8 @@ steps:
       mkdir Qt
       cd Qt
       python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
-      if [[ "$(TARGET)" == "android" && "$(TARGET)" == "ios" ]];
-        if [[ "$(HOST)" == "windows" ]];
+      if [[ "$(TARGET)" == "android" && "$(TARGET)" == "ios" ]]; then
+        if [[ "$(HOST)" == "windows" ]]; then
           python -m aqt install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
         else
           python -m aqt install $(QT_VERSION) $(HOST) desktop --archives qtbase
