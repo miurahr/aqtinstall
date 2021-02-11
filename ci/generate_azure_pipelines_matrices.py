@@ -23,12 +23,12 @@ class PlatformBuildJobs:
 
 
 python_versions = [
-    '3.7',
+    '3.8',
 ]
 
 qt_versions = [
     '5.13.2',
-    '5.14.0'
+    '5.15.2'
 ]
 
 linux_build_jobs = []
@@ -53,31 +53,23 @@ for qt_version in qt_versions:
         BuildJob(qt_version, 'mac', 'desktop', 'clang_64', "clang_64")
     )
 
-# Mac iOS, android
-mac_build_jobs.extend(
-    [
-        BuildJob('5.15.2', 'mac', 'ios', 'ios', 'ios'),
-        BuildJob('5.14.2', 'mac', 'android', 'android', 'android')
-    ]
-)
-
 # Windows Desktop
 windows_build_jobs.extend(
     [
         BuildJob('5.14.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
         BuildJob('5.14.2', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
         BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
-        BuildJob('5.15.0', 'windows', 'desktop', 'win64_mingw81', 'mingw81_64'),
+        BuildJob('5.15.2', 'windows', 'desktop', 'win64_mingw81', 'mingw81_64'),
         # Known issue with Azure-Pipelines environment: it has a pre-installed mingw81 which cause link error.
         # BuildJob('5.15.0', 'windows', 'desktop', 'win32_mingw81', 'mingw81_32'),
-        BuildJob('5.15.0', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64', module='qcharts qtnetworkauth'),
+        BuildJob('5.15.2', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64', module='qcharts qtnetworkauth'),
     ]
 )
 
 # Extra modules test
 linux_build_jobs.extend(
     [
-        BuildJob('5.15.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='qcharts qtnetworkauth'),
+        BuildJob('5.15.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='qcharts qtnetworkauth'),
         BuildJob('5.14.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='all')
     ]
 )
@@ -87,19 +79,22 @@ mac_build_jobs.append(
 
 # WASM
 linux_build_jobs.append(
-    BuildJob('5.14.0', 'linux', 'desktop', 'wasm_32', "wasm_32")
+    BuildJob('5.14.2', 'linux', 'desktop', 'wasm_32', "wasm_32")
 )
 mac_build_jobs.append(
-    BuildJob('5.14.0', 'mac', 'desktop', 'wasm_32', "wasm_32")
-)
-windows_build_jobs.append(
-    BuildJob('5.14.2', 'windows', 'desktop', 'wasm_32', "wasm_32")
+    BuildJob('5.14.2', 'mac', 'desktop', 'wasm_32', "wasm_32")
 )
 
-# android
+# mobile SDK
+mac_build_jobs.extend(
+    [
+        BuildJob('5.15.2', 'mac', 'ios', 'ios', 'ios'),
+        BuildJob('6.1.0', 'mac', 'android', 'android_armv7', 'android_armv7')
+    ]
+)
 linux_build_jobs.extend(
     [
-        BuildJob('5.14.2', 'linux', 'android', 'android', 'android'),
+        BuildJob('6.1.0', 'linux', 'android', 'android_armv7', 'android_armv7')
     ]
 )
 

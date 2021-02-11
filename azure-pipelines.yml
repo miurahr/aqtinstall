@@ -19,7 +19,7 @@ jobs:
 - job: MatricesGenerator
   displayName: Matrices Generator
   pool:
-    vmImage: 'ubuntu-18.04'
+    vmImage: 'ubuntu-20.04'
   steps:
     - task: UsePythonVersion@0
       inputs:
@@ -52,7 +52,7 @@ jobs:
 - job: Linux
   dependsOn: MatricesGenerator
   pool:
-    vmImage: 'ubuntu-18.04'
+    vmImage: 'ubuntu-20.04'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.linux'] ]
   steps:
@@ -92,7 +92,7 @@ jobs:
   displayName: Linux (source)
   variables:
     PYTHON_VERSION: '3.8'
-    QT_VERSION: 6.0.0
+    QT_VERSION: 6.1.0
     HOST: linux
     TARGET: desktop
     TOOL_NAME: src
