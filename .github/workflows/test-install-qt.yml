@@ -8,16 +8,19 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macOS-latest, ubuntu-latest]
-        py: [3.6, 3.8]
-        qtver: [5.9.9, 5.12.8, 5.15.1]
+        py: [3.6, 3.9]
+        qtver: [5.9.9, 5.12.8, 5.15.2]
         include:
           - os: ubuntu-20.04
-            py: 3.8
-            qtver: 6.0.0
+            py: 3.9
+            qtver: 6.0.1
+          - os: windows-latest
+            py: 3.9
+            qtver: 6.0.1
         exclude:
           - os: windows-latest
             py: 3.6
-            qtver: 5.15.1
+            qtver: 5.15.2
     steps:
       - uses: actions/checkout@v1
         with:
@@ -47,6 +50,8 @@ jobs:
               args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
             elif qtver.startswith('5.14'):
               args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
+            elif qtver.startswith('6'):
+              args = [qtver, "windows", "desktop", "win64_mingw81"]
             else:
               args = [qtver, "windows", "desktop", "win64_msvc2015_64"]
           elif platform == "macOS-latest":
@@ -55,14 +60,28 @@ jobs:
             args = [qtver, "linux", "desktop", "gcc_64"]
           command_line.extend(args)
           command_line.extend(["--archives", "qtbase", "icu", "qt"])
+          print("Execute: {}".format(command_line))
           try:
             res = subprocess.run(command_line, timeout=timeout, check=True)
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
           assert res.returncode == 0
+          if qtver.startswith('6'):
+            if platform == 'ubuntu-20.04':
+              command_line = ["python", "-m", "aqt", "install", qtver, "linux", "android", "android_armv7"]
+            elif platform == "macOS-latest":
+              command_line = ["python", "-m", "aqt", "install", qtver, "mac", "ios", "ios"]
+            else:
+              command_line = ["python", "-m", "aqt", "install", qtver, "windows", "android", "android_armv7"]
+            try:
+              res = subprocess.run(command_line, timeout=timeout, check=True)
+            except subprocess.CalledProcessError as cpe:
+              exit(cpe.returncode)
+            assert res.returncode == 0
         shell: python
       - name: Test qmake -query
         run: |
+          import os
           import pathlib
           from subprocess import CalledProcessError, PIPE, run
           platform = "${{ matrix.os }}"
@@ -72,6 +91,8 @@ jobs:
               arch_dir = 'msvc2019_64'
             elif qtver.startswith('5.14'):
               arch_dir = 'msvc2017_64'
+            elif qtver.startswith('6'):
+              arch_dir = 'mingw81_64'
             else:
               arch_dir = 'msvc2015_64'
           elif platform == "macOS-latest":
@@ -88,4 +109,19 @@ jobs:
               if line.startswith(b'QT_INSTALL_PREFIX'):
                 result = line[18:].decode('UTF-8')
                 assert qt_prefix_path.samefile(result)
+            print('PREFIX {}'.format(result))
+            if qtver.startswith('6'):
+              if platform == "windows-latest" and qtver.startswith('6'):
+                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
+              else:
+                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
+              try:
+                res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
+              except CalledProcessError as cpe:
+                exit(cpe.returncode)
+              assert res.returncode == 0
+              for line in res.stdout.splitlines():
+                if line.startswith(b'QT_INSTALL_PREFIX'):
+                  result = line[18:].decode('UTF-8')
+              print('PREFIX {}'.format(result))
         shell: python

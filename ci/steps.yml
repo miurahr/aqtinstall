@@ -111,18 +111,18 @@ steps:
   ##----------------------------------------------------
   # for Android on linux
   - script: |
-      wget https://dl.google.com/android/repository/android-ndk-r20b-linux-x86_64.zip
-      unzip android-ndk-r20b-linux-x86_64.zip
+      wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
+      unzip android-ndk-r21e-linux-x86_64.zip
     condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Linux'))
     displayName: Download and extract Android NDK
   # for Android on mac
   - script: |
-      wget https://dl.google.com/android/repository/android-ndk-r20b-darwin-x86_64.zip
-      unzip android-ndk-r20b-darwin-x86_64.zip
+      wget https://dl.google.com/android/repository/android-ndk-r21e-darwin-x86_64.zip
+      unzip android-ndk-r21e-darwin-x86_64.zip
     condition: and(eq(variables['TARGET'], 'android'), eq(variables['Agent.OS'], 'Darwin'))
     displayName: Download and extract Android NDK
   - bash: |
-      export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r20b
+      export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r21e
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
       export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH

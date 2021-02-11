@@ -56,8 +56,8 @@ for qt_version in qt_versions:
 # Mac iOS, android
 mac_build_jobs.extend(
     [
-        BuildJob('5.13.2', 'mac', 'ios', 'ios', 'ios'),
-        BuildJob('5.14.1', 'mac', 'android', 'android', 'android')
+        BuildJob('5.15.2', 'mac', 'ios', 'ios', 'ios'),
+        BuildJob('5.14.2', 'mac', 'android', 'android', 'android')
     ]
 )
 
@@ -97,8 +97,10 @@ windows_build_jobs.append(
 )
 
 # android
-linux_build_jobs.append(
-    BuildJob('5.14.1', 'linux', 'android', 'android', 'android')
+linux_build_jobs.extend(
+    [
+        BuildJob('5.14.2', 'linux', 'android', 'android', 'android'),
+    ]
 )
 
 matrices = {}
