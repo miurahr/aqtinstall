@@ -44,6 +44,14 @@ class Updater:
         file.write_bytes(data)
         os.chmod(str(file), st.st_mode)
 
+    def _append_string(self, file: pathlib.Path, val: str):
+        """Append string to file"""
+        st = file.stat()
+        data = file.read_text("UTF-8")
+        data += val
+        file.write_text(data, "UTF-8")
+        os.chmod(str(file), st.st_mode)
+
     def _patch_textfile(self, file: pathlib.Path, old: str, new: str):
         st = file.stat()
         data = file.read_text("UTF-8")
@@ -137,8 +145,25 @@ class Updater:
                     line = 'QT_LICHECK =\n'
                 f.write(line)
 
+    def patch_target_qt_conf(self, base_dir, qt_version, arch_dir, os_name):
+        target_qt_conf = self.prefix / 'bin' / 'target_qt.conf'
+        if os_name == 'linux':
+            old_targetprefix = 'Prefix=/home/qt/work/install/target'
+            new_hostprefix = 'HostPrefix=../../gcc_64'
+        elif os_name == 'mac':
+            old_targetprefix = 'Prefix=/Users/qt/work/install/target'
+            new_hostprefix = 'HostPrefix=../../clang_64'
+        else:
+            old_targetprefix = 'Prefix=/Users/qt/work/install/target'
+            new_hostprefix = 'HostPrefix=../../mingw81_64'
+        new_targetprefix = 'Prefix={}'.format(str(pathlib.Path(base_dir).joinpath(qt_version, arch_dir, 'target')))
+        new_hostdata = 'HostData=../{}'.format(arch_dir)
+        self._patch_textfile(target_qt_conf, old_targetprefix, new_targetprefix)
+        self._patch_textfile(target_qt_conf, 'HostPrefix=../../', new_hostprefix)
+        self._patch_textfile(target_qt_conf, 'HostData=target', new_hostdata)
+
     @classmethod
-    def update(cls, target, base_dir, logger):
+    def update(cls, target, base_dir: str, logger):
         """
         Make Qt configuration files, qt.conf and qtconfig.pri.
         And update pkgconfig and patch Qt5Core and qmake
@@ -171,6 +196,7 @@ class Updater:
                 updater.patch_qmake()
             else:  # qt6 non-desktop
                 updater.patch_qmake_script(base_dir, qt_version, target.os_name)
+                updater.patch_target_qt_conf(base_dir, qt_version, arch_dir, target.os_name)
         except IOError as e:
             raise e
 
