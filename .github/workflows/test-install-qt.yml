@@ -8,19 +8,16 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macOS-latest, ubuntu-latest]
-        py: [3.6, 3.9]
-        qtver: [5.9.9, 5.12.8, 5.15.2]
+        py: [3.9]
+        qtver: [5.9.9, 5.12.8, 6.1.0]
         include:
           - os: ubuntu-20.04
             py: 3.9
-            qtver: 6.0.1
-          - os: windows-latest
-            py: 3.9
-            qtver: 6.0.1
+            qtver: 6.1.0
         exclude:
-          - os: windows-latest
-            py: 3.6
-            qtver: 5.15.2
+          - os: ubuntu-latest
+            py: 3.9
+            qtver: 6.1.0
     steps:
       - uses: actions/checkout@v1
         with:
