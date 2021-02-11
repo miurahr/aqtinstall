@@ -18,6 +18,13 @@ steps:
       mkdir Qt
       cd Qt
       python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
+      if [[ "$(TARGET)" == "android" && "$(TARGET)" == "ios" ]];
+        if [[ "$(HOST)" == "windows" ]];
+          python -m aqt install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
+        else
+          python -m aqt install $(QT_VERSION) $(HOST) desktop --archives qtbase
+        fi
+      fi
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -47,17 +54,6 @@ steps:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
     condition: and(not(variables['TOOL_NAME']), not(variables['EXTERNAL']), ne(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''))
     displayName: Run Aqt (With modules)
-  - bash: |
-      number=$RANDOM
-      let "number %= 30"
-      sleep $number
-      mkdir Qt
-      python -m aqt install --outputdir $(Build.BinariesDirectory)/Qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -E "$(EXTERNAL)"
-    workingDirectory: $(Build.BinariesDirectory)
-    env:
-      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: and(not(variables['TOOL_NAME']), variables['EXTERNAL'], eq(variables['SUBARCHIVES'], ''))
-    displayName: Run Aqt (With external 7zip)
   - bash: |
       number=$RANDOM
       let "number %= 30"
