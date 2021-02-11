@@ -240,8 +240,8 @@ steps:
   - script: |
       git clone https://github.com/emscripten-core/emsdk.git
       cd emsdk
-      ./emsdk install sdk-fastcomp-1.39.8-64bit
-      ./emsdk activate --embedded  sdk-fastcomp-1.39.8-64bit
+      ./emsdk install sdk-fastcomp-1.38.27-64bit
+      ./emsdk activate --embedded  sdk-fastcomp-1.38.27-64bit
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: 'Install Emscripten SDK'

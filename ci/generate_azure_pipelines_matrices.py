@@ -79,13 +79,10 @@ mac_build_jobs.append(
 
 # WASM
 linux_build_jobs.append(
-    BuildJob('5.15.2', 'linux', 'desktop', 'wasm_32', "wasm_32")
+    BuildJob('5.14.2', 'linux', 'desktop', 'wasm_32', "wasm_32")
 )
 mac_build_jobs.append(
-    BuildJob('5.15.2', 'mac', 'desktop', 'wasm_32', "wasm_32")
-)
-windows_build_jobs.append(
-    BuildJob('5.15.2', 'windows', 'desktop', 'wasm_32', "wasm_32")
+    BuildJob('5.14.2', 'mac', 'desktop', 'wasm_32', "wasm_32")
 )
 
 # mobile SDK
