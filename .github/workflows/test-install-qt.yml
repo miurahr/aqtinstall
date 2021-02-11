@@ -110,6 +110,8 @@ jobs:
             if qtver.startswith('6'):
               if platform == "windows-latest" and qtver.startswith('6'):
                 qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
+              elif platform == "macOS-latest" and qtver.startswith('6'):
+                qmake = os.path.join(qtver, 'ios', 'bin', 'qmake')
               else:
                 qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
               try:
