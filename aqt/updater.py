@@ -32,14 +32,6 @@ class Updater:
         self.qmake_path = None
         self.qconfigs = {}
 
-    def _patch_qtcore(self, lib_dir, components, encoding):
-        for component in components:
-            if lib_dir.joinpath(component).exists():
-                qtcore_path = lib_dir.joinpath(component).resolve()
-                self.logger.info("Patching {}".format(qtcore_path))
-                newpath = bytes(str(self.prefix), encoding)
-                self._patch_binfile(qtcore_path, b"qt_prfxpath=", newpath)
-
     def _patch_binfile(self, file: pathlib.Path, key: bytes, newpath: bytes):
         """Patch binary file with key/value"""
         st = file.stat()
@@ -109,14 +101,22 @@ class Updater:
     def patch_qtcore(self, target):
         """ patch to QtCore"""
         if target.os_name == 'mac':
-            self._patch_qtcore(self.prefix.joinpath("lib", "QtCore.framework"), ["QtCore", "QtCore_debug"], "UTF-8")
+            lib_dir = self.prefix.joinpath("lib", "QtCore.framework")
+            components = ["QtCore", "QtCore_debug"]
         elif target.os_name == 'linux':
-            self._patch_qtcore(self.prefix.joinpath("lib"), ["libQt5Core.so"], "UTF-8")
+            lib_dir = self.prefix.joinpath("lib")
+            components = ["libQt5Core.so"]
         elif target.os_name == 'windows':
-            self._patch_qtcore(self.prefix.joinpath("bin"), ["Qt5Cored.dll", "Qt5Core.dll"], "UTF-8")
+            lib_dir = self.prefix.joinpath("bin")
+            components = ["Qt5Cored.dll", "Qt5Core.dll"]
         else:
-            # no need to patch Qt5Core
-            pass
+            return
+        for component in components:
+            if lib_dir.joinpath(component).exists():
+                qtcore_path = lib_dir.joinpath(component).resolve()
+                self.logger.info("Patching {}".format(qtcore_path))
+                newpath = bytes(str(self.prefix), "UTF-8")
+                self._patch_binfile(qtcore_path, b"qt_prfxpath=", newpath)
 
     def make_qtconf(self, base_dir, qt_version, arch_dir):
         """Prepare qt.conf"""
