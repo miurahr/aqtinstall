@@ -336,7 +336,7 @@ class Cli:
         target = args.target
         try:
             pl = PackagesList(qt_version, host, target, BASE_URL)
-        except requests.exceptions.ConnectionError:
+        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
             pl = PackagesList(qt_version, host, target, random.choice(FALLBACK_URLS))
         print('List Qt packages in %s for %s' % (args.qt_version, args.host))
         table = Texttable()
@@ -499,6 +499,9 @@ def installer(qt_archive, base_dir, command, response_timeout=30):
                 r = session.get(newurl, stream=True, timeout=timeout)
         except requests.exceptions.ConnectionError as e:
             logger.error("Connection error: %s" % e.args)
+            raise e
+        except requests.exceptions.Timeout as e:
+            logger.error("Connection timeout: %s" % e.args)
             raise e
         else:
             try:
