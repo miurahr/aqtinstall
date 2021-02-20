@@ -171,6 +171,8 @@ class Cli:
             tasks.append((arc, base_dir, sevenzip))
         pool = multiprocessing.Pool(self.settings.concurrency)
         pool.starmap(installer, tasks)
+        pool.close()
+        pool.join()
 
     def run_install(self, args):
         """Run install subcommand"""
