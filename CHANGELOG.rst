@@ -29,6 +29,16 @@ Removed
 Security
 --------
 
+`v1.1.2`_ (20, Feb. 2021)
+=========================
+
+Fixed
+-----
+
+* Fix leaked multiprocessing resource(#220)
+* Catch both read timeout and connection timeout.
+
+
 `v1.1.1`_ (13, Feb. 2021)
 =========================
 
@@ -159,7 +169,8 @@ Fixed
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.2...HEAD
+.. _v1.1.2: https://github.com/miurahr/aqtinstall/compare/v1.1.1...v1.1.2
 .. _v1.1.1: https://github.com/miurahr/aqtinstall/compare/v1.1.0...v1.1.1
 .. _v1.1.0: https://github.com/miurahr/aqtinstall/compare/v1.0.0...v1.1.0
 .. _v1.0.0: https://github.com/miurahr/aqtinstall/compare/v0.11.1...v1.0.0
