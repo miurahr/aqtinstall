@@ -41,6 +41,7 @@ from requests.adapters import HTTPAdapter
 from texttable import Texttable
 from urllib3.util.retry import Retry
 
+from aqt import __version__ as version
 from aqt.archives import (ArchiveConnectionError, ArchiveDownloadError,
                           ArchiveListError, PackagesList, QtArchives,
                           SrcDocExamplesArchives, ToolArchives, NoPackageFound)
@@ -358,7 +359,7 @@ class Cli:
         py_version = platform.python_version()
         py_impl = platform.python_implementation()
         py_build = platform.python_compiler()
-        self.logger.info("aqtinstall({}) v{} on Python {} [{} {}]".format(module_name, dist.version,
+        self.logger.info("aqtinstall({}) v{} on Python {} [{} {}]".format(module_name, version,
                                                                           py_version, py_impl, py_build))
 
     def _set_common_options(self, subparser):
