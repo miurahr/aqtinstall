@@ -29,6 +29,14 @@ Removed
 Security
 --------
 
+`v1.1.3`_ (26, Feb. 2021)
+=========================
+
+Fixed
+-----
+
+* Key error on 3.6.13, 3.7.10, 3.8.8, and 3.9.2(#221)
+
 `v1.1.2`_ (20, Feb. 2021)
 =========================
 
@@ -169,7 +177,8 @@ Fixed
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.3...HEAD
+.. _v1.1.3: https://github.com/miurahr/aqtinstall/compare/v1.1.2...v1.1.3
 .. _v1.1.2: https://github.com/miurahr/aqtinstall/compare/v1.1.1...v1.1.2
 .. _v1.1.1: https://github.com/miurahr/aqtinstall/compare/v1.1.0...v1.1.1
 .. _v1.1.0: https://github.com/miurahr/aqtinstall/compare/v1.0.0...v1.1.0
