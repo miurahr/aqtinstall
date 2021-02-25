@@ -22,11 +22,11 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import inspect
 import logging
 import logging.config
 import multiprocessing
 import os
-import pathlib
 import platform
 import random
 import subprocess
@@ -46,11 +46,6 @@ from aqt.archives import (ArchiveConnectionError, ArchiveDownloadError,
                           SrcDocExamplesArchives, ToolArchives, NoPackageFound)
 from aqt.helper import Settings, altlink
 from aqt.updater import Updater
-
-try:
-    from importlib import metadata as importlib_metadata  # noqa
-except ImportError:
-    import importlib_metadata
 
 
 class ExtractionError(Exception):
@@ -358,8 +353,8 @@ class Cli:
 
     def show_aqt_version(self):
         """Display version information"""
-        dist = importlib_metadata.distribution('aqtinstall')
-        module_name = dist.entry_points[0].name
+        s = inspect.stack()
+        module_name = inspect.getmodule(s[0][0]).__name__
         py_version = platform.python_version()
         py_impl = platform.python_implementation()
         py_build = platform.python_compiler()
