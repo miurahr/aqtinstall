@@ -157,14 +157,14 @@ class Cli:
             self.parser.print_help()
             exit(1)
 
-    def call_installer(self, qt_archives, target_dir, sevenzip):
+    def call_installer(self, qt_archives, target_dir, sevenzip, keep):
         if target_dir is None:
             base_dir = os.getcwd()
         else:
             base_dir = target_dir
         tasks = []
         for arc in qt_archives.get_archives():
-            tasks.append((arc, base_dir, sevenzip))
+            tasks.append((arc, base_dir, sevenzip, keep))
         pool = multiprocessing.Pool(self.settings.concurrency)
         pool.starmap(installer, tasks)
         pool.close()
@@ -178,6 +178,7 @@ class Cli:
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
+        keep = args.keep
         if output_dir is None:
             base_dir = os.getcwd()
         else:
@@ -231,7 +232,7 @@ class Cli:
         except ArchiveDownloadError or ArchiveListError or NoPackageFound:
             exit(1)
         target_config = qt_archives.get_target_config()
-        self.call_installer(qt_archives, output_dir, sevenzip)
+        self.call_installer(qt_archives, output_dir, sevenzip, keep)
         if not nopatch:
             Updater.update(target_config, base_dir, self.logger)
         self.logger.info("Finished installation")
@@ -243,6 +244,7 @@ class Cli:
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
+        keep = args.keep
         if args.base is not None:
             base = args.base + '/online/qtsdkrepository/'
         else:
@@ -268,13 +270,14 @@ class Cli:
                 srcdocexamples_archives = SrcDocExamplesArchives(flavor, os_name, target, qt_version,
                                                                  random.choice(FALLBACK_URLS),
                                                                  subarchives=archives, modules=modules,
-                                                                 logging=self.logger, all_extra=all_extra, timeout=timeout)
+                                                                 logging=self.logger, all_extra=all_extra,
+                                                                 timeout=timeout)
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        self.call_installer(srcdocexamples_archives, output_dir, sevenzip)
+        self.call_installer(srcdocexamples_archives, output_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -299,6 +302,7 @@ class Cli:
         output_dir = args.outputdir
         sevenzip = self._set_sevenzip(args)
         version = args.version
+        keep = args.keep
         if args.base is not None:
             base = args.base + '/online/qtsdkrepository/'
         else:
@@ -322,7 +326,7 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        self.call_installer(tool_archives, output_dir, sevenzip)
+        self.call_installer(tool_archives, output_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -372,6 +376,8 @@ class Cli:
         subparser.add_argument('--internal', action='store_true', help='Use internal extractor.')
         subparser.add_argument('--timeout', nargs='?', type=float,
                                help="Specify connection timeout for download site.(default: 5 sec)")
+        subparser.add_argument('-k', '--keep', action='store_true',
+                               help='Keep downloaded archive when specified, otherwise remove after install')
 
     def _set_module_options(self, subparser):
         subparser.add_argument('-m', '--modules', nargs='*', help="Specify extra modules to install")
@@ -471,7 +477,7 @@ class Cli:
         return args.func(args)
 
 
-def installer(qt_archive, base_dir, command, response_timeout=30):
+def installer(qt_archive, base_dir, command, keep=False, response_timeout=30):
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
@@ -530,5 +536,6 @@ def installer(qt_archive, base_dir, command, response_timeout=30):
                         if cpe.stderr is not None:
                             logger.error(cpe.stderr)
                         raise cpe
-    os.unlink(archive)
+    if not keep:
+        os.unlink(archive)
     logger.info("Finished installation of {} in {}".format(archive, time.perf_counter() - start_time))
