@@ -4,3 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
 local_scheme = "no-local-version"
+
+[tool.pysen]
+version = "0.9"
+
+[tool.pysen.lint]
+enable_black = true
+enable_flake8 = true
+enable_isort = true
+enable_mypy = false
+line_length = 125
+py_version = "py38"
+isort_known_first_party = ["aqt"]
+isort_known_third_party = ["docutils","flake8","pyannotate_runtime","pytest","pytz","requests","setuptools","sphinx","yaml","packaging"]
