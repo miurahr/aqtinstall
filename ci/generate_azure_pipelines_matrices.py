@@ -23,80 +23,60 @@ class PlatformBuildJobs:
 
 
 python_versions = [
-    '3.8',
+    "3.8",
 ]
 
-qt_versions = [
-    '5.13.2',
-    '5.15.2'
-]
+qt_versions = ["5.13.2", "5.15.2"]
 
 linux_build_jobs = []
 mac_build_jobs = []
 windows_build_jobs = []
 
 all_platform_build_jobs = [
-    PlatformBuildJobs('linux', linux_build_jobs),
-    PlatformBuildJobs('mac', mac_build_jobs),
-    PlatformBuildJobs('windows', windows_build_jobs),
+    PlatformBuildJobs("linux", linux_build_jobs),
+    PlatformBuildJobs("mac", mac_build_jobs),
+    PlatformBuildJobs("windows", windows_build_jobs),
 ]
 
 # Linux Desktop
 for qt_version in qt_versions:
-    linux_build_jobs.append(
-        BuildJob(qt_version, 'linux', 'desktop', 'gcc_64', 'gcc_64')
-    )
+    linux_build_jobs.append(BuildJob(qt_version, "linux", "desktop", "gcc_64", "gcc_64"))
 
 # Mac Desktop
 for qt_version in qt_versions:
-    mac_build_jobs.append(
-        BuildJob(qt_version, 'mac', 'desktop', 'clang_64', "clang_64")
-    )
+    mac_build_jobs.append(BuildJob(qt_version, "mac", "desktop", "clang_64", "clang_64"))
 
 # Windows Desktop
 windows_build_jobs.extend(
     [
-        BuildJob('5.14.2', 'windows', 'desktop', 'win64_msvc2017_64', 'msvc2017_64'),
-        BuildJob('5.14.2', 'windows', 'desktop', 'win32_msvc2017', 'msvc2017'),
-        BuildJob('5.13.2', 'windows', 'desktop', 'win64_msvc2015_64', 'msvc2015_64'),
-        BuildJob('5.15.2', 'windows', 'desktop', 'win64_mingw81', 'mingw81_64'),
+        BuildJob("5.14.2", "windows", "desktop", "win64_msvc2017_64", "msvc2017_64"),
+        BuildJob("5.14.2", "windows", "desktop", "win32_msvc2017", "msvc2017"),
+        BuildJob("5.13.2", "windows", "desktop", "win64_msvc2015_64", "msvc2015_64"),
+        BuildJob("5.15.2", "windows", "desktop", "win64_mingw81", "mingw81_64"),
         # Known issue with Azure-Pipelines environment: it has a pre-installed mingw81 which cause link error.
-        # BuildJob('5.15.0', 'windows', 'desktop', 'win32_mingw81', 'mingw81_32'),
-        BuildJob('5.15.2', 'windows', 'desktop', 'win64_msvc2019_64', 'msvc2019_64', module='qcharts qtnetworkauth'),
+        # BuildJob("5.15.0", "windows", "desktop", "win32_mingw81", "mingw81_32"),
+        BuildJob("5.15.2", "windows", "desktop", "win64_msvc2019_64", "msvc2019_64", module="qcharts qtnetworkauth"),
     ]
 )
 
 # Extra modules test
 linux_build_jobs.extend(
     [
-        BuildJob('5.15.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='qcharts qtnetworkauth'),
-        BuildJob('5.14.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='all')
+        BuildJob("5.15.2", "linux", "desktop", "gcc_64", "gcc_64", module="qcharts qtnetworkauth"),
+        BuildJob("5.14.2", "linux", "desktop", "gcc_64", "gcc_64", module="all"),
     ]
 )
-mac_build_jobs.append(
-    BuildJob('5.14.2', 'mac', 'desktop', 'clang_64', 'clang_64', module='qcharts qtnetworkauth')
-)
+mac_build_jobs.append(BuildJob("5.14.2", "mac", "desktop", "clang_64", "clang_64", module="qcharts qtnetworkauth"))
 
 # WASM
-linux_build_jobs.append(
-    BuildJob('5.14.2', 'linux', 'desktop', 'wasm_32', "wasm_32")
-)
-mac_build_jobs.append(
-    BuildJob('5.14.2', 'mac', 'desktop', 'wasm_32', "wasm_32")
-)
+linux_build_jobs.append(BuildJob("5.14.2", "linux", "desktop", "wasm_32", "wasm_32"))
+mac_build_jobs.append(BuildJob("5.14.2", "mac", "desktop", "wasm_32", "wasm_32"))
 
 # mobile SDK
 mac_build_jobs.extend(
-    [
-        BuildJob('5.15.2', 'mac', 'ios', 'ios', 'ios'),
-        BuildJob('6.1.0', 'mac', 'android', 'android_armv7', 'android_armv7')
-    ]
+    [BuildJob("5.15.2", "mac", "ios", "ios", "ios"), BuildJob("6.1.0", "mac", "android", "android_armv7", "android_armv7")]
 )
-linux_build_jobs.extend(
-    [
-        BuildJob('6.1.0', 'linux', 'android', 'android_armv7', 'android_armv7')
-    ]
-)
+linux_build_jobs.extend([BuildJob("6.1.0", "linux", "android", "android_armv7", "android_armv7")])
 
 matrices = {}
 
@@ -104,18 +84,18 @@ for platform_build_job in all_platform_build_jobs:
     matrix_dictionary = collections.OrderedDict()
 
     for build_job, python_version in product(platform_build_job.build_jobs, python_versions):
-        key = '{} {} for {} on {}'.format(build_job.qt_version, build_job.arch, build_job.target, build_job.host)
+        key = "{} {} for {} on {}".format(build_job.qt_version, build_job.arch, build_job.target, build_job.host)
         if build_job.module:
             key = "{} ({})".format(key, build_job.module)
         matrix_dictionary[key] = collections.OrderedDict(
             [
-                ('PYTHON_VERSION', python_version),
-                ('QT_VERSION', build_job.qt_version),
-                ('HOST', build_job.host),
-                ('TARGET', build_job.target),
-                ('ARCH', build_job.arch),
-                ('ARCHDIR', build_job.archdir),
-                ('MODULE', build_job.module if build_job.module else '')
+                ("PYTHON_VERSION", python_version),
+                ("QT_VERSION", build_job.qt_version),
+                ("HOST", build_job.host),
+                ("TARGET", build_job.target),
+                ("ARCH", build_job.arch),
+                ("ARCHDIR", build_job.archdir),
+                ("MODULE", build_job.module if build_job.module else ""),
             ]
         )
 

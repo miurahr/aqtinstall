@@ -33,18 +33,18 @@ import requests
 
 
 def _get_meta(url: str):
-    return requests.get(url + '.meta4')
+    return requests.get(url + ".meta4")
 
 
 def _check_content_type(ct: str) -> bool:
-    candidate = ['application/metalink4+xml', 'text/plain']
+    candidate = ["application/metalink4+xml", "text/plain"]
     return any(ct.startswith(t) for t in candidate)
 
 
 def altlink(url: str, alt: str, logger=None):
     """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
-     When found black url, then try download a url + .meta4 that is a metalink version4
-     xml file, parse it and retrieve best alternative url."""
+    When found black url, then try download a url + .meta4 that is a metalink version4
+    xml file, parse it and retrieve best alternative url."""
     if logger is None:
         logger = logging.getLogger(__name__)
     blacklist = Settings().blacklist  # type: Optional[List[str]]
@@ -57,15 +57,15 @@ def altlink(url: str, alt: str, logger=None):
         return alt
     else:
         # Expected response->'application/metalink4+xml; charset=utf-8'
-        if not _check_content_type(m.headers['content-type']):
-            logger.error("Unexpected meta4 response;content-type: {}".format(m.headers['content-type']))
+        if not _check_content_type(m.headers["content-type"]):
+            logger.error("Unexpected meta4 response;content-type: {}".format(m.headers["content-type"]))
             return alt
         try:
             mirror_xml = ElementTree.fromstring(m.text)
             meta_urls = {}
             for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
                 for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
-                    meta_urls[u.attrib['priority']] = u.text
+                    meta_urls[u.attrib["priority"]] = u.text
             mirrors = [meta_urls[i] for i in sorted(meta_urls.keys(), key=lambda x: int(x))]
         except Exception:
             exc_info = sys.exc_info()
@@ -82,12 +82,9 @@ class Settings(object):
     Actual values are stored in 'settings.ini' file.
     It also holds a combinations database.
     """
+
     # this class is Borg/Singleton
-    _shared_state = {
-        '_config': None,
-        '_combinations': None,
-        '_lock': multiprocessing.Lock()
-    }
+    _shared_state = {"_config": None, "_combinations": None, "_lock": multiprocessing.Lock()}
 
     def __init__(self, config=None):
         self.__dict__ = self._shared_state
@@ -95,11 +92,11 @@ class Settings(object):
             with self._lock:
                 if self._config is None:
                     if config is None:
-                        self.inifile = os.path.join(os.path.dirname(__file__), 'settings.ini')
+                        self.inifile = os.path.join(os.path.dirname(__file__), "settings.ini")
                     else:
                         self.inifile = config
                     self._config = self.configParse(self.inifile)
-                    with open(os.path.join(os.path.dirname(__file__), 'combinations.json'), 'r') as j:
+                    with open(os.path.join(os.path.dirname(__file__), "combinations.json"), "r") as j:
                         self._combinations = json.load(j)[0]
 
     def configParse(self, file_path):
@@ -111,15 +108,15 @@ class Settings(object):
 
     @property
     def qt_combinations(self):
-        return self._combinations['qt']
+        return self._combinations["qt"]
 
     @property
     def tools_combinations(self):
-        return self._combinations['tools']
+        return self._combinations["tools"]
 
     @property
     def available_versions(self):
-        return self._combinations['versions']
+        return self._combinations["versions"]
 
     def available_modules(self, qt_version):
         """Known module names
@@ -127,8 +124,8 @@ class Settings(object):
         :returns: dictionary of qt_version and module names
         :rtype: List[str]
         """
-        modules = self._combinations['modules']
-        versions = qt_version.split('.')
+        modules = self._combinations["modules"]
+        versions = qt_version.split(".")
         version = "{}.{}".format(versions[0], versions[1])
         result = None
         for record in modules:
