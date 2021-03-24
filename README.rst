@@ -129,7 +129,7 @@ Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 .. code-block:: bash
 
     pip install aqtinstall
-    sudo aqt install --outputdir /opt 5.12.0 linux desktop -m qtcharts qtnetworkauth
+    sudo aqt install --outputdir /opt/Qt 5.12.0 linux desktop -m qtcharts qtnetworkauth
 
 
 Example: Installing Android (armv7) Qt 5.10.2:
