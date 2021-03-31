@@ -22,7 +22,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
-import inspect
 import logging
 import logging.config
 import multiprocessing
@@ -354,12 +353,10 @@ class Cli:
 
     def show_aqt_version(self):
         """Display version information"""
-        s = inspect.stack()
-        module_name = inspect.getmodule(s[0][0]).__name__
         py_version = platform.python_version()
         py_impl = platform.python_implementation()
         py_build = platform.python_compiler()
-        self.logger.info("aqtinstall({}) v{} on Python {} [{} {}]".format(module_name, aqt.__version__,
+        self.logger.info("aqtinstall(aqt) v{} on Python {} [{} {}]".format(aqt.__version__,
                                                                           py_version, py_impl, py_build))
 
     def _set_common_options(self, subparser):
