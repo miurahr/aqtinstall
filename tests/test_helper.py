@@ -2,10 +2,9 @@ from aqt import helper
 
 
 def test_helper_altlink(monkeypatch):
-
     class Message:
-        headers = {'content-type': 'text/plain', 'length': 300}
-        text = '''<?xml version="1.0" encoding="UTF-8"?>
+        headers = {"content-type": "text/plain", "length": 300}
+        text = """<?xml version="1.0" encoding="UTF-8"?>
 <metalink xmlns="urn:ietf:params:xml:ns:metalink">
   <generator>MirrorBrain/2.17.0</generator>
   <origin dynamic="true">http://download.example.io/boo.7z.meta4</origin>
@@ -31,14 +30,14 @@ def test_helper_altlink(monkeypatch):
     <url location="jp" priority="3">http://ftp.yz.yamagata-u.ac.jp/pub/boo.7z</url>
   </file>
 </metalink>
-'''
+"""
 
     def mock_return(url):
         return Message()
 
-    monkeypatch.setattr(helper, '_get_meta', mock_return)
+    monkeypatch.setattr(helper, "_get_meta", mock_return)
 
-    url = 'http://foo.baz/qtproject/boo.7z'
-    alt = 'http://mirrors.geekpie.club/boo.7z'
+    url = "http://foo.baz/qtproject/boo.7z"
+    alt = "http://mirrors.geekpie.club/boo.7z"
     newurl = helper.altlink(url, alt)
-    assert newurl.startswith('http://ftp.jaist.ac.jp/')
+    assert newurl.startswith("http://ftp.jaist.ac.jp/")
