@@ -29,6 +29,19 @@ Removed
 Security
 --------
 
+`v1.1.4`_ (2, Apr. 2021)
+=========================
+
+Changed
+-------
+* Code reformatting by black and check by black.
+* Check linting by github actions.
+
+Fixed
+-----
+* Fix document error on README(#228, #226).
+
+
 `v1.1.3`_ (26, Feb. 2021)
 =========================
 
@@ -177,7 +190,8 @@ Fixed
 * When we start an installation, all packages are downloaded whatever the specified platform.(#159)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.4...HEAD
+.. _v1.1.4: https://github.com/miurahr/aqtinstall/compare/v1.1.3...v1.1.4
 .. _v1.1.3: https://github.com/miurahr/aqtinstall/compare/v1.1.2...v1.1.3
 .. _v1.1.2: https://github.com/miurahr/aqtinstall/compare/v1.1.1...v1.1.2
 .. _v1.1.1: https://github.com/miurahr/aqtinstall/compare/v1.1.0...v1.1.1
