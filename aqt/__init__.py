@@ -30,7 +30,7 @@ except DistributionNotFound:
     # package is not installed
     __version__ = "unknown"
 
-__all__ = ['__version__']
+__all__ = ["__version__"]
 
 
 def main():

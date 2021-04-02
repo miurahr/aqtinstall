@@ -4,3 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
 local_scheme = "no-local-version"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
