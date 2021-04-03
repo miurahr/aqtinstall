@@ -521,8 +521,10 @@ class Cli:
             help="Specify connection timeout for download site.(default: 5 sec)",
         )
         subparser.add_argument(
-          '-k', '--keep', action='store_true',
-          help='Keep downloaded archive when specified, otherwise remove after install'
+            "-k",
+            "--keep",
+            action="store_true",
+            help="Keep downloaded archive when specified, otherwise remove after install",
         )
 
     def _set_module_options(self, subparser):
