@@ -55,7 +55,14 @@ Same as usual, it can be installed with `pip`
 
 .. code-block:: bash
 
+    $ pip install -U pip
     $ pip install aqtinstall
+
+You are recommended to update pip before installing aqtinstall.
+aqtinstall depends several packages, that is required to extract 7zip archives,
+some of which are precompiled in several platforms.
+Older pip does not handle it expectedly.(see #230)
+
 
 Usage
 -----
