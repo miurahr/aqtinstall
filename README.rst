@@ -16,14 +16,36 @@ Another Qt installer(aqt)
 This is a utility alternative to the official graphical Qt installer, for using in CI environment where an interactive
 UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
 
+.. warning::
+    This is NOT franchised with The Qt Comapany and The Qt Project.
+    there is NO guarantee and support. Please don't ask them about aqtinstall.
+
+    When you need official and/or commercial support about unattended install,
+    please ask your Qt reseller, or help desk according to your contract.
+
+    The official installer has a capability to scripting installation process,
+    please ask a consult with `the official documents`_.
+
+
+.. _`the official documents`: https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html#unattended-usage
+
+
 It can automatically download prebuilt Qt binaries for any target (you're not bound to
 Linux binaries on Linux; you could also download iOS binaries).
-It's working with Python > 3.5 on Linux, OS X and Windows.
+It's working with Python >= 3.6 on Linux, macOS and Windows.
 
 When installing QtBase package on proper platforms (eg. install linux package on linux),
-aqt update Qt binaries(eg. qmake, and libQt5Core.so/Qt5Core.dll/Freamework.QtCore),
-and change configurations(qt.conf, and qconfig.pri)
-to make it working well with installed directory(Qt prefix).
+aqt update Qt binaries(eg. qmake, and libQt5Core.so/Qt5Core.dll/Freamework.QtCore for Qt<5.14),
+and change configurations(eg. qt.conf, and qconfig.pri) to make it working well with installed directory(Qt prefix).
+
+The aqtinstall does not update PATH environment variable.
+
+.. note::
+    Because it is an installer utility, it can download from Qt distribution site and its mirror.
+    The site is operated by The Qt Company who may remove versions you may want to use that become end of support.
+    Please don't blame us. When you keep your old mirror archives and operate an archive site,
+    you may be able to use aqtinstall with base URL option specified to your site.
+
 
 License and copyright
 ---------------------
@@ -59,9 +81,11 @@ Same as usual, it can be installed with `pip`
     $ pip install aqtinstall
 
 You are recommended to update pip before installing aqtinstall.
-aqtinstall depends several packages, that is required to extract 7zip archives,
-some of which are precompiled in several platforms.
-Older pip does not handle it expectedly.(see #230)
+
+.. note::
+    aqtinstall depends several packages, that is required to download files from internet, and extract 7zip archives,
+    some of which are precompiled in several platforms.
+    Older pip does not handle it expectedly(see #230).
 
 
 Usage
@@ -108,8 +132,9 @@ You can install tools and utilities using following syntax;
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
 * arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on Qt `archive_site`_
-  This is a quite experimental feature, may not work and please use it with your understanding of what you are doing.
-* It does not recognize 'installscript.qs'. When using tools which depends on a qt script, you should do something by yourself.
+  This is a quite experimental feature, may not work and please use it with your understanding what you are doing.
+* It does not recognize 'installscript.qs'.
+  When using tools which depends on a qt script, you should do something by yourself.
 
 .. _`archive_site`: https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
 
@@ -201,6 +226,15 @@ Example: Install Qt6 for android
     qt/6.1.0/android_armv7/bin/qmake -query
 
 
+Example: Install Qt6 for ios/mac
+
+.. code-block:: bash
+
+    aqt install -O qt 6.1.0 mac desktop
+    aqt install -O qt 6.1.0 mac ios ios
+    qt/6.1.0/ios/bin/qmake -query
+
+
 Example: Show help message
 
 .. code-block:: bash
@@ -255,8 +289,10 @@ Avoid installation of py7zr, python 7zip library, and force using external 7z co
     $ python -m aqt --external /usr/local/bin/7z install 5.15.2 linux desktop
 
 
-Use cases
----------
+Testimonies
+-----------
+
+Some projects utilize aqtinstall.
 
 * GitHub Actions: `install_qt`_
 
@@ -267,11 +303,8 @@ Use cases
 * Yet another comic reader: `YACReader`_  utilize on Azure-Pipelines
 
 .. _`install_qt`: https://github.com/jurplel/install-qt-action
-
 .. _`docker aqtinstall`: https://github.com/vslotman/docker-aqtinstall
-
 .. _`pyqt5-tools`: https://github.com/altendky/pyqt5-tools
-
 .. _`YACReader`: https://github.com/YACReader/yacreader
 
 
@@ -292,15 +325,10 @@ Media, slide, articles and discussions
 
 
 .. _`Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
-
 .. _`Using Azure DevOps Pipelines with Qt`: https://lostdomain.org/2019/12/27/using-azure-devops-pipelines-with-qt/
-
 .. _`Using Azure CI for cross-platform Linux and Windows Qt application builds`: https://www.wincak.name/programming/using-azure-ci-for-cross-platform-linux-and-windows-qt-application-builds/
-
 .. _`Automatic installation for Travis CI (or any other CI)`: https://forum.qt.io/topic/114520/automatic-installation-for-travis-ci-or-any-other-ci/2
-
 .. _`Qt silent, unattended install`: https://forum.qt.io/topic/122185/qt-silent-unattended-install
-
 .. _`Another Qt CLI installer`: https://www.slideshare.net/miurahr-nttdata/aqt-install-for-qt-tokyo-r-2-20196
 
 
