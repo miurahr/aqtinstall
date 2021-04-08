@@ -33,7 +33,6 @@ import sys
 import time
 from logging import getLogger
 
-import py7zr
 import requests
 from packaging.version import Version, parse
 from requests.adapters import HTTPAdapter
@@ -53,6 +52,13 @@ from aqt.archives import (
 )
 from aqt.helper import Settings, altlink
 from aqt.updater import Updater
+
+try:
+    import py7zr
+
+    EXT7Z = False
+except ImportError:
+    EXT7Z = True
 
 
 class ExtractionError(Exception):
@@ -129,8 +135,8 @@ class Cli:
                 return True
         return False
 
-    def _set_sevenzip(self, args):
-        sevenzip = args.external
+    def _set_sevenzip(self, external):
+        sevenzip = external
         if sevenzip is None:
             return None
 
@@ -231,7 +237,10 @@ class Cli:
             timeout = (5, 5)
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
-        sevenzip = self._set_sevenzip(args)
+        sevenzip = self._set_sevenzip(args.external)
+        if EXT7Z and sevenzip is None:
+            # override when py7zr is not exist
+            sevenzip = self._set_sevenzip("7z")
         if args.base is not None:
             base = args.base + "/online/qtsdkrepository/"
         else:
@@ -402,7 +411,10 @@ class Cli:
         tool_name = args.tool_name
         os_name = args.host
         output_dir = args.outputdir
-        sevenzip = self._set_sevenzip(args)
+        sevenzip = self._set_sevenzip(args.external)
+        if EXT7Z and sevenzip is None:
+            # override when py7zr is not exist
+            sevenzip = self._set_sevenzip("7z")
         version = args.version
         keep = args.keep
         if args.base is not None:

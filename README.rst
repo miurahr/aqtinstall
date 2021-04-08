@@ -233,6 +233,28 @@ If you want to use it with Github actions, `install_qt`_ action will help you.
 If you want to use it with Azure Pipelines, blog article `Using Azure DevOps Pipelines with Qt`_ may be informative.
 
 
+(Advanced) Force dependency
+---------------------------
+
+(Here is a note for advanced user who knows python/pip well.)
+
+When you have a trouble on your (minor) platform to install aqtinstall's dependency,
+you can force dependencies and its versions (not recommended for ordinary use).
+You can run `pip` to install individual dependencies in manual and install aqtinstall with `--no-deps`.
+
+Example:
+^^^^^^^^
+
+Avoid installation of py7zr, python 7zip library, and force using external 7z command to extract archives.
+
+.. code-block:: bash
+
+    $ pip install -U pip
+    $ pip install requests==2.25.1 packaging texttable
+    $ pip install --no-deps aqtinstall
+    $ python -m aqt --external /usr/local/bin/7z install 5.15.2 linux desktop
+
+
 Use cases
 ---------
 
