@@ -66,10 +66,13 @@ jobs:
           if qtver.startswith('6'):
             if platform == 'ubuntu-20.04':
               command_line = ["python", "-m", "aqt", "install", qtver, "linux", "android", "android_armv7"]
+              timeout = 360
             elif platform == "macOS-latest":
               command_line = ["python", "-m", "aqt", "install", qtver, "mac", "ios", "ios"]
+              timeout = 360
             else:
               command_line = ["python", "-m", "aqt", "install", qtver, "windows", "android", "android_armv7"]
+              timeout = 360
             try:
               res = subprocess.run(command_line, timeout=timeout, check=True)
             except subprocess.CalledProcessError as cpe:
