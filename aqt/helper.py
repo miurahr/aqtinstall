@@ -27,9 +27,11 @@ import multiprocessing
 import os
 import sys
 import xml.etree.ElementTree as ElementTree
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import requests
+from bs4 import BeautifulSoup
+from bs4.element import Tag
 
 
 def _get_meta(url: str):
@@ -87,6 +89,52 @@ def altlink(url: str, alt: str, logger=None):
                 ),
                 alt,
             )
+
+
+def scrape_html_for_folders(html_doc: str) -> Dict[str, List[str]]:
+    """Reads an html file from `https://download.qt.io/online/qtsdkrepository/<os>/<target>/`
+    and extracts a list of all the folders reported by that html file.
+    Each folder should include an Updates.xml file, but this is not guaranteed.
+    This will return a dictionary, where the key is the category (tools, qt5, qt6, etc)
+    and the value is a list of folders.
+    """
+
+    def table_row_to_folder(tr: Tag) -> str:
+        try:
+            return tr.find_all("td")[1].a.contents[0].rstrip("/")
+        except (AttributeError, IndexError):
+            return ""
+
+    def first_snakecase_word(string: str) -> str:
+        try:
+            return string[: string.index("_")]
+        except ValueError:  # There's no "_" in the string!
+            return string
+
+    soup: BeautifulSoup = BeautifulSoup(html_doc, "html.parser")
+    folders: Dict[str, List[str]] = {}  # {"tools": [], "qt5": [], "qt6": []}
+    for row in soup.body.table.find_all("tr"):
+        content: str = table_row_to_folder(row)
+        if not content or content == "Parent Directory":
+            continue
+        category = first_snakecase_word(content)
+        if category in folders:
+            folders[category].append(content)
+        elif category:
+            folders[category] = [content]
+    return folders
+
+
+def print_folders(category: str, all_folders: Dict[str, List[str]]) -> None:
+    if category == "all":
+        to_report: List[str] = [
+            folder for sublist in all_folders.values() for folder in sublist
+        ]
+    elif category in all_folders.keys():
+        to_report: List[str] = all_folders[category]
+    else:
+        raise ValueError("Category '{}' does not exist".format(category))
+    print("\n".join(to_report))
 
 
 class Settings(object):
