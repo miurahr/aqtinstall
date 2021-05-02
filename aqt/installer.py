@@ -50,7 +50,7 @@ from aqt.archives import (
     SrcDocExamplesArchives,
     ToolArchives,
 )
-from aqt.helper import Settings, altlink
+from aqt.helper import Settings, altlink, scrape_html_for_folders, print_folders
 from aqt.updater import Updater
 
 try:
@@ -491,6 +491,44 @@ class Cli:
                 table.add_row([entry.display_name, archid, entry.desc])
         print(table.draw())
 
+    def run_list2(self, args: argparse.ArgumentParser):
+        """Print all folders available for a category"""
+        category: str = args.category
+        host: str = args.host
+        target: str = args.target
+
+        for base_url in (BASE_URL, random.choice(FALLBACK_URLS)):
+            url = "{}{}{}/{}/".format(
+                base_url,
+                host,
+                "_x86" if host == "windows" else "_x64",
+                target,
+            )
+            try:
+                r = requests.get(url, timeout=(5, 5))
+                if r.status_code == 404:
+                    self.logger.error(
+                        "No data available for host='{}', target='{}'".format(
+                            host, target
+                        )
+                    )
+                    return
+                if r.status_code == 200:
+                    print_folders(category, scrape_html_for_folders(r.text))
+                    return
+            except (
+                requests.exceptions.ConnectionError,
+                requests.exceptions.ReadTimeout,
+            ):
+                # Try the next base URL
+                pass
+        # On fallthrough, all base URLs have failed
+        self.logger.error(
+            "HTTP errors while accessing folders for host='{}', target='{}'".format(
+                host, target
+            )
+        )
+
     def show_help(self, args):
         """Display help message"""
         self.parser.print_help()
@@ -650,6 +688,21 @@ class Cli:
         help_parser.set_defaults(func=self.show_help)
         parser.set_defaults(func=self.show_help)
         self.parser = parser
+
+        # list2: placeholder name for added functionality; don't know what to call it!
+        list2_parser = subparsers.add_parser("list2")
+        list2_parser.set_defaults(func=self.run_list2)
+        list2_parser.add_argument(
+            "category",
+            choices=["tools", "qt5", "qt6", "all"],
+            help="category of packages to list",
+        )
+        list2_parser.add_argument(
+            "host", choices=["linux", "mac", "windows"], help="host os name"
+        )
+        list2_parser.add_argument(
+            "target", choices=["desktop", "winrt", "android", "ios"], help="target sdk"
+        )
 
     def _setup_logging(self, args, env_key="LOG_CFG"):
         envconf = os.getenv(env_key, None)
