@@ -125,7 +125,7 @@ class Updater:
             pass
 
     def patch_qtcore(self, target):
-        """ patch to QtCore"""
+        """patch to QtCore"""
         if target.os_name == "mac":
             lib_dir = self.prefix.joinpath("lib", "QtCore.framework")
             components = ["QtCore", "QtCore_debug"]
