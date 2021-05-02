@@ -340,7 +340,10 @@ class Cli:
             timeout = (args.timeout, args.timeout)
         else:
             timeout = (5, 5)
-        sevenzip = self._set_sevenzip(args)
+        sevenzip = self._set_sevenzip(args.external)
+        if EXT7Z and sevenzip is None:
+            # override when py7zr is not exist
+            sevenzip = self._set_sevenzip("7z")
         modules = args.modules
         archives = args.archives
         self._run_common_part(output_dir, base)

@@ -25,6 +25,14 @@ Removed
 Security
 --------
 
+`v1.1.6`_ (2, May. 2021)
+========================
+
+Fixed
+-----
+* doc subcommand failed in argument parse(#234)
+
+
 `v1.1.5`_ (8, Apr. 2021)
 =========================
 
@@ -132,7 +140,9 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.4...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.6...HEAD
+.. _v1.1.6: https://github.com/miurahr/aqtinstall/compare/v1.1.5...v1.1.6
+.. _v1.1.5: https://github.com/miurahr/aqtinstall/compare/v1.1.4...v1.1.5
 .. _v1.1.4: https://github.com/miurahr/aqtinstall/compare/v1.1.3...v1.1.4
 .. _v1.1.3: https://github.com/miurahr/aqtinstall/compare/v1.1.2...v1.1.3
 .. _v1.1.2: https://github.com/miurahr/aqtinstall/compare/v1.1.1...v1.1.2
