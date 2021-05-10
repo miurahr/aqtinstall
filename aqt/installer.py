@@ -32,6 +32,7 @@ import subprocess
 import sys
 import time
 from logging import getLogger
+from typing import Optional
 
 import requests
 from packaging.version import Version, parse
@@ -49,8 +50,16 @@ from aqt.archives import (
     QtArchives,
     SrcDocExamplesArchives,
     ToolArchives,
+    QtDownloadListFetcher,
 )
-from aqt.helper import Settings, altlink, scrape_html_for_folders, print_folders
+from aqt.helper import (
+    Settings,
+    altlink,
+    ALL_EXTENSIONS,
+    request_http_with_failover,
+    list_packages_for_version,
+    ArchiveId,
+)
 from aqt.updater import Updater
 
 try:
@@ -472,7 +481,7 @@ class Cli:
             )
         )
 
-    def run_list(self, args):
+    def run_list_old(self, args):
         """Run list subcommand"""
         self.show_aqt_version()
         qt_version = args.qt_version
@@ -494,43 +503,56 @@ class Cli:
                 table.add_row([entry.display_name, archid, entry.desc])
         print(table.draw())
 
-    def run_list2(self, args: argparse.ArgumentParser):
+    def run_list(self, args: argparse.ArgumentParser):
         """Print all folders available for a category"""
-        category: str = args.category
-        host: str = args.host
-        target: str = args.target
 
-        for base_url in (BASE_URL, random.choice(FALLBACK_URLS)):
-            url = "{}{}{}/{}/".format(
-                base_url,
-                host,
-                "_x86" if host == "windows" else "_x64",
-                target,
+        # Version of Qt for which to list packages
+        list_packages_ver: Optional[str] = args.list_packages
+
+        # Print packages for only the most recent version of Qt that matches the filters set
+        is_print_latest_packages: bool = args.latest_packages
+
+        # Find all versions of Qt matching filters, and only print the most recent version
+        is_latest_version: bool = args.latest_version
+
+        # Remove from output any versions of Qt that don't have the minor version `filter_minor`
+        filter_minor: Optional[int] = args.filter_minor
+
+        archive_id = ArchiveId(args.category, args.host, args.target, args.extension)
+
+        def http_fetcher(rest_of_url: str) -> str:
+            return request_http_with_failover(
+                base_urls=[BASE_URL, random.choice(FALLBACK_URLS)],
+                rest_of_url=rest_of_url,
             )
-            try:
-                r = requests.get(url, timeout=(5, 5))
-                if r.status_code == 404:
-                    self.logger.error(
-                        "No data available for host='{}', target='{}'".format(
-                            host, target
-                        )
-                    )
-                    return
-                if r.status_code == 200:
-                    print_folders(category, scrape_html_for_folders(r.text))
-                    return
-            except (
-                requests.exceptions.ConnectionError,
-                requests.exceptions.ReadTimeout,
-            ):
-                # Try the next base URL
-                pass
-        # On fallthrough, all base URLs have failed
-        self.logger.error(
-            "HTTP errors while accessing folders for host='{}', target='{}'".format(
-                host, target
+
+        if list_packages_ver is not None and archive_id.is_qt():
+            return list_packages_for_version(
+                list_packages_ver, archive_id=archive_id, http_fetcher=http_fetcher
             )
+
+        fetcher = QtDownloadListFetcher(
+            archive_id=archive_id,
+            is_latest=is_latest_version,
+            filter_minor=filter_minor,
+            html_fetcher=http_fetcher,
         )
+
+        try:
+            out = fetcher.run().rstrip()  # raises RequestException
+            if not out:
+                self.logger.error("No data available")
+                return 1
+            if is_print_latest_packages:
+                qt_version = out.rsplit(maxsplit=1)[-1]
+                return list_packages_for_version(
+                    qt_version, archive_id=archive_id, http_fetcher=http_fetcher
+                )
+            print(out)
+            return 0
+        except requests.exceptions.RequestException as e:
+            self.logger.error("HTTP error: {}".format(e))
+            return 1
 
     def show_help(self, args):
         """Display help message"""
@@ -684,28 +706,69 @@ class Cli:
         )
         self._set_common_options(tools_parser)
         #
-        list_parser = subparsers.add_parser("list")
-        list_parser.set_defaults(func=self.run_list)
-        self._set_common_argument(list_parser)
-        help_parser = subparsers.add_parser("help")
-        help_parser.set_defaults(func=self.show_help)
-        parser.set_defaults(func=self.show_help)
-        self.parser = parser
+        # list_parser = subparsers.add_parser("list")
+        # list_parser.set_defaults(func=self.run_list)
+        # self._set_common_argument(list_parser)
+        # help_parser = subparsers.add_parser("help")
+        # help_parser.set_defaults(func=self.show_help)
+        # parser.set_defaults(func=self.show_help)
 
         # list2: placeholder name for added functionality; don't know what to call it!
-        list2_parser = subparsers.add_parser("list2")
-        list2_parser.set_defaults(func=self.run_list2)
-        list2_parser.add_argument(
+        list_parser = subparsers.add_parser(
+            "list",
+            formatter_class=argparse.RawTextHelpFormatter,
+            epilog="Examples:\n"
+            "$ aqt list qt5 windows desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
+            "$ aqt list qt5 windows desktop --filter-minor 9 --latest-version  # print latest Qt 5.9\n"
+            "$ aqt list qt5 windows desktop --filter-minor 9 --latest-packages # print packages for latest 5.9\n"
+            "$ aqt list qt5 windows desktop --list-packages 5.12.0             # print packages for 5.12.0\n",
+        )
+        list_parser.set_defaults(func=self.run_list)
+        list_parser.add_argument(
             "category",
-            choices=["tools", "qt5", "qt6", "all"],
+            choices=["tools", "qt5", "qt6"],
             help="category of packages to list",
         )
-        list2_parser.add_argument(
+        list_parser.add_argument(
             "host", choices=["linux", "mac", "windows"], help="host os name"
         )
-        list2_parser.add_argument(
+        list_parser.add_argument(
             "target", choices=["desktop", "winrt", "android", "ios"], help="target sdk"
         )
+        list_parser.add_argument(
+            "--extension",
+            choices=ALL_EXTENSIONS,
+            help="extension of packages to list",
+        )
+        # list_parser.add_argument("qt_version", required=False, type=str,
+        #                          help='Qt version in the format of "5.X.Y". If this is set, then ')
+        list_parser.add_argument(
+            "--filter-minor",
+            type=int,
+            metavar="MINOR_VERSION",
+            help="print versions for a particular minor version. "
+            "IE: `aqt list qt5 windows desktop --filter-minor 12` prints all versions beginning with 5.12",
+        )
+        output_modifier_exclusive_group = list_parser.add_mutually_exclusive_group()
+        output_modifier_exclusive_group.add_argument(
+            "--list-packages",
+            type=str,
+            metavar="VERSION",
+            help='Qt version in the format of "5.X.Y". '
+            "When set, this lists all the packages available for Qt 5.X.Y.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--latest-version",
+            action="store_true",
+            help="print only the newest version available",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--latest-packages",
+            action="store_true",
+            help="list all the packages available for the latest version of Qt, "
+            "or a minor version if the `--filter-minor` flag is set.",
+        )
+        self.parser = parser
 
     def _setup_logging(self, args, env_key="LOG_CFG"):
         envconf = os.getenv(env_key, None)

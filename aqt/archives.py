@@ -22,10 +22,16 @@
 
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
+from typing import Callable, Optional, List
 
 import requests
 
-from aqt.helper import Settings
+from aqt.helper import (
+    Settings,
+    filter_folders,
+    scrape_html_for_versions_and_tools,
+    ArchiveId,
+)
 
 
 class ArchiveConnectionError(Exception):
@@ -50,6 +56,44 @@ class TargetConfig:
         self.target = target
         self.arch = arch
         self.os_name = os_name
+
+
+# List packages for a particular version of Qt
+# Find all versions
+class QtDownloadListFetcher:
+    """
+    Fetches lists of tools and Qt packages that can be downloaded at downloads.qt.io.
+    Parses html files and filters data based on an argument list.
+    Produces lists of Qt5 versions, Qt6 versions, and lists of tools (openssl, qtifw, etc)
+    """
+
+    def __init__(
+        self,
+        archive_id: ArchiveId,
+        html_fetcher: Callable[[str], str],
+        is_latest: bool = False,
+        filter_minor: Optional[int] = None,
+        # name_filter: Callable[[str], bool],
+        # ver_filter: Optional[Callable[[Version], bool]],
+        # ver_comparator: Optional[Callable[[Version, Version], Version]],
+    ):
+        self.archive_id = archive_id
+        self.is_latest = is_latest
+        self.filter_minor = filter_minor
+        self.html_fetcher = html_fetcher
+        self.logger = getLogger("aqt")
+
+    def run(self) -> str:
+        return self._filter_html(self.html_fetcher(self.archive_id.to_url()))
+
+    def _filter_html(self, html: str) -> str:
+        return filter_folders(
+            self.archive_id.category,
+            self.archive_id.extension,
+            self.is_latest,
+            self.filter_minor,
+            *scrape_html_for_versions_and_tools(html),
+        )
 
 
 class QtPackage:
