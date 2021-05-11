@@ -22,6 +22,8 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import binascii
+import hashlib
 import logging
 import logging.config
 import multiprocessing
@@ -684,12 +686,27 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=30):
     """
     name = qt_archive.name
     url = qt_archive.url
+    hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
     logger = getLogger("aqt")
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     timeout = (3.5, response_timeout)
+    #
+    expected_sha1 = None
+    with requests.Session() as session:
+        retry = Retry(connect=5, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
+        try:
+            r = session.get(hashurl, allow_redirects=True, timeout=timeout)
+        except (requests.exceptions.ConnectionError or requests.exceptions.Timeout):
+            pass  # ignore it
+        else:
+            expected_sha1 = binascii.unhexlify(r.content)
+    #
     with requests.Session() as session:
         retry = Retry(connect=5, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
@@ -708,11 +725,18 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=30):
             logger.error("Connection timeout: %s" % e.args)
             raise e
         else:
+            checksum = hashlib.sha1()
             try:
                 with open(archive, "wb") as fd:
                     for chunk in r.iter_content(chunk_size=8196):
                         fd.write(chunk)
-                        fd.flush()
+                        checksum.update(chunk)
+                    fd.flush()
+                if expected_sha1 is not None:
+                    if checksum.digest() != expected_sha1:
+                        raise ArchiveDownloadError(
+                            "Download file is corrupted! Check sum error."
+                        )
                 if command is None:
                     with py7zr.SevenZipFile(archive, "r") as szf:
                         szf.extractall(path=base_dir)

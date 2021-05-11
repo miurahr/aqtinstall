@@ -57,11 +57,12 @@ class QtPackage:
     Hold package information.
     """
 
-    def __init__(self, name, archive_url, archive, package_desc):
+    def __init__(self, name, archive_url, archive, package_desc, hashurl):
         self.name = name
         self.url = archive_url
         self.archive = archive
         self.desc = package_desc
+        self.hashurl = hashurl
 
 
 class ListInfo:
@@ -268,9 +269,14 @@ class QtArchives:
                             package_url = (
                                 archive_url + name + "/" + full_version + archive
                             )
+                            hashurl = package_url + ".sha1"
                             self.archives.append(
                                 QtPackage(
-                                    archive_name, package_url, archive, package_desc
+                                    archive_name,
+                                    package_url,
+                                    archive,
+                                    package_desc,
+                                    hashurl,
                                 )
                             )
         if len(self.archives) == 0:
@@ -419,8 +425,9 @@ class ToolArchives(QtArchives):
                         + named_version
                         + archive
                     )
+                    hashurl = package_url + ".sha1"
                     self.archives.append(
-                        QtPackage(name, package_url, archive, package_desc)
+                        QtPackage(name, package_url, archive, package_desc, hashurl)
                     )
 
     def get_target_config(self) -> TargetConfig:
