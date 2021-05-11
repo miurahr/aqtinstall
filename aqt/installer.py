@@ -702,7 +702,7 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=30):
         session.mount("https://", adapter)
         try:
             r = session.get(hashurl, allow_redirects=True, timeout=timeout)
-        except (requests.exceptions.ConnectionError or requests.exceptions.Timeout) as e:
+        except (requests.exceptions.ConnectionError or requests.exceptions.Timeout):
             pass  # ignore it
         else:
             expected_sha1 = binascii.unhexlify(r.content)
@@ -734,7 +734,9 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=30):
                     fd.flush()
                 if expected_sha1 is not None:
                     if checksum.digest() != expected_sha1:
-                        raise ArchiveDownloadError("Download file is corrupted! Check sum error.")
+                        raise ArchiveDownloadError(
+                            "Download file is corrupted! Check sum error."
+                        )
                 if command is None:
                     with py7zr.SevenZipFile(archive, "r") as szf:
                         szf.extractall(path=base_dir)

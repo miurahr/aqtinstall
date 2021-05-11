@@ -272,7 +272,11 @@ class QtArchives:
                             hashurl = package_url + ".sha1"
                             self.archives.append(
                                 QtPackage(
-                                    archive_name, package_url, archive, package_desc, hashurl
+                                    archive_name,
+                                    package_url,
+                                    archive,
+                                    package_desc,
+                                    hashurl,
                                 )
                             )
         if len(self.archives) == 0:
