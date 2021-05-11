@@ -580,7 +580,9 @@ class Cli:
             description="Valid subcommands",
             help="subcommand for aqt Qt installer",
         )
-        install_parser = subparsers.add_parser("install")
+        install_parser = subparsers.add_parser(
+            "install", formatter_class=argparse.RawTextHelpFormatter
+        )
         install_parser.set_defaults(func=self.run_install)
         self._set_common_argument(install_parser)
         self._set_common_options(install_parser)
