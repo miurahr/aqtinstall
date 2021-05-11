@@ -52,6 +52,7 @@ from aqt.archives import (
     SrcDocExamplesArchives,
     ToolArchives,
 )
+from aqt.cuteci import DeployCuteCI
 from aqt.helper import Settings, altlink
 from aqt.updater import Updater
 
@@ -67,7 +68,7 @@ class ExtractionError(Exception):
     pass
 
 
-BASE_URL = "https://download.qt.io/online/qtsdkrepository/"
+BASE_URL = "https://download.qt.io"
 FALLBACK_URLS = [
     "https://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/",
     "https://ftp.jaist.ac.jp/pub/qtproject/online/qtsdkrepository/",
@@ -246,7 +247,7 @@ class Cli:
         if args.base is not None:
             base = args.base + "/online/qtsdkrepository/"
         else:
-            base = BASE_URL
+            base = BASE_URL + "/online/qtsdkrepository/"
         archives = args.archives
         if args.noarchives:
             if modules is None:
@@ -327,6 +328,33 @@ class Cli:
             )
         )
 
+    def run_old(self, args):
+        """Run old_install subcommand"""
+        os_name = args.host
+        qt_version = args.qt_version
+        output_dir = args.outputdir
+        arch = args.arch
+        if output_dir is None:
+            base_dir = os.getcwd()
+        else:
+            base_dir = output_dir
+        if args.timeout is not None:
+            timeout = args.timeout
+        else:
+            timeout = 300
+        if args.base is not None:
+            base = args.base + "/new_archive/qt/"
+        else:
+            base = BASE_URL + "/new_archive/qt/"
+        self._run_common_part(output_dir, base)
+        qt_ver_num = qt_version.replace(".", "")
+        packages = ["qt.qt5.{}.{}".format(qt_ver_num, arch)]
+        if args.archives is not None:
+            packages.extend(args.archives)
+        cuteci = DeployCuteCI(qt_version, os_name, base, timeout)
+        archive = cuteci.download_installer(timeout)
+        cuteci.run_installer(archive, packages, base_dir, True)
+
     def _run_src_doc_examples(self, flavor, args):
         start_time = time.perf_counter()
         target = args.target
@@ -337,7 +365,7 @@ class Cli:
         if args.base is not None:
             base = args.base + "/online/qtsdkrepository/"
         else:
-            base = BASE_URL
+            base = BASE_URL + "/online/qtsdkrepository/"
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
@@ -425,7 +453,7 @@ class Cli:
         if args.base is not None:
             base = args.base + "/online/qtsdkrepository/"
         else:
-            base = BASE_URL
+            base = BASE_URL + "/online/qtsdkrepository/"
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
@@ -526,16 +554,16 @@ class Cli:
             "where 'online' folder exist.",
         )
         subparser.add_argument(
-            "-E", "--external", nargs="?", help="Specify external 7zip command path."
-        )
-        subparser.add_argument(
-            "--internal", action="store_true", help="Use internal extractor."
-        )
-        subparser.add_argument(
             "--timeout",
             nargs="?",
             type=float,
             help="Specify connection timeout for download site.(default: 5 sec)",
+        )
+        subparser.add_argument(
+            "-E", "--external", nargs="?", help="Specify external 7zip command path."
+        )
+        subparser.add_argument(
+            "--internal", action="store_true", help="Use internal extractor."
         )
         subparser.add_argument(
             "-k",
@@ -653,6 +681,51 @@ class Cli:
         list_parser = subparsers.add_parser("list")
         list_parser.set_defaults(func=self.run_list)
         self._set_common_argument(list_parser)
+        #
+        old_install = subparsers.add_parser(
+            "old",
+            formatter_class = argparse.RawTextHelpFormatter
+        )
+        old_install.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
+        old_install.add_argument(
+            "host", choices=["linux", "mac", "windows"], help="host os name"
+        )
+        old_install.add_argument(
+            "target", choices=["desktop"], help="target sdk"
+        )
+        old_install.add_argument(
+            "arch",
+            help="\ntarget linux/desktop: gcc_64"
+            "\ntarget mac/desktop:   clang_64"
+            "\nwindows/desktop:      win64_msvc2017_64, win32_msvc2017"
+            "\n                      win64_msvc2015_64, win32_msvc2015"
+        )
+        old_install.add_argument(
+            "--archives",
+            nargs="*",
+            help="Specify packages to install.",
+        )
+        old_install.add_argument(
+            "-O",
+            "--outputdir",
+            nargs="?",
+            help="Target output directory(default current directory)",
+        )
+        old_install.add_argument(
+            "-b",
+            "--base",
+            nargs="?",
+            help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
+                 "where 'online' folder exist.",
+        )
+        old_install.add_argument(
+            "--timeout",
+            nargs="?",
+            type=float,
+            help="Specify connection timeout for download site.(default: 5 sec)",
+        )
+        old_install.set_defaults(func=self.run_old)
+        #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
         parser.set_defaults(func=self.show_help)
