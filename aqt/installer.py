@@ -331,6 +331,7 @@ class Cli:
 
     def run_online_installer(self, args):
         """Run online_installer subcommand"""
+        start_time = time.perf_counter()
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
@@ -342,7 +343,7 @@ class Cli:
         if args.timeout is not None:
             timeout = args.timeout
         else:
-            timeout = 300
+            timeout = 5
         if args.base is not None:
             base = args.base + "/new_archive/qt/"
         else:
@@ -361,6 +362,12 @@ class Cli:
         cuteci = DeployCuteCI(qt_version, os_name, base, timeout)
         archive = cuteci.download_installer(timeout)
         cuteci.run_installer(archive, packages, base_dir, True)
+        self.logger.info("Finished installation")
+        self.logger.info(
+            "Time elapsed: {time:.8f} second".format(
+                time=time.perf_counter() - start_time
+            )
+        )
 
     def _run_src_doc_examples(self, flavor, args):
         start_time = time.perf_counter()
