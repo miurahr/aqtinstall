@@ -71,10 +71,10 @@ class ExtractionError(Exception):
 
 BASE_URL = "https://download.qt.io"
 FALLBACK_URLS = [
-    "https://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/",
-    "https://ftp.jaist.ac.jp/pub/qtproject/online/qtsdkrepository/",
-    "http://ftp1.nluug.nl/languages/qt/online/qtsdkrepository/",
-    "https://mirrors.dotsrc.org/qtproject/online/qtsdkrepository/",
+    "https://mirrors.ocf.berkeley.edu/qt",
+    "https://ftp.jaist.ac.jp/pub/qtproject",
+    "http://ftp1.nluug.nl/languages/qt",
+    "https://mirrors.dotsrc.org/qtproject",
 ]
 
 
@@ -246,9 +246,9 @@ class Cli:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip("7z")
         if args.base is not None:
-            base = args.base + "/online/qtsdkrepository/"
+            base = args.base
         else:
-            base = BASE_URL + "/online/qtsdkrepository/"
+            base = BASE_URL
         archives = args.archives
         if args.noarchives:
             if modules is None:
@@ -345,9 +345,9 @@ class Cli:
         else:
             timeout = 5
         if args.base is not None:
-            base = args.base + "/new_archive/qt/"
+            base = args.base
         else:
-            base = BASE_URL + "/new_archive/qt/"
+            base = BASE_URL
         self._run_common_part(output_dir, base)
         qt_ver_num = qt_version.replace(".", "")
         packages = ["qt.qt5.{}.{}".format(qt_ver_num, arch)]
@@ -377,9 +377,9 @@ class Cli:
         output_dir = args.outputdir
         keep = args.keep
         if args.base is not None:
-            base = args.base + "/online/qtsdkrepository/"
+            base = args.base
         else:
-            base = BASE_URL + "/online/qtsdkrepository/"
+            base = BASE_URL
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
@@ -465,9 +465,9 @@ class Cli:
         version = args.version
         keep = args.keep
         if args.base is not None:
-            base = args.base + "/online/qtsdkrepository/"
+            base = args.base
         else:
-            base = BASE_URL + "/online/qtsdkrepository/"
+            base = BASE_URL
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:

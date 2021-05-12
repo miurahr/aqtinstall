@@ -81,8 +81,12 @@ class DeployCuteCI:
         else:
             arch = "x86"
             ext = "exe"
-        self.installer_url = "{0}{1}/{2}/qt-opensource-{3}-{4}-{5}.{6}".format(
-            base, major_minor, version, os_name, arch, version, ext
+        if major_minor in ["5.11", "5.10", "5.8", "5.7", "5.6", "5.5", "5.4", "5.3", "5.2"]:
+            folder = "new_archive"
+        else:
+            folder = "archive"
+        self.installer_url = "{0}/{1}/qt/{2}/{3}/qt-opensource-{4}-{5}-{6}.{7}".format(
+            base, folder, major_minor, version, os_name, arch, version, ext
         )
 
     def _get_version(self, path):
