@@ -35,6 +35,7 @@ import sys
 import time
 from logging import getLogger
 
+import appdirs
 import requests
 from packaging.version import Version, parse
 from requests.adapters import HTTPAdapter
@@ -351,6 +352,12 @@ class Cli:
         packages = ["qt.qt5.{}.{}".format(qt_ver_num, arch)]
         if args.archives is not None:
             packages.extend(args.archives)
+        #
+        qa = os.path.join(appdirs.user_data_dir("Qt", None), "qtaccount.ini")
+        if not os.path.exists(qa):
+            self.logger.error("There is no Qt account file. abort...")
+            exit(1)
+        #
         cuteci = DeployCuteCI(qt_version, os_name, base, timeout)
         archive = cuteci.download_installer(timeout)
         cuteci.run_installer(archive, packages, base_dir, True)
