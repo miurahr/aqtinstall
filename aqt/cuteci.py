@@ -62,7 +62,6 @@ from aqt.helper import altlink
 WORKING_DIR = os.getcwd()
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 DEFAULT_INSTALL_SCRIPT = os.path.join(CURRENT_DIR, "install-qt.qs")
-UNEXISTING_PROXY = "127.0.1.100:44444"
 
 
 class DeployCuteCI:
@@ -158,6 +157,7 @@ class DeployCuteCI:
                             checksum.update(chunk)
                         fd.flush()
                     if expected_md5 is not None:
+                        # FIXME
                         pass
                         # if checksum.hexdigest() not in expected_md5:
                         #    raise ArchiveDownloadError(
@@ -186,21 +186,21 @@ class DeployCuteCI:
         env = os.environ.copy()
         env["PACKAGES"] = packages
         env["DESTDIR"] = destdir
-        # Set a fake proxy, then credentials are not required in the installer
-        env.update({"http_proxy": UNEXISTING_PROXY, "https_proxy": UNEXISTING_PROXY})
         #
         version = ".".join(self._get_version(archive).split(".")[:1])
         install_script = os.path.join(CURRENT_DIR, "install-qt.qs".format(version))
         installer_path = os.path.join(WORKING_DIR, archive)
         cmd = [installer_path, "--script", install_script]
-        cmd.extend(["--platform", "minimal"])
+        cmd.extend(["--verbose", "--platform", "minimal"])
         logger.info("Running installer %s", cmd)
         try:
             proc = subprocess.run(
-                cmd, stdout=subprocess.PIPE, timeout=self.timeout
+                cmd, stdout=subprocess.PIPE, timeout=self.timeout, env=env, check=True
             )
             logger.debug(proc.stdout)
         except subprocess.CalledProcessError as cpe:
+            if cpe.returncode == 3:
+                pass
             logger.error("Installer error: %d" % cpe.returncode)
             if cpe.stdout is not None:
                 logger.error(cpe.stdout)
@@ -214,11 +214,6 @@ class DeployCuteCI:
             if te.stderr is not None:
                 logger.error(te.stderr)
             raise te
-        if proc.returncode != 3 or proc.returncode != 0:
-            logger.error("Installer error %d" % proc.returncode)
-            raise Exception(
-                "Installer neither returned 0 nor 3 exit code: {}".format(proc.returncode)
-            )
         if not keep_tools:
             logger.info("Cleaning destdir")
             files = os.listdir(destdir)
