@@ -329,8 +329,8 @@ class Cli:
             )
         )
 
-    def run_old(self, args):
-        """Run old_install subcommand"""
+    def run_online_installer(self, args):
+        """Run online_installer subcommand"""
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
@@ -690,22 +690,20 @@ class Cli:
         self._set_common_argument(list_parser)
         #
         old_install = subparsers.add_parser(
-            "old",
-            formatter_class = argparse.RawTextHelpFormatter
+            "online_installer", formatter_class=argparse.RawTextHelpFormatter
         )
-        old_install.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
+        old_install.add_argument(
+            "qt_version", help='Qt version in the format of "5.X.Y"'
+        )
         old_install.add_argument(
             "host", choices=["linux", "mac", "windows"], help="host os name"
-        )
-        old_install.add_argument(
-            "target", choices=["desktop"], help="target sdk"
         )
         old_install.add_argument(
             "arch",
             help="\ntarget linux/desktop: gcc_64"
             "\ntarget mac/desktop:   clang_64"
             "\nwindows/desktop:      win64_msvc2017_64, win32_msvc2017"
-            "\n                      win64_msvc2015_64, win32_msvc2015"
+            "\n                      win64_msvc2015_64, win32_msvc2015",
         )
         old_install.add_argument(
             "--archives",
@@ -723,7 +721,7 @@ class Cli:
             "--base",
             nargs="?",
             help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
-                 "where 'online' folder exist.",
+            "where 'online' folder exist.",
         )
         old_install.add_argument(
             "--timeout",
@@ -731,7 +729,7 @@ class Cli:
             type=float,
             help="Specify connection timeout for download site.(default: 5 sec)",
         )
-        old_install.set_defaults(func=self.run_old)
+        old_install.set_defaults(func=self.run_online_installer)
         #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)

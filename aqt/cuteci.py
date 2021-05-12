@@ -70,7 +70,7 @@ class DeployCuteCI:
     """
 
     def __init__(self, version, os_name, base, timeout):
-        major_minor = version[:version.rfind(".")]
+        major_minor = version[: version.rfind(".")]
         self.timeout = timeout
         if os_name == "linux":
             arch = "x64"
@@ -82,13 +82,7 @@ class DeployCuteCI:
             arch = "x86"
             ext = "exe"
         self.installer_url = "{0}{1}/{2}/qt-opensource-{3}-{4}-{5}.{6}".format(
-            base,
-            major_minor,
-            version,
-            os_name,
-            arch,
-            version,
-            ext
+            base, major_minor, version, os_name, arch, version, ext
         )
 
     def _get_version(self, path):
@@ -115,7 +109,9 @@ class DeployCuteCI:
         logger = getLogger("aqt")
         url = self.installer_url
         archive = self.installer_url[self.installer_url.rfind("/") + 1 :]
-        md5sums_url = self.installer_url[: self.installer_url.rfind("/")] + "/" + "md5sums.txt"
+        md5sums_url = (
+            self.installer_url[: self.installer_url.rfind("/")] + "/" + "md5sums.txt"
+        )
         timeout = (3.5, response_timeout)
         logger.info("Download Qt %s", url)
         #
@@ -137,7 +133,9 @@ class DeployCuteCI:
             session.mount("http://", adapter)
             session.mount("https://", adapter)
             try:
-                r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
+                r = session.get(
+                    url, allow_redirects=False, stream=True, timeout=timeout
+                )
                 if r.status_code == 302:
                     newurl = altlink(r.url, r.headers["Location"], logger=logger)
                     logger.info("Redirected URL: {}".format(newurl))
@@ -179,9 +177,7 @@ class DeployCuteCI:
         :param bool verbose: enable verbosity
         :raises Exception: in case of failure
         """
-        os.chmod(
-            archive, os.stat(archive).st_mode | stat.S_IEXEC
-        )
+        os.chmod(archive, os.stat(archive).st_mode | stat.S_IEXEC)
         logger = getLogger("aqt")
         env = os.environ.copy()
         env["PACKAGES"] = packages
