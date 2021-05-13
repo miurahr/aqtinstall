@@ -35,8 +35,7 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from requests import RequestException
-from semantic_version import Version
-
+from semantic_version import Version, SimpleSpec
 
 ALL_EXTENSIONS = (
     "wasm",
@@ -159,9 +158,8 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
         return Version(
             major=int(qt_ver[:1]),
             minor=int(qt_ver[1:]),
-            patch=None,
+            patch=0,
             prerelease=("preview",),
-            partial=True,
         )
     elif len(qt_ver) >= 4:
         return Version(
@@ -321,7 +319,13 @@ def filter_folders(
     """
     if category == "tools":
         return "\n".join(tool_folders)
-    # if not subtype:
+
+    def stringify_ver(ver: Version) -> str:
+        if ver.prerelease:
+            assert ver.patch == 0 and ver.prerelease == ('preview',)
+            return "{}.{}-preview".format(ver.major, ver.minor)
+        return str(ver)
+
     subtype = "qt" if extension is None else extension
     if (
         category in versions.keys()
@@ -337,10 +341,10 @@ def filter_folders(
         # PRE: data was returned in ascending order
         latest_version = versions_needed[-1][-1]
         if is_latest:
-            return str(latest_version)
+            return stringify_ver(latest_version)
         return "\n".join(
             [
-                " ".join([str(ver) for ver in major_minor])
+                " ".join([stringify_ver(ver) for ver in major_minor])
                 for major_minor in versions_needed
             ]
         )
