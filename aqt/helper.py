@@ -322,7 +322,7 @@ def filter_folders(
 
     def stringify_ver(ver: Version) -> str:
         if ver.prerelease:
-            assert ver.patch == 0 and ver.prerelease == ('preview',)
+            assert ver.patch == 0 and ver.prerelease == ("preview",)
             return "{}.{}-preview".format(ver.major, ver.minor)
         return str(ver)
 
