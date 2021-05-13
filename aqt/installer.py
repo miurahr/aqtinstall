@@ -39,7 +39,6 @@ from typing import Optional
 import requests
 from packaging.version import Version, parse
 from requests.adapters import HTTPAdapter
-from texttable import Texttable
 from urllib3.util.retry import Retry
 
 import aqt
@@ -48,7 +47,6 @@ from aqt.archives import (
     ArchiveDownloadError,
     ArchiveListError,
     NoPackageFound,
-    PackagesList,
     QtArchives,
     SrcDocExamplesArchives,
     ToolArchives,
@@ -483,28 +481,6 @@ class Cli:
             )
         )
 
-    def run_list_old(self, args):
-        """Run list subcommand"""
-        self.show_aqt_version()
-        qt_version = args.qt_version
-        host = args.host
-        target = args.target
-        try:
-            pl = PackagesList(qt_version, host, target, BASE_URL)
-        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
-            pl = PackagesList(qt_version, host, target, random.choice(FALLBACK_URLS))
-        print("List Qt packages in %s for %s" % (args.qt_version, args.host))
-        table = Texttable()
-        table.set_deco(Texttable.HEADER)
-        table.set_cols_dtype(["t", "t", "t"])
-        table.set_cols_align(["l", "l", "l"])
-        table.header(["target", "arch", "description"])
-        for entry in pl.get_list():
-            if qt_version[0:1] == "6" or not entry.virtual:
-                archid = entry.name.split(".")[-1]
-                table.add_row([entry.display_name, archid, entry.desc])
-        print(table.draw())
-
     def run_list(self, args: argparse.ArgumentParser):
         """Print all folders available for a category"""
 
@@ -709,15 +685,7 @@ class Cli:
             "arch", help="Name of full tool name such as qt.tools.ifw.31"
         )
         self._set_common_options(tools_parser)
-        #
-        # list_parser = subparsers.add_parser("list")
-        # list_parser.set_defaults(func=self.run_list)
-        # self._set_common_argument(list_parser)
-        # help_parser = subparsers.add_parser("help")
-        # help_parser.set_defaults(func=self.show_help)
-        # parser.set_defaults(func=self.show_help)
 
-        # list2: placeholder name for added functionality; don't know what to call it!
         list_parser = subparsers.add_parser(
             "list",
             formatter_class=argparse.RawTextHelpFormatter,
@@ -744,8 +712,6 @@ class Cli:
             choices=ALL_EXTENSIONS,
             help="extension of packages to list",
         )
-        # list_parser.add_argument("qt_version", required=False, type=str,
-        #                          help='Qt version in the format of "5.X.Y". If this is set, then ')
         list_parser.add_argument(
             "--filter-minor",
             type=int,
@@ -772,6 +738,9 @@ class Cli:
             help="list all the packages available for the latest version of Qt, "
             "or a minor version if the `--filter-minor` flag is set.",
         )
+        help_parser = subparsers.add_parser("help")
+        help_parser.set_defaults(func=self.show_help)
+        parser.set_defaults(func=self.show_help)
         self.parser = parser
 
     def _setup_logging(self, args, env_key="LOG_CFG"):
