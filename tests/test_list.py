@@ -4,6 +4,7 @@ from typing import Optional
 import pytest
 import json
 from pathlib import Path
+from semantic_version import Version
 
 from aqt.archives import QtDownloadListFetcher
 from aqt.helper import ArchiveId, get_packages_for_version
@@ -99,6 +100,6 @@ def test_list_archives(
     def http_fetcher(_: str) -> str:
         return _xml
 
-    packages = get_packages_for_version(version, archive_id, http_fetcher)
+    packages = get_packages_for_version(Version(version), archive_id, http_fetcher)
     assert packages == expect
     print(" ".join(packages))

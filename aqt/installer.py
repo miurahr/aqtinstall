@@ -59,6 +59,7 @@ from aqt.helper import (
     request_http_with_failover,
     list_packages_for_version,
     ArchiveId,
+    cli_2_semantic_version,
 )
 from aqt.updater import Updater
 
@@ -481,7 +482,7 @@ class Cli:
             )
         )
 
-    def run_list(self, args: argparse.ArgumentParser):
+    def run_list(self, args: argparse.ArgumentParser) -> int:
         """Print all folders available for a category"""
 
         # Version of Qt for which to list packages
@@ -524,7 +525,7 @@ class Cli:
             if is_print_latest_packages:
                 qt_version = out.rsplit(maxsplit=1)[-1]
                 return list_packages_for_version(
-                    qt_version, archive_id=archive_id, http_fetcher=http_fetcher
+                    cli_2_semantic_version(qt_version), archive_id=archive_id, http_fetcher=http_fetcher
                 )
             print(out)
             return 0

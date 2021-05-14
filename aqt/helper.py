@@ -142,6 +142,29 @@ def altlink(url: str, alt: str, logger=None):
             )
 
 
+def cli_2_semantic_version(qt_ver: Optional[str]) -> Optional[Version]:
+    return None if qt_ver is None else get_semantic_version_with_dots(qt_ver)
+
+
+def get_semantic_version_with_dots(qt_ver: str) -> Version:
+    """Converts a Qt version string with dots (5.X.Y, etc) into a semantic version.
+    If the version ends in `-preview`, the version is treated as a preview release.
+    If the patch value is missing, patch is assumed to be zero.
+    If the version cannot be converted to a Version, a ValueError is raised.
+    """
+    match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)?$", qt_ver)
+    if not match:
+        raise ValueError("Invalid version string '{}'".format(qt_ver))
+    major, minor, end, patch = match.groups()
+    is_preview = end == "-preview"
+    return Version(
+        major=int(major),
+        minor=int(minor),
+        patch=int(patch) if patch else 0,
+        prerelease=("preview",) if is_preview else None,
+    )
+
+
 def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
     """Converts a Qt version string (596, 512, 5132, etc) into a semantic version.
     This makes a lot of assumptions based on established patterns:
@@ -352,13 +375,12 @@ def filter_folders(
 
 
 def get_packages_for_version(
-    version: str,
+    version: Version,
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
 ) -> List[str]:
-    match = re.match(r"((\d+)\.\d+(\.\d+)?)(-preview)?$", version)
-    qt_ver_str = match.group(1).replace(".", "")
-    qt_major = int(match.group(2))
+    patch = "" if version.prerelease or archive_id.is_preview() else str(version.patch)
+    qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
     rest_of_url = archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")
     xml = http_fetcher(rest_of_url)  # raises RequestException
 
@@ -372,7 +394,7 @@ def get_packages_for_version(
     )
     # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.")
     pattern = re.compile(
-        r"^(preview\.)?qt\.(qt" + str(qt_major) + r"\.)?" + qt_ver_str + r"\.(.+)$"
+        r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$"
     )
 
     def to_package_name(name: str) -> Optional[str]:
@@ -383,7 +405,7 @@ def get_packages_for_version(
 
 
 def list_packages_for_version(
-    version: str,
+    version: Version,
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
 ) -> int:
