@@ -7,7 +7,7 @@ from pathlib import Path
 from semantic_version import Version
 
 from aqt.archives import QtDownloadListFetcher
-from aqt.helper import ArchiveId, get_packages_for_version
+from aqt.helper import ArchiveId, get_modules_for_version
 
 MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 
@@ -100,6 +100,6 @@ def test_list_archives(
     def http_fetcher(_: str) -> str:
         return _xml
 
-    packages = get_packages_for_version(Version(version), archive_id, http_fetcher)
+    packages = get_modules_for_version(Version(version), archive_id, http_fetcher)
     assert packages == expect
     print(" ".join(packages))

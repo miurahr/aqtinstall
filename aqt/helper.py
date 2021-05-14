@@ -35,7 +35,7 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from requests import RequestException
-from semantic_version import Version, SimpleSpec
+from semantic_version import Version
 
 ALL_EXTENSIONS = (
     "wasm",
@@ -374,7 +374,7 @@ def filter_folders(
     return ""
 
 
-def get_packages_for_version(
+def get_modules_for_version(
     version: Version,
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
@@ -404,14 +404,14 @@ def get_packages_for_version(
     return sorted(filter(None, set(to_package_name(name) for name in packages.keys())))
 
 
-def list_packages_for_version(
+def list_modules_for_version(
     version: Version,
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
 ) -> int:
     logger = logging.getLogger("aqt")
     try:
-        package_names = get_packages_for_version(version, archive_id, http_fetcher)
+        package_names = get_modules_for_version(version, archive_id, http_fetcher)
         if len(package_names) == 0:
             logger.error("No packages available")
             return 1

@@ -57,7 +57,7 @@ from aqt.helper import (
     altlink,
     ALL_EXTENSIONS,
     request_http_with_failover,
-    list_packages_for_version,
+    list_modules_for_version,
     ArchiveId,
     cli_2_semantic_version,
 )
@@ -485,17 +485,45 @@ class Cli:
     def run_list(self, args: argparse.ArgumentParser) -> int:
         """Print all folders available for a category"""
 
-        # Version of Qt for which to list packages
-        list_packages_ver: Optional[str] = args.list_packages
+        try:
+            # Version of Qt for which to list packages
+            list_modules_ver: Optional[Version] = cli_2_semantic_version(args.modules)
+
+            # Version of Qt for which to list extensions
+            list_extensions_ver: Optional[Version] = cli_2_semantic_version(
+                args.extensions
+            )
+
+            # Version of Qt for which to list architectures
+            list_architectures_ver: Optional[Version] = cli_2_semantic_version(
+                args.arch
+            )
+        except ValueError as e:
+            self.logger.error(e)
+            return 1
+
+        if list_extensions_ver:
+            raise NotImplementedError("Listing extensions isn't done yet")
+        if list_architectures_ver:
+            raise NotImplementedError("Listing architectures isn't done yet")
 
         # Print packages for only the most recent version of Qt that matches the filters set
-        is_print_latest_packages: bool = args.latest_packages
+        is_print_latest_modules: bool = args.latest_modules
 
         # Find all versions of Qt matching filters, and only print the most recent version
         is_latest_version: bool = args.latest_version
 
         # Remove from output any versions of Qt that don't have the minor version `filter_minor`
         filter_minor: Optional[int] = args.filter_minor
+
+        if not args.target:
+            result = {
+                "windows": "android desktop winrt",
+                "mac": "android desktop ios",
+                "linux": "android desktop",
+            }[args.host]
+            print(result)
+            return 0
 
         archive_id = ArchiveId(args.category, args.host, args.target, args.extension)
 
@@ -505,9 +533,9 @@ class Cli:
                 rest_of_url=rest_of_url,
             )
 
-        if list_packages_ver is not None and archive_id.is_qt():
-            return list_packages_for_version(
-                list_packages_ver, archive_id=archive_id, http_fetcher=http_fetcher
+        if list_modules_ver is not None and archive_id.is_qt():
+            return list_modules_for_version(
+                list_modules_ver, archive_id=archive_id, http_fetcher=http_fetcher
             )
 
         fetcher = QtDownloadListFetcher(
@@ -522,10 +550,12 @@ class Cli:
             if not out:
                 self.logger.error("No data available")
                 return 1
-            if is_print_latest_packages:
+            if is_print_latest_modules:
                 qt_version = out.rsplit(maxsplit=1)[-1]
-                return list_packages_for_version(
-                    cli_2_semantic_version(qt_version), archive_id=archive_id, http_fetcher=http_fetcher
+                return list_modules_for_version(
+                    cli_2_semantic_version(qt_version),
+                    archive_id=archive_id,
+                    http_fetcher=http_fetcher,
                 )
             print(out)
             return 0
@@ -687,14 +717,25 @@ class Cli:
         )
         self._set_common_options(tools_parser)
 
+        # list category host target         # 1. Print all tools/versions of Qt available for category, os, target
+        # list category host --targets Qt_version           # 2. Print all targets for a version of Qt
+        # list category host target --arch Qt_version       # 3. Print all architectures for Qt version, os, target
+        # list category host target --modules Qt_version    # 4. Print all modules for (Qt, OS, target) tuple
         list_parser = subparsers.add_parser(
             "list",
-            formatter_class=argparse.RawTextHelpFormatter,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
-            "$ aqt list qt5 windows desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
-            "$ aqt list qt5 windows desktop --filter-minor 9 --latest-version  # print latest Qt 5.9\n"
-            "$ aqt list qt5 windows desktop --filter-minor 9 --latest-packages # print packages for latest 5.9\n"
-            "$ aqt list qt5 windows desktop --list-packages 5.12.0             # print packages for 5.12.0\n",
+            "$ aqt list qt5 mac                                            # print all targets for Mac OS\n"
+            "$ aqt list tools mac desktop                                  # print all tools for mac desktop\n"
+            "$ aqt list qt5 mac desktop                                    # print all versions of Qt 5\n"
+            "$ aqt list qt5 mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
+            "$ aqt list qt5 mac desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
+            "$ aqt list qt5 mac desktop --filter-minor 9 --latest-version  # print latest Qt 5.9\n"
+            "$ aqt list qt5 mac desktop --filter-minor 9 --latest-modules  # print modules for latest 5.9\n"
+            "$ aqt list qt5 mac desktop --modules 5.12.0                   # print modules for 5.12.0\n"
+            "$ aqt list qt5 mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
+            "$ aqt list qt5 mac desktop --arch 5.9.9                       "
+            "# print architectures for 5.9.9/mac/desktop\n",
         )
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument(
@@ -706,12 +747,24 @@ class Cli:
             "host", choices=["linux", "mac", "windows"], help="host os name"
         )
         list_parser.add_argument(
-            "target", choices=["desktop", "winrt", "android", "ios"], help="target sdk"
+            "target",
+            nargs="?",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
+        # list_parser.add_argument(
+        #     "--targets",
+        #     type=str,
+        #     metavar="VERSION",
+        #     help='Qt version in the format of "5.X.Y". '
+        #     "When set, this lists all the targets available for Qt 5.X.Y on a host.",
+        # )
         list_parser.add_argument(
             "--extension",
             choices=ALL_EXTENSIONS,
-            help="extension of packages to list",
+            help="Extension of packages to list. "
+            "Use the `--extensions` flag to list all relevant options for a host/target.",
         )
         list_parser.add_argument(
             "--filter-minor",
@@ -722,11 +775,25 @@ class Cli:
         )
         output_modifier_exclusive_group = list_parser.add_mutually_exclusive_group()
         output_modifier_exclusive_group.add_argument(
-            "--list-packages",
+            "--modules",
             type=str,
             metavar="VERSION",
             help='Qt version in the format of "5.X.Y". '
-            "When set, this lists all the packages available for Qt 5.X.Y.",
+            "When set, this lists all the modules available for Qt 5.X.Y.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--extensions",
+            type=str,
+            metavar="VERSION",
+            help='Qt version in the format of "5.X.Y". '
+            "When set, this prints all valid arguments for the `--extension` flag for Qt 5.X.Y with a host/target.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--arch",
+            type=str,
+            metavar="VERSION",
+            help='Qt version in the format of "5.X.Y". '
+            "When set, this prints all architectures available for Qt 5.X.Y with a host/target.",
         )
         output_modifier_exclusive_group.add_argument(
             "--latest-version",
@@ -734,11 +801,12 @@ class Cli:
             help="print only the newest version available",
         )
         output_modifier_exclusive_group.add_argument(
-            "--latest-packages",
+            "--latest-modules",
             action="store_true",
-            help="list all the packages available for the latest version of Qt, "
+            help="list all the modules available for the latest version of Qt, "
             "or a minor version if the `--filter-minor` flag is set.",
         )
+        #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
         parser.set_defaults(func=self.show_help)
