@@ -97,6 +97,9 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
             console.log("Package " + name + " not found");
         }
     }
+    widget.deselectComponent("qt.tools.qtcreator");
+    widget.deselectComponent("qt.tools.doc");
+    widget.deselectComponent("qt.tools.examples");
 
     gui.clickButton(buttons.NextButton);
 }
