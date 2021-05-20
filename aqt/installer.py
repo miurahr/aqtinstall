@@ -701,11 +701,11 @@ class Cli:
         old_install = subparsers.add_parser(
             "offline_installer",
             formatter_class=argparse.RawTextHelpFormatter,
-            description = "Install Qt using offiline installer. It requires downloading installer binary(500-1500MB).\n"
-                          "Please help you for patience to wait downloding."
-                          "It can accept environment variables:\n"
-                          "  QTLOGIN: qt account login name\n"
-                          "  QTPASSWORD: qt account password\n"
+            description="Install Qt using offiline installer. It requires downloading installer binary(500-1500MB).\n"
+            "Please help you for patience to wait downloding."
+            "It can accept environment variables:\n"
+            "  QTLOGIN: qt account login name\n"
+            "  QTPASSWORD: qt account password\n",
         )
         old_install.add_argument(
             "qt_version", help='Qt version in the format of "5.X.Y"'

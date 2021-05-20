@@ -83,7 +83,17 @@ class DeployCuteCI:
         else:
             arch = "x86"
             ext = "exe"
-        if self.major_minor in ["5.11", "5.10", "5.8", "5.7", "5.6", "5.5", "5.4", "5.3", "5.2"]:
+        if self.major_minor in [
+            "5.11",
+            "5.10",
+            "5.8",
+            "5.7",
+            "5.6",
+            "5.5",
+            "5.4",
+            "5.3",
+            "5.2",
+        ]:
             folder = "new_archive"
         else:
             folder = "archive"
@@ -91,7 +101,7 @@ class DeployCuteCI:
             base, folder, self.major_minor, version, os_name, arch, version, ext
         )
         self.md5sums_url = (
-                self.installer_url[: self.installer_url.rfind("/")] + "/" + "md5sums.txt"
+            self.installer_url[: self.installer_url.rfind("/")] + "/" + "md5sums.txt"
         )
 
     def _get_version(self, path):
@@ -110,7 +120,7 @@ class DeployCuteCI:
         return res.group(1)
 
     def get_archive_name(self):
-        return self.installer_url[self.installer_url.rfind("/") + 1:]
+        return self.installer_url[self.installer_url.rfind("/") + 1 :]
 
     def _get_md5(self, archive, timeout):
         expected_md5 = None
@@ -142,7 +152,10 @@ class DeployCuteCI:
                     while len(data) > 0:
                         checksum.update(data)
                         data = f.read(BLOCKSIZE)
-                if checksum.hexdigest() == expected_md5 and os.stat(archive).st_mode & stat.S_IEXEC:
+                if (
+                    checksum.hexdigest() == expected_md5
+                    and os.stat(archive).st_mode & stat.S_IEXEC
+                ):
                     return True
         return False
 
@@ -220,9 +233,7 @@ class DeployCuteCI:
             cmd.extend(["--platform", "minimal"])
         logger.info("Running installer %s", cmd)
         try:
-            subprocess.run(
-                cmd, timeout=self.timeout, env=env, check=True
-            )
+            subprocess.run(cmd, timeout=self.timeout, env=env, check=True)
         except subprocess.CalledProcessError as cpe:
             if cpe.returncode == 3:
                 pass
