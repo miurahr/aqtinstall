@@ -26,6 +26,17 @@ Controller.prototype.WelcomePageCallback = function() {
 
 Controller.prototype.CredentialsPageCallback = function() {
     console.log("Credentials Page");
+
+	var login = installer.environmentVariable("QTLOGIN");
+	var password = installer.environmentVariable("QTPASSWORD");
+
+	if (login === "" || password === "") {
+        gui.clickButton(buttons.NextButton);
+	}
+
+    var widget = gui.currentPageWidget();
+	widget.loginWidget.EmailLineEdit.setText(login);
+	widget.loginWidget.PasswordLineEdit.setText(password);
     gui.clickButton(buttons.NextButton);
 }
 

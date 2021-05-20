@@ -356,9 +356,7 @@ class Cli:
         #
         qa = os.path.join(appdirs.user_data_dir("Qt", None), "qtaccount.ini")
         if not os.path.exists(qa):
-            self.logger.error("There is no Qt account file. abort...")
-            exit(1)
-        #
+            self.logger.warning("Cannot find {}".format(qa))
         cuteci = DeployCuteCI(qt_version, os_name, base, timeout)
         archive = cuteci.download_installer(timeout)
         cuteci.run_installer(archive, packages, base_dir, True)
