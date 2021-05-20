@@ -126,7 +126,7 @@ Experimental commands
 
 .. program::  aqt
 
-.. option:: offline_installer <Qt version> <target OS> <target architecture> --archives [<package>, ...]
+.. option:: offline_installer <Qt version> <target OS> <target variant> --archives [<selection>, ...]
 
     [Experimental, Advanced] install Qt library specified version and target using offline installer.
     When specify old versions that has already become end-of-life, aqt download
@@ -139,9 +139,39 @@ Experimental commands
 
     A feature is considered as very experimental.
 
-.. option:: --archives <list of archives>
+.. option:: Qt version
 
-    archive packages to install. Expected values will be shown on log message.
+    target Qt version, such as 5.4.2, 5.5.1, 5.6.3, 5.7.1, 5.8.0
+
+.. option:: target OS
+
+    target OS name, such as linux, windows and mac
+
+.. option:: target variant
+
+    target variant tag for installer binary name.
+
+    You should know a valid name for your specified Qt version.
+
+    For example
+
+    x64 for linux
+
+    x64-clang, x64-android-ios or x64-android for mac
+
+    x86-msvc2015_64, x86-msvc2015, x86-msvc2017_64, x86-msvc2017,
+    x86-mingw530, x86-mingw49, or x86-android for windows
+
+.. option:: --archives <list of selection>
+
+    package IDs to install. Expected values may be shown on log message.
+    When not specified, vendor default selection will be installed.
+
+    for example
+
+    qt.563.win64_msvc2015_64
+
+    qt.563.win32_mingw49
 
 
 Command examples
@@ -212,4 +242,4 @@ Example: install old version
 
 .. code-block:: bash
 
-    aqt offline_installer 5.11.2 linux gcc_64
+    aqt offline_installer 5.6.3 linux x64
