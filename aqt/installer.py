@@ -329,7 +329,7 @@ class Cli:
             )
         )
 
-    def run_online_installer(self, args):
+    def run_offline_installer(self, args):
         """Run online_installer subcommand"""
         start_time = time.perf_counter()
         os_name = args.host
@@ -343,7 +343,7 @@ class Cli:
         if args.timeout is not None:
             timeout = args.timeout
         else:
-            timeout = 5
+            timeout = 300
         if args.base is not None:
             base = args.base
         else:
@@ -695,7 +695,13 @@ class Cli:
         self._set_common_argument(list_parser)
         #
         old_install = subparsers.add_parser(
-            "online_installer", formatter_class=argparse.RawTextHelpFormatter
+            "offline_installer",
+            formatter_class=argparse.RawTextHelpFormatter,
+            description = "Install Qt using offiline installer. It requires downloading installer binary(500-1500MB).\n"
+                          "Please help you for patience to wait downloding."
+                          "It can accept environment variables:\n"
+                          "  QTLOGIN: qt account login name\n"
+                          "  QTPASSWORD: qt account password\n"
         )
         old_install.add_argument(
             "qt_version", help='Qt version in the format of "5.X.Y"'
@@ -732,9 +738,9 @@ class Cli:
             "--timeout",
             nargs="?",
             type=float,
-            help="Specify connection timeout for download site.(default: 5 sec)",
+            help="Specify timeout for offline installer processing.(default: 300 sec)",
         )
-        old_install.set_defaults(func=self.run_online_installer)
+        old_install.set_defaults(func=self.run_offline_installer)
         #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
