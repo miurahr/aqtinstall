@@ -45,12 +45,12 @@
 # --------------------------------------------------------------------------------
 
 import hashlib
-import sys
 import os
-import stat
-import shutil
-import subprocess
 import re
+import shutil
+import stat
+import subprocess
+import sys
 from logging import getLogger
 
 import requests
