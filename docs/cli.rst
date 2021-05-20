@@ -109,6 +109,19 @@ long options may be truncated to the shortest unambiguous abbreviation.
     You may need to looking for version number at  https://download.qt.io/online/qtsdkrepository/
 
 
+.. option:: offline_installer <Qt version> <target OS> <target architecture> --archives [<package>, ...]
+
+    install Qt library specified version and target using offline installer.
+    When specify old versions that has already become end-of-life, aqt download
+    the installer from a proper server repository.
+    User may need to set environment variable QTLOGIN and QTPASSWORD properly or
+    place qtaccount.ini file at proper place.
+
+    User should specify proper package names. Otherwise it may install default
+    packages.
+
+    A feature is considered as very experimental.
+
 Command examples
 ================
 
