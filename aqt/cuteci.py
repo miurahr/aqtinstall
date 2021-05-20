@@ -224,9 +224,7 @@ class DeployCuteCI:
         env = os.environ.copy()
         env["PACKAGES"] = ",".join(packages)
         env["DESTDIR"] = destdir
-        #
-        version = ".".join(self._get_version(archive).split(".")[:1])
-        install_script = os.path.join(CURRENT_DIR, "install-qt.qs".format(version))
+        install_script = os.path.join(CURRENT_DIR, "install-qt.qs")
         installer_path = os.path.join(WORKING_DIR, archive)
         cmd = [installer_path, "--script", install_script, "--verbose"]
         if self.major_minor in ["5.11", "5.10"]:
