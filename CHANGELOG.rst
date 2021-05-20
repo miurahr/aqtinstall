@@ -9,12 +9,16 @@ All notable changes to this project will be documented in this file.
 
 Added
 -----
+* Support for installation of old versions(#236, #239)
 
 Changed
 -------
+* CI: update test target on Python 3.6 and 3.8(#240)
+* Check MD5 checksum when download(#238)
 
 Fixed
 -----
+* Prettify help message format(#237)
 
 Deprecated
 ----------
