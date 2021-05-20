@@ -339,7 +339,7 @@ class Cli:
         if output_dir is None:
             base_dir = os.getcwd()
         else:
-            base_dir = output_dir
+            base_dir = os.path.realpath(output_dir)
         if args.timeout is not None:
             timeout = args.timeout
         else:
@@ -358,7 +358,11 @@ class Cli:
         if not os.path.exists(qa):
             self.logger.warning("Cannot find {}".format(qa))
         cuteci = DeployCuteCI(qt_version, os_name, base, timeout)
-        archive = cuteci.download_installer(timeout)
+        if not cuteci.check_archive():
+            archive = cuteci.download_installer()
+        else:
+            self.logger.info("Reuse existent installer archive.")
+            archive = cuteci.get_archive_name()
         cuteci.run_installer(archive, packages, base_dir, True)
         self.logger.info("Finished installation")
         self.logger.info(

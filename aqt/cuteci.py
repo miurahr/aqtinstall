@@ -57,11 +57,13 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
+from aqt.archives import ArchiveDownloadError
 from aqt.helper import altlink
 
 WORKING_DIR = os.getcwd()
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 DEFAULT_INSTALL_SCRIPT = os.path.join(CURRENT_DIR, "install-qt.qs")
+BLOCKSIZE = 1048576
 
 
 class DeployCuteCI:
@@ -70,7 +72,7 @@ class DeployCuteCI:
     """
 
     def __init__(self, version, os_name, base, timeout):
-        major_minor = version[: version.rfind(".")]
+        self.major_minor = version[: version.rfind(".")]
         self.timeout = timeout
         if os_name == "linux":
             arch = "x64"
@@ -81,12 +83,15 @@ class DeployCuteCI:
         else:
             arch = "x86"
             ext = "exe"
-        if major_minor in ["5.11", "5.10", "5.8", "5.7", "5.6", "5.5", "5.4", "5.3", "5.2"]:
+        if self.major_minor in ["5.11", "5.10", "5.8", "5.7", "5.6", "5.5", "5.4", "5.3", "5.2"]:
             folder = "new_archive"
         else:
             folder = "archive"
         self.installer_url = "{0}/{1}/qt/{2}/{3}/qt-opensource-{4}-{5}-{6}.{7}".format(
-            base, folder, major_minor, version, os_name, arch, version, ext
+            base, folder, self.major_minor, version, os_name, arch, version, ext
+        )
+        self.md5sums_url = (
+                self.installer_url[: self.installer_url.rfind("/")] + "/" + "md5sums.txt"
         )
 
     def _get_version(self, path):
@@ -104,6 +109,43 @@ class DeployCuteCI:
         res.group(1)
         return res.group(1)
 
+    def get_archive_name(self):
+        return self.installer_url[self.installer_url.rfind("/") + 1:]
+
+    def _get_md5(self, archive, timeout):
+        expected_md5 = None
+        with requests.Session() as session:
+            retry = Retry(connect=5, backoff_factor=0.5)
+            adapter = HTTPAdapter(max_retries=retry)
+            session.mount("http://", adapter)
+            session.mount("https://", adapter)
+            try:
+                r = session.get(self.md5sums_url, allow_redirects=True, timeout=timeout)
+            except (requests.exceptions.ConnectionError or requests.exceptions.Timeout):
+                pass  # ignore it
+            else:
+                for line in r.text.split("\n"):
+                    rec = line.split(" ")
+                    if archive in rec:
+                        expected_md5 = rec[0]
+        return expected_md5
+
+    def check_archive(self):
+        archive = self.get_archive_name()
+        if os.path.exists(archive):
+            timeout = (3.5, 3.5)
+            expected_md5 = self._get_md5(archive, timeout)
+            if expected_md5 is not None:
+                checksum = hashlib.md5()
+                with open(archive, "rb") as f:
+                    data = f.read(BLOCKSIZE)
+                    while len(data) > 0:
+                        checksum.update(data)
+                        data = f.read(BLOCKSIZE)
+                if checksum.hexdigest() == expected_md5 and os.stat(archive).st_mode & stat.S_IEXEC:
+                    return True
+        return False
+
     def download_installer(self, response_timeout: int = 30):
         """
         Download Qt if possible, also verify checksums.
@@ -112,25 +154,11 @@ class DeployCuteCI:
         """
         logger = getLogger("aqt")
         url = self.installer_url
-        archive = self.installer_url[self.installer_url.rfind("/") + 1 :]
-        md5sums_url = (
-            self.installer_url[: self.installer_url.rfind("/")] + "/" + "md5sums.txt"
-        )
+        archive = self.get_archive_name()
         timeout = (3.5, response_timeout)
         logger.info("Download Qt %s", url)
         #
-        expected_md5 = None
-        with requests.Session() as session:
-            retry = Retry(connect=5, backoff_factor=0.5)
-            adapter = HTTPAdapter(max_retries=retry)
-            session.mount("http://", adapter)
-            session.mount("https://", adapter)
-            try:
-                r = session.get(md5sums_url, allow_redirects=True, timeout=timeout)
-            except (requests.exceptions.ConnectionError or requests.exceptions.Timeout):
-                pass  # ignore it
-            else:
-                expected_md5 = str(r.content)
+        expected_md5 = self._get_md5(archive, timeout)
         with requests.Session() as session:
             retry = Retry(connect=5, backoff_factor=0.5)
             adapter = HTTPAdapter(max_retries=retry)
@@ -157,18 +185,16 @@ class DeployCuteCI:
                         for chunk in r.iter_content(chunk_size=8196):
                             fd.write(chunk)
                             checksum.update(chunk)
-                        fd.flush()
                     if expected_md5 is not None:
-                        # FIXME
-                        pass
-                        # if checksum.hexdigest() not in expected_md5:
-                        #    raise ArchiveDownloadError(
-                        #        "Download file is corrupted! Check sum error."
-                        # )
+                        if checksum.hexdigest() != expected_md5:
+                            raise ArchiveDownloadError(
+                                "Download file is corrupted! Check sum error."
+                            )
                 except Exception as e:
                     exc = sys.exc_info()
                     logger.error("Download error: %s" % exc[1])
                     raise e
+        os.chmod(archive, os.stat(archive).st_mode | stat.S_IEXEC)
         return archive
 
     def run_installer(self, archive, packages, destdir, keep_tools):
@@ -181,23 +207,22 @@ class DeployCuteCI:
         :param bool verbose: enable verbosity
         :raises Exception: in case of failure
         """
-        os.chmod(archive, os.stat(archive).st_mode | stat.S_IEXEC)
         logger = getLogger("aqt")
         env = os.environ.copy()
-        env["PACKAGES"] = packages
+        env["PACKAGES"] = ",".join(packages)
         env["DESTDIR"] = destdir
         #
         version = ".".join(self._get_version(archive).split(".")[:1])
         install_script = os.path.join(CURRENT_DIR, "install-qt.qs".format(version))
         installer_path = os.path.join(WORKING_DIR, archive)
-        cmd = [installer_path, "--script", install_script]
-        cmd.extend(["--verbose", "--platform", "minimal"])
+        cmd = [installer_path, "--script", install_script, "--verbose"]
+        if self.major_minor in ["5.11", "5.10"]:
+            cmd.extend(["--platform", "minimal"])
         logger.info("Running installer %s", cmd)
         try:
-            proc = subprocess.run(
-                cmd, stdout=subprocess.PIPE, timeout=self.timeout, env=env, check=True
+            subprocess.run(
+                cmd, timeout=self.timeout, env=env, check=True
             )
-            logger.debug(proc.stdout)
         except subprocess.CalledProcessError as cpe:
             if cpe.returncode == 3:
                 pass
@@ -208,7 +233,7 @@ class DeployCuteCI:
                 logger.error(cpe.stderr)
             raise cpe
         except subprocess.TimeoutExpired as te:
-            logger.error("Installer error %d" % te.returncode)
+            logger.error("Installer timeout expired: {}" % self.timeout)
             if te.stdout is not None:
                 logger.error(te.stdout)
             if te.stderr is not None:
