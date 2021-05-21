@@ -37,7 +37,6 @@ jobs:
           else:
             args = [qtver, "linux", "x64", "--archives", "qt.563.gcc_64"]
           command_line.extend(args)
-          command_line.extend([ "qtbase"])
           print("Execute: {}".format(command_line))
           try:
             res = subprocess.run(command_line, timeout=timeout, check=True)
