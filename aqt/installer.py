@@ -517,12 +517,12 @@ class Cli:
         filter_minor: Optional[int] = args.filter_minor
 
         if not args.target:
-            result = {
+            targets = {
                 "windows": "android desktop winrt",
                 "mac": "android desktop ios",
                 "linux": "android desktop",
-            }[args.host]
-            print(result)
+            }
+            print(targets[args.host])
             return 0
 
         archive_id = ArchiveId(args.category, args.host, args.target, args.extension)
