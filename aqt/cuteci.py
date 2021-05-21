@@ -71,17 +71,29 @@ class DeployCuteCI:
     Class in charge of Qt deployment
     """
 
-    def __init__(self, version, os_name, base, timeout):
+    def __init__(self, version, os_name, arch, base, timeout):
         self.major_minor = version[: version.rfind(".")]
         self.timeout = timeout
         if os_name == "linux":
-            arch = "x64"
+            tag = "x64"
             ext = "run"
         elif os_name == "mac":
-            arch = "x64"
+            tag = "x64"
             ext = "dmg"
-        else:
-            arch = "x86"
+        elif arch == "win64_msvc2017_64":
+            tag = "x86-msvc2017_64"
+            ext = "exe"
+        elif arch == "win32_msvc2017":
+            tag = "x86-msvc2017"
+            ext = "exe"
+        elif arch == "win64_msvc2015_64":
+            tag = "x86-msvc2015_64"
+            ext = "exe"
+        elif arch == "win32_msvc2015":
+            tag = "x86-msvc2015"
+            ext = "exe"
+        elif arch == "win32_mingw530":
+            tag = "x86-mingw530"
             ext = "exe"
         if self.major_minor in [
             "5.11",
@@ -98,7 +110,7 @@ class DeployCuteCI:
         else:
             folder = "archive"
         self.installer_url = "{0}/{1}/qt/{2}/{3}/qt-opensource-{4}-{5}-{6}.{7}".format(
-            base, folder, self.major_minor, version, os_name, arch, version, ext
+            base, folder, self.major_minor, version, os_name, tag, version, ext
         )
         self.md5sums_url = (
             self.installer_url[: self.installer_url.rfind("/")] + "/" + "md5sums.txt"

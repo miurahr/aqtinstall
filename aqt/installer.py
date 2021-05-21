@@ -357,10 +357,9 @@ class Cli:
         qa = os.path.join(appdirs.user_data_dir("Qt", None), "qtaccount.ini")
         if not os.path.exists(qa):
             self.logger.warning("Cannot find {}".format(qa))
-        cuteci = DeployCuteCI(qt_version, os_name, base, timeout)
+        cuteci = DeployCuteCI(qt_version, os_name, arch, base, timeout)
         if not cuteci.check_archive():
             archive = cuteci.download_installer()
-            time.sleep(5)
         else:
             self.logger.info("Reuse existent installer archive.")
             archive = cuteci.get_archive_name()

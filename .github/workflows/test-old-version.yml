@@ -31,11 +31,11 @@ jobs:
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
-            args = [qtver, "windows", "x86-msvc2015_64", "--archives", "qt.563.win64_msvc2015_64"]
+            args = [qtver, "windows", "win64_msvc2015_64"]
           elif platform == "macOS-latest":
-            args = [qtver, "mac", "x64-clang", "--archives", "qt.563.clang_64"]
+            args = [qtver, "mac", "clang_64"]
           else:
-            args = [qtver, "linux", "x64", "--archives", "qt.563.gcc_64"]
+            args = [qtver, "linux", "gcc_64"]
           command_line.extend(args)
           print("Execute: {}".format(command_line))
           try:
