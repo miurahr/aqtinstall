@@ -230,7 +230,6 @@ class DeployCuteCI:
         :param list: packages to install
         :param str destdir: install directory
         :param keep_tools: if True, keep Qt Tools after installation
-        :param bool verbose: enable verbosity
         :raises Exception: in case of failure
         """
         logger = getLogger("aqt")
@@ -239,9 +238,13 @@ class DeployCuteCI:
         env["DESTDIR"] = destdir
         install_script = os.path.join(CURRENT_DIR, "install-qt.qs")
         installer_path = os.path.join(WORKING_DIR, archive)
-        cmd = [installer_path, "--script", install_script, "--verbose"]
-        if self.major_minor in ["5.11", "5.10"]:
+        cmd = [installer_path, "--script", install_script, "--silent"]
+        if self.major_minor in ["5.8", "5.7", "5.6", "5.5"]:
             cmd.extend(["--platform", "minimal"])
+        elif self.major_minor in ["5.4", "5.3", "5.2", "5.1", "5.0"]:
+            pass
+        else:
+            cmd.extend(["--silent"])
         logger.info("Running installer %s", cmd)
         try:
             subprocess.run(cmd, timeout=self.timeout, env=env, check=True)
