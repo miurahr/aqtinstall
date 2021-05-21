@@ -29,7 +29,7 @@ import os
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
-from typing import List, Optional, Dict, Tuple, Iterable, Callable
+from typing import List, Optional, Dict, Tuple, Iterable, Callable, Set
 
 import requests
 from bs4 import BeautifulSoup
@@ -48,6 +48,61 @@ ALL_EXTENSIONS = (
     "arm64_v8a",
 )
 
+ARCH_BY_HOST_TARGET: Dict[str, Dict[str, Iterable[str]]] = {
+    "linux": {
+        "desktop": ("gcc_64", "wasm_32"),
+        "android": (
+            "android",
+            "android_x86_64",
+            "android_arm64_v8a",
+            "android_x86",
+            "android_armv7",
+        ),
+    },
+    "mac": {
+        "desktop": ("clang_64", "wasm_32"),
+        "android": (
+            "android",
+            "android_x86_64",
+            "android_arm64_v8a",
+            "android_x86",
+            "android_armv7",
+        ),
+        "ios": ("ios",),
+    },
+    "windows": {
+        "desktop": (
+            "win64_msvc2019_64",
+            "win32_msvc2019",
+            "win64_msvc2017_64",
+            "win32_msvc2017",
+            "win64_msvc2015_64",
+            "win32_msvc2015",
+            "win64_mingw81",
+            "win32_mingw81",
+            "win64_mingw73",
+            "win32_mingw73",
+            "win32_mingw53",
+            "wasm_32",
+        ),
+        "winrt": (
+            "win64_msvc2019_winrt_x64",
+            "win64_msvc2019_winrt_x86",
+            "win64_msvc2017_winrt_x64",
+            "win64_msvc2017_winrt_x86",
+            "win64_msvc2019_winrt_armv7",
+            "win64_msvc2017_winrt_armv7",
+        ),
+        "android": (
+            "android",
+            "android_x86_64",
+            "android_arm64_v8a",
+            "android_x86",
+            "android_armv7",
+        ),
+    },
+}
+
 
 @dataclasses.dataclass
 class ArchiveId:
@@ -64,6 +119,13 @@ class ArchiveId:
 
     def is_tools(self) -> bool:
         return self.category == "tools"
+
+    def is_no_arch(self) -> bool:
+        """ Returns True if there should be no arch attached to the module names """
+        return self.extension in ("src_doc_examples",)
+
+    def possible_architectures(self) -> Iterable[str]:
+        return ARCH_BY_HOST_TARGET[self.host][self.target]
 
     def to_url(
         self, qt_version_no_dots: Optional[str] = None, file: Optional[str] = None
@@ -217,7 +279,7 @@ def request_http_with_failover(
                 raise e
 
 
-def xml_to_packages(
+def xml_to_modules(
     xml_text: str,
     predicate: Callable[[ElementTree.Element], bool],
     keys_to_keep: Iterable[str],
@@ -374,34 +436,65 @@ def filter_folders(
     return ""
 
 
-def get_modules_for_version(
+def get_modules_architectures_for_version(
     version: Version,
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
-) -> List[str]:
+) -> Tuple[List[str], List[str]]:
     patch = "" if version.prerelease or archive_id.is_preview() else str(version.patch)
     qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
-    rest_of_url = archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")
-    xml = http_fetcher(rest_of_url)  # raises RequestException
-
-    # We want the names of packages, regardless of architecture/compiler:
-    packages = xml_to_packages(
-        xml,
-        predicate=has_empty_downloads
-        if archive_id.extension != "src_doc_examples"
-        else has_nonempty_downloads,
-        keys_to_keep=(),  # Just want names
-    )
-    # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.")
+    # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
     pattern = re.compile(
         r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$"
     )
 
-    def to_package_name(name: str) -> Optional[str]:
+    def trim_module_prefix(name: str) -> Optional[str]:
         _match = pattern.match(name)
         return _match.group(3) if _match else None
 
-    return sorted(filter(None, set(to_package_name(name) for name in packages.keys())))
+    rest_of_url = archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")
+    xml = http_fetcher(rest_of_url)  # raises RequestException
+
+    # We want the names of modules, regardless of architecture:
+    modules = xml_to_modules(
+        xml,
+        predicate=has_nonempty_downloads,
+        keys_to_keep=(),  # Just want names
+    )
+
+    def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
+        module_with_arch = trim_module_prefix(name)
+        if not module_with_arch:
+            return None, None
+        if archive_id.is_no_arch() or '.' not in module_with_arch:
+            return module_with_arch, None
+        module, arch = module_with_arch.rsplit(".", 1)
+        return module, arch
+
+    def naive_modules_arches(names: List[str]) -> Tuple[List[str], List[str]]:
+        _modules, arches = set(), set()
+        for name in names:
+            module, arch = to_module_arch(name)
+            if module:
+                _modules.add(module)
+            if arch:
+                arches.add(arch)
+        for module in _modules:
+            if module in arches:
+                _modules.remove(module)
+        return sorted(_modules), sorted(arches)
+
+    def modules_and_known_arches(names: Iterable[str]) -> Tuple[List[str], List[str]]:
+        _modules, arches = set(), set()
+        for name in names:
+            module, arch = to_module_arch(name)
+            if module and module not in archive_id.possible_architectures():
+                _modules.add(module)
+            if arch:
+                arches.add(arch)
+        return sorted(_modules), sorted(arches)
+
+    return modules_and_known_arches(modules.keys())
 
 
 def list_modules_for_version(
@@ -411,11 +504,29 @@ def list_modules_for_version(
 ) -> int:
     logger = logging.getLogger("aqt")
     try:
-        package_names = get_modules_for_version(version, archive_id, http_fetcher)
-        if len(package_names) == 0:
-            logger.error("No packages available")
+        module_names, architectures = get_modules_architectures_for_version(version, archive_id, http_fetcher)
+        if len(module_names) == 0:
+            logger.error("No modules available")
             return 1
-        print(" ".join(package_names))
+        print(" ".join(module_names))
+        return 0
+    except requests.exceptions.RequestException as e:
+        logger.error("HTTP request error: {}".format(e))
+        return 1
+
+
+def list_architectures_for_version(
+    version: Version,
+    archive_id: ArchiveId,
+    http_fetcher: Callable[[str], str],
+) -> int:
+    logger = logging.getLogger("aqt")
+    try:
+        module_names, architectures = get_modules_architectures_for_version(version, archive_id, http_fetcher)
+        if len(architectures) == 0:
+            logger.error("No architectures available")
+            return 1
+        print(" ".join(architectures))
         return 0
     except requests.exceptions.RequestException as e:
         logger.error("HTTP request error: {}".format(e))

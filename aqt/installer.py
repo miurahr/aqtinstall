@@ -60,6 +60,7 @@ from aqt.helper import (
     list_modules_for_version,
     ArchiveId,
     cli_2_semantic_version,
+    list_architectures_for_version,
 )
 from aqt.updater import Updater
 
@@ -504,8 +505,6 @@ class Cli:
 
         if list_extensions_ver:
             raise NotImplementedError("Listing extensions isn't done yet")
-        if list_architectures_ver:
-            raise NotImplementedError("Listing architectures isn't done yet")
 
         # Print packages for only the most recent version of Qt that matches the filters set
         is_print_latest_modules: bool = args.latest_modules
@@ -536,6 +535,11 @@ class Cli:
         if list_modules_ver is not None and archive_id.is_qt():
             return list_modules_for_version(
                 list_modules_ver, archive_id=archive_id, http_fetcher=http_fetcher
+            )
+
+        if list_architectures_ver is not None and archive_id.is_qt():
+            return list_architectures_for_version(
+                list_architectures_ver, archive_id=archive_id, http_fetcher=http_fetcher
             )
 
         fetcher = QtDownloadListFetcher(
