@@ -343,21 +343,21 @@ class Cli:
         if args.timeout is not None:
             timeout = args.timeout
         else:
-            timeout = 600
+            timeout = 300
         if args.base is not None:
             base = args.base
         else:
             base = BASE_URL
         self._run_common_part(output_dir, base)
         qt_ver_num = qt_version.replace(".", "")
-        packages = ["qt.qt5.{}.{}".format(qt_ver_num, arch)]
+        packages = ["qt.{}.{}".format(qt_ver_num, arch)]
         if args.archives is not None:
             packages.extend(args.archives)
         #
         qa = os.path.join(appdirs.user_data_dir("Qt", None), "qtaccount.ini")
         if not os.path.exists(qa):
             self.logger.warning("Cannot find {}".format(qa))
-        cuteci = DeployCuteCI(qt_version, os_name, arch, base, timeout)
+        cuteci = DeployCuteCI(qt_version, os_name, arch, base, timeout, args.debug)
         if not cuteci.check_archive():
             archive = cuteci.download_installer()
         else:
@@ -744,6 +744,7 @@ class Cli:
             type=float,
             help="Specify timeout for offline installer processing.(default: 300 sec)",
         )
+        old_install.add_argument("--debug", action="store_true", help="Show debug messages")
         old_install.set_defaults(func=self.run_offline_installer)
         #
         help_parser = subparsers.add_parser("help")

@@ -71,10 +71,11 @@ class DeployCuteCI:
     Class in charge of Qt deployment
     """
 
-    def __init__(self, version, os_name, arch, base, timeout):
+    def __init__(self, version, os_name, arch, base, timeout, debug=False):
         self.major_minor = version[: version.rfind(".")]
         self.timeout = timeout
         self.os_name = os_name
+        self.debug = debug
         if os_name == "linux":
             tag = "x64"
             ext = "run"
@@ -240,16 +241,19 @@ class DeployCuteCI:
         install_script = os.path.join(CURRENT_DIR, "install-qt.qs")
         installer_path = os.path.join(WORKING_DIR, archive)
         cmd = [installer_path, "--script", install_script]
-        if self.os_name == "linux":
-            if self.major_minor in ["5.6", "5.5", "5.4"]:
-                cmd.extend(["--platform", "minimal"])
-            else:
-                cmd.extend(["--silent"])
+        if self.debug:
+            cmd.extend(["--verbose"])
         else:
-            if self.major_minor in ["5.5", "5.4"]:
-                cmd.extend(["--platform", "minimal"])
+            if self.os_name == "linux":
+                if self.major_minor in ["5.6", "5.5", "5.4"]:
+                    cmd.extend(["--platform", "minimal"])
+                else:
+                    cmd.extend(["--silent"])
             else:
-                cmd.extend(["--silent"])
+                if self.major_minor in ["5.5", "5.4"]:
+                    cmd.extend(["--platform", "minimal"])
+                else:
+                    cmd.extend(["--silent"])
         logger.info("Running installer %s", cmd)
         try:
             subprocess.run(cmd, timeout=self.timeout, env=env, check=True)
@@ -263,7 +267,7 @@ class DeployCuteCI:
                 logger.error(cpe.stderr)
             raise cpe
         except subprocess.TimeoutExpired as te:
-            logger.error("Installer timeout expired: {}" % self.timeout)
+            logger.error("Installer timeout expired: {}".format(self.timeout))
             if te.stdout is not None:
                 logger.error(te.stdout)
             if te.stderr is not None:

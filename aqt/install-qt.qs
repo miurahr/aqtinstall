@@ -18,10 +18,8 @@ function Controller() {
 Controller.prototype.WelcomePageCallback = function() {
     console.log("Welcome Page");
     var widget = gui.currentPageWidget();
-    widget.completeChanged.connect(function() {
-        // For some reason, this page needs some delay.
-        gui.clickButton(buttons.NextButton);
-    });
+    // For some reason, this page needs some delay.
+    gui.clickButton(buttons.NextButton, 500);
 }
 
 Controller.prototype.CredentialsPageCallback = function() {
@@ -30,13 +28,24 @@ Controller.prototype.CredentialsPageCallback = function() {
 	var login = installer.environmentVariable("QTLOGIN");
 	var password = installer.environmentVariable("QTPASSWORD");
 
+    var widget = gui.currentPageWidget();
+
 	if (login === "" || password === "") {
-        gui.clickButton(buttons.NextButton);
+	    if (buttons.SkipButton) {
+            gui.clickButton(buttons.SkipButton);
+	    } else {
+            gui.clickButton(buttons.NextButton);
+        }
 	}
 
-    var widget = gui.currentPageWidget();
-	widget.loginWidget.EmailLineEdit.setText(login);
-	widget.loginWidget.PasswordLineEdit.setText(password);
+    if (widget.loginWidget) {
+        widget.loginWidget.EmailLineEdit.setText(login);
+        widget.loginWidget.PasswordLineEdit.setText(password);
+    } else {
+        widget.EmailLineEdit.setText(login);
+        widget.PasswordLineEdit.setText(password);
+    }
+
     gui.clickButton(buttons.NextButton);
 }
 
@@ -98,8 +107,6 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
         }
     }
     widget.deselectComponent("qt.tools.qtcreator");
-    widget.deselectComponent("qt.tools.doc");
-    widget.deselectComponent("qt.tools.examples");
 
     gui.clickButton(buttons.NextButton);
 }
