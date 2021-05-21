@@ -74,6 +74,7 @@ class DeployCuteCI:
     def __init__(self, version, os_name, arch, base, timeout):
         self.major_minor = version[: version.rfind(".")]
         self.timeout = timeout
+        self.os_name = os_name
         if os_name == "linux":
             tag = "x64"
             ext = "run"
@@ -238,13 +239,17 @@ class DeployCuteCI:
         env["DESTDIR"] = destdir
         install_script = os.path.join(CURRENT_DIR, "install-qt.qs")
         installer_path = os.path.join(WORKING_DIR, archive)
-        cmd = [installer_path, "--script", install_script, "--silent"]
-        if self.major_minor in ["5.8", "5.7", "5.6", "5.5"]:
-            cmd.extend(["--platform", "minimal"])
-        elif self.major_minor in ["5.4", "5.3", "5.2", "5.1", "5.0"]:
-            pass
+        cmd = [installer_path, "--script", install_script]
+        if self.os_name == "linux":
+            if self.major_minor in ["5.6", "5.5", "5.4"]:
+                cmd.extend(["--platform", "minimal"])
+            else:
+                cmd.extend(["--silent"])
         else:
-            cmd.extend(["--silent"])
+            if self.major_minor in ["5.5", "5.4"]:
+                cmd.extend(["--platform", "minimal"])
+            else:
+                cmd.extend(["--silent"])
         logger.info("Running installer %s", cmd)
         try:
             subprocess.run(cmd, timeout=self.timeout, env=env, check=True)
