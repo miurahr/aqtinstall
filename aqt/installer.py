@@ -343,7 +343,7 @@ class Cli:
         if args.timeout is not None:
             timeout = args.timeout
         else:
-            timeout = 300
+            timeout = 600
         if args.base is not None:
             base = args.base
         else:
