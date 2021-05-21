@@ -360,6 +360,7 @@ class Cli:
         cuteci = DeployCuteCI(qt_version, os_name, base, timeout)
         if not cuteci.check_archive():
             archive = cuteci.download_installer()
+            time.sleep(5)
         else:
             self.logger.info("Reuse existent installer archive.")
             archive = cuteci.get_archive_name()

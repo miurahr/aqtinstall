@@ -198,6 +198,7 @@ class DeployCuteCI:
                         for chunk in r.iter_content(chunk_size=8196):
                             fd.write(chunk)
                             checksum.update(chunk)
+                        fd.flush()
                     if expected_md5 is not None:
                         if checksum.hexdigest() != expected_md5:
                             raise ArchiveDownloadError(
