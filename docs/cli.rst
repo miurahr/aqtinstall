@@ -1,11 +1,13 @@
 .. _string-options-ref:
 
-*********************
 Command Line Options
-*********************
+====================
 
 The CLI uses argparse to parse the command line options so the short or long versions may be used and the
 long options may be truncated to the shortest unambiguous abbreviation.
+
+Generic commands
+----------------
 
 .. program::  aqt
 
@@ -20,6 +22,11 @@ long options may be truncated to the shortest unambiguous abbreviation.
     qt_version            Qt version in the format of "5.X.Y"
     {linux,mac,windows}   host os name
     {desktop,winrt,android,ios} target sdk
+
+Installation command
+--------------------
+
+.. program::  aqt
 
 .. option:: install <Qt version> <target OS> <target variant> <target architecture>
 
@@ -87,6 +94,11 @@ long options may be truncated to the shortest unambiguous abbreviation.
     This is advanced option and you should use with --modules option.
     This allow you to add modules to existent Qt installation.
 
+Tool installation commands
+--------------------------
+
+.. program::  aqt
+
 .. option:: src <Qt version> <target OS> <target variant>
 
     install Qt sources specified version and target.
@@ -107,6 +119,29 @@ long options may be truncated to the shortest unambiguous abbreviation.
     install tools specified. tool name may be 'tools_openssl_x64', 'tools_ninja', 'tools_ifw', 'tools_cmake'
     and tool variants name may be 'qt.tools.openssl.gcc_64', 'qt.tools.ninja',  'qt.tools.ifw.32', 'qt.tools.cmake'.
     You may need to looking for version number at  https://download.qt.io/online/qtsdkrepository/
+
+
+Experimental commands
+---------------------
+
+.. program::  aqt
+
+.. option:: offline_installer <Qt version> <target OS> <target architecture> --archives [<package>, ...]
+
+    [Experimental, Advanced] install Qt library specified version and target using offline installer.
+    When specify old versions that has already become end-of-life, aqt download
+    the installer from a proper server repository. A command intend to support version from 5.2 to 5.11.
+    User may need to set environment variable QTLOGIN and QTPASSWORD properly or
+    place qtaccount.ini file at proper place.
+
+    User should specify proper package names. Otherwise it may install default
+    packages.
+
+    A feature is considered as very experimental.
+
+.. option:: --archives <list of archives>
+
+    archive packages to install. Expected values will be shown on log message.
 
 
 Command examples
@@ -173,3 +208,8 @@ Example: Show help message
 
     aqt help
 
+Example: install old version
+
+.. code-block:: bash
+
+    aqt offline_installer 5.11.2 linux gcc_64

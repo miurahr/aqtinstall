@@ -29,11 +29,10 @@ jobs:
           python-version: ${{ matrix.py }}
       - name: Run pytest
         run: |
-          python -m pip install tox-gh-actions
+          python -m pip install tox-gh-actions build
           tox
-      - name: Build a binary wheel and install
+      - name: Build and install
         run: |
-          python -m pip install pep517 --user
           python -m pip install ./ --user
       - name: Run Aqt
         run: |
