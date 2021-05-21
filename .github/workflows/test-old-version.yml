@@ -25,6 +25,7 @@ jobs:
           python -m pip install ./ --user
       - name: Run Aqt
         run: |
+          import os
           import subprocess
           timeout = 600
           command_line = ["python", "-m", "aqt", "offline_installer"]
