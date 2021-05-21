@@ -37,10 +37,14 @@ jobs:
           else:
             args = [qtver, "linux", "gcc_64"]
           command_line.extend(args)
+          env = os.environ.copy()
           print("Execute: {}".format(command_line))
           try:
-            res = subprocess.run(command_line, timeout=timeout, check=True)
+            res = subprocess.run(command_line, timeout=timeout, check=True, env=env)
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
           assert res.returncode == 0
         shell: python
+        env:
+          QTLOGIN: ${{ secrets.QTLOGIN }}
+          QTPASSWORD: ${{ secrets.QTPASSWORD }}
