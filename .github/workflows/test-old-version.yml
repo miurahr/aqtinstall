@@ -33,12 +33,12 @@ jobs:
         run: |
           import os
           import subprocess
-          timeout = 600
+          timeout = 180
           command_line = ["python", "-m", "aqt", "offline_installer"]
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
-            args = [qtver, "windows", "win64_msvc2015_64"]
+            args = [qtver, "windows", "win32_mingw49"]
           elif platform == "macOS-latest":
             args = [qtver, "mac", "clang_64"]
           else:
