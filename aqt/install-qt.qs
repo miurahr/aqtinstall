@@ -7,6 +7,7 @@ function debugObject(object) {
 }
 
 function Controller() {
+    installer.autoRejectMessageBoxes();
     // Not empty dir is no problem.
     installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
     // If Qt is already installed in dir, acknowlegde the error but situation is stuck.
@@ -42,8 +43,10 @@ Controller.prototype.CredentialsPageCallback = function() {
         widget.loginWidget.EmailLineEdit.setText(login);
         widget.loginWidget.PasswordLineEdit.setText(password);
     } else {
-        widget.EmailLineEdit.setText(login);
-        widget.PasswordLineEdit.setText(password);
+        if (widget.EmailLineEdit) {
+            widget.EmailLineEdit.setText(login);
+            widget.PasswordLineEdit.setText(password);
+        }
     }
 
     gui.clickButton(buttons.NextButton);
