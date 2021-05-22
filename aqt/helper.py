@@ -22,6 +22,7 @@
 import ast
 import configparser
 import dataclasses
+import itertools
 import json
 import logging
 import multiprocessing
@@ -29,7 +30,16 @@ import os
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
-from typing import List, Optional, Dict, Tuple, Iterable, Callable, Set
+from typing import (
+    List,
+    Optional,
+    Dict,
+    Tuple,
+    Iterable,
+    Callable,
+    Generator,
+    Iterator,
+)
 
 import requests
 from bs4 import BeautifulSoup
@@ -109,7 +119,7 @@ class ArchiveId:
     category: str  # one of (tools, qt5, qt6)
     host: str  # one of (windows, mac, linux)
     target: str  # one of (desktop, android, ios, winrt)
-    extension: Optional[str] = None  # one of ALL_EXTENSIONS
+    extension: str = ""  # one of ALL_EXTENSIONS
 
     def is_preview(self) -> bool:
         return "preview" in self.extension if self.extension else False
@@ -141,6 +151,52 @@ class ArchiveId:
             ext="_" + self.extension if self.extension else "",
         )
         return base + folder + file
+
+
+class Versions:
+    def __init__(self, it_of_it: Iterable[Tuple[int, Iterator[Version]]]):
+        self.versions: List[List[Version]] = [
+            list(versions_iterator) for _, versions_iterator in it_of_it
+        ]
+
+    def __str__(self):
+        return "\n".join(
+            " ".join(Versions.stringify_ver(version) for version in minor_list)
+            for minor_list in self.versions
+        )
+
+    def __bool__(self):
+        return len(self.versions) > 0 and len(self.versions[0]) > 0
+
+    def latest(self) -> Optional[Version]:
+        if not self:
+            return None
+        return self.versions[-1][-1]
+
+    @staticmethod
+    def stringify_ver(version: Version) -> str:
+        if version.prerelease:
+            return "{}.{}-preview".format(version.major, version.minor)
+        return str(version)
+
+
+@dataclasses.dataclass
+class Tools:
+    tools: List[str]
+
+    def __str__(self):
+        return "\n".join(self.tools)
+
+    def __bool__(self):
+        return len(self.tools) > 0
+
+
+@dataclasses.dataclass
+class Extensions:
+    exts: List[str]
+
+    def __str__(self):
+        return " ".join(self.exts)
 
 
 def _get_meta(url: str):
@@ -233,7 +289,7 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
     As of May 2021, the version strings at https://download.qt.io/online/qtsdkrepository
     conform to this pattern; they are not guaranteed to do so in the future.
     """
-    if any(not ch.isdigit() for ch in qt_ver):
+    if not qt_ver or any(not ch.isdigit() for ch in qt_ver):
         return None
     if is_preview:
         return Version(
@@ -311,125 +367,76 @@ def has_nonempty_downloads(element: ElementTree.Element) -> bool:
     return downloads is not None and downloads.text
 
 
-def scrape_html_for_versions_and_tools(
-    html_doc: str,
-) -> Tuple[Dict[str, Dict[str, List[List[Version]]]], List[str]]:
-    """Reads an html file from `https://download.qt.io/online/qtsdkrepository/<os>/<target>/`
-    and extracts a list of all the folders reported by that html file.
-    Each folder should include an Updates.xml file, but this is not guaranteed.
-    This will return a dictionary, where the key is the category (tools, qt5, qt6, etc)
-    and the value is a list of folders.
-    """
-
+def _iterate_folders(
+    html_doc: str, filter_category: str = ""
+) -> Generator[str, None, None]:
     def table_row_to_folder(tr: Tag) -> str:
         try:
             return tr.find_all("td")[1].a.contents[0].rstrip("/")
         except (AttributeError, IndexError):
             return ""
 
-    def split_components(
-        string: str,
-    ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
-        components = string.split("_", maxsplit=2)
-        ext = None if len(components) < 3 else components[2]
-        ver = None if len(components) < 2 else components[1]
-        cat = None if len(components) < 1 else components[0]
-        return cat, ver, ext
-
     soup: BeautifulSoup = BeautifulSoup(html_doc, "html.parser")
-    tool_folders: List[str] = []
-    expected_extensions = ("qt", *ALL_EXTENSIONS)
-    versions: Dict[str, Dict[str, Dict[Tuple[int, int], List[Version]]]] = {
-        "qt{}".format(i): {"qt": {}}  # {(6,0): [6.0.0, 6.0.1, ...], (6,1): [6.1.0 ...]}
-        for i in range(5, 10)
-    }
     for row in soup.body.table.find_all("tr"):
         content: str = table_row_to_folder(row)
         if not content or content == "Parent Directory":
             continue
-        category, ver_str, extension = split_components(content)
-        if category == "tools":
-            tool_folders.append(content)
-        elif hasattr(category, "startswith") and category.startswith("qt"):
-            is_preview = extension is not None and "preview" in extension
-            qt_ver = (
-                get_semantic_version(qt_ver=ver_str, is_preview=is_preview)
-                if ver_str
-                else None
+        if content.startswith(filter_category):
+            yield content
+
+
+def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
+    components = folder.split("_", maxsplit=2)
+    ext = "" if len(components) < 3 else components[2]
+    ver = "" if len(components) < 2 else components[1]
+    return get_semantic_version(qt_ver=ver, is_preview="preview" in ext), ext
+
+
+def get_extensions_for_version(
+    desired_version: Version, archive_id: ArchiveId, html_doc: str
+) -> Extensions:
+    return Extensions(
+        exts=list(
+            map(
+                lambda ver_ext: ver_ext[1],
+                filter(
+                    lambda ver_ext: ver_ext[0] == desired_version,
+                    map(
+                        folder_to_version_extension,
+                        _iterate_folders(html_doc, archive_id.category),
+                    ),
+                ),
             )
-            subsection = str(extension) if extension is not None else "qt"
-            if qt_ver is not None and subsection in expected_extensions:
-                if subsection not in versions[category]:
-                    versions[category][subsection] = {}
-                dest: Dict[Tuple[int, int], List[Version]] = versions[category][
-                    subsection
-                ]
-                key = (qt_ver.major, qt_ver.minor)
-                if key not in dest.keys():
-                    dest[key] = []
-                dest[key].append(qt_ver)
-    ordered_versions = {}
-    for qt_major, qt_major_vals in versions.items():
-        ordered_versions[qt_major] = {}
-        for category, ver_lists in qt_major_vals.items():
-            ordered_versions[qt_major][category] = []
-            # Sort ver_lists in ascending order
-            for major_minor in sorted(ver_lists.keys()):
-                all_for_major_minor = sorted(ver_lists[major_minor])
-                ordered_versions[qt_major][category].append(all_for_major_minor)
-
-    return ordered_versions, tool_folders
-
-
-def filter_folders(
-    category: str,
-    extension: Optional[str],
-    is_latest: bool,
-    filter_minor: Optional[int],
-    versions: Dict[str, Dict[str, List[List[Version]]]],
-    tool_folders: List[str],
-) -> str:
-    """!
-    @param category
-    @param extension
-    @param is_latest        When true, only print the latest version.
-    @param filter_minor     Filter out any versions without this minor version.
-    @param versions         Expected to be filtered in ascending order
-    @param tool_folders
-    @return
-    """
-    if category == "tools":
-        return "\n".join(tool_folders)
-
-    def stringify_ver(ver: Version) -> str:
-        if ver.prerelease:
-            assert ver.patch == 0 and ver.prerelease == ("preview",)
-            return "{}.{}-preview".format(ver.major, ver.minor)
-        return str(ver)
-
-    subtype = "qt" if extension is None else extension
-    if (
-        category in versions.keys()
-        and subtype in versions[category].keys()
-        and versions[category][subtype]
-    ):
-        versions_needed = versions[category][subtype]
-        if filter_minor is not None:
-            versions_needed = [
-                row for row in versions_needed if row[0].minor == filter_minor
-            ]
-
-        # PRE: data was returned in ascending order
-        latest_version = versions_needed[-1][-1]
-        if is_latest:
-            return stringify_ver(latest_version)
-        return "\n".join(
-            [
-                " ".join([stringify_ver(ver) for ver in major_minor])
-                for major_minor in versions_needed
-            ]
         )
-    return ""
+    )
+
+
+def get_versions_for_minor(
+    minor_ver: Optional[int], archive_id: ArchiveId, html_doc: str
+) -> Versions:
+    def filter_by(ver_ext: Tuple[Optional[Version], str]) -> bool:
+        version, extension = ver_ext
+        return (
+            version
+            and (minor_ver is None or minor_ver == version.minor)
+            and (archive_id.extension == extension)
+        )
+
+    def get_version(ver_ext: Tuple[Version, str]):
+        return ver_ext[0]
+
+    all_versions_extensions = map(
+        folder_to_version_extension, _iterate_folders(html_doc, archive_id.category)
+    )
+    versions = sorted(
+        filter(None, map(get_version, filter(filter_by, all_versions_extensions)))
+    )
+    iterables = itertools.groupby(versions, lambda version: version.minor)
+    return Versions(iterables)
+
+
+def get_tools(html_doc: str) -> Tools:
+    return Tools(tools=list(_iterate_folders(html_doc, "tools")))
 
 
 def get_modules_architectures_for_version(

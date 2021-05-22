@@ -22,16 +22,18 @@
 
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
-from typing import Callable, Optional, List
+from typing import Callable, Optional, List, Union
 
 import requests
 from semantic_version import Version
 
+from aqt import helper
 from aqt.helper import (
     Settings,
-    filter_folders,
-    scrape_html_for_versions_and_tools,
     ArchiveId,
+    get_extensions_for_version,
+    get_versions_for_minor,
+    get_tools,
 )
 
 
@@ -84,22 +86,18 @@ class QtDownloadListFetcher:
         self.html_fetcher = html_fetcher
         self.logger = getLogger("aqt")
 
-    def run(self, list_extensions_ver: Optional[Version] = None) -> str:
+    def run(
+        self, list_extensions_ver: Optional[Version] = None
+    ) -> Union[helper.Versions, helper.Tools, helper.Extensions, Version]:
+        html_doc = self.html_fetcher(self.archive_id.to_url())
         if list_extensions_ver is not None:
-            return self._get_extensions_from_html(self.html_fetcher(self.archive_id.to_url()), list_extensions_ver)
-        return self._filter_html(self.html_fetcher(self.archive_id.to_url()))
-
-    def _filter_html(self, html: str) -> str:
-        return filter_folders(
-            self.archive_id.category,
-            self.archive_id.extension,
-            self.is_latest,
-            self.filter_minor,
-            *scrape_html_for_versions_and_tools(html),
-        )
-
-    def _get_extensions_from_html(self, html: str) -> str:
-        raise NotImplementedError("This capability is not yet implemented")
+            return get_extensions_for_version(list_extensions_ver, self.archive_id, html_doc)
+        if self.archive_id.is_tools():
+            return get_tools(html_doc)
+        versions = get_versions_for_minor(self.filter_minor, self.archive_id, html_doc)
+        if self.is_latest:
+            return versions.latest()
+        return versions
 
 
 class QtPackage:

@@ -565,7 +565,12 @@ class Cli:
             print(targets[args.host])
             return 0
 
-        archive_id = ArchiveId(args.category, args.host, args.target, args.extension)
+        archive_id = ArchiveId(
+            args.category,
+            args.host,
+            args.target,
+            getattr(args, "extension", __default=""),
+        )
 
         def http_fetcher(rest_of_url: str) -> str:
             return request_http_with_failover(
@@ -591,15 +596,15 @@ class Cli:
         )
 
         try:
-            out = fetcher.run(list_extensions_ver).rstrip()
+            out = fetcher.run(list_extensions_ver)
 
             if not out:
                 self.logger.error("No data available")
                 return 1
             if is_print_latest_modules:
-                qt_version = out.rsplit(maxsplit=1)[-1]
+                qt_version: Version = out.latest()
                 return list_modules_for_version(
-                    cli_2_semantic_version(qt_version),
+                    qt_version,
                     archive_id=archive_id,
                     http_fetcher=http_fetcher,
                 )
