@@ -127,10 +127,8 @@ class ArchiveId:
     def possible_architectures(self) -> Iterable[str]:
         return ARCH_BY_HOST_TARGET[self.host][self.target]
 
-    def to_url(
-        self, qt_version_no_dots: Optional[str] = None, file: Optional[str] = None
-    ) -> str:
-        base = "{os}{arch}/{target}/".format(
+    def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
+        base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
             arch="_x86" if self.host == "windows" else "_x64",
             target=self.target,
@@ -142,8 +140,6 @@ class ArchiveId:
             ver=qt_version_no_dots,
             ext="_" + self.extension if self.extension else "",
         )
-        if not file:
-            return base + folder
         return base + folder + file
 
 
@@ -269,7 +265,7 @@ def request_http_with_failover(
     """
     for i, base_url in enumerate(base_urls):
         try:
-            url = base_url + rest_of_url
+            url = base_url + "/" + rest_of_url
             r = requests.get(url, timeout=timeout)
             r.raise_for_status()
             return r.text
@@ -466,35 +462,39 @@ def get_modules_architectures_for_version(
         module_with_arch = trim_module_prefix(name)
         if not module_with_arch:
             return None, None
-        if archive_id.is_no_arch() or '.' not in module_with_arch:
+        if archive_id.is_no_arch() or "." not in module_with_arch:
             return module_with_arch, None
         module, arch = module_with_arch.rsplit(".", 1)
         return module, arch
 
-    def naive_modules_arches(names: List[str]) -> Tuple[List[str], List[str]]:
-        _modules, arches = set(), set()
+    def naive_modules_arches(names: Iterable[str]) -> Tuple[List[str], List[str]]:
+        modules_and_arches, _modules, arches = set(), set(), set()
         for name in names:
-            module, arch = to_module_arch(name)
-            if module:
-                _modules.add(module)
+            # First term could be a module name or an architecture
+            first_term, arch = to_module_arch(name)
+            if first_term:
+                modules_and_arches.add(first_term)
             if arch:
                 arches.add(arch)
-        for module in _modules:
-            if module in arches:
-                _modules.remove(module)
+        for first_term in modules_and_arches:
+            if first_term not in arches:
+                _modules.add(first_term)
         return sorted(_modules), sorted(arches)
 
     def modules_and_known_arches(names: Iterable[str]) -> Tuple[List[str], List[str]]:
         _modules, arches = set(), set()
         for name in names:
-            module, arch = to_module_arch(name)
-            if module and module not in archive_id.possible_architectures():
-                _modules.add(module)
+            first_term, arch = to_module_arch(name)
+            if first_term:
+                if first_term in archive_id.possible_architectures():
+                    arches.add(first_term)
+                else:
+                    _modules.add(first_term)
             if arch:
                 arches.add(arch)
         return sorted(_modules), sorted(arches)
 
-    return modules_and_known_arches(modules.keys())
+    return naive_modules_arches(modules.keys())
 
 
 def list_modules_for_version(
@@ -502,17 +502,13 @@ def list_modules_for_version(
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
 ) -> int:
-    logger = logging.getLogger("aqt")
-    try:
-        module_names, architectures = get_modules_architectures_for_version(version, archive_id, http_fetcher)
-        if len(module_names) == 0:
-            logger.error("No modules available")
-            return 1
-        print(" ".join(module_names))
-        return 0
-    except requests.exceptions.RequestException as e:
-        logger.error("HTTP request error: {}".format(e))
-        return 1
+    return _list_modules_architectures_for_version(
+        version,
+        archive_id,
+        http_fetcher,
+        lambda mods, arches: mods,
+        "No modules available",
+    )
 
 
 def list_architectures_for_version(
@@ -520,13 +516,31 @@ def list_architectures_for_version(
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
 ) -> int:
+    return _list_modules_architectures_for_version(
+        version,
+        archive_id,
+        http_fetcher,
+        lambda mods, arches: arches,
+        "No architectures available",
+    )
+
+
+def _list_modules_architectures_for_version(
+    version: Version,
+    archive_id: ArchiveId,
+    http_fetcher: Callable[[str], str],
+    mux: Callable[[any], List[str]],
+    error_msg_if_empty: str,
+) -> int:
     logger = logging.getLogger("aqt")
     try:
-        module_names, architectures = get_modules_architectures_for_version(version, archive_id, http_fetcher)
-        if len(architectures) == 0:
-            logger.error("No architectures available")
+        result = mux(
+            *get_modules_architectures_for_version(version, archive_id, http_fetcher)
+        )
+        if len(result) == 0:
+            logger.error(error_msg_if_empty)
             return 1
-        print(" ".join(architectures))
+        print(" ".join(result))
         return 0
     except requests.exceptions.RequestException as e:
         logger.error("HTTP request error: {}".format(e))
