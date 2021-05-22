@@ -21,6 +21,7 @@
 
 import ast
 import configparser
+import hashlib
 import json
 import logging
 import multiprocessing
@@ -30,6 +31,9 @@ import xml.etree.ElementTree as ElementTree
 from typing import List, Optional
 
 import requests
+import requests.adapters
+
+from aqt.exceptions import ArchiveDownloadError, ArchiveConnectionError
 
 
 def _get_meta(url: str):
@@ -39,6 +43,72 @@ def _get_meta(url: str):
 def _check_content_type(ct: str) -> bool:
     candidate = ["application/metalink4+xml", "text/plain"]
     return any(ct.startswith(t) for t in candidate)
+
+
+def getUrl(url: str, timeout, logger) -> str:
+    with requests.Session() as session:
+        adapter = requests.adapters.HTTPAdapter()
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
+        try:
+            r = requests.get(url, allow_redirects=False, timeout=timeout)
+            if r.status_code == 302:
+                newurl = altlink(r.url, r.headers["Location"], logger=logger)
+                logger.info("Redirected URL: {}".format(newurl))
+                r = session.get(newurl, stream=True, timeout=timeout)
+        except (
+            ConnectionResetError,
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+        ):
+            raise ArchiveConnectionError()
+        else:
+            if r.status_code != 200:
+                logger.error(
+                    "Download error when access to {}\n"
+                    "Server response code: {}, reason: {}".format(
+                        url, r.status_code, r.reason
+                    )
+                )
+                raise ArchiveDownloadError("Download error!")
+        result = r.text
+    return result
+
+
+def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, logger):
+    with requests.Session() as session:
+        adapter = requests.adapters.HTTPAdapter()
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
+        try:
+            r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
+            if r.status_code == 302:
+                newurl = altlink(r.url, r.headers["Location"], logger=logger)
+                logger.info("Redirected URL: {}".format(newurl))
+                r = session.get(newurl, stream=True, timeout=timeout)
+        except requests.exceptions.ConnectionError as e:
+            logger.error("Connection error: %s" % e.args)
+            raise e
+        except requests.exceptions.Timeout as e:
+            logger.error("Connection timeout: %s" % e.args)
+            raise e
+        else:
+            hash = hashlib.new(hash_algo)
+            try:
+                with open(out, "wb") as fd:
+                    for chunk in r.iter_content(chunk_size=8196):
+                        fd.write(chunk)
+                        hash.update(chunk)
+                    fd.flush()
+                if exp is not None:
+                    if hash.digest() != exp:
+                        raise ArchiveDownloadError(
+                            "Download file is corrupted! Check sum error."
+                        )
+            except Exception as e:
+                exc = sys.exc_info()
+                logger.error("Download error: %s" % exc[1])
+                raise e
 
 
 def altlink(url: str, alt: str, logger=None):

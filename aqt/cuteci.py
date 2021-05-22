@@ -57,8 +57,8 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from aqt.archives import ArchiveDownloadError
-from aqt.helper import altlink
+from aqt.exceptions import ArchiveDownloadError
+from aqt.helper import altlink, getUrl, downloadBinaryFile
 
 WORKING_DIR = os.getcwd()
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -124,20 +124,11 @@ class DeployCuteCI:
 
     def _get_md5(self, archive, timeout):
         expected_md5 = None
-        with requests.Session() as session:
-            retry = Retry(connect=5, backoff_factor=0.5)
-            adapter = HTTPAdapter(max_retries=retry)
-            session.mount("http://", adapter)
-            session.mount("https://", adapter)
-            try:
-                r = session.get(self.md5sums_url, allow_redirects=True, timeout=timeout)
-            except (requests.exceptions.ConnectionError or requests.exceptions.Timeout):
-                pass  # ignore it
-            else:
-                for line in r.text.split("\n"):
-                    rec = line.split(" ")
-                    if archive in rec:
-                        expected_md5 = rec[0]
+        r_text = getUrl(self.md5sums_url, timeout, self.logger)
+        for line in r_text.split("\n"):
+            rec = line.split(" ")
+            if archive in rec:
+                expected_md5 = rec[0]
         return expected_md5
 
     def check_archive(self):
@@ -172,6 +163,7 @@ class DeployCuteCI:
         logger.info("Download Qt %s", url)
         #
         expected_md5 = self._get_md5(archive, timeout)
+        downloadBinaryFile(url, archive, "md5", expected_md5, timeout, logger)
         with requests.Session() as session:
             retry = Retry(connect=5, backoff_factor=0.5)
             adapter = HTTPAdapter(max_retries=retry)

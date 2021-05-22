@@ -23,7 +23,6 @@
 
 import argparse
 import binascii
-import hashlib
 import logging
 import logging.config
 import multiprocessing
@@ -31,30 +30,32 @@ import os
 import platform
 import random
 import subprocess
-import sys
 import time
 from logging import getLogger
 
 import appdirs
-import requests
 from packaging.version import Version, parse
-from requests.adapters import HTTPAdapter
 from texttable import Texttable
-from urllib3.util.retry import Retry
 
 import aqt
 from aqt.archives import (
-    ArchiveConnectionError,
-    ArchiveDownloadError,
-    ArchiveListError,
-    NoPackageFound,
     PackagesList,
     QtArchives,
     SrcDocExamplesArchives,
     ToolArchives,
 )
 from aqt.cuteci import DeployCuteCI
-from aqt.helper import Settings, altlink
+from aqt.exceptions import (
+    ArchiveDownloadError,
+    ArchiveConnectionError,
+    ArchiveListError,
+    NoPackageFound,
+)
+from aqt.helper import (
+    Settings,
+    downloadBinaryFile,
+    getUrl,
+)
 from aqt.updater import Updater
 
 try:
@@ -526,7 +527,7 @@ class Cli:
         target = args.target
         try:
             pl = PackagesList(qt_version, host, target, BASE_URL)
-        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+        except (ArchiveConnectionError, ArchiveDownloadError):
             pl = PackagesList(qt_version, host, target, random.choice(FALLBACK_URLS))
         print("List Qt packages in %s for %s" % (args.qt_version, args.host))
         table = Texttable()
@@ -786,83 +787,34 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=30):
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     timeout = (3.5, response_timeout)
-    #
-    expected_sha1 = None
-    with requests.Session() as session:
-        retry = Retry(connect=5, backoff_factor=0.5)
-        adapter = HTTPAdapter(max_retries=retry)
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
-        try:
-            r = session.get(hashurl, allow_redirects=True, timeout=timeout)
-        except (requests.exceptions.ConnectionError or requests.exceptions.Timeout):
-            pass  # ignore it
+    hash = binascii.unhexlify(getUrl(hashurl, timeout, logger))
+    downloadBinaryFile(url, archive, "sha1", hash, timeout, logger)
+    if command is None:
+        with py7zr.SevenZipFile(archive, "r") as szf:
+            szf.extractall(path=base_dir)
+    else:
+        if base_dir is not None:
+            command_args = [
+                command,
+                "x",
+                "-aoa",
+                "-bd",
+                "-y",
+                "-o{}".format(base_dir),
+                archive,
+            ]
         else:
-            expected_sha1 = binascii.unhexlify(r.content)
-    #
-    with requests.Session() as session:
-        retry = Retry(connect=5, backoff_factor=0.5)
-        adapter = HTTPAdapter(max_retries=retry)
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
+            command_args = [command, "x", "-aoa", "-bd", "-y", archive]
         try:
-            r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
-            if r.status_code == 302:
-                newurl = altlink(r.url, r.headers["Location"], logger=logger)
-                logger.info("Redirected URL: {}".format(newurl))
-                r = session.get(newurl, stream=True, timeout=timeout)
-        except requests.exceptions.ConnectionError as e:
-            logger.error("Connection error: %s" % e.args)
-            raise e
-        except requests.exceptions.Timeout as e:
-            logger.error("Connection timeout: %s" % e.args)
-            raise e
-        else:
-            checksum = hashlib.sha1()
-            try:
-                with open(archive, "wb") as fd:
-                    for chunk in r.iter_content(chunk_size=8196):
-                        fd.write(chunk)
-                        checksum.update(chunk)
-                    fd.flush()
-                if expected_sha1 is not None:
-                    if checksum.digest() != expected_sha1:
-                        raise ArchiveDownloadError(
-                            "Download file is corrupted! Check sum error."
-                        )
-                if command is None:
-                    with py7zr.SevenZipFile(archive, "r") as szf:
-                        szf.extractall(path=base_dir)
-            except Exception as e:
-                exc = sys.exc_info()
-                logger.error("Download error: %s" % exc[1])
-                raise e
-            else:
-                if command is not None:
-                    if base_dir is not None:
-                        command_args = [
-                            command,
-                            "x",
-                            "-aoa",
-                            "-bd",
-                            "-y",
-                            "-o{}".format(base_dir),
-                            archive,
-                        ]
-                    else:
-                        command_args = [command, "x", "-aoa", "-bd", "-y", archive]
-                    try:
-                        proc = subprocess.run(
-                            command_args, stdout=subprocess.PIPE, check=True
-                        )
-                        logger.debug(proc.stdout)
-                    except subprocess.CalledProcessError as cpe:
-                        logger.error("Extraction error: %d" % cpe.returncode)
-                        if cpe.stdout is not None:
-                            logger.error(cpe.stdout)
-                        if cpe.stderr is not None:
-                            logger.error(cpe.stderr)
-                        raise cpe
+            proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+            logger.debug(proc.stdout)
+        except subprocess.CalledProcessError as cpe:
+            logger.error("Extraction error: %d" % cpe.returncode)
+            if cpe.stdout is not None:
+                logger.error(cpe.stdout)
+            if cpe.stderr is not None:
+                logger.error(cpe.stderr)
+            raise cpe
     if not keep:
         os.unlink(archive)
     logger.info(
