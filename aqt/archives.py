@@ -23,25 +23,8 @@
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 
-import requests
-
-from aqt.helper import Settings
-
-
-class ArchiveConnectionError(Exception):
-    pass
-
-
-class ArchiveListError(Exception):
-    pass
-
-
-class ArchiveDownloadError(Exception):
-    pass
-
-
-class NoPackageFound(Exception):
-    pass
+from aqt.exceptions import ArchiveListError, NoPackageFound
+from aqt.helper import Settings, getUrl
 
 
 class TargetConfig:
@@ -116,8 +99,8 @@ class PackagesList:
                 ext,
             )
             update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
-            r = requests.get(update_xml_url, timeout=self.timeout)
-            self.update_xml = ElementTree.fromstring(r.text)
+            xml_text = getUrl(update_xml_url, self.timeout, self.logger)
+            self.update_xml = ElementTree.fromstring(xml_text)
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
                 if packageupdate.find("DownloadableArchives").text is not None:
@@ -215,25 +198,8 @@ class QtArchives:
         self._parse_update_xml(archive_url, target_packages)
 
     def _download_update_xml(self, update_xml_url):
-        try:
-            r = requests.get(update_xml_url, timeout=self.timeout)
-        except (
-            ConnectionResetError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-        ):
-            raise ArchiveConnectionError()
-        else:
-            if r.status_code == 200:
-                self.update_xml_text = r.text
-            else:
-                self.logger.error(
-                    "Download error when access to {}\n"
-                    "Server response code: {}, reason: {}".format(
-                        update_xml_url, r.status_code, r.reason
-                    )
-                )
-                raise ArchiveDownloadError("Download error!")
+        """Hook for unit test."""
+        self.update_xml_text = getUrl(update_xml_url, self.timeout, self.logger)
 
     def _parse_update_xml(self, archive_url, target_packages):
         try:
