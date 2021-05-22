@@ -194,8 +194,12 @@ class QtArchives:
         )
         target_packages.append("qt.{}.{}".format(qt_ver_num, self.arch))
         target_packages.extend(self.mod_list)
-        self.update_xml_text = getUrl(update_xml_url, self.timeout, self.logger)
+        self._download_update_xml(update_xml_url)
         self._parse_update_xml(archive_url, target_packages)
+
+    def _download_update_xml(self, update_xml_url):
+        """Hook for unit test."""
+        self.update_xml_text = getUrl(update_xml_url, self.timeout, self.logger)
 
     def _parse_update_xml(self, archive_url, target_packages):
         try:
