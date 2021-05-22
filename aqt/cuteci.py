@@ -94,6 +94,9 @@ class DeployCuteCI:
         elif arch == "win32_msvc2015":
             tag = "x86-msvc2015"
             ext = "exe"
+        elif arch == "win32_mingw49":
+            tag = "x86-mingw492"
+            ext = "exe"
         elif arch == "win32_mingw530":
             tag = "x86-mingw530"
             ext = "exe"
