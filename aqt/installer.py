@@ -23,7 +23,6 @@
 
 import argparse
 import binascii
-import hashlib
 import logging
 import logging.config
 import multiprocessing
@@ -31,7 +30,6 @@ import os
 import platform
 import random
 import subprocess
-import sys
 import time
 from logging import getLogger
 from typing import Optional
@@ -44,22 +42,26 @@ from urllib3.util.retry import Retry
 
 import aqt
 from aqt.archives import (
-    ArchiveConnectionError,
-    ArchiveDownloadError,
-    ArchiveListError,
-    NoPackageFound,
+    PackagesList,
     QtArchives,
     QtDownloadListFetcher,
     SrcDocExamplesArchives,
     ToolArchives,
 )
 from aqt.cuteci import DeployCuteCI
+from aqt.exceptions import (
+    ArchiveDownloadError,
+    ArchiveConnectionError,
+    ArchiveListError,
+    NoPackageFound,
+)
 from aqt.helper import (
     ALL_EXTENSIONS,
     ArchiveId,
     Settings,
-    altlink,
     cli_2_semantic_version,
+    downloadBinaryFile,
+    getUrl,
     list_architectures_for_version,
     list_modules_for_version,
     request_http_with_failover,
@@ -109,8 +111,9 @@ class Cli:
 
     def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
         if os_name == "windows" and target == "desktop":
+            major_minor = qt_version[: qt_version.rfind(".")]
             # check frequent mistakes
-            if qt_version.startswith("5.15.") or qt_version.startswith("6."):
+            if major_minor in ["5.15", "6.0", "6.1"]:
                 if arch in [
                     "win64_msvc2017_64",
                     "win32_msvc2017",
@@ -118,11 +121,7 @@ class Cli:
                     "win32_mingw73",
                 ]:
                     return False
-            elif (
-                qt_version.startswith("5.9.")
-                or qt_version.startswith("5.10.")
-                or qt_version.startswith("5.11.")
-            ):
+            elif major_minor in ["5.9", "5.10", "5.11"]:
                 if arch in [
                     "win64_mingw73",
                     "win32_mingw73",
@@ -142,11 +141,11 @@ class Cli:
                 return True
         return False
 
-    def _check_qt_arg_versions(self, qt_version):
-        for ver in self.settings.available_versions:
-            if ver == qt_version:
-                return True
-        return False
+    def _check_qt_arg_versions(self, version):
+        return version in self.settings.available_versions
+
+    def _check_qt_arg_version_offline(self, version):
+        return version in self.settings.available_offline_installer_version
 
     def _set_sevenzip(self, external):
         sevenzip = external
@@ -210,19 +209,7 @@ class Cli:
             return False
         return all([m in available for m in modules])
 
-    def _run_common_part(self, output_dir=None, mirror=None):
-        self.show_aqt_version()
-        if output_dir is not None:
-            output_dir = os.path.normpath(output_dir)
-        if not self._check_mirror(mirror):
-            self.parser.print_help()
-            exit(1)
-
-    def call_installer(self, qt_archives, target_dir, sevenzip, keep):
-        if target_dir is None:
-            base_dir = os.getcwd()
-        else:
-            base_dir = target_dir
+    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
         tasks = []
         for arc in qt_archives.get_archives():
             tasks.append((arc, base_dir, sevenzip, keep))
@@ -234,12 +221,13 @@ class Cli:
     def run_install(self, args):
         """Run install subcommand"""
         start_time = time.perf_counter()
+        self.show_aqt_version()
         arch = args.arch
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
-        output_dir = args.outputdir
         keep = args.keep
+        output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
         else:
@@ -255,6 +243,9 @@ class Cli:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip("7z")
         if args.base is not None:
+            if not self._check_mirror(args.base):
+                self.show_help()
+                exit(1)
             base = args.base
         else:
             base = BASE_URL
@@ -278,7 +269,6 @@ class Cli:
         nopatch = args.noarchives or (
             archives is not None and "qtbase" not in archives
         )  # type: bool
-        self._run_common_part(output_dir, base)
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning(
                 "Specified Qt version is unknown: {}.".format(qt_version)
@@ -328,7 +318,7 @@ class Cli:
         except ArchiveDownloadError or ArchiveListError or NoPackageFound:
             exit(1)
         target_config = qt_archives.get_target_config()
-        self.call_installer(qt_archives, output_dir, sevenzip, keep)
+        self.call_installer(qt_archives, base_dir, sevenzip, keep)
         if not nopatch:
             Updater.update(target_config, base_dir, self.logger)
         self.logger.info("Finished installation")
@@ -341,10 +331,11 @@ class Cli:
     def run_offline_installer(self, args):
         """Run online_installer subcommand"""
         start_time = time.perf_counter()
+        self.show_aqt_version()
         os_name = args.host
         qt_version = args.qt_version
-        output_dir = args.outputdir
         arch = args.arch
+        output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
         else:
@@ -357,7 +348,6 @@ class Cli:
             base = args.base
         else:
             base = BASE_URL
-        self._run_common_part(output_dir, base)
         qt_ver_num = qt_version.replace(".", "")
         packages = ["qt.qt5.{}.{}".format(qt_ver_num, arch)]
         if args.archives is not None:
@@ -382,10 +372,15 @@ class Cli:
 
     def _run_src_doc_examples(self, flavor, args):
         start_time = time.perf_counter()
+        self.show_aqt_version()
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
         output_dir = args.outputdir
+        if output_dir is None:
+            base_dir = os.getcwd()
+        else:
+            base_dir = output_dir
         keep = args.keep
         if args.base is not None:
             base = args.base
@@ -401,7 +396,6 @@ class Cli:
             sevenzip = self._set_sevenzip("7z")
         modules = args.modules
         archives = args.archives
-        self._run_common_part(output_dir, base)
         all_extra = True if modules is not None and "all" in modules else False
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning(
@@ -442,7 +436,7 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        self.call_installer(srcdocexamples_archives, output_dir, sevenzip, keep)
+        self.call_installer(srcdocexamples_archives, base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
@@ -469,6 +463,10 @@ class Cli:
         tool_name = args.tool_name
         os_name = args.host
         output_dir = args.outputdir
+        if output_dir is None:
+            base_dir = os.getcwd()
+        else:
+            base_dir = output_dir
         sevenzip = self._set_sevenzip(args.external)
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
@@ -483,7 +481,6 @@ class Cli:
             timeout = (args.timeout, args.timeout)
         else:
             timeout = (5, 5)
-        self._run_common_part(output_dir, base)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning(
                 "Specified target combination is not valid: {} {} {}".format(
@@ -519,7 +516,7 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        self.call_installer(tool_archives, output_dir, sevenzip, keep)
+        self.call_installer(tool_archives, base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
@@ -614,7 +611,7 @@ class Cli:
             self.logger.error("HTTP error: {}".format(e))
             return 1
 
-    def show_help(self, args):
+    def show_help(self, args=None):
         """Display help message"""
         self.parser.print_help()
 
@@ -946,83 +943,34 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=30):
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     timeout = (3.5, response_timeout)
-    #
-    expected_sha1 = None
-    with requests.Session() as session:
-        retry = Retry(connect=5, backoff_factor=0.5)
-        adapter = HTTPAdapter(max_retries=retry)
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
-        try:
-            r = session.get(hashurl, allow_redirects=True, timeout=timeout)
-        except (requests.exceptions.ConnectionError or requests.exceptions.Timeout):
-            pass  # ignore it
+    hash = binascii.unhexlify(getUrl(hashurl, timeout, logger))
+    downloadBinaryFile(url, archive, "sha1", hash, timeout, logger)
+    if command is None:
+        with py7zr.SevenZipFile(archive, "r") as szf:
+            szf.extractall(path=base_dir)
+    else:
+        if base_dir is not None:
+            command_args = [
+                command,
+                "x",
+                "-aoa",
+                "-bd",
+                "-y",
+                "-o{}".format(base_dir),
+                archive,
+            ]
         else:
-            expected_sha1 = binascii.unhexlify(r.content)
-    #
-    with requests.Session() as session:
-        retry = Retry(connect=5, backoff_factor=0.5)
-        adapter = HTTPAdapter(max_retries=retry)
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
+            command_args = [command, "x", "-aoa", "-bd", "-y", archive]
         try:
-            r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
-            if r.status_code == 302:
-                newurl = altlink(r.url, r.headers["Location"], logger=logger)
-                logger.info("Redirected URL: {}".format(newurl))
-                r = session.get(newurl, stream=True, timeout=timeout)
-        except requests.exceptions.ConnectionError as e:
-            logger.error("Connection error: %s" % e.args)
-            raise e
-        except requests.exceptions.Timeout as e:
-            logger.error("Connection timeout: %s" % e.args)
-            raise e
-        else:
-            checksum = hashlib.sha1()
-            try:
-                with open(archive, "wb") as fd:
-                    for chunk in r.iter_content(chunk_size=8196):
-                        fd.write(chunk)
-                        checksum.update(chunk)
-                    fd.flush()
-                if expected_sha1 is not None:
-                    if checksum.digest() != expected_sha1:
-                        raise ArchiveDownloadError(
-                            "Download file is corrupted! Check sum error."
-                        )
-                if command is None:
-                    with py7zr.SevenZipFile(archive, "r") as szf:
-                        szf.extractall(path=base_dir)
-            except Exception as e:
-                exc = sys.exc_info()
-                logger.error("Download error: %s" % exc[1])
-                raise e
-            else:
-                if command is not None:
-                    if base_dir is not None:
-                        command_args = [
-                            command,
-                            "x",
-                            "-aoa",
-                            "-bd",
-                            "-y",
-                            "-o{}".format(base_dir),
-                            archive,
-                        ]
-                    else:
-                        command_args = [command, "x", "-aoa", "-bd", "-y", archive]
-                    try:
-                        proc = subprocess.run(
-                            command_args, stdout=subprocess.PIPE, check=True
-                        )
-                        logger.debug(proc.stdout)
-                    except subprocess.CalledProcessError as cpe:
-                        logger.error("Extraction error: %d" % cpe.returncode)
-                        if cpe.stdout is not None:
-                            logger.error(cpe.stdout)
-                        if cpe.stderr is not None:
-                            logger.error(cpe.stderr)
-                        raise cpe
+            proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+            logger.debug(proc.stdout)
+        except subprocess.CalledProcessError as cpe:
+            logger.error("Extraction error: %d" % cpe.returncode)
+            if cpe.stdout is not None:
+                logger.error(cpe.stdout)
+            if cpe.stderr is not None:
+                logger.error(cpe.stderr)
+            raise cpe
     if not keep:
         os.unlink(archive)
     logger.info(
