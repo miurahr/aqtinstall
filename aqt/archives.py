@@ -25,6 +25,7 @@ from logging import getLogger
 from typing import Callable, Optional, List
 
 import requests
+from semantic_version import Version
 
 from aqt.helper import (
     Settings,
@@ -83,7 +84,9 @@ class QtDownloadListFetcher:
         self.html_fetcher = html_fetcher
         self.logger = getLogger("aqt")
 
-    def run(self) -> str:
+    def run(self, list_extensions_ver: Optional[Version] = None) -> str:
+        if list_extensions_ver is not None:
+            return self._get_extensions_from_html(self.html_fetcher(self.archive_id.to_url()), list_extensions_ver)
         return self._filter_html(self.html_fetcher(self.archive_id.to_url()))
 
     def _filter_html(self, html: str) -> str:
@@ -94,6 +97,9 @@ class QtDownloadListFetcher:
             self.filter_minor,
             *scrape_html_for_versions_and_tools(html),
         )
+
+    def _get_extensions_from_html(self, html: str) -> str:
+        raise NotImplementedError("This capability is not yet implemented")
 
 
 class QtPackage:

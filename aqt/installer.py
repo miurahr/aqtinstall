@@ -547,9 +547,6 @@ class Cli:
             self.logger.error(e)
             return 1
 
-        if list_extensions_ver:
-            raise NotImplementedError("Listing extensions isn't done yet")
-
         # Print packages for only the most recent version of Qt that matches the filters set
         is_print_latest_modules: bool = args.latest_modules
 
@@ -594,7 +591,8 @@ class Cli:
         )
 
         try:
-            out = fetcher.run().rstrip()  # raises RequestException
+            out = fetcher.run(list_extensions_ver).rstrip()
+
             if not out:
                 self.logger.error("No data available")
                 return 1
