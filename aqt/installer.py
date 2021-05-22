@@ -744,7 +744,9 @@ class Cli:
             type=float,
             help="Specify timeout for offline installer processing.(default: 300 sec)",
         )
-        old_install.add_argument("--debug", action="store_true", help="Show debug messages")
+        old_install.add_argument(
+            "--debug", action="store_true", help="Show debug messages"
+        )
         old_install.set_defaults(func=self.run_offline_installer)
         #
         help_parser = subparsers.add_parser("help")
