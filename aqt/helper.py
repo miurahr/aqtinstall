@@ -139,6 +139,12 @@ class Settings(object):
     def available_versions(self):
         return self._combinations["versions"]
 
+    @property
+    def available_offline_installer_version(self):
+        res = self._combinations["new_archive"]
+        res.extend(self._combinations["versions"])
+        return res
+
     def available_modules(self, qt_version):
         """Known module names
 
