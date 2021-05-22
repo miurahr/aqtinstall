@@ -29,7 +29,7 @@ steps:
   - powershell: |
       mkdir Qt
       cd Qt
-      Join-Path -Path "$(Build.SourcesDirectory)" -ChildPath "ci" -AdditionalChildPath "settings.ini" | Set-Item -Path env:AQT_CONFIG
+      Join-Path -Path "$(Build.SourcesDirectory)" -ChildPath "ci" | Join-Path -Path "settings.ini" | Set-Item -Path env:AQT_CONFIG
       python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
       if ('$(TARGET)' -eq 'android') {
         python -m aqt install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
