@@ -19,17 +19,24 @@ steps:
       cd Qt
       python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
       if [[ "$(TARGET)" == "android" || "$(TARGET)" == "ios" ]]; then
-        if [[ "$(HOST)" == "windows" ]]; then
-          python -m aqt install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
-        else
-          python -m aqt install $(QT_VERSION) $(HOST) desktop --archives qtbase
-        fi
+        python -m aqt install $(QT_VERSION) $(HOST) desktop --archives qtbase
       fi
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''))
+    condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''), ne( variables['Agent.OS'], 'Windows_NT'))
     displayName: Run Aqt (No Base URL Set)
+  - powershell: |
+      mkdir Qt
+      cd Qt
+      Join-Path "$(Build.SourcesDirectory)" "ci" "settings.ini" | Set-Item -Path env:AQT_CONFIG
+      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
+      if ('$(TARGET)' -eq 'android') {
+        python -m aqt install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
+      }
+    workingDirectory: $(Build.BinariesDirectory)
+    condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''), eq( variables['Agent.OS'], 'Windows_NT'))
+    displayName: Run Aqt (No Base URL Set, Windows)
   - bash: |
       number=$RANDOM
       let "number %= 30"
