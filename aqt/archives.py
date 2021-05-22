@@ -24,8 +24,10 @@ import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 
-from aqt.helper import Settings
+from aqt.helper import Settings, altlink
 
 
 class ArchiveConnectionError(Exception):
@@ -215,25 +217,34 @@ class QtArchives:
         self._parse_update_xml(archive_url, target_packages)
 
     def _download_update_xml(self, update_xml_url):
-        try:
-            r = requests.get(update_xml_url, timeout=self.timeout)
-        except (
-            ConnectionResetError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-        ):
-            raise ArchiveConnectionError()
-        else:
-            if r.status_code == 200:
-                self.update_xml_text = r.text
+        with requests.Session() as session:
+            retry = Retry(connect=5, backoff_factor=0.5)
+            adapter = HTTPAdapter(max_retries=retry)
+            session.mount("http://", adapter)
+            session.mount("https://", adapter)
+            try:
+                r = requests.get(update_xml_url, allow_redirects=False, timeout=self.timeout)
+                if r.status_code == 302:
+                    newurl = altlink(r.url, r.headers["Location"], logger=self.logger)
+                    self.logger.info("Redirected URL: {}".format(newurl))
+                    r = session.get(newurl, stream=True, timeout=self.timeout)
+            except (
+                ConnectionResetError,
+                requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout,
+            ):
+                raise ArchiveConnectionError()
             else:
-                self.logger.error(
-                    "Download error when access to {}\n"
-                    "Server response code: {}, reason: {}".format(
-                        update_xml_url, r.status_code, r.reason
+                if r.status_code == 200:
+                    self.update_xml_text = r.text
+                else:
+                    self.logger.error(
+                        "Download error when access to {}\n"
+                        "Server response code: {}, reason: {}".format(
+                            update_xml_url, r.status_code, r.reason
+                        )
                     )
-                )
-                raise ArchiveDownloadError("Download error!")
+                    raise ArchiveDownloadError("Download error!")
 
     def _parse_update_xml(self, archive_url, target_packages):
         try:
