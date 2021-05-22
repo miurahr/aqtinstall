@@ -72,6 +72,7 @@ class DeployCuteCI:
     """
 
     def __init__(self, version, os_name, arch, base, timeout, debug=False):
+        self.logger = getLogger("aqt")
         self.major_minor = version[: version.rfind(".")]
         self.timeout = timeout
         self.os_name = os_name
@@ -182,11 +183,10 @@ class DeployCuteCI:
 
         :raises Exception: in case of failure
         """
-        logger = getLogger("aqt")
         url = self.installer_url
         archive = self.get_archive_name()
         timeout = (3.5, response_timeout)
-        logger.info("Download Qt %s", url)
+        self.logger.info("Download Qt %s", url)
         #
         expected_md5 = self._get_md5(archive, timeout)
         with requests.Session() as session:
@@ -200,13 +200,13 @@ class DeployCuteCI:
                 )
                 if r.status_code == 302:
                     newurl = altlink(r.url, r.headers["Location"], logger=logger)
-                    logger.info("Redirected URL: {}".format(newurl))
+                    self.logger.info("Redirected URL: {}".format(newurl))
                     r = session.get(newurl, stream=True, timeout=timeout)
             except requests.exceptions.ConnectionError as e:
-                logger.error("Connection error: %s" % e.args)
+                self.logger.error("Connection error: %s" % e.args)
                 raise e
             except requests.exceptions.Timeout as e:
-                logger.error("Connection timeout: %s" % e.args)
+                self.logger.error("Connection timeout: %s" % e.args)
                 raise e
             else:
                 checksum = hashlib.md5()
@@ -223,10 +223,53 @@ class DeployCuteCI:
                             )
                 except Exception as e:
                     exc = sys.exc_info()
-                    logger.error("Download error: %s" % exc[1])
+                    self.logger.error("Download error: %s" % exc[1])
                     raise e
         os.chmod(archive, os.stat(archive).st_mode | stat.S_IEXEC)
         return archive
+
+    def _run_dmg(self, dmg, args, env):
+        try:
+            subprocess.run(["hdiutil", "attach", dmg], check=True)
+        except subprocess.CalledProcessError as cpe:
+            if cpe.stdout is not None:
+                self.logger.error(cpe.stdout)
+            if cpe.stderr is not None:
+                self.logger.error(cpe.stderr)
+            raise cpe
+        #
+        attach_path = "/Volumes/" + os.path.splitext(os.path.basename(dmg))[0]
+        self._run_cmd(attach_path + "/Qt Installer.app", args, env)  # FIXME
+        #
+        try:
+            subprocess.run(["hdiutil", "detach", attach_path], check=True)
+        except subprocess.CalledProcessError as cpe:
+            if cpe.stdout is not None:
+                self.logger.error(cpe.stdout)
+            if cpe.stderr is not None:
+                self.logger.error(cpe.stderr)
+            raise cpe
+
+    def _run_cmd(self, cmd, args, env):
+        self.logger.info("Running installer %s %s", cmd, args)
+        try:
+            subprocess.run(cmd, timeout=self.timeout, env=env, check=True)
+        except subprocess.CalledProcessError as cpe:
+            if cpe.returncode == 3:
+                pass
+            self.logger.error("Installer error: %d" % cpe.returncode)
+            if cpe.stdout is not None:
+                self.logger.error(cpe.stdout)
+            if cpe.stderr is not None:
+                self.logger.error(cpe.stderr)
+            raise cpe
+        except subprocess.TimeoutExpired as te:
+            self.logger.error("Installer timeout expired: {}".format(self.timeout))
+            if te.stdout is not None:
+                self.logger.error(te.stdout)
+            if te.stderr is not None:
+                self.logger.error(te.stderr)
+            raise te
 
     def run_installer(self, archive, packages, destdir, keep_tools):
         """
@@ -237,56 +280,40 @@ class DeployCuteCI:
         :param keep_tools: if True, keep Qt Tools after installation
         :raises Exception: in case of failure
         """
-        logger = getLogger("aqt")
         env = os.environ.copy()
         env["PACKAGES"] = ",".join(packages)
         env["DESTDIR"] = destdir
         install_script = os.path.join(CURRENT_DIR, "install-qt.qs")
         installer_path = os.path.join(WORKING_DIR, archive)
-        cmd = [installer_path, "--script", install_script]
+        args = [installer_path, "--script", install_script]
         if self.debug:
-            cmd.extend(["--verbose"])
+            args.extend(["--verbose"])
         else:
             if self.os_name == "linux":
                 if self.major_minor in ["5.6", "5.5", "5.4"]:
-                    cmd.extend(["--platform", "minimal"])
+                    args.extend(["--platform", "minimal"])
                 else:
-                    cmd.extend(["--silent"])
+                    args.extend(["--silent"])
             else:
                 if self.major_minor in ["5.5", "5.4"]:
-                    cmd.extend(["--platform", "minimal"])
+                    args.extend(["--platform", "minimal"])
                 else:
-                    cmd.extend(["--silent"])
-        logger.info("Running installer %s", cmd)
-        try:
-            subprocess.run(cmd, timeout=self.timeout, env=env, check=True)
-        except subprocess.CalledProcessError as cpe:
-            if cpe.returncode == 3:
-                pass
-            logger.error("Installer error: %d" % cpe.returncode)
-            if cpe.stdout is not None:
-                logger.error(cpe.stdout)
-            if cpe.stderr is not None:
-                logger.error(cpe.stderr)
-            raise cpe
-        except subprocess.TimeoutExpired as te:
-            logger.error("Installer timeout expired: {}".format(self.timeout))
-            if te.stdout is not None:
-                logger.error(te.stdout)
-            if te.stderr is not None:
-                logger.error(te.stderr)
-            raise te
+                    args.extend(["--silent"])
+        if self.os_name == 'mac':
+            self._run_dmg(installer_path, args, env)
+        else:
+            self._run_cmd(installer_path, args, env)
         if not keep_tools:
-            logger.info("Cleaning destdir")
+            self.logger.info("Cleaning destdir")
             files = os.listdir(destdir)
             for name in files:
                 fullpath = os.path.join(destdir, name)
                 if re.match(r"\d+\.\d+.\d+", name):
                     # Qt stands in X.Y.Z dir, skip it
-                    logger.info("Keep %s", fullpath)
+                    self.logger.info("Keep %s", fullpath)
                     continue
                 if os.path.isdir(fullpath):
                     shutil.rmtree(fullpath)
                 else:
                     os.remove(fullpath)
-                logger.info("Remove %s", fullpath)
+                self.logger.info("Remove %s", fullpath)
