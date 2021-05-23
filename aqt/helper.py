@@ -179,28 +179,21 @@ class Settings(object):
         if self.config is None:
             with self._lock:
                 if self.config is None:
-                    if config_path is None or not os.path.exists(config_path):
-                        config_path = os.path.join(
-                            os.path.dirname(__file__), "settings.ini"
-                        )
-                    self.config = self.configParse(config_path)
+                    self.config = configparser.ConfigParser()
+                    # load default config file
+                    with open(os.path.join(os.path.dirname(__file__), "settings.ini"), "r") as f:
+                        self.config.read_file(f)
+                    # load custom file
+                    if config_path is not None:
+                        self.config.read(config_path)
+                    self._concurrency = self.config.getint("aqt", "concurrency", fallback=4)
+                    self._blacklist = ast.literal_eval(self.config.get("mirrors", "blacklist", fallback="[]"))
+                    # load combinations
                     with open(
                         os.path.join(os.path.dirname(__file__), "combinations.json"),
                         "r",
                     ) as j:
                         self._combinations = json.load(j)[0]
-
-    def configParse(self, file_path):
-        config = configparser.ConfigParser()
-        try:
-            config.read(file_path)
-        except Exception:
-            pass
-        self._concurrency = config.getint("aqt", "concurrency", fallback=4)
-        self._blacklist = ast.literal_eval(
-            config.get("mirrors", "blacklist", fallback="[]")
-        )
-        return config
 
     @property
     def qt_combinations(self):

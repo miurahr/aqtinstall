@@ -44,18 +44,6 @@ def test_helper_altlink(monkeypatch):
 
 
 def test_settings(tmp_path):
-    config_path = tmp_path.joinpath("settings.ini")
-    with open(config_path, "w") as f:
-        f.write(
-            """\
-[DEFAULTS]
-
-[aqt]
-concurrency: 3
-
-[mirrors]
-blacklist: ['http://mirrors.ustc.edu.cn', 'http://mirrors.tuna.tsinghua.edu.cn', 'http://mirrors.geekpie.club']"""
-        )
-    config = helper.Settings(config_path)
+    config = helper.Settings()
     assert config.concurrency == 3
-    assert "http://mirrors.ustc.edu.cn" in config.blacklist
+    assert "http://mirror.example.com" in config.blacklist
