@@ -167,23 +167,23 @@ class Settings(object):
 
     # this class is Borg/Singleton
     _shared_state = {
-        "_config": None,
+        "config": None,
         "_combinations": None,
+        "_concurrency": None,
+        "_blacklist": None,
         "_lock": multiprocessing.Lock(),
     }
 
-    def __init__(self, config=None):
+    def __init__(self, config_path=None):
         self.__dict__ = self._shared_state
-        if self._config is None:
+        if self.config is None:
             with self._lock:
-                if self._config is None:
-                    if config is None:
-                        self.inifile = os.path.join(
+                if self.config is None:
+                    if config_path is None or not os.path.exists(config_path):
+                        config_path = os.path.join(
                             os.path.dirname(__file__), "settings.ini"
                         )
-                    else:
-                        self.inifile = config
-                    self._config = self.configParse(self.inifile)
+                    self.config = self.configParse(config_path)
                     with open(
                         os.path.join(os.path.dirname(__file__), "combinations.json"),
                         "r",
@@ -191,10 +191,15 @@ class Settings(object):
                         self._combinations = json.load(j)[0]
 
     def configParse(self, file_path):
-        if not os.path.exists(file_path):
-            raise IOError(file_path)
         config = configparser.ConfigParser()
-        config.read(file_path)
+        try:
+            config.read(file_path)
+        except Exception:
+            pass
+        self._concurrency = config.getint("aqt", "concurrency", fallback=4)
+        self._blacklist = ast.literal_eval(
+            config.get("mirrors", "blacklist", fallback="[]")
+        )
         return config
 
     @property
@@ -237,7 +242,7 @@ class Settings(object):
         :return: concurrency
         :rtype: int
         """
-        return self._config.getint("aqt", "concurrency")
+        return self._concurrency
 
     @property
     def blacklist(self):
@@ -246,4 +251,4 @@ class Settings(object):
         :returns: list of site URLs(scheme and host part)
         :rtype: List[str]
         """
-        return ast.literal_eval(self._config.get("mirrors", "blacklist"))
+        return self._blacklist
