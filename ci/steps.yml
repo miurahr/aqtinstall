@@ -263,3 +263,16 @@ steps:
     condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
     displayName: 'Build WebAssembler sample project'
 
+  ##----------------------------------------------------
+  # aqt list
+- script: |
+      aqt list $(QT_MAJOR) $(HOST)                                              # print all targets for host
+      aqt list tools $(HOST) $(TARGET)                                          # print all tools for host/target
+      aqt list $(QT_MAJOR) $(HOST) $(TARGET)                                    # print all versions of Qt
+      aqt list $(QT_MAJOR) $(HOST) $(TARGET) --extension wasm                   # print all wasm versions of Qt
+      aqt list $(QT_MAJOR) $(HOST) $(TARGET) --filter-minor $(QT_MINOR)                   # print all versions of Qt major/minor
+      aqt list $(QT_MAJOR) $(HOST) $(TARGET) --filter-minor $(QT_MINOR) --latest-version  # print latest Qt major/minor
+      aqt list $(QT_MAJOR) $(HOST) $(TARGET) --filter-minor $(QT_MINOR) --latest-modules  # print modules for latest major/minor
+      aqt list $(QT_MAJOR) $(HOST) $(TARGET) --modules $(QT_VERSION)            # print modules for version/host/target
+      aqt list $(QT_MAJOR) $(HOST) $(TARGET) --extensions $(QT_VERSION)         # print choices for --extension flag
+      aqt list $(QT_MAJOR) $(HOST) $(TARGET) --arch $(QT_VERSION)               # print architectures for version/host/target
