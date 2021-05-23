@@ -159,6 +159,23 @@ def altlink(url: str, alt: str, logger=None):
             )
 
 
+class MyConfigParser(configparser.ConfigParser):
+    def getlist(self, section, option, fallback=None):
+        value = self.get(section, option)
+        try:
+            result = list(filter(None, (x.strip() for x in value.splitlines())))
+        except Exception:
+            result = fallback
+        return result
+
+    def getlistint(self, section, option, fallback=None):
+        try:
+            result = [int(x) for x in self.getlist(section, option)]
+        except Exception:
+            result = fallback
+        return result
+
+
 class Settings(object):
     """Class to hold configuration and settings.
     Actual values are stored in 'settings.ini' file.
@@ -177,7 +194,7 @@ class Settings(object):
         if self.config is None:
             with self._lock:
                 if self.config is None:
-                    self.config = configparser.ConfigParser()
+                    self.config = MyConfigParser()
                     # load default config file
                     with open(
                         os.path.join(os.path.dirname(__file__), "settings.ini"), "r"
@@ -242,7 +259,7 @@ class Settings(object):
         :returns: list of site URLs(scheme and host part)
         :rtype: List[str]
         """
-        return ast.literal_eval(self.config.get("mirrors", "blacklist", fallback="[]"))
+        return self.config.getlist("mirrors", "blacklist", fallback=[])
 
     @property
     def baseurl(self):
@@ -250,15 +267,15 @@ class Settings(object):
 
     @property
     def connection_timeout(self):
-        return self.config.getint("aqt", "connection_timeout", fallback=3.5)
+        return self.config.getfloat("aqt", "connection_timeout", fallback=3.5)
 
     @property
     def response_timeout(self):
-        return self.config.getint("aqt", "response_timeout", fallback=3.5)
+        return self.config.getfloat("aqt", "response_timeout", fallback=3.5)
 
     @property
     def fallbacks(self):
-        return ast.literal_eval(self.config.get("mirrors", "fallbacks", fallback="[]"))
+        return self.config.getlist("mirrors", "fallbacks", fallback=[])
 
     @property
     def zipcmd(self):

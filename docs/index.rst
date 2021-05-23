@@ -9,6 +9,7 @@ Contents:
    installation
    cli
    available_versions
+   configuration
    internals
    changes
    devguide
