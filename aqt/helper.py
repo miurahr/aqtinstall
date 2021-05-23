@@ -40,6 +40,7 @@ from typing import (
     Callable,
     Generator,
 )
+from urllib.parse import urlparse
 
 import requests
 from requests import RequestException, adapters
@@ -217,9 +218,10 @@ def getUrl(url: str, timeout, logger) -> str:
         session.mount("https://", adapter)
         try:
             r = requests.get(url, allow_redirects=False, timeout=timeout)
-            if r.status_code == 302:
+            if 300 < r.status_code < 309:
+                logger.info("Asked to redirect({}) to: {}".format(r.status_code, r.headers["Location"]))
                 newurl = altlink(r.url, r.headers["Location"], logger=logger)
-                logger.info("Redirected URL: {}".format(newurl))
+                logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except (
             ConnectionResetError,
@@ -247,9 +249,10 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
         session.mount("https://", adapter)
         try:
             r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
-            if r.status_code == 302:
+            if 300 < r.status_code < 309:
+                logger.info("Asked to redirect({}) to: {}".format(r.status_code, r.headers["Location"]))
                 newurl = altlink(r.url, r.headers["Location"], logger=logger)
-                logger.info("Redirected URL: {}".format(newurl))
+                logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except requests.exceptions.ConnectionError as e:
             logger.error("Connection error: %s" % e.args)
@@ -283,7 +286,7 @@ def altlink(url: str, alt: str, logger=None):
     if logger is None:
         logger = logging.getLogger(__name__)
     blacklist = Settings().blacklist  # type: Optional[List[str]]
-    if blacklist is None or not any(alt.startswith(b) for b in blacklist):
+    if not any(alt.startswith(b) for b in blacklist):
         return alt
     try:
         m = _get_meta(url)
@@ -322,6 +325,23 @@ def altlink(url: str, alt: str, logger=None):
                 ),
                 alt,
             )
+
+
+class MyConfigParser(configparser.ConfigParser):
+    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
+        value = self.get(section, option)
+        try:
+            result = list(filter(None, (x.strip() for x in value.splitlines())))
+        except Exception:
+            result = fallback
+        return result
+
+    def getlistint(self, section: str, option: str, fallback=[]):
+        try:
+            result = [int(x) for x in self.getlist(section, option)]
+        except Exception:
+            result = fallback
+        return result
 
 
 def cli_2_semantic_version(qt_ver: Optional[str]) -> Optional[Version]:
@@ -630,35 +650,38 @@ class Settings(object):
 
     # this class is Borg/Singleton
     _shared_state = {
-        "_config": None,
+        "config": None,
         "_combinations": None,
         "_lock": multiprocessing.Lock(),
     }
 
-    def __init__(self, config=None):
+    def __init__(self, file=None):
         self.__dict__ = self._shared_state
-        if self._config is None:
+        if self.config is None:
             with self._lock:
-                if self._config is None:
-                    if config is None:
-                        self.inifile = os.path.join(
-                            os.path.dirname(__file__), "settings.ini"
-                        )
-                    else:
-                        self.inifile = config
-                    self._config = self.configParse(self.inifile)
+                if self.config is None:
+                    self.config = MyConfigParser()
+                    # load default config file
+                    with open(
+                        os.path.join(os.path.dirname(__file__), "settings.ini"), "r"
+                    ) as f:
+                        self.config.read_file(f)
+                    # load custom file
+                    if file is not None:
+                        if isinstance(file, str):
+                            result = self.config.read(file)
+                            if len(result) == 0:
+                                raise IOError("Fails to load specified config file {}".format(file))
+                        else:
+                            # passed through command line argparse.FileType("r")
+                            self.config.read_file(file)
+                            file.close()
+                    # load combinations
                     with open(
                         os.path.join(os.path.dirname(__file__), "combinations.json"),
                         "r",
                     ) as j:
                         self._combinations = json.load(j)[0]
-
-    def configParse(self, file_path):
-        if not os.path.exists(file_path):
-            raise IOError(file_path)
-        config = configparser.ConfigParser()
-        config.read(file_path)
-        return config
 
     @property
     def qt_combinations(self):
@@ -700,7 +723,7 @@ class Settings(object):
         :return: concurrency
         :rtype: int
         """
-        return self._config.getint("aqt", "concurrency")
+        return self.config.getint("aqt", "concurrency", fallback=4)
 
     @property
     def blacklist(self):
@@ -709,4 +732,24 @@ class Settings(object):
         :returns: list of site URLs(scheme and host part)
         :rtype: List[str]
         """
-        return ast.literal_eval(self._config.get("mirrors", "blacklist"))
+        return self.config.getlist("mirrors", "blacklist", fallback=[])
+
+    @property
+    def baseurl(self):
+        return self.config.get("aqt", "baseurl", fallback="https://download.qt.io")
+
+    @property
+    def connection_timeout(self):
+        return self.config.getfloat("aqt", "connection_timeout", fallback=3.5)
+
+    @property
+    def response_timeout(self):
+        return self.config.getfloat("aqt", "response_timeout", fallback=3.5)
+
+    @property
+    def fallbacks(self):
+        return self.config.getlist("mirrors", "fallbacks", fallback=[])
+
+    @property
+    def zipcmd(self):
+        return self.config.get("aqt", "7zcmd", fallback="7z")
