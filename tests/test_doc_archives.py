@@ -3,7 +3,7 @@ import os
 import pytest
 
 from aqt.archives import QtArchives
-from aqt.installer import BASE_URL
+from aqt.helper import Settings
 
 
 @pytest.mark.parametrize(
@@ -17,12 +17,13 @@ def test_parse_update_xml(monkeypatch, os_name, version, target, datafile):
 
     monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
 
-    qt_archives = QtArchives(os_name, "desktop", version, target, BASE_URL)
+    settings = Settings()
+    qt_archives = QtArchives(os_name, "desktop", version, target, settings.baseurl)
     assert qt_archives.archives is not None
 
     # Get packages with all extra modules
     qt_archives_all_modules = QtArchives(
-        os_name, "desktop", version, target, BASE_URL, None, ["all"], None, True
+        os_name, "desktop", version, target, settings.baseurl, None, ["all"], None, True
     )
     assert qt_archives_all_modules.archives is not None
 

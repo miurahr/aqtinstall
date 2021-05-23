@@ -169,8 +169,6 @@ class Settings(object):
     _shared_state = {
         "config": None,
         "_combinations": None,
-        "_concurrency": None,
-        "_blacklist": None,
         "_lock": multiprocessing.Lock(),
     }
 
@@ -188,12 +186,6 @@ class Settings(object):
                     # load custom file
                     if config_path is not None:
                         self.config.read(config_path)
-                    self._concurrency = self.config.getint(
-                        "aqt", "concurrency", fallback=4
-                    )
-                    self._blacklist = ast.literal_eval(
-                        self.config.get("mirrors", "blacklist", fallback="[]")
-                    )
                     # load combinations
                     with open(
                         os.path.join(os.path.dirname(__file__), "combinations.json"),
@@ -241,7 +233,7 @@ class Settings(object):
         :return: concurrency
         :rtype: int
         """
-        return self._concurrency
+        return self.config.getint("aqt", "concurrency", fallback=4)
 
     @property
     def blacklist(self):
@@ -250,4 +242,24 @@ class Settings(object):
         :returns: list of site URLs(scheme and host part)
         :rtype: List[str]
         """
-        return self._blacklist
+        return ast.literal_eval(self.config.get("mirrors", "blacklist", fallback="[]"))
+
+    @property
+    def baseurl(self):
+        return self.config.get("aqt", "baseurl", fallback="https://download.qt.io")
+
+    @property
+    def connection_timeout(self):
+        return self.config.getint("aqt", "connection_timeout", fallback=3.5)
+
+    @property
+    def response_timeout(self):
+        return self.config.getint("aqt", "response_timeout", fallback=3.5)
+
+    @property
+    def fallbacks(self):
+        return ast.literal_eval(self.config.get("mirrors", "fallbacks", fallback="[]"))
+
+    @property
+    def zipcmd(self):
+        return self.config.get("aqt", "7zcmd", fallback="7z")
