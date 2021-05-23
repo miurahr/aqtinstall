@@ -22,5 +22,6 @@ recursive-include docs *.svg
 recursive-include docs *.html
 recursive-include docs *.txt
 recursive-include docs Makefile
+recursive-include tests *.ini
 recursive-include tests *.py
 recursive-include tests *.xml
