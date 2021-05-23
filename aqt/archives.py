@@ -75,7 +75,9 @@ class QtDownloadListFetcher:
             )
         if self.archive_id.is_tools():
             return helper.get_tools(html_doc)
-        versions = helper.get_versions_for_minor(self.filter_minor, self.archive_id, html_doc)
+        versions = helper.get_versions_for_minor(
+            self.filter_minor, self.archive_id, html_doc
+        )
         if self.is_latest:
             return versions.latest()
         return versions

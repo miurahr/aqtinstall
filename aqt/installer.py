@@ -37,12 +37,9 @@ from typing import Optional
 import appdirs
 import requests
 from packaging.version import Version, parse
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 
 import aqt
 from aqt.archives import (
-    PackagesList,
     QtArchives,
     QtDownloadListFetcher,
     SrcDocExamplesArchives,
@@ -555,13 +552,20 @@ class Cli:
             args.category,
             args.host,
             args.target,
-            getattr(args, "extension", __default=""),
+            args.extension if args.extension else "",
         )
 
         def http_fetcher(rest_of_url: str) -> str:
             return request_http_with_failover(
-                base_urls=[BASE_URL, random.choice(FALLBACK_URLS)],
+                base_urls=[
+                    self.settings.baseurl,
+                    random.choice(self.settings.fallbacks),
+                ],
                 rest_of_url=rest_of_url,
+                timeout=(
+                    self.settings.connection_timeout,
+                    self.settings.response_timeout,
+                ),
             )
 
         if list_modules_ver is not None and archive_id.is_qt():

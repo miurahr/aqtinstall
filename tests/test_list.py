@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 import pytest
 import json
@@ -8,8 +7,11 @@ from semantic_version import Version
 
 from aqt import helper
 from aqt.archives import QtDownloadListFetcher
-from aqt.helper import ArchiveId, get_modules_architectures_for_version, request_http_with_failover
-from aqt.installer import BASE_URL, FALLBACK_URLS
+from aqt.helper import (
+    ArchiveId,
+    get_modules_architectures_for_version,
+    request_http_with_failover,
+)
 
 MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 
@@ -61,7 +63,10 @@ def test_list_folders(os_name, target, in_file, expect_out_file):
             if len(expected_output) == 0:
                 assert not out
             else:
-                assert helper.Versions.stringify_ver(out) == expected_output[-1].split(" ")[-1]
+                assert (
+                    helper.Versions.stringify_ver(out)
+                    == expected_output[-1].split(" ")[-1]
+                )
 
             for row in expected_output:
                 minor = int(MINOR_REGEX.search(row).group(1))
@@ -102,7 +107,9 @@ def test_list_archives(
     def http_fetcher(_: str) -> str:
         return _xml
 
-    modules, arches = get_modules_architectures_for_version(Version(version), archive_id, http_fetcher)
+    modules, arches = get_modules_architectures_for_version(
+        Version(version), archive_id, http_fetcher
+    )
     print(" ".join(arches))
     assert modules == expect["modules"]
     assert arches == expect["architectures"]
