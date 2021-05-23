@@ -41,3 +41,21 @@ def test_helper_altlink(monkeypatch):
     alt = "http://mirrors.geekpie.club/boo.7z"
     newurl = helper.altlink(url, alt)
     assert newurl.startswith("http://ftp.jaist.ac.jp/")
+
+
+def test_settings(tmp_path):
+    config_path = tmp_path.joinpath("settings.ini")
+    with open(config_path, "w") as f:
+        f.write(
+            """\
+[DEFAULTS]
+
+[aqt]
+concurrency: 3
+
+[mirrors]
+blacklist: ['http://mirrors.ustc.edu.cn', 'http://mirrors.tuna.tsinghua.edu.cn', 'http://mirrors.geekpie.club']"""
+        )
+    config = helper.Settings(config_path)
+    assert config.concurrency == 3
+    assert "http://mirrors.ustc.edu.cn" in config.blacklist
