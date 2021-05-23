@@ -39,16 +39,14 @@ from typing import (
     Iterable,
     Callable,
     Generator,
-    Iterator,
 )
 
 import requests
-import requests.adapters
+from requests import RequestException, adapters
 
 from aqt.exceptions import ArchiveDownloadError, ArchiveConnectionError
 from bs4 import BeautifulSoup
 from bs4.element import Tag
-from requests import RequestException
 from semantic_version import Version
 
 ALL_EXTENSIONS = (
@@ -158,7 +156,7 @@ class ArchiveId:
 
 
 class Versions:
-    def __init__(self, it_of_it: Iterable[Tuple[int, Iterator[Version]]]):
+    def __init__(self, it_of_it: Iterable[Tuple[int, Iterable[Version]]]):
         self.versions: List[List[Version]] = [
             list(versions_iterator) for _, versions_iterator in it_of_it
         ]

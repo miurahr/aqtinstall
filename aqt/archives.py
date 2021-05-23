@@ -22,21 +22,14 @@
 
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
+from semantic_version import Version
 from typing import Callable, Optional, List, Union
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
-from aqt.helper import Settings, getUrl
 
-from semantic_version import Version
 
 from aqt import helper
-from aqt.helper import (
-    Settings,
-    ArchiveId,
-    get_extensions_for_version,
-    get_versions_for_minor,
-    get_tools,
-)
+from aqt.helper import Settings, ArchiveId, getUrl
 
 
 class TargetConfig:
@@ -77,10 +70,12 @@ class QtDownloadListFetcher:
     ) -> Union[helper.Versions, helper.Tools, helper.Extensions, Version]:
         html_doc = self.html_fetcher(self.archive_id.to_url())
         if list_extensions_ver is not None:
-            return get_extensions_for_version(list_extensions_ver, self.archive_id, html_doc)
+            return helper.get_extensions_for_version(
+                list_extensions_ver, self.archive_id, html_doc
+            )
         if self.archive_id.is_tools():
-            return get_tools(html_doc)
-        versions = get_versions_for_minor(self.filter_minor, self.archive_id, html_doc)
+            return helper.get_tools(html_doc)
+        versions = helper.get_versions_for_minor(self.filter_minor, self.archive_id, html_doc)
         if self.is_latest:
             return versions.latest()
         return versions
