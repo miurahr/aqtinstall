@@ -28,11 +28,11 @@ steps:
     displayName: Run Aqt (No Base URL Set)
   - powershell: |
       mkdir Qt
+      Copy-Item -Path "ci\settings.ini" -Destination "Qt"
       cd Qt
-      Join-Path -Path "$(Build.SourcesDirectory)" -ChildPath "ci" | Join-Path -ChildPath "settings.ini" | Set-Item -Path env:AQT_CONFIG
-      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
+      python -m aqt -c settings.ini install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
       if ('$(TARGET)' -eq 'android') {
-        python -m aqt install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
+        python -m aqt -c settings.ini install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
       }
     workingDirectory: $(Build.BinariesDirectory)
     condition: and(not(variables['QT_BASE_MIRROR']), not(variables['TOOL_NAME']), not(variables['EXTERNAL']), eq(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''), eq( variables['Agent.OS'], 'Windows_NT'))
