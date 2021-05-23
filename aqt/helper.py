@@ -29,6 +29,7 @@ import os
 import sys
 import xml.etree.ElementTree as ElementTree
 from typing import List, Optional
+from urllib.parse import urlparse
 
 import requests
 import requests.adapters
@@ -52,9 +53,10 @@ def getUrl(url: str, timeout, logger) -> str:
         session.mount("https://", adapter)
         try:
             r = requests.get(url, allow_redirects=False, timeout=timeout)
-            if r.status_code == 302:
+            if 300 < r.status_code < 309:
+                logger.info("Asked to redirect({}) to: {}".format(r.status_code, r.headers["Location"]))
                 newurl = altlink(r.url, r.headers["Location"], logger=logger)
-                logger.info("Redirected URL: {}".format(newurl))
+                logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except (
             ConnectionResetError,
@@ -82,9 +84,10 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
         session.mount("https://", adapter)
         try:
             r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
-            if r.status_code == 302:
+            if 300 < r.status_code < 309:
+                logger.info("Asked to redirect({}) to: {}".format(r.status_code, r.headers["Location"]))
                 newurl = altlink(r.url, r.headers["Location"], logger=logger)
-                logger.info("Redirected URL: {}".format(newurl))
+                logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except requests.exceptions.ConnectionError as e:
             logger.error("Connection error: %s" % e.args)
