@@ -28,7 +28,7 @@ steps:
     displayName: Run Aqt (No Base URL Set)
   - powershell: |
       mkdir Qt
-      Copy-Item -Path "ci\settings.ini" -Destination "Qt"
+      Copy-Item -Path "$(Build.SourcesDirectory)\ci\settings.ini" -Destination "Qt"
       cd Qt
       python -m aqt -c settings.ini install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH)
       if ('$(TARGET)' -eq 'android') {
