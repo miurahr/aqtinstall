@@ -121,7 +121,7 @@ def altlink(url: str, alt: str, logger=None):
     if logger is None:
         logger = logging.getLogger(__name__)
     blacklist = Settings().blacklist  # type: Optional[List[str]]
-    if blacklist is None or not any(alt.startswith(b) for b in blacklist):
+    if not any(alt.startswith(b) for b in blacklist):
         return alt
     try:
         m = _get_meta(url)
@@ -163,7 +163,7 @@ def altlink(url: str, alt: str, logger=None):
 
 
 class MyConfigParser(configparser.ConfigParser):
-    def getlist(self, section, option, fallback=None):
+    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
         value = self.get(section, option)
         try:
             result = list(filter(None, (x.strip() for x in value.splitlines())))
@@ -171,7 +171,7 @@ class MyConfigParser(configparser.ConfigParser):
             result = fallback
         return result
 
-    def getlistint(self, section, option, fallback=None):
+    def getlistint(self, section: str, option: str, fallback=[]):
         try:
             result = [int(x) for x in self.getlist(section, option)]
         except Exception:
