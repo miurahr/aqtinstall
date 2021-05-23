@@ -59,8 +59,20 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-    condition: and(not(variables['TOOL_NAME']), not(variables['EXTERNAL']), ne(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''))
+    condition: and(not(variables['TOOL_NAME']), not(variables['EXTERNAL']), ne(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''), not(variables['QT_BASE_MIRROR']))
     displayName: Run Aqt (With modules)
+  - bash: |
+      number=$RANDOM
+      let "number %= 30"
+      sleep $number
+      mkdir Qt
+      cd Qt
+      python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) -m $(MODULE) -b $(QT_BASE_MIRROR)
+    workingDirectory: $(Build.BinariesDirectory)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    condition: and(not(variables['TOOL_NAME']), not(variables['EXTERNAL']), ne(variables['MODULE'], ''), eq(variables['SUBARCHIVES'], ''), variables['QT_BASE_MIRROR'])
+    displayName: Run Aqt (With modules, mirror)
   - bash: |
       number=$RANDOM
       let "number %= 30"
