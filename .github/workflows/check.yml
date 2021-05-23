@@ -24,5 +24,4 @@ jobs:
         pip install -U pip
         pip install tox tox-gh-actions build
     - name: Run check
-      # Run tox using the version of python in PATH
-      run: tox -e py
+      run: tox
