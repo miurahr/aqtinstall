@@ -6,19 +6,15 @@ jobs:
   check_document:
     name: Check packaging 📦
     runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        python: [3.6, 3.8]
-
     steps:
     - uses: actions/checkout@master
       with:
         fetch-depth: 20
     - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python }}
+        python-version: 3.8
     - name: Install tools
       run: |
         pip install -U pip
