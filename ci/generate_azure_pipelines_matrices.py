@@ -115,8 +115,9 @@ for platform_build_job in all_platform_build_jobs:
                 ('TARGET', build_job.target),
                 ('ARCH', build_job.arch),
                 ('ARCHDIR', build_job.archdir),
-                ('MODULE', build_job.module if build_job.module else '')
-            ]
+                ('MODULE', build_job.module if build_job.module else ''),
+                ("QT_BASE_MIRROR", "http://mirrors.ocf.berkeley.edu/qt/" if platform_build_job.platform == "windows" else "")
+        ]
         )
 
     matrices[platform_build_job.platform] = matrix_dictionary
