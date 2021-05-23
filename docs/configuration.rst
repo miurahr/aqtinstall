@@ -6,9 +6,8 @@ Configuration
 ``aqtinstall`` can be configured through a configuration file.
 A default configuration is stored in ``aqt/settings.ini`` file.
 
-You can specify custom configuration file through ``AQT_CONFIG`` environment variable.
-A configuration should read very early stage of ``aqtinstall``, it cannot be specified
-through command line.
+You can specify custom configuration file through ``AQT_CONFIG``
+environment variable or "-c" or "--config" command line option.
 
 A file is like as follows:
 

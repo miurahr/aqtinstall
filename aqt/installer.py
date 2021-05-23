@@ -73,14 +73,9 @@ class ExtractionError(Exception):
 class Cli:
     """CLI main class to parse command line argument and launch proper functions."""
 
-    __slot__ = ["parser", "combinations", "logger"]
+    __slot__ = ["parser", "combinations", "logger", "settings"]
 
-    def __init__(self, env_key="AQT_CONFIG"):
-        config = os.getenv(env_key, None)
-        if config is not None and os.path.exists(config):
-            self.settings = Settings(config)
-        else:
-            self.settings = Settings()
+    def __init__(self):
         self._create_parser()
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
@@ -454,7 +449,7 @@ class Cli:
         sevenzip = self._set_sevenzip(args.external)
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
-            sevenzip = self._set_sevenzip("7z")
+            sevenzip = self._set_sevenzip(self.settings.zipcmd)
         version = args.version
         keep = args.keep
         if args.base is not None:
@@ -603,6 +598,13 @@ class Cli:
             description="Installer for Qt SDK.",
             formatter_class=argparse.RawTextHelpFormatter,
             add_help=True,
+        )
+        parser.add_argument(
+            "-c",
+            "--config",
+            type=argparse.FileType("r"),
+            nargs=1,
+            help="Configuration ini file.",
         )
         parser.add_argument(
             "--logging-conf",
@@ -756,8 +758,18 @@ class Cli:
         else:
             self.logger = logging.getLogger("aqt")
 
+    def _setup_settings(self, args=None, env_key="AQT_CONFIG"):
+        config = os.getenv(env_key, None)
+        if args is not None and args.config is not None:
+            config = args.config
+        if config is not None and os.path.exists(config):
+            self.settings = Settings(config)
+        else:
+            self.settings = Settings()
+
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
+        self._setup_settings(args)
         self._setup_logging(args)
         return args.func(args)
 
