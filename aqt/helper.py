@@ -181,13 +181,19 @@ class Settings(object):
                 if self.config is None:
                     self.config = configparser.ConfigParser()
                     # load default config file
-                    with open(os.path.join(os.path.dirname(__file__), "settings.ini"), "r") as f:
+                    with open(
+                        os.path.join(os.path.dirname(__file__), "settings.ini"), "r"
+                    ) as f:
                         self.config.read_file(f)
                     # load custom file
                     if config_path is not None:
                         self.config.read(config_path)
-                    self._concurrency = self.config.getint("aqt", "concurrency", fallback=4)
-                    self._blacklist = ast.literal_eval(self.config.get("mirrors", "blacklist", fallback="[]"))
+                    self._concurrency = self.config.getint(
+                        "aqt", "concurrency", fallback=4
+                    )
+                    self._blacklist = ast.literal_eval(
+                        self.config.get("mirrors", "blacklist", fallback="[]")
+                    )
                     # load combinations
                     with open(
                         os.path.join(os.path.dirname(__file__), "combinations.json"),
