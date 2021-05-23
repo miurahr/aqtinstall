@@ -189,7 +189,7 @@ class Settings(object):
         "_lock": multiprocessing.Lock(),
     }
 
-    def __init__(self, config_path=None):
+    def __init__(self, file=None):
         self.__dict__ = self._shared_state
         if self.config is None:
             with self._lock:
@@ -201,8 +201,15 @@ class Settings(object):
                     ) as f:
                         self.config.read_file(f)
                     # load custom file
-                    if config_path is not None:
-                        self.config.read(config_path)
+                    if file is not None:
+                        if isinstance(file, str):
+                            result = self.config.read(file)
+                            if len(result) == 0:
+                                raise IOError("Fails to load specified config file {}".format(file))
+                        else:
+                            # passed through command line argparse.FileType("r")
+                            self.config.read_file(file)
+                            file.close()
                     # load combinations
                     with open(
                         os.path.join(os.path.dirname(__file__), "combinations.json"),

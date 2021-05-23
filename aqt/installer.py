@@ -603,13 +603,11 @@ class Cli:
             "-c",
             "--config",
             type=argparse.FileType("r"),
-            nargs=1,
             help="Configuration ini file.",
         )
         parser.add_argument(
             "--logging-conf",
             type=argparse.FileType("r"),
-            nargs=1,
             help="Logging configuration ini file.",
         )
         parser.add_argument("--logger", nargs=1, help="Specify logger name")
@@ -759,13 +757,14 @@ class Cli:
             self.logger = logging.getLogger("aqt")
 
     def _setup_settings(self, args=None, env_key="AQT_CONFIG"):
-        config = os.getenv(env_key, None)
         if args is not None and args.config is not None:
-            config = args.config
-        if config is not None and os.path.exists(config):
-            self.settings = Settings(config)
+            self.settings = Settings(args.config)
         else:
-            self.settings = Settings()
+            config = os.getenv(env_key, None)
+            if config is not None and os.path.exists(config):
+                self.settings = Settings(config)
+            else:
+                self.settings = Settings()
 
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
