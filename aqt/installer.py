@@ -86,7 +86,10 @@ class Cli:
 
     def __init__(self, env_key="AQT_CONFIG"):
         config = os.getenv(env_key, None)
-        self.settings = Settings(config=config)
+        if config is not None and os.path.exists(config):
+            self.settings = Settings(config)
+        else:
+            self.settings = Settings()
         self._create_parser()
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):

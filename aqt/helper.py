@@ -167,35 +167,39 @@ class Settings(object):
 
     # this class is Borg/Singleton
     _shared_state = {
-        "_config": None,
+        "config": None,
         "_combinations": None,
+        "_concurrency": None,
+        "_blacklist": None,
         "_lock": multiprocessing.Lock(),
     }
 
-    def __init__(self, config=None):
+    def __init__(self, config_path=None):
         self.__dict__ = self._shared_state
-        if self._config is None:
+        if self.config is None:
             with self._lock:
-                if self._config is None:
-                    if config is None:
-                        self.inifile = os.path.join(
-                            os.path.dirname(__file__), "settings.ini"
-                        )
-                    else:
-                        self.inifile = config
-                    self._config = self.configParse(self.inifile)
+                if self.config is None:
+                    self.config = configparser.ConfigParser()
+                    # load default config file
+                    with open(
+                        os.path.join(os.path.dirname(__file__), "settings.ini"), "r"
+                    ) as f:
+                        self.config.read_file(f)
+                    # load custom file
+                    if config_path is not None:
+                        self.config.read(config_path)
+                    self._concurrency = self.config.getint(
+                        "aqt", "concurrency", fallback=4
+                    )
+                    self._blacklist = ast.literal_eval(
+                        self.config.get("mirrors", "blacklist", fallback="[]")
+                    )
+                    # load combinations
                     with open(
                         os.path.join(os.path.dirname(__file__), "combinations.json"),
                         "r",
                     ) as j:
                         self._combinations = json.load(j)[0]
-
-    def configParse(self, file_path):
-        if not os.path.exists(file_path):
-            raise IOError(file_path)
-        config = configparser.ConfigParser()
-        config.read(file_path)
-        return config
 
     @property
     def qt_combinations(self):
@@ -237,7 +241,7 @@ class Settings(object):
         :return: concurrency
         :rtype: int
         """
-        return self._config.getint("aqt", "concurrency")
+        return self._concurrency
 
     @property
     def blacklist(self):
@@ -246,4 +250,4 @@ class Settings(object):
         :returns: list of site URLs(scheme and host part)
         :rtype: List[str]
         """
-        return ast.literal_eval(self._config.get("mirrors", "blacklist"))
+        return self._blacklist

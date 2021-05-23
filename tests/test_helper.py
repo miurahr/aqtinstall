@@ -41,3 +41,9 @@ def test_helper_altlink(monkeypatch):
     alt = "http://mirrors.geekpie.club/boo.7z"
     newurl = helper.altlink(url, alt)
     assert newurl.startswith("http://ftp.jaist.ac.jp/")
+
+
+def test_settings(tmp_path):
+    config = helper.Settings()
+    assert config.concurrency == 3
+    assert "http://mirror.example.com" in config.blacklist
