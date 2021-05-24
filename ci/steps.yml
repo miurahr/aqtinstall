@@ -76,7 +76,7 @@ steps:
   - script: |
       sudo apt-get update
       sudo apt-get install -y libgl1-mesa-dev
-    condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'), eq(variable['SUBCOMMAND'], 'install'))
+    condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'), eq(variables['SUBCOMMAND'], 'install'))
     displayName: install test dependency for Linux
 
   ##----------------------------------------------------
