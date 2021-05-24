@@ -37,9 +37,14 @@ steps:
             python -m aqt install $(QT_VERSION) $(HOST) desktop --archives qtbase
           fi
         fi
-      else if [[ "$(SUBCOMMAND)" == "list" ]]; then
+      fi
+      if [[ "$(SUBCOMMAND)" == "list" ]]; then
         echo implement me.
-      else
+      fi
+      if [[ "$(SUBCOMMAND)" == "src" ]]; then
+        python -m aqt $(SUBCOMMAND) $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
+      fi
+      if [[ "$(SUBCOMMAND)" == "doc" ]]; then
         python -m aqt $(SUBCOMMAND) $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
       fi
     workingDirectory: $(Build.BinariesDirectory)
