@@ -33,13 +33,11 @@ import subprocess
 import time
 from logging import getLogger
 
-import appdirs
 from packaging.version import Version, parse
 from texttable import Texttable
 
 import aqt
 from aqt.archives import PackagesList, QtArchives, SrcDocExamplesArchives, ToolArchives
-from aqt.cuteci import DeployCuteCI
 from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
@@ -294,48 +292,6 @@ class Cli:
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elasped: {time:.8f} second".format(
-                time=time.perf_counter() - start_time
-            )
-        )
-
-    def run_offline_installer(self, args):
-        """Run online_installer subcommand"""
-        start_time = time.perf_counter()
-        self.show_aqt_version()
-        os_name = args.host
-        qt_version = args.qt_version
-        arch = args.arch
-        output_dir = args.outputdir
-        if output_dir is None:
-            base_dir = os.getcwd()
-        else:
-            base_dir = os.path.realpath(output_dir)
-        if args.timeout is not None:
-            timeout = args.timeout
-        else:
-            timeout = 300
-        if args.base is not None:
-            base = args.base
-        else:
-            base = self.settings.baseurl
-        qt_ver_num = qt_version.replace(".", "")
-        packages = ["qt.qt5.{}.{}".format(qt_ver_num, arch)]
-        if args.archives is not None:
-            packages.extend(args.archives)
-        #
-        qa = os.path.join(appdirs.user_data_dir("Qt", None), "qtaccount.ini")
-        if not os.path.exists(qa):
-            self.logger.warning("Cannot find {}".format(qa))
-        cuteci = DeployCuteCI(qt_version, os_name, base, timeout)
-        if not cuteci.check_archive():
-            archive = cuteci.download_installer()
-        else:
-            self.logger.info("Reuse existent installer archive.")
-            archive = cuteci.get_archive_name()
-        cuteci.run_installer(archive, packages, base_dir, True)
-        self.logger.info("Finished installation")
-        self.logger.info(
-            "Time elapsed: {time:.8f} second".format(
                 time=time.perf_counter() - start_time
             )
         )
@@ -680,54 +636,6 @@ class Cli:
         list_parser = subparsers.add_parser("list")
         list_parser.set_defaults(func=self.run_list)
         self._set_common_argument(list_parser)
-        #
-        old_install = subparsers.add_parser(
-            "offline_installer",
-            formatter_class=argparse.RawTextHelpFormatter,
-            description="Install Qt using offiline installer. It requires downloading installer binary(500-1500MB).\n"
-            "Please help you for patience to wait downloding."
-            "It can accept environment variables:\n"
-            "  QTLOGIN: qt account login name\n"
-            "  QTPASSWORD: qt account password\n",
-        )
-        old_install.add_argument(
-            "qt_version", help='Qt version in the format of "5.X.Y"'
-        )
-        old_install.add_argument(
-            "host", choices=["linux", "mac", "windows"], help="host os name"
-        )
-        old_install.add_argument(
-            "arch",
-            help="\ntarget linux/desktop: gcc_64"
-            "\ntarget mac/desktop:   clang_64"
-            "\nwindows/desktop:      win64_msvc2017_64, win32_msvc2017"
-            "\n                      win64_msvc2015_64, win32_msvc2015",
-        )
-        old_install.add_argument(
-            "--archives",
-            nargs="*",
-            help="Specify packages to install.",
-        )
-        old_install.add_argument(
-            "-O",
-            "--outputdir",
-            nargs="?",
-            help="Target output directory(default current directory)",
-        )
-        old_install.add_argument(
-            "-b",
-            "--base",
-            nargs="?",
-            help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, "
-            "where 'online' folder exist.",
-        )
-        old_install.add_argument(
-            "--timeout",
-            nargs="?",
-            type=float,
-            help="Specify timeout for offline installer processing.(default: 300 sec)",
-        )
-        old_install.set_defaults(func=self.run_offline_installer)
         #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
