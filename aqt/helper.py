@@ -351,16 +351,14 @@ class MyConfigParser(configparser.ConfigParser):
         return result
 
 
-def cli_2_semantic_version(qt_ver: Optional[str]) -> Optional[Version]:
-    return None if qt_ver is None else get_semantic_version_with_dots(qt_ver)
-
-
-def get_semantic_version_with_dots(qt_ver: str) -> Version:
+def to_version(qt_ver: Optional[str]) -> Optional[Version]:
     """Converts a Qt version string with dots (5.X.Y, etc) into a semantic version.
     If the version ends in `-preview`, the version is treated as a preview release.
     If the patch value is missing, patch is assumed to be zero.
     If the version cannot be converted to a Version, a ValueError is raised.
     """
+    if not qt_ver:
+        return None
     match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)?$", qt_ver)
     if not match:
         raise ValueError("Invalid version string '{}'".format(qt_ver))

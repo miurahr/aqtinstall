@@ -56,7 +56,7 @@ from aqt.helper import (
     ALL_EXTENSIONS,
     ArchiveId,
     Settings,
-    cli_2_semantic_version,
+    to_version,
     downloadBinaryFile,
     getUrl,
     list_architectures_for_version,
@@ -515,17 +515,13 @@ class Cli:
 
         try:
             # Version of Qt for which to list packages
-            list_modules_ver: Optional[Version] = cli_2_semantic_version(args.modules)
+            list_modules_ver: Optional[Version] = to_version(args.modules)
 
             # Version of Qt for which to list extensions
-            list_extensions_ver: Optional[Version] = cli_2_semantic_version(
-                args.extensions
-            )
+            list_extensions_ver: Optional[Version] = to_version(args.extensions)
 
             # Version of Qt for which to list architectures
-            list_architectures_ver: Optional[Version] = cli_2_semantic_version(
-                args.arch
-            )
+            list_architectures_ver: Optional[Version] = to_version(args.arch)
         except ValueError as e:
             self.logger.error(e)
             return 1
