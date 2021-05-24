@@ -78,7 +78,9 @@ linux_build_jobs.extend(
         BuildJob('install', '5.14.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', module='all'),
         BuildJob('install', '5.15.2', 'linux', 'desktop', 'gcc_64', 'gcc_64', subarchives='qtbase qttools qt icu'),
         BuildJob('src', '6.1.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', subarchives='qt'),
-        BuildJob('doc', '6.1.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', subarchives='qtdoc')
+        BuildJob('doc', '6.1.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', subarchives='qtdoc'),
+        # test for list commands
+        BuildJob('list', '6.1.0', 'linux', 'desktop', '', '')
     ]
 )
 mac_build_jobs.append(
@@ -112,9 +114,11 @@ for platform_build_job in all_platform_build_jobs:
     matrix_dictionary = collections.OrderedDict()
 
     for build_job, python_version in product(platform_build_job.build_jobs, python_versions):
-        key = '{} {} for {}'.format(build_job.qt_version, build_job.arch, build_job.target)
+        key = '{} {} {} for {}'.format(build_job.command, build_job.qt_version, build_job.arch, build_job.target)
         if build_job.module:
             key = "{} ({})".format(key, build_job.module)
+        if build_job.subarchives:
+            key = "{} ({})".format(key, build_job.subarchives)
         matrix_dictionary[key] = collections.OrderedDict(
             [
                 ('PYTHON_VERSION', python_version),
@@ -127,7 +131,7 @@ for platform_build_job in all_platform_build_jobs:
                 ('MODULE', build_job.module if build_job.module else ''),
                 ("QT_BASE_MIRROR", build_job.mirror if build_job.mirror else ''),
                 ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else '')
-        ]
+            ]
         )
 
     matrices[platform_build_job.platform] = matrix_dictionary
