@@ -58,7 +58,7 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from aqt.exceptions import ArchiveDownloadError
-from aqt.helper import altlink, getUrl, downloadBinaryFile
+from aqt.helper import altlink, downloadBinaryFile, getUrl
 
 WORKING_DIR = os.getcwd()
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))

@@ -47,8 +47,8 @@ from aqt.archives import (
 )
 from aqt.cuteci import DeployCuteCI
 from aqt.exceptions import (
-    ArchiveDownloadError,
     ArchiveConnectionError,
+    ArchiveDownloadError,
     ArchiveListError,
     NoPackageFound,
 )

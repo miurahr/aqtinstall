@@ -44,7 +44,7 @@ from urllib.parse import urlparse
 import requests
 from requests import RequestException, adapters
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveConnectionError
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from semantic_version import Version

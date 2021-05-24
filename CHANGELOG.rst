@@ -10,15 +10,22 @@ All notable changes to this project will be documented in this file.
 Added
 -----
 * Support for installation of old versions(#236, #239)
+* Add -c/--config option to specify custom settings.ini(#246)
+* Document for settings.ini configuration parameters(#246)
 
 Changed
 -------
-* CI: update test target on Python 3.6 and 3.8(#240)
 * Check MD5 checksum when download(#238)
+* Config settings.ini parser and URL list format(#246)
+* Refactoring network connection code, consolidated to helper.py(#244)
+* Refactoring exceptions, introduce exceptions.py(#244)
+* Update known Qt versions combinations.(#243)
 
 Fixed
 -----
 * Prettify help message format(#237)
+* CI: fix check workflow(#248)
+* CI: fix error on Azure/Windows(connection error)(#246)
 
 Deprecated
 ----------
