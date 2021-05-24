@@ -19,7 +19,6 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import ast
 import configparser
 import hashlib
 import json
@@ -34,7 +33,7 @@ from urllib.parse import urlparse
 import requests
 import requests.adapters
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveConnectionError
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
 
 def _get_meta(url: str):
@@ -54,7 +53,11 @@ def getUrl(url: str, timeout, logger) -> str:
         try:
             r = requests.get(url, allow_redirects=False, timeout=timeout)
             if 300 < r.status_code < 309:
-                logger.info("Asked to redirect({}) to: {}".format(r.status_code, r.headers["Location"]))
+                logger.info(
+                    "Asked to redirect({}) to: {}".format(
+                        r.status_code, r.headers["Location"]
+                    )
+                )
                 newurl = altlink(r.url, r.headers["Location"], logger=logger)
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
@@ -85,7 +88,11 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
         try:
             r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
             if 300 < r.status_code < 309:
-                logger.info("Asked to redirect({}) to: {}".format(r.status_code, r.headers["Location"]))
+                logger.info(
+                    "Asked to redirect({}) to: {}".format(
+                        r.status_code, r.headers["Location"]
+                    )
+                )
                 newurl = altlink(r.url, r.headers["Location"], logger=logger)
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
@@ -208,7 +215,11 @@ class Settings(object):
                         if isinstance(file, str):
                             result = self.config.read(file)
                             if len(result) == 0:
-                                raise IOError("Fails to load specified config file {}".format(file))
+                                raise IOError(
+                                    "Fails to load specified config file {}".format(
+                                        file
+                                    )
+                                )
                         else:
                             # passed through command line argparse.FileType("r")
                             self.config.read_file(file)

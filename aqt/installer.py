@@ -38,24 +38,15 @@ from packaging.version import Version, parse
 from texttable import Texttable
 
 import aqt
-from aqt.archives import (
-    PackagesList,
-    QtArchives,
-    SrcDocExamplesArchives,
-    ToolArchives,
-)
+from aqt.archives import PackagesList, QtArchives, SrcDocExamplesArchives, ToolArchives
 from aqt.cuteci import DeployCuteCI
 from aqt.exceptions import (
-    ArchiveDownloadError,
     ArchiveConnectionError,
+    ArchiveDownloadError,
     ArchiveListError,
     NoPackageFound,
 )
-from aqt.helper import (
-    Settings,
-    downloadBinaryFile,
-    getUrl,
-)
+from aqt.helper import Settings, downloadBinaryFile, getUrl
 from aqt.updater import Updater
 
 try:
@@ -512,7 +503,9 @@ class Cli:
         try:
             pl = PackagesList(qt_version, host, target, self.settings.baseurl)
         except (ArchiveConnectionError, ArchiveDownloadError):
-            pl = PackagesList(qt_version, host, target, random.choice(self.settings.fallbacks))
+            pl = PackagesList(
+                qt_version, host, target, random.choice(self.settings.fallbacks)
+            )
         print("List Qt packages in %s for %s" % (args.qt_version, args.host))
         table = Texttable()
         table.set_deco(Texttable.HEADER)

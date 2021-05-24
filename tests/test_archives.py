@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from aqt.helper import Settings
 from aqt.archives import QtArchives
+from aqt.helper import Settings
 
 
 @pytest.mark.parametrize(
