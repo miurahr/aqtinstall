@@ -80,7 +80,7 @@ linux_build_jobs.extend(
         BuildJob('src', '6.1.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', subarchives='qt'),
         BuildJob('doc', '6.1.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', subarchives='qtdoc'),
         # test for list commands
-        BuildJob('list', '6.1.0', 'linux', 'desktop', '', '')
+        BuildJob('list', '5.15.2', 'linux', 'desktop', '', '')
     ]
 )
 mac_build_jobs.append(
