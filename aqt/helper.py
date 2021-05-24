@@ -35,6 +35,8 @@ import requests.adapters
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
+BLOCKSIZE = 1048576
+
 
 def _get_meta(url: str):
     return requests.get(url + ".meta4")
@@ -106,7 +108,7 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
             hash = hashlib.new(hash_algo)
             try:
                 with open(out, "wb") as fd:
-                    for chunk in r.iter_content(chunk_size=8196):
+                    for chunk in r.iter_content(chunk_size=BLOCKSIZE):
                         fd.write(chunk)
                         hash.update(chunk)
                     fd.flush()

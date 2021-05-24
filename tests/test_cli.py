@@ -5,7 +5,7 @@ def test_cli_help(capsys):
     expected = "".join(
         [
             "usage: aqt [-h] [-c CONFIG] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
-            "           {install,doc,examples,src,tool,list,help} ...\n",
+            "           {install,doc,examples,src,tool,list,offline_installer,help} ...\n",
             "\n",
             "Installer for Qt SDK.\n",
             "\n",
@@ -20,7 +20,7 @@ def test_cli_help(capsys):
             "subcommands:\n",
             "  Valid subcommands\n",
             "\n",
-            "  {install,doc,examples,src,tool,list,help}\n",
+            "  {install,doc,examples,src,tool,list,offline_installer,help}\n",
             "                        subcommand for aqt Qt installer\n",
         ]
     )
@@ -68,7 +68,7 @@ def test_cli_launch_with_no_argument(capsys):
     expected = "".join(
         [
             "usage: aqt [-h] [-c CONFIG] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
-            "           {install,doc,examples,src,tool,list,help} ...\n",
+            "           {install,doc,examples,src,tool,list,offline_installer,help} ...\n",
             "\n",
             "Installer for Qt SDK.\n",
             "\n",
@@ -83,7 +83,7 @@ def test_cli_launch_with_no_argument(capsys):
             "subcommands:\n",
             "  Valid subcommands\n",
             "\n",
-            "  {install,doc,examples,src,tool,list,help}\n",
+            "  {install,doc,examples,src,tool,list,offline_installer,help}\n",
             "                        subcommand for aqt Qt installer\n",
         ]
     )
