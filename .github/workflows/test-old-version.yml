@@ -1,0 +1,66 @@
+name: Install old version
+
+on: push
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        py: [3.9]
+        qtver: [5.6.3]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 20
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: Set up Python
+        id: setup_python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.py }}
+      - name: Build and install
+        id: build_and_install
+        if: ${{ success() }}
+        run: |
+          python -m pip install ./ --user
+      - name: Run Aqt
+        id: run_aqt
+        if: ${{ success() }}
+        run: |
+          import os
+          import subprocess
+          timeout = 6000
+          command_line = ["python", "-m", "aqt", "offline_installer", "--timeout", "{}".format(timeout)]
+          platform = "${{ matrix.os }}"
+          qtver = "${{ matrix.qtver }}"
+          if platform == "windows-latest":
+            args = [qtver, "windows", "win32_mingw49"]
+          elif platform == "macOS-latest":
+            args = [qtver, "mac", "clang_64"]
+          else:
+            args = [qtver, "linux", "gcc_64"]
+          command_line.extend(args)
+          env = os.environ.copy()
+          print("Execute: {}".format(command_line))
+          try:
+            res = subprocess.run(command_line, timeout=timeout, check=True, env=env)
+          except subprocess.CalledProcessError as cpe:
+            exit(cpe.returncode)
+          assert res.returncode == 0
+        shell: python
+        env:
+          QTLOGIN: ${{ secrets.QTLOGIN }}
+          QTPASSWORD: ${{ secrets.QTPASSWORD }}
+      - name: Upload install log
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: Log
+          path: |
+            InstallationLog.txt
+            components.xml
+            dist/installer-changelog
