@@ -9,7 +9,6 @@ All notable changes to this project will be documented in this file.
 
 Added
 -----
-* Support for installation of old versions(#236, #239)
 * Add -c/--config option to specify custom settings.ini(#246)
 * Document for settings.ini configuration parameters(#246)
 

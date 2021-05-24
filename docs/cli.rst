@@ -186,29 +186,6 @@ Tool installation commands
     You may need to looking for version number at  https://download.qt.io/online/qtsdkrepository/
 
 
-Experimental commands
----------------------
-
-.. program::  aqt
-
-.. option:: offline_installer <Qt version> <target OS> <target architecture> --archives [<package>, ...]
-
-    [Experimental, Advanced] install Qt library specified version and target using offline installer.
-    When specify old versions that has already become end-of-life, aqt download
-    the installer from a proper server repository. A command intend to support version from 5.2 to 5.11.
-    User may need to set environment variable QTLOGIN and QTPASSWORD properly or
-    place qtaccount.ini file at proper place.
-
-    User should specify proper package names. Otherwise it may install default
-    packages.
-
-    A feature is considered as very experimental.
-
-.. option:: --archives <list of archives>
-
-    archive packages to install. Expected values will be shown on log message.
-
-
 Command examples
 ================
 
@@ -272,9 +249,3 @@ Example: Show help message
 .. code-block:: bash
 
     aqt help
-
-Example: install old version
-
-.. code-block:: bash
-
-    aqt offline_installer 5.11.2 linux gcc_64
