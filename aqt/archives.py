@@ -22,9 +22,14 @@
 
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
+from semantic_version import Version
+from typing import Callable, Optional, List, Union
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
-from aqt.helper import Settings, getUrl
+
+
+from aqt import helper
+from aqt.helper import Settings, ArchiveId, getUrl
 
 
 class TargetConfig:
@@ -33,6 +38,49 @@ class TargetConfig:
         self.target = target
         self.arch = arch
         self.os_name = os_name
+
+
+# List packages for a particular version of Qt
+# Find all versions
+class QtDownloadListFetcher:
+    """
+    Fetches lists of tools and Qt packages that can be downloaded at downloads.qt.io.
+    Parses html files and filters data based on an argument list.
+    Produces lists of Qt5 versions, Qt6 versions, and lists of tools (openssl, qtifw, etc)
+    """
+
+    def __init__(
+        self,
+        archive_id: ArchiveId,
+        html_fetcher: Callable[[str], str],
+        is_latest: bool = False,
+        filter_minor: Optional[int] = None,
+        # name_filter: Callable[[str], bool],
+        # ver_filter: Optional[Callable[[Version], bool]],
+        # ver_comparator: Optional[Callable[[Version, Version], Version]],
+    ):
+        self.archive_id = archive_id
+        self.is_latest = is_latest
+        self.filter_minor = filter_minor
+        self.html_fetcher = html_fetcher
+        self.logger = getLogger("aqt")
+
+    def run(
+        self, list_extensions_ver: Optional[Version] = None
+    ) -> Union[helper.Versions, helper.Tools, helper.Extensions, Version]:
+        html_doc = self.html_fetcher(self.archive_id.to_url())
+        if list_extensions_ver is not None:
+            return helper.get_extensions_for_version(
+                list_extensions_ver, self.archive_id, html_doc
+            )
+        if self.archive_id.is_tools():
+            return helper.get_tools(html_doc)
+        versions = helper.get_versions_for_minor(
+            self.filter_minor, self.archive_id, html_doc
+        )
+        if self.is_latest:
+            return versions.latest()
+        return versions
 
 
 class QtPackage:

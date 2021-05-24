@@ -20,20 +20,185 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import configparser
+import dataclasses
+import itertools
 import hashlib
 import json
 import logging
 import multiprocessing
 import os
+import re
 import sys
 import xml.etree.ElementTree as ElementTree
-from typing import List, Optional
+from typing import (
+    List,
+    Optional,
+    Dict,
+    Tuple,
+    Iterable,
+    Callable,
+    Generator,
+)
 from urllib.parse import urlparse
 
 import requests
-import requests.adapters
+from requests import RequestException, adapters
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
+from bs4 import BeautifulSoup
+from bs4.element import Tag
+from semantic_version import Version
+
+ALL_EXTENSIONS = (
+    "wasm",
+    "src_doc_examples",
+    "preview",
+    "wasm_preview",
+    "x86_64",
+    "x86",
+    "armv7",
+    "arm64_v8a",
+)
+
+ARCH_BY_HOST_TARGET: Dict[str, Dict[str, Iterable[str]]] = {
+    "linux": {
+        "desktop": ("gcc_64", "wasm_32"),
+        "android": (
+            "android",
+            "android_x86_64",
+            "android_arm64_v8a",
+            "android_x86",
+            "android_armv7",
+        ),
+    },
+    "mac": {
+        "desktop": ("clang_64", "wasm_32"),
+        "android": (
+            "android",
+            "android_x86_64",
+            "android_arm64_v8a",
+            "android_x86",
+            "android_armv7",
+        ),
+        "ios": ("ios",),
+    },
+    "windows": {
+        "desktop": (
+            "win64_msvc2019_64",
+            "win32_msvc2019",
+            "win64_msvc2017_64",
+            "win32_msvc2017",
+            "win64_msvc2015_64",
+            "win32_msvc2015",
+            "win64_mingw81",
+            "win32_mingw81",
+            "win64_mingw73",
+            "win32_mingw73",
+            "win32_mingw53",
+            "wasm_32",
+        ),
+        "winrt": (
+            "win64_msvc2019_winrt_x64",
+            "win64_msvc2019_winrt_x86",
+            "win64_msvc2017_winrt_x64",
+            "win64_msvc2017_winrt_x86",
+            "win64_msvc2019_winrt_armv7",
+            "win64_msvc2017_winrt_armv7",
+        ),
+        "android": (
+            "android",
+            "android_x86_64",
+            "android_arm64_v8a",
+            "android_x86",
+            "android_armv7",
+        ),
+    },
+}
+
+
+@dataclasses.dataclass
+class ArchiveId:
+    category: str  # one of (tools, qt5, qt6)
+    host: str  # one of (windows, mac, linux)
+    target: str  # one of (desktop, android, ios, winrt)
+    extension: str = ""  # one of ALL_EXTENSIONS
+
+    def is_preview(self) -> bool:
+        return "preview" in self.extension if self.extension else False
+
+    def is_qt(self) -> bool:
+        return self.category.startswith("qt")
+
+    def is_tools(self) -> bool:
+        return self.category == "tools"
+
+    def is_no_arch(self) -> bool:
+        """ Returns True if there should be no arch attached to the module names """
+        return self.extension in ("src_doc_examples",)
+
+    def possible_architectures(self) -> Iterable[str]:
+        return ARCH_BY_HOST_TARGET[self.host][self.target]
+
+    def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
+        base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
+            os=self.host,
+            arch="_x86" if self.host == "windows" else "_x64",
+            target=self.target,
+        )
+        if not qt_version_no_dots:
+            return base
+        folder = "{category}_{ver}{ext}/".format(
+            category=self.category,
+            ver=qt_version_no_dots,
+            ext="_" + self.extension if self.extension else "",
+        )
+        return base + folder + file
+
+
+class Versions:
+    def __init__(self, it_of_it: Iterable[Tuple[int, Iterable[Version]]]):
+        self.versions: List[List[Version]] = [
+            list(versions_iterator) for _, versions_iterator in it_of_it
+        ]
+
+    def __str__(self):
+        return "\n".join(
+            " ".join(Versions.stringify_ver(version) for version in minor_list)
+            for minor_list in self.versions
+        )
+
+    def __bool__(self):
+        return len(self.versions) > 0 and len(self.versions[0]) > 0
+
+    def latest(self) -> Optional[Version]:
+        if not self:
+            return None
+        return self.versions[-1][-1]
+
+    @staticmethod
+    def stringify_ver(version: Version) -> str:
+        if version.prerelease:
+            return "{}.{}-preview".format(version.major, version.minor)
+        return str(version)
+
+
+@dataclasses.dataclass
+class Tools:
+    tools: List[str]
+
+    def __str__(self):
+        return "\n".join(self.tools)
+
+    def __bool__(self):
+        return len(self.tools) > 0
+
+
+@dataclasses.dataclass
+class Extensions:
+    exts: List[str]
+
+    def __str__(self):
+        return " ".join(self.exts)
 
 
 def _get_meta(url: str):
@@ -184,6 +349,304 @@ class MyConfigParser(configparser.ConfigParser):
         except Exception:
             result = fallback
         return result
+
+
+def cli_2_semantic_version(qt_ver: Optional[str]) -> Optional[Version]:
+    return None if qt_ver is None else get_semantic_version_with_dots(qt_ver)
+
+
+def get_semantic_version_with_dots(qt_ver: str) -> Version:
+    """Converts a Qt version string with dots (5.X.Y, etc) into a semantic version.
+    If the version ends in `-preview`, the version is treated as a preview release.
+    If the patch value is missing, patch is assumed to be zero.
+    If the version cannot be converted to a Version, a ValueError is raised.
+    """
+    match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)?$", qt_ver)
+    if not match:
+        raise ValueError("Invalid version string '{}'".format(qt_ver))
+    major, minor, end, patch = match.groups()
+    is_preview = end == "-preview"
+    return Version(
+        major=int(major),
+        minor=int(minor),
+        patch=int(patch) if patch else 0,
+        prerelease=("preview",) if is_preview else None,
+    )
+
+
+def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
+    """Converts a Qt version string (596, 512, 5132, etc) into a semantic version.
+    This makes a lot of assumptions based on established patterns:
+    If is_preview is True, the number is interpreted as ver[0].ver[1:], with no patch.
+    If the version is 3 digits, then major, minor, and patch each get 1 digit.
+    If the version is 4 or more digits, then major gets 1 digit, minor gets 2 digits
+    and patch gets all the rest.
+    As of May 2021, the version strings at https://download.qt.io/online/qtsdkrepository
+    conform to this pattern; they are not guaranteed to do so in the future.
+    """
+    if not qt_ver or any(not ch.isdigit() for ch in qt_ver):
+        return None
+    if is_preview:
+        return Version(
+            major=int(qt_ver[:1]),
+            minor=int(qt_ver[1:]),
+            patch=0,
+            prerelease=("preview",),
+        )
+    elif len(qt_ver) >= 4:
+        return Version(
+            major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:])
+        )
+    elif len(qt_ver) == 3:
+        return Version(
+            major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:])
+        )
+    elif len(qt_ver) == 2:
+        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
+    raise ValueError("Invalid version string '{}'".format(qt_ver))
+
+
+def request_http_with_failover(
+    base_urls: List[str], rest_of_url: str, timeout: Tuple[float, float]
+) -> str:
+    """Make an HTTP request, using one or more base urls in case the request fails.
+    If all requests fail, then re-raise the requests.exceptions.RequestException
+    that was raised by the final HTTP request.
+    Any HTTP request that resulted in a status code >= 400 will result in a RequestException.
+    """
+    for i, base_url in enumerate(base_urls):
+        try:
+            url = base_url + "/" + rest_of_url
+            r = requests.get(url, timeout=timeout)
+            r.raise_for_status()
+            return r.text
+        except RequestException as e:
+            # Only raise the exception if all urls are exhausted
+            if i == len(base_urls) - 1:
+                raise e
+
+
+def xml_to_modules(
+    xml_text: str,
+    predicate: Callable[[ElementTree.Element], bool],
+    keys_to_keep: Iterable[str],
+) -> Dict[str, Dict[str, str]]:
+    """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
+    Only report elements that satisfy `predicate(element)`.
+    Only report keys in the list `keys_to_keep`.
+    """
+    try:
+        parsed_xml = ElementTree.fromstring(xml_text)
+    except ElementTree.ParseError:
+        return {}
+    packages = {}
+    for packageupdate in parsed_xml.iter("PackageUpdate"):
+        if predicate and not predicate(packageupdate):
+            continue
+        name = packageupdate.find("Name").text
+        packages[name] = {}
+        for key in keys_to_keep:
+            packages[name][key] = getattr(packageupdate.find(key), "text", None)
+    return packages
+
+
+def has_empty_downloads(element: ElementTree.Element) -> bool:
+    """Returns True if the element has an empty '<DownloadableArchives/>' tag"""
+    downloads = element.find("DownloadableArchives")
+    return downloads is not None and not downloads.text
+
+
+def has_nonempty_downloads(element: ElementTree.Element) -> bool:
+    """Returns True if the element has an empty '<DownloadableArchives/>' tag"""
+    downloads = element.find("DownloadableArchives")
+    return downloads is not None and downloads.text
+
+
+def _iterate_folders(
+    html_doc: str, filter_category: str = ""
+) -> Generator[str, None, None]:
+    def table_row_to_folder(tr: Tag) -> str:
+        try:
+            return tr.find_all("td")[1].a.contents[0].rstrip("/")
+        except (AttributeError, IndexError):
+            return ""
+
+    soup: BeautifulSoup = BeautifulSoup(html_doc, "html.parser")
+    for row in soup.body.table.find_all("tr"):
+        content: str = table_row_to_folder(row)
+        if not content or content == "Parent Directory":
+            continue
+        if content.startswith(filter_category):
+            yield content
+
+
+def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
+    components = folder.split("_", maxsplit=2)
+    ext = "" if len(components) < 3 else components[2]
+    ver = "" if len(components) < 2 else components[1]
+    return get_semantic_version(qt_ver=ver, is_preview="preview" in ext), ext
+
+
+def get_extensions_for_version(
+    desired_version: Version, archive_id: ArchiveId, html_doc: str
+) -> Extensions:
+    return Extensions(
+        exts=list(
+            map(
+                lambda ver_ext: ver_ext[1],
+                filter(
+                    lambda ver_ext: ver_ext[0] == desired_version,
+                    map(
+                        folder_to_version_extension,
+                        _iterate_folders(html_doc, archive_id.category),
+                    ),
+                ),
+            )
+        )
+    )
+
+
+def get_versions_for_minor(
+    minor_ver: Optional[int], archive_id: ArchiveId, html_doc: str
+) -> Versions:
+    def filter_by(ver_ext: Tuple[Optional[Version], str]) -> bool:
+        version, extension = ver_ext
+        return (
+            version
+            and (minor_ver is None or minor_ver == version.minor)
+            and (archive_id.extension == extension)
+        )
+
+    def get_version(ver_ext: Tuple[Version, str]):
+        return ver_ext[0]
+
+    all_versions_extensions = map(
+        folder_to_version_extension, _iterate_folders(html_doc, archive_id.category)
+    )
+    versions = sorted(
+        filter(None, map(get_version, filter(filter_by, all_versions_extensions)))
+    )
+    iterables = itertools.groupby(versions, lambda version: version.minor)
+    return Versions(iterables)
+
+
+def get_tools(html_doc: str) -> Tools:
+    return Tools(tools=list(_iterate_folders(html_doc, "tools")))
+
+
+def get_modules_architectures_for_version(
+    version: Version,
+    archive_id: ArchiveId,
+    http_fetcher: Callable[[str], str],
+) -> Tuple[List[str], List[str]]:
+    patch = "" if version.prerelease or archive_id.is_preview() else str(version.patch)
+    qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
+    # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
+    pattern = re.compile(
+        r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$"
+    )
+
+    def trim_module_prefix(name: str) -> Optional[str]:
+        _match = pattern.match(name)
+        return _match.group(3) if _match else None
+
+    rest_of_url = archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")
+    xml = http_fetcher(rest_of_url)  # raises RequestException
+
+    # We want the names of modules, regardless of architecture:
+    modules = xml_to_modules(
+        xml,
+        predicate=has_nonempty_downloads,
+        keys_to_keep=(),  # Just want names
+    )
+
+    def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
+        module_with_arch = trim_module_prefix(name)
+        if not module_with_arch:
+            return None, None
+        if archive_id.is_no_arch() or "." not in module_with_arch:
+            return module_with_arch, None
+        module, arch = module_with_arch.rsplit(".", 1)
+        return module, arch
+
+    def naive_modules_arches(names: Iterable[str]) -> Tuple[List[str], List[str]]:
+        modules_and_arches, _modules, arches = set(), set(), set()
+        for name in names:
+            # First term could be a module name or an architecture
+            first_term, arch = to_module_arch(name)
+            if first_term:
+                modules_and_arches.add(first_term)
+            if arch:
+                arches.add(arch)
+        for first_term in modules_and_arches:
+            if first_term not in arches:
+                _modules.add(first_term)
+        return sorted(_modules), sorted(arches)
+
+    def modules_and_known_arches(names: Iterable[str]) -> Tuple[List[str], List[str]]:
+        _modules, arches = set(), set()
+        for name in names:
+            first_term, arch = to_module_arch(name)
+            if first_term:
+                if first_term in archive_id.possible_architectures():
+                    arches.add(first_term)
+                else:
+                    _modules.add(first_term)
+            if arch:
+                arches.add(arch)
+        return sorted(_modules), sorted(arches)
+
+    return naive_modules_arches(modules.keys())
+
+
+def list_modules_for_version(
+    version: Version,
+    archive_id: ArchiveId,
+    http_fetcher: Callable[[str], str],
+) -> int:
+    return _list_modules_architectures_for_version(
+        version,
+        archive_id,
+        http_fetcher,
+        lambda mods, arches: mods,
+        "No modules available",
+    )
+
+
+def list_architectures_for_version(
+    version: Version,
+    archive_id: ArchiveId,
+    http_fetcher: Callable[[str], str],
+) -> int:
+    return _list_modules_architectures_for_version(
+        version,
+        archive_id,
+        http_fetcher,
+        lambda mods, arches: arches,
+        "No architectures available",
+    )
+
+
+def _list_modules_architectures_for_version(
+    version: Version,
+    archive_id: ArchiveId,
+    http_fetcher: Callable[[str], str],
+    mux: Callable[[any], List[str]],
+    error_msg_if_empty: str,
+) -> int:
+    logger = logging.getLogger("aqt")
+    try:
+        result = mux(
+            *get_modules_architectures_for_version(version, archive_id, http_fetcher)
+        )
+        if len(result) == 0:
+            logger.error(error_msg_if_empty)
+            return 1
+        print(" ".join(result))
+        return 0
+    except requests.exceptions.RequestException as e:
+        logger.error("HTTP request error: {}".format(e))
+        return 1
 
 
 class Settings(object):

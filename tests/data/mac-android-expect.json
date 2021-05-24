@@ -1,0 +1,66 @@
+{
+  "qt5": {
+    "qt": [
+      "5.9.0 5.9.1 5.9.2 5.9.3 5.9.4 5.9.5 5.9.6 5.9.7 5.9.8 5.9.9",
+      "5.10.0 5.10.1",
+      "5.11.0 5.11.1 5.11.2 5.11.3",
+      "5.12.0 5.12.1 5.12.2 5.12.3 5.12.4 5.12.5 5.12.6 5.12.7 5.12.8 5.12.9 5.12.10",
+      "5.13.0 5.13.1 5.13.2",
+      "5.14.0 5.14.1 5.14.2",
+      "5.15.0 5.15.1 5.15.2"
+    ],
+    "preview": [
+      "5.9-preview",
+      "5.10-preview",
+      "5.11-preview",
+      "5.12-preview",
+      "5.13-preview",
+      "5.14-preview",
+      "5.15-preview"
+    ],
+    "wasm": [],
+    "wasm_preview": [],
+    "src_doc_examples": []
+  },
+  "qt6": {
+    "qt": [
+      "6.0.0 6.0.1 6.0.2 6.0.3",
+      "6.1.0"
+    ],
+    "preview": [
+      "6.0-preview",
+      "6.1-preview"
+    ],
+    "src_doc_examples": [],
+    "x86_64": [
+      "6.0.0 6.0.1 6.0.2 6.0.3",
+      "6.1.0"
+    ],
+    "x86": [
+      "6.0.0 6.0.1 6.0.2 6.0.3",
+      "6.1.0"
+    ],
+    "armv7": [
+      "6.0.0 6.0.1 6.0.2 6.0.3",
+      "6.1.0"
+    ],
+    "arm64_v8a": [
+      "6.0.0 6.0.1 6.0.2 6.0.3",
+      "6.1.0"
+    ]
+  },
+  "tools": [
+    "tools_qt3dstudio_runtime_preview",
+    "tools_qt3dstudio_runtime_240",
+    "tools_qt3dstudio_runtime_230",
+    "tools_qt3dstudio_runtime_220",
+    "tools_qt3dstudio_openglruntime_preview",
+    "tools_qt3dstudio_openglruntime_280_5151",
+    "tools_qt3dstudio_openglruntime_280",
+    "tools_qt3dstudio_openglruntime_270_5150",
+    "tools_qt3dstudio_openglruntime_270",
+    "tools_qt3dstudio_openglruntime_260",
+    "tools_qt3dstudio_openglruntime_250",
+    "tools_qt3dstudio_openglruntime_240"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "modules": [
+    "debug_info",
+    "qtcharts",
+    "qtdatavis3d",
+    "qtlottie",
+    "qtnetworkauth",
+    "qtpurchasing",
+    "qtquick3d",
+    "qtquicktimeline",
+    "qtscript",
+    "qtvirtualkeyboard",
+    "qtwebengine",
+    "qtwebglplugin"
+  ],
+  "architectures": [
+    "win32_mingw81",
+    "win32_msvc2019",
+    "win64_mingw81",
+    "win64_msvc2015_64",
+    "win64_msvc2019_64"
+  ]
+}
