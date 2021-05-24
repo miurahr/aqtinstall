@@ -63,8 +63,6 @@ jobs:
   variables:
     PYTHON_VERSION: '3.8'
     QT_VERSION: 6.1.0
-    QT_MAJOR: qt6   # I think this should be calculated from QT_VERSION
-    QT_MINOR: 1     # Just an arbitrary number for `aqt list` command
     HOST: linux
     TARGET: desktop
     ARCH: gcc_64
@@ -80,8 +78,6 @@ jobs:
   variables:
     PYTHON_VERSION: '3.8'
     QT_VERSION: 5.15.0
-    QT_MAJOR: qt5
-    QT_MINOR: 15
     HOST: linux
     TARGET: desktop
     ARCH: gcc_64
@@ -97,8 +93,6 @@ jobs:
   variables:
     PYTHON_VERSION: '3.8'
     QT_VERSION: 6.1.0
-    QT_MAJOR: qt6
-    QT_MINOR: 0
     HOST: linux
     TARGET: desktop
     TOOL_NAME: src
@@ -113,8 +107,6 @@ jobs:
   variables:
     PYTHON_VERSION: '3.8'
     QT_VERSION: 5.15.0
-    QT_MAJOR: qt5
-    QT_MINOR: 14
     HOST: linux
     TARGET: desktop
     TOOL_NAME: examples
@@ -128,8 +120,6 @@ jobs:
   variables:
     PYTHON_VERSION: '3.8'
     QT_VERSION: 5.15.0
-    QT_MAJOR: qt5
-    QT_MINOR: 13
     HOST: linux
     TARGET: desktop
     TOOL_NAME: doc
