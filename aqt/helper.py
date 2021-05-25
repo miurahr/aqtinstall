@@ -113,7 +113,9 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
                 if exp is not None:
                     if hash.digest() != exp:
                         raise ArchiveDownloadError(
-                            "Download file is corrupted! Check sum error."
+                            "Download file is corrupted! Detect checksum error.\nExpected {}, Actual {}".format(
+                                exp, hash.digest()
+                            )
                         )
             except Exception as e:
                 exc = sys.exc_info()

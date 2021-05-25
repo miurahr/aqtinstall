@@ -1,3 +1,10 @@
+import binascii
+import logging
+import os
+
+import requests
+from requests.models import Response
+
 from aqt import helper
 
 
@@ -47,3 +54,47 @@ def test_settings(tmp_path):
     config = helper.Settings()
     assert config.concurrency == 3
     assert "http://mirror.example.com" in config.blacklist
+
+
+def mocked_iter_content(chunk_size):
+    with open(
+        os.path.join(os.path.dirname(__file__), "data", "windows-5150-update.xml"), "rb"
+    ) as f:
+        data = f.read(chunk_size)
+        while len(data) > 0:
+            yield data
+            data = f.read(chunk_size)
+        return b""
+
+
+def mocked_requests_get(*args, **kwargs):
+    response = Response()
+    response.status_code = 200
+    response.iter_content = mocked_iter_content
+    return response
+
+
+def test_helper_downloadBinary_md5(tmp_path, monkeypatch):
+
+    monkeypatch.setattr(requests.Session, "get", mocked_requests_get)
+
+    expected = binascii.unhexlify("1d41a93e4a585bb01e4518d4af431933")
+    out = tmp_path.joinpath("text.xml")
+    logger = logging.getLogger(__file__)
+    helper.downloadBinaryFile(
+        "http://example.com/test.xml", out, "md5", expected, 60, logger
+    )
+
+
+def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
+
+    monkeypatch.setattr(requests.Session, "get", mocked_requests_get)
+
+    expected = binascii.unhexlify(
+        "07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd"
+    )
+    out = tmp_path.joinpath("text.xml")
+    logger = logging.getLogger(__file__)
+    helper.downloadBinaryFile(
+        "http://example.com/test.xml", out, "sha256", expected, 60, logger
+    )
