@@ -43,20 +43,24 @@ steps:
         MAJORMINOR=${qtversion%.*}
         qtmajor="qt${MAJORMINOR%.*}"
         qtminor=${MAJORMINOR##*.}
+        if [[ $(TARGET) == "android" && $qtmajor == "qt6" ]]; then
+          # In this case, if you don't specify an extension, Updates.xml just shows dependencies
+          ext="--extension armv7"
+        fi
         aqt list $qtmajor $(HOST)                                               # print all targets for host
         aqt list tools $(HOST) $(TARGET)                                        # print all tools for host/target
         aqt list $qtmajor $(HOST) $(TARGET)                                     # print all versions of Qt
-        if [[ "$(TARGET)" == "desktop" && $qtmajor == "qt5" ]]; then
+        if [[ "$(TARGET)" == "desktop" && $qtmajor == "qt5" && $qtminor >= 13 ]]; then
           aqt list $qtmajor $(HOST) $(TARGET) --extension wasm                  # print all wasm versions of Qt5
         else
           ! aqt list $qtmajor $(HOST) $(TARGET) --extension wasm                # Only Qt5 desktop provides wasm extension
         fi
-        aqt list $qtmajor $(HOST) $(TARGET) --filter-minor $qtminor             # print all versions of Qt major/minor
-        aqt list $qtmajor $(HOST) $(TARGET) --filter-minor $qtminor --latest-version  # print latest Qt major/minor
-        aqt list $qtmajor $(HOST) $(TARGET) --filter-minor $qtminor --latest-modules  # print modules for latest major/minor
-        aqt list $qtmajor $(HOST) $(TARGET) --modules $(QT_VERSION)             # print modules for version/host/target
+        aqt list $qtmajor $(HOST) $(TARGET) $ext --filter-minor $qtminor        # print all versions of Qt major/minor
+        aqt list $qtmajor $(HOST) $(TARGET) $ext --filter-minor $qtminor --latest-version  # print latest Qt major/minor
+        aqt list $qtmajor $(HOST) $(TARGET) $ext --filter-minor $qtminor --latest-modules  # print modules for latest major/minor
+        aqt list $qtmajor $(HOST) $(TARGET) $ext --modules $(QT_VERSION)        # print modules for version/host/target
         aqt list $qtmajor $(HOST) $(TARGET) --extensions $(QT_VERSION)          # print choices for --extension flag
-        aqt list $qtmajor $(HOST) $(TARGET) --arch $(QT_VERSION)                # print architectures for version/host/target
+        aqt list $qtmajor $(HOST) $(TARGET) $ext --arch $(QT_VERSION)           # print architectures for version/host/target
       fi
       if [[ "$(SUBCOMMAND)" == "src" ]]; then
         python -m aqt $(SUBCOMMAND) $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
