@@ -191,6 +191,9 @@ class Extensions:
     def __str__(self):
         return " ".join(self.exts)
 
+    def __bool__(self):
+        return len(self.exts) > 0
+
 
 def _get_meta(url: str):
     return requests.get(url + ".meta4")
@@ -479,20 +482,14 @@ def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
 def get_extensions_for_version(
     desired_version: Version, archive_id: ArchiveId, html_doc: str
 ) -> Extensions:
-    return Extensions(
-        exts=list(
-            map(
-                lambda ver_ext: ver_ext[1],
-                filter(
-                    lambda ver_ext: ver_ext[0] == desired_version,
-                    map(
-                        folder_to_version_extension,
-                        _iterate_folders(html_doc, archive_id.category),
-                    ),
-                ),
-            )
-        )
+    versions_extensions = map(
+        folder_to_version_extension, _iterate_folders(html_doc, archive_id.category)
     )
+    filtered = filter(
+        lambda ver_ext: ver_ext[0] == desired_version and ver_ext[1],
+        versions_extensions,
+    )
+    return Extensions(exts=list(map(lambda ver_ext: ver_ext[1], filtered)))
 
 
 def get_versions_for_minor(
