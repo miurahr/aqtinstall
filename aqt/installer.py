@@ -29,20 +29,20 @@ import multiprocessing
 import os
 import platform
 import random
-import requests
 import subprocess
 import time
 from logging import getLogger
 from typing import Optional
 
+import requests
 from packaging.version import Version, parse
 
 import aqt
 from aqt.archives import (
     QtArchives,
+    QtDownloadListFetcher,
     SrcDocExamplesArchives,
     ToolArchives,
-    QtDownloadListFetcher,
 )
 from aqt.exceptions import (
     ArchiveConnectionError,

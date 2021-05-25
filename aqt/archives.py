@@ -22,14 +22,13 @@
 
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
-from semantic_version import Version
 from typing import Callable, Optional, Union
 
-from aqt.exceptions import ArchiveListError, NoPackageFound
-
+from semantic_version import Version
 
 from aqt import helper
-from aqt.helper import Settings, ArchiveId, getUrl
+from aqt.exceptions import ArchiveListError, NoPackageFound
+from aqt.helper import ArchiveId, Settings, getUrl
 
 
 class TargetConfig:

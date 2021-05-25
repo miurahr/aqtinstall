@@ -21,8 +21,8 @@
 
 import configparser
 import dataclasses
-import itertools
 import hashlib
+import itertools
 import json
 import logging
 import multiprocessing
@@ -30,23 +30,15 @@ import os
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
-from typing import (
-    List,
-    Optional,
-    Dict,
-    Tuple,
-    Iterable,
-    Callable,
-    Generator,
-)
+from typing import Callable, Dict, Generator, Iterable, List, Optional, Tuple
 from urllib.parse import urlparse
 
 import requests
-
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from semantic_version import Version
+
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
 ALL_EXTENSIONS = (
     "wasm",

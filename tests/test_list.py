@@ -1,8 +1,8 @@
+import json
 import re
+from pathlib import Path
 
 import pytest
-import json
-from pathlib import Path
 from semantic_version import Version
 
 from aqt import helper
