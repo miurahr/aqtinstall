@@ -29,6 +29,7 @@ import multiprocessing
 import os
 import platform
 import random
+import requests
 import subprocess
 import time
 from logging import getLogger
@@ -37,7 +38,12 @@ from typing import Optional
 from packaging.version import Version, parse
 
 import aqt
-from aqt.archives import PackagesList, QtArchives, SrcDocExamplesArchives, ToolArchives, QtDownloadListFetcher
+from aqt.archives import (
+    QtArchives,
+    SrcDocExamplesArchives,
+    ToolArchives,
+    QtDownloadListFetcher,
+)
 from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
@@ -48,12 +54,12 @@ from aqt.helper import (
     ALL_EXTENSIONS,
     ArchiveId,
     Settings,
-    cli_2_semantic_version,
     downloadBinaryFile,
     getUrl,
     list_architectures_for_version,
     list_modules_for_version,
     request_http_with_failover,
+    to_version,
 )
 from aqt.updater import Updater
 
@@ -465,17 +471,13 @@ class Cli:
 
         try:
             # Version of Qt for which to list packages
-            list_modules_ver: Optional[Version] = cli_2_semantic_version(args.modules)
+            list_modules_ver: Optional[Version] = to_version(args.modules)
 
             # Version of Qt for which to list extensions
-            list_extensions_ver: Optional[Version] = cli_2_semantic_version(
-                args.extensions
-            )
+            list_extensions_ver: Optional[Version] = to_version(args.extensions)
 
             # Version of Qt for which to list architectures
-            list_architectures_ver: Optional[Version] = cli_2_semantic_version(
-                args.arch
-            )
+            list_architectures_ver: Optional[Version] = to_version(args.arch)
         except ValueError as e:
             self.logger.error(e)
             return 1

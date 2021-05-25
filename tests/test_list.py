@@ -7,11 +7,7 @@ from semantic_version import Version
 
 from aqt import helper
 from aqt.archives import QtDownloadListFetcher
-from aqt.helper import (
-    ArchiveId,
-    get_modules_architectures_for_version,
-    request_http_with_failover,
-)
+from aqt.helper import ArchiveId, get_modules_architectures_for_version
 
 MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 

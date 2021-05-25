@@ -42,7 +42,6 @@ from typing import (
 from urllib.parse import urlparse
 
 import requests
-from requests import RequestException, adapters
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 from bs4 import BeautifulSoup
@@ -133,7 +132,7 @@ class ArchiveId:
         return self.category == "tools"
 
     def is_no_arch(self) -> bool:
-        """ Returns True if there should be no arch attached to the module names """
+        """Returns True if there should be no arch attached to the module names"""
         return self.extension in ("src_doc_examples",)
 
     def possible_architectures(self) -> Iterable[str]:
@@ -418,7 +417,7 @@ def request_http_with_failover(
             r = requests.get(url, timeout=timeout)
             r.raise_for_status()
             return r.text
-        except RequestException as e:
+        except requests.exceptions.RequestException as e:
             # Only raise the exception if all urls are exhausted
             if i == len(base_urls) - 1:
                 raise e

@@ -23,7 +23,7 @@
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from semantic_version import Version
-from typing import Callable, Optional, List, Union
+from typing import Callable, Optional, Union
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
 
