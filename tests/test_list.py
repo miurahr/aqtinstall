@@ -94,7 +94,7 @@ def test_list_folders(os_name, target, in_file, expect_out_file):
 def test_list_archives(
     capsys, version: str, extension: str, in_file: str, expect_out_file: str
 ):
-    archive_id = ArchiveId("qt", "windows", "desktop", extension)
+    archive_id = ArchiveId("qt" + version[0], "windows", "desktop", extension)
     _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
     expect = json.loads(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
