@@ -51,61 +51,6 @@ ALL_EXTENSIONS = (
     "arm64_v8a",
 )
 
-ARCH_BY_HOST_TARGET: Dict[str, Dict[str, Iterable[str]]] = {
-    "linux": {
-        "desktop": ("gcc_64", "wasm_32"),
-        "android": (
-            "android",
-            "android_x86_64",
-            "android_arm64_v8a",
-            "android_x86",
-            "android_armv7",
-        ),
-    },
-    "mac": {
-        "desktop": ("clang_64", "wasm_32"),
-        "android": (
-            "android",
-            "android_x86_64",
-            "android_arm64_v8a",
-            "android_x86",
-            "android_armv7",
-        ),
-        "ios": ("ios",),
-    },
-    "windows": {
-        "desktop": (
-            "win64_msvc2019_64",
-            "win32_msvc2019",
-            "win64_msvc2017_64",
-            "win32_msvc2017",
-            "win64_msvc2015_64",
-            "win32_msvc2015",
-            "win64_mingw81",
-            "win32_mingw81",
-            "win64_mingw73",
-            "win32_mingw73",
-            "win32_mingw53",
-            "wasm_32",
-        ),
-        "winrt": (
-            "win64_msvc2019_winrt_x64",
-            "win64_msvc2019_winrt_x86",
-            "win64_msvc2017_winrt_x64",
-            "win64_msvc2017_winrt_x86",
-            "win64_msvc2019_winrt_armv7",
-            "win64_msvc2017_winrt_armv7",
-        ),
-        "android": (
-            "android",
-            "android_x86_64",
-            "android_arm64_v8a",
-            "android_x86",
-            "android_armv7",
-        ),
-    },
-}
-
 
 @dataclasses.dataclass
 class ArchiveId:
@@ -126,9 +71,6 @@ class ArchiveId:
     def is_no_arch(self) -> bool:
         """Returns True if there should be no arch attached to the module names"""
         return self.extension in ("src_doc_examples",)
-
-    def possible_architectures(self) -> Iterable[str]:
-        return ARCH_BY_HOST_TARGET[self.host][self.target]
 
     def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
         base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
@@ -527,6 +469,7 @@ def get_modules_architectures_for_version(
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
 ) -> Tuple[List[str], List[str]]:
+    """Returns [list of modules, list of architectures]"""
     patch = "" if version.prerelease or archive_id.is_preview() else str(version.patch)
     qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
     # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
@@ -534,9 +477,15 @@ def get_modules_architectures_for_version(
         r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$"
     )
 
-    def trim_module_prefix(name: str) -> Optional[str]:
+    def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
         _match = pattern.match(name)
-        return _match.group(3) if _match else None
+        if not _match:
+            return None, None
+        module_with_arch = _match.group(3)
+        if archive_id.is_no_arch() or "." not in module_with_arch:
+            return module_with_arch, None
+        module, arch = module_with_arch.rsplit(".", 1)
+        return module, arch
 
     rest_of_url = archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")
     xml = http_fetcher(rest_of_url)  # raises RequestException
@@ -547,15 +496,6 @@ def get_modules_architectures_for_version(
         predicate=has_nonempty_downloads,
         keys_to_keep=(),  # Just want names
     )
-
-    def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
-        module_with_arch = trim_module_prefix(name)
-        if not module_with_arch:
-            return None, None
-        if archive_id.is_no_arch() or "." not in module_with_arch:
-            return module_with_arch, None
-        module, arch = module_with_arch.rsplit(".", 1)
-        return module, arch
 
     def naive_modules_arches(names: Iterable[str]) -> Tuple[List[str], List[str]]:
         modules_and_arches, _modules, arches = set(), set(), set()
@@ -569,19 +509,6 @@ def get_modules_architectures_for_version(
         for first_term in modules_and_arches:
             if first_term not in arches:
                 _modules.add(first_term)
-        return sorted(_modules), sorted(arches)
-
-    def modules_and_known_arches(names: Iterable[str]) -> Tuple[List[str], List[str]]:
-        _modules, arches = set(), set()
-        for name in names:
-            first_term, arch = to_module_arch(name)
-            if first_term:
-                if first_term in archive_id.possible_architectures():
-                    arches.add(first_term)
-                else:
-                    _modules.add(first_term)
-            if arch:
-                arches.add(arch)
         return sorted(_modules), sorted(arches)
 
     return naive_modules_arches(modules.keys())

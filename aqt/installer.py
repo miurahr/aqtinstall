@@ -751,13 +751,6 @@ class Cli:
             choices=["desktop", "winrt", "android", "ios"],
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
-        # list_parser.add_argument(
-        #     "--targets",
-        #     type=str,
-        #     metavar="VERSION",
-        #     help='Qt version in the format of "5.X.Y". '
-        #     "When set, this lists all the targets available for Qt 5.X.Y on a host.",
-        # )
         list_parser.add_argument(
             "--extension",
             choices=ALL_EXTENSIONS,
