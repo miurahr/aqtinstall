@@ -15,6 +15,7 @@ Contributors, listed alphabetically, are:
 
 * Andrei Yankovich (tools ifw installation)
 * Aurélien Gâteau (patching to qmake, #100)
+* David Dalcino (list command)
 * Gamso (improve parsing of update.xml)
 * Kyle Altendorf (7z binary path search)
 * Martin Delille (Document)
