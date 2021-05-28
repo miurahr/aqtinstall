@@ -9,7 +9,8 @@ MIRROR = "http://mirrors.ocf.berkeley.edu/qt/"
 
 
 class BuildJob:
-    def __init__(self, command, qt_version, host, target, arch, archdir, *, module=None, mirror=None, subarchives=None):
+    def __init__(self, command, qt_version, host, target, arch, archdir,
+                 *, module=None, mirror=None, subarchives=None, list_options=None):
         self.command = command
         self.qt_version = qt_version
         self.host = host
@@ -19,6 +20,7 @@ class BuildJob:
         self.module = module
         self.mirror = mirror
         self.subarchives = subarchives
+        self.list_options = list_options if list_options else {}
 
 
 class PlatformBuildJobs:
@@ -80,11 +82,17 @@ linux_build_jobs.extend(
         BuildJob('src', '6.1.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', subarchives='qt'),
         BuildJob('doc', '6.1.0', 'linux', 'desktop', 'gcc_64', 'gcc_64', subarchives='qtdoc'),
         # test for list commands
-        BuildJob('list', '5.15.2', 'linux', 'desktop', '', ''),
-        BuildJob('list', '6.1.0', 'linux', 'android', '', ''),
+        BuildJob('list', '5.15.2', 'linux', 'desktop', '', '', list_options={
+            'HAS_WASM_EXTENSION': "True",
+            'HAS_EXTENSIONS': "True",
+        }),
+        BuildJob('list', '6.1.0', 'linux', 'android', '', '', list_options={
+            'HAS_EXTENSIONS': "True",
+            'USE_EXTENSION': "armv7",
+        }),
         # tests run on linux but query data about other platforms
-        BuildJob('list', '5.14.1', 'mac', 'ios', '', ''),
-        BuildJob('list', '5.13.1', 'windows', 'winrt', '', ''),
+        BuildJob('list', '5.14.1', 'mac', 'ios', '', '', list_options={}),
+        BuildJob('list', '5.13.1', 'windows', 'winrt', '', '', list_options={}),
     ]
 )
 mac_build_jobs.append(
@@ -134,7 +142,10 @@ for platform_build_job in all_platform_build_jobs:
                 ('ARCHDIR', build_job.archdir),
                 ('MODULE', build_job.module if build_job.module else ''),
                 ("QT_BASE_MIRROR", build_job.mirror if build_job.mirror else ''),
-                ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else '')
+                ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else ''),
+                ("HAS_WASM_EXTENSION", build_job.list_options.get("HAS_WASM_EXTENSION", "False")),
+                ("HAS_EXTENSIONS", build_job.list_options.get("HAS_EXTENSIONS", "False")),
+                ("USE_EXTENSION", build_job.list_options.get("USE_EXTENSION", "None")),
             ]
         )
 

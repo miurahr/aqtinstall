@@ -43,14 +43,14 @@ steps:
         MAJORMINOR=${qtversion%.*}
         qtmajor="qt${MAJORMINOR%.*}"
         qtminor=${MAJORMINOR##*.}
-        if [[ $(TARGET) == "android" && $qtmajor == "qt6" ]]; then
+        if [[ $(USE_EXTENSION) != "None" ]]; then
           # In this case, if you don't specify an extension, Updates.xml just shows dependencies
-          ext="--extension armv7"
+          ext="--extension $(USE_EXTENSION)"
         fi
         aqt list $qtmajor $(HOST)                                               # print all targets for host
         aqt list tools $(HOST) $(TARGET)                                        # print all tools for host/target
         aqt list $qtmajor $(HOST) $(TARGET)                                     # print all versions of Qt
-        if [[ "$(TARGET)" == "desktop" && $qtmajor == "qt5" && $qtminor >= 13 ]]; then
+        if [[ $(HAS_WASM_EXTENSION) == "True" ]]; then
           aqt list $qtmajor $(HOST) $(TARGET) --extension wasm                  # print all wasm versions of Qt5
         else
           ! aqt list $qtmajor $(HOST) $(TARGET) --extension wasm                # Only Qt5 desktop provides wasm extension
@@ -59,7 +59,11 @@ steps:
         aqt list $qtmajor $(HOST) $(TARGET) $ext --filter-minor $qtminor --latest-version  # print latest Qt major/minor
         aqt list $qtmajor $(HOST) $(TARGET) $ext --filter-minor $qtminor --latest-modules  # print modules for latest major/minor
         aqt list $qtmajor $(HOST) $(TARGET) $ext --modules $(QT_VERSION)        # print modules for version/host/target
-        aqt list $qtmajor $(HOST) $(TARGET) --extensions $(QT_VERSION)          # print choices for --extension flag
+        if [[ $(HAS_EXTENSIONS) == "True" ]]; then
+          aqt list $qtmajor $(HOST) $(TARGET) --extensions $(QT_VERSION)        # print choices for --extension flag
+        else
+          ! aqt list $qtmajor $(HOST) $(TARGET) --extensions $(QT_VERSION)
+        fi
         aqt list $qtmajor $(HOST) $(TARGET) $ext --arch $(QT_VERSION)           # print architectures for version/host/target
       fi
       if [[ "$(SUBCOMMAND)" == "src" ]]; then
