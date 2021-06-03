@@ -51,21 +51,16 @@ class QtDownloadListFetcher:
     def __init__(
         self,
         archive_id: ArchiveId,
-        html_fetcher: Callable[[str], str],
-        is_latest: bool = False,
         filter_minor: Optional[int] = None,
-        # name_filter: Callable[[str], bool],
-        # ver_filter: Optional[Callable[[Version], bool]],
-        # ver_comparator: Optional[Callable[[Version, Version], Version]],
+        html_fetcher: Callable[[str], str] = helper.default_http_fetcher,
     ):
         self.archive_id = archive_id
-        self.is_latest = is_latest
         self.filter_minor = filter_minor
         self.html_fetcher = html_fetcher
         self.logger = getLogger("aqt")
 
     def run(
-        self, list_extensions_ver: Optional[Version] = None
+        self, *, list_extensions_ver: Optional[Version] = None, is_latest: bool = False
     ) -> Union[helper.Versions, helper.Tools, helper.Extensions, Version]:
         html_doc = self.html_fetcher(self.archive_id.to_url())
         if list_extensions_ver is not None:
@@ -77,7 +72,7 @@ class QtDownloadListFetcher:
         versions = helper.get_versions_for_minor(
             self.filter_minor, self.archive_id, html_doc
         )
-        if self.is_latest:
+        if is_latest:
             return versions.latest()
         return versions
 

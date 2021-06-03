@@ -38,6 +38,7 @@ import requests
 from packaging.version import Version, parse
 
 import aqt
+from aqt import helper
 from aqt.archives import (
     QtArchives,
     QtDownloadListFetcher,
@@ -469,28 +470,6 @@ class Cli:
     def run_list(self, args: argparse.ArgumentParser) -> int:
         """Print all folders available for a category"""
 
-        try:
-            # Version of Qt for which to list packages
-            list_modules_ver: Optional[Version] = to_version(args.modules)
-
-            # Version of Qt for which to list extensions
-            list_extensions_ver: Optional[Version] = to_version(args.extensions)
-
-            # Version of Qt for which to list architectures
-            list_architectures_ver: Optional[Version] = to_version(args.arch)
-        except ValueError as e:
-            self.logger.error(e)
-            return 1
-
-        # Print packages for only the most recent version of Qt that matches the filters set
-        is_print_latest_modules: bool = args.latest_modules
-
-        # Find all versions of Qt matching filters, and only print the most recent version
-        is_latest_version: bool = args.latest_version
-
-        # Remove from output any versions of Qt that don't have the minor version `filter_minor`
-        filter_minor: Optional[int] = args.filter_minor
-
         if not args.target:
             targets = {
                 "windows": "android desktop winrt",
@@ -500,6 +479,12 @@ class Cli:
             print(targets[args.host])
             return 0
 
+        # Find all versions of Qt matching filters, and only print the most recent version
+        is_latest_version: bool = args.latest_version
+
+        # Remove from output any versions of Qt that don't have the minor version `filter_minor`
+        filter_minor: Optional[int] = args.filter_minor
+
         archive_id = ArchiveId(
             args.category,
             args.host,
@@ -507,54 +492,80 @@ class Cli:
             args.extension if args.extension else "",
         )
 
-        def http_fetcher(rest_of_url: str) -> str:
-            return request_http_with_failover(
-                base_urls=[
-                    self.settings.baseurl,
-                    random.choice(self.settings.fallbacks),
-                ],
-                rest_of_url=rest_of_url,
-                timeout=(
-                    self.settings.connection_timeout,
-                    self.settings.response_timeout,
-                ),
+        fetcher = QtDownloadListFetcher(
+            archive_id=archive_id,
+            filter_minor=filter_minor,
+            html_fetcher=self._default_http_fetcher,
+        )
+
+        def choose_version(qt_ver: Optional[str]) -> Optional[Version]:
+            if not qt_ver:
+                return None
+            if qt_ver == "latest":
+                # Automatically determine the latest version of Qt
+                return fetcher.run(is_latest=True)
+            if archive_id.is_major_ver_mismatch(qt_ver):
+                raise ValueError(
+                    "User has requested {}, but version {} has mismatched major version {}".format(
+                        archive_id.category, qt_ver, qt_ver[0]
+                    )
+                )
+            return to_version(qt_ver)
+
+        try:
+            # Version of Qt for which to list packages
+            list_modules_ver: Optional[Version] = choose_version(args.modules)
+
+            # Version of Qt for which to list extensions
+            list_extensions_ver: Optional[Version] = choose_version(args.extensions)
+
+            # Version of Qt for which to list architectures
+            list_architectures_ver: Optional[Version] = choose_version(args.arch)
+        except ValueError as e:
+            self.logger.error(e)
+            return 1
+        except requests.exceptions.RequestException as e:
+            self.logger.error(
+                "HTTP error when resolving latest version of Qt: {}".format(e)
             )
+            return 1
 
         if list_modules_ver is not None and archive_id.is_qt():
             return list_modules_for_version(
-                list_modules_ver, archive_id=archive_id, http_fetcher=http_fetcher
+                version=list_modules_ver,
+                archive_id=archive_id,
+                http_fetcher=self._default_http_fetcher,
             )
 
         if list_architectures_ver is not None and archive_id.is_qt():
             return list_architectures_for_version(
-                list_architectures_ver, archive_id=archive_id, http_fetcher=http_fetcher
+                version=list_architectures_ver,
+                archive_id=archive_id,
+                http_fetcher=self._default_http_fetcher,
             )
 
-        fetcher = QtDownloadListFetcher(
-            archive_id=archive_id,
-            is_latest=is_latest_version,
-            filter_minor=filter_minor,
-            html_fetcher=http_fetcher,
-        )
-
         try:
-            out = fetcher.run(list_extensions_ver)
-
-            if not out:
-                self.logger.error("No data available")
+            out = fetcher.run(
+                list_extensions_ver=list_extensions_ver, is_latest=is_latest_version
+            )
+            if not list_extensions_ver and not out:
+                self.logger.error("No data available for this request")
                 return 1
-            if is_print_latest_modules:
-                qt_version: Version = out.latest()
-                return list_modules_for_version(
-                    qt_version,
-                    archive_id=archive_id,
-                    http_fetcher=http_fetcher,
+            elif not out:
+                # An empty list of extensions is normal, and is not an error
+                msg = "No extensions available for Qt version {} with {}".format(
+                    list_extensions_ver, archive_id
                 )
-            print(out)
+                self.logger.info(msg)
+            else:
+                print(out)
             return 0
         except requests.exceptions.RequestException as e:
             self.logger.error("HTTP error: {}".format(e))
             return 1
+
+    def _default_http_fetcher(self, rest_of_url: str):
+        return helper.default_http_fetcher(rest_of_url)
 
     def show_help(self, args=None):
         """Display help message"""
@@ -715,10 +726,6 @@ class Cli:
         )
         self._set_common_options(tools_parser)
 
-        # list category host target         # 1. Print all tools/versions of Qt available for category, os, target
-        # list category host --targets Qt_version           # 2. Print all targets for a version of Qt
-        # list category host target --arch Qt_version       # 3. Print all architectures for Qt version, os, target
-        # list category host target --modules Qt_version    # 4. Print all modules for (Qt, OS, target) tuple
         list_parser = subparsers.add_parser(
             "list",
             formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -729,11 +736,13 @@ class Cli:
             "$ aqt list qt5 mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
             "$ aqt list qt5 mac desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
             "$ aqt list qt5 mac desktop --filter-minor 9 --latest-version  # print latest Qt 5.9\n"
-            "$ aqt list qt5 mac desktop --filter-minor 9 --latest-modules  # print modules for latest 5.9\n"
             "$ aqt list qt5 mac desktop --modules 5.12.0                   # print modules for 5.12.0\n"
+            "$ aqt list qt5 mac desktop --filter-minor 9 --modules latest  # print modules for latest 5.9\n"
             "$ aqt list qt5 mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
             "$ aqt list qt5 mac desktop --arch 5.9.9                       "
-            "# print architectures for 5.9.9/mac/desktop\n",
+            "# print architectures for 5.9.9/mac/desktop\n"
+            "$ aqt list qt5 mac desktop --arch latest                      "
+            "# print architectures for the latest Qt 5\n",
         )
         list_parser.set_defaults(func=self.run_list)
         list_parser.add_argument(
@@ -768,34 +777,29 @@ class Cli:
         output_modifier_exclusive_group.add_argument(
             "--modules",
             type=str,
-            metavar="VERSION",
-            help='Qt version in the format of "5.X.Y". '
-            "When set, this lists all the modules available for Qt 5.X.Y.",
+            metavar="(VERSION | latest)",
+            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
+            "When set, this lists all the modules available for either Qt 5.X.Y or the latest version of Qt.",
         )
         output_modifier_exclusive_group.add_argument(
             "--extensions",
             type=str,
-            metavar="VERSION",
-            help='Qt version in the format of "5.X.Y". '
-            "When set, this prints all valid arguments for the `--extension` flag for Qt 5.X.Y with a host/target.",
+            metavar="(VERSION | latest)",
+            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
+            "When set, this prints all valid arguments for the `--extension` flag "
+            "for either Qt 5.X.Y or the latest version of Qt.",
         )
         output_modifier_exclusive_group.add_argument(
             "--arch",
             type=str,
-            metavar="VERSION",
-            help='Qt version in the format of "5.X.Y". '
-            "When set, this prints all architectures available for Qt 5.X.Y with a host/target.",
+            metavar="(VERSION | latest)",
+            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
+            "When set, this prints all architectures available for either Qt 5.X.Y or the latest version of Qt.",
         )
         output_modifier_exclusive_group.add_argument(
             "--latest-version",
             action="store_true",
             help="print only the newest version available",
-        )
-        output_modifier_exclusive_group.add_argument(
-            "--latest-modules",
-            action="store_true",
-            help="list all the modules available for the latest version of Qt, "
-            "or a minor version if the `--filter-minor` flag is set.",
         )
         #
         help_parser = subparsers.add_parser("help")

@@ -22,8 +22,8 @@ List command
 .. program::  aqt
 
 .. option:: list [-h | --help] [--extension <extension>] [--filter-minor <Qt minor version>]
-                [--modules <Qt version> | --extensions <Qt version> | --arch <Qt version> |
-                 --latest-version | --latest-modules]
+                [--modules (<Qt version> | latest) | --extensions (<Qt version> | latest) |
+                 --arch (<Qt version> | latest) | --latest-version ]
                 <category> <target OS> [<target variant>]
 
     list available tools, versions of Qt, targets, extensions, modules, and architectures.
@@ -50,41 +50,35 @@ List command
     Use the `--extensions` flag to list all relevant options for a host/target.
     Incompatible with the `--extensions` flag, but may be combined with any other flag.
 
-.. option:: --extensions <Qt version>
+.. option:: --extensions (<Qt version> | latest)
 
-    Qt version in the format of "5.X.Y". When set, this prints all valid
-    arguments for the `--extension` flag for Qt 5.X.Y with a host/target.
-    Incompatible with all other flags.
+    Qt version in the format of "5.X.Y", or the keyword `latest`.
+    When set, this prints all valid arguments for the `--extension` flag for
+    Qt 5.X.Y, or the latest version of Qt if `latest` is specified.
+    Incompatible with the `--extension` flag.
 
 .. option:: --filter-minor <Qt minor version>
 
     Print versions of Qt that have a particular minor version.
     For example, `aqt list qt5 windows desktop --filter-minor 12` would print
     all versions of Qt for Windows Desktop beginning with 5.12.
-    May be combined with the `--extension` flag and either the
-    `--latest-version` or `--latest-modules` flags.
+    May be combined with any other flag to filter the output of that flag.
 
-.. option:: --modules <Qt version>
+.. option:: --modules (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this lists all the modules
-    available for Qt 5.X.Y with a host/target/extension.
-    May be combined with the `--extension` flag.
+    available for Qt 5.X.Y with a host/target/extension, or the latest version
+    of Qt if `latest` is specified.
 
-.. option:: --arch <Qt version>
+.. option:: --arch (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this prints all architectures
-    available for Qt 5.X.Y with a host/target/extension.
-    May be combined with the `--extension` flag.
+    available for Qt 5.X.Y with a host/target/extension, or the latest version
+    of Qt if `latest` is specified.
 
 .. option:: --latest-version
 
     Print only the newest version available
-    May be combined with the `--extension` and/or `--filter-minor` flags.
-
-.. option:: --latest-modules
-
-    List all the modules available for the latest version of Qt, or a minor
-    version if the `--filter-minor` flag is set.
     May be combined with the `--extension` and/or `--filter-minor` flags.
 
 

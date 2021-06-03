@@ -27,6 +27,7 @@ import json
 import logging
 import multiprocessing
 import os
+import random
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
@@ -72,6 +73,15 @@ class ArchiveId:
         """Returns True if there should be no arch attached to the module names"""
         return self.extension in ("src_doc_examples",)
 
+    def is_major_ver_mismatch(self, qt_version: str) -> bool:
+        """Returns True if the version string specifies a version different from the specified category"""
+        return (
+            self.is_qt()
+            and qt_version
+            and len(qt_version) > 0
+            and qt_version[0] != self.category[-1]
+        )
+
     def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
         base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
@@ -86,6 +96,14 @@ class ArchiveId:
             ext="_" + self.extension if self.extension else "",
         )
         return base + folder + file
+
+    def __str__(self) -> str:
+        return "{cat}/{host}/{target}{ext}".format(
+            cat=self.category,
+            host=self.host,
+            target=self.target,
+            ext="" if not self.extension else "/" + self.extension,
+        )
 
 
 class Versions:
@@ -360,6 +378,15 @@ def request_http_with_failover(
             # Only raise the exception if all urls are exhausted
             if i == len(base_urls) - 1:
                 raise e
+
+
+def default_http_fetcher(rest_of_url: str) -> str:
+    settings = Settings()  # Borg/Singleton ensures we get the right settings
+    return request_http_with_failover(
+        base_urls=[settings.baseurl, random.choice(settings.fallbacks)],
+        rest_of_url=rest_of_url,
+        timeout=(settings.connection_timeout, settings.response_timeout),
+    )
 
 
 def xml_to_modules(
