@@ -59,7 +59,6 @@ from aqt.helper import (
     getUrl,
     list_architectures_for_version,
     list_modules_for_version,
-    request_http_with_failover,
     to_version,
 )
 from aqt.updater import Updater
