@@ -38,8 +38,8 @@ class Updater:
         idx = data.find(key)
         if idx < 0:
             return
-        assert len(newpath) < 256, "Qt Prefix path is too long(255)."
-        data = data[:idx] + key + newpath + data[idx + len(key) + len(newpath) :]
+        assert len(key) + len(newpath) < 256, "Qt Prefix path is too long(255)."
+        data = data[:idx] + key + newpath + bytearray(256 - (len(key) + len(newpath))) + data[idx + 256 :]
         file.write_bytes(data)
         os.chmod(str(file), st.st_mode)
 
