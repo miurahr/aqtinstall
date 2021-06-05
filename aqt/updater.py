@@ -36,10 +36,10 @@ class Updater:
         st = file.stat()
         data = file.read_bytes()
         idx = data.find(key)
-        if idx > 0:
+        if idx < 0:
             return
         assert len(newpath) < 256, "Qt Prefix path is too long(255)."
-        data = data[:idx] + key + newpath + data[idx + len(newpath) :]
+        data = data[:idx] + key + newpath + data[idx + len(key) + len(newpath) :]
         file.write_bytes(data)
         os.chmod(str(file), st.st_mode)
 
