@@ -9,7 +9,8 @@ MIRROR = "http://mirrors.ocf.berkeley.edu/qt/"
 
 
 class BuildJob:
-    def __init__(self, command, qt_version, host, target, arch, archdir, *, module=None, mirror=None, subarchives=None):
+    def __init__(self, command, qt_version, host, target, arch, archdir, *,
+                 module=None, mirror=None, subarchives=None, output_dir=None):
         self.command = command
         self.qt_version = qt_version
         self.host = host
@@ -19,6 +20,7 @@ class BuildJob:
         self.module = module
         self.mirror = mirror
         self.subarchives = subarchives
+        self.output_dir = output_dir
 
 
 class PlatformBuildJobs:
@@ -108,6 +110,19 @@ linux_build_jobs.extend(
     ]
 )
 
+# Test binary patch of qmake
+linux_build_jobs.extend(
+    [
+        # New output dir is shorter than the default value; qmake could fail to
+        # locate prefix dir if the value is patched wrong
+        BuildJob('install', '5.12.11', 'linux', 'desktop', 'gcc_64', 'gcc_64', output_dir="/t/Q"),
+        # New output dir is longer than the default value.
+        # This case is meant to work without any bugfix; if this fails, the test is setup wrong
+        BuildJob('install', '5.12.11', 'linux', 'desktop', 'gcc_64', 'gcc_64',
+                 output_dir="/some/super/long/arbitrary/path/to" * 5),
+    ]
+)
+
 matrices = {}
 
 for platform_build_job in all_platform_build_jobs:
@@ -119,6 +134,8 @@ for platform_build_job in all_platform_build_jobs:
             key = "{} ({})".format(key, build_job.module)
         if build_job.subarchives:
             key = "{} ({})".format(key, build_job.subarchives)
+        if build_job.output_dir:
+            key = "{} ({})".format(key, build_job.output_dir)
         matrix_dictionary[key] = collections.OrderedDict(
             [
                 ('PYTHON_VERSION', python_version),
@@ -130,7 +147,16 @@ for platform_build_job in all_platform_build_jobs:
                 ('ARCHDIR', build_job.archdir),
                 ('MODULE', build_job.module if build_job.module else ''),
                 ("QT_BASE_MIRROR", build_job.mirror if build_job.mirror else ''),
-                ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else '')
+                ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else ''),
+                ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ''),
+                ("QT_BINDIR", "{0}/{1.qt_version}/{1.archdir}/bin".format(
+                    "$(Build.BinariesDirectory)/Qt" if not build_job.output_dir else build_job.output_dir,
+                    build_job,
+                )),
+                ("WIN_QT_BINDIR", "{0}\\{1.qt_version}\\{1.archdir}\\bin".format(
+                    "$(Build.BinariesDirectory)\\Qt" if not build_job.output_dir else build_job.output_dir,
+                    build_job,
+                )),
             ]
         )
 

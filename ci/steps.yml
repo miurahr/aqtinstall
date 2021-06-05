@@ -12,7 +12,7 @@ steps:
   ## we insert sleep in random duration < 30sec to reduce
   ## download server load.
   - bash: |
-      set -e
+      set -ex
       number=$RANDOM
       let "number %= 30"
       sleep $number
@@ -26,6 +26,11 @@ steps:
         if [[ "$(MODULE)" != "" ]]; then
           opt+=" -m $(MODULE)"
         fi
+        if [[ "$(OUTPUT_DIR)" != "" ]]; then
+          opt+=" --outputdir $(OUTPUT_DIR)"
+          sudo mkdir -p "$(OUTPUT_DIR)"
+          sudo chown $(whoami) "$(OUTPUT_DIR)"
+        fi
         if [[ "$(SUBARCHIVES)" != "" ]]; then
           opt+=" --archives $(SUBARCHIVES)"
         fi
@@ -36,6 +41,26 @@ steps:
           else
             python -m aqt install $(QT_VERSION) $(HOST) desktop --archives qtbase
           fi
+        fi
+        if [[ "$(OUTPUT_DIR)" != "" ]]; then
+          # Use 'strings' to read binary
+          echo "Verify patched value of qt_prfxpath"
+          [[ "$(strings $(QT_BINDIR)/qmake | grep qt_prfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+          echo "Verify patched value of qt_epfxpath"
+          [[ "$(strings $(QT_BINDIR)/qmake | grep qt_epfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+          echo "Verify patched value of qt_hpfxpath"
+          [[ "$(strings $(QT_BINDIR)/qmake | grep qt_hpfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+
+          # Use 'qmake -query' to check paths
+          echo "Hide qt.conf so it doesn't interfere with test"
+          mv $(QT_BINDIR)/qt.conf $(QT_BINDIR)/_qt.conf
+          #export PATH=$(QT_BINDIR):$PATH
+          echo "Require that qt_epfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
+          [[ $($(QT_BINDIR)/qmake -query QT_INSTALL_PREFIX) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+          echo "Require that qt_prfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
+          [[ $($(QT_BINDIR)/qmake -query QT_INSTALL_PREFIX/dev) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+          echo "Require that qt_hpfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
+          [[ $($(QT_BINDIR)/qmake -query QT_HOST_PREFIX) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
         fi
       fi
       if [[ "$(SUBCOMMAND)" == "list" ]]; then
@@ -55,7 +80,7 @@ steps:
   ##----------------------------------------------------
   # for Android target
   - bash: |
-      set -e
+      set -ex
       if [[ "$(Agent.OS)" == "Linux" ]]; then
         wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
         unzip android-ndk-r21e-linux-x86_64.zip
@@ -67,7 +92,7 @@ steps:
       export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r21e
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
-      export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
+      export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/accelbubble
       make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
@@ -105,7 +130,7 @@ steps:
       } else {
         Write-Host '##vso[task.setvariable variable=VSVER]2015'
       }
-      cd $(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin
+      cd $(WIN_QT_BINDIR)
       Invoke-WebRequest -Uri https://mirrors.ocf.berkeley.edu/qt/official_releases/jom/jom.zip -OutFile jom.zip
       unzip jom.zip
     condition: eq( variables['Agent.OS'], 'Windows_NT')
@@ -113,9 +138,10 @@ steps:
 
   # When no modules
   - script: |
+      set -ex
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/helloworld.7z)
-      export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
+      export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/helloworld
       make
     condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''), eq(variables['SUBCOMMAND'], 'install'))
@@ -124,7 +150,7 @@ steps:
   - powershell: |
       if ( $env:TOOLCHAIN -eq 'MSVC' ) {
         Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-        $env:Path += ";$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin"
+        $env:Path += ";$(WIN_QT_BINDIR)"
         mkdir $(Build.BinariesDirectory)\tests
         cd $(Build.BinariesDirectory)\tests
         7z x $(Build.SourcesDirectory)\ci\helloworld.7z
@@ -139,7 +165,7 @@ steps:
           python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw 8.1.0-1-202004170606 qt.tools.win32_mingw810
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_32\bin" + $env:Path, "Machine")
         }
-        $env:Path = "$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin;$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin;" + $env:Path
+        $env:Path = "$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin;$(WIN_QT_BINDIR);" + $env:Path
         mkdir $(Build.BinariesDirectory)\tests
         cd $(Build.BinariesDirectory)\tests
         7z x $(Build.SourcesDirectory)\ci\helloworld.7z
@@ -151,7 +177,7 @@ steps:
     displayName: build test with qmake w/o extra module
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-      $env:Path += ";$(Build.BinariesDirectory)\Qt\$(QT_VERSION)\$(ARCHDIR)\bin"
+      $env:Path += ";$(WIN_QT_BINDIR)"
       echo Add Qt to PATH: $env:PATH
       mkdir $(Build.BinariesDirectory)/tests
       cd $(Build.BinariesDirectory)/tests
@@ -162,9 +188,10 @@ steps:
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''), ne(variables['VSVER'], '2019'))
     displayName: build test with qmake with MSVC with extra module
   - bash: |
+      set -ex
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
-      export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
+      export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/redditclient
       make
     condition: and(eq( variables['TARGET'], 'desktop'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
@@ -173,6 +200,7 @@ steps:
   ##----------------------------------------------------
   # wasm_32 on linux and mac
   - script: |
+      set -ex
       git clone https://github.com/emscripten-core/emsdk.git
       cd emsdk
       ./emsdk install sdk-fastcomp-1.38.27-64bit
@@ -180,7 +208,7 @@ steps:
       source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/openglwindow.7z)
-      export PATH=$(Build.BinariesDirectory)/Qt/$(QT_VERSION)/$(ARCHDIR)/bin:$PATH
+      export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/openglwindow
       make
     workingDirectory: $(Build.BinariesDirectory)
