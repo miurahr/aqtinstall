@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from semantic_version import Version
 
-from aqt import helper, installer
+from aqt import archives, helper, installer
 from aqt.archives import QtDownloadListFetcher
 from aqt.helper import ArchiveId, get_modules_architectures_for_version
 
@@ -55,8 +55,10 @@ def test_list_folders(os_name, target, in_file, expect_out_file):
                 assert str(out) == "\n".join(expected_output)
 
             # Filter for the latest version only
-            out = QtDownloadListFetcher(archive_id, html_fetcher=html_fetcher).run(
-                is_latest=True
+            out = (
+                QtDownloadListFetcher(archive_id, html_fetcher=html_fetcher)
+                .run()
+                .latest()
             )
             if len(expected_output) == 0:
                 assert not out
@@ -70,9 +72,13 @@ def test_list_folders(os_name, target, in_file, expect_out_file):
                 minor = int(MINOR_REGEX.search(row).group(1))
 
                 # Find the latest version for a particular minor version
-                out = QtDownloadListFetcher(
-                    archive_id, html_fetcher=html_fetcher, filter_minor=minor
-                ).run(is_latest=True)
+                out = (
+                    QtDownloadListFetcher(
+                        archive_id, html_fetcher=html_fetcher, filter_minor=minor
+                    )
+                    .run()
+                    .latest()
+                )
                 assert helper.Versions.stringify_ver(out) == row.split(" ")[-1]
 
                 # Find all versions for a particular minor version
@@ -110,9 +116,9 @@ def test_list_architectures_and_modules(
     modules, arches = get_modules_architectures_for_version(
         Version(version), archive_id, http_fetcher
     )
-    print(" ".join(arches))
-    assert modules == expect["modules"]
-    assert arches == expect["architectures"]
+    print(arches)
+    assert modules.strings == expect["modules"]
+    assert arches.strings == expect["architectures"]
 
 
 @pytest.mark.parametrize(
@@ -146,7 +152,7 @@ def test_list_cli(
     htmlfile,
     htmlexpect,
 ):
-    def _mock(self, rest_of_url: str):
+    def _mock(rest_of_url: str) -> str:
         in_file = xmlfile if rest_of_url.endswith("Updates.xml") else htmlfile
         text = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
         if not rest_of_url.endswith("Updates.xml"):
@@ -160,7 +166,7 @@ def test_list_cli(
         ver_to_replace = ver.replace(".", "")
         return text.replace(ver_to_replace, desired_version)
 
-    monkeypatch.setattr(installer.Cli, "_default_http_fetcher", _mock)
+    monkeypatch.setattr(archives.ListCommand, "_default_http_fetcher", _mock)
 
     expected_modules_arches = json.loads(
         (Path(__file__).parent / "data" / xmlexpect).read_text("utf-8")

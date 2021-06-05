@@ -39,7 +39,7 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from semantic_version import Version
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
 
 ALL_EXTENSIONS = (
     "wasm",
@@ -141,18 +141,18 @@ class Tools:
         return "\n".join(self.tools)
 
     def __bool__(self):
-        return len(self.tools) > 0
+        return len(self.tools) > 0 and len(self.tools[0]) > 0
 
 
 @dataclasses.dataclass
-class Extensions:
-    exts: List[str]
+class ListOfStr:
+    strings: List[str]
 
     def __str__(self):
-        return " ".join(self.exts)
+        return " ".join(self.strings)
 
     def __bool__(self):
-        return len(self.exts) > 0
+        return len(self.strings) > 0 and len(self.strings[0]) > 0
 
 
 def _get_meta(url: str):
@@ -307,17 +307,15 @@ class MyConfigParser(configparser.ConfigParser):
         return result
 
 
-def to_version(qt_ver: Optional[str]) -> Optional[Version]:
+def to_version(qt_ver: str) -> Version:
     """Converts a Qt version string with dots (5.X.Y, etc) into a semantic version.
     If the version ends in `-preview`, the version is treated as a preview release.
     If the patch value is missing, patch is assumed to be zero.
-    If the version cannot be converted to a Version, a ValueError is raised.
+    If the version cannot be converted to a Version, a CliInputError is raised.
     """
-    if not qt_ver:
-        return None
     match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)?$", qt_ver)
     if not match:
-        raise ValueError("Invalid version string '{}'".format(qt_ver))
+        raise CliInputError("Invalid version string '{}'".format(qt_ver))
     major, minor, end, patch = match.groups()
     is_preview = end == "-preview"
     return Version(
@@ -452,7 +450,7 @@ def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
 
 def get_extensions_for_version(
     desired_version: Version, archive_id: ArchiveId, html_doc: str
-) -> Extensions:
+) -> ListOfStr:
     versions_extensions = map(
         folder_to_version_extension, _iterate_folders(html_doc, archive_id.category)
     )
@@ -460,7 +458,7 @@ def get_extensions_for_version(
         lambda ver_ext: ver_ext[0] == desired_version and ver_ext[1],
         versions_extensions,
     )
-    return Extensions(exts=list(map(lambda ver_ext: ver_ext[1], filtered)))
+    return ListOfStr(strings=list(map(lambda ver_ext: ver_ext[1], filtered)))
 
 
 def get_versions_for_minor(
@@ -495,7 +493,7 @@ def get_modules_architectures_for_version(
     version: Version,
     archive_id: ArchiveId,
     http_fetcher: Callable[[str], str],
-) -> Tuple[List[str], List[str]]:
+) -> Tuple[ListOfStr, ListOfStr]:
     """Returns [list of modules, list of architectures]"""
     patch = "" if version.prerelease or archive_id.is_preview() else str(version.patch)
     qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
@@ -524,7 +522,7 @@ def get_modules_architectures_for_version(
         keys_to_keep=(),  # Just want names
     )
 
-    def naive_modules_arches(names: Iterable[str]) -> Tuple[List[str], List[str]]:
+    def naive_modules_arches(names: Iterable[str]) -> Tuple[ListOfStr, ListOfStr]:
         modules_and_arches, _modules, arches = set(), set(), set()
         for name in names:
             # First term could be a module name or an architecture
@@ -536,7 +534,7 @@ def get_modules_architectures_for_version(
         for first_term in modules_and_arches:
             if first_term not in arches:
                 _modules.add(first_term)
-        return sorted(_modules), sorted(arches)
+        return ListOfStr(strings=sorted(_modules)), ListOfStr(strings=sorted(arches))
 
     return naive_modules_arches(modules.keys())
 

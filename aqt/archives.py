@@ -19,15 +19,15 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 import xml.etree.ElementTree as ElementTree
+from functools import reduce
 from logging import getLogger
-from typing import Callable, Optional, Union
+from typing import Callable, List, Optional, Union
 
 from semantic_version import Version
 
 from aqt import helper
-from aqt.exceptions import ArchiveListError, NoPackageFound
+from aqt.exceptions import ArchiveListError, CliInputError, NoPackageFound
 from aqt.helper import ArchiveId, Settings, getUrl
 
 
@@ -60,8 +60,8 @@ class QtDownloadListFetcher:
         self.logger = getLogger("aqt")
 
     def run(
-        self, *, list_extensions_ver: Optional[Version] = None, is_latest: bool = False
-    ) -> Union[helper.Versions, helper.Tools, helper.Extensions, Version]:
+        self, *, list_extensions_ver: Optional[Version] = None
+    ) -> Union[helper.Versions, helper.Tools, helper.ListOfStr]:
         html_doc = self.html_fetcher(self.archive_id.to_url())
         if list_extensions_ver is not None:
             return helper.get_extensions_for_version(
@@ -72,9 +72,136 @@ class QtDownloadListFetcher:
         versions = helper.get_versions_for_minor(
             self.filter_minor, self.archive_id, html_doc
         )
-        if is_latest:
-            return versions.latest()
         return versions
+
+
+class ListCommand:
+    """Encapsulate all parts of the `aqt list` command"""
+
+    def __init__(
+        self,
+        archive_id: ArchiveId,
+        filter_minor: Optional[int],
+        is_latest_version: bool,
+        modules_ver: Optional[str],
+        extensions_ver: Optional[str],
+        architectures_ver: Optional[str],
+        http_fetcher: Optional[Callable[[str], str]] = None,
+    ):
+        """
+        Construct ListCommand.
+        Raises `CliInputError` for invalid Qt versions, at time of construction.
+        @param filter_minor         When set, the ListCommand will filter out all versions of
+                                    Qt that don't match this minor version.
+        @param is_latest_version    When True, the ListCommand will find all versions of Qt
+                                    matching filters, and only print the most recent version
+        @param modules_ver          Version of Qt for which to list modules
+        @param extensions_ver       Version of Qt for which to list extensions
+        @param architectures_ver    Version of Qt for which to list architectures
+        @param http_fetcher         Function to use to fetch documents via http
+        """
+        self.http_fetcher = (
+            http_fetcher if http_fetcher else ListCommand._default_http_fetcher
+        )
+        self.archive_id = archive_id
+        self.filter_minor = filter_minor
+
+        def determine_action() -> Callable[
+            [], Union[helper.Versions, helper.Tools, helper.ListOfStr, Version]
+        ]:
+            """Translate args into the actual command to be run"""
+            if is_latest_version:
+                return self.get_latest_version
+
+            version: Optional[str] = reduce(
+                lambda x, y: x if x else y,
+                (modules_ver, extensions_ver, architectures_ver),
+                None,
+            )
+            if version:
+                if self.archive_id.is_major_ver_mismatch(version):
+                    msg = "Major version mismatch between {} and {}".format(
+                        self.archive_id.category, version
+                    )
+                    raise CliInputError(msg)
+                get_ver = self._transform_qt_ver_with_dots(version)
+
+                if modules_ver:
+                    return lambda: self.fetch_modules(get_ver)
+                elif extensions_ver:
+                    return lambda: self.fetch_extensions(get_ver)
+                elif architectures_ver:
+                    return lambda: self.fetch_arches(get_ver)
+                else:
+                    assert False, "This branch should be unreachable"
+
+            return self.list_all_versions
+
+        self._action = determine_action()
+        self.logger = getLogger("aqt")
+
+    def run(self) -> int:
+        try:
+            output = self._action()
+            if not output:
+                self.logger.info("No data available for this request.")
+                return 1
+            print(str(output))
+            return 0
+        except Exception as e:
+            self.logger.error("{}".format(e))
+            return 1
+
+    def list_all_versions(self) -> helper.Versions:
+        return QtDownloadListFetcher(
+            archive_id=self.archive_id,
+            filter_minor=self.filter_minor,
+            html_fetcher=self.http_fetcher,
+        ).run()
+
+    def get_latest_version(self) -> Version:
+        return self.list_all_versions().latest()
+
+    def fetch_modules(self, get_version: Callable[[], Version]) -> helper.ListOfStr:
+        return helper.get_modules_architectures_for_version(
+            version=get_version(),
+            archive_id=self.archive_id,
+            http_fetcher=self.http_fetcher,
+        )[0]
+
+    def fetch_arches(self, get_version: Callable[[], Version]) -> helper.ListOfStr:
+        return helper.get_modules_architectures_for_version(
+            version=get_version(),
+            archive_id=self.archive_id,
+            http_fetcher=self.http_fetcher,
+        )[1]
+
+    def fetch_extensions(self, get_version: Callable[[], Version]) -> helper.ListOfStr:
+        return QtDownloadListFetcher(
+            archive_id=self.archive_id,
+            filter_minor=self.filter_minor,
+            html_fetcher=self.http_fetcher,
+        ).run(list_extensions_ver=get_version())
+
+    def _transform_qt_ver_with_dots(self, qt_ver: str) -> Callable[[], Version]:
+        """
+        Returns a function that returns a semantic version.
+        This allows lazy-evaluation, in the case that qt_ver is the string `latest`.
+        Otherwise, if qt_ver is not a valid semantic version, CliInputError will be
+        raised immediately.
+
+        @param qt_ver   Either the literal string `latest`, or a semantic version
+                        with each part separated with dots.
+        """
+        assert qt_ver
+        if qt_ver == "latest":
+            return self.get_latest_version
+        version = helper.to_version(qt_ver)
+        return lambda: version
+
+    @staticmethod
+    def _default_http_fetcher(rest_of_url: str):
+        return helper.default_http_fetcher(rest_of_url)
 
 
 class QtPackage:
