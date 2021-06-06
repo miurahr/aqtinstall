@@ -104,6 +104,16 @@ class Updater:
                 key=b"qt_prfxpath=",
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
+            self._patch_binfile(
+                self.qmake_path,
+                key=b"qt_epfxpath=",
+                newpath=bytes(str(self.prefix), "UTF-8"),
+            )
+            self._patch_binfile(
+                self.qmake_path,
+                key=b"qt_hpfxpath=",
+                newpath=bytes(str(self.prefix), "UTF-8"),
+            )
 
     def patch_qmake_script(self, base_dir, qt_version, os_name):
         if os_name == "linux":
