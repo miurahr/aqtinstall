@@ -39,7 +39,10 @@ class Updater:
         if idx < 0:
             return
         assert len(newpath) < 256, "Qt Prefix path is too long(255)."
-        data = data[:idx] + key + newpath + data[idx + len(key) + len(newpath) :]
+        oldlen = data[idx + len(key) :].find(b"\0")
+        assert oldlen >= 0
+        value = newpath + b"\0" * (oldlen - len(newpath))
+        data = data[: idx + len(key)] + value + data[idx + len(key) + len(value) :]
         file.write_bytes(data)
         os.chmod(str(file), st.st_mode)
 
@@ -96,6 +99,16 @@ class Updater:
             self._patch_binfile(
                 self.qmake_path,
                 key=b"qt_prfxpath=",
+                newpath=bytes(str(self.prefix), "UTF-8"),
+            )
+            self._patch_binfile(
+                self.qmake_path,
+                key=b"qt_epfxpath=",
+                newpath=bytes(str(self.prefix), "UTF-8"),
+            )
+            self._patch_binfile(
+                self.qmake_path,
+                key=b"qt_hpfxpath=",
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
 
