@@ -11,6 +11,7 @@ Added
 -----
 * Add -c/--config option to specify custom settings.ini(#246)
 * Document for settings.ini configuration parameters(#246)
+* CI: Add more blacklist mirrors
 
 Changed
 -------
@@ -19,9 +20,11 @@ Changed
 * Refactoring network connection code, consolidated to helper.py(#244)
 * Refactoring exceptions, introduce exceptions.py(#244)
 * Update known Qt versions combinations.(#243)
+* CI: changes azure pipelines test scripts(#250)
 
 Fixed
 -----
+* Fix patching qmake(#259)
 * Prettify help message format(#237)
 * CI: fix check workflow(#248)
 * CI: fix error on Azure/Windows(connection error)(#246)
