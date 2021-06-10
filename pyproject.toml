@@ -8,3 +8,6 @@ local_scheme = "no-local-version"
 [tool.black]
 line-length = 88
 target-version = ['py38']
+
+[tool.check-manifest]
+ignore = ["aqt/version.py","azure-pipelines.yml","ci/*"]
