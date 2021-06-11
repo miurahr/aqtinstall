@@ -1,4 +1,5 @@
 build
+aqt/version.py
 dist
 venv
 *.pyc
@@ -10,3 +11,5 @@ __pycache__
 _build
 ci/*.matrix.gen.yml
 docs/_build
+aqtinstall.log
+

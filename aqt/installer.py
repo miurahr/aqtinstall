@@ -478,7 +478,7 @@ class Cli:
         """Display help message"""
         self.parser.print_help()
 
-    def show_aqt_version(self):
+    def show_aqt_version(self, args=None):
         """Display version information"""
         py_version = platform.python_version()
         py_impl = platform.python_implementation()
@@ -639,6 +639,9 @@ class Cli:
         #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
+        #
+        version_parser = subparsers.add_parser("version")
+        version_parser.set_defaults(func=self.show_aqt_version)
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
