@@ -85,8 +85,7 @@ class PackagesList:
         if self.version.major == 6 and self.target == "android":
             arch_ext = ["_armv7/", "_x86/", "_x86_64/", "_arm64_v8a/"]
         elif (
-            self.version.major == 5
-            and self.version >= Version("5.13.0")
+            self.version in SimpleSpec(">=5.13.0,<6.0")
             and self.target == "desktop"
         ):
             arch_ext = ["/", "_wasm/"]
@@ -414,7 +413,7 @@ class ToolArchives(QtArchives):
                 if not full_version.base_version == self.version.base_version:
                     self.logger.warning(
                         "Base Version of {} is differed from requested version {} -- skip.".format(
-                            named_version, self.version.public
+                            named_version, self.version
                         )
                     )
                     continue

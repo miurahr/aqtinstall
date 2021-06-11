@@ -33,7 +33,7 @@ import subprocess
 import time
 from logging import getLogger
 
-from semantic_version import Version
+from semantic_version import SimpleSpec, Version
 from texttable import Texttable
 
 import aqt
