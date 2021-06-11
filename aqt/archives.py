@@ -81,19 +81,15 @@ class PackagesList:
         # Get packages index
         if self.version.major == 6 and self.target == "android":
             arch_ext = ["_armv7/", "_x86/", "_x86_64/", "_arm64_v8a/"]
-        elif (
-            self.version in SimpleSpec(">=5.13.0,<6.0")
-            and self.target == "desktop"
-        ):
+        elif self.version in SimpleSpec(">=5.13.0,<6.0") and self.target == "desktop":
             arch_ext = ["/", "_wasm/"]
         else:
             arch_ext = ["/"]
         for ext in arch_ext:
-            archive_path = "{0}{1}{2}/qt{3}_{4}{5}{6}{7}".format(
+            archive_path = "{0}{1}{2}/qt{3}_{3}{4}{5}{6}".format(
                 self.os_name,
                 "_x86/" if self.os_name == "windows" else "_x64/",
                 self.target,
-                self.version.major,
                 self.version.major,
                 self.version.minor,
                 self.version.patch,
@@ -161,8 +157,7 @@ class QtArchives:
         else:
             for m in modules if modules is not None else []:
                 self.mod_list.append(
-                    "qt.qt{0}.{1}{2}{3}.{4}.{5}".format(
-                        self.version.major,
+                    "qt.qt{0}.{0}{1}{2}.{3}.{4}".format(
                         self.version.major,
                         self.version.minor,
                         self.version.patch,
@@ -192,11 +187,10 @@ class QtArchives:
             arch_ext = "{}".format(self.arch[7:])
         else:
             arch_ext = ""
-        archive_path = "{0}{1}{2}/qt{3}_{4}{5}{6}{7}/".format(
+        archive_path = "{0}{1}{2}/qt{3}_{3}{4}{5}{6}/".format(
             self.os_name,
             "_x86/" if self.os_name == "windows" else "_x64/",
             self.target,
-            self.version.major,
             self.version.major,
             self.version.minor,
             self.version.patch,
@@ -206,8 +200,7 @@ class QtArchives:
         archive_url = "{0}{1}".format(self.base, archive_path)
         target_packages = []
         target_packages.append(
-            "qt.qt{0}.{1}{2}{3}.{4}".format(
-                self.version.major,
+            "qt.qt{0}.{0}{1}{2}.{3}".format(
                 self.version.major,
                 self.version.minor,
                 self.version.patch,
@@ -329,11 +322,10 @@ class SrcDocExamplesArchives(QtArchives):
         )
 
     def _get_archives(self):
-        archive_path = "{0}{1}{2}/qt{3}_{4}{5}{6}{7}".format(
+        archive_path = "{0}{1}{2}/qt{3}_{3}{4}{5}{6}".format(
             self.os_name,
             "_x86/" if self.os_name == "windows" else "_x64/",
             self.target,
-            self.version.major,
             self.version.major,
             self.version.minor,
             self.version.patch,
@@ -343,8 +335,7 @@ class SrcDocExamplesArchives(QtArchives):
         update_xml_url = "{0}/Updates.xml".format(archive_url)
         target_packages = []
         target_packages.append(
-            "qt.qt{0}.{1}{2}{3}.{4}".format(
-                self.version.major,
+            "qt.qt{0}.{0}{1}{2}.{3}".format(
                 self.version.major,
                 self.version.minor,
                 self.version.patch,
@@ -409,7 +400,7 @@ class ToolArchives(QtArchives):
                 full_version = Version(named_version)
                 if not full_version.base_version == self.version.base_version:
                     self.logger.warning(
-                        "Base Version of {} is differed from requested version {} -- skip.".format(
+                        "Base Version of {} is different from requested version {} -- skip.".format(
                             named_version, self.version
                         )
                     )

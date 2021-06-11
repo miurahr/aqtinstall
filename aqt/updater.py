@@ -23,6 +23,8 @@ import os
 import pathlib
 import subprocess
 
+from semantic_version import SimpleSpec, Version
+
 
 class Updater:
     def __init__(self, prefix: pathlib.Path, logger):
@@ -233,7 +235,7 @@ class Updater:
                 updater.patch_qmake()
                 if target.os_name == "linux":
                     updater.patch_pkgconfig()
-                if versiontuple(target.version) < (5, 14, 0):
+                if Version(target.version) < Version("5.14.0"):
                     updater.patch_qtcore(target)
             elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
                 updater.patch_qmake()
@@ -244,7 +246,3 @@ class Updater:
                 )
         except IOError as e:
             raise e
-
-
-def versiontuple(v: str):
-    return tuple(map(int, (v.split("."))))
