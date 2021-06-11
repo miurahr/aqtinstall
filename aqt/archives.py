@@ -23,7 +23,7 @@
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 
-from packaging.version import Version
+from semantic_version import Version
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl
@@ -100,7 +100,7 @@ class PackagesList:
                 self.version.major,
                 self.version.major,
                 self.version.minor,
-                self.version.micro,
+                self.version.patch,
                 ext,
             )
             update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
@@ -169,7 +169,7 @@ class QtArchives:
                         self.version.major,
                         self.version.major,
                         self.version.minor,
-                        self.version.micro,
+                        self.version.patch,
                         m,
                         arch,
                     )
@@ -178,7 +178,7 @@ class QtArchives:
                     "qt.{0}{1}{2}.{3}.{4}".format(
                         self.version.major,
                         self.version.minor,
-                        self.version.micro,
+                        self.version.patch,
                         m,
                         arch,
                     )
@@ -203,7 +203,7 @@ class QtArchives:
             self.version.major,
             self.version.major,
             self.version.minor,
-            self.version.micro,
+            self.version.patch,
             arch_ext,
         )
         update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
@@ -214,13 +214,13 @@ class QtArchives:
                 self.version.major,
                 self.version.major,
                 self.version.minor,
-                self.version.micro,
+                self.version.patch,
                 self.arch,
             )
         )
         target_packages.append(
             "qt.{0}{1}{2}.{3}".format(
-                self.version.major, self.version.minor, self.version.micro, self.arch
+                self.version.major, self.version.minor, self.version.patch, self.arch
             )
         )
         target_packages.extend(self.mod_list)
@@ -340,7 +340,7 @@ class SrcDocExamplesArchives(QtArchives):
             self.version.major,
             self.version.major,
             self.version.minor,
-            self.version.micro,
+            self.version.patch,
             "_src_doc_examples/",
         )
         archive_url = "{0}{1}".format(self.base, archive_path)
@@ -351,7 +351,7 @@ class SrcDocExamplesArchives(QtArchives):
                 self.version.major,
                 self.version.major,
                 self.version.minor,
-                self.version.micro,
+                self.version.patch,
                 self.flavor,
             )
         )
@@ -410,17 +410,7 @@ class ToolArchives(QtArchives):
                 else:
                     downloadable_archives = []
                 named_version = packageupdate.find("Version").text
-                split_version = named_version.split("-")
-                if len(split_version) > 2:
-                    full_version = Version(
-                        "{0}.post{1}.dev{2}".format(
-                            split_version[0], split_version[1], split_version[2]
-                        )
-                    )
-                else:
-                    full_version = Version(
-                        "{0}.post{1}".format(split_version[0], split_version[1])
-                    )
+                full_version = Version(named_version)
                 if not full_version.base_version == self.version.base_version:
                     self.logger.warning(
                         "Base Version of {} is differed from requested version {} -- skip.".format(
