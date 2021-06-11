@@ -17,11 +17,13 @@
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 # FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR I    packagingN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
+
+from packaging.version import Version
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl
@@ -29,7 +31,10 @@ from aqt.helper import Settings, getUrl
 
 class TargetConfig:
     def __init__(self, version, target, arch, os_name):
-        self.version = version
+        if isinstance(version, Version):
+            self.version = version.public
+        else:
+            self.version = version
         self.target = target
         self.arch = arch
         self.os_name = os_name
@@ -66,7 +71,7 @@ class PackagesList:
     """
 
     def __init__(self, version, os_name, target, base, timeout=(5, 5)):
-        self.version = version
+        self.version = Version(version)
         self.os_name = os_name
         self.target = target
         self.archives = []
@@ -76,26 +81,26 @@ class PackagesList:
         self._get_archives()
 
     def _get_archives(self):
-        qt_ver_num = self.version.replace(".", "")
-        self.qt_ver_base = self.version[0:1]
         # Get packages index
-        if self.qt_ver_base == "6" and self.target == "android":
+        if self.version.major == 6 and self.target == "android":
             arch_ext = ["_armv7/", "_x86/", "_x86_64/", "_arm64_v8a/"]
         elif (
-            self.qt_ver_base == "5"
-            and int(qt_ver_num) >= 5130
+            self.version.major == 5
+            and self.version >= Version("5.13.0")
             and self.target == "desktop"
         ):
             arch_ext = ["/", "_wasm/"]
         else:
             arch_ext = ["/"]
         for ext in arch_ext:
-            archive_path = "{0}{1}{2}/qt{3}_{4}{5}".format(
+            archive_path = "{0}{1}{2}/qt{3}_{4}{5}{6}{7}".format(
                 self.os_name,
                 "_x86/" if self.os_name == "windows" else "_x64/",
                 self.target,
-                self.qt_ver_base,
-                qt_ver_num,
+                self.version.major,
+                self.version.major,
+                self.version.minor,
+                self.version.micro,
                 ext,
             )
             update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
@@ -141,7 +146,7 @@ class QtArchives:
         all_extra=False,
         timeout=(5, 5),
     ):
-        self.version = version
+        self.version = Version(version)
         self.target = target
         self.arch = arch
         self.os_name = os_name
@@ -155,44 +160,69 @@ class QtArchives:
             self.logger = getLogger("aqt")
         self.archives = []
         self.mod_list = []
-        qt_ver_num = self.version.replace(".", "")
-        self.qt_ver_base = self.version[0:1]
         if all_extra:
             self.all_extra = True
         else:
             for m in modules if modules is not None else []:
                 self.mod_list.append(
-                    "qt.qt{}.{}.{}.{}".format(self.qt_ver_base, qt_ver_num, m, arch)
+                    "qt.qt{0}.{1}{2}{3}.{4}.{5}".format(
+                        self.version.major,
+                        self.version.major,
+                        self.version.minor,
+                        self.version.micro,
+                        m,
+                        arch,
+                    )
                 )
-                self.mod_list.append("qt.{}.{}.{}".format(qt_ver_num, m, arch))
+                self.mod_list.append(
+                    "qt.{0}{1}{2}.{3}.{4}".format(
+                        self.version.major,
+                        self.version.minor,
+                        self.version.micro,
+                        m,
+                        arch,
+                    )
+                )
         self.timeout = timeout
-        self._get_archives(qt_ver_num)
+        self._get_archives()
         if not all_archives:
             self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
 
-    def _get_archives(self, qt_ver_num):
+    def _get_archives(self):
         # Get packages index
         if self.arch == "wasm_32":
             arch_ext = "_wasm"
-        elif self.arch.startswith("android_") and qt_ver_num[0:1] == "6":
+        elif self.arch.startswith("android_") and self.version.major == 6:
             arch_ext = "{}".format(self.arch[7:])
         else:
             arch_ext = ""
-        archive_path = "{0}{1}{2}/qt{3}_{4}{5}/".format(
+        archive_path = "{0}{1}{2}/qt{3}_{4}{5}{6}{7}/".format(
             self.os_name,
             "_x86/" if self.os_name == "windows" else "_x64/",
             self.target,
-            self.qt_ver_base,
-            qt_ver_num,
+            self.version.major,
+            self.version.major,
+            self.version.minor,
+            self.version.micro,
             arch_ext,
         )
         update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
         archive_url = "{0}{1}".format(self.base, archive_path)
         target_packages = []
         target_packages.append(
-            "qt.qt{}.{}.{}".format(self.qt_ver_base, qt_ver_num, self.arch)
+            "qt.qt{0}.{1}{2}{3}.{4}".format(
+                self.version.major,
+                self.version.major,
+                self.version.minor,
+                self.version.micro,
+                self.arch,
+            )
         )
-        target_packages.append("qt.{}.{}".format(qt_ver_num, self.arch))
+        target_packages.append(
+            "qt.{0}{1}{2}.{3}".format(
+                self.version.major, self.version.minor, self.version.micro, self.arch
+            )
+        )
         target_packages.extend(self.mod_list)
         self._download_update_xml(update_xml_url)
         self._parse_update_xml(archive_url, target_packages)
@@ -302,20 +332,28 @@ class SrcDocExamplesArchives(QtArchives):
             timeout=timeout,
         )
 
-    def _get_archives(self, qt_ver_num):
-        archive_path = "{0}{1}{2}/qt{3}_{4}{5}".format(
+    def _get_archives(self):
+        archive_path = "{0}{1}{2}/qt{3}_{4}{5}{6}{7}".format(
             self.os_name,
             "_x86/" if self.os_name == "windows" else "_x64/",
             self.target,
-            self.qt_ver_base,
-            qt_ver_num,
+            self.version.major,
+            self.version.major,
+            self.version.minor,
+            self.version.micro,
             "_src_doc_examples/",
         )
         archive_url = "{0}{1}".format(self.base, archive_path)
         update_xml_url = "{0}/Updates.xml".format(archive_url)
         target_packages = []
         target_packages.append(
-            "qt.qt{}.{}.{}".format(self.qt_ver_base, qt_ver_num, self.flavor)
+            "qt.qt{0}.{1}{2}{3}.{4}".format(
+                self.version.major,
+                self.version.major,
+                self.version.minor,
+                self.version.micro,
+                self.flavor,
+            )
         )
         target_packages.extend(self.mod_list)
         self._download_update_xml(update_xml_url)
@@ -346,7 +384,7 @@ class ToolArchives(QtArchives):
             os_name, "desktop", version, arch, base, logging=logging, timeout=timeout
         )
 
-    def _get_archives(self, qt_ver_num):
+    def _get_archives(self):
         if self.os_name == "windows":
             archive_url = self.base + self.os_name + "_x86/" + self.target + "/"
         else:
@@ -371,15 +409,25 @@ class ToolArchives(QtArchives):
                     downloadable_archives = _archives.split(", ")
                 else:
                     downloadable_archives = []
-                full_version = packageupdate.find("Version").text
-                if not full_version.startswith(self.version):
+                named_version = packageupdate.find("Version").text
+                split_version = named_version.split("-")
+                if len(split_version) > 2:
+                    full_version = Version(
+                        "{0}.post{1}.dev{2}".format(
+                            split_version[0], split_version[1], split_version[2]
+                        )
+                    )
+                else:
+                    full_version = Version(
+                        "{0}.post{1}".format(split_version[0], split_version[1])
+                    )
+                if not full_version.base_version == self.version.base_version:
                     self.logger.warning(
-                        "Version {} differ from requested version {} -- skip.".format(
-                            full_version, self.version
+                        "Base Version of {} is differed from requested version {} -- skip.".format(
+                            named_version, self.version.public
                         )
                     )
                     continue
-                named_version = full_version
                 package_desc = packageupdate.find("Description").text
                 for archive in downloadable_archives:
                     package_url = (
