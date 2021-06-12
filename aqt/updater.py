@@ -85,7 +85,7 @@ class Updater:
                 return True
         return False
 
-    def patch_pkgconfig(self, oldvalue):
+    def patch_pkgconfig(self, oldvalue, os_name):
         for pcfile in self.prefix.joinpath("lib", "pkgconfig").glob("*.pc"):
             self.logger.info("Patching {}".format(pcfile))
             self._patch_textfile(
@@ -93,11 +93,12 @@ class Updater:
                 "prefix={}".format(oldvalue),
                 "prefix={}".format(str(self.prefix)),
             )
-            self._patch_textfile(
-                pcfile,
-                "-F{}".format(os.path.join(oldvalue, "lib")),
-                "-F{}".format(os.path.join(str(self.prefix), "lib")),
-            )
+            if os_name == "mac":
+                self._patch_textfile(
+                    pcfile,
+                    "-F{}".format(os.path.join(oldvalue, "lib")),
+                    "-F{}".format(os.path.join(str(self.prefix), "lib")),
+                )
 
     def patch_libtool(self, oldvalue, os_name):
         for lafile in self.prefix.joinpath("lib").glob("*.la"):
@@ -274,10 +275,10 @@ class Updater:
                 updater.make_qtconf(base_dir, target.version, arch_dir)
                 updater.patch_qmake()
                 if target.os_name == "linux":
-                    updater.patch_pkgconfig("/home/qt/work/install")
+                    updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
                     updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
                 elif target.os_name == "mac":
-                    updater.patch_pkgconfig("/Users/qt/work/install")
+                    updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
                 if Version(target.version) < Version("5.14.0"):
                     updater.patch_qtcore(target)
