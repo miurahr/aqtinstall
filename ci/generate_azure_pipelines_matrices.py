@@ -3,8 +3,8 @@ This sets variables for a matrix of QT versions to test downloading against with
 """
 import collections
 import json
+import random
 from itertools import product
-from random import random
 
 MIRRORS = [
     "https://mirrors.ocf.berkeley.edu/qt",
