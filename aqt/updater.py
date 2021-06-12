@@ -85,24 +85,19 @@ class Updater:
                 return True
         return False
 
-    def patch_pkgconfig(self, os_name):
+    def patch_pkgconfig(self, oldvalue):
         for pcfile in self.prefix.joinpath("lib", "pkgconfig").glob("*.pc"):
-            if os_name == "linux":
-                self.logger.info("Patching {}".format(pcfile))
-                self._patch_textfile(
-                    pcfile,
-                    "prefix=/home/qt/work/install",
-                    "prefix={}".format(str(self.prefix)),
-                )
-            elif os_name == "mac":
-                self.logger.info("Patching {}".format(pcfile))
-                self._patch_textfile(
-                    pcfile,
-                    "prefix=/Users/qt/work/install",
-                    "prefix={}".format(str(self.prefix)),
-                )
-            else:
-                pass
+            self.logger.info("Patching {}".format(pcfile))
+            self._patch_textfile(
+                pcfile,
+                "prefix={}".format(oldvalue),
+                "prefix={}".format(str(self.prefix)),
+            )
+            self._patch_textfile(
+                pcfile,
+                "-F{}/lib".format(oldvalue),
+                "-F{}/lib".format(str(self.prefix)),
+            )
 
     def patch_qmake(self):
         """Patch to qmake binary"""
@@ -243,8 +238,10 @@ class Updater:
             ]:  # desktop version
                 updater.make_qtconf(base_dir, target.version, arch_dir)
                 updater.patch_qmake()
-                if os.path.isdir(prefix.joinpath("lib", "pkgconfig")):
-                    updater.patch_pkgconfig(target.os_name)
+                if target.os_name == "linux":
+                    updater.patch_pkgconfig("/home/qt/work/install")
+                elif target.os_name == "mac":
+                    updater.patch_pkgconfig("/Users/qt/work/install")
                 if Version(target.version) < Version("5.14.0"):
                     updater.patch_qtcore(target)
             elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
