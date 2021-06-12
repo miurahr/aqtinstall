@@ -85,14 +85,24 @@ class Updater:
                 return True
         return False
 
-    def patch_pkgconfig(self):
+    def patch_pkgconfig(self, os_name):
         for pcfile in self.prefix.joinpath("lib", "pkgconfig").glob("*.pc"):
-            self.logger.info("Patching {}".format(pcfile))
-            self._patch_textfile(
-                pcfile,
-                "prefix=/home/qt/work/install",
-                "prefix={}".format(str(self.prefix)),
-            )
+            if os_name == "linux":
+                self.logger.info("Patching {}".format(pcfile))
+                self._patch_textfile(
+                    pcfile,
+                    "prefix=/home/qt/work/install",
+                    "prefix={}".format(str(self.prefix)),
+                )
+            elif os_name == "mac":
+                self.logger.info("Patching {}".format(pcfile))
+                self._patch_textfile(
+                    pcfile,
+                    "prefix=/Users/qt/work/install",
+                    "prefix={}".format(str(self.prefix)),
+                )
+            else:
+                pass
 
     def patch_qmake(self):
         """Patch to qmake binary"""
@@ -233,8 +243,8 @@ class Updater:
             ]:  # desktop version
                 updater.make_qtconf(base_dir, target.version, arch_dir)
                 updater.patch_qmake()
-                if target.os_name == "linux":
-                    updater.patch_pkgconfig()
+                if os.path.isdir(prefix.joinpath("lib", "pkgconfig")):
+                    updater.patch_pkgconfig(target.os_name)
                 if Version(target.version) < Version("5.14.0"):
                     updater.patch_qtcore(target)
             elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
