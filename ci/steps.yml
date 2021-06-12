@@ -9,12 +9,13 @@ steps:
 
   # Run Aqt
   ##----------------------------------------------------
-  ## we insert sleep in random duration < 30sec to reduce
+  ## we insert sleep in random 1sec < duration < 60sec to reduce
   ## download server load.
   - bash: |
       set -ex
       number=$RANDOM
-      let "number %= 30"
+      let "number %= 60"
+      let "number += 1"
       sleep $number
       mkdir Qt
       cd Qt
