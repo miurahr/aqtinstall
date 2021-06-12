@@ -23,6 +23,8 @@ import os
 import pathlib
 import subprocess
 
+from semantic_version import SimpleSpec, Version
+
 
 class Updater:
     def __init__(self, prefix: pathlib.Path, logger):
@@ -205,7 +207,6 @@ class Updater:
         Make Qt configuration files, qt.conf and qtconfig.pri.
         And update pkgconfig and patch Qt5Core and qmake
         """
-        qt_version = target.version
         arch = target.arch
         if arch is None:
             arch_dir = ""
@@ -220,7 +221,7 @@ class Updater:
         try:
             prefix = pathlib.Path(base_dir) / target.version / arch_dir
             updater = Updater(prefix, logger)
-            updater.set_license(base_dir, qt_version, arch_dir)
+            updater.set_license(base_dir, target.version, arch_dir)
             if target.arch not in [
                 "ios",
                 "android",
@@ -230,22 +231,18 @@ class Updater:
                 "android_x86",
                 "android_armv7",
             ]:  # desktop version
-                updater.make_qtconf(base_dir, qt_version, arch_dir)
+                updater.make_qtconf(base_dir, target.version, arch_dir)
                 updater.patch_qmake()
                 if target.os_name == "linux":
                     updater.patch_pkgconfig()
-                if versiontuple(target.version) < (5, 14, 0):
+                if Version(target.version) < Version("5.14.0"):
                     updater.patch_qtcore(target)
-            elif qt_version.startswith("5."):  # qt5 non-desktop
+            elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
                 updater.patch_qmake()
             else:  # qt6 non-desktop
-                updater.patch_qmake_script(base_dir, qt_version, target.os_name)
+                updater.patch_qmake_script(base_dir, target.version, target.os_name)
                 updater.patch_target_qt_conf(
-                    base_dir, qt_version, arch_dir, target.os_name
+                    base_dir, target.version, arch_dir, target.os_name
                 )
         except IOError as e:
             raise e
-
-
-def versiontuple(v: str):
-    return tuple(map(int, (v.split("."))))
