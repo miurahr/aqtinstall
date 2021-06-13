@@ -11,6 +11,7 @@ Added
 -----
 * Add -c/--config option to specify custom settings.ini(#246)
 * Document for settings.ini configuration parameters(#246)
+* Patching libtool file(.la) on mac(#267)
 * CI: Add more blacklist mirrors
 
 Changed
@@ -26,6 +27,7 @@ Fixed
 -----
 * Fix patching qmake(#259)
 * Prettify help message format(#237)
+* Update patching pkgconfig/lib on mac(#267)
 * CI: fix check workflow(#248)
 * CI: fix error on Azure/Windows(connection error)(#246)
 
