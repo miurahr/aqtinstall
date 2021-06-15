@@ -172,6 +172,16 @@ class ListCommand:
         html_doc = self.http_fetcher(self.archive_id.to_url())
         return Tools(tools=list(ListCommand.iterate_folders(html_doc, "tools")))
 
+    def fetch_tool_modules(self, tool_name: str) -> helper.ListOfStr:
+        rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
+        xml = self.http_fetcher(rest_of_url)  # raises RequestException
+        modules = xml_to_modules(
+            xml,
+            predicate=ListCommand._has_nonempty_downloads,
+            keys_to_keep=(),  # Just want names
+        )
+        return helper.ListOfStr(strings=list(modules.keys()))
+
     def _to_version(self, qt_ver: str) -> Version:
         """
         Turns a string in the form of `5.X.Y | latest` into a semantic version.
@@ -243,6 +253,12 @@ class ListCommand:
             folder_to_version_extension, ListCommand.iterate_folders(html_doc, category)
         )
 
+    @staticmethod
+    def _has_nonempty_downloads(element: ElementTree.Element) -> bool:
+        """Returns True if the element has an empty '<DownloadableArchives/>' tag"""
+        downloads = element.find("DownloadableArchives")
+        return downloads is not None and downloads.text
+
     def get_modules_architectures_for_version(
         self, version: Version
     ) -> Tuple[ListOfStr, ListOfStr]:
@@ -272,11 +288,6 @@ class ListCommand:
             module, arch = module_with_arch.rsplit(".", 1)
             return module, arch
 
-        def has_nonempty_downloads(element: ElementTree.Element) -> bool:
-            """Returns True if the element has an empty '<DownloadableArchives/>' tag"""
-            downloads = element.find("DownloadableArchives")
-            return downloads is not None and downloads.text
-
         rest_of_url = self.archive_id.to_url(
             qt_version_no_dots=qt_ver_str, file="Updates.xml"
         )
@@ -285,7 +296,7 @@ class ListCommand:
         # We want the names of modules, regardless of architecture:
         modules = xml_to_modules(
             xml,
-            predicate=has_nonempty_downloads,
+            predicate=ListCommand._has_nonempty_downloads,
             keys_to_keep=(),  # Just want names
         )
 

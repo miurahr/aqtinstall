@@ -1,0 +1,44 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.qtcreator</Name>
+  <DisplayName>Qt Creator 4.15.1</DisplayName>
+  <Description>IDE for Qt application development</Description>
+  <Version>4.15.1-0-202106081242</Version>
+  <ReleaseDate>2021-06-08</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Dependencies/>
+  <SortingPriority>1000</SortingPriority>
+  <ForcedInstallation>true</ForcedInstallation>
+  <DownloadableArchives>qtcreator.7z, qtcreator_sdktool.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="136099945" UncompressedSize="533316311" OS="Any"/>
+  <UserInterfaces>associatecommonfiletypesform.ui,launchqtcreatorcheckboxform.ui</UserInterfaces>
+  <SHA1>684ee4525e6412623167a5442b7c262cac52c9bb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.qtcreatordbg</Name>
+  <DisplayName>Qt Creator 4.15.1 Debug Symbols</DisplayName>
+  <Description>Additional symbol files required to debug Qt Creator</Description>
+  <Version>4.15.1-0-202106081242</Version>
+  <ReleaseDate>2021-06-08</ReleaseDate>
+  <SortingPriority>994</SortingPriority>
+  <DownloadableArchives>qtcreator-debug.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="235240929" UncompressedSize="1570679561" OS="Any"/>
+  <SHA1>c71f2e138df7232f7482e66a4cc2db5f94a3c7b4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.qtcreatordev</Name>
+  <DisplayName>Qt Creator 4.15.1 Plugin Development</DisplayName>
+  <Description>Headers and libs required to develop additional plugins</Description>
+  <Version>4.15.1-0-202106081242</Version>
+  <ReleaseDate>2021-06-08</ReleaseDate>
+  <SortingPriority>990</SortingPriority>
+  <DownloadableArchives>qtcreator_dev.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12377799" UncompressedSize="104362249" OS="Any"/>
+  <SHA1>0e2127ef128a87f6bc04e0c9eccab677aac21ec0</SHA1>
+ </PackageUpdate>
+ <SHA1>593112b370156d1ef2fe365fb2b9890b175ce084</SHA1>
+ <MetadataName>2021-06-08-1242_meta.7z</MetadataName>
+</Updates>

@@ -115,6 +115,32 @@ def test_list_architectures_and_modules(
 
 
 @pytest.mark.parametrize(
+    "host, target, tool_name",
+    [
+        ("mac", "desktop", "tools_cmake"),
+        ("mac", "desktop", "tools_ifw"),
+        ("mac", "desktop", "tools_qtcreator"),
+    ],
+)
+def test_tool_modules(host: str, target: str, tool_name: str):
+    archive_id = ArchiveId("tools", host, target)
+    in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
+    expect_out_file = "{}-{}-{}-expect.json".format(host, target, tool_name)
+    _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+    expect = json.loads(
+        (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
+    )
+
+    def http_fetcher(_: str) -> str:
+        return _xml
+
+    modules = ListCommand(archive_id, http_fetcher=http_fetcher).fetch_tool_modules(
+        tool_name
+    )
+    assert modules.strings == expect["modules"]
+
+
+@pytest.mark.parametrize(
     "cat, host, target, minor_ver, ver, ext, xmlfile, xmlexpect, htmlfile, htmlexpect",
     [
         (
