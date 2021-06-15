@@ -26,13 +26,9 @@ import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from typing import Callable, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 
-from semantic_version import SimpleSpec, Version
-
-from aqt.exceptions import ArchiveListError, NoPackageFound
-from aqt.helper import Settings, getUrl
 import bs4
 import requests
-from semantic_version import Version
+from semantic_version import SimpleSpec, Version
 
 from aqt import helper
 from aqt.exceptions import ArchiveListError, CliInputError, NoPackageFound

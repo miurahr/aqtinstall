@@ -34,7 +34,6 @@ import time
 from logging import getLogger
 
 from semantic_version import Version
-from texttable import Texttable
 
 import aqt
 from aqt.archives import ListCommand, QtArchives, SrcDocExamplesArchives, ToolArchives
