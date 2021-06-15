@@ -5,9 +5,10 @@ from pathlib import Path
 import pytest
 from semantic_version import Version
 
-from aqt import archives, helper, installer
-from aqt.archives import QtDownloadListFetcher
-from aqt.helper import ArchiveId, get_modules_architectures_for_version
+from aqt import archives, installer
+from aqt.archives import ListCommand
+from aqt.helper import ArchiveId
+from aqt.helper import Versions as v
 
 MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 
@@ -25,67 +26,60 @@ MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
         ("mac", "ios", "mac-ios.html", "mac-ios-expect.json"),
     ],
 )
-def test_list_folders(os_name, target, in_file, expect_out_file):
+def test_list_versions_tools(os_name, target, in_file, expect_out_file):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
 
-    def html_fetcher(_: str) -> str:
+    def http_fetcher(_: str) -> str:
         return _html
 
     expected = json.loads(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    archive_id = ArchiveId("tools", os_name, target)
-
     # Test 'aqt list tools'
-    fetcher = QtDownloadListFetcher(archive_id, html_fetcher=html_fetcher)
-    out = fetcher.run()
-    assert str(out) == "\n".join(expected["tools"])
+    tools = ListCommand(
+        ArchiveId("tools", os_name, target), http_fetcher=http_fetcher
+    ).action()
+    assert str(tools) == "\n".join(expected["tools"])
 
     for qt in ("qt5", "qt6"):
-        archive_id.category = qt
-        for extension, expected_output in expected[qt].items():
-            archive_id.extension = extension if extension != "qt" else ""
-            fetcher = QtDownloadListFetcher(archive_id, html_fetcher=html_fetcher)
-            out = fetcher.run()
+        for ext, expected_output in expected[qt].items():
+            # Test 'aqt list qt'
+            archive_id = ArchiveId(qt, os_name, target, ext if ext != "qt" else "")
+            all_versions = ListCommand(archive_id, http_fetcher=http_fetcher).action()
 
             if len(expected_output) == 0:
-                assert not out
+                assert not all_versions
             else:
-                assert str(out) == "\n".join(expected_output)
+                assert str(all_versions) == "\n".join(expected_output)
 
             # Filter for the latest version only
-            out = (
-                QtDownloadListFetcher(archive_id, html_fetcher=html_fetcher)
-                .run()
-                .latest()
-            )
+            latest_ver = ListCommand(
+                archive_id, is_latest_version=True, http_fetcher=http_fetcher
+            ).action()
+
             if len(expected_output) == 0:
-                assert not out
+                assert not latest_ver
             else:
-                assert (
-                    helper.Versions.stringify_ver(out)
-                    == expected_output[-1].split(" ")[-1]
-                )
+                assert v.stringify_ver(latest_ver) == expected_output[-1].split(" ")[-1]
 
             for row in expected_output:
                 minor = int(MINOR_REGEX.search(row).group(1))
 
                 # Find the latest version for a particular minor version
-                out = (
-                    QtDownloadListFetcher(
-                        archive_id, html_fetcher=html_fetcher, filter_minor=minor
-                    )
-                    .run()
-                    .latest()
-                )
-                assert helper.Versions.stringify_ver(out) == row.split(" ")[-1]
+                latest_ver_for_minor = ListCommand(
+                    archive_id,
+                    filter_minor=minor,
+                    is_latest_version=True,
+                    http_fetcher=http_fetcher,
+                ).action()
+                assert v.stringify_ver(latest_ver_for_minor) == row.split(" ")[-1]
 
                 # Find all versions for a particular minor version
-                out = QtDownloadListFetcher(
-                    archive_id, html_fetcher=html_fetcher, filter_minor=minor
-                ).run()
-                assert str(out) == row
+                all_ver_for_minor = ListCommand(
+                    archive_id, filter_minor=minor, http_fetcher=http_fetcher
+                ).action()
+                assert str(all_ver_for_minor) == row
 
 
 @pytest.mark.parametrize(
@@ -113,10 +107,9 @@ def test_list_architectures_and_modules(
     def http_fetcher(_: str) -> str:
         return _xml
 
-    modules, arches = get_modules_architectures_for_version(
-        Version(version), archive_id, http_fetcher
-    )
-    print(arches)
+    modules, arches = ListCommand(
+        archive_id, http_fetcher=http_fetcher
+    ).get_modules_architectures_for_version(Version(version))
     assert modules.strings == expect["modules"]
     assert arches.strings == expect["architectures"]
 

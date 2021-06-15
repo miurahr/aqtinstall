@@ -41,10 +41,9 @@ from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
     ArchiveListError,
-    CliInputError,
     NoPackageFound,
 )
-from aqt.helper import ALL_EXTENSIONS, ArchiveId, Settings, downloadBinaryFile, getUrl
+from aqt.helper import ArchiveId, Settings, downloadBinaryFile, getUrl
 from aqt.updater import Updater
 
 try:
@@ -451,30 +450,17 @@ class Cli:
         )
 
     def run_list(self, args: argparse.ArgumentParser) -> int:
-        """Print all folders available for a category"""
+        """Print tools, versions of Qt, extensions, modules, architectures"""
 
         if not args.target:
-            targets = {
-                "windows": "android desktop winrt",
-                "mac": "android desktop ios",
-                "linux": "android desktop",
-            }
-            print(targets[args.host])
+            print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
             return 0
-
-        try:
-            list_command = self._read_list_parser(args)
-        except CliInputError as e:
-            self.logger.error("Command line input error: {}".format(e))
+        if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
+            self.logger.error(
+                "'{0.target}' is not a valid target for host '{0.host}'".format(args)
+            )
             return 1
-        return list_command.run()
-
-    def _read_list_parser(self, args: argparse.ArgumentParser) -> ListCommand:
-        """
-        Unwraps `args` into a ListCommand object.
-        Performs input validation on Qt versions, and raises CliInputError for invalid versions.
-        """
-        return ListCommand(
+        command = ListCommand(
             archive_id=ArchiveId(
                 args.category,
                 args.host,
@@ -487,6 +473,7 @@ class Cli:
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
         )
+        return command.run()
 
     def _make_list_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the ListCommand, and adds it to the `subparsers` parameter"""
@@ -525,7 +512,7 @@ class Cli:
         )
         list_parser.add_argument(
             "--extension",
-            choices=ALL_EXTENSIONS,
+            choices=ArchiveId.ALL_EXTENSIONS,
             help="Extension of packages to list. "
             "Use the `--extensions` flag to list all relevant options for a host/target.",
         )

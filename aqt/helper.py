@@ -22,43 +22,54 @@
 import configparser
 import dataclasses
 import hashlib
-import itertools
 import json
 import logging
 import multiprocessing
 import os
-import random
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
-from typing import Callable, Dict, Generator, Iterable, List, Optional, Tuple
+from typing import Callable, Dict, Iterable, List, Optional, Tuple
 from urllib.parse import urlparse
 
 import requests
-from bs4 import BeautifulSoup
-from bs4.element import Tag
 from semantic_version import Version
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
 
-ALL_EXTENSIONS = (
-    "wasm",
-    "src_doc_examples",
-    "preview",
-    "wasm_preview",
-    "x86_64",
-    "x86",
-    "armv7",
-    "arm64_v8a",
-)
 
-
-@dataclasses.dataclass
 class ArchiveId:
-    category: str  # one of (tools, qt5, qt6)
-    host: str  # one of (windows, mac, linux)
-    target: str  # one of (desktop, android, ios, winrt)
-    extension: str = ""  # one of ALL_EXTENSIONS
+    CATEGORIES = ("tools", "qt5", "qt6")
+    HOSTS = ("windows", "mac", "linux")
+    TARGETS_FOR_HOST = {
+        "windows": ["android", "desktop", "winrt"],
+        "mac": ["android", "desktop", "ios"],
+        "linux": ["android", "desktop"],
+    }
+    ALL_EXTENSIONS = (
+        "wasm",
+        "src_doc_examples",
+        "preview",
+        "wasm_preview",
+        "x86_64",
+        "x86",
+        "armv7",
+        "arm64_v8a",
+    )
+
+    def __init__(self, category: str, host: str, target: str, extension: str = ""):
+        if category not in ArchiveId.CATEGORIES:
+            raise ValueError("Category '{}' is invalid".format(category))
+        if host not in ArchiveId.HOSTS:
+            raise ValueError("Host '{}' is invalid".format(host))
+        if target not in ArchiveId.TARGETS_FOR_HOST[host]:
+            raise ValueError("Target '{}' is invalid".format(target))
+        if extension and extension not in ArchiveId.ALL_EXTENSIONS:
+            raise ValueError("Extension '{}' is invalid".format(extension))
+        self.category: str = category
+        self.host: str = host
+        self.target: str = target
+        self.extension: str = extension
 
     def is_preview(self) -> bool:
         return "preview" in self.extension if self.extension else False
@@ -73,14 +84,9 @@ class ArchiveId:
         """Returns True if there should be no arch attached to the module names"""
         return self.extension in ("src_doc_examples",)
 
-    def is_major_ver_mismatch(self, qt_version: str) -> bool:
-        """Returns True if the version string specifies a version different from the specified category"""
-        return (
-            self.is_qt()
-            and qt_version
-            and len(qt_version) > 0
-            and qt_version[0] != self.category[-1]
-        )
+    def is_major_ver_mismatch(self, qt_version: Version) -> bool:
+        """Returns True if the version specifies a version different from the specified category"""
+        return self.is_qt() and int(self.category[-1]) != qt_version.major
 
     def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
         base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
@@ -372,19 +378,12 @@ def request_http_with_failover(
             r = requests.get(url, timeout=timeout)
             r.raise_for_status()
             return r.text
-        except requests.exceptions.RequestException as e:
+        except requests.RequestException as e:
             # Only raise the exception if all urls are exhausted
+            # NOTE: this will print the randomly-selected failover URL, which may
+            # be confusing to users that expect aqt to use the primary URL instead
             if i == len(base_urls) - 1:
                 raise e
-
-
-def default_http_fetcher(rest_of_url: str) -> str:
-    settings = Settings()  # Borg/Singleton ensures we get the right settings
-    return request_http_with_failover(
-        base_urls=[settings.baseurl, random.choice(settings.fallbacks)],
-        rest_of_url=rest_of_url,
-        timeout=(settings.connection_timeout, settings.response_timeout),
-    )
 
 
 def xml_to_modules(
@@ -409,184 +408,6 @@ def xml_to_modules(
         for key in keys_to_keep:
             packages[name][key] = getattr(packageupdate.find(key), "text", None)
     return packages
-
-
-def has_empty_downloads(element: ElementTree.Element) -> bool:
-    """Returns True if the element has an empty '<DownloadableArchives/>' tag"""
-    downloads = element.find("DownloadableArchives")
-    return downloads is not None and not downloads.text
-
-
-def has_nonempty_downloads(element: ElementTree.Element) -> bool:
-    """Returns True if the element has an empty '<DownloadableArchives/>' tag"""
-    downloads = element.find("DownloadableArchives")
-    return downloads is not None and downloads.text
-
-
-def _iterate_folders(
-    html_doc: str, filter_category: str = ""
-) -> Generator[str, None, None]:
-    def table_row_to_folder(tr: Tag) -> str:
-        try:
-            return tr.find_all("td")[1].a.contents[0].rstrip("/")
-        except (AttributeError, IndexError):
-            return ""
-
-    soup: BeautifulSoup = BeautifulSoup(html_doc, "html.parser")
-    for row in soup.body.table.find_all("tr"):
-        content: str = table_row_to_folder(row)
-        if not content or content == "Parent Directory":
-            continue
-        if content.startswith(filter_category):
-            yield content
-
-
-def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
-    components = folder.split("_", maxsplit=2)
-    ext = "" if len(components) < 3 else components[2]
-    ver = "" if len(components) < 2 else components[1]
-    return get_semantic_version(qt_ver=ver, is_preview="preview" in ext), ext
-
-
-def get_extensions_for_version(
-    desired_version: Version, archive_id: ArchiveId, html_doc: str
-) -> ListOfStr:
-    versions_extensions = map(
-        folder_to_version_extension, _iterate_folders(html_doc, archive_id.category)
-    )
-    filtered = filter(
-        lambda ver_ext: ver_ext[0] == desired_version and ver_ext[1],
-        versions_extensions,
-    )
-    return ListOfStr(strings=list(map(lambda ver_ext: ver_ext[1], filtered)))
-
-
-def get_versions_for_minor(
-    minor_ver: Optional[int], archive_id: ArchiveId, html_doc: str
-) -> Versions:
-    def filter_by(ver_ext: Tuple[Optional[Version], str]) -> bool:
-        version, extension = ver_ext
-        return (
-            version
-            and (minor_ver is None or minor_ver == version.minor)
-            and (archive_id.extension == extension)
-        )
-
-    def get_version(ver_ext: Tuple[Version, str]):
-        return ver_ext[0]
-
-    all_versions_extensions = map(
-        folder_to_version_extension, _iterate_folders(html_doc, archive_id.category)
-    )
-    versions = sorted(
-        filter(None, map(get_version, filter(filter_by, all_versions_extensions)))
-    )
-    iterables = itertools.groupby(versions, lambda version: version.minor)
-    return Versions(iterables)
-
-
-def get_tools(html_doc: str) -> Tools:
-    return Tools(tools=list(_iterate_folders(html_doc, "tools")))
-
-
-def get_modules_architectures_for_version(
-    version: Version,
-    archive_id: ArchiveId,
-    http_fetcher: Callable[[str], str],
-) -> Tuple[ListOfStr, ListOfStr]:
-    """Returns [list of modules, list of architectures]"""
-    patch = "" if version.prerelease or archive_id.is_preview() else str(version.patch)
-    qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
-    # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
-    pattern = re.compile(
-        r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$"
-    )
-
-    def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
-        _match = pattern.match(name)
-        if not _match:
-            return None, None
-        module_with_arch = _match.group(3)
-        if archive_id.is_no_arch() or "." not in module_with_arch:
-            return module_with_arch, None
-        module, arch = module_with_arch.rsplit(".", 1)
-        return module, arch
-
-    rest_of_url = archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")
-    xml = http_fetcher(rest_of_url)  # raises RequestException
-
-    # We want the names of modules, regardless of architecture:
-    modules = xml_to_modules(
-        xml,
-        predicate=has_nonempty_downloads,
-        keys_to_keep=(),  # Just want names
-    )
-
-    def naive_modules_arches(names: Iterable[str]) -> Tuple[ListOfStr, ListOfStr]:
-        modules_and_arches, _modules, arches = set(), set(), set()
-        for name in names:
-            # First term could be a module name or an architecture
-            first_term, arch = to_module_arch(name)
-            if first_term:
-                modules_and_arches.add(first_term)
-            if arch:
-                arches.add(arch)
-        for first_term in modules_and_arches:
-            if first_term not in arches:
-                _modules.add(first_term)
-        return ListOfStr(strings=sorted(_modules)), ListOfStr(strings=sorted(arches))
-
-    return naive_modules_arches(modules.keys())
-
-
-def list_modules_for_version(
-    version: Version,
-    archive_id: ArchiveId,
-    http_fetcher: Callable[[str], str],
-) -> int:
-    return _list_modules_architectures_for_version(
-        version,
-        archive_id,
-        http_fetcher,
-        lambda mods, arches: mods,
-        "No modules available",
-    )
-
-
-def list_architectures_for_version(
-    version: Version,
-    archive_id: ArchiveId,
-    http_fetcher: Callable[[str], str],
-) -> int:
-    return _list_modules_architectures_for_version(
-        version,
-        archive_id,
-        http_fetcher,
-        lambda mods, arches: arches,
-        "No architectures available",
-    )
-
-
-def _list_modules_architectures_for_version(
-    version: Version,
-    archive_id: ArchiveId,
-    http_fetcher: Callable[[str], str],
-    mux: Callable[[any], List[str]],
-    error_msg_if_empty: str,
-) -> int:
-    logger = logging.getLogger("aqt")
-    try:
-        result = mux(
-            *get_modules_architectures_for_version(version, archive_id, http_fetcher)
-        )
-        if len(result) == 0:
-            logger.error(error_msg_if_empty)
-            return 1
-        print(" ".join(result))
-        return 0
-    except requests.exceptions.RequestException as e:
-        logger.error("HTTP request error: {}".format(e))
-        return 1
 
 
 class Settings(object):

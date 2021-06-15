@@ -19,16 +19,28 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+import itertools
+import random
+import re
 import xml.etree.ElementTree as ElementTree
-from functools import reduce
 from logging import getLogger
-from typing import Callable, List, Optional, Union
+from typing import Callable, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 
+import bs4
+import requests
 from semantic_version import Version
 
 from aqt import helper
 from aqt.exceptions import ArchiveListError, CliInputError, NoPackageFound
-from aqt.helper import ArchiveId, Settings, getUrl
+from aqt.helper import (
+    ArchiveId,
+    ListOfStr,
+    Settings,
+    Tools,
+    Versions,
+    getUrl,
+    xml_to_modules,
+)
 
 
 class TargetConfig:
@@ -39,58 +51,22 @@ class TargetConfig:
         self.os_name = os_name
 
 
-# List packages for a particular version of Qt
-# Find all versions
-class QtDownloadListFetcher:
-    """
-    Fetches lists of tools and Qt packages that can be downloaded at downloads.qt.io.
-    Parses html files and filters data based on an argument list.
-    Produces lists of Qt5 versions, Qt6 versions, and lists of tools (openssl, qtifw, etc)
-    """
-
-    def __init__(
-        self,
-        archive_id: ArchiveId,
-        filter_minor: Optional[int] = None,
-        html_fetcher: Callable[[str], str] = helper.default_http_fetcher,
-    ):
-        self.archive_id = archive_id
-        self.filter_minor = filter_minor
-        self.html_fetcher = html_fetcher
-        self.logger = getLogger("aqt")
-
-    def run(
-        self, *, list_extensions_ver: Optional[Version] = None
-    ) -> Union[helper.Versions, helper.Tools, helper.ListOfStr]:
-        html_doc = self.html_fetcher(self.archive_id.to_url())
-        if list_extensions_ver is not None:
-            return helper.get_extensions_for_version(
-                list_extensions_ver, self.archive_id, html_doc
-            )
-        if self.archive_id.is_tools():
-            return helper.get_tools(html_doc)
-        versions = helper.get_versions_for_minor(
-            self.filter_minor, self.archive_id, html_doc
-        )
-        return versions
-
-
 class ListCommand:
     """Encapsulate all parts of the `aqt list` command"""
 
     def __init__(
         self,
         archive_id: ArchiveId,
-        filter_minor: Optional[int],
-        is_latest_version: bool,
-        modules_ver: Optional[str],
-        extensions_ver: Optional[str],
-        architectures_ver: Optional[str],
+        *,
+        filter_minor: Optional[int] = None,
+        is_latest_version: bool = False,
+        modules_ver: Optional[str] = None,
+        extensions_ver: Optional[str] = None,
+        architectures_ver: Optional[str] = None,
         http_fetcher: Optional[Callable[[str], str]] = None,
     ):
         """
         Construct ListCommand.
-        Raises `CliInputError` for invalid Qt versions, at time of construction.
         @param filter_minor         When set, the ListCommand will filter out all versions of
                                     Qt that don't match this minor version.
         @param is_latest_version    When True, the ListCommand will find all versions of Qt
@@ -98,110 +74,258 @@ class ListCommand:
         @param modules_ver          Version of Qt for which to list modules
         @param extensions_ver       Version of Qt for which to list extensions
         @param architectures_ver    Version of Qt for which to list architectures
-        @param http_fetcher         Function to use to fetch documents via http
+        @param http_fetcher         Function used to fetch documents via http
         """
+        self.logger = getLogger("aqt")
         self.http_fetcher = (
             http_fetcher if http_fetcher else ListCommand._default_http_fetcher
         )
         self.archive_id = archive_id
         self.filter_minor = filter_minor
 
-        def determine_action() -> Callable[
-            [], Union[helper.Versions, helper.Tools, helper.ListOfStr, Version]
-        ]:
-            """Translate args into the actual command to be run"""
-            if is_latest_version:
-                return self.get_latest_version
-
-            version: Optional[str] = reduce(
-                lambda x, y: x if x else y,
-                (modules_ver, extensions_ver, architectures_ver),
-                None,
+        if is_latest_version:
+            self.request_type = "latest version"
+            self._action = self.fetch_latest_version
+        elif modules_ver:
+            self.request_type = "modules"
+            self._action = lambda: self.fetch_modules(self._to_version(modules_ver))
+        elif extensions_ver:
+            self.request_type = "extensions"
+            self._action = lambda: self.fetch_extensions(
+                self._to_version(extensions_ver)
             )
-            if version:
-                if self.archive_id.is_major_ver_mismatch(version):
-                    msg = "Major version mismatch between {} and {}".format(
-                        self.archive_id.category, version
-                    )
-                    raise CliInputError(msg)
-                get_ver = self._transform_qt_ver_with_dots(version)
+        elif architectures_ver:
+            self.request_type = "architectures"
+            self._action = lambda: self.fetch_arches(
+                self._to_version(architectures_ver)
+            )
+        elif archive_id.is_tools():
+            self.request_type = "tools"
+            self._action = self.fetch_tools
+        else:
+            self.request_type = "versions"
+            self._action = self.fetch_versions
 
-                if modules_ver:
-                    return lambda: self.fetch_modules(get_ver)
-                elif extensions_ver:
-                    return lambda: self.fetch_extensions(get_ver)
-                elif architectures_ver:
-                    return lambda: self.fetch_arches(get_ver)
-                else:
-                    assert False, "This branch should be unreachable"
-
-            return self.list_all_versions
-
-        self._action = determine_action()
-        self.logger = getLogger("aqt")
+    def action(self) -> Union[Optional[Version], ListOfStr, Tools, Versions]:
+        return self._action()
 
     def run(self) -> int:
         try:
-            output = self._action()
+            output = self.action()
             if not output:
-                self.logger.info("No data available for this request.")
+                self.logger.info(
+                    "No {} available for this request.".format(self.request_type)
+                )
+                self.print_suggested_follow_up(self.logger.info)
                 return 1
             print(str(output))
             return 0
-        except Exception as e:
+        except CliInputError as e:
+            self.logger.error("Command line input error: {}".format(e))
+            return 1
+        except requests.RequestException as e:
             self.logger.error("{}".format(e))
+            self.print_suggested_follow_up(self.logger.error)
             return 1
 
-    def list_all_versions(self) -> helper.Versions:
-        return QtDownloadListFetcher(
-            archive_id=self.archive_id,
-            filter_minor=self.filter_minor,
-            html_fetcher=self.http_fetcher,
-        ).run()
+    def fetch_modules(self, version: Version) -> helper.ListOfStr:
+        return self.get_modules_architectures_for_version(version=version)[0]
 
-    def get_latest_version(self) -> Version:
-        return self.list_all_versions().latest()
+    def fetch_arches(self, version: Version) -> helper.ListOfStr:
+        return self.get_modules_architectures_for_version(version=version)[1]
 
-    def fetch_modules(self, get_version: Callable[[], Version]) -> helper.ListOfStr:
-        return helper.get_modules_architectures_for_version(
-            version=get_version(),
-            archive_id=self.archive_id,
-            http_fetcher=self.http_fetcher,
-        )[0]
+    def fetch_extensions(self, version: Version) -> helper.ListOfStr:
+        versions_extensions = ListCommand.get_versions_extensions(
+            self.http_fetcher(self.archive_id.to_url()), self.archive_id.category
+        )
+        filtered = filter(
+            lambda ver_ext: ver_ext[0] == version and ver_ext[1],
+            versions_extensions,
+        )
+        return ListOfStr(strings=list(map(lambda ver_ext: ver_ext[1], filtered)))
 
-    def fetch_arches(self, get_version: Callable[[], Version]) -> helper.ListOfStr:
-        return helper.get_modules_architectures_for_version(
-            version=get_version(),
-            archive_id=self.archive_id,
-            http_fetcher=self.http_fetcher,
-        )[1]
+    def fetch_versions(self) -> helper.Versions:
+        def filter_by(ver_ext: Tuple[Optional[Version], str]) -> bool:
+            version, extension = ver_ext
+            return (
+                version
+                and (self.filter_minor is None or self.filter_minor == version.minor)
+                and (self.archive_id.extension == extension)
+            )
 
-    def fetch_extensions(self, get_version: Callable[[], Version]) -> helper.ListOfStr:
-        return QtDownloadListFetcher(
-            archive_id=self.archive_id,
-            filter_minor=self.filter_minor,
-            html_fetcher=self.http_fetcher,
-        ).run(list_extensions_ver=get_version())
+        def get_version(ver_ext: Tuple[Version, str]):
+            return ver_ext[0]
 
-    def _transform_qt_ver_with_dots(self, qt_ver: str) -> Callable[[], Version]:
+        versions_extensions = ListCommand.get_versions_extensions(
+            self.http_fetcher(self.archive_id.to_url()), self.archive_id.category
+        )
+        versions = sorted(
+            filter(None, map(get_version, filter(filter_by, versions_extensions)))
+        )
+        iterables = itertools.groupby(versions, lambda version: version.minor)
+        return Versions(iterables)
+
+    def fetch_latest_version(self) -> Optional[Version]:
+        return self.fetch_versions().latest()
+
+    def fetch_tools(self) -> helper.Tools:
+        html_doc = self.http_fetcher(self.archive_id.to_url())
+        return Tools(tools=list(ListCommand.iterate_folders(html_doc, "tools")))
+
+    def _to_version(self, qt_ver: str) -> Version:
         """
-        Returns a function that returns a semantic version.
-        This allows lazy-evaluation, in the case that qt_ver is the string `latest`.
-        Otherwise, if qt_ver is not a valid semantic version, CliInputError will be
-        raised immediately.
-
+        Turns a string in the form of `5.X.Y | latest` into a semantic version.
+        If the string does not fit either of these forms, CliInputError will be raised.
+        If qt_ver == latest, and no versions exist corresponding to the filters specified,
+        then CliInputError will be raised.
+        If qt_ver == latest, and an HTTP error occurs, requests.RequestException will be raised.
         @param qt_ver   Either the literal string `latest`, or a semantic version
                         with each part separated with dots.
         """
         assert qt_ver
         if qt_ver == "latest":
-            return self.get_latest_version
+            latest_version = self.fetch_latest_version()
+            if not latest_version:
+                msg = "There is no latest version of Qt with the criteria '{}'".format(
+                    self.describe_filters()
+                )
+                raise CliInputError(msg)
+            return latest_version
         version = helper.to_version(qt_ver)
-        return lambda: version
+        if self.archive_id.is_major_ver_mismatch(version):
+            msg = "Major version mismatch between {} and {}".format(
+                self.archive_id.category, version
+            )
+            raise CliInputError(msg)
+        return version
 
     @staticmethod
     def _default_http_fetcher(rest_of_url: str):
-        return helper.default_http_fetcher(rest_of_url)
+        settings = Settings()  # Borg/Singleton ensures we get the right settings
+        return helper.request_http_with_failover(
+            base_urls=[settings.baseurl, random.choice(settings.fallbacks)],
+            rest_of_url=rest_of_url,
+            timeout=(settings.connection_timeout, settings.response_timeout),
+        )
+
+    @staticmethod
+    def iterate_folders(
+        html_doc: str, filter_category: str = ""
+    ) -> Generator[str, None, None]:
+        def table_row_to_folder(tr: bs4.element.Tag) -> str:
+            try:
+                return tr.find_all("td")[1].a.contents[0].rstrip("/")
+            except (AttributeError, IndexError):
+                return ""
+
+        soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html_doc, "html.parser")
+        for row in soup.body.table.find_all("tr"):
+            content: str = table_row_to_folder(row)
+            if not content or content == "Parent Directory":
+                continue
+            if content.startswith(filter_category):
+                yield content
+
+    @staticmethod
+    def get_versions_extensions(
+        html_doc: str, category: str
+    ) -> Iterator[Tuple[Optional[Version], str]]:
+        def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
+            components = folder.split("_", maxsplit=2)
+            ext = "" if len(components) < 3 else components[2]
+            ver = "" if len(components) < 2 else components[1]
+            return (
+                helper.get_semantic_version(qt_ver=ver, is_preview="preview" in ext),
+                ext,
+            )
+
+        return map(
+            folder_to_version_extension, ListCommand.iterate_folders(html_doc, category)
+        )
+
+    def get_modules_architectures_for_version(
+        self, version: Version
+    ) -> Tuple[ListOfStr, ListOfStr]:
+        """Returns [list of modules, list of architectures]"""
+        patch = (
+            ""
+            if version.prerelease or self.archive_id.is_preview()
+            else str(version.patch)
+        )
+        qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
+        # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
+        pattern = re.compile(
+            r"^(preview\.)?qt\.(qt"
+            + str(version.major)
+            + r"\.)?"
+            + qt_ver_str
+            + r"\.(.+)$"
+        )
+
+        def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
+            _match = pattern.match(name)
+            if not _match:
+                return None, None
+            module_with_arch = _match.group(3)
+            if self.archive_id.is_no_arch() or "." not in module_with_arch:
+                return module_with_arch, None
+            module, arch = module_with_arch.rsplit(".", 1)
+            return module, arch
+
+        def has_nonempty_downloads(element: ElementTree.Element) -> bool:
+            """Returns True if the element has an empty '<DownloadableArchives/>' tag"""
+            downloads = element.find("DownloadableArchives")
+            return downloads is not None and downloads.text
+
+        rest_of_url = self.archive_id.to_url(
+            qt_version_no_dots=qt_ver_str, file="Updates.xml"
+        )
+        xml = self.http_fetcher(rest_of_url)  # raises RequestException
+
+        # We want the names of modules, regardless of architecture:
+        modules = xml_to_modules(
+            xml,
+            predicate=has_nonempty_downloads,
+            keys_to_keep=(),  # Just want names
+        )
+
+        def naive_modules_arches(names: Iterable[str]) -> Tuple[ListOfStr, ListOfStr]:
+            modules_and_arches, _modules, arches = set(), set(), set()
+            for name in names:
+                # First term could be a module name or an architecture
+                first_term, arch = to_module_arch(name)
+                if first_term:
+                    modules_and_arches.add(first_term)
+                if arch:
+                    arches.add(arch)
+            for first_term in modules_and_arches:
+                if first_term not in arches:
+                    _modules.add(first_term)
+            return ListOfStr(strings=sorted(_modules)), ListOfStr(
+                strings=sorted(arches)
+            )
+
+        return naive_modules_arches(modules.keys())
+
+    def describe_filters(self) -> str:
+        if self.filter_minor is None:
+            return str(self.archive_id)
+        return "{} with minor version {}".format(self.archive_id, self.filter_minor)
+
+    def print_suggested_follow_up(self, printer: Callable[[str], None]) -> None:
+        """Makes an informed guess at what the user got wrong, in the event of an error."""
+        base_cmd = "aqt {0.category} {0.host} {0.target}".format(self.archive_id)
+        if self.archive_id.extension:
+            msg = "Please use '{} --extensions <QT_VERSION>' to list valid extensions.".format(
+                base_cmd
+            )
+            printer(msg)
+
+        if self.filter_minor is not None:
+            msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
+                base_cmd, self.archive_id.category, self.filter_minor
+            )
+            printer(msg)
 
 
 class QtPackage:
