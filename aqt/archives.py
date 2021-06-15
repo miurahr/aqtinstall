@@ -24,7 +24,7 @@ import random
 import re
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
-from typing import Callable, Generator, Iterable, Iterator, List, Optional, Tuple, Union
+from typing import Callable, Generator, Iterable, Iterator, Optional, Tuple, Union
 
 import bs4
 import requests
