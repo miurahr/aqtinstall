@@ -23,6 +23,8 @@ import os
 import pathlib
 import subprocess
 
+from semantic_version import SimpleSpec, Version
+
 
 class Updater:
     def __init__(self, prefix: pathlib.Path, logger):
@@ -36,10 +38,13 @@ class Updater:
         st = file.stat()
         data = file.read_bytes()
         idx = data.find(key)
-        if idx > 0:
+        if idx < 0:
             return
         assert len(newpath) < 256, "Qt Prefix path is too long(255)."
-        data = data[:idx] + key + newpath + data[idx + len(newpath) :]
+        oldlen = data[idx + len(key) :].find(b"\0")
+        assert oldlen >= 0
+        value = newpath + b"\0" * (oldlen - len(newpath))
+        data = data[: idx + len(key)] + value + data[idx + len(key) + len(value) :]
         file.write_bytes(data)
         os.chmod(str(file), st.st_mode)
 
@@ -80,14 +85,55 @@ class Updater:
                 return True
         return False
 
-    def patch_pkgconfig(self):
+    def patch_pkgconfig(self, oldvalue, os_name):
         for pcfile in self.prefix.joinpath("lib", "pkgconfig").glob("*.pc"):
             self.logger.info("Patching {}".format(pcfile))
             self._patch_textfile(
                 pcfile,
-                "prefix=/home/qt/work/install",
+                "prefix={}".format(oldvalue),
                 "prefix={}".format(str(self.prefix)),
             )
+            if os_name == "mac":
+                self._patch_textfile(
+                    pcfile,
+                    "-F{}".format(os.path.join(oldvalue, "lib")),
+                    "-F{}".format(os.path.join(str(self.prefix), "lib")),
+                )
+
+    def patch_libtool(self, oldvalue, os_name):
+        for lafile in self.prefix.joinpath("lib").glob("*.la"):
+            self.logger.info("Patching {}".format(lafile))
+            self._patch_textfile(
+                lafile,
+                "libdir='={}'".format(oldvalue),
+                "libdir='={}'".format(os.path.join(str(self.prefix), "lib")),
+            )
+            self._patch_textfile(
+                lafile,
+                "libdir='{}'".format(oldvalue),
+                "libdir='{}'".format(os.path.join(str(self.prefix), "lib")),
+            )
+            self._patch_textfile(
+                lafile,
+                "-L={}".format(oldvalue),
+                "-L={}".format(os.path.join(str(self.prefix), "lib")),
+            )
+            self._patch_textfile(
+                lafile,
+                "-L{}".format(oldvalue),
+                "-L{}".format(os.path.join(str(self.prefix), "lib")),
+            )
+            if os_name == "mac":
+                self._patch_textfile(
+                    lafile,
+                    "-F={}".format(oldvalue),
+                    "-F={}".format(os.path.join(str(self.prefix), "lib")),
+                )
+                self._patch_textfile(
+                    lafile,
+                    "-F{}".format(oldvalue),
+                    "-F{}".format(os.path.join(str(self.prefix), "lib")),
+                )
 
     def patch_qmake(self):
         """Patch to qmake binary"""
@@ -96,6 +142,16 @@ class Updater:
             self._patch_binfile(
                 self.qmake_path,
                 key=b"qt_prfxpath=",
+                newpath=bytes(str(self.prefix), "UTF-8"),
+            )
+            self._patch_binfile(
+                self.qmake_path,
+                key=b"qt_epfxpath=",
+                newpath=bytes(str(self.prefix), "UTF-8"),
+            )
+            self._patch_binfile(
+                self.qmake_path,
+                key=b"qt_hpfxpath=",
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
 
@@ -192,7 +248,6 @@ class Updater:
         Make Qt configuration files, qt.conf and qtconfig.pri.
         And update pkgconfig and patch Qt5Core and qmake
         """
-        qt_version = target.version
         arch = target.arch
         if arch is None:
             arch_dir = ""
@@ -207,7 +262,7 @@ class Updater:
         try:
             prefix = pathlib.Path(base_dir) / target.version / arch_dir
             updater = Updater(prefix, logger)
-            updater.set_license(base_dir, qt_version, arch_dir)
+            updater.set_license(base_dir, target.version, arch_dir)
             if target.arch not in [
                 "ios",
                 "android",
@@ -217,22 +272,22 @@ class Updater:
                 "android_x86",
                 "android_armv7",
             ]:  # desktop version
-                updater.make_qtconf(base_dir, qt_version, arch_dir)
+                updater.make_qtconf(base_dir, target.version, arch_dir)
                 updater.patch_qmake()
                 if target.os_name == "linux":
-                    updater.patch_pkgconfig()
-                if versiontuple(target.version) < (5, 14, 0):
+                    updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
+                    updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
+                elif target.os_name == "mac":
+                    updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
+                    updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
+                if Version(target.version) < Version("5.14.0"):
                     updater.patch_qtcore(target)
-            elif qt_version.startswith("5."):  # qt5 non-desktop
+            elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
                 updater.patch_qmake()
             else:  # qt6 non-desktop
-                updater.patch_qmake_script(base_dir, qt_version, target.os_name)
+                updater.patch_qmake_script(base_dir, target.version, target.os_name)
                 updater.patch_target_qt_conf(
-                    base_dir, qt_version, arch_dir, target.os_name
+                    base_dir, target.version, arch_dir, target.os_name
                 )
         except IOError as e:
             raise e
-
-
-def versiontuple(v: str):
-    return tuple(map(int, (v.split("."))))

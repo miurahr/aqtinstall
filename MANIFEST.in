@@ -1,17 +1,12 @@
 include *.rst
 include *.txt
 include *.cfg
-include *.yml
 include LICENSE
 include pyproject.toml
 include tox.ini
 recursive-include aqt *.ini
 recursive-include aqt *.json
 recursive-include aqt *.yml
-recursive-include ci *.7z
-recursive-include ci *.ini
-recursive-include ci *.py
-recursive-include ci *.yml
 recursive-include docs *.bat
 recursive-include docs *.dia
 recursive-include docs *.py

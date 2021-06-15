@@ -33,7 +33,8 @@ import subprocess
 import time
 from logging import getLogger
 
-from packaging.version import Version, parse
+from semantic_version import Version
+from texttable import Texttable
 
 import aqt
 from aqt.archives import ListCommand, QtArchives, SrcDocExamplesArchives, ToolArchives
@@ -143,7 +144,7 @@ class Cli:
                 arch = "clang_64"
             elif os_name == "mac" and target == "ios":
                 arch = "ios"
-            elif target == "android" and parse(qt_version) >= Version("5.14.0"):
+            elif target == "android" and Version(qt_version) >= Version("5.14.0"):
                 arch = "android"
             else:
                 print("Please supply a target architecture.")
@@ -557,7 +558,7 @@ class Cli:
         """Display help message"""
         self.parser.print_help()
 
-    def show_aqt_version(self):
+    def show_aqt_version(self, args=None):
         """Display version information"""
         py_version = platform.python_version()
         py_impl = platform.python_implementation()
@@ -716,6 +717,9 @@ class Cli:
         #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
+        #
+        version_parser = subparsers.add_parser("version")
+        version_parser.set_defaults(func=self.show_aqt_version)
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
