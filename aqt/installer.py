@@ -472,6 +472,7 @@ class Cli:
             modules_ver=args.modules,
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
+            tool_name=args.tool,
         )
         return command.run()
 
@@ -483,6 +484,7 @@ class Cli:
             epilog="Examples:\n"
             "$ aqt list qt5 mac                                            # print all targets for Mac OS\n"
             "$ aqt list tools mac desktop                                  # print all tools for mac desktop\n"
+            "$ aqt list tools mac desktop --tool tools_ifw                 # print all tool variant names for QtIFW\n"
             "$ aqt list qt5 mac desktop                                    # print all versions of Qt 5\n"
             "$ aqt list qt5 mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
             "$ aqt list qt5 mac desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
@@ -550,6 +552,16 @@ class Cli:
             "--latest-version",
             action="store_true",
             help="print only the newest version available",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--tool",
+            type=str,
+            metavar="TOOL_NAME",
+            help="The name of a tool. Use 'aqt list tools <host> <target>' to see accepted values. "
+            "This flag only works with the 'tools' category, and cannot be combined with any other flags. "
+            "When set, this prints all 'tool variant names' available. "
+            # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
+            "The output of this command is intended to be used with `aqt tool`.",
         )
         list_parser.set_defaults(func=self.run_list)
 
@@ -708,7 +720,9 @@ class Cli:
             "version", help='Tool version in the format of "4.1.2"'
         )
         tools_parser.add_argument(
-            "arch", help="Name of full tool name such as qt.tools.ifw.31"
+            "arch",
+            help="Name of full tool name such as qt.tools.ifw.31. "
+            "Please use 'aqt list --tool' to list acceptable values for this parameter.",
         )
         self._set_common_options(tools_parser)
 

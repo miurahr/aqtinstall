@@ -23,7 +23,7 @@ List command
 
 .. option:: list [-h | --help] [--extension <extension>] [--filter-minor <Qt minor version>]
                 [--modules (<Qt version> | latest) | --extensions (<Qt version> | latest) |
-                 --arch (<Qt version> | latest) | --latest-version ]
+                 --arch (<Qt version> | latest) | --latest-version | --tool <tool name>]
                 <category> <target OS> [<target variant>]
 
     list available tools, versions of Qt, targets, extensions, modules, and architectures.
@@ -81,6 +81,15 @@ List command
     Print only the newest version available
     May be combined with the `--extension` and/or `--filter-minor` flags.
 
+.. option:: --tool <tool name>
+
+    The name of a tool. Use `aqt list tools <host> <target>` to see accepted values.
+    This flag only works with the 'tools' category, and may noy be combined with
+    any other flags.
+    When set, this prints all 'tool variant names' available.
+
+    The output of this command is meant to be used with the `aqt tool` command:
+    See the :ref:`Tool installation commands` below.
 
 Installation command
 --------------------
@@ -177,6 +186,7 @@ Tool installation commands
 
     install tools specified. tool name may be 'tools_openssl_x64', 'tools_ninja', 'tools_ifw', 'tools_cmake'
     and tool variants name may be 'qt.tools.openssl.gcc_64', 'qt.tools.ninja',  'qt.tools.ifw.32', 'qt.tools.cmake'.
+    You may use the :ref:`List command` with the `--tool` flag to display what tool variant names are available.
     You may need to looking for version number at  https://download.qt.io/online/qtsdkrepository/
 
 
@@ -220,6 +230,13 @@ Example: Install an Install FrameWork (IFW):
 .. code-block:: bash
 
     aqt tool linux tools_ifw 4.0 qt.tools.ifw.40
+
+
+Example: List the variants of IFW available:
+
+.. code-block:: bash
+
+    aqt list tools linux desktop --tool tools_ifw   # prints 'qt.tools.ifw.40'
 
 
 Example: Install vcredist:

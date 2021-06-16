@@ -75,6 +75,7 @@ steps:
         fi
         aqt list $qtmajor $(HOST)                                               # print all targets for host
         aqt list tools $(HOST) $(TARGET)                                        # print all tools for host/target
+        aqt list tools $(HOST) $(TARGET) --tool qtcreator                       # print all tool variant names for qtcreator
         aqt list $qtmajor $(HOST) $(TARGET)                                     # print all versions of Qt
         if [[ $(HAS_WASM_EXTENSION) == "True" ]]; then
           aqt list $qtmajor $(HOST) $(TARGET) --extension wasm                  # print all wasm versions of Qt5

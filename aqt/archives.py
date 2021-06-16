@@ -63,6 +63,7 @@ class ListCommand:
         modules_ver: Optional[str] = None,
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
+        tool_name: Optional[str] = None,
         http_fetcher: Optional[Callable[[str], str]] = None,
     ):
         """
@@ -83,7 +84,14 @@ class ListCommand:
         self.archive_id = archive_id
         self.filter_minor = filter_minor
 
-        if is_latest_version:
+        if archive_id.is_tools():
+            if tool_name:
+                self.request_type = "tool variant names"
+                self._action = lambda: self.fetch_tool_modules(tool_name)
+            else:
+                self.request_type = "tools"
+                self._action = self.fetch_tools
+        elif is_latest_version:
             self.request_type = "latest version"
             self._action = self.fetch_latest_version
         elif modules_ver:
@@ -99,9 +107,6 @@ class ListCommand:
             self._action = lambda: self.fetch_arches(
                 self._to_version(architectures_ver)
             )
-        elif archive_id.is_tools():
-            self.request_type = "tools"
-            self._action = self.fetch_tools
         else:
             self.request_type = "versions"
             self._action = self.fetch_versions
@@ -336,6 +341,9 @@ class ListCommand:
             msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
                 base_cmd, self.archive_id.category, self.filter_minor
             )
+            printer(msg)
+        if self.archive_id.is_tools() and self.request_type == "tool variant names":
+            msg = "Please use '{}' to check what tools are available.".format(base_cmd)
             printer(msg)
 
 
