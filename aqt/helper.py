@@ -20,7 +20,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import configparser
-import dataclasses
 import hashlib
 import json
 import logging
@@ -139,26 +138,20 @@ class Versions:
         return str(version)
 
 
-@dataclasses.dataclass
-class Tools:
-    tools: List[str]
-
-    def __str__(self):
-        return "\n".join(self.tools)
-
-    def __bool__(self):
-        return len(self.tools) > 0 and len(self.tools[0]) > 0
-
-
-@dataclasses.dataclass
 class ListOfStr:
-    strings: List[str]
+    def __init__(self, strings: List[str]):
+        self.strings = strings
 
     def __str__(self):
         return " ".join(self.strings)
 
     def __bool__(self):
         return len(self.strings) > 0 and len(self.strings[0]) > 0
+
+
+class Tools(ListOfStr):
+    def __str__(self):
+        return "\n".join(self.strings)
 
 
 def _get_meta(url: str):

@@ -170,7 +170,7 @@ class ListCommand:
 
     def fetch_tools(self) -> helper.Tools:
         html_doc = self.fetch_http(self.archive_id.to_url())
-        return Tools(tools=list(ListCommand.iterate_folders(html_doc, "tools")))
+        return Tools(list(ListCommand.iterate_folders(html_doc, "tools")))
 
     def fetch_tool_modules(self, tool_name: str) -> helper.ListOfStr:
         rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
