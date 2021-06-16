@@ -14,7 +14,7 @@ steps:
   - bash: |
       set -ex
       number=$RANDOM
-      let "number %= 60"
+      let "number %= 60" || true
       let "number += 1"
       sleep $number
       mkdir Qt
