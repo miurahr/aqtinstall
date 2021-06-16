@@ -358,13 +358,17 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 
 def request_http_with_failover(
-    base_urls: List[str], rest_of_url: str, timeout: Tuple[float, float]
+    base_urls: List[str], rest_of_url: str, timeout=None
 ) -> str:
     """Make an HTTP request, using one or more base urls in case the request fails.
     If all requests fail, then re-raise the requests.exceptions.RequestException
     that was raised by the final HTTP request.
     Any HTTP request that resulted in a status code >= 400 will result in a RequestException.
     """
+    if not timeout:
+        settings = Settings()  # Borg/Singleton ensures we get the right settings
+        timeout = settings.connection_timeout, settings.response_timeout
+
     for i, base_url in enumerate(base_urls):
         try:
             url = base_url + "/" + rest_of_url
