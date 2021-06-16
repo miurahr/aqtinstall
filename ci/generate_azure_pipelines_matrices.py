@@ -7,7 +7,6 @@ import random
 from itertools import product
 
 MIRRORS = [
-    "https://mirrors.ocf.berkeley.edu/qt",
     "https://ftp.jaist.ac.jp/pub/qtproject",
     "http://ftp1.nluug.nl/languages/qt",
     "https://mirrors.dotsrc.org/qtproject",
