@@ -26,27 +26,23 @@ MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
         ("mac", "ios", "mac-ios.html", "mac-ios-expect.json"),
     ],
 )
-def test_list_versions_tools(os_name, target, in_file, expect_out_file):
+def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_file):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-
-    def http_fetcher(_: str) -> str:
-        return _html
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda _: _html)
 
     expected = json.loads(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
     # Test 'aqt list tools'
-    tools = ListCommand(
-        ArchiveId("tools", os_name, target), http_fetcher=http_fetcher
-    ).action()
+    tools = ListCommand(ArchiveId("tools", os_name, target)).action()
     assert str(tools) == "\n".join(expected["tools"])
 
     for qt in ("qt5", "qt6"):
         for ext, expected_output in expected[qt].items():
             # Test 'aqt list qt'
             archive_id = ArchiveId(qt, os_name, target, ext if ext != "qt" else "")
-            all_versions = ListCommand(archive_id, http_fetcher=http_fetcher).action()
+            all_versions = ListCommand(archive_id).action()
 
             if len(expected_output) == 0:
                 assert not all_versions
@@ -54,9 +50,7 @@ def test_list_versions_tools(os_name, target, in_file, expect_out_file):
                 assert str(all_versions) == "\n".join(expected_output)
 
             # Filter for the latest version only
-            latest_ver = ListCommand(
-                archive_id, is_latest_version=True, http_fetcher=http_fetcher
-            ).action()
+            latest_ver = ListCommand(archive_id, is_latest_version=True).action()
 
             if len(expected_output) == 0:
                 assert not latest_ver
@@ -71,13 +65,12 @@ def test_list_versions_tools(os_name, target, in_file, expect_out_file):
                     archive_id,
                     filter_minor=minor,
                     is_latest_version=True,
-                    http_fetcher=http_fetcher,
                 ).action()
                 assert v.stringify_ver(latest_ver_for_minor) == row.split(" ")[-1]
 
                 # Find all versions for a particular minor version
                 all_ver_for_minor = ListCommand(
-                    archive_id, filter_minor=minor, http_fetcher=http_fetcher
+                    archive_id, filter_minor=minor,
                 ).action()
                 assert str(all_ver_for_minor) == row
 
@@ -96,7 +89,7 @@ def test_list_versions_tools(os_name, target, in_file, expect_out_file):
     ],
 )
 def test_list_architectures_and_modules(
-    capsys, version: str, extension: str, in_file: str, expect_out_file: str
+    monkeypatch, version: str, extension: str, in_file: str, expect_out_file: str
 ):
     archive_id = ArchiveId("qt" + version[0], "windows", "desktop", extension)
     _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
@@ -104,13 +97,12 @@ def test_list_architectures_and_modules(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    def http_fetcher(_: str) -> str:
-        return _xml
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda _: _xml)
 
-    modules, arches = ListCommand(
-        archive_id, http_fetcher=http_fetcher
-    ).get_modules_architectures_for_version(Version(version))
+    modules = ListCommand(archive_id).fetch_modules(Version(version))
     assert modules.strings == expect["modules"]
+
+    arches = ListCommand(archive_id).fetch_arches(Version(version))
     assert arches.strings == expect["architectures"]
 
 
@@ -122,7 +114,7 @@ def test_list_architectures_and_modules(
         ("mac", "desktop", "tools_qtcreator"),
     ],
 )
-def test_tool_modules(host: str, target: str, tool_name: str):
+def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
     archive_id = ArchiveId("tools", host, target)
     in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
     expect_out_file = "{}-{}-{}-expect.json".format(host, target, tool_name)
@@ -131,10 +123,9 @@ def test_tool_modules(host: str, target: str, tool_name: str):
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    def http_fetcher(_: str) -> str:
-        return _xml
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda _: _xml)
 
-    modules = ListCommand(archive_id, http_fetcher=http_fetcher).fetch_tool_modules(
+    modules = ListCommand(archive_id).fetch_tool_modules(
         tool_name
     )
     assert modules.strings == expect["modules"]
@@ -185,7 +176,7 @@ def test_list_cli(
         ver_to_replace = ver.replace(".", "")
         return text.replace(ver_to_replace, desired_version)
 
-    monkeypatch.setattr(archives.ListCommand, "_default_http_fetcher", _mock)
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", _mock)
 
     expected_modules_arches = json.loads(
         (Path(__file__).parent / "data" / xmlexpect).read_text("utf-8")

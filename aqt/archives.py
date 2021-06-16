@@ -64,7 +64,6 @@ class ListCommand:
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         tool_name: Optional[str] = None,
-        http_fetcher: Optional[Callable[[str], str]] = None,
     ):
         """
         Construct ListCommand.
@@ -75,12 +74,8 @@ class ListCommand:
         @param modules_ver          Version of Qt for which to list modules
         @param extensions_ver       Version of Qt for which to list extensions
         @param architectures_ver    Version of Qt for which to list architectures
-        @param http_fetcher         Function used to fetch documents via http
         """
         self.logger = getLogger("aqt")
-        self.http_fetcher = (
-            http_fetcher if http_fetcher else ListCommand._default_http_fetcher
-        )
         self.archive_id = archive_id
         self.filter_minor = filter_minor
 
@@ -141,7 +136,7 @@ class ListCommand:
 
     def fetch_extensions(self, version: Version) -> helper.ListOfStr:
         versions_extensions = ListCommand.get_versions_extensions(
-            self.http_fetcher(self.archive_id.to_url()), self.archive_id.category
+            self.fetch_http(self.archive_id.to_url()), self.archive_id.category
         )
         filtered = filter(
             lambda ver_ext: ver_ext[0] == version and ver_ext[1],
@@ -162,7 +157,7 @@ class ListCommand:
             return ver_ext[0]
 
         versions_extensions = ListCommand.get_versions_extensions(
-            self.http_fetcher(self.archive_id.to_url()), self.archive_id.category
+            self.fetch_http(self.archive_id.to_url()), self.archive_id.category
         )
         versions = sorted(
             filter(None, map(get_version, filter(filter_by, versions_extensions)))
@@ -174,12 +169,12 @@ class ListCommand:
         return self.fetch_versions().latest()
 
     def fetch_tools(self) -> helper.Tools:
-        html_doc = self.http_fetcher(self.archive_id.to_url())
+        html_doc = self.fetch_http(self.archive_id.to_url())
         return Tools(tools=list(ListCommand.iterate_folders(html_doc, "tools")))
 
     def fetch_tool_modules(self, tool_name: str) -> helper.ListOfStr:
         rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
-        xml = self.http_fetcher(rest_of_url)  # raises RequestException
+        xml = self.fetch_http(rest_of_url)  # raises RequestException
         modules = xml_to_modules(
             xml,
             predicate=ListCommand._has_nonempty_downloads,
@@ -215,7 +210,7 @@ class ListCommand:
         return version
 
     @staticmethod
-    def _default_http_fetcher(rest_of_url: str):
+    def fetch_http(rest_of_url: str):
         settings = Settings()  # Borg/Singleton ensures we get the right settings
         return helper.request_http_with_failover(
             base_urls=[settings.baseurl, random.choice(settings.fallbacks)],
@@ -296,7 +291,7 @@ class ListCommand:
         rest_of_url = self.archive_id.to_url(
             qt_version_no_dots=qt_ver_str, file="Updates.xml"
         )
-        xml = self.http_fetcher(rest_of_url)  # raises RequestException
+        xml = self.fetch_http(rest_of_url)  # raises RequestException
 
         # We want the names of modules, regardless of architecture:
         modules = xml_to_modules(
