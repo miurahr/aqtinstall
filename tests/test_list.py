@@ -70,7 +70,8 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
 
                 # Find all versions for a particular minor version
                 all_ver_for_minor = ListCommand(
-                    archive_id, filter_minor=minor,
+                    archive_id,
+                    filter_minor=minor,
                 ).action()
                 assert str(all_ver_for_minor) == row
 
@@ -125,9 +126,7 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
 
     monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda _: _xml)
 
-    modules = ListCommand(archive_id).fetch_tool_modules(
-        tool_name
-    )
+    modules = ListCommand(archive_id).fetch_tool_modules(tool_name)
     assert modules.strings == expect["modules"]
 
 
