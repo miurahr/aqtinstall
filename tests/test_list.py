@@ -28,7 +28,7 @@ MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 )
 def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_file):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda _: _html)
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _html)
 
     expected = json.loads(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
@@ -98,7 +98,7 @@ def test_list_architectures_and_modules(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda _: _xml)
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _xml)
 
     modules = ListCommand(archive_id).fetch_modules(Version(version))
     assert modules.strings == expect["modules"]
@@ -124,7 +124,7 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda _: _xml)
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _xml)
 
     modules = ListCommand(archive_id).fetch_tool_modules(tool_name)
     assert modules.strings == expect["modules"]
@@ -161,7 +161,7 @@ def test_list_cli(
     htmlfile,
     htmlexpect,
 ):
-    def _mock(rest_of_url: str) -> str:
+    def _mock(_, rest_of_url: str) -> str:
         in_file = xmlfile if rest_of_url.endswith("Updates.xml") else htmlfile
         text = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
         if not rest_of_url.endswith("Updates.xml"):
