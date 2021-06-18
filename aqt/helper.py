@@ -187,47 +187,51 @@ class MyConfigParser(configparser.ConfigParser):
 
 
 class Settings:
+    """Class to hold configuration and settings.		￼
+    ￼    Actual values are stored in 'settings.ini' file.
+    ￼    It also holds a combinations database.
+    ￼"""
 
     def __init__(self):
-        self.configurations = MyConfigParser()
+        self.config = MyConfigParser()
         # load default config file
         with open(os.path.join(os.path.dirname(__file__), "settings.ini"), "r") as f:
-            self.configurations.read_file(f)
+            self.config.read_file(f)
         # load combinations
         with open(
             os.path.join(os.path.dirname(__file__), "combinations.json"),
             "r",
         ) as j:
-            self.combinations = json.load(j)[0]
+            self._combinations = json.load(j)[0]
 
     def load_settings(self, file):
         # load custom file
         if file is not None:
             if isinstance(file, str):
-                result = self.configurations.read(file)
+                result = self.config.read(file)
                 if len(result) == 0:
                     raise IOError("Fails to load specified config file {}".format(file))
             else:
                 # passed through command line argparse.FileType("r")
-                self.configurations.read_file(file)
+                self.config.read_file(file)
                 file.close()
 
     @property
     def qt_combinations(self):
-        return self.combinations["qt"]
+        return self._combinations["qt"]
 
     @property
     def tools_combinations(self):
-        return self.combinations["tools"]
+        return self._combinations["tools"]
 
     @property
     def available_versions(self):
-        return self.combinations["versions"]
+        return self._combinations["versions"]
 
     @property
     def available_offline_installer_version(self):
-        res = self.combinations["new_archive"]
-        res.extend(self.combinations["versions"])
+        res = self._combinations["new_archive"]
+        res.extend(self._combinations["versions"])
         return res
 
     def available_modules(self, qt_version):
@@ -236,7 +240,7 @@ class Settings:
         :returns: dictionary of qt_version and module names
         :rtype: List[str]
         """
-        modules = self.combinations["modules"]
+        modules = self._combinations["modules"]
         versions = qt_version.split(".")
         version = "{}.{}".format(versions[0], versions[1])
         result = None
@@ -252,7 +256,7 @@ class Settings:
         :return: concurrency
         :rtype: int
         """
-        return self.configurations.getint("aqt", "concurrency", fallback=4)
+        return self.config.getint("aqt", "concurrency", fallback=4)
 
     @property
     def blacklist(self):
@@ -261,27 +265,29 @@ class Settings:
         :returns: list of site URLs(scheme and host part)
         :rtype: List[str]
         """
-        return self.configurations.getlist("mirrors", "blacklist", fallback=[])
+        return self.config.getlist("mirrors", "blacklist", fallback=[])
 
     @property
     def baseurl(self):
-        return self.configurations.get("aqt", "baseurl", fallback="https://download.qt.io")
+        return self.config.get(
+            "aqt", "baseurl", fallback="https://download.qt.io"
+        )
 
     @property
     def connection_timeout(self):
-        return self.configurations.getfloat("aqt", "connection_timeout", fallback=3.5)
+        return self.config.getfloat("aqt", "connection_timeout", fallback=3.5)
 
     @property
     def response_timeout(self):
-        return self.configurations.getfloat("aqt", "response_timeout", fallback=3.5)
+        return self.config.getfloat("aqt", "response_timeout", fallback=3.5)
 
     @property
     def fallbacks(self):
-        return self.configurations.getlist("mirrors", "fallbacks", fallback=[])
+        return self.config.getlist("mirrors", "fallbacks", fallback=[])
 
     @property
     def zipcmd(self):
-        return self.configurations.get("aqt", "7zcmd", fallback="7z")
+        return self.config.get("aqt", "7zcmd", fallback="7z")
 
 
 Settings = Settings()
