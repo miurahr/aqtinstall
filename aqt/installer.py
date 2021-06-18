@@ -259,7 +259,6 @@ class Cli:
                 base,
                 subarchives=archives,
                 modules=modules,
-                logging=self.logger,
                 all_extra=all_extra,
                 timeout=timeout,
             )
@@ -276,7 +275,6 @@ class Cli:
                     random.choice(Settings.fallbacks),
                     subarchives=archives,
                     modules=modules,
-                    logging=self.logger,
                     all_extra=all_extra,
                     timeout=timeout,
                 )
@@ -336,7 +334,6 @@ class Cli:
                 base,
                 subarchives=archives,
                 modules=modules,
-                logging=self.logger,
                 all_extra=all_extra,
                 timeout=timeout,
             )
@@ -353,7 +350,6 @@ class Cli:
                     random.choice(Settings.fallbacks),
                     subarchives=archives,
                     modules=modules,
-                    logging=self.logger,
                     all_extra=all_extra,
                     timeout=timeout,
                 )
@@ -420,7 +416,6 @@ class Cli:
                 version,
                 arch,
                 base,
-                logging=self.logger,
                 timeout=timeout,
             )
         except ArchiveConnectionError:
@@ -434,7 +429,6 @@ class Cli:
                     version,
                     arch,
                     random.choice(Settings.fallbacks),
-                    logging=self.logger,
                     timeout=timeout,
                 )
             except Exception:
@@ -655,10 +649,6 @@ class Cli:
         if conf is None or not os.path.exists(conf):
             conf = os.path.join(os.path.dirname(__file__), "logging.ini")
         logging.config.fileConfig(conf)
-        if args.logger is not None:
-            self.logger = logging.getLogger(args.logger)
-        else:
-            self.logger = logging.getLogger("aqt")
 
     def _setup_settings(self, args=None, env_key="AQT_CONFIG"):
         if args is not None and args.config is not None:
@@ -672,6 +662,7 @@ class Cli:
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
         self._setup_logging(args)
+        self.logger = logging.getLogger("aqt")
         return args.func(args)
 
 

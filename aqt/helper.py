@@ -92,7 +92,7 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
                         r.status_code, r.headers["Location"]
                     )
                 )
-                newurl = altlink(r.url, r.headers["Location"], logger=logger)
+                newurl = altlink(r.url, r.headers["Location"])
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except requests.exceptions.ConnectionError as e:
@@ -122,14 +122,12 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
                 raise e
 
 
-def altlink(url: str, alt: str, logger=None):
+def altlink(url: str, alt: str):
     """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
     When found black url, then try download a url + .meta4 that is a metalink version4
     xml file, parse it and retrieve best alternative url."""
-    if logger is None:
-        logger = logging.getLogger(__name__)
-    blacklist = Settings.blacklist  # type: Optional[List[str]]
-    if not any(alt.startswith(b) for b in blacklist):
+    logger = logging.getLogger("aqt")
+    if not any(alt.startswith(b) for b in Settings.blacklist):
         return alt
     try:
         m = _get_meta(url)
