@@ -19,12 +19,8 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import configparser
 import hashlib
-import json
 import logging
-import multiprocessing
-import os
 import sys
 import xml.etree.ElementTree as ElementTree
 from typing import List, Optional
@@ -33,6 +29,7 @@ from urllib.parse import urlparse
 import requests
 import requests.adapters
 
+import aqt.settings as Settings
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
 
@@ -129,7 +126,7 @@ def altlink(url: str, alt: str, logger=None):
     xml file, parse it and retrieve best alternative url."""
     if logger is None:
         logger = logging.getLogger(__name__)
-    blacklist = Settings().blacklist  # type: Optional[List[str]]
+    blacklist = Settings.blacklist()  # type: Optional[List[str]]
     if not any(alt.startswith(b) for b in blacklist):
         return alt
     try:
@@ -169,137 +166,3 @@ def altlink(url: str, alt: str, logger=None):
                 ),
                 alt,
             )
-
-
-class MyConfigParser(configparser.ConfigParser):
-    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
-        value = self.get(section, option)
-        try:
-            result = list(filter(None, (x.strip() for x in value.splitlines())))
-        except Exception:
-            result = fallback
-        return result
-
-    def getlistint(self, section: str, option: str, fallback=[]):
-        try:
-            result = [int(x) for x in self.getlist(section, option)]
-        except Exception:
-            result = fallback
-        return result
-
-
-class Settings(object):
-    """Class to hold configuration and settings.
-    Actual values are stored in 'settings.ini' file.
-    It also holds a combinations database.
-    """
-
-    # this class is Borg/Singleton
-    _shared_state = {
-        "config": None,
-        "_combinations": None,
-        "_lock": multiprocessing.Lock(),
-    }
-
-    def __init__(self, file=None):
-        self.__dict__ = self._shared_state
-        if self.config is None:
-            with self._lock:
-                if self.config is None:
-                    self.config = MyConfigParser()
-                    # load default config file
-                    with open(
-                        os.path.join(os.path.dirname(__file__), "settings.ini"), "r"
-                    ) as f:
-                        self.config.read_file(f)
-                    # load custom file
-                    if file is not None:
-                        if isinstance(file, str):
-                            result = self.config.read(file)
-                            if len(result) == 0:
-                                raise IOError(
-                                    "Fails to load specified config file {}".format(
-                                        file
-                                    )
-                                )
-                        else:
-                            # passed through command line argparse.FileType("r")
-                            self.config.read_file(file)
-                            file.close()
-                    # load combinations
-                    with open(
-                        os.path.join(os.path.dirname(__file__), "combinations.json"),
-                        "r",
-                    ) as j:
-                        self._combinations = json.load(j)[0]
-
-    @property
-    def qt_combinations(self):
-        return self._combinations["qt"]
-
-    @property
-    def tools_combinations(self):
-        return self._combinations["tools"]
-
-    @property
-    def available_versions(self):
-        return self._combinations["versions"]
-
-    @property
-    def available_offline_installer_version(self):
-        res = self._combinations["new_archive"]
-        res.extend(self._combinations["versions"])
-        return res
-
-    def available_modules(self, qt_version):
-        """Known module names
-
-        :returns: dictionary of qt_version and module names
-        :rtype: List[str]
-        """
-        modules = self._combinations["modules"]
-        versions = qt_version.split(".")
-        version = "{}.{}".format(versions[0], versions[1])
-        result = None
-        for record in modules:
-            if record["qt_version"] == version:
-                result = record["modules"]
-        return result
-
-    @property
-    def concurrency(self):
-        """concurrency configuration.
-
-        :return: concurrency
-        :rtype: int
-        """
-        return self.config.getint("aqt", "concurrency", fallback=4)
-
-    @property
-    def blacklist(self):
-        """list of sites in a blacklist
-
-        :returns: list of site URLs(scheme and host part)
-        :rtype: List[str]
-        """
-        return self.config.getlist("mirrors", "blacklist", fallback=[])
-
-    @property
-    def baseurl(self):
-        return self.config.get("aqt", "baseurl", fallback="https://download.qt.io")
-
-    @property
-    def connection_timeout(self):
-        return self.config.getfloat("aqt", "connection_timeout", fallback=3.5)
-
-    @property
-    def response_timeout(self):
-        return self.config.getfloat("aqt", "response_timeout", fallback=3.5)
-
-    @property
-    def fallbacks(self):
-        return self.config.getlist("mirrors", "fallbacks", fallback=[])
-
-    @property
-    def zipcmd(self):
-        return self.config.get("aqt", "7zcmd", fallback="7z")

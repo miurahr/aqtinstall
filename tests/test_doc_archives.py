@@ -17,13 +17,20 @@ def test_parse_update_xml(monkeypatch, os_name, version, target, datafile):
 
     monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
 
-    settings = Settings()
-    qt_archives = QtArchives(os_name, "desktop", version, target, settings.baseurl)
+    qt_archives = QtArchives(os_name, "desktop", version, target, Settings.baseurl())
     assert qt_archives.archives is not None
 
     # Get packages with all extra modules
     qt_archives_all_modules = QtArchives(
-        os_name, "desktop", version, target, settings.baseurl, None, ["all"], None, True
+        os_name,
+        "desktop",
+        version,
+        target,
+        Settings.baseurl(),
+        None,
+        ["all"],
+        None,
+        True,
     )
     assert qt_archives_all_modules.archives is not None
 

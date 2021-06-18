@@ -25,8 +25,9 @@ from logging import getLogger
 
 from semantic_version import SimpleSpec, Version
 
+import aqt.settings as Settings
 from aqt.exceptions import ArchiveListError, NoPackageFound
-from aqt.helper import Settings, getUrl
+from aqt.helper import getUrl
 
 
 class TargetConfig:
@@ -143,7 +144,7 @@ class QtArchives:
         self.arch = arch
         self.os_name = os_name
         self.all_extra = all_extra
-        self.arch_list = [item.get("arch") for item in Settings().qt_combinations]
+        self.arch_list = [item.get("arch") for item in Settings.qt_combinations()]
         all_archives = subarchives is None
         self.base = base + "/online/qtsdkrepository/"
         if logging:
