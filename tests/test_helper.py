@@ -5,7 +5,7 @@ import os
 import requests
 from requests.models import Response
 
-import aqt.settings as Settings
+from aqt.settings import Settings
 from aqt import helper
 
 
@@ -55,8 +55,8 @@ def test_settings(tmp_path):
     Settings.load_settings(
         os.path.join(os.path.dirname(__file__), "data", "settings.ini")
     )
-    assert Settings.concurrency() == 3
-    assert "http://mirror.example.com" in Settings.blacklist()
+    assert Settings.concurrency == 3
+    assert "http://mirror.example.com" in Settings.blacklist
 
 
 def mocked_iter_content(chunk_size):

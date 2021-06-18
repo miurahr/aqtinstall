@@ -29,7 +29,7 @@ from urllib.parse import urlparse
 import requests
 import requests.adapters
 
-import aqt.settings as Settings
+from aqt.settings import Settings
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
 
@@ -126,7 +126,7 @@ def altlink(url: str, alt: str, logger=None):
     xml file, parse it and retrieve best alternative url."""
     if logger is None:
         logger = logging.getLogger(__name__)
-    blacklist = Settings.blacklist()  # type: Optional[List[str]]
+    blacklist = Settings.blacklist  # type: Optional[List[str]]
     if not any(alt.startswith(b) for b in blacklist):
         return alt
     try:

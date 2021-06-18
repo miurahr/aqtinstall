@@ -3,7 +3,7 @@ import os
 import pytest
 
 from aqt.archives import QtArchives
-from aqt.helper import Settings
+from aqt.settings import Settings
 
 
 @pytest.mark.parametrize(
@@ -24,7 +24,7 @@ def test_parse_update_xml(monkeypatch, os_name, version, target, datafile):
     Settings.load_settings(
         os.path.join(os.path.dirname(__file__), "data", "settings.ini")
     )
-    qt_archives = QtArchives(os_name, "desktop", version, target, Settings.baseurl())
+    qt_archives = QtArchives(os_name, "desktop", version, target, Settings.baseurl)
     assert qt_archives.archives is not None
 
     # Get packages with all extra modules

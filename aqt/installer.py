@@ -37,7 +37,6 @@ from semantic_version import Version
 from texttable import Texttable
 
 import aqt
-import aqt.settings as Settings
 from aqt.archives import PackagesList, QtArchives, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import (
     ArchiveConnectionError,
@@ -46,6 +45,7 @@ from aqt.exceptions import (
     NoPackageFound,
 )
 from aqt.helper import downloadBinaryFile, getUrl
+from aqt.settings import Settings
 from aqt.updater import Updater
 
 try:
@@ -69,7 +69,7 @@ class Cli:
         self._create_parser()
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
-        for c in Settings.tools_combinations():
+        for c in Settings.tools_combinations:
             if (
                 c["os_name"] == os_name
                 and c["tool_name"] == tool_name
@@ -105,16 +105,16 @@ class Cli:
                 "win32_mingw81",
             ]:
                 return False
-        for c in Settings.qt_combinations():
+        for c in Settings.qt_combinations:
             if c["os_name"] == os_name and c["target"] == target and c["arch"] == arch:
                 return True
         return False
 
     def _check_qt_arg_versions(self, version):
-        return version in Settings.available_versions()
+        return version in Settings.available_versions
 
     def _check_qt_arg_version_offline(self, version):
-        return version in Settings.available_offline_installer_version()
+        return version in Settings.available_offline_installer_version
 
     def _set_sevenzip(self, external):
         sevenzip = external
@@ -182,7 +182,7 @@ class Cli:
         tasks = []
         for arc in qt_archives.get_archives():
             tasks.append((arc, base_dir, sevenzip, keep))
-        pool = multiprocessing.Pool(Settings.concurrency())
+        pool = multiprocessing.Pool(Settings.concurrency)
         pool.starmap(installer, tasks)
         pool.close()
         pool.join()
@@ -204,7 +204,7 @@ class Cli:
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
-            timeout = (Settings.connection_timeout(), Settings.response_timeout())
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args.external)
@@ -217,7 +217,7 @@ class Cli:
                 exit(1)
             base = args.base
         else:
-            base = Settings.baseurl()
+            base = Settings.baseurl
         archives = args.archives
         if args.noarchives:
             if modules is None:
@@ -274,7 +274,7 @@ class Cli:
                     target,
                     qt_version,
                     arch,
-                    random.choice(Settings.fallbacks()),
+                    random.choice(Settings.fallbacks),
                     subarchives=archives,
                     modules=modules,
                     logging=self.logger,
@@ -312,15 +312,15 @@ class Cli:
         if args.base is not None:
             base = args.base
         else:
-            base = Settings.baseurl()
+            base = Settings.baseurl
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
-            timeout = (Settings.connection_timeout(), Settings.response_timeout())
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
         sevenzip = self._set_sevenzip(args.external)
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
-            sevenzip = self._set_sevenzip(Settings.zipcmd())
+            sevenzip = self._set_sevenzip(Settings.zipcmd)
         modules = args.modules
         archives = args.archives
         all_extra = True if modules is not None and "all" in modules else False
@@ -351,7 +351,7 @@ class Cli:
                     os_name,
                     target,
                     qt_version,
-                    random.choice(Settings.fallbacks()),
+                    random.choice(Settings.fallbacks),
                     subarchives=archives,
                     modules=modules,
                     logging=self.logger,
@@ -397,17 +397,17 @@ class Cli:
         sevenzip = self._set_sevenzip(args.external)
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
-            sevenzip = self._set_sevenzip(Settings.zipcmd())
+            sevenzip = self._set_sevenzip(Settings.zipcmd)
         version = args.version
         keep = args.keep
         if args.base is not None:
             base = args.base
         else:
-            base = Settings.baseurl()
+            base = Settings.baseurl
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
-            timeout = (Settings.connection_timeout(), Settings.response_timeout())
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning(
                 "Specified target combination is not valid: {} {} {}".format(
@@ -434,7 +434,7 @@ class Cli:
                     tool_name,
                     version,
                     arch,
-                    random.choice(Settings.fallbacks()),
+                    random.choice(Settings.fallbacks),
                     logging=self.logger,
                     timeout=timeout,
                 )
@@ -458,10 +458,10 @@ class Cli:
         host = args.host
         target = args.target
         try:
-            pl = PackagesList(qt_version, host, target, Settings.baseurl())
+            pl = PackagesList(qt_version, host, target, Settings.baseurl)
         except (ArchiveConnectionError, ArchiveDownloadError):
             pl = PackagesList(
-                qt_version, host, target, random.choice(Settings.fallbacks())
+                qt_version, host, target, random.choice(Settings.fallbacks)
             )
         print("List Qt packages in %s for %s" % (args.qt_version, args.host))
         table = Texttable()
@@ -668,8 +668,6 @@ class Cli:
             config = os.getenv(env_key, None)
             if config is not None and os.path.exists(config):
                 Settings.load_settings(config)
-            else:
-                Settings.load_settings()
 
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
@@ -692,9 +690,9 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
-        timeout = (Settings.connection_timeout(), Settings.response_timeout())
+        timeout = (Settings.connection_timeout, Settings.response_timeout)
     else:
-        timeout = (Settings.connection_timeout(), response_timeout)
+        timeout = (Settings.connection_timeout, response_timeout)
     hash = binascii.unhexlify(getUrl(hashurl, timeout, logger))
     downloadBinaryFile(url, archive, "sha1", hash, timeout, logger)
     if command is None:
