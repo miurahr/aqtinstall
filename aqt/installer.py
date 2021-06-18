@@ -44,8 +44,7 @@ from aqt.exceptions import (
     ArchiveListError,
     NoPackageFound,
 )
-from aqt.helper import downloadBinaryFile, getUrl
-from aqt.settings import Settings
+from aqt.helper import Settings, downloadBinaryFile, getUrl
 from aqt.updater import Updater
 
 try:

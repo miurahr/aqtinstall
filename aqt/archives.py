@@ -26,8 +26,7 @@ from logging import getLogger
 from semantic_version import SimpleSpec, Version
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
-from aqt.helper import getUrl
-from aqt.settings import Settings
+from aqt.helper import Settings, getUrl
 
 
 class TargetConfig:

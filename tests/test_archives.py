@@ -3,7 +3,7 @@ import os
 import pytest
 
 from aqt.archives import QtArchives
-from aqt.settings import Settings
+from aqt.helper import Settings
 
 
 @pytest.mark.parametrize(
