@@ -23,10 +23,11 @@ import configparser
 import hashlib
 import json
 import logging
+import logging.config
 import os
 import sys
 import xml.etree.ElementTree as ElementTree
-from typing import List, Optional
+from typing import List
 from urllib.parse import urlparse
 
 import requests
@@ -161,7 +162,7 @@ def altlink(url: str, alt: str):
             # if not found then return alt in default
             return next(
                 filter(
-                    lambda mirror: not any(mirror.startswith(b) for b in blacklist),
+                    lambda mirror: not any(mirror.startswith(b) for b in Settings.blacklist),
                     mirrors,
                 ),
                 alt,
@@ -193,6 +194,7 @@ class Settings:
 
     def __init__(self):
         self.config = MyConfigParser()
+        self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
         # load default config file
         with open(os.path.join(os.path.dirname(__file__), "settings.ini"), "r") as f:
             self.config.read_file(f)
@@ -203,7 +205,7 @@ class Settings:
         ) as j:
             self._combinations = json.load(j)[0]
 
-    def load_settings(self, file):
+    def load_settings(self, file=None):
         # load custom file
         if file is not None:
             if isinstance(file, str):
@@ -214,6 +216,15 @@ class Settings:
                 # passed through command line argparse.FileType("r")
                 self.config.read_file(file)
                 file.close()
+        else:
+            # defualts have already loaded in constructor
+            pass
+
+    def load_logging_conf(self, file=None):
+        if file is not None:
+            logging.config.fileConfig(file)
+        else:
+            logging.config.fileConfig(self.loggingconf)
 
     @property
     def qt_combinations(self):

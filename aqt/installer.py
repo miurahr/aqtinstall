@@ -31,7 +31,6 @@ import platform
 import random
 import subprocess
 import time
-from logging import getLogger
 
 from semantic_version import Version
 from texttable import Texttable
@@ -640,15 +639,14 @@ class Cli:
         self.parser = parser
 
     def _setup_logging(self, args, env_key="LOG_CFG"):
-        envconf = os.getenv(env_key, None)
-        conf = None
-        if args.logging_conf:
-            conf = args.logging_conf
-        elif envconf is not None:
-            conf = envconf
-        if conf is None or not os.path.exists(conf):
-            conf = os.path.join(os.path.dirname(__file__), "logging.ini")
-        logging.config.fileConfig(conf)
+        if args is not None and args.logging_conf is not None:
+            Settings.load_logging_conf(args.logging_conf)
+        else:
+            config = os.getenv(env_key, None)
+            if config is not None and os.path.exists(config):
+                Settings.load_logging_conf(config)
+            else:
+                Settings.load_logging_conf()
 
     def _setup_settings(self, args=None, env_key="AQT_CONFIG"):
         if args is not None and args.config is not None:
@@ -657,6 +655,8 @@ class Cli:
             config = os.getenv(env_key, None)
             if config is not None and os.path.exists(config):
                 Settings.load_settings(config)
+            else:
+                Settings.load_settings()
 
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
@@ -676,7 +676,8 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
-    logger = getLogger("aqt")
+    Settings.load_logging_conf()
+    logger = logging.getLogger("installer")
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
