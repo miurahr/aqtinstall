@@ -51,9 +51,11 @@ def test_helper_altlink(monkeypatch):
 
 
 def test_settings(tmp_path):
-    config = helper.Settings()
-    assert config.concurrency == 3
-    assert "http://mirror.example.com" in config.blacklist
+    helper.Settings.load_settings(
+        os.path.join(os.path.dirname(__file__), "data", "settings.ini")
+    )
+    assert helper.Settings.concurrency == 3
+    assert "http://mirror.example.com" in helper.Settings.blacklist
 
 
 def mocked_iter_content(chunk_size):

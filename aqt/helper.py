@@ -23,7 +23,6 @@ import configparser
 import hashlib
 import json
 import logging
-import multiprocessing
 import os
 import sys
 import xml.etree.ElementTree as ElementTree
@@ -129,7 +128,7 @@ def altlink(url: str, alt: str, logger=None):
     xml file, parse it and retrieve best alternative url."""
     if logger is None:
         logger = logging.getLogger(__name__)
-    blacklist = Settings().blacklist  # type: Optional[List[str]]
+    blacklist = Settings.blacklist  # type: Optional[List[str]]
     if not any(alt.startswith(b) for b in blacklist):
         return alt
     try:
@@ -188,50 +187,35 @@ class MyConfigParser(configparser.ConfigParser):
         return result
 
 
-class Settings(object):
-    """Class to hold configuration and settings.
-    Actual values are stored in 'settings.ini' file.
-    It also holds a combinations database.
-    """
+class Settings:
+    """Class to hold configuration and settings.		￼
+    ￼    Actual values are stored in 'settings.ini' file.
+    ￼    It also holds a combinations database.
+    ￼"""
 
-    # this class is Borg/Singleton
-    _shared_state = {
-        "config": None,
-        "_combinations": None,
-        "_lock": multiprocessing.Lock(),
-    }
+    def __init__(self):
+        self.config = MyConfigParser()
+        # load default config file
+        with open(os.path.join(os.path.dirname(__file__), "settings.ini"), "r") as f:
+            self.config.read_file(f)
+        # load combinations
+        with open(
+            os.path.join(os.path.dirname(__file__), "combinations.json"),
+            "r",
+        ) as j:
+            self._combinations = json.load(j)[0]
 
-    def __init__(self, file=None):
-        self.__dict__ = self._shared_state
-        if self.config is None:
-            with self._lock:
-                if self.config is None:
-                    self.config = MyConfigParser()
-                    # load default config file
-                    with open(
-                        os.path.join(os.path.dirname(__file__), "settings.ini"), "r"
-                    ) as f:
-                        self.config.read_file(f)
-                    # load custom file
-                    if file is not None:
-                        if isinstance(file, str):
-                            result = self.config.read(file)
-                            if len(result) == 0:
-                                raise IOError(
-                                    "Fails to load specified config file {}".format(
-                                        file
-                                    )
-                                )
-                        else:
-                            # passed through command line argparse.FileType("r")
-                            self.config.read_file(file)
-                            file.close()
-                    # load combinations
-                    with open(
-                        os.path.join(os.path.dirname(__file__), "combinations.json"),
-                        "r",
-                    ) as j:
-                        self._combinations = json.load(j)[0]
+    def load_settings(self, file):
+        # load custom file
+        if file is not None:
+            if isinstance(file, str):
+                result = self.config.read(file)
+                if len(result) == 0:
+                    raise IOError("Fails to load specified config file {}".format(file))
+            else:
+                # passed through command line argparse.FileType("r")
+                self.config.read_file(file)
+                file.close()
 
     @property
     def qt_combinations(self):
@@ -303,3 +287,6 @@ class Settings(object):
     @property
     def zipcmd(self):
         return self.config.get("aqt", "7zcmd", fallback="7z")
+
+
+Settings = Settings()

@@ -143,7 +143,7 @@ class QtArchives:
         self.arch = arch
         self.os_name = os_name
         self.all_extra = all_extra
-        self.arch_list = [item.get("arch") for item in Settings().qt_combinations]
+        self.arch_list = [item.get("arch") for item in Settings.qt_combinations]
         all_archives = subarchives is None
         self.base = base + "/online/qtsdkrepository/"
         if logging:
