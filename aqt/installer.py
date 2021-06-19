@@ -638,7 +638,9 @@ class Cli:
         self._set_common_argument(src_parser)
         self._set_common_options(src_parser)
         self._set_module_options(src_parser)
-        src_parser.add_argument("--kde", action="store_true", help="patching with KDE patch kit.")
+        src_parser.add_argument(
+            "--kde", action="store_true", help="patching with KDE patch kit."
+        )
         #
         tools_parser = subparsers.add_parser("tool")
         tools_parser.set_defaults(func=self.run_tool)

@@ -298,7 +298,9 @@ class Updater:
     @classmethod
     def patch_kde(cls, src_dir):
         logger = logging.getLogger("aqt")
-        PATCH_URL_BASE = "https://raw.githubusercontent.com/miurahr/kde-qt-patch/main/patches/"
+        PATCH_URL_BASE = (
+            "https://raw.githubusercontent.com/miurahr/kde-qt-patch/main/patches/"
+        )
         for p in Settings.kde_patches:
             logger.info("Apply patch: " + p)
             patchfile = patch.fromurl(PATCH_URL_BASE + p)
