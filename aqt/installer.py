@@ -25,6 +25,7 @@ import argparse
 import binascii
 import logging
 import logging.config
+import logging.handlers
 import multiprocessing
 import os
 import platform
@@ -176,14 +177,31 @@ class Cli:
             return False
         return all([m in available for m in modules])
 
+    def logger_init(self):
+        q = multiprocessing.Queue()
+        # this is the handler for all log records
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(levelname)s: %(asctime)s - %(process)s - %(message)s"))
+        # ql gets records from the queue and sends them to the handler
+        ql = logging.handlers.QueueListener(q, handler)
+        ql.start()
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
+        # add the handler to the logger so records from this process are handled
+        logger.addHandler(handler)
+        return ql, q
+
     def call_installer(self, qt_archives, base_dir, sevenzip, keep):
+        ql, q = self.logger_init()
         tasks = []
         for arc in qt_archives.get_archives():
             tasks.append((arc, base_dir, sevenzip, keep))
-        pool = multiprocessing.Pool(Settings.concurrency)
+        ctx = multiprocessing.get_context("spawn")
+        pool = ctx.Pool(Settings.concurrency, worker_init, [q])
         pool.starmap(installer, tasks)
         pool.close()
         pool.join()
+        ql.stop()
 
     def run_install(self, args):
         """Run install subcommand"""
@@ -666,6 +684,14 @@ class Cli:
         return args.func(args)
 
 
+def worker_init(q):
+    # all records from worker processes go to qh and then into q
+    qh = logging.handlers.QueueHandler(q)
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(qh)
+
+
 def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     """
     Installer function to download archive files and extract it.
@@ -677,7 +703,7 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     archive = qt_archive.archive
     start_time = time.perf_counter()
     Settings.load_logging_conf()
-    logger = logging.getLogger("installer")
+    logger = logging.getLogger()
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
