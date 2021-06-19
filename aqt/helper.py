@@ -162,7 +162,9 @@ def altlink(url: str, alt: str):
             # if not found then return alt in default
             return next(
                 filter(
-                    lambda mirror: not any(mirror.startswith(b) for b in Settings.blacklist),
+                    lambda mirror: not any(
+                        mirror.startswith(b) for b in Settings.blacklist
+                    ),
                     mirrors,
                 ),
                 alt,
