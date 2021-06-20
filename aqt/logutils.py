@@ -42,14 +42,16 @@ def setup_logging(args, env_key="LOG_CFG"):
 
 
 class QueueListenerHandler(QueueHandler):
-
     def __init__(self, respect_handler_level=False, auto_run=True, queue=Queue(-1)):
         super().__init__(queue)
-        handlers = [StreamHandler(sys.stderr,)]
+        handlers = [
+            StreamHandler(
+                sys.stderr,
+            )
+        ]
         self._listener = QueueListener(
-            self.queue,
-            *handlers,
-            respect_handler_level=respect_handler_level)
+            self.queue, *handlers, respect_handler_level=respect_handler_level
+        )
         if auto_run:
             self.start()
             # register(self.stop)
