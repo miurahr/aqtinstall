@@ -285,7 +285,6 @@ class Cli:
         )
 
     def _run_src_doc_examples(self, flavor, args):
-        start_time = time.perf_counter()
         self.show_aqt_version()
         target = args.target
         os_name = args.host
@@ -350,23 +349,46 @@ class Cli:
             exit(1)
         self.call_installer(srcdocexamples_archives, base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
+
+    def run_src(self, args):
+        """Run src subcommand"""
+        if args.kde:
+            if args.qt_version != "5.15.2":
+                print("KDE patch: unsupported version!!")
+                exit(1)
+        start_time = time.perf_counter()
+        self._run_src_doc_examples("src", args)
+        if args.kde:
+            if args.outputdir is None:
+                target_dir = os.path.join(os.getcwd(), args.qt_version, "Src")
+            else:
+                target_dir = os.path.join(args.outputdir, args.qt_version, "Src")
+            Updater.patch_kde(target_dir)
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
                 time=time.perf_counter() - start_time
             )
         )
 
-    def run_src(self, args):
-        """Run src subcommand"""
-        self._run_src_doc_examples("src", args)
-
     def run_examples(self, args):
         """Run example subcommand"""
+        start_time = time.perf_counter()
         self._run_src_doc_examples("examples", args)
+        self.logger.info(
+            "Time elapsed: {time:.8f} second".format(
+                time=time.perf_counter() - start_time
+            )
+        )
 
     def run_doc(self, args):
         """Run doc subcommand"""
+        start_time = time.perf_counter()
         self._run_src_doc_examples("doc", args)
+        self.logger.info(
+            "Time elapsed: {time:.8f} second".format(
+                time=time.perf_counter() - start_time
+            )
+        )
 
     def run_tool(self, args):
         """Run tool subcommand"""
@@ -594,6 +616,9 @@ class Cli:
         self._set_common_argument(src_parser)
         self._set_common_options(src_parser)
         self._set_module_options(src_parser)
+        src_parser.add_argument(
+            "--kde", action="store_true", help="patching with KDE patch kit."
+        )
         #
         tools_parser = subparsers.add_parser("tool")
         tools_parser.set_defaults(func=self.run_tool)

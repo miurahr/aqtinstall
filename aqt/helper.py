@@ -293,6 +293,10 @@ class Settings:
     def zipcmd(self):
         return self.config.get("aqt", "7zcmd", fallback="7z")
 
+    @property
+    def kde_patches(self):
+        return self.config.getlist("kde_patches", "patches", fallback=[])
+
 
 Settings = Settings()
 
