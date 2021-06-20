@@ -40,20 +40,18 @@ def setup_logging(env_key="LOG_CFG"):
 
 class LoggingQueueListener:
 
+    queue = multiprocessing.Queue(-1)
+
     def __init__(self):
-        self.queue = multiprocessing.Queue(-1)
         handlers = getLogger("aqt").handlers
-        self.listener = QueueListener(self.queue, *handlers, respect_handler_level=False)
+        self.listener = QueueListener(
+            self.queue, *handlers, respect_handler_level=False
+        )
         self.listener.start()
 
-    def get_queue_handler(self):
-        return QueueHandler(self.queue)
+    @classmethod
+    def get_queue_handler(cls):
+        return QueueHandler(cls.queue)
 
     def stop(self):
         self.listener.stop()
-        self.queue.close()
-        self.listener = None
-        self.queue = None
-
-
-LoggingQueueListener = LoggingQueueListener()

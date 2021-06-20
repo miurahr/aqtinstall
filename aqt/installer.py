@@ -176,15 +176,6 @@ class Cli:
             return False
         return all([m in available for m in modules])
 
-    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
-        tasks = []
-        for arc in qt_archives.get_archives():
-            tasks.append((arc, base_dir, sevenzip, keep))
-        pool = multiprocessing.Pool(Settings.concurrency)
-        pool.starmap(installer, tasks)
-        pool.close()
-        pool.join()
-
     def run_install(self, args):
         """Run install subcommand"""
         start_time = time.perf_counter()
@@ -646,10 +637,21 @@ class Cli:
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
         setup_logging()
+        self.logging_listener = LoggingQueueListener()
         self.logger = getLogger("aqt.main")
         result = args.func(args)
-        LoggingQueueListener.stop()
+        self.logging_listener.stop()
         return result
+
+    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
+        tasks = []
+        for arc in qt_archives.get_archives():
+            tasks.append((arc, base_dir, sevenzip, keep))
+        ctx = multiprocessing.get_context("spawn")
+        pool = ctx.Pool(Settings.concurrency)
+        pool.starmap(installer, tasks)
+        pool.close()
+        pool.join()
 
 
 def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
