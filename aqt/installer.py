@@ -288,7 +288,7 @@ class Cli:
         target_config = qt_archives.get_target_config()
         self.call_installer(qt_archives, base_dir, sevenzip, keep)
         if not nopatch:
-            Updater.update(target_config, base_dir, self.logger)
+            Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elasped: {time:.8f} second".format(
