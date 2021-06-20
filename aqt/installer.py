@@ -30,6 +30,7 @@ import random
 import subprocess
 import time
 from logging import getLogger
+from logging.handlers import QueueHandler, QueueListener
 
 from semantic_version import Version
 from texttable import Texttable
@@ -42,8 +43,7 @@ from aqt.exceptions import (
     ArchiveListError,
     NoPackageFound,
 )
-from aqt.helper import Settings, downloadBinaryFile, getUrl
-from aqt.logutils import setup_logging, LoggingQueueListener
+from aqt.helper import Settings, downloadBinaryFile, getUrl, setup_logging
 from aqt.updater import Updater
 
 try:
@@ -279,7 +279,7 @@ class Cli:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
         self.logger.info(
-            "Time elasped: {time:.8f} second".format(
+            "Time elapsed: {time:.8f} second".format(
                 time=time.perf_counter() - start_time
             )
         )
@@ -637,24 +637,30 @@ class Cli:
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
         setup_logging()
-        self.logging_listener = LoggingQueueListener()
         self.logger = getLogger("aqt.main")
         result = args.func(args)
-        self.logging_listener.stop()
         return result
 
     def call_installer(self, qt_archives, base_dir, sevenzip, keep):
+        queue = multiprocessing.Manager().Queue(-1)
+        handlers = getLogger("aqt").handlers
+        listener = QueueListener(queue, *handlers, respect_handler_level=False)
+        listener.start()
+        #
         tasks = []
         for arc in qt_archives.get_archives():
-            tasks.append((arc, base_dir, sevenzip, keep))
+            tasks.append((arc, base_dir, sevenzip, queue, keep))
         ctx = multiprocessing.get_context("spawn")
         pool = ctx.Pool(Settings.concurrency)
         pool.starmap(installer, tasks)
+        #
         pool.close()
         pool.join()
+        # all done, close logging service for sub-processes
+        listener.enqueue_sentinel()
+        listener.stop()
 
-
-def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
+def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout=None):
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
@@ -665,7 +671,7 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     archive = qt_archive.archive
     start_time = time.perf_counter()
     setup_logging()  # XXX: why need to load again?
-    qh = LoggingQueueListener.get_queue_handler()
+    qh = QueueHandler(queue)
     logger = getLogger("aqt.installer")
     logger.addHandler(qh)
     logger.info("Downloading {}...".format(name))
@@ -709,3 +715,6 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
             archive, time.perf_counter() - start_time
         )
     )
+    qh.flush()
+    qh.close()
+    logger.removeHandler(qh)

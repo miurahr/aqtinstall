@@ -219,7 +219,7 @@ class Settings:
                 self.config.read_file(file)
                 file.close()
         else:
-            # defualts have already loaded in constructor
+            # defaults have already loaded in constructor
             pass
 
     @property
@@ -295,3 +295,11 @@ class Settings:
 
 
 Settings = Settings()
+
+
+def setup_logging(env_key="LOG_CFG"):
+    config = os.getenv(env_key, None)
+    if config is not None and os.path.exists(config):
+        logging.config.fileConfig(config)
+    else:
+        logging.config.fileConfig(Settings.loggingconf)
