@@ -45,6 +45,7 @@ from aqt.exceptions import (
     NoPackageFound,
 )
 from aqt.helper import Settings, downloadBinaryFile, getUrl
+from aqt.logutils import setup_logging
 from aqt.updater import Updater
 
 try:
@@ -177,31 +178,15 @@ class Cli:
             return False
         return all([m in available for m in modules])
 
-    def logger_init(self):
-        q = multiprocessing.Queue()
-        # this is the handler for all log records
-        handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter("%(levelname)s: %(asctime)s - %(process)s - %(message)s"))
-        # ql gets records from the queue and sends them to the handler
-        ql = logging.handlers.QueueListener(q, handler)
-        ql.start()
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-        # add the handler to the logger so records from this process are handled
-        logger.addHandler(handler)
-        return ql, q
-
     def call_installer(self, qt_archives, base_dir, sevenzip, keep):
-        ql, q = self.logger_init()
         tasks = []
         for arc in qt_archives.get_archives():
             tasks.append((arc, base_dir, sevenzip, keep))
         ctx = multiprocessing.get_context("spawn")
-        pool = ctx.Pool(Settings.concurrency, worker_init, [q])
+        pool = ctx.Pool(Settings.concurrency)
         pool.starmap(installer, tasks)
         pool.close()
         pool.join()
-        ql.stop()
 
     def run_install(self, args):
         """Run install subcommand"""
@@ -656,16 +641,6 @@ class Cli:
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
-    def _setup_logging(self, args, env_key="LOG_CFG"):
-        if args is not None and args.logging_conf is not None:
-            Settings.load_logging_conf(args.logging_conf)
-        else:
-            config = os.getenv(env_key, None)
-            if config is not None and os.path.exists(config):
-                Settings.load_logging_conf(config)
-            else:
-                Settings.load_logging_conf()
-
     def _setup_settings(self, args=None, env_key="AQT_CONFIG"):
         if args is not None and args.config is not None:
             Settings.load_settings(args.config)
@@ -679,17 +654,9 @@ class Cli:
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
-        self._setup_logging(args)
+        setup_logging(args)
         self.logger = logging.getLogger("aqt")
         return args.func(args)
-
-
-def worker_init(q):
-    # all records from worker processes go to qh and then into q
-    qh = logging.handlers.QueueHandler(q)
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(qh)
 
 
 def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
@@ -703,7 +670,7 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     archive = qt_archive.archive
     start_time = time.perf_counter()
     Settings.load_logging_conf()
-    logger = logging.getLogger()
+    logger = logging.getLogger("aqt.installer")
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
