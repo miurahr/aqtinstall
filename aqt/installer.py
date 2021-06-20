@@ -660,6 +660,7 @@ class Cli:
         listener.enqueue_sentinel()
         listener.stop()
 
+
 def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout=None):
     """
     Installer function to download archive files and extract it.
