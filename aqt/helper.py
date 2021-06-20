@@ -225,6 +225,7 @@ class Settings:
     def load_logging_conf(self, file=None):
         if file is not None:
             logging.config.fileConfig(file)
+            self.loggingconf = file
         else:
             logging.config.fileConfig(self.loggingconf)
 

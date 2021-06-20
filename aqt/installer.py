@@ -23,15 +23,13 @@
 
 import argparse
 import binascii
-import logging
-import logging.config
-import logging.handlers
 import multiprocessing
 import os
 import platform
 import random
 import subprocess
 import time
+from logging import getLogger
 
 from semantic_version import Version
 from texttable import Texttable
@@ -655,7 +653,7 @@ class Cli:
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
         setup_logging(args)
-        self.logger = logging.getLogger("aqt.main")
+        self.logger = getLogger("aqt.main")
         return args.func(args)
 
 
@@ -669,8 +667,8 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
-    Settings.load_logging_conf()
-    logger = logging.getLogger("aqt.installer")
+    Settings.load_logging_conf()  # XXX: why need to load again?
+    logger = getLogger("aqt.installer")
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:

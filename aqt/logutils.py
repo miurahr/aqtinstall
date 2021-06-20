@@ -21,11 +21,10 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import multiprocessing
 import os
-import sys
-from logging import StreamHandler
+from logging import getLogger
 from logging.handlers import QueueHandler, QueueListener
-from queue import Queue
 
 from aqt.helper import Settings
 
@@ -42,25 +41,14 @@ def setup_logging(args, env_key="LOG_CFG"):
 
 
 class QueueListenerHandler(QueueHandler):
-    def __init__(self, respect_handler_level=False, auto_run=True, queue=Queue(-1)):
+    def __init__(self):
+        queue = multiprocessing.Queue(-1)
         super().__init__(queue)
-        handlers = [
-            StreamHandler(
-                sys.stderr,
-            )
-        ]
-        self._listener = QueueListener(
-            self.queue, *handlers, respect_handler_level=respect_handler_level
+        handlers = getLogger("aqt").handlers
+        listener = QueueListener(
+            queue, *handlers, respect_handler_level=False
         )
-        if auto_run:
-            self.start()
-            # register(self.stop)
-
-    def start(self):
-        self._listener.start()
-
-    def stop(self):
-        self._listener.stop()
+        listener.start()
 
     def emit(self, record):
         return super().emit(record)
