@@ -4,7 +4,7 @@ import aqt
 def test_cli_help(capsys):
     expected = "".join(
         [
-            "usage: aqt [-h] [-c CONFIG] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
+            "usage: aqt [-h] [-c CONFIG]\n",
             "           {install,doc,examples,src,tool,list,help,version} ...\n",
             "\n",
             "Installer for Qt SDK.\n",
@@ -13,9 +13,6 @@ def test_cli_help(capsys):
             "  -h, --help            show this help message and exit\n",
             "  -c CONFIG, --config CONFIG\n",
             "                        Configuration ini file.\n",
-            "  --logging-conf LOGGING_CONF\n",
-            "                        Logging configuration ini file.\n",
-            "  --logger LOGGER       Specify logger name\n",
             "\n",
             "subcommands:\n",
             "  Valid subcommands\n",
@@ -67,7 +64,7 @@ def test_cli_check_mirror():
 def test_cli_launch_with_no_argument(capsys):
     expected = "".join(
         [
-            "usage: aqt [-h] [-c CONFIG] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
+            "usage: aqt [-h] [-c CONFIG]\n",
             "           {install,doc,examples,src,tool,list,help,version} ...\n",
             "\n",
             "Installer for Qt SDK.\n",
@@ -76,9 +73,6 @@ def test_cli_launch_with_no_argument(capsys):
             "  -h, --help            show this help message and exit\n",
             "  -c CONFIG, --config CONFIG\n",
             "                        Configuration ini file.\n",
-            "  --logging-conf LOGGING_CONF\n",
-            "                        Logging configuration ini file.\n",
-            "  --logger LOGGER       Specify logger name\n",
             "\n",
             "subcommands:\n",
             "  Valid subcommands\n",

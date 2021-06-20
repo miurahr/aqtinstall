@@ -547,12 +547,6 @@ class Cli:
             type=argparse.FileType("r"),
             help="Configuration ini file.",
         )
-        parser.add_argument(
-            "--logging-conf",
-            type=argparse.FileType("r"),
-            help="Logging configuration ini file.",
-        )
-        parser.add_argument("--logger", nargs=1, help="Specify logger name")
         subparsers = parser.add_subparsers(
             title="subcommands",
             description="Valid subcommands",
@@ -651,7 +645,7 @@ class Cli:
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
-        setup_logging(args)
+        setup_logging()
         self.logger = getLogger("aqt.main")
         result = args.func(args)
         LoggingQueueListener.stop()
@@ -668,7 +662,7 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
-    Settings.load_logging_conf()  # XXX: why need to load again?
+    setup_logging()  # XXX: why need to load again?
     qh = LoggingQueueListener.get_queue_handler()
     logger = getLogger("aqt.installer")
     logger.addHandler(qh)

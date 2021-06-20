@@ -222,13 +222,6 @@ class Settings:
             # defualts have already loaded in constructor
             pass
 
-    def load_logging_conf(self, file=None):
-        if file is not None:
-            logging.config.fileConfig(file)
-            self.loggingconf = file
-        else:
-            logging.config.fileConfig(self.loggingconf)
-
     @property
     def qt_combinations(self):
         return self._combinations["qt"]

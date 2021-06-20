@@ -24,20 +24,18 @@
 import multiprocessing
 import os
 from logging import getLogger
+from logging.config import fileConfig
 from logging.handlers import QueueHandler, QueueListener
 
 from aqt.helper import Settings
 
 
-def setup_logging(args, env_key="LOG_CFG"):
-    if args is not None and args.logging_conf is not None:
-        Settings.load_logging_conf(args.logging_conf)
+def setup_logging(env_key="LOG_CFG"):
+    config = os.getenv(env_key, None)
+    if config is not None and os.path.exists(config):
+        fileConfig(config)
     else:
-        config = os.getenv(env_key, None)
-        if config is not None and os.path.exists(config):
-            Settings.load_logging_conf(config)
-        else:
-            Settings.load_logging_conf()
+        fileConfig(Settings.loggingconf)
 
 
 class LoggingQueueListener:
