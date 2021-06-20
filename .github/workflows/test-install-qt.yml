@@ -64,6 +64,7 @@ jobs:
           env = os.environ.copy()
           github_workspace = pathlib.Path(env["GITHUB_WORKSPACE"])
           env["AQT_CONFIG"] = (github_workspace / "ci" / "settings.ini").as_posix()
+          env["LOG_CFG"] = (github_workspace / "ci" / "logging.ini").as_posix()
           print("Execute: {}".format(command_line))
           try:
             res = subprocess.run(command_line, timeout=timeout, check=True, env=env)

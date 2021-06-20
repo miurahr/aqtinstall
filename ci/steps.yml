@@ -76,6 +76,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
     displayName: Run Aqt
 
   ##----------------------------------------------------
