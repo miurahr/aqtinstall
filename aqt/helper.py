@@ -127,7 +127,7 @@ def altlink(url: str, alt: str):
     """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
     When found black url, then try download a url + .meta4 that is a metalink version4
     xml file, parse it and retrieve best alternative url."""
-    logger = logging.getLogger("aqt")
+    logger = logging.getLogger("aqt.helper")
     if not any(alt.startswith(b) for b in Settings.blacklist):
         return alt
     try:

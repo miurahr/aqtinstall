@@ -145,7 +145,7 @@ class QtArchives:
         self.arch_list = [item.get("arch") for item in Settings.qt_combinations]
         all_archives = subarchives is None
         self.base = base + "/online/qtsdkrepository/"
-        self.logger = getLogger("aqt")
+        self.logger = getLogger("aqt.archives")
         self.archives = []
         self.mod_list = []
         if all_extra:
@@ -303,7 +303,7 @@ class SrcDocExamplesArchives(QtArchives):
         self.target = target
         self.os_name = os_name
         self.base = base
-        self.logger = getLogger("aqt")
+        self.logger = getLogger("aqt.archives")
         super(SrcDocExamplesArchives, self).__init__(
             os_name,
             target,
@@ -360,7 +360,7 @@ class ToolArchives(QtArchives):
     def __init__(self, os_name, tool_name, version, arch, base, timeout=(5, 5)):
         self.tool_name = tool_name
         self.os_name = os_name
-        self.logger = getLogger("aqt")
+        self.logger = getLogger("aqt.archives")
         super(ToolArchives, self).__init__(
             os_name, "desktop", version, arch, base, timeout=timeout
         )

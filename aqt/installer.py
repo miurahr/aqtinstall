@@ -655,7 +655,7 @@ class Cli:
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
         setup_logging(args)
-        self.logger = logging.getLogger("aqt")
+        self.logger = logging.getLogger("aqt.main")
         return args.func(args)
 
 
