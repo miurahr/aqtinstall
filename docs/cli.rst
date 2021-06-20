@@ -99,9 +99,14 @@ Tool installation commands
 
 .. program::  aqt
 
-.. option:: src <Qt version> <target OS> <target variant>
+.. option:: src <Qt version> <target OS> <target variant> [--kde] [--archives <archive>]
 
-    install Qt sources specified version and target.
+    install Qt sources specified version and target. by adding --kde option,
+    KDE patch collection is applied for qtbase tree. It is only applied to
+    Qt 5.15.2. When specified version is other than it, command will abort
+    with error when using --kde.
+    You can specify --archives option to install only a specified source
+    such as qtbase.
 
 
 .. option:: doc <Qt version> <target OS> <target variant>
@@ -144,9 +149,9 @@ Example: Install examples, doc and source:
 
 .. code-block:: bash
 
-    C:\ aqt examples 5.15.0 windows desktop -m qtcharts qtnetworkauth
-    C:\ aqt doc 5.15.0 windows desktop -m qtcharts qtnetworkauth
-    C:\ aqt src 5.15.0 windows desktop
+    C:\ aqt examples 5.15.2 windows desktop -m qtcharts qtnetworkauth
+    C:\ aqt doc 5.15.2 windows desktop -m qtcharts qtnetworkauth
+    C:\ aqt src 5.15.2 windows desktop --archives qtbase --kde
 
 
 Example: Install Web Assembly

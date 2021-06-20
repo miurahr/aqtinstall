@@ -18,12 +18,15 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+import logging
 import os
 import pathlib
 import subprocess
 
+import patch
 from semantic_version import SimpleSpec, Version
+
+from aqt.helper import Settings
 
 
 class Updater:
@@ -291,3 +294,14 @@ class Updater:
                 )
         except IOError as e:
             raise e
+
+    @classmethod
+    def patch_kde(cls, src_dir):
+        logger = logging.getLogger("aqt")
+        PATCH_URL_BASE = (
+            "https://raw.githubusercontent.com/miurahr/kde-qt-patch/main/patches/"
+        )
+        for p in Settings.kde_patches:
+            logger.info("Apply patch: " + p)
+            patchfile = patch.fromurl(PATCH_URL_BASE + p)
+            patchfile.apply(strip=True, root=os.path.join(src_dir, "qtbase"))
