@@ -43,7 +43,7 @@ from aqt.exceptions import (
     NoPackageFound,
 )
 from aqt.helper import Settings, downloadBinaryFile, getUrl
-from aqt.logutils import setup_logging
+from aqt.logutils import setup_logging, LoggingQueueListener
 from aqt.updater import Updater
 
 try:
@@ -180,8 +180,7 @@ class Cli:
         tasks = []
         for arc in qt_archives.get_archives():
             tasks.append((arc, base_dir, sevenzip, keep))
-        ctx = multiprocessing.get_context("spawn")
-        pool = ctx.Pool(Settings.concurrency)
+        pool = multiprocessing.Pool(Settings.concurrency)
         pool.starmap(installer, tasks)
         pool.close()
         pool.join()
@@ -654,7 +653,9 @@ class Cli:
         self._setup_settings(args)
         setup_logging(args)
         self.logger = getLogger("aqt.main")
-        return args.func(args)
+        result = args.func(args)
+        LoggingQueueListener.stop()
+        return result
 
 
 def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
@@ -668,7 +669,9 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     archive = qt_archive.archive
     start_time = time.perf_counter()
     Settings.load_logging_conf()  # XXX: why need to load again?
+    qh = LoggingQueueListener.get_queue_handler()
     logger = getLogger("aqt.installer")
+    logger.addHandler(qh)
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
