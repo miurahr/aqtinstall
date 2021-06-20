@@ -45,9 +45,7 @@ class QueueListenerHandler(QueueHandler):
         queue = multiprocessing.Queue(-1)
         super().__init__(queue)
         handlers = getLogger("aqt").handlers
-        listener = QueueListener(
-            queue, *handlers, respect_handler_level=False
-        )
+        listener = QueueListener(queue, *handlers, respect_handler_level=False)
         listener.start()
 
     def emit(self, record):

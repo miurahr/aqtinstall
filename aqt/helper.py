@@ -88,7 +88,7 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
         try:
             r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
             if 300 < r.status_code < 309:
-                logger.info(
+                logger.debug(
                     "Asked to redirect({}) to: {}".format(
                         r.status_code, r.headers["Location"]
                     )
