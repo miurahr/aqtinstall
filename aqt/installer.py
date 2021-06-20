@@ -737,7 +737,7 @@ def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout
     if not keep:
         os.unlink(archive)
     logger.info(
-        "Finished installation of {} in {}".format(
+        "Finished installation of {} in {:.8f}".format(
             archive, time.perf_counter() - start_time
         )
     )
