@@ -23,8 +23,6 @@
 
 import argparse
 import binascii
-import logging
-import logging.config
 import multiprocessing
 import os
 import platform
@@ -32,6 +30,7 @@ import random
 import subprocess
 import time
 from logging import getLogger
+from logging.handlers import QueueHandler
 
 from semantic_version import Version
 from texttable import Texttable
@@ -44,7 +43,13 @@ from aqt.exceptions import (
     ArchiveListError,
     NoPackageFound,
 )
-from aqt.helper import Settings, downloadBinaryFile, getUrl
+from aqt.helper import (
+    MyQueueListener,
+    Settings,
+    downloadBinaryFile,
+    getUrl,
+    setup_logging,
+)
 from aqt.updater import Updater
 
 try:
@@ -177,15 +182,6 @@ class Cli:
             return False
         return all([m in available for m in modules])
 
-    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
-        tasks = []
-        for arc in qt_archives.get_archives():
-            tasks.append((arc, base_dir, sevenzip, keep))
-        pool = multiprocessing.Pool(Settings.concurrency)
-        pool.starmap(installer, tasks)
-        pool.close()
-        pool.join()
-
     def run_install(self, args):
         """Run install subcommand"""
         start_time = time.perf_counter()
@@ -259,7 +255,6 @@ class Cli:
                 base,
                 subarchives=archives,
                 modules=modules,
-                logging=self.logger,
                 all_extra=all_extra,
                 timeout=timeout,
             )
@@ -276,7 +271,6 @@ class Cli:
                     random.choice(Settings.fallbacks),
                     subarchives=archives,
                     modules=modules,
-                    logging=self.logger,
                     all_extra=all_extra,
                     timeout=timeout,
                 )
@@ -288,10 +282,10 @@ class Cli:
         target_config = qt_archives.get_target_config()
         self.call_installer(qt_archives, base_dir, sevenzip, keep)
         if not nopatch:
-            Updater.update(target_config, base_dir, self.logger)
+            Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
         self.logger.info(
-            "Time elasped: {time:.8f} second".format(
+            "Time elapsed: {time:.8f} second".format(
                 time=time.perf_counter() - start_time
             )
         )
@@ -335,7 +329,6 @@ class Cli:
                 base,
                 subarchives=archives,
                 modules=modules,
-                logging=self.logger,
                 all_extra=all_extra,
                 timeout=timeout,
             )
@@ -352,7 +345,6 @@ class Cli:
                     random.choice(Settings.fallbacks),
                     subarchives=archives,
                     modules=modules,
-                    logging=self.logger,
                     all_extra=all_extra,
                     timeout=timeout,
                 )
@@ -442,7 +434,6 @@ class Cli:
                 version,
                 arch,
                 base,
-                logging=self.logger,
                 timeout=timeout,
             )
         except ArchiveConnectionError:
@@ -456,7 +447,6 @@ class Cli:
                     version,
                     arch,
                     random.choice(Settings.fallbacks),
-                    logging=self.logger,
                     timeout=timeout,
                 )
             except Exception:
@@ -576,12 +566,6 @@ class Cli:
             type=argparse.FileType("r"),
             help="Configuration ini file.",
         )
-        parser.add_argument(
-            "--logging-conf",
-            type=argparse.FileType("r"),
-            help="Logging configuration ini file.",
-        )
-        parser.add_argument("--logger", nargs=1, help="Specify logger name")
         subparsers = parser.add_subparsers(
             title="subcommands",
             description="Valid subcommands",
@@ -670,37 +654,47 @@ class Cli:
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
-    def _setup_logging(self, args, env_key="LOG_CFG"):
-        envconf = os.getenv(env_key, None)
-        conf = None
-        if args.logging_conf:
-            conf = args.logging_conf
-        elif envconf is not None:
-            conf = envconf
-        if conf is None or not os.path.exists(conf):
-            conf = os.path.join(os.path.dirname(__file__), "logging.ini")
-        logging.config.fileConfig(conf)
-        if args.logger is not None:
-            self.logger = logging.getLogger(args.logger)
-        else:
-            self.logger = logging.getLogger("aqt")
-
-    def _setup_settings(self, args=None, env_key="AQT_CONFIG"):
+    def _setup_settings(self, args=None):
+        # setup logging
+        setup_logging()
+        self.logger = getLogger("aqt.main")
+        # setup settings
         if args is not None and args.config is not None:
             Settings.load_settings(args.config)
         else:
-            config = os.getenv(env_key, None)
+            config = os.getenv("AQT_CONFIG", None)
             if config is not None and os.path.exists(config):
                 Settings.load_settings(config)
+                self.logger.info("Load configuration from {}".format(config))
+            else:
+                Settings.load_settings()
 
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
-        self._setup_logging(args)
-        return args.func(args)
+        result = args.func(args)
+        return result
+
+    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
+        queue = multiprocessing.Manager().Queue(-1)
+        listener = MyQueueListener(queue)
+        listener.start()
+        #
+        tasks = []
+        for arc in qt_archives.get_archives():
+            tasks.append((arc, base_dir, sevenzip, queue, keep))
+        ctx = multiprocessing.get_context("spawn")
+        pool = ctx.Pool(Settings.concurrency)
+        pool.starmap(installer, tasks)
+        #
+        pool.close()
+        pool.join()
+        # all done, close logging service for sub-processes
+        listener.enqueue_sentinel()
+        listener.stop()
 
 
-def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
+def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout=None):
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
@@ -710,7 +704,17 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
-    logger = getLogger("aqt")
+    # set defaults
+    Settings.load_settings()
+    # set logging
+    setup_logging()  # XXX: why need to load again?
+    qh = QueueHandler(queue)
+    logger = getLogger()
+    for handler in logger.handlers:
+        handler.close()
+        logger.removeHandler(handler)
+    logger.addHandler(qh)
+    #
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
@@ -748,7 +752,10 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     if not keep:
         os.unlink(archive)
     logger.info(
-        "Finished installation of {} in {}".format(
+        "Finished installation of {} in {:.8f}".format(
             archive, time.perf_counter() - start_time
         )
     )
+    qh.flush()
+    qh.close()
+    logger.removeHandler(qh)

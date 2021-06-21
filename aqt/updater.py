@@ -22,6 +22,7 @@ import logging
 import os
 import pathlib
 import subprocess
+from logging import getLogger
 
 import patch
 from semantic_version import SimpleSpec, Version
@@ -246,11 +247,12 @@ class Updater:
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
     @classmethod
-    def update(cls, target, base_dir: str, logger):
+    def update(cls, target, base_dir: str):
         """
         Make Qt configuration files, qt.conf and qtconfig.pri.
         And update pkgconfig and patch Qt5Core and qmake
         """
+        logger = getLogger("aqt.updater")
         arch = target.arch
         if arch is None:
             arch_dir = ""
