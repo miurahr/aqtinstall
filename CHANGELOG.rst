@@ -13,9 +13,11 @@ Added
 * Document for settings.ini configuration parameters(#246)
 * Patching libtool file(.la) on mac(#267)
 * CI: Add more blacklist mirrors
+* Add --kde option for src subommand(#274)
 
 Changed
 -------
+* Use spawn multiprocessing on Linux platform.(#273)
 * Check MD5 checksum when download(#238)
 * Config settings.ini parser and URL list format(#246)
 * Refactoring network connection code, consolidated to helper.py(#244)
@@ -25,6 +27,7 @@ Changed
 
 Fixed
 -----
+* Fix logging during subprocess installation on macOS, and Windows(#273)
 * Fix patching qmake(#259)
 * Prettify help message format(#237)
 * Update patching pkgconfig/lib on mac(#267)
