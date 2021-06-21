@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+
+`v1.2.0`_ (21, Jun. 2021)
+========================
+
 Added
 -----
 * Add -c/--config option to specify custom settings.ini(#246)
@@ -33,15 +37,6 @@ Fixed
 * Update patching pkgconfig/lib on mac(#267)
 * CI: fix check workflow(#248)
 * CI: fix error on Azure/Windows(connection error)(#246)
-
-Deprecated
-----------
-
-Removed
--------
-
-Security
---------
 
 `v1.1.6`_ (2, May. 2021)
 ========================
@@ -158,7 +153,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.6...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.0...HEAD
+.. _v1.2.0: https://github.com/miurahr/aqtinstall/compare/v1.1.6...v1.2.0
 .. _v1.1.6: https://github.com/miurahr/aqtinstall/compare/v1.1.5...v1.1.6
 .. _v1.1.5: https://github.com/miurahr/aqtinstall/compare/v1.1.4...v1.1.5
 .. _v1.1.4: https://github.com/miurahr/aqtinstall/compare/v1.1.3...v1.1.4
