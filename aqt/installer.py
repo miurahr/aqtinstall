@@ -648,8 +648,7 @@ class Cli:
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
-    def run(self, arg=None):
-        args = self.parser.parse_args(arg)
+    def _setup_settings(self, args=None):
         # setup logging
         setup_logging()
         self.logger = getLogger("aqt.main")
@@ -663,7 +662,10 @@ class Cli:
                 self.logger.info("Load configuration from {}".format(config))
             else:
                 Settings.load_settings()
-        #
+
+    def run(self, arg=None):
+        args = self.parser.parse_args(arg)
+        self._setup_settings(args)
         result = args.func(args)
         return result
 
