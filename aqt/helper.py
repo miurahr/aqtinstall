@@ -196,31 +196,33 @@ class Settings:
 
     def __init__(self):
         self.config = MyConfigParser()
+        self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
         self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
-        # load default config file
-        with open(os.path.join(os.path.dirname(__file__), "settings.ini"), "r") as f:
-            self.config.read_file(f)
-        # load combinations
+
+    def load_settings(self, file=None):
         with open(
             os.path.join(os.path.dirname(__file__), "combinations.json"),
             "r",
         ) as j:
             self._combinations = json.load(j)[0]
-
-    def load_settings(self, file=None):
-        # load custom file
         if file is not None:
             if isinstance(file, str):
                 result = self.config.read(file)
                 if len(result) == 0:
                     raise IOError("Fails to load specified config file {}".format(file))
+                self.configfile = file
             else:
                 # passed through command line argparse.FileType("r")
                 self.config.read_file(file)
+                self.configfile = file
                 file.close()
         else:
-            # defaults have already loaded in constructor
-            pass
+            if isinstance(self.configfile, str):
+                with open(self.configfile, "r") as f:
+                    self.config.read_file(f)
+            else:
+                self.configfile.seek(0)
+                self.config.read_file(self.configfile)
 
     @property
     def qt_combinations(self):
