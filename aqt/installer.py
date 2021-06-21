@@ -703,8 +703,7 @@ def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout
     setup_logging()  # XXX: why need to load again?
     qh = QueueHandler(queue)
     logger = getLogger()
-    handlers = logger.handlers
-    for handler in handlers:
+    for handler in logger.handlers:
         handler.close()
         logger.removeHandler(handler)
     logger.addHandler(qh)
