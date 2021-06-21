@@ -648,21 +648,22 @@ class Cli:
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
-    def _setup_settings(self, args=None, env_key="AQT_CONFIG"):
+    def run(self, arg=None):
+        args = self.parser.parse_args(arg)
+        # setup logging
+        setup_logging()
+        self.logger = getLogger("aqt.main")
+        # setup settings
         if args is not None and args.config is not None:
             Settings.load_settings(args.config)
         else:
-            config = os.getenv(env_key, None)
+            config = os.getenv("AQT_CONFIG", None)
             if config is not None and os.path.exists(config):
                 Settings.load_settings(config)
+                self.logger.info("Load configuration from {}".format(config))
             else:
                 Settings.load_settings()
-
-    def run(self, arg=None):
-        args = self.parser.parse_args(arg)
-        self._setup_settings(args)
-        setup_logging()
-        self.logger = getLogger("aqt.main")
+        #
         result = args.func(args)
         return result
 
