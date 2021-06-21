@@ -697,11 +697,18 @@ def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
+    # set defaults
     Settings.load_settings()
+    # set logging
     setup_logging()  # XXX: why need to load again?
     qh = QueueHandler(queue)
-    logger = getLogger("aqt.installer")
+    logger = getLogger()
+    handlers = logger.handlers
+    for handler in handlers:
+        handler.close()
+        logger.removeHandler(handler)
     logger.addHandler(qh)
+    #
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
