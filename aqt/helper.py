@@ -27,6 +27,7 @@ import logging.config
 import os
 import sys
 import xml.etree.ElementTree as ElementTree
+from logging.handlers import QueueListener
 from typing import List
 from urllib.parse import urlparse
 
@@ -186,6 +187,23 @@ class MyConfigParser(configparser.ConfigParser):
         except Exception:
             result = fallback
         return result
+
+
+class MyQueueListener(QueueListener):
+
+    def __init__(self, queue):
+        handlers = []
+        super().__init__(queue, *handlers)
+
+    def handle(self, record):
+        """
+        Handle a record from subprocess.
+        Override logger name then handle at proper logger.
+        """
+        record = self.prepare(record)
+        logger = logging.getLogger("aqt.installer")
+        record.name = "aqt.installer"
+        logger.handle(record)
 
 
 class Settings:

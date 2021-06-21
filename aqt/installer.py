@@ -43,7 +43,7 @@ from aqt.exceptions import (
     ArchiveListError,
     NoPackageFound,
 )
-from aqt.helper import Settings, downloadBinaryFile, getUrl, setup_logging
+from aqt.helper import Settings, downloadBinaryFile, getUrl, setup_logging, MyQueueListener
 from aqt.updater import Updater
 
 try:
@@ -672,7 +672,7 @@ class Cli:
     def call_installer(self, qt_archives, base_dir, sevenzip, keep):
         queue = multiprocessing.Manager().Queue(-1)
         handlers = getLogger("aqt").handlers
-        listener = QueueListener(queue, *handlers, respect_handler_level=False)
+        listener = MyQueueListener(queue)
         listener.start()
         #
         tasks = []
