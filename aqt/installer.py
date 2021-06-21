@@ -30,7 +30,7 @@ import random
 import subprocess
 import time
 from logging import getLogger
-from logging.handlers import QueueHandler, QueueListener
+from logging.handlers import QueueHandler
 
 from semantic_version import Version
 from texttable import Texttable
@@ -43,7 +43,13 @@ from aqt.exceptions import (
     ArchiveListError,
     NoPackageFound,
 )
-from aqt.helper import Settings, downloadBinaryFile, getUrl, setup_logging, MyQueueListener
+from aqt.helper import (
+    MyQueueListener,
+    Settings,
+    downloadBinaryFile,
+    getUrl,
+    setup_logging,
+)
 from aqt.updater import Updater
 
 try:
@@ -671,7 +677,6 @@ class Cli:
 
     def call_installer(self, qt_archives, base_dir, sevenzip, keep):
         queue = multiprocessing.Manager().Queue(-1)
-        handlers = getLogger("aqt").handlers
         listener = MyQueueListener(queue)
         listener.start()
         #

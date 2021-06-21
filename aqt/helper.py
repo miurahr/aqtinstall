@@ -190,7 +190,6 @@ class MyConfigParser(configparser.ConfigParser):
 
 
 class MyQueueListener(QueueListener):
-
     def __init__(self, queue):
         handlers = []
         super().__init__(queue, *handlers)
