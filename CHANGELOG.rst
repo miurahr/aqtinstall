@@ -8,6 +8,13 @@ All notable changes to this project will be documented in this file.
 =============
 
 
+`v1.2.1`_ (22, Jun. 2021)
+========================
+
+Fixed
+-----
+* Fix crash when tool subcommand used.(#275,#276)
+
 `v1.2.0`_ (21, Jun. 2021)
 ========================
 
@@ -153,7 +160,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.1...HEAD
+.. _v1.2.1: https://github.com/miurahr/aqtinstall/compare/v1.2.0...v1.2.1
 .. _v1.2.0: https://github.com/miurahr/aqtinstall/compare/v1.1.6...v1.2.0
 .. _v1.1.6: https://github.com/miurahr/aqtinstall/compare/v1.1.5...v1.1.6
 .. _v1.1.5: https://github.com/miurahr/aqtinstall/compare/v1.1.4...v1.1.5
