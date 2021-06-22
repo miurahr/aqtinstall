@@ -212,6 +212,23 @@ class Updater:
             f.write("[Paths]\n")
             f.write("Prefix=..\n")
 
+    def make_qtenv2(self, base_dir, qt_version, arch_dir):
+        """Prepare qtenv2.bat"""
+        with open(
+            os.path.join(base_dir, qt_version, arch_dir, "bin", "qtenv2.bat"), "w"
+        ) as f:
+            f.write("@echo off\n")
+            f.write("echo Setting up environment for Qt usage...\n")
+            f.write(
+                "set PATH={};%PATH%\n".format(
+                    os.path.join(base_dir, qt_version, arch_dir, "bin")
+                )
+            )
+            f.write("cd /D {}\n".format(os.path.join(base_dir, qt_version, arch_dir)))
+            f.write(
+                "echo Remember to call vcvarsall.bat to complete environment setup!\n"
+            )
+
     def set_license(self, base_dir, qt_version, arch_dir):
         """Update qtconfig.pri as OpenSource"""
         with open(
@@ -285,6 +302,8 @@ class Updater:
                 elif target.os_name == "mac":
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
+                elif target.os_name == "windows":
+                    updater.make_qtenv2(base_dir, target.version, arch_dir)
                 if Version(target.version) < Version("5.14.0"):
                     updater.patch_qtcore(target)
             elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
