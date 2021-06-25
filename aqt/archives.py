@@ -505,6 +505,16 @@ class ToolArchives(QtArchives):
                 msg += f"Zero tools where found to be available in {url}"
             raise NoPackageFound(msg)
 
+        if len(self.archives) > 1:
+            self.logger.info(
+                f"Found {len(self.archives)} potential archives. "
+                "Returning the max.")
+            archive_max = max(self.archives,
+                              key=lambda package: package.version
+                              if package.version
+                              else packaging.version.Version('0'))
+            self.archives = [archive_max]
+
     def get_target_config(self) -> TargetConfig:
         """Get target configuration.
 
