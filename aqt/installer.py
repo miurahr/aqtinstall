@@ -636,10 +636,17 @@ class Cli:
             "tool_name", help="Name of tool such as tools_ifw, tools_mingw"
         )
         tools_parser.add_argument(
-            "version", help='Tool version in the format of "4.1.2"'
+            '-v',
+            '--version',
+            type=str,
+            help=('Tool version in the format of "4.1.2". '
+                  'If not supplied, defaults to latest found'),
         )
+
         tools_parser.add_argument(
-            "arch", help="Name of full tool name such as qt.tools.ifw.31"
+            '-a', '--arch',
+            type=str,
+            help='Name of full tool name such as "qt.tools.ifw.31"'
         )
         self._set_common_options(tools_parser)
         #
