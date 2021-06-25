@@ -34,6 +34,8 @@ from urllib.parse import urlparse
 import requests
 import requests.adapters
 
+from packaging.version import Version
+
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
 
@@ -203,6 +205,17 @@ class MyQueueListener(QueueListener):
         logger = logging.getLogger("aqt.installer")
         record.name = "aqt.installer"
         logger.handle(record)
+
+
+def satifiesVersion(requestedVersion: Version, candidateVersion: Version):
+    """
+    This will return true if the candidateVersion matches the requestedVersion
+    It will only compare the number of components of the candidateVersion
+    """
+    for (a, b) in zip(requestedVersion.release, candidateVersion.release):
+        if a != b:
+            return False
+    return True
 
 
 class Settings:
