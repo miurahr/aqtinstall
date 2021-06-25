@@ -25,7 +25,7 @@ import subprocess
 from logging import getLogger
 
 import patch
-from semantic_version import SimpleSpec, Version
+import packaging.version
 
 from aqt.helper import Settings
 
@@ -304,9 +304,9 @@ class Updater:
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
                 elif target.os_name == "windows":
                     updater.make_qtenv2(base_dir, target.version, arch_dir)
-                if Version(target.version) < Version("5.14.0"):
+                if packaging.version.parse(target.version) < packaging.version.Version("5.14.0"):
                     updater.patch_qtcore(target)
-            elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
+            elif packaging.version.parse(target.version).major == 5:
                 updater.patch_qmake()
             else:  # qt6 non-desktop
                 updater.patch_qmake_script(base_dir, target.version, target.os_name)
