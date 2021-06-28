@@ -221,7 +221,7 @@ def satifiesVersion(requestedVersion: Version, candidateVersion: Version):
     return True
 
 
-class Settings:
+class SettingsClass:
     """
     Class to hold configuration and settings.
     Actual values are stored in 'settings.ini' file.
@@ -334,7 +334,7 @@ class Settings:
         return self.config.getlist("kde_patches", "patches", fallback=[])
 
 
-Settings = Settings()
+Settings = SettingsClass()
 
 
 def setup_logging(env_key="LOG_CFG"):
