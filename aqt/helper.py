@@ -28,7 +28,7 @@ import os
 import sys
 import xml.etree.ElementTree as ElementTree
 from logging.handlers import QueueListener
-from typing import List
+from typing import List, Optional
 from urllib.parse import urlparse
 
 import requests
@@ -125,11 +125,15 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
                 raise e
 
 
-def altlink(url: str, alt: str):
-    """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
+def altlink(url: str, alt: str, logger: Optional[logging.Logger] = None):
+    """
+    Blacklisting redirected(alt) location based on Settings.blacklist configuration.
     When found black url, then try download a url + .meta4 that is a metalink version4
-    xml file, parse it and retrieve best alternative url."""
-    logger = logging.getLogger("aqt.helper")
+    xml file, parse it and retrieve best alternative url.
+    """
+    if logger is None:
+        logger = logging.getLogger("aqt.helper")
+
     if not any(alt.startswith(b) for b in Settings.blacklist):
         return alt
     try:

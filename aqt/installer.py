@@ -32,7 +32,7 @@ import time
 from logging import getLogger
 from logging.handlers import QueueHandler
 
-from semantic_version import Version
+import packaging.version
 from texttable import Texttable
 
 import aqt
@@ -149,7 +149,10 @@ class Cli:
                 arch = "clang_64"
             elif os_name == "mac" and target == "ios":
                 arch = "ios"
-            elif target == "android" and Version(qt_version) >= Version("5.14.0"):
+            elif target == "android" and (
+                packaging.version.parse(qt_version)
+                >= packaging.version.Version("5.14.0")
+            ):
                 arch = "android"
             else:
                 print("Please supply a target architecture.")
