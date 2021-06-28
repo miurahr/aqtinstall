@@ -24,8 +24,8 @@ import pathlib
 import subprocess
 from logging import getLogger
 
-import patch
 import packaging.version
+import patch
 
 from aqt.helper import Settings
 
@@ -304,7 +304,9 @@ class Updater:
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
                 elif target.os_name == "windows":
                     updater.make_qtenv2(base_dir, target.version, arch_dir)
-                if packaging.version.parse(target.version) < packaging.version.Version("5.14.0"):
+                if packaging.version.parse(target.version) < packaging.version.Version(
+                    "5.14.0"
+                ):
                     updater.patch_qtcore(target)
             elif packaging.version.parse(target.version).major == 5:
                 updater.patch_qmake()

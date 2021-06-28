@@ -33,7 +33,6 @@ from urllib.parse import urlparse
 
 import requests
 import requests.adapters
-
 from packaging.version import Version
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
@@ -219,10 +218,11 @@ def satifiesVersion(requestedVersion: Version, candidateVersion: Version):
 
 
 class Settings:
-    """Class to hold configuration and settings.		￼
-    ￼    Actual values are stored in 'settings.ini' file.
-    ￼    It also holds a combinations database.
-    ￼"""
+    """
+    Class to hold configuration and settings.
+    Actual values are stored in 'settings.ini' file.
+    It also holds a combinations database.
+    """
 
     def __init__(self):
         self.config = MyConfigParser()

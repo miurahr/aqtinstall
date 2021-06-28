@@ -20,13 +20,14 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import posixpath
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
+from typing import Optional, Tuple
+
 import packaging.version
 from packaging.version import Version
-import posixpath
 
-from typing import Optional, Tuple
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl, satifiesVersion
 
@@ -39,11 +40,13 @@ class TargetConfig:
         self.os_name = os_name
 
     def __str__(self):
-        print(f'TargetConfig(version={self.version}, target={self.target}, '
-              f'arch={self.arch}, os_name={self.os_name}')
+        print(
+            f"TargetConfig(version={self.version}, target={self.target}, "
+            f"arch={self.arch}, os_name={self.os_name}"
+        )
 
     def __repr__(self):
-        print(f'({self.version}, {self.target}, {self.arch}, {self.os_name})')
+        print(f"({self.version}, {self.target}, {self.arch}, {self.os_name})")
 
 
 class QtPackage:
@@ -51,9 +54,15 @@ class QtPackage:
     Hold package information.
     """
 
-    def __init__(self, name: str , archive_url: str, archive: str,
-                 package_desc: str, hashurl: str,
-                 version: Optional[Version] = None):
+    def __init__(
+        self,
+        name: str,
+        archive_url: str,
+        archive: str,
+        package_desc: str,
+        hashurl: str,
+        version: Optional[Version] = None,
+    ):
         self.name = name
         self.url = archive_url
         self.archive = archive
@@ -62,16 +71,16 @@ class QtPackage:
         self.version = version
 
     def __repr__(self):
-        v_info = f', version={self.version}' if self.version else ''
-        return (
-            f'QtPackage(name={self.name}, archive={self.archive}{v_info})'
-        )
+        v_info = f", version={self.version}" if self.version else ""
+        return f"QtPackage(name={self.name}, archive={self.archive}{v_info})"
 
     def __str__(self):
-        v_info = f', version={self.version}' if self.version else ''
-        return (f'QtPackage(name={self.name}, url={self.url}, '
-                f'archive={self.archive}, desc={self.desc}'
-                f'hashurl={self.hashurl}{v_info})')
+        v_info = f", version={self.version}" if self.version else ""
+        return (
+            f"QtPackage(name={self.name}, url={self.url}, "
+            f"archive={self.archive}, desc={self.desc}"
+            f"hashurl={self.hashurl}{v_info})"
+        )
 
 
 class ListInfo:
@@ -106,9 +115,11 @@ class PackagesList:
         # Get packages index
         if self.version.major == 6 and self.target == "android":
             arch_ext = ["_armv7/", "_x86/", "_x86_64/", "_arm64_v8a/"]
-        elif ((self.target == 'desktop') and
-              (self.version >= Version('5.13.0')) and
-              (self.version < Version('6.0.0'))):
+        elif (
+            (self.target == "desktop")
+            and (self.version >= Version("5.13.0"))
+            and (self.version < Version("6.0.0"))
+        ):
             arch_ext = ["/", "_wasm/"]
         else:
             arch_ext = ["/"]
@@ -165,7 +176,9 @@ class QtArchives:
         timeout=(5, 5),
     ):
         self.version_str = version_str
-        self.version = packaging.version.parse(version_str) if version_str is not None else None
+        self.version = (
+            packaging.version.parse(version_str) if version_str is not None else None
+        )
         self.target = target
         self.arch = arch
         self.os_name = os_name
@@ -237,9 +250,9 @@ class QtArchives:
             )
         )
         target_packages.extend(self.mod_list)
-        self.logger.debug('QtArchives::_get_archives')
-        self.logger.debug(f'{update_xml_url=}')
-        self.logger.debug(f'{target_packages=}')
+        self.logger.debug("QtArchives::_get_archives")
+        self.logger.debug(f"{update_xml_url=}")
+        self.logger.debug(f"{target_packages=}")
 
         self._download_update_xml(update_xml_url)
         self._parse_update_xml(archive_url, target_packages)
@@ -277,7 +290,7 @@ class QtArchives:
                     ).text.split(", ")
                     full_version = packageupdate.find("Version").text
                     # keep only '5.15.2' in '5.15.2-0-202011130724'
-                    parsed_version = packaging.version.parse(full_version.split('-')[0])
+                    parsed_version = packaging.version.parse(full_version.split("-")[0])
                     package_desc = packageupdate.find("Description").text
                     for archive in downloadable_archives:
                         archive_name = archive.split("-", maxsplit=1)[0]
@@ -287,7 +300,7 @@ class QtArchives:
                             # qt.qt5.5150.gcc_64/
                             name,
                             # 5.15.0-0-202005140804qtbase-Linux-RHEL_7_6-GCC-Linux-RHEL_7_6-X86_64.7z
-                            full_version + archive
+                            full_version + archive,
                         )
                         hashurl = package_url + ".sha1"
                         self.archives.append(
@@ -297,7 +310,7 @@ class QtArchives:
                                 archive,
                                 package_desc,
                                 hashurl,
-                                parsed_version
+                                parsed_version,
                             )
                         )
         if len(self.archives) == 0:
@@ -305,7 +318,7 @@ class QtArchives:
                 "Specified packages are not found while parsing XML of package information!"
             )
             raise NoPackageFound
-        self.logger.debug(f'Archives: {self.archives}')
+        self.logger.debug(f"Archives: {self.archives}")
 
     def get_archives(self):
         """
@@ -397,24 +410,30 @@ class ToolArchives(QtArchives):
     when installing ifw tool, argument would be
     ToolArchive(linux, desktop, 3.1.1, ifw)
     """
-    def __init__(self,
-                 os_name: str,
-                 tool_name: str,
-                 base: str,
-                 version_str: Optional[str] = None,
-                 arch: Optional[str] = None,
-                 timeout: Tuple[int, int] = (5, 5)):
+
+    def __init__(
+        self,
+        os_name: str,
+        tool_name: str,
+        base: str,
+        version_str: Optional[str] = None,
+        arch: Optional[str] = None,
+        timeout: Tuple[int, int] = (5, 5),
+    ):
         self.tool_name = tool_name
         self.os_name = os_name
         self.logger = getLogger("aqt.archives")
         super(ToolArchives, self).__init__(
-            os_name=os_name, target="desktop",
-            version_str=version_str, arch=arch,
-            base=base, timeout=timeout,
+            os_name=os_name,
+            target="desktop",
+            version_str=version_str,
+            arch=arch,
+            base=base,
+            timeout=timeout,
         )
 
     def __str__(self):
-        return f'ToolArchives(tool_name={self.tool_name}, version={self.version_str}, arch={self.arch})'
+        return f"ToolArchives(tool_name={self.tool_name}, version={self.version_str}, arch={self.arch})"
 
     def _get_archives(self):
         _a = "_x64"
@@ -429,7 +448,7 @@ class ToolArchives(QtArchives):
             # desktop/
             self.target,
             # tools_ifw/
-            self.tool_name
+            self.tool_name,
         )
         update_xml_url = posixpath.join(archive_url, "Updates.xml")
         self._download_update_xml(update_xml_url)  # call super method.
@@ -448,11 +467,11 @@ class ToolArchives(QtArchives):
             name = packageupdate.find("Name").text
             full_version = packageupdate.find("Version").text
             # keep only '4.1.1' in '4.1.1-20210526113'
-            parsed_version = packaging.version.parse(full_version.split('-')[0])
+            parsed_version = packaging.version.parse(full_version.split("-")[0])
             versions.append((name, str(parsed_version)))
 
             # Filter out on version first
-            parsed_version = packaging.version.parse(full_version.split('-')[0])
+            parsed_version = packaging.version.parse(full_version.split("-")[0])
 
             if self.version:
                 if not satifiesVersion(self.version, parsed_version):
@@ -466,8 +485,8 @@ class ToolArchives(QtArchives):
             # Filter out on arch next
             if self.arch and name != self.arch:
                 self.logger.warning(
-                    f'Arch of {name} is different from requested '
-                    f'arch {self.arch} -- skip.'
+                    f"Arch of {name} is different from requested "
+                    f"arch {self.arch} -- skip."
                 )
                 continue
 
@@ -485,21 +504,27 @@ class ToolArchives(QtArchives):
                     # qt.tools.ifw.41/
                     name,
                     #  4.1.1-202105261130ifw-linux-x64.7z
-                    f'{full_version}{archive}'
+                    f"{full_version}{archive}",
                 )
                 hashurl = package_url + ".sha1"
                 self.archives.append(
-                    QtPackage(name, package_url, archive, package_desc,
-                              hashurl, parsed_version)
+                    QtPackage(
+                        name,
+                        package_url,
+                        archive,
+                        package_desc,
+                        hashurl,
+                        parsed_version,
+                    )
                 )
 
         if self.archives:
-            self.logger.debug(f'ToolArchives: {self.archives}')
+            self.logger.debug(f"ToolArchives: {self.archives}")
         else:
             msg = f"{self} did not match any available tools. "
             if versions:
-                msg += 'Available tools\n'
-                msg += f'[(version, arch)] = {versions}'
+                msg += "Available tools\n"
+                msg += f"[(version, arch)] = {versions}"
             else:
                 url = posixpath.join(archive_url, "Updates.xml")
                 msg += f"Zero tools where found to be available in {url}"
@@ -507,12 +532,14 @@ class ToolArchives(QtArchives):
 
         if len(self.archives) > 1:
             self.logger.info(
-                f"Found {len(self.archives)} potential archives. "
-                "Returning the max.")
-            archive_max = max(self.archives,
-                              key=lambda package: package.version
-                              if package.version
-                              else packaging.version.Version('0'))
+                f"Found {len(self.archives)} potential archives. " "Returning the max."
+            )
+            archive_max = max(
+                self.archives,
+                key=lambda package: package.version
+                if package.version
+                else packaging.version.Version("0"),
+            )
             self.archives = [archive_max]
 
     def get_target_config(self) -> TargetConfig:
