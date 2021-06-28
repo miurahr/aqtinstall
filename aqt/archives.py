@@ -20,6 +20,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import posixpath
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 
@@ -72,7 +73,7 @@ class PackagesList:
         self.os_name = os_name
         self.target = target
         self.archives = []
-        self.base = base
+        self.base = posixpath.join(self.base, "online", "qtsdkrepository")
         self.timeout = timeout
         self.logger = getLogger("aqt")
         self._get_archives()
@@ -95,7 +96,7 @@ class PackagesList:
                 self.version.patch,
                 ext,
             )
-            update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
+            update_xml_url = posixpath.join(self.base, archive_path, "Updates.xml")
             xml_text = getUrl(update_xml_url, self.timeout, self.logger)
             self.update_xml = ElementTree.fromstring(xml_text)
             for packageupdate in self.update_xml.iter("PackageUpdate"):
