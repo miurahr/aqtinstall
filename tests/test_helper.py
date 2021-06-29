@@ -1,9 +1,9 @@
 import binascii
 import logging
-import packaging.version
-import pytest
 import os
 
+import packaging.version
+import pytest
 import requests
 from requests.models import Response
 
@@ -107,14 +107,14 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
 @pytest.mark.parametrize(
     "requestedVersion,candidateVersion,expected",
     [
-        ('4.0', '4.0.0', True),
-        ('4.0', '4.0.1', True),
-        ('4.1', '4.0.1', False),
-        ('4.0.0', '4.0.0', True),
-        ('4.1.0', '4.1.1', False),
-        ('4.1.1', '4.1.1-202105261130', True),
-        ('4.1', '4.1.1-202105261130', True),
-        ('4', '4.1.1-202105261130', True),
+        ("4.0", "4.0.0", True),
+        ("4.0", "4.0.1", True),
+        ("4.1", "4.0.1", False),
+        ("4.0.0", "4.0.0", True),
+        ("4.1.0", "4.1.1", False),
+        ("4.1.1", "4.1.1-202105261130", True),
+        ("4.1", "4.1.1-202105261130", True),
+        ("4", "4.1.1-202105261130", True),
     ],
 )
 def test_satifiesVersion(requestedVersion, candidateVersion, expected):
@@ -124,4 +124,6 @@ def test_satifiesVersion(requestedVersion, candidateVersion, expected):
     if expected:
         assert matches, f"Expected {candidateVersion} to satify {requestedVersion}"
     else:
-        assert not matches, f"Expected {candidateVersion} to NOT match {requestedVersion}"
+        assert (
+            not matches
+        ), f"Expected {candidateVersion} to NOT match {requestedVersion}"
