@@ -206,10 +206,10 @@ class MyQueueListener(QueueListener):
 
 
 class Settings:
-    """Class to hold configuration and settings.		￼
-    ￼    Actual values are stored in 'settings.ini' file.
-    ￼    It also holds a combinations database.
-    ￼"""
+    """Class to hold configuration and settings.
+    Actual values are stored in 'settings.ini' file.
+    It also holds a combinations database.
+    """
 
     def __init__(self):
         self.config = MyConfigParser()
