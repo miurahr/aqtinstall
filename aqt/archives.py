@@ -250,11 +250,10 @@ class ListCommand:
 
     @staticmethod
     def fetch_http(rest_of_url: str):
-        settings = Settings()  # Borg/Singleton ensures we get the right settings
         return helper.request_http_with_failover(
-            base_urls=[settings.baseurl, random.choice(settings.fallbacks)],
+            base_urls=[Settings.baseurl, random.choice(Settings.fallbacks)],
             rest_of_url=rest_of_url,
-            timeout=(settings.connection_timeout, settings.response_timeout),
+            timeout=(Settings.connection_timeout, Settings.response_timeout),
         )
 
     @staticmethod
