@@ -29,7 +29,7 @@ import packaging.version
 from packaging.version import Version
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
-from aqt.helper import Settings, getUrl, satifiesVersion
+from aqt.helper import Settings, getUrl, satisfiesVersion
 
 
 class TargetConfig:
@@ -474,7 +474,7 @@ class ToolArchives(QtArchives):
             parsed_version = packaging.version.parse(full_version.split("-")[0])
 
             if self.version:
-                if not satifiesVersion(self.version, parsed_version):
+                if not satisfiesVersion(self.version, parsed_version):
                     self.logger.warning(
                         "Base Version of {} is different from requested version {} -- skip.".format(
                             full_version, self.version

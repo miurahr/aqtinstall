@@ -210,7 +210,7 @@ class MyQueueListener(QueueListener):
         logger.handle(record)
 
 
-def satifiesVersion(requestedVersion: Version, candidateVersion: Version):
+def satisfiesVersion(requestedVersion: Version, candidateVersion: Version):
     """
     This will return true if the candidateVersion matches the requestedVersion
     It will only compare the number of components of the candidateVersion

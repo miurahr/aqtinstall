@@ -117,10 +117,10 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
         ("4", "4.1.1-202105261130", True),
     ],
 )
-def test_satifiesVersion(requestedVersion, candidateVersion, expected):
+def test_satisfiesVersion(requestedVersion, candidateVersion, expected):
     v1 = packaging.version.parse(requestedVersion)
     v2 = packaging.version.parse(candidateVersion)
-    matches = helper.satifiesVersion(v1, v2)
+    matches = helper.satisfiesVersion(v1, v2)
     if expected:
         assert matches, f"Expected {candidateVersion} to satify {requestedVersion}"
     else:
