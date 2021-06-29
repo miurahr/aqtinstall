@@ -23,8 +23,6 @@
 
 import argparse
 import binascii
-import logging
-import logging.config
 import multiprocessing
 import os
 import platform
@@ -32,6 +30,7 @@ import random
 import subprocess
 import time
 from logging import getLogger
+from logging.handlers import QueueHandler
 
 from semantic_version import Version
 
@@ -43,7 +42,14 @@ from aqt.exceptions import (
     ArchiveListError,
     NoPackageFound,
 )
-from aqt.helper import ArchiveId, Settings, downloadBinaryFile, getUrl
+from aqt.helper import (
+    ArchiveId,
+    MyQueueListener,
+    Settings,
+    downloadBinaryFile,
+    getUrl,
+    setup_logging,
+)
 from aqt.updater import Updater
 
 try:
@@ -61,13 +67,13 @@ class ExtractionError(Exception):
 class Cli:
     """CLI main class to parse command line argument and launch proper functions."""
 
-    __slot__ = ["parser", "combinations", "logger", "settings"]
+    __slot__ = ["parser", "combinations", "logger"]
 
     def __init__(self):
         self._create_parser()
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
-        for c in self.settings.tools_combinations:
+        for c in Settings.tools_combinations:
             if (
                 c["os_name"] == os_name
                 and c["tool_name"] == tool_name
@@ -103,16 +109,16 @@ class Cli:
                 "win32_mingw81",
             ]:
                 return False
-        for c in self.settings.qt_combinations:
+        for c in Settings.qt_combinations:
             if c["os_name"] == os_name and c["target"] == target and c["arch"] == arch:
                 return True
         return False
 
     def _check_qt_arg_versions(self, version):
-        return version in self.settings.available_versions
+        return version in Settings.available_versions
 
     def _check_qt_arg_version_offline(self, version):
-        return version in self.settings.available_offline_installer_version
+        return version in Settings.available_offline_installer_version
 
     def _set_sevenzip(self, external):
         sevenzip = external
@@ -171,19 +177,10 @@ class Cli:
     def _check_modules_arg(self, qt_version, modules):
         if modules is None:
             return True
-        available = self.settings.available_modules(qt_version)
+        available = Settings.available_modules(qt_version)
         if available is None:
             return False
         return all([m in available for m in modules])
-
-    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
-        tasks = []
-        for arc in qt_archives.get_archives():
-            tasks.append((arc, base_dir, sevenzip, keep))
-        pool = multiprocessing.Pool(self.settings.concurrency)
-        pool.starmap(installer, tasks)
-        pool.close()
-        pool.join()
 
     def run_install(self, args):
         """Run install subcommand"""
@@ -202,7 +199,7 @@ class Cli:
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
-            timeout = (self.settings.connection_timeout, self.settings.response_timeout)
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
         arch = self._set_arch(args, arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args.external)
@@ -215,7 +212,7 @@ class Cli:
                 exit(1)
             base = args.base
         else:
-            base = self.settings.baseurl
+            base = Settings.baseurl
         archives = args.archives
         if args.noarchives:
             if modules is None:
@@ -258,7 +255,6 @@ class Cli:
                 base,
                 subarchives=archives,
                 modules=modules,
-                logging=self.logger,
                 all_extra=all_extra,
                 timeout=timeout,
             )
@@ -272,10 +268,9 @@ class Cli:
                     target,
                     qt_version,
                     arch,
-                    random.choice(self.settings.fallbacks),
+                    random.choice(Settings.fallbacks),
                     subarchives=archives,
                     modules=modules,
-                    logging=self.logger,
                     all_extra=all_extra,
                     timeout=timeout,
                 )
@@ -287,16 +282,15 @@ class Cli:
         target_config = qt_archives.get_target_config()
         self.call_installer(qt_archives, base_dir, sevenzip, keep)
         if not nopatch:
-            Updater.update(target_config, base_dir, self.logger)
+            Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
         self.logger.info(
-            "Time elasped: {time:.8f} second".format(
+            "Time elapsed: {time:.8f} second".format(
                 time=time.perf_counter() - start_time
             )
         )
 
     def _run_src_doc_examples(self, flavor, args):
-        start_time = time.perf_counter()
         self.show_aqt_version()
         target = args.target
         os_name = args.host
@@ -310,15 +304,15 @@ class Cli:
         if args.base is not None:
             base = args.base
         else:
-            base = self.settings.baseurl
+            base = Settings.baseurl
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
-            timeout = (self.settings.connection_timeout, self.settings.response_timeout)
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
         sevenzip = self._set_sevenzip(args.external)
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
-            sevenzip = self._set_sevenzip(self.settings.zipcmd)
+            sevenzip = self._set_sevenzip(Settings.zipcmd)
         modules = args.modules
         archives = args.archives
         all_extra = True if modules is not None and "all" in modules else False
@@ -335,7 +329,6 @@ class Cli:
                 base,
                 subarchives=archives,
                 modules=modules,
-                logging=self.logger,
                 all_extra=all_extra,
                 timeout=timeout,
             )
@@ -349,10 +342,9 @@ class Cli:
                     os_name,
                     target,
                     qt_version,
-                    random.choice(self.settings.fallbacks),
+                    random.choice(Settings.fallbacks),
                     subarchives=archives,
                     modules=modules,
-                    logging=self.logger,
                     all_extra=all_extra,
                     timeout=timeout,
                 )
@@ -363,23 +355,46 @@ class Cli:
             exit(1)
         self.call_installer(srcdocexamples_archives, base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
+
+    def run_src(self, args):
+        """Run src subcommand"""
+        if args.kde:
+            if args.qt_version != "5.15.2":
+                print("KDE patch: unsupported version!!")
+                exit(1)
+        start_time = time.perf_counter()
+        self._run_src_doc_examples("src", args)
+        if args.kde:
+            if args.outputdir is None:
+                target_dir = os.path.join(os.getcwd(), args.qt_version, "Src")
+            else:
+                target_dir = os.path.join(args.outputdir, args.qt_version, "Src")
+            Updater.patch_kde(target_dir)
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
                 time=time.perf_counter() - start_time
             )
         )
 
-    def run_src(self, args):
-        """Run src subcommand"""
-        self._run_src_doc_examples("src", args)
-
     def run_examples(self, args):
         """Run example subcommand"""
+        start_time = time.perf_counter()
         self._run_src_doc_examples("examples", args)
+        self.logger.info(
+            "Time elapsed: {time:.8f} second".format(
+                time=time.perf_counter() - start_time
+            )
+        )
 
     def run_doc(self, args):
         """Run doc subcommand"""
+        start_time = time.perf_counter()
         self._run_src_doc_examples("doc", args)
+        self.logger.info(
+            "Time elapsed: {time:.8f} second".format(
+                time=time.perf_counter() - start_time
+            )
+        )
 
     def run_tool(self, args):
         """Run tool subcommand"""
@@ -395,17 +410,17 @@ class Cli:
         sevenzip = self._set_sevenzip(args.external)
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
-            sevenzip = self._set_sevenzip(self.settings.zipcmd)
+            sevenzip = self._set_sevenzip(Settings.zipcmd)
         version = args.version
         keep = args.keep
         if args.base is not None:
             base = args.base
         else:
-            base = self.settings.baseurl
+            base = Settings.baseurl
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
-            timeout = (self.settings.connection_timeout, self.settings.response_timeout)
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
         if not self._check_tools_arg_combination(os_name, tool_name, arch):
             self.logger.warning(
                 "Specified target combination is not valid: {} {} {}".format(
@@ -419,7 +434,6 @@ class Cli:
                 version,
                 arch,
                 base,
-                logging=self.logger,
                 timeout=timeout,
             )
         except ArchiveConnectionError:
@@ -432,8 +446,7 @@ class Cli:
                     tool_name,
                     version,
                     arch,
-                    random.choice(self.settings.fallbacks),
-                    logging=self.logger,
+                    random.choice(Settings.fallbacks),
                     timeout=timeout,
                 )
             except Exception:
@@ -645,12 +658,6 @@ class Cli:
             type=argparse.FileType("r"),
             help="Configuration ini file.",
         )
-        parser.add_argument(
-            "--logging-conf",
-            type=argparse.FileType("r"),
-            help="Logging configuration ini file.",
-        )
-        parser.add_argument("--logger", nargs=1, help="Specify logger name")
         subparsers = parser.add_subparsers(
             title="subcommands",
             description="Valid subcommands",
@@ -707,6 +714,9 @@ class Cli:
         self._set_common_argument(src_parser)
         self._set_common_options(src_parser)
         self._set_module_options(src_parser)
+        src_parser.add_argument(
+            "--kde", action="store_true", help="patching with KDE patch kit."
+        )
         #
         tools_parser = subparsers.add_parser("tool")
         tools_parser.set_defaults(func=self.run_tool)
@@ -736,39 +746,47 @@ class Cli:
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
-    def _setup_logging(self, args, env_key="LOG_CFG"):
-        envconf = os.getenv(env_key, None)
-        conf = None
-        if args.logging_conf:
-            conf = args.logging_conf
-        elif envconf is not None:
-            conf = envconf
-        if conf is None or not os.path.exists(conf):
-            conf = os.path.join(os.path.dirname(__file__), "logging.ini")
-        logging.config.fileConfig(conf)
-        if args.logger is not None:
-            self.logger = logging.getLogger(args.logger)
-        else:
-            self.logger = logging.getLogger("aqt")
-
-    def _setup_settings(self, args=None, env_key="AQT_CONFIG"):
+    def _setup_settings(self, args=None):
+        # setup logging
+        setup_logging()
+        self.logger = getLogger("aqt.main")
+        # setup settings
         if args is not None and args.config is not None:
-            self.settings = Settings(args.config)
+            Settings.load_settings(args.config)
         else:
-            config = os.getenv(env_key, None)
+            config = os.getenv("AQT_CONFIG", None)
             if config is not None and os.path.exists(config):
-                self.settings = Settings(config)
+                Settings.load_settings(config)
+                self.logger.info("Load configuration from {}".format(config))
             else:
-                self.settings = Settings()
+                Settings.load_settings()
 
     def run(self, arg=None):
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
-        self._setup_logging(args)
-        return args.func(args)
+        result = args.func(args)
+        return result
+
+    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
+        queue = multiprocessing.Manager().Queue(-1)
+        listener = MyQueueListener(queue)
+        listener.start()
+        #
+        tasks = []
+        for arc in qt_archives.get_archives():
+            tasks.append((arc, base_dir, sevenzip, queue, keep))
+        ctx = multiprocessing.get_context("spawn")
+        pool = ctx.Pool(Settings.concurrency)
+        pool.starmap(installer, tasks)
+        #
+        pool.close()
+        pool.join()
+        # all done, close logging service for sub-processes
+        listener.enqueue_sentinel()
+        listener.stop()
 
 
-def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
+def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout=None):
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
@@ -778,14 +796,23 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
-    logger = getLogger("aqt")
+    # set defaults
+    Settings.load_settings()
+    # set logging
+    setup_logging()  # XXX: why need to load again?
+    qh = QueueHandler(queue)
+    logger = getLogger()
+    for handler in logger.handlers:
+        handler.close()
+        logger.removeHandler(handler)
+    logger.addHandler(qh)
+    #
     logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
-    settings = Settings()
     if response_timeout is None:
-        timeout = (settings.connection_timeout, settings.response_timeout)
+        timeout = (Settings.connection_timeout, Settings.response_timeout)
     else:
-        timeout = (settings.connection_timeout, response_timeout)
+        timeout = (Settings.connection_timeout, response_timeout)
     hash = binascii.unhexlify(getUrl(hashurl, timeout, logger))
     downloadBinaryFile(url, archive, "sha1", hash, timeout, logger)
     if command is None:
@@ -817,7 +844,10 @@ def installer(qt_archive, base_dir, command, keep=False, response_timeout=None):
     if not keep:
         os.unlink(archive)
     logger.info(
-        "Finished installation of {} in {}".format(
+        "Finished installation of {} in {:.8f}".format(
             archive, time.perf_counter() - start_time
         )
     )
+    qh.flush()
+    qh.close()
+    logger.removeHandler(qh)

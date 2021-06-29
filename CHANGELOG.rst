@@ -7,15 +7,28 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+
+`v1.2.1`_ (22, Jun. 2021)
+========================
+
+Fixed
+-----
+* Fix crash when tool subcommand used.(#275,#276)
+
+`v1.2.0`_ (21, Jun. 2021)
+========================
+
 Added
 -----
 * Add -c/--config option to specify custom settings.ini(#246)
 * Document for settings.ini configuration parameters(#246)
 * Patching libtool file(.la) on mac(#267)
 * CI: Add more blacklist mirrors
+* Add --kde option for src subommand(#274)
 
 Changed
 -------
+* Use spawn multiprocessing on Linux platform.(#273)
 * Check MD5 checksum when download(#238)
 * Config settings.ini parser and URL list format(#246)
 * Refactoring network connection code, consolidated to helper.py(#244)
@@ -25,20 +38,12 @@ Changed
 
 Fixed
 -----
+* Fix logging during subprocess installation on macOS, and Windows(#273)
 * Fix patching qmake(#259)
 * Prettify help message format(#237)
 * Update patching pkgconfig/lib on mac(#267)
 * CI: fix check workflow(#248)
 * CI: fix error on Azure/Windows(connection error)(#246)
-
-Deprecated
-----------
-
-Removed
--------
-
-Security
---------
 
 `v1.1.6`_ (2, May. 2021)
 ========================
@@ -155,7 +160,9 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.1.6...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.1...HEAD
+.. _v1.2.1: https://github.com/miurahr/aqtinstall/compare/v1.2.0...v1.2.1
+.. _v1.2.0: https://github.com/miurahr/aqtinstall/compare/v1.1.6...v1.2.0
 .. _v1.1.6: https://github.com/miurahr/aqtinstall/compare/v1.1.5...v1.1.6
 .. _v1.1.5: https://github.com/miurahr/aqtinstall/compare/v1.1.4...v1.1.5
 .. _v1.1.4: https://github.com/miurahr/aqtinstall/compare/v1.1.3...v1.1.4

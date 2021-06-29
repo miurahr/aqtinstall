@@ -65,7 +65,7 @@ Requirements
 ------------
 
 - Minimum Python version:  3.6
-- Recommended Python version: 3.7.5 or later
+- Recommended Python version: 3.8, 3.9 (frequently tested on)
 
 - Dependent libraries: requests, py7zr
 

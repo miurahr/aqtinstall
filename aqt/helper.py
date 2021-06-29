@@ -23,11 +23,12 @@ import configparser
 import hashlib
 import json
 import logging
-import multiprocessing
+import logging.config
 import os
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
+from logging.handlers import QueueListener
 from typing import Callable, Dict, Iterable, List, Optional
 from urllib.parse import urlparse
 
@@ -163,12 +164,12 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
         try:
             r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
             if 300 < r.status_code < 309:
-                logger.info(
+                logger.debug(
                     "Asked to redirect({}) to: {}".format(
                         r.status_code, r.headers["Location"]
                     )
                 )
-                newurl = altlink(r.url, r.headers["Location"], logger=logger)
+                newurl = altlink(r.url, r.headers["Location"])
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except requests.exceptions.ConnectionError as e:
@@ -198,14 +199,12 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, lo
                 raise e
 
 
-def altlink(url: str, alt: str, logger=None):
+def altlink(url: str, alt: str):
     """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
     When found black url, then try download a url + .meta4 that is a metalink version4
     xml file, parse it and retrieve best alternative url."""
-    if logger is None:
-        logger = logging.getLogger(__name__)
-    blacklist = Settings().blacklist  # type: Optional[List[str]]
-    if not any(alt.startswith(b) for b in blacklist):
+    logger = logging.getLogger("aqt.helper")
+    if not any(alt.startswith(b) for b in Settings.blacklist):
         return alt
     try:
         m = _get_meta(url)
@@ -239,7 +238,9 @@ def altlink(url: str, alt: str, logger=None):
             # if not found then return alt in default
             return next(
                 filter(
-                    lambda mirror: not any(mirror.startswith(b) for b in blacklist),
+                    lambda mirror: not any(
+                        mirror.startswith(b) for b in Settings.blacklist
+                    ),
                     mirrors,
                 ),
                 alt,
@@ -261,6 +262,22 @@ class MyConfigParser(configparser.ConfigParser):
         except Exception:
             result = fallback
         return result
+
+
+class MyQueueListener(QueueListener):
+    def __init__(self, queue):
+        handlers = []
+        super().__init__(queue, *handlers)
+
+    def handle(self, record):
+        """
+        Handle a record from subprocess.
+        Override logger name then handle at proper logger.
+        """
+        record = self.prepare(record)
+        logger = logging.getLogger("aqt.installer")
+        record.name = "aqt.installer"
+        logger.handle(record)
 
 
 def to_version(qt_ver: str) -> Version:
@@ -320,11 +337,11 @@ def request_http_with_failover(
     """Make an HTTP request, using one or more base urls in case the request fails.
     If all requests fail, then re-raise the requests.exceptions.RequestException
     that was raised by the final HTTP request.
-    Any HTTP request that resulted in a status code >= 400 will result in a RequestException.
+    Any HTTP request that resulted in a status code >= 400 will raise a RequestException.
+    Any HTTP redirects will redirect automatically
     """
     if not timeout:
-        settings = Settings()  # Borg/Singleton ensures we get the right settings
-        timeout = settings.connection_timeout, settings.response_timeout
+        timeout = Settings.connection_timeout, Settings.response_timeout
 
     for i, base_url in enumerate(base_urls):
         try:
@@ -364,50 +381,41 @@ def xml_to_modules(
     return packages
 
 
-class Settings(object):
+class Settings:
     """Class to hold configuration and settings.
     Actual values are stored in 'settings.ini' file.
     It also holds a combinations database.
     """
 
-    # this class is Borg/Singleton
-    _shared_state = {
-        "config": None,
-        "_combinations": None,
-        "_lock": multiprocessing.Lock(),
-    }
+    def __init__(self):
+        self.config = MyConfigParser()
+        self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
+        self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
 
-    def __init__(self, file=None):
-        self.__dict__ = self._shared_state
-        if self.config is None:
-            with self._lock:
-                if self.config is None:
-                    self.config = MyConfigParser()
-                    # load default config file
-                    with open(
-                        os.path.join(os.path.dirname(__file__), "settings.ini"), "r"
-                    ) as f:
-                        self.config.read_file(f)
-                    # load custom file
-                    if file is not None:
-                        if isinstance(file, str):
-                            result = self.config.read(file)
-                            if len(result) == 0:
-                                raise IOError(
-                                    "Fails to load specified config file {}".format(
-                                        file
-                                    )
-                                )
-                        else:
-                            # passed through command line argparse.FileType("r")
-                            self.config.read_file(file)
-                            file.close()
-                    # load combinations
-                    with open(
-                        os.path.join(os.path.dirname(__file__), "combinations.json"),
-                        "r",
-                    ) as j:
-                        self._combinations = json.load(j)[0]
+    def load_settings(self, file=None):
+        with open(
+            os.path.join(os.path.dirname(__file__), "combinations.json"),
+            "r",
+        ) as j:
+            self._combinations = json.load(j)[0]
+        if file is not None:
+            if isinstance(file, str):
+                result = self.config.read(file)
+                if len(result) == 0:
+                    raise IOError("Fails to load specified config file {}".format(file))
+                self.configfile = file
+            else:
+                # passed through command line argparse.FileType("r")
+                self.config.read_file(file)
+                self.configfile = file
+                file.close()
+        else:
+            if isinstance(self.configfile, str):
+                with open(self.configfile, "r") as f:
+                    self.config.read_file(f)
+            else:
+                self.configfile.seek(0)
+                self.config.read_file(self.configfile)
 
     @property
     def qt_combinations(self):
@@ -479,3 +487,18 @@ class Settings(object):
     @property
     def zipcmd(self):
         return self.config.get("aqt", "7zcmd", fallback="7z")
+
+    @property
+    def kde_patches(self):
+        return self.config.getlist("kde_patches", "patches", fallback=[])
+
+
+Settings = Settings()
+
+
+def setup_logging(env_key="LOG_CFG"):
+    config = os.getenv(env_key, None)
+    if config is not None and os.path.exists(config):
+        logging.config.fileConfig(config)
+    else:
+        logging.config.fileConfig(Settings.loggingconf)

@@ -14,7 +14,7 @@ steps:
   - bash: |
       set -ex
       number=$RANDOM
-      let "number %= 60"
+      let "number %= 60" || true
       let "number += 1"
       sleep $number
       mkdir Qt
@@ -105,6 +105,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
     displayName: Run Aqt
 
   ##----------------------------------------------------
@@ -161,7 +162,7 @@ steps:
         Write-Host '##vso[task.setvariable variable=VSVER]2015'
       }
       cd $(WIN_QT_BINDIR)
-      Invoke-WebRequest -Uri https://mirrors.ocf.berkeley.edu/qt/official_releases/jom/jom.zip -OutFile jom.zip
+      Invoke-WebRequest -Uri https://download.qt.io/official_releases/jom/jom.zip -OutFile jom.zip
       unzip jom.zip
     condition: eq( variables['Agent.OS'], 'Windows_NT')
     displayName: Detect toolchain for Windows and update PATH

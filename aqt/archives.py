@@ -20,6 +20,7 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import itertools
+import posixpath
 import random
 import re
 import xml.etree.ElementTree as ElementTree
@@ -418,7 +419,7 @@ class PackagesList:
         self.os_name = os_name
         self.target = target
         self.archives = []
-        self.base = base
+        self.base = posixpath.join(self.base, "online", "qtsdkrepository")
         self.timeout = timeout
         self.logger = getLogger("aqt")
         self._get_archives()
@@ -441,7 +442,7 @@ class PackagesList:
                 self.version.patch,
                 ext,
             )
-            update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
+            update_xml_url = posixpath.join(self.base, archive_path, "Updates.xml")
             xml_text = getUrl(update_xml_url, self.timeout, self.logger)
             self.update_xml = ElementTree.fromstring(xml_text)
             for packageupdate in self.update_xml.iter("PackageUpdate"):
@@ -480,7 +481,6 @@ class QtArchives:
         base,
         subarchives=None,
         modules=None,
-        logging=None,
         all_extra=False,
         timeout=(5, 5),
     ):
@@ -489,13 +489,10 @@ class QtArchives:
         self.arch = arch
         self.os_name = os_name
         self.all_extra = all_extra
-        self.arch_list = [item.get("arch") for item in Settings().qt_combinations]
+        self.arch_list = [item.get("arch") for item in Settings.qt_combinations]
         all_archives = subarchives is None
         self.base = base + "/online/qtsdkrepository/"
-        if logging:
-            self.logger = logging
-        else:
-            self.logger = getLogger("aqt")
+        self.logger = getLogger("aqt.archives")
         self.archives = []
         self.mod_list = []
         if all_extra:
@@ -646,7 +643,6 @@ class SrcDocExamplesArchives(QtArchives):
         base,
         subarchives=None,
         modules=None,
-        logging=None,
         all_extra=False,
         timeout=(5, 5),
     ):
@@ -654,6 +650,7 @@ class SrcDocExamplesArchives(QtArchives):
         self.target = target
         self.os_name = os_name
         self.base = base
+        self.logger = getLogger("aqt.archives")
         super(SrcDocExamplesArchives, self).__init__(
             os_name,
             target,
@@ -662,7 +659,6 @@ class SrcDocExamplesArchives(QtArchives):
             base,
             subarchives=subarchives,
             modules=modules,
-            logging=logging,
             all_extra=all_extra,
             timeout=timeout,
         )
@@ -708,13 +704,12 @@ class ToolArchives(QtArchives):
     ToolArchive(linux, desktop, 3.1.1, ifw)
     """
 
-    def __init__(
-        self, os_name, tool_name, version, arch, base, logging=None, timeout=(5, 5)
-    ):
+    def __init__(self, os_name, tool_name, version, arch, base, timeout=(5, 5)):
         self.tool_name = tool_name
         self.os_name = os_name
+        self.logger = getLogger("aqt.archives")
         super(ToolArchives, self).__init__(
-            os_name, "desktop", version, arch, base, logging=logging, timeout=timeout
+            os_name, "desktop", version, arch, base, timeout=timeout
         )
 
     def _get_archives(self):
@@ -744,7 +739,7 @@ class ToolArchives(QtArchives):
                     downloadable_archives = []
                 named_version = packageupdate.find("Version").text
                 full_version = Version(named_version)
-                if not full_version.base_version == self.version.base_version:
+                if full_version.truncate("patch") != self.version.truncate("patch"):
                     self.logger.warning(
                         "Base Version of {} is different from requested version {} -- skip.".format(
                             named_version, self.version

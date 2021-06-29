@@ -18,12 +18,16 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+import logging
 import os
 import pathlib
 import subprocess
+from logging import getLogger
 
+import patch
 from semantic_version import SimpleSpec, Version
+
+from aqt.helper import Settings
 
 
 class Updater:
@@ -208,6 +212,23 @@ class Updater:
             f.write("[Paths]\n")
             f.write("Prefix=..\n")
 
+    def make_qtenv2(self, base_dir, qt_version, arch_dir):
+        """Prepare qtenv2.bat"""
+        with open(
+            os.path.join(base_dir, qt_version, arch_dir, "bin", "qtenv2.bat"), "w"
+        ) as f:
+            f.write("@echo off\n")
+            f.write("echo Setting up environment for Qt usage...\n")
+            f.write(
+                "set PATH={};%PATH%\n".format(
+                    os.path.join(base_dir, qt_version, arch_dir, "bin")
+                )
+            )
+            f.write("cd /D {}\n".format(os.path.join(base_dir, qt_version, arch_dir)))
+            f.write(
+                "echo Remember to call vcvarsall.bat to complete environment setup!\n"
+            )
+
     def set_license(self, base_dir, qt_version, arch_dir):
         """Update qtconfig.pri as OpenSource"""
         with open(
@@ -243,11 +264,12 @@ class Updater:
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
     @classmethod
-    def update(cls, target, base_dir: str, logger):
+    def update(cls, target, base_dir: str):
         """
         Make Qt configuration files, qt.conf and qtconfig.pri.
         And update pkgconfig and patch Qt5Core and qmake
         """
+        logger = getLogger("aqt.updater")
         arch = target.arch
         if arch is None:
             arch_dir = ""
@@ -280,6 +302,8 @@ class Updater:
                 elif target.os_name == "mac":
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
+                elif target.os_name == "windows":
+                    updater.make_qtenv2(base_dir, target.version, arch_dir)
                 if Version(target.version) < Version("5.14.0"):
                     updater.patch_qtcore(target)
             elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
@@ -291,3 +315,14 @@ class Updater:
                 )
         except IOError as e:
             raise e
+
+    @classmethod
+    def patch_kde(cls, src_dir):
+        logger = logging.getLogger("aqt")
+        PATCH_URL_BASE = (
+            "https://raw.githubusercontent.com/miurahr/kde-qt-patch/main/patches/"
+        )
+        for p in Settings.kde_patches:
+            logger.info("Apply patch: " + p)
+            patchfile = patch.fromurl(PATCH_URL_BASE + p)
+            patchfile.apply(strip=True, root=os.path.join(src_dir, "qtbase"))
