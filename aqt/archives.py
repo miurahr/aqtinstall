@@ -24,7 +24,7 @@ import random
 import re
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
-from typing import Callable, Generator, Iterable, Iterator, Optional, Tuple, Union
+from typing import Callable, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 
 import bs4
 import requests
@@ -32,15 +32,7 @@ from semantic_version import SimpleSpec, Version
 
 from aqt import helper
 from aqt.exceptions import ArchiveListError, CliInputError, NoPackageFound
-from aqt.helper import (
-    ArchiveId,
-    ListOfStr,
-    Settings,
-    Tools,
-    Versions,
-    getUrl,
-    xml_to_modules,
-)
+from aqt.helper import ArchiveId, Settings, getUrl, xml_to_modules
 
 
 class TargetConfig:
@@ -53,6 +45,50 @@ class TargetConfig:
 
 class ListCommand:
     """Encapsulate all parts of the `aqt list` command"""
+
+    # Inner helper classes
+    class Versions:
+        def __init__(self, it_of_it: Iterable[Tuple[int, Iterable[Version]]]):
+            self.versions: List[List[Version]] = [
+                list(versions_iterator) for _, versions_iterator in it_of_it
+            ]
+
+        def __str__(self):
+            return "\n".join(
+                " ".join(
+                    ListCommand.Versions.stringify_ver(version)
+                    for version in minor_list
+                )
+                for minor_list in self.versions
+            )
+
+        def __bool__(self):
+            return len(self.versions) > 0 and len(self.versions[0]) > 0
+
+        def latest(self) -> Optional[Version]:
+            if not self:
+                return None
+            return self.versions[-1][-1]
+
+        @staticmethod
+        def stringify_ver(version: Version) -> str:
+            if version.prerelease:
+                return "{}.{}-preview".format(version.major, version.minor)
+            return str(version)
+
+    class ListOfStr:
+        def __init__(self, strings: List[str]):
+            self.strings = strings
+
+        def __str__(self):
+            return " ".join(self.strings)
+
+        def __bool__(self):
+            return len(self.strings) > 0 and len(self.strings[0]) > 0
+
+    class Tools(ListOfStr):
+        def __str__(self):
+            return "\n".join(self.strings)
 
     def __init__(
         self,
@@ -128,13 +164,13 @@ class ListCommand:
             self.print_suggested_follow_up(self.logger.error)
             return 1
 
-    def fetch_modules(self, version: Version) -> helper.ListOfStr:
+    def fetch_modules(self, version: Version) -> ListOfStr:
         return self.get_modules_architectures_for_version(version=version)[0]
 
-    def fetch_arches(self, version: Version) -> helper.ListOfStr:
+    def fetch_arches(self, version: Version) -> ListOfStr:
         return self.get_modules_architectures_for_version(version=version)[1]
 
-    def fetch_extensions(self, version: Version) -> helper.ListOfStr:
+    def fetch_extensions(self, version: Version) -> ListOfStr:
         versions_extensions = ListCommand.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url()), self.archive_id.category
         )
@@ -142,9 +178,11 @@ class ListCommand:
             lambda ver_ext: ver_ext[0] == version and ver_ext[1],
             versions_extensions,
         )
-        return ListOfStr(strings=list(map(lambda ver_ext: ver_ext[1], filtered)))
+        return ListCommand.ListOfStr(
+            strings=list(map(lambda ver_ext: ver_ext[1], filtered))
+        )
 
-    def fetch_versions(self) -> helper.Versions:
+    def fetch_versions(self) -> Versions:
         def filter_by(ver_ext: Tuple[Optional[Version], str]) -> bool:
             version, extension = ver_ext
             return (
@@ -163,16 +201,16 @@ class ListCommand:
             filter(None, map(get_version, filter(filter_by, versions_extensions)))
         )
         iterables = itertools.groupby(versions, lambda version: version.minor)
-        return Versions(iterables)
+        return ListCommand.Versions(iterables)
 
     def fetch_latest_version(self) -> Optional[Version]:
         return self.fetch_versions().latest()
 
-    def fetch_tools(self) -> helper.Tools:
+    def fetch_tools(self) -> Tools:
         html_doc = self.fetch_http(self.archive_id.to_url())
-        return Tools(list(ListCommand.iterate_folders(html_doc, "tools")))
+        return ListCommand.Tools(list(ListCommand.iterate_folders(html_doc, "tools")))
 
-    def fetch_tool_modules(self, tool_name: str) -> helper.ListOfStr:
+    def fetch_tool_modules(self, tool_name: str) -> ListOfStr:
         rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
         xml = self.fetch_http(rest_of_url)  # raises RequestException
         modules = xml_to_modules(
@@ -180,7 +218,7 @@ class ListCommand:
             predicate=ListCommand._has_nonempty_downloads,
             keys_to_keep=(),  # Just want names
         )
-        return helper.ListOfStr(strings=list(modules.keys()))
+        return ListCommand.ListOfStr(strings=list(modules.keys()))
 
     def _to_version(self, qt_ver: str) -> Version:
         """
@@ -300,7 +338,9 @@ class ListCommand:
             keys_to_keep=(),  # Just want names
         )
 
-        def naive_modules_arches(names: Iterable[str]) -> Tuple[ListOfStr, ListOfStr]:
+        def naive_modules_arches(
+            names: Iterable[str],
+        ) -> Tuple[ListCommand.ListOfStr, ListCommand.ListOfStr]:
             modules_and_arches, _modules, arches = set(), set(), set()
             for name in names:
                 # First term could be a module name or an architecture
@@ -312,8 +352,9 @@ class ListCommand:
             for first_term in modules_and_arches:
                 if first_term not in arches:
                     _modules.add(first_term)
-            return ListOfStr(strings=sorted(_modules)), ListOfStr(
-                strings=sorted(arches)
+            return (
+                ListCommand.ListOfStr(strings=sorted(_modules)),
+                ListCommand.ListOfStr(strings=sorted(arches)),
             )
 
         return naive_modules_arches(modules.keys())

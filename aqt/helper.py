@@ -28,7 +28,7 @@ import os
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
-from typing import Callable, Dict, Iterable, List, Optional, Tuple
+from typing import Callable, Dict, Iterable, List, Optional
 from urllib.parse import urlparse
 
 import requests
@@ -109,49 +109,6 @@ class ArchiveId:
             target=self.target,
             ext="" if not self.extension else "/" + self.extension,
         )
-
-
-class Versions:
-    def __init__(self, it_of_it: Iterable[Tuple[int, Iterable[Version]]]):
-        self.versions: List[List[Version]] = [
-            list(versions_iterator) for _, versions_iterator in it_of_it
-        ]
-
-    def __str__(self):
-        return "\n".join(
-            " ".join(Versions.stringify_ver(version) for version in minor_list)
-            for minor_list in self.versions
-        )
-
-    def __bool__(self):
-        return len(self.versions) > 0 and len(self.versions[0]) > 0
-
-    def latest(self) -> Optional[Version]:
-        if not self:
-            return None
-        return self.versions[-1][-1]
-
-    @staticmethod
-    def stringify_ver(version: Version) -> str:
-        if version.prerelease:
-            return "{}.{}-preview".format(version.major, version.minor)
-        return str(version)
-
-
-class ListOfStr:
-    def __init__(self, strings: List[str]):
-        self.strings = strings
-
-    def __str__(self):
-        return " ".join(self.strings)
-
-    def __bool__(self):
-        return len(self.strings) > 0 and len(self.strings[0]) > 0
-
-
-class Tools(ListOfStr):
-    def __str__(self):
-        return "\n".join(self.strings)
 
 
 def _get_meta(url: str):
