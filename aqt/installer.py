@@ -690,8 +690,8 @@ class Cli:
         return result
 
     def call_installer(self, qt_archives, base_dir, sevenzip, keep):
-        if not qt_archives.get_archives():
-            raise NoPackageFound("Couldn't find any archives")
+        # if not qt_archives.get_archives():
+        #     raise NoPackageFound("Couldn't find any archives")
         queue = multiprocessing.Manager().Queue(-1)
         listener = MyQueueListener(queue)
         listener.start()
