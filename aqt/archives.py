@@ -23,6 +23,7 @@
 import posixpath
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
+from typing import Optional, Tuple
 
 from semantic_version import SimpleSpec, Version
 
@@ -37,18 +38,48 @@ class TargetConfig:
         self.arch = arch
         self.os_name = os_name
 
+    def __str__(self):
+        print(
+            f"TargetConfig(version={self.version}, target={self.target}, "
+            f"arch={self.arch}, os_name={self.os_name}"
+        )
+
+    def __repr__(self):
+        print(f"({self.version}, {self.target}, {self.arch}, {self.os_name})")
+
 
 class QtPackage:
     """
     Hold package information.
     """
 
-    def __init__(self, name, archive_url, archive, package_desc, hashurl):
+    def __init__(
+        self,
+        name: str,
+        archive_url: str,
+        archive: str,
+        package_desc: str,
+        hashurl: str,
+        version: Optional[Version] = None,
+    ):
         self.name = name
         self.url = archive_url
         self.archive = archive
         self.desc = package_desc
         self.hashurl = hashurl
+        self.version = version
+
+    def __repr__(self):
+        v_info = f", version={self.version}" if self.version else ""
+        return f"QtPackage(name={self.name}, archive={self.archive}{v_info})"
+
+    def __str__(self):
+        v_info = f", version={self.version}" if self.version else ""
+        return (
+            f"QtPackage(name={self.name}, url={self.url}, "
+            f"archive={self.archive}, desc={self.desc}"
+            f"hashurl={self.hashurl}{v_info})"
+        )
 
 
 class ListInfo:
@@ -130,7 +161,7 @@ class QtArchives:
         self,
         os_name,
         target,
-        version,
+        version_str,
         arch,
         base,
         subarchives=None,
@@ -138,7 +169,7 @@ class QtArchives:
         all_extra=False,
         timeout=(5, 5),
     ):
-        self.version = Version(version)
+        self.version = Version(version_str)
         self.target = target
         self.arch = arch
         self.os_name = os_name
@@ -358,13 +389,29 @@ class ToolArchives(QtArchives):
     ToolArchive(linux, desktop, 3.1.1, ifw)
     """
 
-    def __init__(self, os_name, tool_name, version, arch, base, timeout=(5, 5)):
+    def __init__(
+        self,
+        os_name: str,
+        tool_name: str,
+        base: str,
+        version_str: Optional[str] = None,
+        arch: Optional[str] = None,
+        timeout: Tuple[int, int] = (5, 5),
+    ):
         self.tool_name = tool_name
         self.os_name = os_name
         self.logger = getLogger("aqt.archives")
         super(ToolArchives, self).__init__(
-            os_name, "desktop", version, arch, base, timeout=timeout
+            os_name=os_name,
+            target="desktop",
+            version_str=version_str,
+            arch=arch,
+            base=base,
+            timeout=timeout,
         )
+
+    def __str__(self):
+        return f"ToolArchives(tool_name={self.tool_name}, version={self.version_str}, arch={self.arch})"
 
     def _get_archives(self):
         if self.os_name == "windows":
