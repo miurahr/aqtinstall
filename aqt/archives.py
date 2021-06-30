@@ -141,7 +141,12 @@ class PackagesList:
                     else:
                         virtual = False
                     self.archives.append(
-                        ListInfo(name, display_name, package_desc, virtual)
+                        ListInfo(
+                            name=name,
+                            display_name=display_name,
+                            desc=package_desc,
+                            virtual=virtual,
+                        )
                     )
         if len(self.archives) == 0:
             self.logger.error("Error while parsing package information!")
@@ -290,11 +295,11 @@ class QtArchives:
                         hashurl = package_url + ".sha1"
                         self.archives.append(
                             QtPackage(
-                                archive_name,
-                                package_url,
-                                archive,
-                                package_desc,
-                                hashurl,
+                                name=archive_name,
+                                archive_url=package_url,
+                                archive=archive,
+                                package_desc=package_desc,
+                                hashurl=hashurl,
                             )
                         )
         if len(self.archives) == 0:
@@ -474,7 +479,13 @@ class ToolArchives(QtArchives):
                 )
                 hashurl = package_url + ".sha1"
                 self.archives.append(
-                    QtPackage(name, package_url, archive, package_desc, hashurl)
+                    QtPackage(
+                        name=name,
+                        archive_url=package_url,
+                        archive=archive,
+                        package_desc=package_desc,
+                        hashurl=hashurl,
+                    )
                 )
 
     def get_target_config(self) -> TargetConfig:
