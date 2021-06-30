@@ -279,8 +279,13 @@ class QtArchives:
                         package_desc = packageupdate.find("Description").text
                         for archive in downloadable_archives:
                             archive_name = archive.split("-", maxsplit=1)[0]
-                            package_url = (
-                                archive_url + name + "/" + full_version + archive
+                            package_url = posixpath.join(
+                                # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt5_5150/
+                                archive_url,
+                                # qt.qt5.5150.gcc_64/
+                                name,
+                                # 5.15.0-0-202005140804qtbase-Linux-RHEL_7_6-GCC-Linux-RHEL_7_6-X86_64.7z
+                                full_version + archive,
                             )
                             hashurl = package_url + ".sha1"
                             self.archives.append(
@@ -414,11 +419,21 @@ class ToolArchives(QtArchives):
         return f"ToolArchives(tool_name={self.tool_name}, version={self.version_str}, arch={self.arch})"
 
     def _get_archives(self):
+        _a = "_x64"
         if self.os_name == "windows":
-            archive_url = self.base + self.os_name + "_x86/" + self.target + "/"
-        else:
-            archive_url = self.base + self.os_name + "_x64/" + self.target + "/"
-        update_xml_url = "{0}{1}/Updates.xml".format(archive_url, self.tool_name)
+            _a = "_x86"
+
+        archive_url = posixpath.join(
+            # https://download.qt.io/online/qtsdkrepository/
+            self.base,
+            # linux_x64/
+            self.os_name + _a,
+            # desktop/
+            self.target,
+            # tools_ifw/
+            self.tool_name,
+        )
+        update_xml_url = posixpath.join(archive_url, "Updates.xml")
         self._download_update_xml(update_xml_url)  # call super method.
         self._parse_update_xml(archive_url, [])
 
@@ -449,14 +464,13 @@ class ToolArchives(QtArchives):
                     continue
                 package_desc = packageupdate.find("Description").text
                 for archive in downloadable_archives:
-                    package_url = (
-                        archive_url
-                        + self.tool_name
-                        + "/"
-                        + name
-                        + "/"
-                        + named_version
-                        + archive
+                    package_url = posixpath.join(
+                        # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
+                        archive_url,
+                        # qt.tools.ifw.41/
+                        name,
+                        #  4.1.1-202105261130ifw-linux-x64.7z
+                        f"{named_version}{archive}",
                     )
                     hashurl = package_url + ".sha1"
                     self.archives.append(
