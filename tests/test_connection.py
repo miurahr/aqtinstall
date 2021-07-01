@@ -22,7 +22,7 @@ def test_cli_unknown_version(capsys):
 
     """
     Expected result when no redirect occurs:
-    
+
     aqtinstall(aqt) v.* on Python 3.*
     Specified Qt version is unknown: 5.16.0.
     Download error when access to https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt5_5160/Updates.xml
