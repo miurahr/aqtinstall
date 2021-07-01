@@ -73,7 +73,7 @@ def getUrl(url: str, timeout, logger) -> str:
         else:
             if r.status_code != 200:
                 logger.error(
-                    "Download error when access to {}\n"
+                    "Failed to retrieve file at {}\n"
                     "Server response code: {}, reason: {}".format(
                         url, r.status_code, r.reason
                     )
