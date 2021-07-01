@@ -190,6 +190,7 @@ class Cli:
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
+        self._validate_version_str(qt_version)
         keep = args.keep
         output_dir = args.outputdir
         if output_dir is None:
@@ -295,6 +296,7 @@ class Cli:
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
+        self._validate_version_str(qt_version)
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -466,6 +468,7 @@ class Cli:
         """Run list subcommand"""
         self.show_aqt_version()
         qt_version = args.qt_version
+        self._validate_version_str(qt_version)
         host = args.host
         target = args.target
         try:
@@ -692,6 +695,13 @@ class Cli:
         # all done, close logging service for sub-processes
         listener.enqueue_sentinel()
         listener.stop()
+
+    def _validate_version_str(self, version_str: str) -> None:
+        try:
+            Version(version_str)
+        except ValueError:
+            self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(version_str))
+            exit(1)
 
 
 def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout=None):
