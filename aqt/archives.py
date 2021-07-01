@@ -388,15 +388,15 @@ class ListCommand:
             )
             printer(msg)
 
-        if self.filter_minor is not None:
+        if self.archive_id.is_tools() and self.request_type == "tool variant names":
+            msg = "Please use '{}' to check what tools are available.".format(base_cmd)
+            printer(msg)
+        elif self.filter_minor is not None:
             msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
                 base_cmd, self.archive_id.category, self.filter_minor
             )
             printer(msg)
-        if self.archive_id.is_tools() and self.request_type == "tool variant names":
-            msg = "Please use '{}' to check what tools are available.".format(base_cmd)
-            printer(msg)
-        if self.request_type in ("architectures", "modules", "extensions"):
+        elif self.request_type in ("architectures", "modules", "extensions"):
             msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
             printer(msg)
 
