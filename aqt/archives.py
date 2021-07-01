@@ -104,13 +104,14 @@ class ListCommand:
     ):
         """
         Construct ListCommand.
-        @param filter_minor         When set, the ListCommand will filter out all versions of
+
+        :param filter_minor:        When set, the ListCommand will filter out all versions of
                                     Qt that don't match this minor version.
-        @param is_latest_version    When True, the ListCommand will find all versions of Qt
+        :param is_latest_version:   When True, the ListCommand will find all versions of Qt
                                     matching filters, and only print the most recent version
-        @param modules_ver          Version of Qt for which to list modules
-        @param extensions_ver       Version of Qt for which to list extensions
-        @param architectures_ver    Version of Qt for which to list architectures
+        :param modules_ver:         Version of Qt for which to list modules
+        :param extensions_ver:      Version of Qt for which to list extensions
+        :param architectures_ver:   Version of Qt for which to list architectures
         """
         self.logger = getLogger("aqt")
         self.archive_id = archive_id
@@ -228,7 +229,8 @@ class ListCommand:
         If qt_ver == latest, and no versions exist corresponding to the filters specified,
         then CliInputError will be raised.
         If qt_ver == latest, and an HTTP error occurs, requests.RequestException will be raised.
-        @param qt_ver   Either the literal string `latest`, or a semantic version
+
+        :param qt_ver:  Either the literal string `latest`, or a semantic version
                         with each part separated with dots.
         """
         assert qt_ver
