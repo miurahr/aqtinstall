@@ -8,6 +8,19 @@ All notable changes to this project will be documented in this file.
 =============
 
 
+`v1.2.2`_ (1, Jul. 2021)
+========================
+
+Added
+-----
+* Create qtenv2.bat file on windows(#279)
+
+Fixed
+-----
+* Fix list subcommand to retrieve information from web(#280)
+* Fix crash when installing Qt6.2.0 on mac(#288,#289)
+
+
 `v1.2.1`_ (22, Jun. 2021)
 ========================
 
@@ -160,7 +173,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.2...HEAD
+.. _v1.2.2: https://github.com/miurahr/aqtinstall/compare/v1.2.1...v1.2.2
 .. _v1.2.1: https://github.com/miurahr/aqtinstall/compare/v1.2.0...v1.2.1
 .. _v1.2.0: https://github.com/miurahr/aqtinstall/compare/v1.1.6...v1.2.0
 .. _v1.1.6: https://github.com/miurahr/aqtinstall/compare/v1.1.5...v1.1.6

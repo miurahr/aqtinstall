@@ -174,16 +174,26 @@ linux_build_jobs.extend(
         BuildJob('list', '5.13.1', 'windows', 'winrt', '', '', list_options={}),
     ]
 )
-mac_build_jobs.append(
-    BuildJob(
-        "install",
-        "5.14.2",
-        "mac",
-        "desktop",
-        "clang_64",
-        "clang_64",
-        module="qcharts qtnetworkauth",
-    )
+mac_build_jobs.extend(
+    [
+        BuildJob(
+            "install",
+            "6.2.0",
+            "mac",
+            "desktop",
+            "clang_64",
+            "macos",
+        ),
+        BuildJob(
+            "install",
+            "5.14.2",
+            "mac",
+            "desktop",
+            "clang_64",
+            "clang_64",
+            module="qcharts qtnetworkauth",
+        ),
+    ]
 )
 
 # WASM

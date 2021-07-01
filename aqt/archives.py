@@ -420,7 +420,7 @@ class PackagesList:
         self.os_name = os_name
         self.target = target
         self.archives = []
-        self.base = posixpath.join(self.base, "online", "qtsdkrepository")
+        self.base = posixpath.join(base, "online", "qtsdkrepository")
         self.timeout = timeout
         self.logger = getLogger("aqt")
         self._get_archives()
