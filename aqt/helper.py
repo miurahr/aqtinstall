@@ -56,7 +56,7 @@ def getUrl(url: str, timeout, logger) -> str:
             num_redirects = 0
             while 300 < r.status_code < 309 and num_redirects < 10:
                 num_redirects += 1
-                logger.info(
+                logger.debug(
                     "Asked to redirect({}) to: {}".format(
                         r.status_code, r.headers["Location"]
                     )
