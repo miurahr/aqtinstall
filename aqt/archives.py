@@ -31,7 +31,13 @@ import bs4
 from semantic_version import SimpleSpec, Version
 
 from aqt import helper
-from aqt.exceptions import *
+from aqt.exceptions import (
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    CliInputError,
+    NoPackageFound,
+)
 from aqt.helper import ArchiveId, Settings, getUrl, xml_to_modules
 
 
