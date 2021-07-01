@@ -142,7 +142,7 @@ def getUrl(url: str, timeout, logger) -> str:
             requests.exceptions.ConnectionError,
             requests.exceptions.Timeout,
         ):
-            raise ArchiveConnectionError()
+            raise ArchiveConnectionError("Failure to connect to  {}".format(url))
         else:
             if r.status_code != 200:
                 logger.error(
@@ -151,7 +151,7 @@ def getUrl(url: str, timeout, logger) -> str:
                         url, r.status_code, r.reason
                     )
                 )
-                raise ArchiveDownloadError("Download error!")
+                raise ArchiveDownloadError("Failure to retrieve {}".format(url))
         result = r.text
     return result
 
@@ -329,32 +329,6 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
     elif len(qt_ver) == 2:
         return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
     raise ValueError("Invalid version string '{}'".format(qt_ver))
-
-
-def request_http_with_failover(
-    base_urls: List[str], rest_of_url: str, timeout=None
-) -> str:
-    """Make an HTTP request, using one or more base urls in case the request fails.
-    If all requests fail, then re-raise the requests.exceptions.RequestException
-    that was raised by the final HTTP request.
-    Any HTTP request that resulted in a status code >= 400 will raise a RequestException.
-    Any HTTP redirects will redirect automatically
-    """
-    if not timeout:
-        timeout = Settings.connection_timeout, Settings.response_timeout
-
-    for i, base_url in enumerate(base_urls):
-        try:
-            url = base_url + "/" + rest_of_url
-            r = requests.get(url, timeout=timeout)
-            r.raise_for_status()
-            return r.text
-        except requests.RequestException as e:
-            # Only raise the exception if all urls are exhausted
-            # NOTE: this will print the randomly-selected failover URL, which may
-            # be confusing to users that expect aqt to use the primary URL instead
-            if i == len(base_urls) - 1:
-                raise e
 
 
 def xml_to_modules(

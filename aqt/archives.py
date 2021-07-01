@@ -28,11 +28,10 @@ from logging import getLogger
 from typing import Callable, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 
 import bs4
-import requests
 from semantic_version import SimpleSpec, Version
 
 from aqt import helper
-from aqt.exceptions import ArchiveListError, CliInputError, NoPackageFound
+from aqt.exceptions import *
 from aqt.helper import ArchiveId, Settings, getUrl, xml_to_modules
 
 
@@ -161,7 +160,7 @@ class ListCommand:
         except CliInputError as e:
             self.logger.error("Command line input error: {}".format(e))
             return 1
-        except requests.RequestException as e:
+        except (ArchiveConnectionError, ArchiveDownloadError) as e:
             self.logger.error("{}".format(e))
             self.print_suggested_follow_up(self.logger.error)
             return 1
@@ -251,12 +250,20 @@ class ListCommand:
         return version
 
     @staticmethod
-    def fetch_http(rest_of_url: str):
-        return helper.request_http_with_failover(
-            base_urls=[Settings.baseurl, random.choice(Settings.fallbacks)],
-            rest_of_url=rest_of_url,
-            timeout=(Settings.connection_timeout, Settings.response_timeout),
-        )
+    def fetch_http(rest_of_url: str) -> str:
+        base_urls = Settings.baseurl, random.choice(Settings.fallbacks)
+        for i, base_url in enumerate(base_urls):
+            try:
+                url = posixpath.join(base_url, rest_of_url)
+                return getUrl(
+                    url=url,
+                    timeout=(Settings.connection_timeout, Settings.response_timeout),
+                    logger=getLogger("aqt"),
+                )
+
+            except (ArchiveDownloadError, ArchiveConnectionError) as e:
+                if i == len(base_urls) - 1:
+                    raise e
 
     @staticmethod
     def iterate_folders(
