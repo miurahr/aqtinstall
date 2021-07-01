@@ -171,7 +171,6 @@ mac_build_jobs.extend(
             "desktop",
             "clang_64",
             "macos",
-            module="qcharts qtnetworkauth",
         ),
         BuildJob(
             "install",
