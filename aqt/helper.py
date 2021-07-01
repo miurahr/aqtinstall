@@ -61,7 +61,7 @@ def getUrl(url: str, timeout, logger) -> str:
                         r.status_code, r.headers["Location"]
                     )
                 )
-                newurl = altlink(r.url, r.headers["Location"], logger=logger)
+                newurl = altlink(r.url, r.headers["Location"])
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except (
