@@ -53,13 +53,15 @@ def getUrl(url: str, timeout, logger) -> str:
         session.mount("https://", adapter)
         try:
             r = requests.get(url, allow_redirects=False, timeout=timeout)
-            if 300 < r.status_code < 309:
-                logger.info(
+            num_redirects = 0
+            while 300 < r.status_code < 309 and num_redirects < 10:
+                num_redirects += 1
+                logger.debug(
                     "Asked to redirect({}) to: {}".format(
                         r.status_code, r.headers["Location"]
                     )
                 )
-                newurl = altlink(r.url, r.headers["Location"], logger=logger)
+                newurl = altlink(r.url, r.headers["Location"])
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except (
@@ -71,7 +73,7 @@ def getUrl(url: str, timeout, logger) -> str:
         else:
             if r.status_code != 200:
                 logger.error(
-                    "Download error when access to {}\n"
+                    "Failed to retrieve file at {}\n"
                     "Server response code: {}, reason: {}".format(
                         url, r.status_code, r.reason
                     )
