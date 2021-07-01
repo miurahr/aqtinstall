@@ -1,3 +1,9 @@
+import re
+import sys
+
+import pytest
+from semantic_version import Version
+
 import aqt
 
 
@@ -49,6 +55,35 @@ def test_cli_check_version():
     cli._setup_settings()
     assert cli._check_qt_arg_versions("5.12.0")
     assert not cli._check_qt_arg_versions("5.12")
+
+
+@pytest.mark.parametrize(
+    "invalid_version",
+    ("5.15", "five-dot-fifteen", "5"),
+)
+def test_cli_invalid_version(capsys, invalid_version):
+    """Checks that invalid version strings are handled properly"""
+
+    # Ensure that invalid_version cannot be a Version
+    with pytest.raises(ValueError):
+        Version(invalid_version)
+
+    cli = aqt.installer.Cli()
+    cli._setup_settings()
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        cli = aqt.installer.Cli()
+        cli.run(["install", invalid_version, "mac", "desktop"])
+    assert pytest_wrapped_e.type == SystemExit
+    assert pytest_wrapped_e.value.code == 1
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+
+    matcher = re.compile(
+        r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+        r".*Invalid version: '" + invalid_version + r"'! Please use the form '5\.X\.Y'\.\n.*"
+    )
+    assert matcher.match(err)
 
 
 def test_cli_check_mirror():
