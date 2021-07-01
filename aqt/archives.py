@@ -390,6 +390,9 @@ class ListCommand:
         if self.archive_id.is_tools() and self.request_type == "tool variant names":
             msg = "Please use '{}' to check what tools are available.".format(base_cmd)
             printer(msg)
+        if self.request_type in ("architectures", "modules", "extensions"):
+            msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
+            printer(msg)
 
 
 class QtPackage:
