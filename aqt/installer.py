@@ -700,7 +700,11 @@ class Cli:
         try:
             Version(version_str)
         except ValueError:
-            self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(version_str))
+            self.logger.error(
+                "Invalid version: '{}'! Please use the form '5.X.Y'.".format(
+                    version_str
+                )
+            )
             exit(1)
 
 
