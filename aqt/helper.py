@@ -290,7 +290,9 @@ def to_version(qt_ver: str) -> Version:
     """
     match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)$", qt_ver)
     if not match:
-        raise CliInputError("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_ver))
+        raise CliInputError(
+            "Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_ver)
+        )
     major, minor, end, patch = match.groups()
     is_preview = end == "-preview"
     return Version(

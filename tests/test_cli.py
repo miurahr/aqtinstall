@@ -79,9 +79,9 @@ def test_cli_invalid_version(capsys, invalid_version):
     )
 
     for cmd in (
-            ("install", invalid_version, "mac", "desktop"),
-            ("doc", invalid_version, "mac", "desktop"),
-            ("list", "qt5", "mac", "desktop", "--modules", invalid_version),
+        ("install", invalid_version, "mac", "desktop"),
+        ("doc", invalid_version, "mac", "desktop"),
+        ("list", "qt5", "mac", "desktop", "--modules", invalid_version),
     ):
         with pytest.raises(SystemExit) as pytest_wrapped_e:
             cli = aqt.installer.Cli()
