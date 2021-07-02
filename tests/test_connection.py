@@ -25,7 +25,7 @@ def test_cli_unknown_version(capsys):
 
     aqtinstall(aqt) v.* on Python 3.*
     Specified Qt version is unknown: 5.16.0.
-    Download error when access to https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt5_5160/Updates.xml
+    Failed to retrieve file at https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt5_5160/Updates.xml
     Server response code: 404, reason: Not Found
 
     Expected result when redirect occurs:
@@ -33,7 +33,7 @@ def test_cli_unknown_version(capsys):
     aqtinstall(aqt) v.* on Python 3.*
     Specified Qt version is unknown: 5.16.0.
     Connection to the download site failed and fallback to mirror site.
-    Download error when access to .*/mac_x64/desktop/qt5_5160/Updates.xml
+    Failed to retrieve file at .*/mac_x64/desktop/qt5_5160/Updates.xml
     Server response code: 404, reason: Not Found
     Connection to the download site failed. Aborted...
     """
@@ -41,7 +41,7 @@ def test_cli_unknown_version(capsys):
     matcher = re.compile(
         r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
         r".*Specified Qt version is unknown: " + re.escape(wrong_version) + r"\.\n"
-        r".*Download error when access to .*" + re.escape(wrong_url_ending) + r"\n"
+        r".*Failed to retrieve file at .*" + re.escape(wrong_url_ending) + r"\n"
         r".*Server response code: 404, reason: Not Found.*"
     )
 
