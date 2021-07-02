@@ -165,7 +165,7 @@ class ListCommand:
             return 0
         except CliInputError as e:
             self.logger.error("Command line input error: {}".format(e))
-            return 1
+            exit(1)
         except (ArchiveConnectionError, ArchiveDownloadError) as e:
             self.logger.error("{}".format(e))
             self.print_suggested_follow_up(self.logger.error)
