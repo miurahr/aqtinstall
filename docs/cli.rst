@@ -230,18 +230,46 @@ Example: Install Web Assembly
     aqt install 5.15.0 linux desktop wasm_32
 
 
-Example: Install an Install FrameWork (IFW):
+Example: List available versions for Qt5 on Linux
 
 .. code-block:: bash
 
-    aqt tool linux tools_ifw 4.0 qt.tools.ifw.40
+    aqt list qt5 linux desktop
+
+
+Example: List available versions for Qt6 on macOS
+
+.. code-block:: bash
+
+    aqt list qt6 mac desktop
+
+
+Example: List available versions for Qt6 on macOS
+
+.. code-block:: bash
+
+    aqt list qt6 mac desktop --modules latest
+
+
+Example: List available tools on windows
+
+.. code-block:: bash
+
+    aqt list tools windows desktop
 
 
 Example: List the variants of IFW available:
 
 .. code-block:: bash
 
-    aqt list tools linux desktop --tool tools_ifw   # prints 'qt.tools.ifw.40'
+    aqt list tools linux desktop --tool tools_ifw   # prints 'qt.tools.ifw.41'
+
+
+Example: Install an Install FrameWork (IFW):
+
+.. code-block:: bash
+
+    aqt tool linux tools_ifw 4.1 qt.tools.ifw.41
 
 
 Example: Install vcredist:
