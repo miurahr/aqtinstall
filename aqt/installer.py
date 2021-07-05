@@ -668,7 +668,7 @@ class Cli:
             config = os.getenv("AQT_CONFIG", None)
             if config is not None and os.path.exists(config):
                 Settings.load_settings(config)
-                self.logger.info("Load configuration from {}".format(config))
+                self.logger.debug("Load configuration from {}".format(config))
             else:
                 Settings.load_settings()
 
