@@ -215,7 +215,9 @@ def _check_content_type(ct: str) -> bool:
 
 def getUrl(url: str, timeout, logger) -> str:
     with requests.Session() as session:
-        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries, backoff_factor=Settings.backoff_factor
+        )
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
@@ -253,7 +255,9 @@ def getUrl(url: str, timeout, logger) -> str:
 
 def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, logger):
     with requests.Session() as session:
-        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries, backoff_factor=Settings.backoff_factor
+        )
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
