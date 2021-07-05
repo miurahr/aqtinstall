@@ -54,10 +54,15 @@ class ListCommand:
 
     # Inner helper classes
     class Versions:
-        def __init__(self, it_of_it: Iterable[Tuple[int, Iterable[Version]]]):
-            self.versions: List[List[Version]] = [
-                list(versions_iterator) for _, versions_iterator in it_of_it
-            ]
+        def __init__(self, versions: Union[None, Version, Iterable[Tuple[int, Iterable[Version]]]]):
+            if versions is None:
+                self.versions = list()
+            elif isinstance(versions, Version):
+                self.versions = [[versions]]
+            else:
+                self.versions: List[List[Version]] = [
+                    list(versions_iterator) for _, versions_iterator in versions
+                ]
 
         def __str__(self) -> str:
             return str(self.versions)
@@ -137,9 +142,7 @@ class ListCommand:
                 self._action = self.fetch_tools
         elif is_latest_version:
             self.request_type = "latest version"
-            self._action = lambda: ListCommand.Versions(
-                [(0, [self.fetch_latest_version()])]
-            )
+            self._action = lambda: ListCommand.Versions(self.fetch_latest_version())
         elif modules_ver:
             self.request_type = "modules"
             self._action = lambda: self.fetch_modules(self._to_version(modules_ver))
