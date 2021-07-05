@@ -48,7 +48,10 @@ def _check_content_type(ct: str) -> bool:
 
 def getUrl(url: str, timeout, logger) -> str:
     with requests.Session() as session:
-        adapter = requests.adapters.HTTPAdapter()
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries, backoff_factor=Settings.backoff_factor
+        )
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         try:
@@ -83,7 +86,10 @@ def getUrl(url: str, timeout, logger) -> str:
 
 def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, logger):
     with requests.Session() as session:
-        adapter = requests.adapters.HTTPAdapter()
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries, backoff_factor=Settings.backoff_factor
+        )
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         try:
@@ -302,7 +308,15 @@ class Settings:
 
     @property
     def response_timeout(self):
-        return self.config.getfloat("aqt", "response_timeout", fallback=3.5)
+        return self.config.getfloat("aqt", "response_timeout", fallback=10)
+
+    @property
+    def max_retries(self):
+        return 5
+
+    @property
+    def backoff_factor(self):
+        return 0.1
 
     @property
     def fallbacks(self):
