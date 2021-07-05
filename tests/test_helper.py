@@ -1,5 +1,4 @@
 import binascii
-import logging
 import os
 
 import requests
@@ -82,10 +81,7 @@ def test_helper_downloadBinary_md5(tmp_path, monkeypatch):
 
     expected = binascii.unhexlify("1d41a93e4a585bb01e4518d4af431933")
     out = tmp_path.joinpath("text.xml")
-    logger = logging.getLogger(__file__)
-    helper.downloadBinaryFile(
-        "http://example.com/test.xml", out, "md5", expected, 60, logger
-    )
+    helper.downloadBinaryFile("http://example.com/test.xml", out, "md5", expected, 60)
 
 
 def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
@@ -96,7 +92,6 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
         "07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd"
     )
     out = tmp_path.joinpath("text.xml")
-    logger = logging.getLogger(__file__)
     helper.downloadBinaryFile(
-        "http://example.com/test.xml", out, "sha256", expected, 60, logger
+        "http://example.com/test.xml", out, "sha256", expected, 60
     )

@@ -34,3 +34,7 @@ class ArchiveListError(Exception):
 
 class NoPackageFound(Exception):
     pass
+
+
+class CliInputError(Exception):
+    pass
