@@ -22,7 +22,6 @@
 import configparser
 import hashlib
 import json
-import logging
 import logging.config
 import os
 import re
@@ -160,7 +159,8 @@ def getUrl(url: str, timeout) -> str:
     return result
 
 
-def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, logger):
+def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
+    logger = getLogger("aqt.helper")
     with requests.Session() as session:
         adapter = requests.adapters.HTTPAdapter()
         session.mount("http://", adapter)
@@ -207,7 +207,7 @@ def altlink(url: str, alt: str):
     """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
     When found black url, then try download a url + .meta4 that is a metalink version4
     xml file, parse it and retrieve best alternative url."""
-    logger = logging.getLogger("aqt.helper")
+    logger = getLogger("aqt.helper")
     if not any(alt.startswith(b) for b in Settings.blacklist):
         return alt
     try:
@@ -279,7 +279,7 @@ class MyQueueListener(QueueListener):
         Override logger name then handle at proper logger.
         """
         record = self.prepare(record)
-        logger = logging.getLogger("aqt.installer")
+        logger = getLogger("aqt.installer")
         record.name = "aqt.installer"
         logger.handle(record)
 
