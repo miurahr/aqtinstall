@@ -33,6 +33,7 @@ from typing import Callable, Dict, Iterable, List, Optional
 from urllib.parse import urlparse
 
 import requests
+import requests.adapters
 from semantic_version import Version
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
@@ -124,7 +125,10 @@ def _check_content_type(ct: str) -> bool:
 def getUrl(url: str, timeout) -> str:
     logger = getLogger("aqt.helper")
     with requests.Session() as session:
-        adapter = requests.adapters.HTTPAdapter()
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries, backoff_factor=Settings.backoff_factor
+        )
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         try:
@@ -162,7 +166,10 @@ def getUrl(url: str, timeout) -> str:
 def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
     logger = getLogger("aqt.helper")
     with requests.Session() as session:
-        adapter = requests.adapters.HTTPAdapter()
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries, backoff_factor=Settings.backoff_factor
+        )
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         try:
@@ -249,23 +256,6 @@ def altlink(url: str, alt: str):
                 ),
                 alt,
             )
-
-
-class MyConfigParser(configparser.ConfigParser):
-    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
-        value = self.get(section, option)
-        try:
-            result = list(filter(None, (x.strip() for x in value.splitlines())))
-        except Exception:
-            result = fallback
-        return result
-
-    def getlistint(self, section: str, option: str, fallback=[]):
-        try:
-            result = [int(x) for x in self.getlist(section, option)]
-        except Exception:
-            result = fallback
-        return result
 
 
 class MyQueueListener(QueueListener):
@@ -361,6 +351,23 @@ def xml_to_modules(
     return packages
 
 
+class MyConfigParser(configparser.ConfigParser):
+    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
+        value = self.get(section, option)
+        try:
+            result = list(filter(None, (x.strip() for x in value.splitlines())))
+        except Exception:
+            result = fallback
+        return result
+
+    def getlistint(self, section: str, option: str, fallback=[]):
+        try:
+            result = [int(x) for x in self.getlist(section, option)]
+        except Exception:
+            result = fallback
+        return result
+
+
 class Settings:
     """Class to hold configuration and settings.
     Actual values are stored in 'settings.ini' file.
@@ -454,11 +461,19 @@ class Settings:
 
     @property
     def connection_timeout(self):
-        return self.config.getfloat("aqt", "connection_timeout", fallback=3.5)
+        return self.config.getfloat("requests", "connection_timeout", fallback=3.5)
 
     @property
     def response_timeout(self):
-        return self.config.getfloat("aqt", "response_timeout", fallback=3.5)
+        return self.config.getfloat("requests", "response_timeout", fallback=10)
+
+    @property
+    def max_retries(self):
+        return self.config.getfloat("requests", "max_retries", fallback=5)
+
+    @property
+    def backoff_factor(self):
+        return self.config.getfloat("requests", "retry_backoff", fallback=0.1)
 
     @property
     def fallbacks(self):
