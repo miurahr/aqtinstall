@@ -54,7 +54,10 @@ class ListCommand:
 
     # Inner helper classes
     class Versions:
-        def __init__(self, versions: Union[None, Version, Iterable[Tuple[int, Iterable[Version]]]]):
+        def __init__(
+            self,
+            versions: Union[None, Version, Iterable[Tuple[int, Iterable[Version]]]],
+        ):
             if versions is None:
                 self.versions = list()
             elif isinstance(versions, Version):
