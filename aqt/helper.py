@@ -28,6 +28,7 @@ import os
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
+from logging import getLogger
 from logging.handlers import QueueListener
 from typing import Callable, Dict, Iterable, List, Optional
 from urllib.parse import urlparse
@@ -121,7 +122,8 @@ def _check_content_type(ct: str) -> bool:
     return any(ct.startswith(t) for t in candidate)
 
 
-def getUrl(url: str, timeout, logger) -> str:
+def getUrl(url: str, timeout) -> str:
+    logger = getLogger("aqt.helper")
     with requests.Session() as session:
         adapter = requests.adapters.HTTPAdapter()
         session.mount("http://", adapter)

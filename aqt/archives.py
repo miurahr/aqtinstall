@@ -118,7 +118,7 @@ class ListCommand:
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
         """
-        self.logger = getLogger("aqt")
+        self.logger = getLogger("aqt.archives")
         self.archive_id = archive_id
         self.filter_minor = filter_minor
 
@@ -264,7 +264,6 @@ class ListCommand:
                 return getUrl(
                     url=url,
                     timeout=(Settings.connection_timeout, Settings.response_timeout),
-                    logger=getLogger("aqt"),
                 )
 
             except (ArchiveDownloadError, ArchiveConnectionError) as e:
@@ -460,7 +459,7 @@ class PackagesList:
                 ext,
             )
             update_xml_url = posixpath.join(self.base, archive_path, "Updates.xml")
-            xml_text = getUrl(update_xml_url, self.timeout, self.logger)
+            xml_text = getUrl(update_xml_url, self.timeout)
             self.update_xml = ElementTree.fromstring(xml_text)
             for packageupdate in self.update_xml.iter("PackageUpdate"):
                 name = packageupdate.find("Name").text
@@ -578,7 +577,7 @@ class QtArchives:
 
     def _download_update_xml(self, update_xml_url):
         """Hook for unit test."""
-        self.update_xml_text = getUrl(update_xml_url, self.timeout, self.logger)
+        self.update_xml_text = getUrl(update_xml_url, self.timeout)
 
     def _parse_update_xml(self, archive_url, target_packages):
         try:
