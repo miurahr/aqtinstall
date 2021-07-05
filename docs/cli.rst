@@ -244,7 +244,7 @@ Example: List available versions for Qt6 on macOS
     aqt list qt6 mac desktop
 
 
-Example: List available versions for Qt6 on macOS
+Example: List available modules for Qt6 on macOS
 
 .. code-block:: bash
 
