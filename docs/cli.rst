@@ -244,18 +244,25 @@ Example: List available versions for Qt6 on macOS
     aqt list qt6 mac desktop
 
 
-Example: List available modules for Qt6 on macOS
+Example: List available modules for latest version of Qt6 on macOS
 
 .. code-block:: bash
 
-    aqt list qt6 mac desktop --modules latest
+    aqt list qt6 mac desktop --modules latest    # prints 'qtquick3d qtshadertools', etc
+
+
+Example: List available architectures for Qt 6.1.2 on windows
+
+.. code-block:: bash
+
+    aqt list qt6 windows desktop --arch 6.1.2    # prints 'win64_mingw81 win64_msvc2019_64', etc
 
 
 Example: List available tools on windows
 
 .. code-block:: bash
 
-    aqt list tools windows desktop
+    aqt list tools windows desktop    # prints 'tools_ifw tools_qtcreator', etc
 
 
 Example: List the variants of IFW available:
