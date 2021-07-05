@@ -735,8 +735,8 @@ def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout
         timeout = (Settings.connection_timeout, Settings.response_timeout)
     else:
         timeout = (Settings.connection_timeout, response_timeout)
-    hash = binascii.unhexlify(getUrl(hashurl, timeout, logger))
-    downloadBinaryFile(url, archive, "sha1", hash, timeout, logger)
+    hash = binascii.unhexlify(getUrl(hashurl, timeout))
+    downloadBinaryFile(url, archive, "sha1", hash, timeout)
     if command is None:
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)
