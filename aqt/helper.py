@@ -113,27 +113,6 @@ class ArchiveId:
         )
 
 
-
-class MyConfigParser(configparser.ConfigParser):
-    def __init__(self):
-        super().__init__()
-
-    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
-        value = self.get(section, option)
-        try:
-            result = list(filter(None, (x.strip() for x in value.splitlines())))
-        except Exception:
-            result = fallback
-        return result
-
-    def getlistint(self, section: str, option: str, fallback=[]):
-        try:
-            result = [int(x) for x in self.getlist(section, option)]
-        except Exception:
-            result = fallback
-        return result
-
-
 class MyQueueListener(QueueListener):
     def __init__(self, queue):
         handlers = []
@@ -225,6 +204,23 @@ def xml_to_modules(
         for key in keys_to_keep:
             packages[name][key] = getattr(packageupdate.find(key), "text", None)
     return packages
+
+
+class MyConfigParser(configparser.ConfigParser):
+    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
+        value = self.get(section, option)
+        try:
+            result = list(filter(None, (x.strip() for x in value.splitlines())))
+        except Exception:
+            result = fallback
+        return result
+
+    def getlistint(self, section: str, option: str, fallback=[]):
+        try:
+            result = [int(x) for x in self.getlist(section, option)]
+        except Exception:
+            result = fallback
+        return result
 
 
 class Settings:
