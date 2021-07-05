@@ -59,7 +59,10 @@ class ListCommand:
                 list(versions_iterator) for _, versions_iterator in it_of_it
             ]
 
-        def __str__(self):
+        def __str__(self) -> str:
+            return str(self.versions)
+
+        def pretty_print(self) -> str:
             return "\n".join(
                 " ".join(
                     ListCommand.Versions.stringify_ver(version)
@@ -87,13 +90,16 @@ class ListCommand:
             self.strings = strings
 
         def __str__(self):
+            return str(self.strings)
+
+        def pretty_print(self) -> str:
             return " ".join(self.strings)
 
         def __bool__(self):
             return len(self.strings) > 0 and len(self.strings[0]) > 0
 
     class Tools(ListOfStr):
-        def __str__(self):
+        def pretty_print(self) -> str:
             return "\n".join(self.strings)
 
     def __init__(
@@ -131,7 +137,9 @@ class ListCommand:
                 self._action = self.fetch_tools
         elif is_latest_version:
             self.request_type = "latest version"
-            self._action = self.fetch_latest_version
+            self._action = lambda: ListCommand.Versions(
+                [(0, [self.fetch_latest_version()])]
+            )
         elif modules_ver:
             self.request_type = "modules"
             self._action = lambda: self.fetch_modules(self._to_version(modules_ver))
@@ -149,7 +157,7 @@ class ListCommand:
             self.request_type = "versions"
             self._action = self.fetch_versions
 
-    def action(self) -> Union[Optional[Version], ListOfStr, Tools, Versions]:
+    def action(self) -> Union[ListOfStr, Tools, Versions]:
         return self._action()
 
     def run(self) -> int:
@@ -161,7 +169,7 @@ class ListCommand:
                 )
                 self.print_suggested_follow_up(self.logger.info)
                 return 1
-            print(str(output))
+            print(output.pretty_print())
             return 0
         except CliInputError as e:
             self.logger.error("Command line input error: {}".format(e))

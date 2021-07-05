@@ -37,8 +37,6 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
     tools = ListCommand(ArchiveId("tools", os_name, target)).action()
     assert str(tools) == "\n".join(expected["tools"])
 
-    stringify_ver = ListCommand.Versions.stringify_ver
-
     for qt in ("qt5", "qt6"):
         for ext, expected_output in expected[qt].items():
             # Test 'aqt list qt'
@@ -56,7 +54,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
             if len(expected_output) == 0:
                 assert not latest_ver
             else:
-                assert stringify_ver(latest_ver) == expected_output[-1].split(" ")[-1]
+                assert latest_ver.pretty_print() == expected_output[-1].split(" ")[-1]
 
             for row in expected_output:
                 minor = int(MINOR_REGEX.search(row).group(1))
@@ -67,7 +65,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
                     filter_minor=minor,
                     is_latest_version=True,
                 ).action()
-                assert stringify_ver(latest_ver_for_minor) == row.split(" ")[-1]
+                assert latest_ver_for_minor.pretty_print() == row.split(" ")[-1]
 
                 # Find all versions for a particular minor version
                 all_ver_for_minor = ListCommand(
