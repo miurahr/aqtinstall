@@ -33,10 +33,9 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 
 from semantic_version import Version
-from texttable import Texttable
 
 import aqt
-from aqt.archives import PackagesList, QtArchives, SrcDocExamplesArchives, ToolArchives
+from aqt.archives import ListCommand, QtArchives, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
@@ -44,6 +43,7 @@ from aqt.exceptions import (
     NoPackageFound,
 )
 from aqt.helper import (
+    ArchiveId,
     MyQueueListener,
     Settings,
     downloadBinaryFile,
@@ -464,30 +464,121 @@ class Cli:
             )
         )
 
-    def run_list(self, args):
-        """Run list subcommand"""
-        self.show_aqt_version()
-        qt_version = args.qt_version
-        self._validate_version_str(qt_version)
-        host = args.host
-        target = args.target
-        try:
-            pl = PackagesList(qt_version, host, target, Settings.baseurl)
-        except (ArchiveConnectionError, ArchiveDownloadError):
-            pl = PackagesList(
-                qt_version, host, target, random.choice(Settings.fallbacks)
+    def run_list(self, args: argparse.ArgumentParser) -> int:
+        """Print tools, versions of Qt, extensions, modules, architectures"""
+
+        if not args.target:
+            print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
+            return 0
+        if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
+            self.logger.error(
+                "'{0.target}' is not a valid target for host '{0.host}'".format(args)
             )
-        print("List Qt packages in %s for %s" % (args.qt_version, args.host))
-        table = Texttable()
-        table.set_deco(Texttable.HEADER)
-        table.set_cols_dtype(["t", "t", "t"])
-        table.set_cols_align(["l", "l", "l"])
-        table.header(["target", "arch", "description"])
-        for entry in pl.get_list():
-            if qt_version[0:1] == "6" or not entry.virtual:
-                archid = entry.name.split(".")[-1]
-                table.add_row([entry.display_name, archid, entry.desc])
-        print(table.draw())
+            return 1
+        command = ListCommand(
+            archive_id=ArchiveId(
+                args.category,
+                args.host,
+                args.target,
+                args.extension if args.extension else "",
+            ),
+            filter_minor=args.filter_minor,
+            is_latest_version=args.latest_version,
+            modules_ver=args.modules,
+            extensions_ver=args.extensions,
+            architectures_ver=args.arch,
+            tool_name=args.tool,
+        )
+        return command.run()
+
+    def _make_list_parser(self, subparsers: argparse._SubParsersAction):
+        """Creates a subparser that works with the ListCommand, and adds it to the `subparsers` parameter"""
+        list_parser: argparse.ArgumentParser = subparsers.add_parser(
+            "list",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="Examples:\n"
+            "$ aqt list qt5 mac                                            # print all targets for Mac OS\n"
+            "$ aqt list tools mac desktop                                  # print all tools for mac desktop\n"
+            "$ aqt list tools mac desktop --tool tools_ifw                 # print all tool variant names for QtIFW\n"
+            "$ aqt list qt5 mac desktop                                    # print all versions of Qt 5\n"
+            "$ aqt list qt5 mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
+            "$ aqt list qt5 mac desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
+            "$ aqt list qt5 mac desktop --filter-minor 9 --latest-version  # print latest Qt 5.9\n"
+            "$ aqt list qt5 mac desktop --modules 5.12.0                   # print modules for 5.12.0\n"
+            "$ aqt list qt5 mac desktop --filter-minor 9 --modules latest  # print modules for latest 5.9\n"
+            "$ aqt list qt5 mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
+            "$ aqt list qt5 mac desktop --arch 5.9.9                       "
+            "# print architectures for 5.9.9/mac/desktop\n"
+            "$ aqt list qt5 mac desktop --arch latest                      "
+            "# print architectures for the latest Qt 5\n",
+        )
+        list_parser.add_argument(
+            "category",
+            choices=["tools", "qt5", "qt6"],
+            help="category of packages to list",
+        )
+        list_parser.add_argument(
+            "host", choices=["linux", "mac", "windows"], help="host os name"
+        )
+        list_parser.add_argument(
+            "target",
+            nargs="?",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK. When omitted, this prints all the targets available for a host OS.",
+        )
+        list_parser.add_argument(
+            "--extension",
+            choices=ArchiveId.ALL_EXTENSIONS,
+            help="Extension of packages to list. "
+            "Use the `--extensions` flag to list all relevant options for a host/target.",
+        )
+        list_parser.add_argument(
+            "--filter-minor",
+            type=int,
+            metavar="MINOR_VERSION",
+            help="print versions for a particular minor version. "
+            "IE: `aqt list qt5 windows desktop --filter-minor 12` prints all versions beginning with 5.12",
+        )
+        output_modifier_exclusive_group = list_parser.add_mutually_exclusive_group()
+        output_modifier_exclusive_group.add_argument(
+            "--modules",
+            type=str,
+            metavar="(VERSION | latest)",
+            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
+            "When set, this prints all the modules available for either Qt 5.X.Y or the latest version of Qt.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--extensions",
+            type=str,
+            metavar="(VERSION | latest)",
+            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
+            "When set, this prints all valid arguments for the `--extension` flag "
+            "for either Qt 5.X.Y or the latest version of Qt.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--arch",
+            type=str,
+            metavar="(VERSION | latest)",
+            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
+            "When set, this prints all architectures available for either Qt 5.X.Y or the latest version of Qt.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--latest-version",
+            action="store_true",
+            help="print only the newest version available",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--tool",
+            type=str,
+            metavar="TOOL_NAME",
+            help="The name of a tool. Use 'aqt list tools <host> <target>' to see accepted values. "
+            "This flag only works with the 'tools' category, and cannot be combined with any other flags. "
+            "When set, this prints all 'tool variant names' available. "
+            # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
+            "The output of this command is intended to be used with `aqt tool`.",
+        )
+        list_parser.set_defaults(func=self.run_list)
 
     def show_help(self, args=None):
         """Display help message"""
@@ -641,13 +732,13 @@ class Cli:
             "version", help='Tool version in the format of "4.1.2"'
         )
         tools_parser.add_argument(
-            "arch", help="Name of full tool name such as qt.tools.ifw.31"
+            "arch",
+            help="Name of full tool name such as qt.tools.ifw.31. "
+            "Please use 'aqt list --tool' to list acceptable values for this parameter.",
         )
         self._set_common_options(tools_parser)
-        #
-        list_parser = subparsers.add_parser("list")
-        list_parser.set_defaults(func=self.run_list)
-        self._set_common_argument(list_parser)
+
+        self._make_list_parser(subparsers)
         #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
@@ -735,8 +826,8 @@ def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout
         timeout = (Settings.connection_timeout, Settings.response_timeout)
     else:
         timeout = (Settings.connection_timeout, response_timeout)
-    hash = binascii.unhexlify(getUrl(hashurl, timeout, logger))
-    downloadBinaryFile(url, archive, "sha1", hash, timeout, logger)
+    hash = binascii.unhexlify(getUrl(hashurl, timeout))
+    downloadBinaryFile(url, archive, "sha1", hash, timeout)
     if command is None:
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)

@@ -78,10 +78,14 @@ def test_cli_invalid_version(capsys, invalid_version):
         + r"'! Please use the form '5\.X\.Y'\.\n.*"
     )
 
-    for cmd in "install", "doc", "list":
+    for cmd in (
+        ("install", invalid_version, "mac", "desktop"),
+        ("doc", invalid_version, "mac", "desktop"),
+        ("list", "qt5", "mac", "desktop", "--modules", invalid_version),
+    ):
         with pytest.raises(SystemExit) as pytest_wrapped_e:
             cli = aqt.installer.Cli()
-            cli.run([cmd, invalid_version, "mac", "desktop"])
+            cli.run(cmd)
         assert pytest_wrapped_e.type == SystemExit
         assert pytest_wrapped_e.value.code == 1
         out, err = capsys.readouterr()

@@ -14,7 +14,7 @@ Contributors, listed alphabetically, are:
 * Andrei Yankovich (tools ifw installation)
 * Aurélien Gâteau (patching to qmake)
 * Benjamin O (Github Actions and more)
-* David Dalcino (Improve tests and fix patching to qmake)
+* David Dalcino (List command, improve tests and fix patching to qmake)
 * Felix Barz (Android, Explicit extra module installation)
 * Gamso (improve parsing of update.xml)
 * Kyle Altendorf (7z binary path search)
