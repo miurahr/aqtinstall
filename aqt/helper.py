@@ -37,144 +37,10 @@ import requests.adapters
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
 
-def _get_meta(url: str):
-    return requests.get(url + ".meta4")
-
-
-def _check_content_type(ct: str) -> bool:
-    candidate = ["application/metalink4+xml", "text/plain"]
-    return any(ct.startswith(t) for t in candidate)
-
-
-def getUrl(url: str, timeout, logger) -> str:
-    with requests.Session() as session:
-        adapter = requests.adapters.HTTPAdapter()
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
-        try:
-            r = requests.get(url, allow_redirects=False, timeout=timeout)
-            num_redirects = 0
-            while 300 < r.status_code < 309 and num_redirects < 10:
-                num_redirects += 1
-                logger.debug(
-                    "Asked to redirect({}) to: {}".format(
-                        r.status_code, r.headers["Location"]
-                    )
-                )
-                newurl = altlink(r.url, r.headers["Location"])
-                logger.info("Redirected: {}".format(urlparse(newurl).hostname))
-                r = session.get(newurl, stream=True, timeout=timeout)
-        except (
-            ConnectionResetError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-        ):
-            raise ArchiveConnectionError()
-        else:
-            if r.status_code != 200:
-                logger.error(
-                    "Failed to retrieve file at {}\n"
-                    "Server response code: {}, reason: {}".format(
-                        url, r.status_code, r.reason
-                    )
-                )
-                raise ArchiveDownloadError("Download error!")
-        result = r.text
-    return result
-
-
-def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, logger):
-    with requests.Session() as session:
-        adapter = requests.adapters.HTTPAdapter()
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
-        try:
-            r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
-            if 300 < r.status_code < 309:
-                logger.debug(
-                    "Asked to redirect({}) to: {}".format(
-                        r.status_code, r.headers["Location"]
-                    )
-                )
-                newurl = altlink(r.url, r.headers["Location"])
-                logger.info("Redirected: {}".format(urlparse(newurl).hostname))
-                r = session.get(newurl, stream=True, timeout=timeout)
-        except requests.exceptions.ConnectionError as e:
-            logger.error("Connection error: %s" % e.args)
-            raise e
-        except requests.exceptions.Timeout as e:
-            logger.error("Connection timeout: %s" % e.args)
-            raise e
-        else:
-            hash = hashlib.new(hash_algo)
-            try:
-                with open(out, "wb") as fd:
-                    for chunk in r.iter_content(chunk_size=8196):
-                        fd.write(chunk)
-                        hash.update(chunk)
-                    fd.flush()
-                if exp is not None:
-                    if hash.digest() != exp:
-                        raise ArchiveDownloadError(
-                            "Download file is corrupted! Detect checksum error.\nExpected {}, Actual {}".format(
-                                exp, hash.digest()
-                            )
-                        )
-            except Exception as e:
-                exc = sys.exc_info()
-                logger.error("Download error: %s" % exc[1])
-                raise e
-
-
-def altlink(url: str, alt: str):
-    """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
-    When found black url, then try download a url + .meta4 that is a metalink version4
-    xml file, parse it and retrieve best alternative url."""
-    logger = logging.getLogger("aqt.helper")
-    if not any(alt.startswith(b) for b in Settings.blacklist):
-        return alt
-    try:
-        m = _get_meta(url)
-    except requests.exceptions.ConnectionError:
-        logger.error("Got connection error. Fall back to recovery plan...")
-        return alt
-    else:
-        # Expected response->'application/metalink4+xml; charset=utf-8'
-        if not _check_content_type(m.headers["content-type"]):
-            logger.error(
-                "Unexpected meta4 response;content-type: {}".format(
-                    m.headers["content-type"]
-                )
-            )
-            return alt
-        try:
-            mirror_xml = ElementTree.fromstring(m.text)
-            meta_urls = {}
-            for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
-                for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
-                    meta_urls[u.attrib["priority"]] = u.text
-            mirrors = [
-                meta_urls[i] for i in sorted(meta_urls.keys(), key=lambda x: int(x))
-            ]
-        except Exception:
-            exc_info = sys.exc_info()
-            logger.error("Unexpected meta4 file; parse error: {}".format(exc_info[1]))
-            return alt
-        else:
-            # Return first priority item which is not blacklist in mirrors list,
-            # if not found then return alt in default
-            return next(
-                filter(
-                    lambda mirror: not any(
-                        mirror.startswith(b) for b in Settings.blacklist
-                    ),
-                    mirrors,
-                ),
-                alt,
-            )
-
-
 class MyConfigParser(configparser.ConfigParser):
+    def __init__(self):
+        super().__init__()
+
     def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
         value = self.get(section, option)
         try:
@@ -300,11 +166,19 @@ class Settings:
 
     @property
     def connection_timeout(self):
-        return self.config.getfloat("aqt", "connection_timeout", fallback=3.5)
+        return self.config.getfloat("requests", "connection_timeout", fallback=3.5)
 
     @property
     def response_timeout(self):
-        return self.config.getfloat("aqt", "response_timeout", fallback=3.5)
+        return self.config.getfloat("requests", "response_timeout", fallback=10)
+
+    @property
+    def max_retries(self):
+        return self.config.getfloat("requests", "max_retries", fallback=5)
+
+    @property
+    def backoff_factor(self):
+        return self.config.getfloat("requests", "retry_backoff", fallback=0.1)
 
     @property
     def fallbacks(self):
@@ -328,3 +202,142 @@ def setup_logging(env_key="LOG_CFG"):
         logging.config.fileConfig(config)
     else:
         logging.config.fileConfig(Settings.loggingconf)
+
+
+def _get_meta(url: str):
+    return requests.get(url + ".meta4")
+
+
+def _check_content_type(ct: str) -> bool:
+    candidate = ["application/metalink4+xml", "text/plain"]
+    return any(ct.startswith(t) for t in candidate)
+
+
+def getUrl(url: str, timeout, logger) -> str:
+    with requests.Session() as session:
+        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
+        try:
+            r = requests.get(url, allow_redirects=False, timeout=timeout)
+            num_redirects = 0
+            while 300 < r.status_code < 309 and num_redirects < 10:
+                num_redirects += 1
+                logger.debug(
+                    "Asked to redirect({}) to: {}".format(
+                        r.status_code, r.headers["Location"]
+                    )
+                )
+                newurl = altlink(r.url, r.headers["Location"])
+                logger.info("Redirected: {}".format(urlparse(newurl).hostname))
+                r = session.get(newurl, stream=True, timeout=timeout)
+        except (
+            ConnectionResetError,
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+        ):
+            raise ArchiveConnectionError()
+        else:
+            if r.status_code != 200:
+                logger.error(
+                    "Failed to retrieve file at {}\n"
+                    "Server response code: {}, reason: {}".format(
+                        url, r.status_code, r.reason
+                    )
+                )
+                raise ArchiveDownloadError("Download error!")
+        result = r.text
+    return result
+
+
+def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout, logger):
+    with requests.Session() as session:
+        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
+        session.mount("http://", adapter)
+        session.mount("https://", adapter)
+        try:
+            r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
+            if 300 < r.status_code < 309:
+                logger.debug(
+                    "Asked to redirect({}) to: {}".format(
+                        r.status_code, r.headers["Location"]
+                    )
+                )
+                newurl = altlink(r.url, r.headers["Location"])
+                logger.info("Redirected: {}".format(urlparse(newurl).hostname))
+                r = session.get(newurl, stream=True, timeout=timeout)
+        except requests.exceptions.ConnectionError as e:
+            logger.error("Connection error: %s" % e.args)
+            raise e
+        except requests.exceptions.Timeout as e:
+            logger.error("Connection timeout: %s" % e.args)
+            raise e
+        else:
+            hash = hashlib.new(hash_algo)
+            try:
+                with open(out, "wb") as fd:
+                    for chunk in r.iter_content(chunk_size=8196):
+                        fd.write(chunk)
+                        hash.update(chunk)
+                    fd.flush()
+                if exp is not None:
+                    if hash.digest() != exp:
+                        raise ArchiveDownloadError(
+                            "Download file is corrupted! Detect checksum error.\nExpected {}, Actual {}".format(
+                                exp, hash.digest()
+                            )
+                        )
+            except Exception as e:
+                exc = sys.exc_info()
+                logger.error("Download error: %s" % exc[1])
+                raise e
+
+
+def altlink(url: str, alt: str):
+    """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
+    When found black url, then try download a url + .meta4 that is a metalink version4
+    xml file, parse it and retrieve best alternative url."""
+    logger = logging.getLogger("aqt.helper")
+    if not any(alt.startswith(b) for b in Settings.blacklist):
+        return alt
+    try:
+        m = _get_meta(url)
+    except requests.exceptions.ConnectionError:
+        logger.error("Got connection error. Fall back to recovery plan...")
+        return alt
+    else:
+        # Expected response->'application/metalink4+xml; charset=utf-8'
+        if not _check_content_type(m.headers["content-type"]):
+            logger.error(
+                "Unexpected meta4 response;content-type: {}".format(
+                    m.headers["content-type"]
+                )
+            )
+            return alt
+        try:
+            mirror_xml = ElementTree.fromstring(m.text)
+            meta_urls = {}
+            for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
+                for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
+                    meta_urls[u.attrib["priority"]] = u.text
+            mirrors = [
+                meta_urls[i] for i in sorted(meta_urls.keys(), key=lambda x: int(x))
+            ]
+        except Exception:
+            exc_info = sys.exc_info()
+            logger.error("Unexpected meta4 file; parse error: {}".format(exc_info[1]))
+            return alt
+        else:
+            # Return first priority item which is not blacklist in mirrors list,
+            # if not found then return alt in default
+            return next(
+                filter(
+                    lambda mirror: not any(
+                        mirror.startswith(b) for b in Settings.blacklist
+                    ),
+                    mirrors,
+                ),
+                alt,
+            )
