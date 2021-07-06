@@ -1,0 +1,24 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.cmake</Name>
+  <DisplayName>CMake 3.19.2</DisplayName>
+  <Description>CMake tools 3.19.2</Description>
+  <Version>3.19.2-202101071155</Version>
+  <ReleaseDate>2021-01-07</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives>macos64_x86_cmake_tools.7z</DownloadableArchives>
+  <Default>true</Default>
+  <UpdateFile CompressedSize="43264131" OS="Any" UncompressedSize="165156306"/>
+  <UserInterfaces>licensedialog.ui</UserInterfaces>
+  <Licenses>
+   <License file="Copyright.txt" name="CMake license agreement"/>
+  </Licenses>
+  <SHA1>c514d8a496607eee80f7dae2f152b464f288319f</SHA1>
+ </PackageUpdate>
+ <SHA1>c514d8a496607eee80f7dae2f152b464f288319f</SHA1>
+ <MetadataName>2021-01-07-1156_meta.7z</MetadataName>
+</Updates>

@@ -271,6 +271,8 @@ class Updater:
         """
         logger = getLogger("aqt.updater")
         arch = target.arch
+        version = Version(target.version)
+        os_name = target.os_name
         if arch is None:
             arch_dir = ""
         elif arch.startswith("win64_mingw"):
@@ -279,6 +281,8 @@ class Updater:
             arch_dir = arch[6:] + "_32"
         elif arch.startswith("win"):
             arch_dir = arch[6:]
+        elif version in SimpleSpec(">=6.2") and os_name == "mac" and arch == "clang_64":
+            arch_dir = "macos"
         else:
             arch_dir = arch
         try:
