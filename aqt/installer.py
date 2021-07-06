@@ -190,7 +190,11 @@ class Cli:
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
-        self._validate_version_str(qt_version)
+        if not Cli._is_valid_version_str(qt_version):
+            self.logger.error(
+                "Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version)
+            )
+            exit(1)
         keep = args.keep
         output_dir = args.outputdir
         if output_dir is None:
@@ -296,7 +300,11 @@ class Cli:
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
-        self._validate_version_str(qt_version)
+        if not Cli._is_valid_version_str(qt_version):
+            self.logger.error(
+                "Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version)
+            )
+            exit(1)
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -477,6 +485,18 @@ class Cli:
                 "'{0.target}' is not a valid target for host '{0.host}'".format(args)
             )
             return 1
+
+        for version_str in (args.modules, args.extensions, args.arch):
+            if not Cli._is_valid_version_str(
+                version_str, allow_latest=True, allow_empty=True
+            ):
+                self.logger.error(
+                    "Invalid version: '{}'! Please use the form '5.X.Y'.".format(
+                        version_str
+                    )
+                )
+                exit(1)
+
         command = ListCommand(
             archive_id=ArchiveId(
                 args.category,
@@ -789,16 +809,19 @@ class Cli:
         listener.enqueue_sentinel()
         listener.stop()
 
-    def _validate_version_str(self, version_str: str) -> None:
+    @staticmethod
+    def _is_valid_version_str(
+        version_str: str, *, allow_latest: bool = False, allow_empty: bool = False
+    ) -> bool:
+        if (allow_latest and version_str == "latest") or (
+            allow_empty and not version_str
+        ):
+            return True
         try:
             Version(version_str)
+            return True
         except ValueError:
-            self.logger.error(
-                "Invalid version: '{}'! Please use the form '5.X.Y'.".format(
-                    version_str
-                )
-            )
-            exit(1)
+            return False
 
 
 def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout=None):
