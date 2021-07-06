@@ -210,7 +210,7 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
                 raise e
 
 
-def altlink(url: str, alt: str, logger: Optional[logging.Logger] = None):
+def altlink(url: str, alt: str):
     """
     Blacklisting redirected(alt) location based on Settings.blacklist configuration.
     When found black url, then try download a url + .meta4 that is a metalink version4
