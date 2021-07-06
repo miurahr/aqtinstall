@@ -401,6 +401,7 @@ class Cli:
     def run_tool(self, args):
         """Run tool subcommand"""
         start_time = time.perf_counter()
+        self.show_aqt_version()
         arch = args.arch
         tool_name = args.tool_name
         os_name = args.host
