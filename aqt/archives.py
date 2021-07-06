@@ -112,6 +112,9 @@ class ListCommand:
         def pretty_print(self) -> str:
             return " ".join(self.strings)
 
+        def get(self, index: int) -> str:
+            return self.strings[index]
+
         def __bool__(self):
             return len(self.strings) > 0 and len(self.strings[0]) > 0
 
@@ -188,7 +191,7 @@ class ListCommand:
             return 0
         except CliInputError as e:
             self.logger.error("Command line input error: {}".format(e))
-            exit(1)
+            return 1
         except (ArchiveConnectionError, ArchiveDownloadError) as e:
             self.logger.error("{}".format(e))
             self.print_suggested_follow_up(self.logger.error)
@@ -779,7 +782,6 @@ class ToolArchives(QtArchives):
         os_name: str,
         tool_name: str,
         base: str,
-        version_str: Optional[str] = None,
         arch: Optional[str] = None,
         timeout: Tuple[int, int] = (5, 5),
     ):
@@ -789,14 +791,14 @@ class ToolArchives(QtArchives):
         super(ToolArchives, self).__init__(
             os_name=os_name,
             target="desktop",
-            version_str=version_str,
+            version_str="0.0.1",  # dummy version
             arch=arch,
             base=base,
             timeout=timeout,
         )
 
     def __str__(self):
-        return f"ToolArchives(tool_name={self.tool_name}, version={self.version_str}, arch={self.arch})"
+        return f"ToolArchives(tool_name={self.tool_name}, arch={self.arch})"
 
     def _get_archives(self):
         _a = "_x64"

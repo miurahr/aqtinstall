@@ -402,10 +402,13 @@ class Cli:
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
-        arch = args.arch
         tool_name = args.tool_name
         os_name = args.host
         output_dir = args.outputdir
+        arch = args.arch
+        if arch is None:
+            getArch = ListCommand(archive_id=ArchiveId("tools", os_name, "desktop", ""), is_latest_version=True, tool_name=tool_name)
+            arch = getArch.action().get(0)
         if output_dir is None:
             base_dir = os.getcwd()
         else:
@@ -414,7 +417,6 @@ class Cli:
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip(Settings.zipcmd)
-        version = args.version
         keep = args.keep
         if args.base is not None:
             base = args.base
@@ -436,7 +438,6 @@ class Cli:
                 os_name=os_name,
                 tool_name=tool_name,
                 base=base,
-                version_str=version,
                 arch=arch,
                 timeout=timeout,
             )
@@ -449,7 +450,6 @@ class Cli:
                     os_name=os_name,
                     tool_name=tool_name,
                     base=random.choice(Settings.fallbacks),
-                    version_str=version,
                     arch=arch,
                     timeout=timeout,
                 )
@@ -731,10 +731,9 @@ class Cli:
             "tool_name", help="Name of tool such as tools_ifw, tools_mingw"
         )
         tools_parser.add_argument(
-            "version", help='Tool version in the format of "4.1.2"'
-        )
-        tools_parser.add_argument(
             "arch",
+            nargs="?",
+            default=None,
             help="Name of full tool name such as qt.tools.ifw.31. "
             "Please use 'aqt list --tool' to list acceptable values for this parameter.",
         )
