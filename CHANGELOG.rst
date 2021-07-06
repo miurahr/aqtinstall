@@ -7,6 +7,19 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Changed
+-------
+* list subcommand now support tool information(#235)
+* list subcommand can show versions, archiectures and modules.(#235)
+* Add max_retries configuration for connection(#296)
+* Change settings.ini to introduce [requests] section[#297]
+* Change log format for logging file.
+
+Fixed
+-----
+* Fix helper.getUrl() to handle several response statuses(#292)
+* Fix Qt 6.2.0 target path for macOS.(#289)
+
 
 `v1.2.2`_ (1, Jul. 2021)
 ========================
