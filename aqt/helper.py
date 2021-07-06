@@ -211,9 +211,11 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
 
 
 def altlink(url: str, alt: str):
-    """Blacklisting redirected(alt) location based on Settings.blacklist configuration.
+    """
+    Blacklisting redirected(alt) location based on Settings.blacklist configuration.
     When found black url, then try download a url + .meta4 that is a metalink version4
-    xml file, parse it and retrieve best alternative url."""
+    xml file, parse it and retrieve best alternative url.
+    """
     logger = getLogger("aqt.helper")
     if not any(alt.startswith(b) for b in Settings.blacklist):
         return alt
@@ -368,8 +370,9 @@ class MyConfigParser(configparser.ConfigParser):
         return result
 
 
-class Settings:
-    """Class to hold configuration and settings.
+class SettingsClass:
+    """
+    Class to hold configuration and settings.
     Actual values are stored in 'settings.ini' file.
     It also holds a combinations database.
     """
@@ -488,7 +491,7 @@ class Settings:
         return self.config.getlist("kde_patches", "patches", fallback=[])
 
 
-Settings = Settings()
+Settings = SettingsClass()
 
 
 def setup_logging(env_key="LOG_CFG"):

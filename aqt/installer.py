@@ -429,13 +429,14 @@ class Cli:
                     os_name, tool_name, arch
                 )
             )
+
         try:
             tool_archives = ToolArchives(
-                os_name,
-                tool_name,
-                version,
-                arch,
-                base,
+                os_name=os_name,
+                tool_name=tool_name,
+                base=base,
+                version_str=version,
+                arch=arch,
                 timeout=timeout,
             )
         except ArchiveConnectionError:
@@ -444,11 +445,11 @@ class Cli:
                     "Connection to the download site failed and fallback to mirror site."
                 )
                 tool_archives = ToolArchives(
-                    os_name,
-                    tool_name,
-                    version,
-                    arch,
-                    random.choice(Settings.fallbacks),
+                    os_name=os_name,
+                    tool_name=tool_name,
+                    base=random.choice(Settings.fallbacks),
+                    version_str=version,
+                    arch=arch,
                     timeout=timeout,
                 )
             except Exception:
