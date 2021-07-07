@@ -26,6 +26,7 @@ jobs:
         id: build_and_install
         if: ${{ success() }}
         run: |
+          python setup.py build
           python -m pip install ./ --user
       - name: Run Aqt
         id: run_aqt
