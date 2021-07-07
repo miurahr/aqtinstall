@@ -224,6 +224,7 @@ class DeployCuteCI:
         env = os.environ.copy()
         env["PACKAGES"] = ",".join(packages)
         env["DESTDIR"] = destdir
+        env["QT_QPA_PLATFORM"] = "offscreen"
         install_script = os.path.join(CURRENT_DIR, "install-qt.qs")
         installer_path = os.path.join(WORKING_DIR, archive)
         args = [installer_path, "--script", install_script]
