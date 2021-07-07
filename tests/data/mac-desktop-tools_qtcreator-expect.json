@@ -1,0 +1,7 @@
+{
+  "modules": [
+    "qt.tools.qtcreator",
+    "qt.tools.qtcreatordbg",
+    "qt.tools.qtcreatordev"
+  ]
+}

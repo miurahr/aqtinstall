@@ -1,5 +1,4 @@
 import binascii
-import logging
 import os
 
 import requests
@@ -51,9 +50,11 @@ def test_helper_altlink(monkeypatch):
 
 
 def test_settings(tmp_path):
-    config = helper.Settings()
-    assert config.concurrency == 3
-    assert "http://mirror.example.com" in config.blacklist
+    helper.Settings.load_settings(
+        os.path.join(os.path.dirname(__file__), "data", "settings.ini")
+    )
+    assert helper.Settings.concurrency == 3
+    assert "http://mirror.example.com" in helper.Settings.blacklist
 
 
 def mocked_iter_content(chunk_size):
@@ -80,10 +81,7 @@ def test_helper_downloadBinary_md5(tmp_path, monkeypatch):
 
     expected = binascii.unhexlify("1d41a93e4a585bb01e4518d4af431933")
     out = tmp_path.joinpath("text.xml")
-    logger = logging.getLogger(__file__)
-    helper.downloadBinaryFile(
-        "http://example.com/test.xml", out, "md5", expected, 60, logger
-    )
+    helper.downloadBinaryFile("http://example.com/test.xml", out, "md5", expected, 60)
 
 
 def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
@@ -94,7 +92,6 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
         "07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd"
     )
     out = tmp_path.joinpath("text.xml")
-    logger = logging.getLogger(__file__)
     helper.downloadBinaryFile(
-        "http://example.com/test.xml", out, "sha256", expected, 60, logger
+        "http://example.com/test.xml", out, "sha256", expected, 60
     )

@@ -33,13 +33,16 @@ jobs:
           tox
       - name: Build and install
         run: |
+          python setup.py --version
           python -m pip install ./ --user
-      - name: Run Aqt
+      - name: Run aqt
         run: |
           import os
           import pathlib
           import subprocess
           timeout = 300
+          os.mkdir("Qt")
+          os.chdir("Qt")
           command_line = ["python", "-m", "aqt", "install"]
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
@@ -61,6 +64,7 @@ jobs:
           env = os.environ.copy()
           github_workspace = pathlib.Path(env["GITHUB_WORKSPACE"])
           env["AQT_CONFIG"] = (github_workspace / "ci" / "settings.ini").as_posix()
+          env["LOG_CFG"] = (github_workspace / "ci" / "logging.ini").as_posix()
           print("Execute: {}".format(command_line))
           try:
             res = subprocess.run(command_line, timeout=timeout, check=True, env=env)
@@ -83,11 +87,13 @@ jobs:
               exit(cpe.returncode)
             assert res.returncode == 0
         shell: python
+        working-directory: ${{ github.workspace }}
       - name: Test qmake -query
         run: |
           import os
           import pathlib
           from subprocess import CalledProcessError, PIPE, run
+          os.chdir("Qt")
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
@@ -131,3 +137,4 @@ jobs:
                   result = line[18:].decode('UTF-8')
               print('PREFIX {}'.format(result))
         shell: python
+        working-directory: ${{ github.workspace }}
