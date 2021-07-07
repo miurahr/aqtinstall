@@ -1,0 +1,28 @@
+{
+  "modules": [
+    "doc",
+    "doc.qtcharts",
+    "doc.qtdatavis3d",
+    "doc.qtlottie",
+    "doc.qtnetworkauth",
+    "doc.qtpurchasing",
+    "doc.qtquick3d",
+    "doc.qtquicktimeline",
+    "doc.qtscript",
+    "doc.qtvirtualkeyboard",
+    "doc.qtwebengine",
+    "examples",
+    "examples.qtcharts",
+    "examples.qtdatavis3d",
+    "examples.qtlottie",
+    "examples.qtnetworkauth",
+    "examples.qtpurchasing",
+    "examples.qtquick3d",
+    "examples.qtquicktimeline",
+    "examples.qtscript",
+    "examples.qtvirtualkeyboard",
+    "examples.qtwebengine",
+    "src"
+  ],
+  "architectures": []
+}

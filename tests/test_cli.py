@@ -1,11 +1,17 @@
+import re
+import sys
+
+import pytest
+from semantic_version import Version
+
 import aqt
 
 
 def test_cli_help(capsys):
     expected = "".join(
         [
-            "usage: aqt [-h] [-c CONFIG] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
-            "           {install,doc,examples,src,tool,list,offline_installer,help} ...\n",
+            "usage: aqt [-h] [-c CONFIG]\n",
+            "           {install,doc,examples,src,tool,list,offline_installer,help,version} ...\n",
             "\n",
             "Installer for Qt SDK.\n",
             "\n",
@@ -13,14 +19,11 @@ def test_cli_help(capsys):
             "  -h, --help            show this help message and exit\n",
             "  -c CONFIG, --config CONFIG\n",
             "                        Configuration ini file.\n",
-            "  --logging-conf LOGGING_CONF\n",
-            "                        Logging configuration ini file.\n",
-            "  --logger LOGGER       Specify logger name\n",
             "\n",
             "subcommands:\n",
             "  Valid subcommands\n",
             "\n",
-            "  {install,doc,examples,src,tool,list,offline_installer,help}\n",
+            "  {install,doc,examples,src,tool,list,offline_installer,help,version}\n",
             "                        subcommand for aqt Qt installer\n",
         ]
     )
@@ -54,6 +57,43 @@ def test_cli_check_version():
     assert not cli._check_qt_arg_versions("5.12")
 
 
+@pytest.mark.parametrize(
+    "invalid_version",
+    ("5.15", "five-dot-fifteen", "5", "5.5.5.5"),
+)
+def test_cli_invalid_version(capsys, invalid_version):
+    """Checks that invalid version strings are handled properly"""
+
+    # Ensure that invalid_version cannot be a Version
+    with pytest.raises(ValueError):
+        Version(invalid_version)
+
+    cli = aqt.installer.Cli()
+    cli._setup_settings()
+
+    matcher = re.compile(
+        r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+        r".*Invalid version: '"
+        + invalid_version
+        + r"'! Please use the form '5\.X\.Y'\.\n.*"
+    )
+
+    for cmd in (
+        ("install", invalid_version, "mac", "desktop"),
+        ("doc", invalid_version, "mac", "desktop"),
+        ("list", "qt5", "mac", "desktop", "--modules", invalid_version),
+    ):
+        with pytest.raises(SystemExit) as pytest_wrapped_e:
+            cli = aqt.installer.Cli()
+            cli.run(cmd)
+        assert pytest_wrapped_e.type == SystemExit
+        assert pytest_wrapped_e.value.code == 1
+        out, err = capsys.readouterr()
+        sys.stdout.write(out)
+        sys.stderr.write(err)
+        assert matcher.match(err)
+
+
 def test_cli_check_mirror():
     cli = aqt.installer.Cli()
     cli._setup_settings()
@@ -67,8 +107,8 @@ def test_cli_check_mirror():
 def test_cli_launch_with_no_argument(capsys):
     expected = "".join(
         [
-            "usage: aqt [-h] [-c CONFIG] [--logging-conf LOGGING_CONF] [--logger LOGGER]\n",
-            "           {install,doc,examples,src,tool,list,offline_installer,help} ...\n",
+            "usage: aqt [-h] [-c CONFIG]\n",
+            "           {install,doc,examples,src,tool,list,offline_installer,help,version} ...\n",
             "\n",
             "Installer for Qt SDK.\n",
             "\n",
@@ -76,14 +116,11 @@ def test_cli_launch_with_no_argument(capsys):
             "  -h, --help            show this help message and exit\n",
             "  -c CONFIG, --config CONFIG\n",
             "                        Configuration ini file.\n",
-            "  --logging-conf LOGGING_CONF\n",
-            "                        Logging configuration ini file.\n",
-            "  --logger LOGGER       Specify logger name\n",
             "\n",
             "subcommands:\n",
             "  Valid subcommands\n",
             "\n",
-            "  {install,doc,examples,src,tool,list,offline_installer,help}\n",
+            "  {install,doc,examples,src,tool,list,offline_installer,help,version}\n",
             "                        subcommand for aqt Qt installer\n",
         ]
     )

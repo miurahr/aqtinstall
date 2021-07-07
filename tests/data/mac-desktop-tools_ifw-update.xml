@@ -1,0 +1,19 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.ifw.41</Name>
+  <DisplayName>Qt Installer Framework 4.1</DisplayName>
+  <Description>The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.</Description>
+  <Version>4.1.1-202105261132</Version>
+  <ReleaseDate>2021-05-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>410</SortingPriority>
+  <DownloadableArchives>ifw-mac-x64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="129741860" CompressedSize="39605245" OS="Any"/>
+  <SHA1>ac812bbcade385c605bc1dc200be8a23ac839cbf</SHA1>
+ </PackageUpdate>
+ <SHA1>ac812bbcade385c605bc1dc200be8a23ac839cbf</SHA1>
+ <MetadataName>2021-05-26-1132_meta.7z</MetadataName>
+</Updates>

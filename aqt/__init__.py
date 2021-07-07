@@ -20,15 +20,8 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from pkg_resources import DistributionNotFound, get_distribution
-
 from aqt.installer import Cli
-
-try:
-    __version__ = get_distribution(__name__).version
-except DistributionNotFound:
-    # package is not installed
-    __version__ = "unknown"
+from aqt.version import __version__
 
 __all__ = ["__version__"]
 
