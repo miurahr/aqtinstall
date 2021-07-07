@@ -34,7 +34,6 @@ from logging.handlers import QueueHandler
 
 import appdirs
 from semantic_version import Version
-from texttable import Texttable
 
 import aqt
 from aqt.archives import ListCommand, QtArchives, SrcDocExamplesArchives, ToolArchives
@@ -317,7 +316,7 @@ class Cli:
         if args.base is not None:
             base = args.base
         else:
-            base = self.settings.baseurl
+            base = Settings.baseurl
         qt_ver_num = qt_version.replace(".", "")
         packages = ["qt.{}.{}".format(qt_ver_num, arch)]
         if args.archives is not None:

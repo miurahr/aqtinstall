@@ -52,6 +52,8 @@ import stat
 import subprocess
 from logging import getLogger
 
+from semantic_version import Version, SimpleSpec
+
 from aqt.helper import BLOCKSIZE, downloadBinaryFile, getUrl
 
 WORKING_DIR = os.getcwd()
@@ -64,9 +66,9 @@ class DeployCuteCI:
     Class in charge of Qt deployment
     """
 
-    def __init__(self, version, os_name, arch, base, timeout, debug=False):
+    def __init__(self, version_str, os_name, arch, base, timeout, debug=False):
         self.logger = getLogger("aqt")
-        self.major_minor = version[: version.rfind(".")]
+        self.version = Version(version_str)
         self.timeout = timeout
         self.os_name = os_name
         self.debug = debug
@@ -94,22 +96,12 @@ class DeployCuteCI:
         elif arch == "win32_mingw530":
             tag = "x86-mingw530"
             ext = "exe"
-        if self.major_minor in [
-            "5.11",
-            "5.10",
-            "5.8",
-            "5.7",
-            "5.6",
-            "5.5",
-            "5.4",
-            "5.3",
-            "5.2",
-        ]:
+        if self.version in SimpleSpec(">5.1,<5.9"):
             folder = "new_archive"
         else:
             folder = "archive"
-        self.installer_url = "{0}/{1}/qt/{2}/{3}/qt-opensource-{4}-{5}-{6}.{7}".format(
-            base, folder, self.major_minor, version, os_name, tag, version, ext
+        self.installer_url = "{0}/{1}/qt/{2}.{3}/{4}/qt-opensource-{5}-{6}-{7}.{8}".format(
+            base, folder, self.version.major, self.version.minor, version_str, os_name, tag, version_str, ext
         )
         self.md5sums_url = (
             self.installer_url[: self.installer_url.rfind("/")] + "/" + "md5sums.txt"
@@ -135,7 +127,7 @@ class DeployCuteCI:
 
     def _get_md5(self, archive, timeout):
         expected_md5 = None
-        r_text = getUrl(self.md5sums_url, timeout, self.logger)
+        r_text = getUrl(self.md5sums_url, timeout)
         for line in r_text.split("\n"):
             rec = line.split(" ")
             if archive in rec:
@@ -173,7 +165,7 @@ class DeployCuteCI:
         self.logger.info("Download Qt %s", url)
         #
         expected_md5 = self._get_md5(archive, timeout)
-        downloadBinaryFile(url, archive, "md5", expected_md5, timeout, self.logger)
+        downloadBinaryFile(url, archive, "md5", expected_md5, timeout)
         os.chmod(archive, os.stat(archive).st_mode | stat.S_IEXEC)
         return archive
 
@@ -239,12 +231,12 @@ class DeployCuteCI:
             args.extend(["--verbose"])
         else:
             if self.os_name == "linux":
-                if self.major_minor in ["5.6", "5.5", "5.4"]:
+                if self.version in SimpleSpec(">5.3,<5.7"):
                     args.extend(["--platform", "minimal"])
                 else:
                     args.extend(["--silent"])
             else:
-                if self.major_minor in ["5.5", "5.4"]:
+                if self.version in SimpleSpec(">5.3,<5.6"):
                     args.extend(["--platform", "minimal"])
                 else:
                     args.extend(["--silent"])
