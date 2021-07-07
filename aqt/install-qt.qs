@@ -14,13 +14,15 @@ function Controller() {
     installer.setMessageBoxAutomaticAnswer("TargetDirectoryInUse", QMessageBox.Ok);
     // Allow to quit the installer when listing packages.
     installer.setMessageBoxAutomaticAnswer("cancelInstallation", QMessageBox.Yes);
+    // Other actions
+    installer.setMessageBoxAutomaticAnswer("installationErrorWithRetry", QMessageBox.Ignore);
 }
 
 Controller.prototype.WelcomePageCallback = function() {
     console.log("Welcome Page");
     var widget = gui.currentPageWidget();
     // For some reason, this page needs some delay.
-    gui.clickButton(buttons.NextButton, 500);
+    gui.clickButton(buttons.NextButton, 3000);
 }
 
 Controller.prototype.CredentialsPageCallback = function() {
@@ -65,7 +67,7 @@ Controller.prototype.TargetDirectoryPageCallback = function() {
         var widget = gui.currentPageWidget();
         widget.TargetDirectoryLineEdit.setText(installDir);
     }
-    gui.clickButton(buttons.NextButton);
+    gui.clickButton(buttons.NextButton, 3000);
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function() {
@@ -124,6 +126,11 @@ Controller.prototype.LicenseAgreementPageCallback = function() {
 Controller.prototype.ReadyForInstallationPageCallback = function() {
     console.log("Ready For Installation Page");
     gui.clickButton(buttons.CommitButton);
+}
+
+Controller.prototype.StartMenuDirectoryPageCallback = function() {
+    console.log("Start Menu Directory Page");
+    gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.PerformInstallationPageCallback = function() {
