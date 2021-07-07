@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest]
         py: [3.9]
-        qtver: [5.6.3]
+        qtver: [5.8.0]
       fail-fast: false
 
     steps:
