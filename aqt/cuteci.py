@@ -224,23 +224,15 @@ class DeployCuteCI:
         env = os.environ.copy()
         env["PACKAGES"] = ",".join(packages)
         env["DESTDIR"] = destdir
-        env["QT_QPA_PLATFORM"] = "offscreen"
+        env["QT_QPA_PLATFORM"] = "minimal"
         install_script = os.path.join(CURRENT_DIR, "install-qt.qs")
         installer_path = os.path.join(WORKING_DIR, archive)
         args = [installer_path, "--script", install_script]
         if self.debug:
             args.extend(["--verbose"])
         else:
-            if self.os_name == "linux":
-                if self.version in SimpleSpec(">5.3,<5.7"):
-                    args.extend(["--platform", "minimal"])
-                else:
-                    args.extend(["--silent"])
-            else:
-                if self.version in SimpleSpec(">5.3,<5.6"):
-                    args.extend(["--platform", "minimal"])
-                else:
-                    args.extend(["--silent"])
+            if self.version in SimpleSpec(">5.6"):
+                args.extend(["--silent"])
         if self.os_name == "mac":
             self._run_dmg(installer_path, args, env)
         else:
