@@ -796,7 +796,7 @@ class ToolArchives(QtArchives):
         )
 
     def __str__(self):
-        return f"ToolArchives(tool_name={self.tool_name}, version={self.version_str}, arch={self.arch})"
+        return f"ToolArchives(tool_name={self.tool_name}, version={self.version}, arch={self.arch})"
 
     def _get_archives(self):
         _a = "_x64"
