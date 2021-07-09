@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 import pytest
-from semantic_version import Version
+from semantic_version import Version, SimpleSpec
 
 from aqt import archives, installer
 from aqt.archives import ListCommand
@@ -232,3 +232,29 @@ def test_list_cli(
     check_arches()
     cli.run(["list", cat, host, target, *_ext, "--arch", ver])
     check_arches()
+
+
+@pytest.mark.parametrize(
+    "simple_spec, expected_name",
+    (
+            (SimpleSpec("*"), "mytool.999"),
+            (SimpleSpec(">3.5"), "mytool.999"),
+            (SimpleSpec("3.5.5"), "mytool.355"),
+            (SimpleSpec("<3.5"), "mytool.300"),
+            (SimpleSpec("<=3.5"), "mytool.355"),
+            (SimpleSpec("<=3.5.0"), "mytool.350"),
+            (SimpleSpec(">10"), None),
+    ),
+)
+def test_list_choose_tool_by_version(simple_spec, expected_name):
+    tools_data = {
+        "mytool.999": {"Version": "9.9.9", "Name": "mytool.999"},
+        "mytool.355": {"Version": "3.5.5", "Name": "mytool.355"},
+        "mytool.350": {"Version": "3.5.0", "Name": "mytool.350"},
+        "mytool.300": {"Version": "3.0.0", "Name": "mytool.300"},
+    }
+    item = ListCommand.choose_highest_version_in_spec(tools_data, simple_spec)
+    if item is not None:
+        assert item["Name"] == expected_name
+    else:
+        assert expected_name is None
