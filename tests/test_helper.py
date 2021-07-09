@@ -102,10 +102,10 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
 @pytest.mark.parametrize(
     "version, expect",
     [
-        ('1.33.1', Version('1.33.1')),
-        ('1.33.1-202102101246', Version('1.33.1-202102101246')),
-        ('1.33-202102101246', Version('1.33.0-202102101246')),
-        ('2020-05-19-1', Version('2020.0.0-05-19-1')),
+        ("1.33.1", Version("1.33.1")),
+        ("1.33.1-202102101246", Version("1.33.1-202102101246")),
+        ("1.33-202102101246", Version("1.33.0-202102101246")),
+        ("2020-05-19-1", Version("2020.0.0-05-19-1")),
     ],
 )
 def test_helper_to_version_permissive(version, expect):
