@@ -274,9 +274,18 @@ class ListCommand:
     def fetch_tool_by_simple_spec(
         self, tool_name: str, simple_spec: SimpleSpec
     ) -> Optional[Dict[str, str]]:
-        # Get data for all the tool modules
+        """This fetches the whole XML record"""
         all_tools_data = self._fetch_tool_data(tool_name)
         return ListCommand.choose_highest_version_in_spec(all_tools_data, simple_spec)
+
+    def fetch_tool_module_by_simple_spec(
+        self, tool_name: str, simple_spec: SimpleSpec
+    ) -> Optional[str]:
+        """This fetches just the name of the XML record"""
+        tool_data = self.fetch_tool_by_simple_spec(tool_name, simple_spec)
+        if tool_data is None:
+            return None
+        return tool_data["Name"]
 
     @staticmethod
     def choose_highest_version_in_spec(

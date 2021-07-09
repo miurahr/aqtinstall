@@ -32,7 +32,7 @@ import time
 from logging import getLogger
 from logging.handlers import QueueHandler
 
-from semantic_version import Version
+from semantic_version import SimpleSpec, Version
 
 import aqt
 from aqt.archives import ListCommand, QtArchives, SrcDocExamplesArchives, ToolArchives
@@ -408,8 +408,29 @@ class Cli:
         output_dir = args.outputdir
         arch = args.arch
         if arch is None:
-            getArch = ListCommand(archive_id=ArchiveId("tools", os_name, target, ""), is_latest_version=True, tool_name=tool_name)
-            arch = getArch.action().get(0)
+            getArch = ListCommand(
+                archive_id=ArchiveId("tools", os_name, target, ""),
+                is_latest_version=True,
+                tool_name=tool_name,
+            )
+            try:
+                spec = SimpleSpec(args.spec)
+            except ValueError:
+                spec = "*"
+            arch = getArch.fetch_tool_module_by_simple_spec(tool_name, spec)
+            if not arch:
+                if args.spec == "*":
+                    msg = "Could not automatically determine 'tool variant name' for tool '{}'".format(
+                        tool_name
+                    )
+                else:
+                    msg = (
+                        "Version specification '{}' matches no tools named '{}'".format(
+                            args.spec, tool_name
+                        )
+                    )
+                self.logger.error(msg)
+                exit(1)
         if output_dir is None:
             base_dir = os.getcwd()
         else:
@@ -747,6 +768,16 @@ class Cli:
             help="Name of full tool name such as qt.tools.ifw.31. "
             "Please use 'aqt list --tool' to list acceptable values for this parameter.",
         )
+        tools_parser.add_argument(
+            "--spec",
+            type=str,
+            metavar="VERSION_SPEC",
+            default="*",
+            help="SimpleSpec specification for version of tool. "
+            "IE: '*' gets the highest version of the tool. '<3.5' will retrieve the highest version below 3.5. "
+            "The command will fail if there are no versions of the tool available that satisfy this requirement.",
+        )
+
         self._set_common_options(tools_parser)
 
         self._make_list_parser(subparsers)
