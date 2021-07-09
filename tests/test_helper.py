@@ -1,8 +1,10 @@
 import binascii
 import os
 
+import pytest
 import requests
 from requests.models import Response
+from semantic_version import Version
 
 from aqt import helper
 
@@ -95,3 +97,16 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
     helper.downloadBinaryFile(
         "http://example.com/test.xml", out, "sha256", expected, 60
     )
+
+
+@pytest.mark.parametrize(
+    "version, expect",
+    [
+        ('1.33.1', Version('1.33.1')),
+        ('1.33.1-202102101246', Version('1.33.1-202102101246')),
+        ('1.33-202102101246', Version('1.33.0-202102101246')),
+        ('2020-05-19-1', Version('2020.0.0-05-19-1')),
+    ],
+)
+def test_helper_to_version_permissive(version, expect):
+    assert helper.to_version_permissive(version) == expect

@@ -20,12 +20,23 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import itertools
+import operator
 import posixpath
 import random
 import re
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
-from typing import Callable, Generator, Iterable, Iterator, List, Optional, Tuple, Union
+from typing import (
+    Callable,
+    Dict,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import bs4
 from semantic_version import SimpleSpec, Version
@@ -240,15 +251,55 @@ class ListCommand:
         html_doc = self.fetch_http(self.archive_id.to_url())
         return ListCommand.Tools(list(ListCommand.iterate_folders(html_doc, "tools")))
 
-    def fetch_tool_modules(self, tool_name: str) -> ListOfStr:
+    def _fetch_tool_data(
+        self, tool_name: str, keys_to_keep: Optional[Iterable[str]] = None
+    ) -> Dict[str, Dict[str, str]]:
+        # raises ArchiveDownloadError, ArchiveConnectionError
         rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
-        xml = self.fetch_http(rest_of_url)  # raises RequestException
+        xml = self.fetch_http(rest_of_url)
         modules = xml_to_modules(
             xml,
             predicate=ListCommand._has_nonempty_downloads,
-            keys_to_keep=(),  # Just want names
+            keys_to_keep=keys_to_keep,
         )
-        return ListCommand.ListOfStr(strings=list(modules.keys()))
+        return modules
+
+    def fetch_tool_modules(self, tool_name: str) -> ListOfStr:
+        tool_data = self._fetch_tool_data(tool_name, keys_to_keep=())
+        return ListCommand.ListOfStr(strings=list(tool_data.keys()))
+
+    def fetch_tool_by_simple_spec(
+        self, tool_name: str, simple_spec: SimpleSpec
+    ) -> Optional[Dict[str, str]]:
+        # Get data for all the tool modules
+        all_tools_data = self._fetch_tool_data(tool_name)
+        return ListCommand.choose_highest_version_in_spec(all_tools_data, simple_spec)
+
+    @staticmethod
+    def choose_highest_version_in_spec(
+        all_tools_data: Dict[str, Dict[str, str]], simple_spec: SimpleSpec
+    ) -> Optional[Dict[str, str]]:
+        # Get versions of all modules. Fail if version cannot be determined.
+        try:
+            tools_versions = [
+                (name, tool_data, helper.to_version_permissive(tool_data["Version"]))
+                for name, tool_data in all_tools_data.items()
+            ]
+        except ValueError:
+            return None
+
+        # Remove items that don't conform to simple_spec
+        tools_versions = filter(
+            lambda tool_item: tool_item[2] in simple_spec, tools_versions
+        )
+
+        try:
+            # Return the conforming item with the highest version.
+            # If there are multiple items with the same version, the result will not be predictable.
+            return max(tools_versions, key=operator.itemgetter(2))[1]
+        except ValueError:
+            # There were no tools that fit the simple_spec
+            return None
 
     def _to_version(self, qt_ver: str) -> Version:
         """
