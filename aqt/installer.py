@@ -402,12 +402,13 @@ class Cli:
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
+        target = args.target
         tool_name = args.tool_name
         os_name = args.host
         output_dir = args.outputdir
         arch = args.arch
         if arch is None:
-            getArch = ListCommand(archive_id=ArchiveId("tools", os_name, "desktop", ""), is_latest_version=True, tool_name=tool_name)
+            getArch = ListCommand(archive_id=ArchiveId("tools", os_name, target, ""), is_latest_version=True, tool_name=tool_name)
             arch = getArch.action().get(0)
         if output_dir is None:
             base_dir = os.getcwd()
@@ -437,6 +438,7 @@ class Cli:
             tool_archives = ToolArchives(
                 os_name=os_name,
                 tool_name=tool_name,
+                target=target,
                 base=base,
                 arch=arch,
                 timeout=timeout,
@@ -448,6 +450,7 @@ class Cli:
                 )
                 tool_archives = ToolArchives(
                     os_name=os_name,
+                    target=target,
                     tool_name=tool_name,
                     base=random.choice(Settings.fallbacks),
                     arch=arch,
@@ -727,6 +730,13 @@ class Cli:
         tools_parser.add_argument(
             "host", choices=["linux", "mac", "windows"], help="host os name"
         )
+        tools_parser.add_argument(
+            "target",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK.",
+        )
+
         tools_parser.add_argument(
             "tool_name", help="Name of tool such as tools_ifw, tools_mingw"
         )

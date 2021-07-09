@@ -780,17 +780,19 @@ class ToolArchives(QtArchives):
     def __init__(
         self,
         os_name: str,
+        target: str,
         tool_name: str,
         base: str,
         arch: Optional[str] = None,
         timeout: Tuple[int, int] = (5, 5),
     ):
+        self.target = target
         self.tool_name = tool_name
         self.os_name = os_name
         self.logger = getLogger("aqt.archives")
         super(ToolArchives, self).__init__(
             os_name=os_name,
-            target="desktop",
+            target=target,
             version_str="0.0.1",  # dummy version
             arch=arch,
             base=base,
