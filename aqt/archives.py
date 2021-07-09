@@ -786,10 +786,6 @@ class ToolArchives(QtArchives):
         arch: Optional[str] = None,
         timeout: Tuple[int, int] = (5, 5),
     ):
-        self.target = target
-        self.tool_name = tool_name
-        self.os_name = os_name
-        self.logger = getLogger("aqt.archives")
         super(ToolArchives, self).__init__(
             os_name=os_name,
             target=target,
