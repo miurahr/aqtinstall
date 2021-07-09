@@ -1,6 +1,6 @@
 include *.rst
 include *.txt
-include *.cfg
+include setup.cfg
 include LICENSE
 include pyproject.toml
 include tox.ini
@@ -21,3 +21,5 @@ recursive-include tests *.ini
 recursive-include tests *.json
 recursive-include tests *.py
 recursive-include tests *.xml
+exclude .gitignore
+prune .github

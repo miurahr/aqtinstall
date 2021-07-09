@@ -838,14 +838,6 @@ class ToolArchives(QtArchives):
             else:
                 downloadable_archives = []
             named_version = packageupdate.find("Version").text
-            full_version = Version(named_version)
-            if full_version.truncate("patch") != self.version.truncate("patch"):
-                self.logger.warning(
-                    "Base Version of {} is different from requested version {} -- skip.".format(
-                        named_version, self.version
-                    )
-                )
-                continue
             package_desc = packageupdate.find("Description").text
             for archive in downloadable_archives:
                 package_url = posixpath.join(
