@@ -260,13 +260,13 @@ def test_list_cli(
 @pytest.mark.parametrize(
     "simple_spec, expected_name",
     (
-            (SimpleSpec("*"), "mytool.999"),
-            (SimpleSpec(">3.5"), "mytool.999"),
-            (SimpleSpec("3.5.5"), "mytool.355"),
-            (SimpleSpec("<3.5"), "mytool.300"),
-            (SimpleSpec("<=3.5"), "mytool.355"),
-            (SimpleSpec("<=3.5.0"), "mytool.350"),
-            (SimpleSpec(">10"), None),
+        (SimpleSpec("*"), "mytool.999"),
+        (SimpleSpec(">3.5"), "mytool.999"),
+        (SimpleSpec("3.5.5"), "mytool.355"),
+        (SimpleSpec("<3.5"), "mytool.300"),
+        (SimpleSpec("<=3.5"), "mytool.355"),
+        (SimpleSpec("<=3.5.0"), "mytool.350"),
+        (SimpleSpec(">10"), None),
     ),
 )
 def test_list_choose_tool_by_version(simple_spec, expected_name):
