@@ -3,5 +3,28 @@
     "qt.tools.qtcreator",
     "qt.tools.qtcreatordbg",
     "qt.tools.qtcreatordev"
+  ],
+  "long_listing": [
+    [
+      "qt.tools.qtcreator",
+      "4.15.1-0-202106081242",
+      "2021-06-08",
+      "Qt Creator 4.15.1",
+      "IDE for Qt application development"
+    ],
+    [
+      "qt.tools.qtcreatordbg",
+      "4.15.1-0-202106081242",
+      "2021-06-08",
+      "Qt Creator 4.15.1 Debug Symbols",
+      "Additional symbol files required to debug Qt Creator"
+    ],
+    [
+      "qt.tools.qtcreatordev",
+      "4.15.1-0-202106081242",
+      "2021-06-08",
+      "Qt Creator 4.15.1 Plugin Development",
+      "Headers and libs required to develop additional plugins"
+    ]
   ]
 }

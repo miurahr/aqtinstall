@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 import pytest
-from semantic_version import Version, SimpleSpec
+from semantic_version import SimpleSpec, Version
 
 from aqt import archives, installer
 from aqt.archives import ListCommand
@@ -127,6 +127,29 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
 
     modules = ListCommand(archive_id).fetch_tool_modules(tool_name)
     assert modules.strings == expect["modules"]
+
+
+@pytest.mark.parametrize(
+    "host, target, tool_name",
+    [
+        ("mac", "desktop", "tools_cmake"),
+        ("mac", "desktop", "tools_ifw"),
+        ("mac", "desktop", "tools_qtcreator"),
+    ],
+)
+def test_tool_long_listing(monkeypatch, host: str, target: str, tool_name: str):
+    archive_id = ArchiveId("tools", host, target)
+    in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
+    expect_out_file = "{}-{}-{}-expect.json".format(host, target, tool_name)
+    _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+    expect = json.loads(
+        (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
+    )
+
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _xml)
+
+    table = ListCommand(archive_id).fetch_tool_long_listing(tool_name)
+    assert table.rows == expect["long_listing"]
 
 
 @pytest.mark.parametrize(

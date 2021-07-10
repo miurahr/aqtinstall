@@ -510,6 +510,7 @@ class Cli:
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
             tool_name=args.tool,
+            tool_long_listing=args.tool_long,
         )
         return command.run()
 
@@ -599,6 +600,16 @@ class Cli:
             "When set, this prints all 'tool variant names' available. "
             # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
             "The output of this command is intended to be used with `aqt tool`.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--tool-long",
+            type=str,
+            metavar="TOOL_NAME",
+            help="The name of a tool. Use 'aqt list tools <host> <target>' to see accepted values. "
+            "This flag only works with the 'tools' category, and cannot be combined with any other flags. "
+            "When set, this prints all 'tool variant names' available, along with versions and release dates. "
+            # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
+            "The output of this command is formatted as a table.",
         )
         list_parser.set_defaults(func=self.run_list)
 
