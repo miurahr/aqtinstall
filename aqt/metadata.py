@@ -39,7 +39,7 @@ from typing import (
 from xml.etree import ElementTree as ElementTree
 
 import bs4
-from semantic_version import SimpleSpec as SementicSimpleSpec
+from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
@@ -47,12 +47,12 @@ from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInpu
 from aqt.helper import Settings, getUrl, xml_to_modules
 
 
-class SimpleSpec(SementicSimpleSpec):
+class SimpleSpec(SemanticSimpleSpec):
     pass
 
 
 class Version(SemanticVersion):
-    """Overide semantic_version.Version class
+    """Override semantic_version.Version class
     to accept Qt versions and tools versions
     If the version ends in `-preview`, the version is treated as a preview release.
     """
@@ -270,22 +270,23 @@ class ArchiveId:
         )
 
 
+class Table:
+    def __init__(self, head: List[str], rows: List[List[str]], max_width: int = 0):
+        # max_width is set to 0 by default: this disables wrapping of text table cells
+        self.head = head
+        self.rows = rows
+        self.max_width = max_width
+
+    def __format__(self) -> str:
+        table = Texttable(max_width=self.max_width)
+        table.set_deco(Texttable.HEADER)
+        table.header(self.head)
+        table.add_rows(self.rows, header=False)
+        return table.draw()
+
+
 class ListCommand:
     """Encapsulate all parts of the `aqt list` command"""
-
-    class Table:
-        def __init__(self, head: List[str], rows: List[List[str]], max_width: int = 0):
-            # max_width is set to 0 by default: this disables wrapping of text table cells
-            self.head = head
-            self.rows = rows
-            self.max_width = max_width
-
-        def pretty_print(self) -> str:
-            table = Texttable(max_width=self.max_width)
-            table.set_deco(Texttable.HEADER)
-            table.header(self.head)
-            table.add_rows(self.rows, header=False)
-            return table.draw()
 
     def __init__(
         self,
@@ -344,7 +345,7 @@ class ListCommand:
             self.request_type = "versions"
             self._action = self.fetch_versions
 
-    def action(self) -> Union[List[str], Versions]:
+    def action(self) -> Union[List[str], Versions, Table]:
         return self._action()
 
     def run(self) -> int:
@@ -356,9 +357,7 @@ class ListCommand:
                 )
                 self.print_suggested_follow_up(self.logger.info)
                 return 1
-            if self.archive_id.is_tools():
-                print("\n".join(output))
-            elif isinstance(output, Versions):
+            if isinstance(output, Versions) or isinstance(output, Table):
                 print(f"{output}")
             else:
                 print(" ".join(output))
@@ -453,7 +452,7 @@ class ListCommand:
             [name, *[content[key] for key in keys]]
             for name, content in tool_data.items()
         ]
-        return ListCommand.Table(head, rows)
+        return Table(head, rows)
 
     @staticmethod
     def choose_highest_version_in_spec(
