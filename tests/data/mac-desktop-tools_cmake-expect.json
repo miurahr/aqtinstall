@@ -1,5 +1,14 @@
 {
   "modules": [
     "qt.tools.cmake"
+  ],
+  "long_listing": [
+    [
+      "qt.tools.cmake",
+      "3.19.2-202101071155",
+      "2021-01-07",
+      "CMake 3.19.2",
+      "CMake tools 3.19.2"
+    ]
   ]
 }

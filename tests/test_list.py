@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 import pytest
-from semantic_version import Version
+from semantic_version import SimpleSpec, Version
 
 from aqt import archives, installer
 from aqt.archives import ListCommand
@@ -130,6 +130,29 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
 
 
 @pytest.mark.parametrize(
+    "host, target, tool_name",
+    [
+        ("mac", "desktop", "tools_cmake"),
+        ("mac", "desktop", "tools_ifw"),
+        ("mac", "desktop", "tools_qtcreator"),
+    ],
+)
+def test_tool_long_listing(monkeypatch, host: str, target: str, tool_name: str):
+    archive_id = ArchiveId("tools", host, target)
+    in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
+    expect_out_file = "{}-{}-{}-expect.json".format(host, target, tool_name)
+    _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+    expect = json.loads(
+        (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
+    )
+
+    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _xml)
+
+    table = ListCommand(archive_id).fetch_tool_long_listing(tool_name)
+    assert table.rows == expect["long_listing"]
+
+
+@pytest.mark.parametrize(
     "cat, host, target, minor_ver, ver, ext, xmlfile, xmlexpect, htmlfile, htmlexpect",
     [
         (
@@ -232,3 +255,29 @@ def test_list_cli(
     check_arches()
     cli.run(["list", cat, host, target, *_ext, "--arch", ver])
     check_arches()
+
+
+@pytest.mark.parametrize(
+    "simple_spec, expected_name",
+    (
+        (SimpleSpec("*"), "mytool.999"),
+        (SimpleSpec(">3.5"), "mytool.999"),
+        (SimpleSpec("3.5.5"), "mytool.355"),
+        (SimpleSpec("<3.5"), "mytool.300"),
+        (SimpleSpec("<=3.5"), "mytool.355"),
+        (SimpleSpec("<=3.5.0"), "mytool.350"),
+        (SimpleSpec(">10"), None),
+    ),
+)
+def test_list_choose_tool_by_version(simple_spec, expected_name):
+    tools_data = {
+        "mytool.999": {"Version": "9.9.9", "Name": "mytool.999"},
+        "mytool.355": {"Version": "3.5.5", "Name": "mytool.355"},
+        "mytool.350": {"Version": "3.5.0", "Name": "mytool.350"},
+        "mytool.300": {"Version": "3.0.0", "Name": "mytool.300"},
+    }
+    item = ListCommand.choose_highest_version_in_spec(tools_data, simple_spec)
+    if item is not None:
+        assert item["Name"] == expected_name
+    else:
+        assert expected_name is None

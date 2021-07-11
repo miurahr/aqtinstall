@@ -20,15 +20,27 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import itertools
+import operator
 import posixpath
 import random
 import re
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
-from typing import Callable, Generator, Iterable, Iterator, List, Optional, Tuple, Union
+from typing import (
+    Callable,
+    Dict,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import bs4
 from semantic_version import SimpleSpec, Version
+from texttable import Texttable
 
 from aqt import helper
 from aqt.exceptions import (
@@ -119,6 +131,20 @@ class ListCommand:
         def pretty_print(self) -> str:
             return "\n".join(self.strings)
 
+    class Table:
+        def __init__(self, head: List[str], rows: List[List[str]], max_width: int = 0):
+            # max_width is set to 0 by default: this disables wrapping of text table cells
+            self.head = head
+            self.rows = rows
+            self.max_width = max_width
+
+        def pretty_print(self) -> str:
+            table = Texttable(max_width=self.max_width)
+            table.set_deco(Texttable.HEADER)
+            table.header(self.head)
+            table.add_rows(self.rows, header=False)
+            return table.draw()
+
     def __init__(
         self,
         archive_id: ArchiveId,
@@ -129,6 +155,7 @@ class ListCommand:
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         tool_name: Optional[str] = None,
+        tool_long_listing: Optional[str] = None,
     ):
         """
         Construct ListCommand.
@@ -149,6 +176,9 @@ class ListCommand:
             if tool_name:
                 self.request_type = "tool variant names"
                 self._action = lambda: self.fetch_tool_modules(tool_name)
+            elif tool_long_listing:
+                self.request_type = "tool long listing"
+                self._action = lambda: self.fetch_tool_long_listing(tool_long_listing)
             else:
                 self.request_type = "tools"
                 self._action = self.fetch_tools
@@ -240,15 +270,71 @@ class ListCommand:
         html_doc = self.fetch_http(self.archive_id.to_url())
         return ListCommand.Tools(list(ListCommand.iterate_folders(html_doc, "tools")))
 
-    def fetch_tool_modules(self, tool_name: str) -> ListOfStr:
+    def _fetch_tool_data(
+        self, tool_name: str, keys_to_keep: Optional[Iterable[str]] = None
+    ) -> Dict[str, Dict[str, str]]:
+        # raises ArchiveDownloadError, ArchiveConnectionError
         rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
-        xml = self.fetch_http(rest_of_url)  # raises RequestException
+        xml = self.fetch_http(rest_of_url)
         modules = xml_to_modules(
             xml,
             predicate=ListCommand._has_nonempty_downloads,
-            keys_to_keep=(),  # Just want names
+            keys_to_keep=keys_to_keep,
         )
-        return ListCommand.ListOfStr(strings=list(modules.keys()))
+        return modules
+
+    def fetch_tool_modules(self, tool_name: str) -> ListOfStr:
+        tool_data = self._fetch_tool_data(tool_name, keys_to_keep=())
+        return ListCommand.ListOfStr(strings=list(tool_data.keys()))
+
+    def fetch_tool_by_simple_spec(
+        self, tool_name: str, simple_spec: SimpleSpec
+    ) -> Optional[Dict[str, str]]:
+        # Get data for all the tool modules
+        all_tools_data = self._fetch_tool_data(tool_name)
+        return ListCommand.choose_highest_version_in_spec(all_tools_data, simple_spec)
+
+    def fetch_tool_long_listing(self, tool_name: str) -> Table:
+        head = [
+            "Tool Variant Name",
+            "Version",
+            "Release Date",
+            "Display Name",
+            "Description",
+        ]
+        keys = ("Version", "ReleaseDate", "DisplayName", "Description")
+        tool_data = self._fetch_tool_data(tool_name, keys_to_keep=keys)
+        rows = [
+            [name, *[content[key] for key in keys]]
+            for name, content in tool_data.items()
+        ]
+        return ListCommand.Table(head, rows)
+
+    @staticmethod
+    def choose_highest_version_in_spec(
+        all_tools_data: Dict[str, Dict[str, str]], simple_spec: SimpleSpec
+    ) -> Optional[Dict[str, str]]:
+        # Get versions of all modules. Fail if version cannot be determined.
+        try:
+            tools_versions = [
+                (name, tool_data, helper.to_version_permissive(tool_data["Version"]))
+                for name, tool_data in all_tools_data.items()
+            ]
+        except ValueError:
+            return None
+
+        # Remove items that don't conform to simple_spec
+        tools_versions = filter(
+            lambda tool_item: tool_item[2] in simple_spec, tools_versions
+        )
+
+        try:
+            # Return the conforming item with the highest version.
+            # If there are multiple items with the same version, the result will not be predictable.
+            return max(tools_versions, key=operator.itemgetter(2))[1]
+        except ValueError:
+            # There were no tools that fit the simple_spec
+            return None
 
     def _to_version(self, qt_ver: str) -> Version:
         """

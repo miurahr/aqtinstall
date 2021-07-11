@@ -297,6 +297,30 @@ def to_version(qt_ver: str) -> Version:
     )
 
 
+def to_version_permissive(version_str: str) -> Version:
+    """Converts a version string with dots (5.X.Y, etc) into a semantic version.
+    If the version omits either the patch or minor versions, they will be filled in with zeros,
+    and the remaining version string becomes part of the prerelease component.
+    If the version cannot be converted to a Version, a ValueError is raised.
+
+    This function is intended to be used on Version tags in an Updates.xml file.
+
+    to_version_permissive('1.33.1-202102101246') => Version('1.33.1-202102101246')
+    to_version_permissive('1.33-202102101246') => Version('1.33.0-202102101246')    # tools_conan
+    to_version_permissive('2020-05-19-1') => Version('2020.0.0-05-19-1')            # tools_vcredist
+    """
+    match = re.match(r"^(\d+)(\.(\d+)(\.(\d+))?)?(.*)$", version_str)
+    if not match:
+        raise ValueError("Invalid version detected: '{}'".format(version_str))
+
+    major, dot_minor, minor, dot_patch, patch, prerelease = match.groups()
+    return Version(
+        "{}.{}.{}{}".format(
+            major, minor if minor else 0, patch if patch else 0, prerelease
+        )
+    )
+
+
 def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
     """Converts a Qt version string (596, 512, 5132, etc) into a semantic version.
     This makes a lot of assumptions based on established patterns:
@@ -332,11 +356,16 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 def xml_to_modules(
     xml_text: str,
     predicate: Callable[[ElementTree.Element], bool],
-    keys_to_keep: Iterable[str],
+    keys_to_keep: Optional[Iterable[str]] = None,
 ) -> Dict[str, Dict[str, str]]:
     """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
     Only report elements that satisfy `predicate(element)`.
     Only report keys in the list `keys_to_keep`.
+    :param xml_text: The entire contents of an xml file
+    :param predicate: A function that decides which elements to keep or discard
+    :param keys_to_keep: A list of which tags in the element should be kept.
+                        If the list is empty, then no tags will be kept.
+                        If the list is None, then all tags will be kept.
     """
     try:
         parsed_xml = ElementTree.fromstring(xml_text)
@@ -348,8 +377,12 @@ def xml_to_modules(
             continue
         name = packageupdate.find("Name").text
         packages[name] = {}
-        for key in keys_to_keep:
-            packages[name][key] = getattr(packageupdate.find(key), "text", None)
+        if keys_to_keep is None:
+            for child in packageupdate:
+                packages[name][child.tag] = child.text
+        else:
+            for key in keys_to_keep:
+                packages[name][key] = getattr(packageupdate.find(key), "text", None)
     return packages
 
 
