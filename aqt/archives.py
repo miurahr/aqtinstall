@@ -787,6 +787,7 @@ class ToolArchives(QtArchives):
         arch: Optional[str] = None,
         timeout: Tuple[int, int] = (5, 5),
     ):
+        self.tool_name = tool_name
         super(ToolArchives, self).__init__(
             os_name=os_name,
             target=target,
