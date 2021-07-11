@@ -410,9 +410,9 @@ class Cli:
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
-        target = args.target
-        tool_name = args.tool_name
-        os_name = args.host
+        os_name = args.host  # windows, linux and mac
+        target = args.target  # desktop, android and ios
+        tool_name = args.tool_name  # such as tools_openssl_x64
         output_dir = args.outputdir
         arch = args.arch
         if arch is None:
@@ -426,6 +426,7 @@ class Cli:
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip(Settings.zipcmd)
+        version = "0.0.1"  # just store a dummy version
         keep = args.keep
         if args.base is not None:
             base = args.base
@@ -448,6 +449,7 @@ class Cli:
                 tool_name=tool_name,
                 target=target,
                 base=base,
+                version_str=version,
                 arch=arch,
                 timeout=timeout,
             )
@@ -461,6 +463,7 @@ class Cli:
                     target=target,
                     tool_name=tool_name,
                     base=random.choice(Settings.fallbacks),
+                    version_str=version,
                     arch=arch,
                     timeout=timeout,
                 )

@@ -1,6 +1,6 @@
 include *.rst
 include *.txt
-include setup.cfg
+include *.cfg
 include LICENSE
 include pyproject.toml
 include tox.ini

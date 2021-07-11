@@ -783,13 +783,14 @@ class ToolArchives(QtArchives):
         target: str,
         tool_name: str,
         base: str,
+        version_str: Optional[str] = None,
         arch: Optional[str] = None,
         timeout: Tuple[int, int] = (5, 5),
     ):
         super(ToolArchives, self).__init__(
             os_name=os_name,
             target=target,
-            version_str="0.0.1",  # dummy version
+            version_str=version_str,
             arch=arch,
             base=base,
             timeout=timeout,
