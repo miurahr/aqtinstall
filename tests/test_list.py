@@ -36,7 +36,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
 
     # Test 'aqt list tools'
     tools = ListCommand(ArchiveId("tools", os_name, target)).action()
-    assert "\n".join(tools) == "\n".join(expected["tools"])
+    assert tools == expected["tools"]
 
     for qt in ("qt5", "qt6"):
         for ext, expected_output in expected[qt].items():
