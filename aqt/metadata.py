@@ -103,7 +103,7 @@ class Version(SemanticVersion):
                 major=int(major),
                 minor=int(minor) if minor else 0,
                 patch=int(patch) if patch else 0,
-                prerelease=prerelease
+                prerelease=prerelease,
             )
             return
         # bad input
