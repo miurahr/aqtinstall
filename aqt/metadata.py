@@ -277,12 +277,17 @@ class Table:
         self.rows = rows
         self.max_width = max_width
 
-    def __format__(self) -> str:
-        table = Texttable(max_width=self.max_width)
-        table.set_deco(Texttable.HEADER)
-        table.header(self.head)
-        table.add_rows(self.rows, header=False)
-        return table.draw()
+    def __format__(self, format_spec) -> str:
+        if format_spec == "":
+            table = Texttable(max_width=self.max_width)
+            table.set_deco(Texttable.HEADER)
+            table.header(self.head)
+            table.add_rows(self.rows, header=False)
+            return table.draw()
+        elif format_spec == "s":
+            return str(self)
+        else:
+            raise ValueError()
 
 
 class ListCommand:
