@@ -21,6 +21,7 @@
 
 import itertools
 import operator
+import posixpath
 import random
 import re
 from logging import getLogger
@@ -38,17 +39,86 @@ from typing import (
 from xml.etree import ElementTree as ElementTree
 
 import bs4
-from semantic_version import Version, SimpleSpec
+from semantic_version import Version as SemanticVersion
+from semantic_version import SimpleSpec
 from texttable import Texttable
 
 from aqt.exceptions import CliInputError, ArchiveConnectionError, ArchiveDownloadError
 from aqt.helper import ArchiveId, xml_to_modules, Settings, getUrl
 
 
+class Version(SemanticVersion):
+    """Overide semantic_version.Version class
+    to accept Qt versions and tools versions
+    If the version ends in `-preview`, the version is treated as a preview release.
+    If the version omits either the patch or minor versions, they will be filled in with zeros,
+    and the remaining version string becomes part of the prerelease component.
+    If the version cannot be converted to a Version, a ValueError is raised.
+
+    This class is intended to be used on Version tags in an Updates.xml file.
+
+    '1.33.1-202102101246' => Version('1.33.1-202102101246')
+    '1.33-202102101246' => Version('1.33.0-202102101246')    # tools_conan
+    '2020-05-19-1' => Version('2020.0.0-05-19-1')            # tools_vcredist
+    """
+
+    def __init__(
+        self,
+        version_string=None,
+        major=None,
+        minor=None,
+        patch=None,
+        prerelease=None,
+        build=None,
+        partial=False,
+    ):
+        if version_string is None:
+            super(Version, self).__init__(
+                version_string=None,
+                major=major,
+                minor=minor,
+                patch=patch,
+                prerelease=prerelease,
+                build=build,
+                partial=partial,
+            )
+            return
+        # test qt versions
+        match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)$", version_string)
+        if match:
+            major, minor, end, patch = match.groups()
+            is_preview = end == "-preview"
+            super(Version, self).__init__(
+                major=int(major),
+                minor=int(minor),
+                patch=int(patch) if patch else 0,
+                prerelease=("preview",) if is_preview else None,
+            )
+            return
+        # further permissive inputs
+        match = re.match(r"^(\d+)(\.(\d+)(\.(\d+))?)?(.*)$", version_string)
+        if match:
+            major, dot_minor, minor, dot_patch, patch, prerelease = match.groups()
+            super(Version, self).__init__(
+                major=int(major),
+                minor=int(minor) if minor else 0,
+                patch=int(patch) if patch else 0,
+                prerelease=prerelease
+            )
+            return
+        # bad input
+        raise ValueError("Invalid version string: '{}'".format(version_string))
+
+    def __str__(self):
+        if self.prerelease:
+            return "{}.{}-preview".format(self.major, self.minor)
+        return super(Version, self).__str__()
+
+
 class Versions:
     def __init__(
-            self,
-            versions: Union[None, Version, Iterable[Tuple[int, Iterable[Version]]]],
+        self,
+        versions: Union[None, Version, Iterable[Tuple[int, Iterable[Version]]]],
     ):
         if versions is None:
             self.versions = list()
@@ -65,7 +135,7 @@ class Versions:
     def __format__(self, format_spec) -> str:
         if format_spec == "":
             return "\n".join(
-                " ".join(stringify_ver(version) for version in minor_list)
+                " ".join(str(version) for version in minor_list)
                 for minor_list in self.versions
             )
         elif format_spec == "s":
@@ -84,57 +154,6 @@ class Versions:
     def __iter__(self) -> List[Version]:
         for item in self.versions:
             yield item
-
-
-def stringify_ver(version: Version) -> str:
-    if version.prerelease:
-        return "{}.{}-preview".format(version.major, version.minor)
-    return str(version)
-
-
-def to_version(qt_ver: str) -> Version:
-    """Converts a Qt version string with dots (5.X.Y, etc) into a semantic version.
-    If the version ends in `-preview`, the version is treated as a preview release.
-    If the patch value is missing, patch is assumed to be zero.
-    If the version cannot be converted to a Version, a CliInputError is raised.
-    """
-    match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)$", qt_ver)
-    if not match:
-        raise CliInputError(
-            "Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_ver)
-        )
-    major, minor, end, patch = match.groups()
-    is_preview = end == "-preview"
-    return Version(
-        major=int(major),
-        minor=int(minor),
-        patch=int(patch) if patch else 0,
-        prerelease=("preview",) if is_preview else None,
-    )
-
-
-def to_version_permissive(version_str: str) -> Version:
-    """Converts a version string with dots (5.X.Y, etc) into a semantic version.
-    If the version omits either the patch or minor versions, they will be filled in with zeros,
-    and the remaining version string becomes part of the prerelease component.
-    If the version cannot be converted to a Version, a ValueError is raised.
-
-    This function is intended to be used on Version tags in an Updates.xml file.
-
-    to_version_permissive('1.33.1-202102101246') => Version('1.33.1-202102101246')
-    to_version_permissive('1.33-202102101246') => Version('1.33.0-202102101246')    # tools_conan
-    to_version_permissive('2020-05-19-1') => Version('2020.0.0-05-19-1')            # tools_vcredist
-    """
-    match = re.match(r"^(\d+)(\.(\d+)(\.(\d+))?)?(.*)$", version_str)
-    if not match:
-        raise ValueError("Invalid version detected: '{}'".format(version_str))
-
-    major, dot_minor, minor, dot_patch, patch, prerelease = match.groups()
-    return Version(
-        "{}.{}.{}{}".format(
-            major, minor if minor else 0, patch if patch else 0, prerelease
-        )
-    )
 
 
 def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
@@ -361,7 +380,7 @@ class ListCommand:
         # Get versions of all modules. Fail if version cannot be determined.
         try:
             tools_versions = [
-                (name, tool_data, to_version_permissive(tool_data["Version"]))
+                (name, tool_data, Version(tool_data["Version"]))
                 for name, tool_data in all_tools_data.items()
             ]
         except ValueError:
@@ -400,7 +419,10 @@ class ListCommand:
                 )
                 raise CliInputError(msg)
             return latest_version
-        version = to_version(qt_ver)
+        try:
+            version = Version(qt_ver)
+        except ValueError as e:
+            raise CliInputError(e)
         if self.archive_id.is_major_ver_mismatch(version):
             msg = "Major version mismatch between {} and {}".format(
                 self.archive_id.category, version
