@@ -64,7 +64,7 @@ def test_cli_check_version():
 def test_cli_invalid_version(capsys, invalid_version):
     """Checks that invalid version strings are handled properly"""
 
-    # Ensure that invalid_version cannot be a Version
+    # Ensure that invalid_version cannot be a semantic_version.Version
     with pytest.raises(ValueError):
         Version(invalid_version)
 

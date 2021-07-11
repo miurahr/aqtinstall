@@ -55,15 +55,6 @@ class Version(SemanticVersion):
     """Overide semantic_version.Version class
     to accept Qt versions and tools versions
     If the version ends in `-preview`, the version is treated as a preview release.
-    If the version omits either the patch or minor versions, they will be filled in with zeros,
-    and the remaining version string becomes part of the prerelease component.
-    If the version cannot be converted to a Version, a ValueError is raised.
-
-    This class is intended to be used on Version tags in an Updates.xml file.
-
-    '1.33.1-202102101246' => Version('1.33.1-202102101246')
-    '1.33-202102101246' => Version('1.33.0-202102101246')    # tools_conan
-    '2020-05-19-1' => Version('2020.0.0-05-19-1')            # tools_vcredist
     """
 
     def __init__(
@@ -89,34 +80,47 @@ class Version(SemanticVersion):
             return
         # test qt versions
         match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)$", version_string)
-        if match:
-            major, minor, end, patch = match.groups()
-            is_preview = end == "-preview"
-            super(Version, self).__init__(
-                major=int(major),
-                minor=int(minor),
-                patch=int(patch) if patch else 0,
-                prerelease=("preview",) if is_preview else None,
-            )
-            return
-        # further permissive inputs
-        match = re.match(r"^(\d+)(\.(\d+)(\.(\d+))?)?(.*)$", version_string)
-        if match:
-            major, dot_minor, minor, dot_patch, patch, prerelease = match.groups()
-            super(Version, self).__init__(
-                major=int(major),
-                minor=int(minor) if minor else 0,
-                patch=int(patch) if patch else 0,
-                prerelease=prerelease,
-            )
-            return
-        # bad input
-        raise ValueError("Invalid version string: '{}'".format(version_string))
+        if not match:
+            # bad input
+            raise ValueError("Invalid version string: '{}'".format(version_string))
+        major, minor, end, patch = match.groups()
+        is_preview = end == "-preview"
+        super(Version, self).__init__(
+            major=int(major),
+            minor=int(minor),
+            patch=int(patch) if patch else 0,
+            prerelease=("preview",) if is_preview else None,
+        )
 
     def __str__(self):
         if self.prerelease:
             return "{}.{}-preview".format(self.major, self.minor)
         return super(Version, self).__str__()
+
+    @classmethod
+    def permissive(cls, version_string: str):
+        """Converts a version string with dots (5.X.Y, etc) into a semantic version.
+        If the version omits either the patch or minor versions, they will be filled in with zeros,
+        and the remaining version string becomes part of the prerelease component.
+        If the version cannot be converted to a Version, a ValueError is raised.
+
+        This is intended to be used on Version tags in an Updates.xml file.
+
+        '1.33.1-202102101246' => Version('1.33.1-202102101246')
+        '1.33-202102101246' => Version('1.33.0-202102101246')    # tools_conan
+        '2020-05-19-1' => Version('2020.0.0-05-19-1')            # tools_vcredist
+        """
+
+        match = re.match(r"^(\d+)(\.(\d+)(\.(\d+))?)?(-(.+))?$", version_string)
+        if not match:
+            raise ValueError("Invalid version string: '{}'".format(version_string))
+        major, dot_minor, minor, dot_patch, patch, hyphen_build, build = match.groups()
+        return cls(
+            major=int(major),
+            minor=int(minor) if minor else 0,
+            patch=int(patch) if patch else 0,
+            build=(build,) if build else None,
+        )
 
 
 class Versions:
@@ -458,7 +462,7 @@ class ListCommand:
         # Get versions of all modules. Fail if version cannot be determined.
         try:
             tools_versions = [
-                (name, tool_data, Version(tool_data["Version"]))
+                (name, tool_data, Version.permissive(tool_data["Version"]))
                 for name, tool_data in all_tools_data.items()
             ]
         except ValueError:
