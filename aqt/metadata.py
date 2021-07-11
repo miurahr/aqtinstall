@@ -364,6 +364,8 @@ class ListCommand:
                 return 1
             if isinstance(output, Versions) or isinstance(output, Table):
                 print(f"{output}")
+            elif self.archive_id.is_tools():
+                print("\n".join(output))
             else:
                 print(" ".join(output))
             return 0
