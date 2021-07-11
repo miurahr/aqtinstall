@@ -433,7 +433,11 @@ class Cli:
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
         if args.arch is None:
-            archs = ListCommand(archive_id=ArchiveId("tools", os_name, target, ""), is_latest_version=True, tool_name=tool_name).action()
+            archs = ListCommand(
+                archive_id=ArchiveId("tools", os_name, target, ""),
+                is_latest_version=True,
+                tool_name=tool_name,
+            ).action()
         else:
             archs = [args.arch]
 
@@ -470,7 +474,9 @@ class Cli:
                         timeout=timeout,
                     )
                 except Exception:
-                    self.logger.error("Connection to the download site failed. Aborted...")
+                    self.logger.error(
+                        "Connection to the download site failed. Aborted..."
+                    )
                     exit(1)
             except ArchiveDownloadError or ArchiveListError:
                 exit(1)
