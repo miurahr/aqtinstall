@@ -25,9 +25,9 @@ import subprocess
 from logging import getLogger
 
 import patch
-from semantic_version import SimpleSpec, Version
 
 from aqt.helper import Settings
+from aqt.metadata import SimpleSpec, Version
 
 
 class Updater:

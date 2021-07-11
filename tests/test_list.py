@@ -3,12 +3,9 @@ import re
 from pathlib import Path
 
 import pytest
-from semantic_version import SimpleSpec, Version
 
-import aqt.metadata
-from aqt import installer
-from aqt.metadata import ListCommand
-from aqt.helper import ArchiveId
+from aqt.installer import Cli
+from aqt.metadata import ArchiveId, ListCommand, SimpleSpec, Version
 
 MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 
@@ -28,7 +25,7 @@ MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 )
 def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_file):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", lambda self, _: _html)
+    monkeypatch.setattr(ListCommand, "fetch_http", lambda self, _: _html)
 
     expected = json.loads(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
@@ -98,7 +95,7 @@ def test_list_architectures_and_modules(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(ListCommand, "fetch_http", lambda self, _: _xml)
 
     modules = ListCommand(archive_id).fetch_modules(Version(version))
     assert modules == expect["modules"]
@@ -124,7 +121,7 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(ListCommand, "fetch_http", lambda self, _: _xml)
 
     modules = ListCommand(archive_id).fetch_tool_modules(tool_name)
     assert modules == expect["modules"]
@@ -147,7 +144,7 @@ def test_tool_long_listing(monkeypatch, host: str, target: str, tool_name: str):
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(ListCommand, "fetch_http", lambda self, _: _xml)
 
     table = ListCommand(archive_id).fetch_tool_long_listing(tool_name)
     assert table.rows == expect["long_listing"]
@@ -198,7 +195,7 @@ def test_list_cli(
         ver_to_replace = ver.replace(".", "")
         return text.replace(ver_to_replace, desired_version)
 
-    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", _mock)
+    monkeypatch.setattr(ListCommand, "fetch_http", _mock)
 
     expected_modules_arches = json.loads(
         (Path(__file__).parent / "data" / xmlexpect).read_text("utf-8")
@@ -222,7 +219,7 @@ def test_list_cli(
     _minor = ["--filter-minor", minor_ver]
     _ext = ["--extension", ext]
 
-    cli = installer.Cli()
+    cli = Cli()
     # Query extensions by latest version, minor version, and specific version
     cli.run(["list", cat, host, target, "--extensions", "latest"])
     check_extensions()

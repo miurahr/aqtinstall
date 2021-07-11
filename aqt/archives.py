@@ -23,19 +23,11 @@
 import posixpath
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
-from typing import (
-    List,
-    Optional,
-    Tuple,
-)
+from typing import Optional, Tuple
 
-from semantic_version import SimpleSpec, Version
-
-from aqt.exceptions import (
-    ArchiveListError,
-    NoPackageFound,
-)
+from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl
+from aqt.metadata import SimpleSpec, Version
 
 
 class TargetConfig:

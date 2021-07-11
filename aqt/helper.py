@@ -33,83 +33,8 @@ from urllib.parse import urlparse
 
 import requests
 import requests.adapters
-from semantic_version import Version
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
-
-
-class ArchiveId:
-    CATEGORIES = ("tools", "qt5", "qt6")
-    HOSTS = ("windows", "mac", "linux")
-    TARGETS_FOR_HOST = {
-        "windows": ["android", "desktop", "winrt"],
-        "mac": ["android", "desktop", "ios"],
-        "linux": ["android", "desktop"],
-    }
-    ALL_EXTENSIONS = (
-        "wasm",
-        "src_doc_examples",
-        "preview",
-        "wasm_preview",
-        "x86_64",
-        "x86",
-        "armv7",
-        "arm64_v8a",
-    )
-
-    def __init__(self, category: str, host: str, target: str, extension: str = ""):
-        if category not in ArchiveId.CATEGORIES:
-            raise ValueError("Category '{}' is invalid".format(category))
-        if host not in ArchiveId.HOSTS:
-            raise ValueError("Host '{}' is invalid".format(host))
-        if target not in ArchiveId.TARGETS_FOR_HOST[host]:
-            raise ValueError("Target '{}' is invalid".format(target))
-        if extension and extension not in ArchiveId.ALL_EXTENSIONS:
-            raise ValueError("Extension '{}' is invalid".format(extension))
-        self.category: str = category
-        self.host: str = host
-        self.target: str = target
-        self.extension: str = extension
-
-    def is_preview(self) -> bool:
-        return "preview" in self.extension if self.extension else False
-
-    def is_qt(self) -> bool:
-        return self.category.startswith("qt")
-
-    def is_tools(self) -> bool:
-        return self.category == "tools"
-
-    def is_no_arch(self) -> bool:
-        """Returns True if there should be no arch attached to the module names"""
-        return self.extension in ("src_doc_examples",)
-
-    def is_major_ver_mismatch(self, qt_version: Version) -> bool:
-        """Returns True if the version specifies a version different from the specified category"""
-        return self.is_qt() and int(self.category[-1]) != qt_version.major
-
-    def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
-        base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
-            os=self.host,
-            arch="_x86" if self.host == "windows" else "_x64",
-            target=self.target,
-        )
-        if not qt_version_no_dots:
-            return base
-        folder = "{category}_{ver}{ext}/".format(
-            category=self.category,
-            ver=qt_version_no_dots,
-            ext="_" + self.extension if self.extension else "",
-        )
-        return base + folder + file
-
-    def __str__(self) -> str:
-        return "{cat}/{host}/{target}{ext}".format(
-            cat=self.category,
-            host=self.host,
-            target=self.target,
-            ext="" if not self.extension else "/" + self.extension,
-        )
 
 
 def _get_meta(url: str):
