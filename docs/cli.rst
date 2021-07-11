@@ -162,8 +162,9 @@ Installation command
     This is advanced option and you should use with --modules option.
     This allow you to add modules to existent Qt installation.
 
-Tool installation commands
---------------------------
+
+Source installation command
+---------------------------
 
 .. program::  aqt
 
@@ -177,22 +178,32 @@ Tool installation commands
     such as qtbase.
 
 
+Document installation command
+-----------------------------
+
 .. option:: doc <Qt version> <target OS> <target variant>
 
     install Qt documents specified version and target.
 
+
+Example installation command
+----------------------------
 
 .. option:: examples <Qt version> <target OS> <target variant>
 
     install Qt examples specified version and target.
 
 
-.. option:: tool <target OS> <target tool name> <target tool version> <tool variant name>
+Tools installation command
+---------------------------
 
-    install tools specified. tool name may be 'tools_openssl_x64', 'tools_ninja', 'tools_ifw', 'tools_cmake'
-    and tool variants name may be 'qt.tools.openssl.gcc_64', 'qt.tools.ninja',  'qt.tools.ifw.32', 'qt.tools.cmake'.
-    You may use the :ref:`List command` with the `--tool` flag to display what tool variant names are available.
-    You may need to looking for version number at  https://download.qt.io/online/qtsdkrepository/
+.. option:: tool <target OS> <target variant> <tool name> [<tool variant name>]
+
+    install tools specified. tool name may be 'tools_openssl_x64', 'tools_vcredist', 'tools_ninja',
+    'tools_ifw', 'tools_cmake'
+    You may use the :ref:`List command` with the `--tool` flag to display what tool names are available.
+
+    tool variants name may be 'qt.tools.openssl.gcc_64', 'qt.tools.vcredist_msvc2013_x64'.
 
 
 Command examples
@@ -276,23 +287,23 @@ Example: Install an Install FrameWork (IFW):
 
 .. code-block:: bash
 
-    aqt tool linux tools_ifw 4.1 qt.tools.ifw.41
+    aqt tool linux desktop tools_ifw
 
 
 Example: Install vcredist:
 
 .. code-block:: bash
 
-    C:\ aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
-    C:\ .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
+    C:\ aqt tool -O c:\Qt windows desktop tools_vcredist
+    C:\ \Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
 Example: Install MinGW on Windows
 
 .. code-block:: bash
 
-    C:\ aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
-    c:\ set PATH=C:\Qt\Tools\mingw810_64\bin
+    C:\ aqt tool -O c:\Qt windows desktop tools_mingw qt.tools.mingw482
+    c:\ set PATH=C:\Qt\Tools\mingw482_32\bin
 
 
 Example: Show help message
