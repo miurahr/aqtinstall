@@ -35,7 +35,8 @@ from logging.handlers import QueueHandler
 from semantic_version import Version
 
 import aqt
-from aqt.archives import ListCommand, QtArchives, SrcDocExamplesArchives, ToolArchives
+from aqt.archives import QtArchives, SrcDocExamplesArchives, ToolArchives
+from aqt.metadata import ListCommand
 from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,

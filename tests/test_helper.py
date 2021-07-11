@@ -7,6 +7,7 @@ from requests.models import Response
 from semantic_version import Version
 
 from aqt import helper
+from aqt.metadata import to_version_permissive
 
 
 def test_helper_altlink(monkeypatch):
@@ -109,4 +110,4 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
     ],
 )
 def test_helper_to_version_permissive(version, expect):
-    assert helper.to_version_permissive(version) == expect
+    assert to_version_permissive(version) == expect

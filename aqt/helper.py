@@ -24,7 +24,6 @@ import hashlib
 import json
 import logging.config
 import os
-import re
 import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
@@ -36,7 +35,7 @@ import requests
 import requests.adapters
 from semantic_version import Version
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
 
 class ArchiveId:
@@ -274,83 +273,6 @@ class MyQueueListener(QueueListener):
         logger = getLogger("aqt.installer")
         record.name = "aqt.installer"
         logger.handle(record)
-
-
-def to_version(qt_ver: str) -> Version:
-    """Converts a Qt version string with dots (5.X.Y, etc) into a semantic version.
-    If the version ends in `-preview`, the version is treated as a preview release.
-    If the patch value is missing, patch is assumed to be zero.
-    If the version cannot be converted to a Version, a CliInputError is raised.
-    """
-    match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)$", qt_ver)
-    if not match:
-        raise CliInputError(
-            "Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_ver)
-        )
-    major, minor, end, patch = match.groups()
-    is_preview = end == "-preview"
-    return Version(
-        major=int(major),
-        minor=int(minor),
-        patch=int(patch) if patch else 0,
-        prerelease=("preview",) if is_preview else None,
-    )
-
-
-def to_version_permissive(version_str: str) -> Version:
-    """Converts a version string with dots (5.X.Y, etc) into a semantic version.
-    If the version omits either the patch or minor versions, they will be filled in with zeros,
-    and the remaining version string becomes part of the prerelease component.
-    If the version cannot be converted to a Version, a ValueError is raised.
-
-    This function is intended to be used on Version tags in an Updates.xml file.
-
-    to_version_permissive('1.33.1-202102101246') => Version('1.33.1-202102101246')
-    to_version_permissive('1.33-202102101246') => Version('1.33.0-202102101246')    # tools_conan
-    to_version_permissive('2020-05-19-1') => Version('2020.0.0-05-19-1')            # tools_vcredist
-    """
-    match = re.match(r"^(\d+)(\.(\d+)(\.(\d+))?)?(.*)$", version_str)
-    if not match:
-        raise ValueError("Invalid version detected: '{}'".format(version_str))
-
-    major, dot_minor, minor, dot_patch, patch, prerelease = match.groups()
-    return Version(
-        "{}.{}.{}{}".format(
-            major, minor if minor else 0, patch if patch else 0, prerelease
-        )
-    )
-
-
-def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
-    """Converts a Qt version string (596, 512, 5132, etc) into a semantic version.
-    This makes a lot of assumptions based on established patterns:
-    If is_preview is True, the number is interpreted as ver[0].ver[1:], with no patch.
-    If the version is 3 digits, then major, minor, and patch each get 1 digit.
-    If the version is 4 or more digits, then major gets 1 digit, minor gets 2 digits
-    and patch gets all the rest.
-    As of May 2021, the version strings at https://download.qt.io/online/qtsdkrepository
-    conform to this pattern; they are not guaranteed to do so in the future.
-    """
-    if not qt_ver or any(not ch.isdigit() for ch in qt_ver):
-        return None
-    if is_preview:
-        return Version(
-            major=int(qt_ver[:1]),
-            minor=int(qt_ver[1:]),
-            patch=0,
-            prerelease=("preview",),
-        )
-    elif len(qt_ver) >= 4:
-        return Version(
-            major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:])
-        )
-    elif len(qt_ver) == 3:
-        return Version(
-            major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:])
-        )
-    elif len(qt_ver) == 2:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
-    raise ValueError("Invalid version string '{}'".format(qt_ver))
 
 
 def xml_to_modules(

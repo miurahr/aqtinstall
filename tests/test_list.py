@@ -5,8 +5,9 @@ from pathlib import Path
 import pytest
 from semantic_version import SimpleSpec, Version
 
-from aqt import archives, installer
-from aqt.archives import ListCommand
+import aqt.metadata
+from aqt import installer
+from aqt.metadata import ListCommand
 from aqt.helper import ArchiveId
 
 MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
@@ -27,7 +28,7 @@ MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 )
 def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_file):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _html)
+    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", lambda self, _: _html)
 
     expected = json.loads(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
@@ -35,7 +36,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
 
     # Test 'aqt list tools'
     tools = ListCommand(ArchiveId("tools", os_name, target)).action()
-    assert tools.pretty_print() == "\n".join(expected["tools"])
+    assert "\n".join(tools) == "\n".join(expected["tools"])
 
     for qt in ("qt5", "qt6"):
         for ext, expected_output in expected[qt].items():
@@ -46,7 +47,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
             if len(expected_output) == 0:
                 assert not all_versions
             else:
-                assert all_versions.pretty_print() == "\n".join(expected_output)
+                assert f"{all_versions}" == "\n".join(expected_output)
 
             # Filter for the latest version only
             latest_ver = ListCommand(archive_id, is_latest_version=True).action()
@@ -54,7 +55,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
             if len(expected_output) == 0:
                 assert not latest_ver
             else:
-                assert latest_ver.pretty_print() == expected_output[-1].split(" ")[-1]
+                assert f"{latest_ver}" == expected_output[-1].split(" ")[-1]
 
             for row in expected_output:
                 minor = int(MINOR_REGEX.search(row).group(1))
@@ -65,14 +66,14 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
                     filter_minor=minor,
                     is_latest_version=True,
                 ).action()
-                assert latest_ver_for_minor.pretty_print() == row.split(" ")[-1]
+                assert f"{latest_ver_for_minor}" == row.split(" ")[-1]
 
                 # Find all versions for a particular minor version
                 all_ver_for_minor = ListCommand(
                     archive_id,
                     filter_minor=minor,
                 ).action()
-                assert all_ver_for_minor.pretty_print() == row
+                assert f"{all_ver_for_minor}" == row
 
 
 @pytest.mark.parametrize(
@@ -97,13 +98,13 @@ def test_list_architectures_and_modules(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", lambda self, _: _xml)
 
     modules = ListCommand(archive_id).fetch_modules(Version(version))
-    assert modules.strings == expect["modules"]
+    assert modules == expect["modules"]
 
     arches = ListCommand(archive_id).fetch_arches(Version(version))
-    assert arches.strings == expect["architectures"]
+    assert arches == expect["architectures"]
 
 
 @pytest.mark.parametrize(
@@ -123,10 +124,10 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", lambda self, _: _xml)
 
     modules = ListCommand(archive_id).fetch_tool_modules(tool_name)
-    assert modules.strings == expect["modules"]
+    assert modules == expect["modules"]
 
 
 @pytest.mark.parametrize(
@@ -146,7 +147,7 @@ def test_tool_long_listing(monkeypatch, host: str, target: str, tool_name: str):
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(archives.ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", lambda self, _: _xml)
 
     table = ListCommand(archive_id).fetch_tool_long_listing(tool_name)
     assert table.rows == expect["long_listing"]
@@ -197,7 +198,7 @@ def test_list_cli(
         ver_to_replace = ver.replace(".", "")
         return text.replace(ver_to_replace, desired_version)
 
-    monkeypatch.setattr(archives.ListCommand, "fetch_http", _mock)
+    monkeypatch.setattr(aqt.metadata.ListCommand, "fetch_http", _mock)
 
     expected_modules_arches = json.loads(
         (Path(__file__).parent / "data" / xmlexpect).read_text("utf-8")
