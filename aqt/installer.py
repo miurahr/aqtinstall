@@ -414,10 +414,6 @@ class Cli:
         target = args.target  # desktop, android and ios
         tool_name = args.tool_name  # such as tools_openssl_x64
         output_dir = args.outputdir
-        arch = args.arch
-        if arch is None:
-            getArch = ListCommand(archive_id=ArchiveId("tools", os_name, target, ""), is_latest_version=True, tool_name=tool_name)
-            arch = getArch.action().get(0)
         if output_dir is None:
             base_dir = os.getcwd()
         else:
@@ -436,43 +432,49 @@ class Cli:
             timeout = (args.timeout, args.timeout)
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
-        if not self._check_tools_arg_combination(os_name, tool_name, arch):
-            self.logger.warning(
-                "Specified target combination is not valid: {} {} {}".format(
-                    os_name, tool_name, arch
-                )
-            )
+        if args.arch is None:
+            archs = ListCommand(archive_id=ArchiveId("tools", os_name, target, ""), is_latest_version=True, tool_name=tool_name).action()
+        else:
+            archs = [args.arch]
 
-        try:
-            tool_archives = ToolArchives(
-                os_name=os_name,
-                tool_name=tool_name,
-                target=target,
-                base=base,
-                version_str=version,
-                arch=arch,
-                timeout=timeout,
-            )
-        except ArchiveConnectionError:
-            try:
+        for arch in archs:
+            if not self._check_tools_arg_combination(os_name, tool_name, arch):
                 self.logger.warning(
-                    "Connection to the download site failed and fallback to mirror site."
+                    "Specified target combination is not valid: {} {} {}".format(
+                        os_name, tool_name, arch
+                    )
                 )
+
+            try:
                 tool_archives = ToolArchives(
                     os_name=os_name,
-                    target=target,
                     tool_name=tool_name,
-                    base=random.choice(Settings.fallbacks),
+                    target=target,
+                    base=base,
                     version_str=version,
                     arch=arch,
                     timeout=timeout,
                 )
-            except Exception:
-                self.logger.error("Connection to the download site failed. Aborted...")
+            except ArchiveConnectionError:
+                try:
+                    self.logger.warning(
+                        "Connection to the download site failed and fallback to mirror site."
+                    )
+                    tool_archives = ToolArchives(
+                        os_name=os_name,
+                        target=target,
+                        tool_name=tool_name,
+                        base=random.choice(Settings.fallbacks),
+                        version_str=version,
+                        arch=arch,
+                        timeout=timeout,
+                    )
+                except Exception:
+                    self.logger.error("Connection to the download site failed. Aborted...")
+                    exit(1)
+            except ArchiveDownloadError or ArchiveListError:
                 exit(1)
-        except ArchiveDownloadError or ArchiveListError:
-            exit(1)
-        self.call_installer(tool_archives, base_dir, sevenzip, keep)
+            self.call_installer(tool_archives, base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
