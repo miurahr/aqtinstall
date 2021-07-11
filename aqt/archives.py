@@ -118,6 +118,10 @@ class ListCommand:
         def __bool__(self):
             return len(self.strings) > 0 and len(self.strings[0]) > 0
 
+        def __iter__(self):
+            for item in self.strings:
+                yield item
+
     class Tools(ListOfStr):
         def pretty_print(self) -> str:
             return "\n".join(self.strings)
