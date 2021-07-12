@@ -363,11 +363,11 @@ class ListCommand:
                 self.print_suggested_follow_up(self.logger.info)
                 return 1
             if isinstance(output, Versions) or isinstance(output, Table):
-                print(f"{output}")
+                print(format(output))
             elif self.archive_id.is_tools():
-                print("\n".join(output))
+                print(*output, sep="\n")
             else:
-                print(" ".join(output))
+                print(*output, sep=" ")
             return 0
         except CliInputError as e:
             self.logger.error("Command line input error: {}".format(e))
