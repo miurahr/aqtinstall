@@ -24,7 +24,6 @@ import hashlib
 import json
 import logging.config
 import os
-import re
 import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
@@ -34,83 +33,8 @@ from urllib.parse import urlparse
 
 import requests
 import requests.adapters
-from semantic_version import Version
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
-
-
-class ArchiveId:
-    CATEGORIES = ("tools", "qt5", "qt6")
-    HOSTS = ("windows", "mac", "linux")
-    TARGETS_FOR_HOST = {
-        "windows": ["android", "desktop", "winrt"],
-        "mac": ["android", "desktop", "ios"],
-        "linux": ["android", "desktop"],
-    }
-    ALL_EXTENSIONS = (
-        "wasm",
-        "src_doc_examples",
-        "preview",
-        "wasm_preview",
-        "x86_64",
-        "x86",
-        "armv7",
-        "arm64_v8a",
-    )
-
-    def __init__(self, category: str, host: str, target: str, extension: str = ""):
-        if category not in ArchiveId.CATEGORIES:
-            raise ValueError("Category '{}' is invalid".format(category))
-        if host not in ArchiveId.HOSTS:
-            raise ValueError("Host '{}' is invalid".format(host))
-        if target not in ArchiveId.TARGETS_FOR_HOST[host]:
-            raise ValueError("Target '{}' is invalid".format(target))
-        if extension and extension not in ArchiveId.ALL_EXTENSIONS:
-            raise ValueError("Extension '{}' is invalid".format(extension))
-        self.category: str = category
-        self.host: str = host
-        self.target: str = target
-        self.extension: str = extension
-
-    def is_preview(self) -> bool:
-        return "preview" in self.extension if self.extension else False
-
-    def is_qt(self) -> bool:
-        return self.category.startswith("qt")
-
-    def is_tools(self) -> bool:
-        return self.category == "tools"
-
-    def is_no_arch(self) -> bool:
-        """Returns True if there should be no arch attached to the module names"""
-        return self.extension in ("src_doc_examples",)
-
-    def is_major_ver_mismatch(self, qt_version: Version) -> bool:
-        """Returns True if the version specifies a version different from the specified category"""
-        return self.is_qt() and int(self.category[-1]) != qt_version.major
-
-    def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
-        base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
-            os=self.host,
-            arch="_x86" if self.host == "windows" else "_x64",
-            target=self.target,
-        )
-        if not qt_version_no_dots:
-            return base
-        folder = "{category}_{ver}{ext}/".format(
-            category=self.category,
-            ver=qt_version_no_dots,
-            ext="_" + self.extension if self.extension else "",
-        )
-        return base + folder + file
-
-    def __str__(self) -> str:
-        return "{cat}/{host}/{target}{ext}".format(
-            cat=self.category,
-            host=self.host,
-            target=self.target,
-            ext="" if not self.extension else "/" + self.extension,
-        )
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 
 
 def _get_meta(url: str):
@@ -274,83 +198,6 @@ class MyQueueListener(QueueListener):
         logger = getLogger("aqt.installer")
         record.name = "aqt.installer"
         logger.handle(record)
-
-
-def to_version(qt_ver: str) -> Version:
-    """Converts a Qt version string with dots (5.X.Y, etc) into a semantic version.
-    If the version ends in `-preview`, the version is treated as a preview release.
-    If the patch value is missing, patch is assumed to be zero.
-    If the version cannot be converted to a Version, a CliInputError is raised.
-    """
-    match = re.match(r"^(\d+)\.(\d+)(\.(\d+)|-preview)$", qt_ver)
-    if not match:
-        raise CliInputError(
-            "Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_ver)
-        )
-    major, minor, end, patch = match.groups()
-    is_preview = end == "-preview"
-    return Version(
-        major=int(major),
-        minor=int(minor),
-        patch=int(patch) if patch else 0,
-        prerelease=("preview",) if is_preview else None,
-    )
-
-
-def to_version_permissive(version_str: str) -> Version:
-    """Converts a version string with dots (5.X.Y, etc) into a semantic version.
-    If the version omits either the patch or minor versions, they will be filled in with zeros,
-    and the remaining version string becomes part of the prerelease component.
-    If the version cannot be converted to a Version, a ValueError is raised.
-
-    This function is intended to be used on Version tags in an Updates.xml file.
-
-    to_version_permissive('1.33.1-202102101246') => Version('1.33.1-202102101246')
-    to_version_permissive('1.33-202102101246') => Version('1.33.0-202102101246')    # tools_conan
-    to_version_permissive('2020-05-19-1') => Version('2020.0.0-05-19-1')            # tools_vcredist
-    """
-    match = re.match(r"^(\d+)(\.(\d+)(\.(\d+))?)?(.*)$", version_str)
-    if not match:
-        raise ValueError("Invalid version detected: '{}'".format(version_str))
-
-    major, dot_minor, minor, dot_patch, patch, prerelease = match.groups()
-    return Version(
-        "{}.{}.{}{}".format(
-            major, minor if minor else 0, patch if patch else 0, prerelease
-        )
-    )
-
-
-def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
-    """Converts a Qt version string (596, 512, 5132, etc) into a semantic version.
-    This makes a lot of assumptions based on established patterns:
-    If is_preview is True, the number is interpreted as ver[0].ver[1:], with no patch.
-    If the version is 3 digits, then major, minor, and patch each get 1 digit.
-    If the version is 4 or more digits, then major gets 1 digit, minor gets 2 digits
-    and patch gets all the rest.
-    As of May 2021, the version strings at https://download.qt.io/online/qtsdkrepository
-    conform to this pattern; they are not guaranteed to do so in the future.
-    """
-    if not qt_ver or any(not ch.isdigit() for ch in qt_ver):
-        return None
-    if is_preview:
-        return Version(
-            major=int(qt_ver[:1]),
-            minor=int(qt_ver[1:]),
-            patch=0,
-            prerelease=("preview",),
-        )
-    elif len(qt_ver) >= 4:
-        return Version(
-            major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:])
-        )
-    elif len(qt_ver) == 3:
-        return Version(
-            major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:])
-        )
-    elif len(qt_ver) == 2:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
-    raise ValueError("Invalid version string '{}'".format(qt_ver))
 
 
 def xml_to_modules(

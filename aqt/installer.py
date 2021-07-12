@@ -32,10 +32,8 @@ import time
 from logging import getLogger
 from logging.handlers import QueueHandler
 
-from semantic_version import Version
-
 import aqt
-from aqt.archives import ListCommand, QtArchives, SrcDocExamplesArchives, ToolArchives
+from aqt.archives import QtArchives, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
@@ -43,13 +41,13 @@ from aqt.exceptions import (
     NoPackageFound,
 )
 from aqt.helper import (
-    ArchiveId,
     MyQueueListener,
     Settings,
     downloadBinaryFile,
     getUrl,
     setup_logging,
 )
+from aqt.metadata import ArchiveId, ListCommand, Version
 from aqt.updater import Updater
 
 try:
