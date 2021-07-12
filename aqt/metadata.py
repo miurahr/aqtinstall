@@ -270,21 +270,35 @@ class ArchiveId:
         )
 
 
-class Table:
-    def __init__(self, head: List[str], rows: List[List[str]], max_width: int = 0):
-        # max_width is set to 0 by default: this disables wrapping of text table cells
-        self.head = head
-        self.rows = rows
-        self.max_width = max_width
+class ToolData:
+    """A data class hold tool details."""
+
+    def __init__(self, tool_data):
+        self.tool_data = tool_data
 
     def __format__(self, format_spec) -> str:
-        if format_spec == "":
-            table = Texttable(max_width=self.max_width)
+        if format_spec == "" or format_spec[-1] == "t":  # default is table
+            # max_width is set to 0 by default: this disables wrapping of text table cells
+            w = format_spec[:-1]
+            max_width: int = 0 if len(w) == 0 else int(w)
+            head = [
+                "Tool Variant Name",
+                "Version",
+                "Release Date",
+                "Display Name",
+                "Description",
+            ]
+            keys = ("Version", "ReleaseDate", "DisplayName", "Description")
+            rows = [
+                [name, *[content[key] for key in keys]]
+                for name, content in self.tool_data.items()
+            ]
+            table = Texttable(max_width=max_width)
             table.set_deco(Texttable.HEADER)
-            table.header(self.head)
-            table.add_rows(self.rows, header=False)
+            table.header(head)
+            table.add_rows(rows, header=False)
             return table.draw()
-        elif format_spec == "s":
+        elif format_spec[-1] == "s":
             return str(self)
         else:
             raise ValueError()
@@ -350,7 +364,7 @@ class ListCommand:
             self.request_type = "versions"
             self._action = self.fetch_versions
 
-    def action(self) -> Union[List[str], Versions, Table]:
+    def action(self) -> Union[List[str], Versions, ToolData]:
         return self._action()
 
     def run(self) -> int:
@@ -362,8 +376,10 @@ class ListCommand:
                 )
                 self.print_suggested_follow_up(self.logger.info)
                 return 1
-            if isinstance(output, Versions) or isinstance(output, Table):
+            if isinstance(output, Versions):
                 print(format(output))
+            elif isinstance(output, ToolData):
+                print(format(output, "{:t}"))  # can set width "{:100t}"
             elif self.archive_id.is_tools():
                 print(*output, sep="\n")
             else:
@@ -443,23 +459,10 @@ class ListCommand:
     ) -> Optional[Dict[str, str]]:
         # Get data for all the tool modules
         all_tools_data = self._fetch_tool_data(tool_name)
-        return ListCommand.choose_highest_version_in_spec(all_tools_data, simple_spec)
+        return self.choose_highest_version_in_spec(all_tools_data, simple_spec)
 
-    def fetch_tool_long_listing(self, tool_name: str) -> Table:
-        head = [
-            "Tool Variant Name",
-            "Version",
-            "Release Date",
-            "Display Name",
-            "Description",
-        ]
-        keys = ("Version", "ReleaseDate", "DisplayName", "Description")
-        tool_data = self._fetch_tool_data(tool_name, keys_to_keep=keys)
-        rows = [
-            [name, *[content[key] for key in keys]]
-            for name, content in tool_data.items()
-        ]
-        return Table(head, rows)
+    def fetch_tool_long_listing(self, tool_name: str) -> ToolData:
+        return ToolData(self._fetch_tool_data(tool_name))
 
     @staticmethod
     def choose_highest_version_in_spec(
