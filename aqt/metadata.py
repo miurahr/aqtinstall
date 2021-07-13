@@ -643,9 +643,7 @@ def show_list(meta: ListCommand) -> int:
     try:
         output = meta.action()
         if not output:
-            logger.info(
-                "No {} available for this request.".format(meta.request_type)
-            )
+            logger.info("No {} available for this request.".format(meta.request_type))
             logger.info(suggested_follow_up(meta))
             return 1
         if isinstance(output, Versions):
