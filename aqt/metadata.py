@@ -25,16 +25,7 @@ import posixpath
 import random
 import re
 from logging import getLogger
-from typing import (
-    Dict,
-    Generator,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 from xml.etree import ElementTree as ElementTree
 
 import bs4
@@ -272,6 +263,14 @@ class ArchiveId:
 class ToolData:
     """A data class hold tool details."""
 
+    head = [
+        "Tool Variant Name",
+        "Version",
+        "Release Date",
+        "Display Name",
+        "Description",
+    ]
+
     def __init__(self, tool_data):
         self.tool_data = tool_data
 
@@ -284,27 +283,22 @@ class ToolData:
             match = re.match(r"\{(.*):(\d*)t\}", format_spec)
             if match:
                 g = match.groups()
-                max_width = 0 if g[1] is "" else int(g[1])
+                max_width = 0 if g[1] == "" else int(g[1])
             else:
                 raise ValueError("Wrong format")
+        table = Texttable(max_width=max_width)
+        table.set_deco(Texttable.HEADER)
+        table.header(self.head)
+        table.add_rows(self.rows, header=False)
+        return table.draw()
 
-        head = [
-            "Tool Variant Name",
-            "Version",
-            "Release Date",
-            "Display Name",
-            "Description",
-        ]
+    @property
+    def rows(self):
         keys = ("Version", "ReleaseDate", "DisplayName", "Description")
-        rows = [
+        return [
             [name, *[content[key] for key in keys]]
             for name, content in self.tool_data.items()
         ]
-        table = Texttable(max_width=max_width)
-        table.set_deco(Texttable.HEADER)
-        table.header(head)
-        table.add_rows(rows, header=False)
-        return table.draw()
 
 
 class ListCommand:
