@@ -581,7 +581,7 @@ class ListCommand:
         # NOTE: The url at `<base>/<host>/<target>/qt5_590/` does not exist; the real one is `qt5_590`
         patch = (
             ""
-            if version.prerelease 
+            if version.prerelease
             or self.archive_id.is_preview()
             or version in SimpleSpec("5.9.0")
             else str(version.patch)
