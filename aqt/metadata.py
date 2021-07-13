@@ -578,9 +578,12 @@ class ListCommand:
         self, version: Version
     ) -> Tuple[List[str], List[str]]:
         """Returns [list of modules, list of architectures]"""
+        # NOTE: The url at `<base>/<host>/<target>/qt5_590/` does not exist; the real one is `qt5_590`
         patch = (
             ""
-            if version.prerelease or self.archive_id.is_preview()
+            if version.prerelease 
+            or self.archive_id.is_preview()
+            or version in SimpleSpec("5.9.0")
             else str(version.patch)
         )
         qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
