@@ -26,7 +26,6 @@ import random
 import re
 from logging import getLogger
 from typing import (
-    Callable,
     Dict,
     Generator,
     Iterable,
@@ -367,32 +366,6 @@ class ListCommand:
     def action(self) -> Union[List[str], Versions, ToolData]:
         return self._action()
 
-    def run(self) -> int:
-        try:
-            output = self.action()
-            if not output:
-                self.logger.info(
-                    "No {} available for this request.".format(self.request_type)
-                )
-                self.print_suggested_follow_up(self.logger.info)
-                return 1
-            if isinstance(output, Versions):
-                print(format(output))
-            elif isinstance(output, ToolData):
-                print(format(output, "{:t}"))  # can set width "{:100t}"
-            elif self.archive_id.is_tools():
-                print(*output, sep="\n")
-            else:
-                print(*output, sep=" ")
-            return 0
-        except CliInputError as e:
-            self.logger.error("Command line input error: {}".format(e))
-            return 1
-        except (ArchiveConnectionError, ArchiveDownloadError) as e:
-            self.logger.error("{}".format(e))
-            self.print_suggested_follow_up(self.logger.error)
-            return 1
-
     def fetch_modules(self, version: Version) -> List[str]:
         return self.get_modules_architectures_for_version(version=version)[0]
 
@@ -644,23 +617,50 @@ class ListCommand:
             return str(self.archive_id)
         return "{} with minor version {}".format(self.archive_id, self.filter_minor)
 
-    def print_suggested_follow_up(self, printer: Callable[[str], None]) -> None:
-        """Makes an informed guess at what the user got wrong, in the event of an error."""
-        base_cmd = "aqt {0.category} {0.host} {0.target}".format(self.archive_id)
-        if self.archive_id.extension:
-            msg = "Please use '{} --extensions <QT_VERSION>' to list valid extensions.".format(
-                base_cmd
-            )
-            printer(msg)
 
-        if self.archive_id.is_tools() and self.request_type == "tool variant names":
-            msg = "Please use '{}' to check what tools are available.".format(base_cmd)
-            printer(msg)
-        elif self.filter_minor is not None:
-            msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
-                base_cmd, self.archive_id.category, self.filter_minor
+def suggested_follow_up(meta: ListCommand) -> str:
+    """Makes an informed guess at what the user got wrong, in the event of an error."""
+    base_cmd = "aqt {0.category} {0.host} {0.target}".format(meta.archive_id)
+    if meta.archive_id.extension:
+        msg = "Please use '{} --extensions <QT_VERSION>' to list valid extensions.".format(
+            base_cmd
+        )
+        return msg
+
+    if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
+        msg = "Please use '{}' to check what tools are available.".format(base_cmd)
+    elif meta.filter_minor is not None:
+        msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
+            base_cmd, meta.archive_id.category, meta.filter_minor
+        )
+    elif meta.request_type in ("architectures", "modules", "extensions"):
+        msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
+    return msg
+
+
+def show_list(meta: ListCommand) -> int:
+    logger = getLogger()
+    try:
+        output = meta.action()
+        if not output:
+            logger.info(
+                "No {} available for this request.".format(meta.request_type)
             )
-            printer(msg)
-        elif self.request_type in ("architectures", "modules", "extensions"):
-            msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
-            printer(msg)
+            logger.info(suggested_follow_up(meta))
+            return 1
+        if isinstance(output, Versions):
+            print(format(output))
+        elif isinstance(output, ToolData):
+            print(format(output, "{:t}"))  # can set width "{:100t}"
+        elif meta.archive_id.is_tools():
+            print(*output, sep="\n")
+        else:
+            print(*output, sep=" ")
+        return 0
+    except CliInputError as e:
+        logger.error("Command line input error: {}".format(e))
+        return 1
+    except (ArchiveConnectionError, ArchiveDownloadError) as e:
+        logger.error("{}".format(e))
+        logger.error(suggested_follow_up(meta))
+        return 1
