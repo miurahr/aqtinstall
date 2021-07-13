@@ -281,7 +281,7 @@ class Updater:
         elif arch.startswith("win32_mingw"):
             arch_dir = arch[6:] + "_32"
         elif arch.startswith("win"):
-            m = re.match("win\d{2}_(msvc\d{4})_(winrt_x\d{2})", arch)
+            m = re.match(r"win\d{2}_(msvc\d{4})_(winrt_x\d{2})", arch)
             if m:
                 a, b = m.groups()
                 arch_dir = b + "_" + a
