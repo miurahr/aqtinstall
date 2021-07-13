@@ -31,9 +31,10 @@ import subprocess
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
+from typing import List, Optional
 
 import aqt
-from aqt.archives import QtArchives, SrcDocExamplesArchives, ToolArchives
+from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
@@ -283,7 +284,7 @@ class Cli:
         except ArchiveDownloadError or ArchiveListError or NoPackageFound:
             exit(1)
         target_config = qt_archives.get_target_config()
-        self.call_installer(qt_archives, base_dir, sevenzip, keep)
+        run_installer(qt_archives.get_archives(), base_dir, sevenzip, keep)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -361,7 +362,7 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        self.call_installer(srcdocexamples_archives, base_dir, sevenzip, keep)
+        run_installer(srcdocexamples_archives.get_archives(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
 
     def run_src(self, args):
@@ -464,7 +465,7 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        self.call_installer(tool_archives, base_dir, sevenzip, keep)
+        run_installer(tool_archives.get_archives(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
@@ -800,24 +801,6 @@ class Cli:
         result = args.func(args)
         return result
 
-    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
-        queue = multiprocessing.Manager().Queue(-1)
-        listener = MyQueueListener(queue)
-        listener.start()
-        #
-        tasks = []
-        for arc in qt_archives.get_archives():
-            tasks.append((arc, base_dir, sevenzip, queue, keep))
-        ctx = multiprocessing.get_context("spawn")
-        pool = ctx.Pool(Settings.concurrency)
-        pool.starmap(installer, tasks)
-        #
-        pool.close()
-        pool.join()
-        # all done, close logging service for sub-processes
-        listener.enqueue_sentinel()
-        listener.stop()
-
     @staticmethod
     def _is_valid_version_str(
         version_str: str, *, allow_latest: bool = False, allow_empty: bool = False
@@ -833,7 +816,35 @@ class Cli:
             return False
 
 
-def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout=None):
+def run_installer(
+    archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool
+):
+    queue = multiprocessing.Manager().Queue(-1)
+    listener = MyQueueListener(queue)
+    listener.start()
+    #
+    tasks = []
+    for arc in archives:
+        tasks.append((arc, base_dir, sevenzip, queue, keep))
+    ctx = multiprocessing.get_context("spawn")
+    pool = ctx.Pool(Settings.concurrency)
+    pool.starmap(installer, tasks)
+    #
+    pool.close()
+    pool.join()
+    # all done, close logging service for sub-processes
+    listener.enqueue_sentinel()
+    listener.stop()
+
+
+def installer(
+    qt_archive: QtPackage,
+    base_dir: str,
+    command: Optional[str],
+    queue: multiprocessing.Queue,
+    keep: bool = False,
+    response_timeout: Optional[int] = None,
+):
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
