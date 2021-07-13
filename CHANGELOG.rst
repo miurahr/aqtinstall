@@ -7,6 +7,18 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v1.2.3`_ (14, Jul. 2021)
+=============-===========
+
+Changed
+-------
+* helper: set max_retries (#296)
+
+Fixed
+-----
+* Patching for winrt packages(#311)
+* CI: Fix release note script
+* CI: bundle jom.zip for test
 
 `v1.2.2`_ (1, Jul. 2021)
 ========================
@@ -173,7 +185,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.3...HEAD
+.. _v1.2.3: https://github.com/miurahr/aqtinstall/compare/v1.2.2...v1.2.3
 .. _v1.2.2: https://github.com/miurahr/aqtinstall/compare/v1.2.1...v1.2.2
 .. _v1.2.1: https://github.com/miurahr/aqtinstall/compare/v1.2.0...v1.2.1
 .. _v1.2.0: https://github.com/miurahr/aqtinstall/compare/v1.1.6...v1.2.0
