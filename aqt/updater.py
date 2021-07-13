@@ -283,7 +283,7 @@ class Updater:
         elif arch.startswith("win"):
             m = re.match("win\d{2}_(msvc\d{4})_(winrt_x\d{2})", arch)
             if m:
-                a, b= m.groups()
+                a, b = m.groups()
                 arch_dir = b + "_" + a
             else:
                 arch_dir = arch[6:]
