@@ -276,31 +276,35 @@ class ToolData:
         self.tool_data = tool_data
 
     def __format__(self, format_spec) -> str:
-        if format_spec == "" or format_spec[-1] == "t":  # default is table
-            # max_width is set to 0 by default: this disables wrapping of text table cells
-            w = format_spec[:-1]
-            max_width: int = 0 if len(w) == 0 else int(w)
-            head = [
-                "Tool Variant Name",
-                "Version",
-                "Release Date",
-                "Display Name",
-                "Description",
-            ]
-            keys = ("Version", "ReleaseDate", "DisplayName", "Description")
-            rows = [
-                [name, *[content[key] for key in keys]]
-                for name, content in self.tool_data.items()
-            ]
-            table = Texttable(max_width=max_width)
-            table.set_deco(Texttable.HEADER)
-            table.header(head)
-            table.add_rows(rows, header=False)
-            return table.draw()
-        elif format_spec[-1] == "s":
+        if format_spec == "{s}":
             return str(self)
+        if format_spec == "":
+            max_width: int = 0
         else:
-            raise ValueError()
+            match = re.match(r"\{(.*):(\d*)t\}", format_spec)
+            if match:
+                g = match.groups()
+                max_width = 0 if g[1] is "" else int(g[1])
+            else:
+                raise ValueError("Wrong format")
+
+        head = [
+            "Tool Variant Name",
+            "Version",
+            "Release Date",
+            "Display Name",
+            "Description",
+        ]
+        keys = ("Version", "ReleaseDate", "DisplayName", "Description")
+        rows = [
+            [name, *[content[key] for key in keys]]
+            for name, content in self.tool_data.items()
+        ]
+        table = Texttable(max_width=max_width)
+        table.set_deco(Texttable.HEADER)
+        table.header(head)
+        table.add_rows(rows, header=False)
+        return table.draw()
 
 
 class ListCommand:
