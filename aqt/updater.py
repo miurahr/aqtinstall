@@ -21,6 +21,7 @@
 import logging
 import os
 import pathlib
+import re
 import subprocess
 from logging import getLogger
 
@@ -280,7 +281,12 @@ class Updater:
         elif arch.startswith("win32_mingw"):
             arch_dir = arch[6:] + "_32"
         elif arch.startswith("win"):
-            arch_dir = arch[6:]
+            m = re.match(r"win\d{2}_(msvc\d{4})_(winrt_x\d{2})", arch)
+            if m:
+                a, b = m.groups()
+                arch_dir = b + "_" + a
+            else:
+                arch_dir = arch[6:]
         elif version in SimpleSpec(">=6.2") and os_name == "mac" and arch == "clang_64":
             arch_dir = "macos"
         else:
