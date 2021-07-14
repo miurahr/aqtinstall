@@ -839,7 +839,7 @@ def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout
     It is called through multiprocessing.Pool()
     """
     name = qt_archive.name
-    url = qt_archive.url
+    url = qt_archive.archive_url
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
