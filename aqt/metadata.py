@@ -637,13 +637,15 @@ def suggested_follow_up(meta: ListCommand, printer: Callable[[str], None]) -> No
 
     if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
         msg = "Please use '{}' to check what tools are available.".format(base_cmd)
+        printer(msg)
     elif meta.filter_minor is not None:
         msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
             base_cmd, meta.archive_id.category, meta.filter_minor
         )
+        printer(msg)
     elif meta.request_type in ("architectures", "modules", "extensions"):
         msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
-    printer(msg)
+        printer(msg)
 
 
 def show_list(meta: ListCommand) -> int:
