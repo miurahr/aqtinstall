@@ -34,7 +34,7 @@ from logging.handlers import QueueHandler
 from typing import List, Optional
 
 import aqt
-from aqt.archives import QtArchives, SrcDocExamplesArchives, ToolArchives
+from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
@@ -817,7 +817,7 @@ class Cli:
 
 
 def run_installer(
-    archives: List[QtArchives], base_dir: str, sevenzip: Optional[str], keep: bool
+    archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool
 ):
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
@@ -838,7 +838,7 @@ def run_installer(
 
 
 def installer(
-    qt_archive: QtArchives,
+    qt_archive: QtPackage,
     base_dir: str,
     command: Optional[str],
     queue: multiprocessing.Queue,
