@@ -371,7 +371,7 @@ class MetadataFactory:
             self.request_type = "versions"
             self._action = self.fetch_versions
 
-    def action(self) -> Union[List[str], Versions, ToolData]:
+    def getList(self) -> Union[List[str], Versions, ToolData]:
         return self._action()
 
     def fetch_modules(self, version: Version) -> List[str]:
@@ -652,7 +652,7 @@ def suggested_follow_up(meta: MetadataFactory, printer: Callable[[str], None]) -
 def show_list(meta: MetadataFactory) -> int:
     logger = getLogger("aqt.list")
     try:
-        output = meta.action()
+        output = meta.getList()
         if not output:
             logger.info("No {} available for this request.".format(meta.request_type))
             suggested_follow_up(meta, logger.info)

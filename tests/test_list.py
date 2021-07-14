@@ -32,14 +32,14 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
     )
 
     # Test 'aqt list tools'
-    tools = MetadataFactory(ArchiveId("tools", os_name, target)).action()
+    tools = MetadataFactory(ArchiveId("tools", os_name, target)).getList()
     assert tools == expected["tools"]
 
     for qt in ("qt5", "qt6"):
         for ext, expected_output in expected[qt].items():
             # Test 'aqt list qt'
             archive_id = ArchiveId(qt, os_name, target, ext if ext != "qt" else "")
-            all_versions = MetadataFactory(archive_id).action()
+            all_versions = MetadataFactory(archive_id).getList()
 
             if len(expected_output) == 0:
                 assert not all_versions
@@ -47,7 +47,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
                 assert f"{all_versions}" == "\n".join(expected_output)
 
             # Filter for the latest version only
-            latest_ver = MetadataFactory(archive_id, is_latest_version=True).action()
+            latest_ver = MetadataFactory(archive_id, is_latest_version=True).getList()
 
             if len(expected_output) == 0:
                 assert not latest_ver
@@ -62,14 +62,14 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
                     archive_id,
                     filter_minor=minor,
                     is_latest_version=True,
-                ).action()
+                ).getList()
                 assert f"{latest_ver_for_minor}" == row.split(" ")[-1]
 
                 # Find all versions for a particular minor version
                 all_ver_for_minor = MetadataFactory(
                     archive_id,
                     filter_minor=minor,
-                ).action()
+                ).getList()
                 assert f"{all_ver_for_minor}" == row
 
 
