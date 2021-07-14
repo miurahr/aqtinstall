@@ -22,6 +22,7 @@
 
 import posixpath
 import xml.etree.ElementTree as ElementTree
+from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Optional, Tuple
 
@@ -30,43 +31,25 @@ from aqt.helper import Settings, getUrl
 from aqt.metadata import SimpleSpec, Version
 
 
+@dataclass
 class TargetConfig:
-    def __init__(self, version, target, arch, os_name):
-        self.version = str(version)
-        self.target = target
-        self.arch = arch
-        self.os_name = os_name
+    version: str
+    target: str
+    arch: str
+    os_name: str
 
-    def __str__(self):
-        print(
-            f"TargetConfig(version={self.version}, target={self.target}, "
-            f"arch={self.arch}, os_name={self.os_name}"
-        )
-
-    def __repr__(self):
-        print(f"({self.version}, {self.target}, {self.arch}, {self.os_name})")
+    def __post_init__(self):
+        self.version = str(self.version)
 
 
+@dataclass
 class QtPackage:
-    """
-    Hold package information.
-    """
-
-    def __init__(
-        self,
-        name: str,
-        archive_url: str,
-        archive: str,
-        package_desc: str,
-        hashurl: str,
-        version: Optional[Version] = None,
-    ):
-        self.name = name
-        self.url = archive_url
-        self.archive = archive
-        self.desc = package_desc
-        self.hashurl = hashurl
-        self.version = version
+    name: str
+    archive_url: str
+    archive: str
+    package_desc: str
+    hashurl: str
+    version: Optional[Version] = field(default=None)
 
     def __repr__(self):
         v_info = f", version={self.version}" if self.version else ""
@@ -81,16 +64,12 @@ class QtPackage:
         )
 
 
+@dataclass
 class ListInfo:
-    """
-    Hold list information
-    """
-
-    def __init__(self, name, display_name, desc, virtual):
-        self.name = name
-        self.display_name = display_name
-        self.desc = desc
-        self.virtual = virtual
+    name: str
+    display_name: str
+    desc: str
+    virtual: str
 
 
 class PackagesList:
