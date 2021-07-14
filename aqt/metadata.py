@@ -25,7 +25,17 @@ import posixpath
 import random
 import re
 from logging import getLogger
-from typing import Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
+from typing import (
+    Callable,
+    Dict,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
+)
 from xml.etree import ElementTree as ElementTree
 
 import bs4
@@ -616,14 +626,14 @@ class ListCommand:
         return "{} with minor version {}".format(self.archive_id, self.filter_minor)
 
 
-def suggested_follow_up(meta: ListCommand) -> str:
+def suggested_follow_up(meta: ListCommand, printer: Callable[[str], None]) -> None:
     """Makes an informed guess at what the user got wrong, in the event of an error."""
     base_cmd = "aqt {0.category} {0.host} {0.target}".format(meta.archive_id)
     if meta.archive_id.extension:
-        msg = "Please use '{} --extensions <QT_VERSION>' to list valid extensions.".format(
+        msg = "Please use '{} --extensions <QT_VERSION>' to list valid extensions.\n".format(
             base_cmd
         )
-        return msg
+        printer(msg)
 
     if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
         msg = "Please use '{}' to check what tools are available.".format(base_cmd)
@@ -633,16 +643,16 @@ def suggested_follow_up(meta: ListCommand) -> str:
         )
     elif meta.request_type in ("architectures", "modules", "extensions"):
         msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
-    return msg
+    printer(msg)
 
 
 def show_list(meta: ListCommand) -> int:
-    logger = getLogger()
+    logger = getLogger("aqt.list")
     try:
         output = meta.action()
         if not output:
             logger.info("No {} available for this request.".format(meta.request_type))
-            logger.info(suggested_follow_up(meta))
+            suggested_follow_up(meta, logger.info)
             return 1
         if isinstance(output, Versions):
             print(format(output))
@@ -658,5 +668,5 @@ def show_list(meta: ListCommand) -> int:
         return 1
     except (ArchiveConnectionError, ArchiveDownloadError) as e:
         logger.error("{}".format(e))
-        logger.error(suggested_follow_up(meta))
+        suggested_follow_up(meta, logger.error)
         return 1
