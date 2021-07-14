@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from aqt.installer import Cli
-from aqt.metadata import ArchiveId, ListCommand, SimpleSpec, Version
+from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version
 
 MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 
@@ -25,21 +25,21 @@ MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 )
 def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_file):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    monkeypatch.setattr(ListCommand, "fetch_http", lambda self, _: _html)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
 
     expected = json.loads(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
     # Test 'aqt list tools'
-    tools = ListCommand(ArchiveId("tools", os_name, target)).action()
+    tools = MetadataFactory(ArchiveId("tools", os_name, target)).action()
     assert tools == expected["tools"]
 
     for qt in ("qt5", "qt6"):
         for ext, expected_output in expected[qt].items():
             # Test 'aqt list qt'
             archive_id = ArchiveId(qt, os_name, target, ext if ext != "qt" else "")
-            all_versions = ListCommand(archive_id).action()
+            all_versions = MetadataFactory(archive_id).action()
 
             if len(expected_output) == 0:
                 assert not all_versions
@@ -47,7 +47,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
                 assert f"{all_versions}" == "\n".join(expected_output)
 
             # Filter for the latest version only
-            latest_ver = ListCommand(archive_id, is_latest_version=True).action()
+            latest_ver = MetadataFactory(archive_id, is_latest_version=True).action()
 
             if len(expected_output) == 0:
                 assert not latest_ver
@@ -58,7 +58,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
                 minor = int(MINOR_REGEX.search(row).group(1))
 
                 # Find the latest version for a particular minor version
-                latest_ver_for_minor = ListCommand(
+                latest_ver_for_minor = MetadataFactory(
                     archive_id,
                     filter_minor=minor,
                     is_latest_version=True,
@@ -66,7 +66,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
                 assert f"{latest_ver_for_minor}" == row.split(" ")[-1]
 
                 # Find all versions for a particular minor version
-                all_ver_for_minor = ListCommand(
+                all_ver_for_minor = MetadataFactory(
                     archive_id,
                     filter_minor=minor,
                 ).action()
@@ -95,12 +95,12 @@ def test_list_architectures_and_modules(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
-    modules = ListCommand(archive_id).fetch_modules(Version(version))
+    modules = MetadataFactory(archive_id).fetch_modules(Version(version))
     assert modules == expect["modules"]
 
-    arches = ListCommand(archive_id).fetch_arches(Version(version))
+    arches = MetadataFactory(archive_id).fetch_arches(Version(version))
     assert arches == expect["architectures"]
 
 
@@ -121,9 +121,9 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
-    modules = ListCommand(archive_id).fetch_tool_modules(tool_name)
+    modules = MetadataFactory(archive_id).fetch_tool_modules(tool_name)
     assert modules == expect["modules"]
 
 
@@ -144,9 +144,9 @@ def test_tool_long_listing(monkeypatch, host: str, target: str, tool_name: str):
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    monkeypatch.setattr(ListCommand, "fetch_http", lambda self, _: _xml)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
-    table = ListCommand(archive_id).fetch_tool_long_listing(tool_name)
+    table = MetadataFactory(archive_id).fetch_tool_long_listing(tool_name)
     assert table.rows == expect["long_listing"]
 
 
@@ -195,7 +195,7 @@ def test_list_cli(
         ver_to_replace = ver.replace(".", "")
         return text.replace(ver_to_replace, desired_version)
 
-    monkeypatch.setattr(ListCommand, "fetch_http", _mock)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock)
 
     expected_modules_arches = json.loads(
         (Path(__file__).parent / "data" / xmlexpect).read_text("utf-8")
@@ -274,7 +274,7 @@ def test_list_choose_tool_by_version(simple_spec, expected_name):
         "mytool.350": {"Version": "3.5.0", "Name": "mytool.350"},
         "mytool.300": {"Version": "3.0.0", "Name": "mytool.300"},
     }
-    item = ListCommand.choose_highest_version_in_spec(tools_data, simple_spec)
+    item = MetadataFactory.choose_highest_version_in_spec(tools_data, simple_spec)
     if item is not None:
         assert item["Name"] == expected_name
     else:

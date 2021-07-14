@@ -311,8 +311,8 @@ class ToolData:
         ]
 
 
-class ListCommand:
-    """Encapsulate all parts of the `aqt list` command"""
+class MetadataFactory:
+    """Retrieve metadata of Qt variations, versions, and descriptions from Qt site."""
 
     def __init__(
         self,
@@ -327,11 +327,11 @@ class ListCommand:
         tool_long_listing: Optional[str] = None,
     ):
         """
-        Construct ListCommand.
+        Construct MetadataFactory.
 
-        :param filter_minor:        When set, the ListCommand will filter out all versions of
+        :param filter_minor:        When set, the MetadataFactory will filter out all versions of
                                     Qt that don't match this minor version.
-        :param is_latest_version:   When True, the ListCommand will find all versions of Qt
+        :param is_latest_version:   When True, the MetadataFactory will find all versions of Qt
                                     matching filters, and only print the most recent version
         :param modules_ver:         Version of Qt for which to list modules
         :param extensions_ver:      Version of Qt for which to list extensions
@@ -381,7 +381,7 @@ class ListCommand:
         return self.get_modules_architectures_for_version(version=version)[1]
 
     def fetch_extensions(self, version: Version) -> List[str]:
-        versions_extensions = ListCommand.get_versions_extensions(
+        versions_extensions = MetadataFactory.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url()), self.archive_id.category
         )
         filtered = filter(
@@ -402,7 +402,7 @@ class ListCommand:
         def get_version(ver_ext: Tuple[Version, str]):
             return ver_ext[0]
 
-        versions_extensions = ListCommand.get_versions_extensions(
+        versions_extensions = MetadataFactory.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url()), self.archive_id.category
         )
         versions = sorted(
@@ -416,7 +416,7 @@ class ListCommand:
 
     def fetch_tools(self) -> List[str]:
         html_doc = self.fetch_http(self.archive_id.to_url())
-        return list(ListCommand.iterate_folders(html_doc, "tools"))
+        return list(MetadataFactory.iterate_folders(html_doc, "tools"))
 
     def _fetch_tool_data(
         self, tool_name: str, keys_to_keep: Optional[Iterable[str]] = None
@@ -426,7 +426,7 @@ class ListCommand:
         xml = self.fetch_http(rest_of_url)
         modules = xml_to_modules(
             xml,
-            predicate=ListCommand._has_nonempty_downloads,
+            predicate=MetadataFactory._has_nonempty_downloads,
             keys_to_keep=keys_to_keep,
         )
         return modules
@@ -549,7 +549,7 @@ class ListCommand:
             )
 
         return map(
-            folder_to_version_extension, ListCommand.iterate_folders(html_doc, category)
+            folder_to_version_extension, MetadataFactory.iterate_folders(html_doc, category)
         )
 
     @staticmethod
@@ -595,7 +595,7 @@ class ListCommand:
         # We want the names of modules, regardless of architecture:
         modules = xml_to_modules(
             xml,
-            predicate=ListCommand._has_nonempty_downloads,
+            predicate=MetadataFactory._has_nonempty_downloads,
             keys_to_keep=(),  # Just want names
         )
 
@@ -626,7 +626,7 @@ class ListCommand:
         return "{} with minor version {}".format(self.archive_id, self.filter_minor)
 
 
-def suggested_follow_up(meta: ListCommand, printer: Callable[[str], None]) -> None:
+def suggested_follow_up(meta: MetadataFactory, printer: Callable[[str], None]) -> None:
     """Makes an informed guess at what the user got wrong, in the event of an error."""
     base_cmd = "aqt {0.category} {0.host} {0.target}".format(meta.archive_id)
     if meta.archive_id.extension:
@@ -648,7 +648,7 @@ def suggested_follow_up(meta: ListCommand, printer: Callable[[str], None]) -> No
         printer(msg)
 
 
-def show_list(meta: ListCommand) -> int:
+def show_list(meta: MetadataFactory) -> int:
     logger = getLogger("aqt.list")
     try:
         output = meta.action()
