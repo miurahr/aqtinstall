@@ -282,10 +282,11 @@ def test_list_choose_tool_by_version(simple_spec, expected_name):
         assert expected_name is None
 
 
-requires_ext_msg = "Qt 6 for Android requires one of the following extensions: "
-f"{ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6}. "
-"Please add your extension using the `--extension` flag."
-
+qt6_android_requires_ext_msg = (
+    "Qt 6 for Android requires one of the following extensions: "
+    f"{ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6}. "
+    "Please add your extension using the `--extension` flag."
+)
 no_arm64_v8_msg = "The extension 'arm64_v8a' is only valid for Qt 6 for Android"
 no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13 to 5.15 on desktop."
 
@@ -293,7 +294,7 @@ no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13 to 5.15 on desk
 @pytest.mark.parametrize(
     "target, ext, version, expected_msg",
     (
-        ("android", "", "6.2.0", requires_ext_msg),
+        ("android", "", "6.2.0", qt6_android_requires_ext_msg),
         ("android", "arm64_v8a", "5.13.0", no_arm64_v8_msg),
         ("desktop", "arm64_v8a", "5.13.0", no_arm64_v8_msg),
         ("desktop", "arm64_v8a", "6.2.0", no_arm64_v8_msg),
@@ -301,7 +302,7 @@ no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13 to 5.15 on desk
         ("desktop", "wasm", "6.2.0", no_wasm_msg),  # out of range
         ("android", "wasm", "5.12.11", no_wasm_msg),  # in range, wrong target
         ("android", "wasm", "5.14.0", no_wasm_msg),  # in range, wrong target
-        ("android", "wasm", "6.2.0", requires_ext_msg),  # in range, wrong target
+        ("android", "wasm", "6.2.0", qt6_android_requires_ext_msg),  # in range, wrong target
     ),
 )
 def test_list_invalid_extensions(
