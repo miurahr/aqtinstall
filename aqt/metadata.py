@@ -214,6 +214,7 @@ class ArchiveId:
         "armv7",
         "arm64_v8a",
     )
+    EXTENSIONS_REQUIRED_ANDROID_QT6 = "x86_64", "x86", "armv7", "arm64_v8a"
 
     def __init__(self, category: str, host: str, target: str, extension: str = ""):
         if category not in ArchiveId.CATEGORIES:
@@ -461,6 +462,40 @@ class ListCommand:
         ]
         return Table(head, rows)
 
+    def validate_extension(self, qt_ver: Version) -> None:
+        """
+        Checks extension, and raises CliInputError if invalid.
+
+        Rules:
+        1. On Qt6 for Android, an extension for processor architecture is required.
+        2. On any platform other than Android, or on Qt5, an extension for
+        processor architecture is forbidden.
+        3. The "wasm" extension only works on desktop targets for Qt 5.13-5.15.
+        """
+        if (
+            self.archive_id.target == "android"
+            and qt_ver.major == 6
+            and self.archive_id.extension
+            not in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6
+        ):
+            raise CliInputError(
+                "Qt 6 for Android requires one of the following extensions: "
+                f"{ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6}. "
+                "Please add your extension using the `--extension` flag."
+            )
+        if self.archive_id.extension in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6 and (
+            self.archive_id.target != "android" or qt_ver.major != 6
+        ):
+            raise CliInputError(
+                f"The extension '{self.archive_id.extension}' is only valid for Qt 6 for Android"
+            )
+        if "wasm" in self.archive_id.extension and (
+            qt_ver not in SimpleSpec(">=5.13,<6") or self.archive_id.target != "desktop"
+        ):
+            raise CliInputError(
+                f"The extension '{self.archive_id.extension}' is only available in Qt 5.13 to 5.15 on desktop."
+            )
+
     @staticmethod
     def choose_highest_version_in_spec(
         all_tools_data: Dict[str, Dict[str, str]], simple_spec: SimpleSpec
@@ -578,6 +613,7 @@ class ListCommand:
         self, version: Version
     ) -> Tuple[List[str], List[str]]:
         """Returns [list of modules, list of architectures]"""
+        self.validate_extension(version)
         # NOTE: The url at `<base>/<host>/<target>/qt5_590/` does not exist; the real one is `qt5_590`
         patch = (
             ""
