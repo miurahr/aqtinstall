@@ -549,7 +549,8 @@ class MetadataFactory:
             )
 
         return map(
-            folder_to_version_extension, MetadataFactory.iterate_folders(html_doc, category)
+            folder_to_version_extension,
+            MetadataFactory.iterate_folders(html_doc, category),
         )
 
     @staticmethod
