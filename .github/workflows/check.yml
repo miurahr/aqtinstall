@@ -18,6 +18,12 @@ jobs:
     - name: Install tools
       run: |
         pip install -U pip
-        pip install tox tox-gh-actions build
-    - name: Run check
+        pip install tox tox-gh-actions coveralls
+    - name: Check
       run: tox
+      env:
+        PYTEST_ADDOPTS: --cov-config=pyproject.toml --cov --cov-append --verbose
+    - name: Upload Coverage
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
