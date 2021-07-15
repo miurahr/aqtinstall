@@ -3,8 +3,7 @@ Another Qt installer(aqt)
 
 - Release: |pypi|
 - Documents: |docs|
-- Test status: |gha|
-
+- Test status: |gha| and Coverage: |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
@@ -12,6 +11,8 @@ Another Qt installer(aqt)
    :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
 .. |gha| image:: https://github.com/miurahr/aqtinstall/workflows/Test%20on%20GH%20actions%20environment/badge.svg
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
+.. |coveralls| image:: https://coveralls.io/repos/github/miurahr/aqtinstall/badge.svg?branch=master
+   :target: https://coveralls.io/github/miurahr/aqtinstall?branch=master
 
 This is a utility alternative to the official graphical Qt installer, for using in CI environment where an interactive
 UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.

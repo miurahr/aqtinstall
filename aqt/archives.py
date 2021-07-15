@@ -22,51 +22,34 @@
 
 import posixpath
 import xml.etree.ElementTree as ElementTree
+from dataclasses import dataclass, field
 from logging import getLogger
 from typing import List, Optional, Tuple
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl
-from aqt.metadata import SimpleSpec, Version
+from aqt.metadata import Version
 
 
+@dataclass
 class TargetConfig:
-    def __init__(self, version, target, arch, os_name):
-        self.version = str(version)
-        self.target = target
-        self.arch = arch
-        self.os_name = os_name
+    version: str
+    target: str
+    arch: str
+    os_name: str
 
-    def __str__(self):
-        print(
-            f"TargetConfig(version={self.version}, target={self.target}, "
-            f"arch={self.arch}, os_name={self.os_name}"
-        )
-
-    def __repr__(self):
-        print(f"({self.version}, {self.target}, {self.arch}, {self.os_name})")
+    def __post_init__(self):
+        self.version = str(self.version)
 
 
+@dataclass
 class QtPackage:
-    """
-    Hold package information.
-    """
-
-    def __init__(
-        self,
-        name: str,
-        archive_url: str,
-        archive: str,
-        package_desc: str,
-        hashurl: str,
-        version: Optional[Version] = None,
-    ):
-        self.name = name
-        self.url = archive_url
-        self.archive = archive
-        self.desc = package_desc
-        self.hashurl = hashurl
-        self.version = version
+    name: str
+    archive_url: str
+    archive: str
+    package_desc: str
+    hashurl: str
+    version: Optional[Version] = field(default=None)
 
     def __repr__(self):
         v_info = f", version={self.version}" if self.version else ""
@@ -79,80 +62,6 @@ class QtPackage:
             f"archive={self.archive}, desc={self.desc}"
             f"hashurl={self.hashurl}{v_info})"
         )
-
-
-class ListInfo:
-    """
-    Hold list information
-    """
-
-    def __init__(self, name, display_name, desc, virtual):
-        self.name = name
-        self.display_name = display_name
-        self.desc = desc
-        self.virtual = virtual
-
-
-class PackagesList:
-    """
-    Hold packages list information.
-    """
-
-    def __init__(self, version, os_name, target, base, timeout=(5, 5)):
-        self.version = Version(version)
-        self.os_name = os_name
-        self.target = target
-        self.archives = []
-        self.base = posixpath.join(base, "online", "qtsdkrepository")
-        self.timeout = timeout
-        self.logger = getLogger("aqt")
-        self._get_archives()
-
-    def _get_archives(self):
-        # Get packages index
-        if self.version.major == 6 and self.target == "android":
-            arch_ext = ["_armv7/", "_x86/", "_x86_64/", "_arm64_v8a/"]
-        elif self.version in SimpleSpec(">=5.13.0,<6.0") and self.target == "desktop":
-            arch_ext = ["/", "_wasm/"]
-        else:
-            arch_ext = ["/"]
-        for ext in arch_ext:
-            archive_path = "{0}{1}{2}/qt{3}_{3}{4}{5}{6}".format(
-                self.os_name,
-                "_x86/" if self.os_name == "windows" else "_x64/",
-                self.target,
-                self.version.major,
-                self.version.minor,
-                self.version.patch,
-                ext,
-            )
-            update_xml_url = posixpath.join(self.base, archive_path, "Updates.xml")
-            xml_text = getUrl(update_xml_url, self.timeout)
-            self.update_xml = ElementTree.fromstring(xml_text)
-            for packageupdate in self.update_xml.iter("PackageUpdate"):
-                name = packageupdate.find("Name").text
-                if packageupdate.find("DownloadableArchives").text is not None:
-                    package_desc = packageupdate.findtext("Description")
-                    display_name = packageupdate.findtext("DisplayName")
-                    virtual_str = packageupdate.findtext("Virtual")
-                    if virtual_str == "true":
-                        virtual = True
-                    else:
-                        virtual = False
-                    self.archives.append(
-                        ListInfo(
-                            name=name,
-                            display_name=display_name,
-                            desc=package_desc,
-                            virtual=virtual,
-                        )
-                    )
-        if len(self.archives) == 0:
-            self.logger.error("Error while parsing package information!")
-            exit(1)
-
-    def get_list(self):
-        return self.archives
 
 
 class QtArchives:
@@ -307,7 +216,7 @@ class QtArchives:
             )
             raise NoPackageFound
 
-    def get_archives(self) -> List[QtPackage]:
+    def get_packages(self) -> List[QtPackage]:
         """
          It returns an archive package list.
 

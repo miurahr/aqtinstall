@@ -284,7 +284,7 @@ class Cli:
         except ArchiveDownloadError or ArchiveListError or NoPackageFound:
             exit(1)
         target_config = qt_archives.get_target_config()
-        run_installer(qt_archives.get_archives(), base_dir, sevenzip, keep)
+        run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -362,7 +362,7 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        run_installer(srcdocexamples_archives.get_archives(), base_dir, sevenzip, keep)
+        run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
 
     def run_src(self, args):
@@ -465,7 +465,7 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        run_installer(tool_archives.get_archives(), base_dir, sevenzip, keep)
+        run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
@@ -850,7 +850,7 @@ def installer(
     It is called through multiprocessing.Pool()
     """
     name = qt_archive.name
-    url = qt_archive.url
+    url = qt_archive.archive_url
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()
