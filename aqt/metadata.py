@@ -286,7 +286,7 @@ class ToolData:
     short_head = [
         "Tool Variant Name",
         "Version",
-        "Display Name",
+        "Release Date",
     ]
 
     def __init__(self, tool_data):
@@ -326,7 +326,7 @@ class ToolData:
         ]
 
     def _short_rows(self):
-        keys = ("Version", "DisplayName")
+        keys = ("Version", "ReleaseDate")
         return [
             [name, *[content[key] for key in keys]]
             for name, content in self.tool_data.items()
