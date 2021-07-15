@@ -48,7 +48,7 @@ from aqt.helper import (
     getUrl,
     setup_logging,
 )
-from aqt.metadata import ArchiveId, ListCommand, Version
+from aqt.metadata import ArchiveId, MetadataFactory, Version, show_list
 from aqt.updater import Updater
 
 try:
@@ -496,7 +496,7 @@ class Cli:
                 )
                 exit(1)
 
-        command = ListCommand(
+        meta = MetadataFactory(
             archive_id=ArchiveId(
                 args.category,
                 args.host,
@@ -511,10 +511,10 @@ class Cli:
             tool_name=args.tool,
             tool_long_listing=args.tool_long,
         )
-        return command.run()
+        return show_list(meta)
 
     def _make_list_parser(self, subparsers: argparse._SubParsersAction):
-        """Creates a subparser that works with the ListCommand, and adds it to the `subparsers` parameter"""
+        """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: argparse.ArgumentParser = subparsers.add_parser(
             "list",
             formatter_class=argparse.RawDescriptionHelpFormatter,

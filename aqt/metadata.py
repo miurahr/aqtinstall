@@ -271,28 +271,49 @@ class ArchiveId:
         )
 
 
-class Table:
-    def __init__(self, head: List[str], rows: List[List[str]], max_width: int = 0):
-        # max_width is set to 0 by default: this disables wrapping of text table cells
-        self.head = head
-        self.rows = rows
-        self.max_width = max_width
+class ToolData:
+    """A data class hold tool details."""
+
+    head = [
+        "Tool Variant Name",
+        "Version",
+        "Release Date",
+        "Display Name",
+        "Description",
+    ]
+
+    def __init__(self, tool_data):
+        self.tool_data = tool_data
 
     def __format__(self, format_spec) -> str:
-        if format_spec == "":
-            table = Texttable(max_width=self.max_width)
-            table.set_deco(Texttable.HEADER)
-            table.header(self.head)
-            table.add_rows(self.rows, header=False)
-            return table.draw()
-        elif format_spec == "s":
+        if format_spec == "{s}":
             return str(self)
+        if format_spec == "":
+            max_width: int = 0
         else:
-            raise ValueError()
+            match = re.match(r"\{(.*):(\d*)t\}", format_spec)
+            if match:
+                g = match.groups()
+                max_width = 0 if g[1] == "" else int(g[1])
+            else:
+                raise ValueError("Wrong format")
+        table = Texttable(max_width=max_width)
+        table.set_deco(Texttable.HEADER)
+        table.header(self.head)
+        table.add_rows(self.rows, header=False)
+        return table.draw()
+
+    @property
+    def rows(self):
+        keys = ("Version", "ReleaseDate", "DisplayName", "Description")
+        return [
+            [name, *[content[key] for key in keys]]
+            for name, content in self.tool_data.items()
+        ]
 
 
-class ListCommand:
-    """Encapsulate all parts of the `aqt list` command"""
+class MetadataFactory:
+    """Retrieve metadata of Qt variations, versions, and descriptions from Qt site."""
 
     def __init__(
         self,
@@ -307,11 +328,11 @@ class ListCommand:
         tool_long_listing: Optional[str] = None,
     ):
         """
-        Construct ListCommand.
+        Construct MetadataFactory.
 
-        :param filter_minor:        When set, the ListCommand will filter out all versions of
+        :param filter_minor:        When set, the MetadataFactory will filter out all versions of
                                     Qt that don't match this minor version.
-        :param is_latest_version:   When True, the ListCommand will find all versions of Qt
+        :param is_latest_version:   When True, the MetadataFactory will find all versions of Qt
                                     matching filters, and only print the most recent version
         :param modules_ver:         Version of Qt for which to list modules
         :param extensions_ver:      Version of Qt for which to list extensions
@@ -351,32 +372,8 @@ class ListCommand:
             self.request_type = "versions"
             self._action = self.fetch_versions
 
-    def action(self) -> Union[List[str], Versions, Table]:
+    def getList(self) -> Union[List[str], Versions, ToolData]:
         return self._action()
-
-    def run(self) -> int:
-        try:
-            output = self.action()
-            if not output:
-                self.logger.info(
-                    "No {} available for this request.".format(self.request_type)
-                )
-                self.print_suggested_follow_up(self.logger.info)
-                return 1
-            if isinstance(output, Versions) or isinstance(output, Table):
-                print(format(output))
-            elif self.archive_id.is_tools():
-                print(*output, sep="\n")
-            else:
-                print(*output, sep=" ")
-            return 0
-        except CliInputError as e:
-            self.logger.error("Command line input error: {}".format(e))
-            return 1
-        except (ArchiveConnectionError, ArchiveDownloadError) as e:
-            self.logger.error("{}".format(e))
-            self.print_suggested_follow_up(self.logger.error)
-            return 1
 
     def fetch_modules(self, version: Version) -> List[str]:
         return self.get_modules_architectures_for_version(version=version)[0]
@@ -385,7 +382,7 @@ class ListCommand:
         return self.get_modules_architectures_for_version(version=version)[1]
 
     def fetch_extensions(self, version: Version) -> List[str]:
-        versions_extensions = ListCommand.get_versions_extensions(
+        versions_extensions = MetadataFactory.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url()), self.archive_id.category
         )
         filtered = filter(
@@ -406,7 +403,7 @@ class ListCommand:
         def get_version(ver_ext: Tuple[Version, str]):
             return ver_ext[0]
 
-        versions_extensions = ListCommand.get_versions_extensions(
+        versions_extensions = MetadataFactory.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url()), self.archive_id.category
         )
         versions = sorted(
@@ -420,7 +417,7 @@ class ListCommand:
 
     def fetch_tools(self) -> List[str]:
         html_doc = self.fetch_http(self.archive_id.to_url())
-        return list(ListCommand.iterate_folders(html_doc, "tools"))
+        return list(MetadataFactory.iterate_folders(html_doc, "tools"))
 
     def _fetch_tool_data(
         self, tool_name: str, keys_to_keep: Optional[Iterable[str]] = None
@@ -430,7 +427,7 @@ class ListCommand:
         xml = self.fetch_http(rest_of_url)
         modules = xml_to_modules(
             xml,
-            predicate=ListCommand._has_nonempty_downloads,
+            predicate=MetadataFactory._has_nonempty_downloads,
             keys_to_keep=keys_to_keep,
         )
         return modules
@@ -444,23 +441,10 @@ class ListCommand:
     ) -> Optional[Dict[str, str]]:
         # Get data for all the tool modules
         all_tools_data = self._fetch_tool_data(tool_name)
-        return ListCommand.choose_highest_version_in_spec(all_tools_data, simple_spec)
+        return self.choose_highest_version_in_spec(all_tools_data, simple_spec)
 
-    def fetch_tool_long_listing(self, tool_name: str) -> Table:
-        head = [
-            "Tool Variant Name",
-            "Version",
-            "Release Date",
-            "Display Name",
-            "Description",
-        ]
-        keys = ("Version", "ReleaseDate", "DisplayName", "Description")
-        tool_data = self._fetch_tool_data(tool_name, keys_to_keep=keys)
-        rows = [
-            [name, *[content[key] for key in keys]]
-            for name, content in tool_data.items()
-        ]
-        return Table(head, rows)
+    def fetch_tool_long_listing(self, tool_name: str) -> ToolData:
+        return ToolData(self._fetch_tool_data(tool_name))
 
     def validate_extension(self, qt_ver: Version) -> None:
         """
@@ -600,7 +584,8 @@ class ListCommand:
             )
 
         return map(
-            folder_to_version_extension, ListCommand.iterate_folders(html_doc, category)
+            folder_to_version_extension,
+            MetadataFactory.iterate_folders(html_doc, category),
         )
 
     @staticmethod
@@ -650,7 +635,7 @@ class ListCommand:
         # We want the names of modules, regardless of architecture:
         modules = xml_to_modules(
             xml,
-            predicate=ListCommand._has_nonempty_downloads,
+            predicate=MetadataFactory._has_nonempty_downloads,
             keys_to_keep=(),  # Just want names
         )
 
@@ -680,23 +665,50 @@ class ListCommand:
             return str(self.archive_id)
         return "{} with minor version {}".format(self.archive_id, self.filter_minor)
 
-    def print_suggested_follow_up(self, printer: Callable[[str], None]) -> None:
-        """Makes an informed guess at what the user got wrong, in the event of an error."""
-        base_cmd = "aqt {0.category} {0.host} {0.target}".format(self.archive_id)
-        if self.archive_id.extension:
-            msg = "Please use '{} --extensions <QT_VERSION>' to list valid extensions.".format(
-                base_cmd
-            )
-            printer(msg)
 
-        if self.archive_id.is_tools() and self.request_type == "tool variant names":
-            msg = "Please use '{}' to check what tools are available.".format(base_cmd)
-            printer(msg)
-        elif self.filter_minor is not None:
-            msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
-                base_cmd, self.archive_id.category, self.filter_minor
-            )
-            printer(msg)
-        elif self.request_type in ("architectures", "modules", "extensions"):
-            msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
-            printer(msg)
+def suggested_follow_up(meta: MetadataFactory, printer: Callable[[str], None]) -> None:
+    """Makes an informed guess at what the user got wrong, in the event of an error."""
+    base_cmd = "aqt {0.category} {0.host} {0.target}".format(meta.archive_id)
+    if meta.archive_id.extension:
+        msg = "Please use '{} --extensions <QT_VERSION>' to list valid extensions.\n".format(
+            base_cmd
+        )
+        printer(msg)
+
+    if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
+        msg = "Please use '{}' to check what tools are available.".format(base_cmd)
+        printer(msg)
+    elif meta.filter_minor is not None:
+        msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
+            base_cmd, meta.archive_id.category, meta.filter_minor
+        )
+        printer(msg)
+    elif meta.request_type in ("architectures", "modules", "extensions"):
+        msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
+        printer(msg)
+
+
+def show_list(meta: MetadataFactory) -> int:
+    logger = getLogger("aqt.list")
+    try:
+        output = meta.getList()
+        if not output:
+            logger.info("No {} available for this request.".format(meta.request_type))
+            suggested_follow_up(meta, logger.info)
+            return 1
+        if isinstance(output, Versions):
+            print(format(output))
+        elif isinstance(output, ToolData):
+            print(format(output, "{:t}"))  # can set width "{:100t}"
+        elif meta.archive_id.is_tools():
+            print(*output, sep="\n")
+        else:
+            print(*output, sep=" ")
+        return 0
+    except CliInputError as e:
+        logger.error("Command line input error: {}".format(e))
+        return 1
+    except (ArchiveConnectionError, ArchiveDownloadError) as e:
+        logger.error("{}".format(e))
+        suggested_follow_up(meta, logger.error)
+        return 1
