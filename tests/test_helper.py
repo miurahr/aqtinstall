@@ -1,10 +1,12 @@
 import binascii
 import os
 
+import pytest
 import requests
 from requests.models import Response
 
 from aqt import helper
+from aqt.metadata import Version
 
 
 def test_helper_altlink(monkeypatch):
@@ -95,3 +97,22 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
     helper.downloadBinaryFile(
         "http://example.com/test.xml", out, "sha256", expected, 60
     )
+
+
+@pytest.mark.parametrize(
+    "version, expect",
+    [
+        ("1.33.1", Version(major=1, minor=33, patch=1)),
+        (
+            "1.33.1-202102101246",
+            Version(major=1, minor=33, patch=1, build=("202102101246",)),
+        ),
+        (
+            "1.33-202102101246",
+            Version(major=1, minor=33, patch=0, build=("202102101246",)),
+        ),
+        ("2020-05-19-1", Version(major=2020, minor=0, patch=0, build=("05-19-1",))),
+    ],
+)
+def test_helper_to_version_permissive(version, expect):
+    assert Version.permissive(version) == expect

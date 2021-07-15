@@ -31,11 +31,10 @@ import subprocess
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
-
-from semantic_version import Version
+from typing import List, Optional
 
 import aqt
-from aqt.archives import ListCommand, QtArchives, SrcDocExamplesArchives, ToolArchives
+from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
@@ -43,13 +42,13 @@ from aqt.exceptions import (
     NoPackageFound,
 )
 from aqt.helper import (
-    ArchiveId,
     MyQueueListener,
     Settings,
     downloadBinaryFile,
     getUrl,
     setup_logging,
 )
+from aqt.metadata import ArchiveId, MetadataFactory, Version, show_list
 from aqt.updater import Updater
 
 try:
@@ -285,7 +284,7 @@ class Cli:
         except ArchiveDownloadError or ArchiveListError or NoPackageFound:
             exit(1)
         target_config = qt_archives.get_target_config()
-        self.call_installer(qt_archives, base_dir, sevenzip, keep)
+        run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -363,7 +362,7 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        self.call_installer(srcdocexamples_archives, base_dir, sevenzip, keep)
+        run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
 
     def run_src(self, args):
@@ -410,9 +409,9 @@ class Cli:
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
+        tool_name = args.tool_name  # such as tools_openssl_x64
         os_name = args.host  # windows, linux and mac
         target = args.target  # desktop, android and ios
-        tool_name = args.tool_name  # such as tools_openssl_x64
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -433,11 +432,11 @@ class Cli:
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
         if args.arch is None:
-            archs = ListCommand(
+            archs = MetadataFactory(
                 archive_id=ArchiveId("tools", os_name, target, ""),
                 is_latest_version=True,
                 tool_name=tool_name,
-            ).action()
+            ).getList()
         else:
             archs = [args.arch]
 
@@ -480,7 +479,7 @@ class Cli:
                     exit(1)
             except ArchiveDownloadError or ArchiveListError:
                 exit(1)
-            self.call_installer(tool_archives, base_dir, sevenzip, keep)
+            run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
@@ -511,7 +510,7 @@ class Cli:
                 )
                 exit(1)
 
-        command = ListCommand(
+        meta = MetadataFactory(
             archive_id=ArchiveId(
                 args.category,
                 args.host,
@@ -524,11 +523,12 @@ class Cli:
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
             tool_name=args.tool,
+            tool_long_listing=args.tool_long,
         )
-        return command.run()
+        return show_list(meta)
 
     def _make_list_parser(self, subparsers: argparse._SubParsersAction):
-        """Creates a subparser that works with the ListCommand, and adds it to the `subparsers` parameter"""
+        """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: argparse.ArgumentParser = subparsers.add_parser(
             "list",
             formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -613,6 +613,16 @@ class Cli:
             "When set, this prints all 'tool variant names' available. "
             # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
             "The output of this command is intended to be used with `aqt tool`.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--tool-long",
+            type=str,
+            metavar="TOOL_NAME",
+            help="The name of a tool. Use 'aqt list tools <host> <target>' to see accepted values. "
+            "This flag only works with the 'tools' category, and cannot be combined with any other flags. "
+            "When set, this prints all 'tool variant names' available, along with versions and release dates. "
+            # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
+            "The output of this command is formatted as a table.",
         )
         list_parser.set_defaults(func=self.run_list)
 
@@ -811,24 +821,6 @@ class Cli:
         result = args.func(args)
         return result
 
-    def call_installer(self, qt_archives, base_dir, sevenzip, keep):
-        queue = multiprocessing.Manager().Queue(-1)
-        listener = MyQueueListener(queue)
-        listener.start()
-        #
-        tasks = []
-        for arc in qt_archives.get_archives():
-            tasks.append((arc, base_dir, sevenzip, queue, keep))
-        ctx = multiprocessing.get_context("spawn")
-        pool = ctx.Pool(Settings.concurrency)
-        pool.starmap(installer, tasks)
-        #
-        pool.close()
-        pool.join()
-        # all done, close logging service for sub-processes
-        listener.enqueue_sentinel()
-        listener.stop()
-
     @staticmethod
     def _is_valid_version_str(
         version_str: str, *, allow_latest: bool = False, allow_empty: bool = False
@@ -844,13 +836,41 @@ class Cli:
             return False
 
 
-def installer(qt_archive, base_dir, command, queue, keep=False, response_timeout=None):
+def run_installer(
+    archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool
+):
+    queue = multiprocessing.Manager().Queue(-1)
+    listener = MyQueueListener(queue)
+    listener.start()
+    #
+    tasks = []
+    for arc in archives:
+        tasks.append((arc, base_dir, sevenzip, queue, keep))
+    ctx = multiprocessing.get_context("spawn")
+    pool = ctx.Pool(Settings.concurrency)
+    pool.starmap(installer, tasks)
+    #
+    pool.close()
+    pool.join()
+    # all done, close logging service for sub-processes
+    listener.enqueue_sentinel()
+    listener.stop()
+
+
+def installer(
+    qt_archive: QtPackage,
+    base_dir: str,
+    command: Optional[str],
+    queue: multiprocessing.Queue,
+    keep: bool = False,
+    response_timeout: Optional[int] = None,
+):
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
     """
     name = qt_archive.name
-    url = qt_archive.url
+    url = qt_archive.archive_url
     hashurl = qt_archive.hashurl
     archive = qt_archive.archive
     start_time = time.perf_counter()

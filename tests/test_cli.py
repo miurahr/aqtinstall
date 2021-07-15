@@ -2,9 +2,9 @@ import re
 import sys
 
 import pytest
-from semantic_version import Version
 
-import aqt
+from aqt.installer import Cli
+from aqt.metadata import Version
 
 
 def test_cli_help(capsys):
@@ -27,14 +27,14 @@ def test_cli_help(capsys):
             "                        subcommand for aqt Qt installer\n",
         ]
     )
-    cli = aqt.installer.Cli()
+    cli = Cli()
     cli.run(["help"])
     out, err = capsys.readouterr()
     assert out == expected
 
 
 def test_cli_check_module():
-    cli = aqt.installer.Cli()
+    cli = Cli()
     cli._setup_settings()
     assert cli._check_modules_arg("5.11.3", ["qtcharts", "qtwebengine"])
     assert not cli._check_modules_arg("5.7", ["not_exist"])
@@ -43,7 +43,7 @@ def test_cli_check_module():
 
 
 def test_cli_check_combination():
-    cli = aqt.installer.Cli()
+    cli = Cli()
     cli._setup_settings()
     assert cli._check_qt_arg_combination("5.11.3", "linux", "desktop", "gcc_64")
     assert cli._check_qt_arg_combination("5.11.3", "mac", "desktop", "clang_64")
@@ -51,7 +51,7 @@ def test_cli_check_combination():
 
 
 def test_cli_check_version():
-    cli = aqt.installer.Cli()
+    cli = Cli()
     cli._setup_settings()
     assert cli._check_qt_arg_versions("5.12.0")
     assert not cli._check_qt_arg_versions("5.12")
@@ -64,11 +64,11 @@ def test_cli_check_version():
 def test_cli_invalid_version(capsys, invalid_version):
     """Checks that invalid version strings are handled properly"""
 
-    # Ensure that invalid_version cannot be a Version
+    # Ensure that invalid_version cannot be a semantic_version.Version
     with pytest.raises(ValueError):
         Version(invalid_version)
 
-    cli = aqt.installer.Cli()
+    cli = Cli()
     cli._setup_settings()
 
     matcher = re.compile(
@@ -84,7 +84,7 @@ def test_cli_invalid_version(capsys, invalid_version):
         ("list", "qt5", "mac", "desktop", "--modules", invalid_version),
     ):
         with pytest.raises(SystemExit) as pytest_wrapped_e:
-            cli = aqt.installer.Cli()
+            cli = Cli()
             cli.run(cmd)
         assert pytest_wrapped_e.type == SystemExit
         assert pytest_wrapped_e.value.code == 1
@@ -95,7 +95,7 @@ def test_cli_invalid_version(capsys, invalid_version):
 
 
 def test_cli_check_mirror():
-    cli = aqt.installer.Cli()
+    cli = Cli()
     cli._setup_settings()
     assert cli._check_mirror(None)
     arg = ["install", "5.11.3", "linux", "desktop", "-b", "https://download.qt.io/"]
@@ -124,7 +124,7 @@ def test_cli_launch_with_no_argument(capsys):
             "                        subcommand for aqt Qt installer\n",
         ]
     )
-    cli = aqt.installer.Cli()
+    cli = Cli()
     cli.run([])
     out, err = capsys.readouterr()
     assert out == expected
