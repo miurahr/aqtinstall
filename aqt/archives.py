@@ -24,7 +24,7 @@ import posixpath
 import xml.etree.ElementTree as ElementTree
 from dataclasses import dataclass, field
 from logging import getLogger
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl
@@ -216,7 +216,7 @@ class QtArchives:
             )
             raise NoPackageFound
 
-    def get_archives(self):
+    def get_packages(self) -> List[QtPackage]:
         """
          It returns an archive package list.
 
