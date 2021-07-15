@@ -148,7 +148,7 @@ def test_tool_long_listing(monkeypatch, host: str, target: str, tool_name: str):
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
     table = MetadataFactory(archive_id).fetch_tool_long_listing(tool_name)
-    assert table.rows == expect["long_listing"]
+    assert table._rows() == expect["long_listing"]
 
 
 @pytest.mark.parametrize(
