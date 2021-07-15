@@ -291,6 +291,10 @@ class ToolData:
 
     def __init__(self, tool_data):
         self.tool_data = tool_data
+        for key in tool_data.keys():
+            self.tool_data[key]["Description"] = tool_data[key]["Description"].replace(
+                "<br>", "\n"
+            )
 
     def __format__(self, format_spec) -> str:
         short = False
@@ -302,7 +306,7 @@ class ToolData:
             short = True
             max_width = 0
         else:
-            match = re.match(r"(\d+)t", format_spec)
+            match = re.match(r"\{?:?(\d+)t\}?", format_spec)
             if match:
                 g = match.groups()
                 max_width = int(g[0])
@@ -720,8 +724,10 @@ def show_list(meta: MetadataFactory) -> int:
         if isinstance(output, Versions):
             print(format(output))
         elif isinstance(output, ToolData):
-            width: int = shutil.get_terminal_size().columns
-            if width < 95:
+            width: int = shutil.get_terminal_size((0, 40)).columns
+            if width == 0:  # notty ?
+                print(format(output, "{:0t}"))
+            elif width < 95:  # narrow terminal
                 print(format(output, "{:T}"))
             else:
                 print("{0:{1}t}".format(output, width))
