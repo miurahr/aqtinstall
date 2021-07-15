@@ -311,7 +311,7 @@ def test_list_invalid_extensions(
     def _mock(_, rest_of_url: str) -> str:
         return ""
 
-    monkeypatch.setattr(ListCommand, "fetch_http", _mock)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock)
 
     cat = "qt" + version[0]
     host = "windows"
