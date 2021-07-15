@@ -24,6 +24,7 @@ import operator
 import posixpath
 import random
 import re
+import shutil
 from logging import getLogger
 from typing import (
     Callable,
@@ -282,30 +283,54 @@ class ToolData:
         "Description",
     ]
 
+    short_head = [
+        "Tool Variant Name",
+        "Version",
+        "Release Date",
+    ]
+
     def __init__(self, tool_data):
         self.tool_data = tool_data
+        for key in tool_data.keys():
+            self.tool_data[key]["Description"] = tool_data[key]["Description"].replace(
+                "<br>", "\n"
+            )
 
     def __format__(self, format_spec) -> str:
-        if format_spec == "{s}":
+        short = False
+        if format_spec == "{:s}":
             return str(self)
         if format_spec == "":
             max_width: int = 0
+        elif format_spec == "{:T}":
+            short = True
+            max_width = 0
         else:
-            match = re.match(r"\{(.*):(\d*)t\}", format_spec)
+            match = re.match(r"\{?:?(\d+)t\}?", format_spec)
             if match:
                 g = match.groups()
-                max_width = 0 if g[1] == "" else int(g[1])
+                max_width = int(g[0])
             else:
-                raise ValueError("Wrong format")
+                raise ValueError("Wrong format {}".format(format_spec))
         table = Texttable(max_width=max_width)
         table.set_deco(Texttable.HEADER)
-        table.header(self.head)
-        table.add_rows(self.rows, header=False)
+        if short:
+            table.header(self.short_head)
+            table.add_rows(self._short_rows(), header=False)
+        else:
+            table.header(self.head)
+            table.add_rows(self._rows(), header=False)
         return table.draw()
 
-    @property
-    def rows(self):
+    def _rows(self):
         keys = ("Version", "ReleaseDate", "DisplayName", "Description")
+        return [
+            [name, *[content[key] for key in keys]]
+            for name, content in self.tool_data.items()
+        ]
+
+    def _short_rows(self):
+        keys = ("Version", "ReleaseDate")
         return [
             [name, *[content[key] for key in keys]]
             for name, content in self.tool_data.items()
@@ -699,7 +724,13 @@ def show_list(meta: MetadataFactory) -> int:
         if isinstance(output, Versions):
             print(format(output))
         elif isinstance(output, ToolData):
-            print(format(output, "{:t}"))  # can set width "{:100t}"
+            width: int = shutil.get_terminal_size((0, 40)).columns
+            if width == 0:  # notty ?
+                print(format(output, "{:0t}"))
+            elif width < 95:  # narrow terminal
+                print(format(output, "{:T}"))
+            else:
+                print("{0:{1}t}".format(output, width))
         elif meta.archive_id.is_tools():
             print(*output, sep="\n")
         else:

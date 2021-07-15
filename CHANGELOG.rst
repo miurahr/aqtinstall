@@ -7,19 +7,26 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Added
+-----
+* Add error messages when user inputs an invalid semantic version(#291)
+
 Changed
 -------
 * list subcommand now support tool information(#235)
 * list subcommand can show versions, archiectures and modules.(#235)
 * Add max_retries configuration for connection(#296)
-* Change settings.ini to introduce [requests] section[#297]
+* Change settings.ini to introduce [requests] section(#297)
 * Change log format for logging file.
+* Extension validation for tool subcommand(#314)
+* list subcommand has --tool-long option(#304, #319)
 
 Fixed
 -----
 * Fix helper.getUrl() to handle several response statuses(#292)
 * Fix Qt 6.2.0 target path for macOS.(#289)
-
+* Fix WinRT installation patching(#311)
+* Fix Qt 5.9.0 installation (#312)
 
 `v1.2.2`_ (1, Jul. 2021)
 ========================
