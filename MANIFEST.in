@@ -21,3 +21,8 @@ recursive-include tests *.ini
 recursive-include tests *.json
 recursive-include tests *.py
 recursive-include tests *.xml
+prune .github
+exclude .gitignore
+exclude azure-pipelines.yml
+exclude qtaccount.ini
+exclude aqtinstall.log
