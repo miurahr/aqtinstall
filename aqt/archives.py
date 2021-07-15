@@ -286,7 +286,7 @@ class QtArchives:
             )
             raise NoPackageFound
 
-    def get_archives(self) -> List[QtPackage]:
+    def get_packages(self) -> List[QtPackage]:
         """
          It returns an archive package list.
 
