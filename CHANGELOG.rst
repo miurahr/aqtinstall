@@ -62,8 +62,15 @@ Fixed
 * Running python2 -m aqt does not trigger Python version check (#372,#373)
 
 
+`v1.2.4`_ (17, Jul. 2021)
+=========================
+
+Fixed
+-----
+* Fix crash when installing Qt6.1.2 on mac(#288,#320)
+
 `v1.2.3`_ (14, Jul. 2021)
-=============-===========
+=========================
 
 Changed
 -------
@@ -242,7 +249,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.4...HEAD
+.. _v1.2.4: https://github.com/miurahr/aqtinstall/compare/v1.2.3...v1.2.4
 .. _v1.2.3: https://github.com/miurahr/aqtinstall/compare/v1.2.2...v1.2.3
 .. _v1.2.2: https://github.com/miurahr/aqtinstall/compare/v1.2.1...v1.2.2
 .. _v1.2.1: https://github.com/miurahr/aqtinstall/compare/v1.2.0...v1.2.1
