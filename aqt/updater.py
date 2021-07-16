@@ -287,7 +287,7 @@ class Updater:
                 arch_dir = b + "_" + a
             else:
                 arch_dir = arch[6:]
-        elif version in SimpleSpec(">=6.2") and os_name == "mac" and arch == "clang_64":
+        elif version in SimpleSpec(">=6.1.2") and os_name == "mac" and arch == "clang_64":
             arch_dir = "macos"
         else:
             arch_dir = arch
