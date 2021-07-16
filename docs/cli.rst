@@ -279,20 +279,20 @@ Example: Install an Install FrameWork (IFW):
     aqt tool linux tools_ifw 4.1 qt.tools.ifw.41
 
 
-Example: Install vcredist:
+Example: Install vcredist on Windows:
 
-.. code-block:: bash
+.. code-block:: doscon
 
-    C:\ aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
-    C:\ .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
+    aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
+    .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
 Example: Install MinGW on Windows
 
-.. code-block:: bash
+.. code-block:: doscon
 
-    C:\ aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
-    c:\ set PATH=C:\Qt\Tools\mingw810_64\bin
+    aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
+    set PATH=C:\Qt\Tools\mingw810_64\bin
 
 
 Example: Show help message
