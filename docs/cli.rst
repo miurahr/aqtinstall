@@ -201,7 +201,7 @@ Command examples
 
 Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 
-.. code-block:: bash
+.. code-block:: console
 
     pip install aqtinstall
     sudo aqt install --outputdir /opt 5.12.0 linux desktop -m qtcharts qtnetworkauth
@@ -209,72 +209,72 @@ Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 
 Example: Installing Android (armv7) Qt 5.10.2:
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt install 5.10.2 linux android android_armv7
 
 
 Example: Install examples, doc and source:
 
-.. code-block:: bash
+.. code-block:: console
 
-    C:\ aqt examples 5.15.2 windows desktop -m qtcharts qtnetworkauth
-    C:\ aqt doc 5.15.2 windows desktop -m qtcharts qtnetworkauth
-    C:\ aqt src 5.15.2 windows desktop --archives qtbase --kde
+    aqt examples 5.15.2 windows desktop -m qtcharts qtnetworkauth
+    aqt doc 5.15.2 windows desktop -m qtcharts qtnetworkauth
+    aqt src 5.15.2 windows desktop --archives qtbase --kde
 
 
 Example: Install Web Assembly
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt install 5.15.0 linux desktop wasm_32
 
 
 Example: List available versions for Qt5 on Linux
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt list qt5 linux desktop
 
 
 Example: List available versions for Qt6 on macOS
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt list qt6 mac desktop
 
 
 Example: List available modules for latest version of Qt6 on macOS
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt list qt6 mac desktop --modules latest    # prints 'qtquick3d qtshadertools', etc
 
 
 Example: List available architectures for Qt 6.1.2 on windows
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt list qt6 windows desktop --arch 6.1.2    # prints 'win64_mingw81 win64_msvc2019_64', etc
 
 
 Example: List available tools on windows
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt list tools windows desktop    # prints 'tools_ifw tools_qtcreator', etc
 
 
 Example: List the variants of IFW available:
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt list tools linux desktop --tool tools_ifw   # prints 'qt.tools.ifw.41'
 
 
 Example: Install an Install FrameWork (IFW):
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt tool linux tools_ifw 4.1 qt.tools.ifw.41
 
@@ -297,6 +297,6 @@ Example: Install MinGW on Windows
 
 Example: Show help message
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt help
