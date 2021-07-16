@@ -78,8 +78,8 @@ Same as usual, it can be installed with `pip`
 
 .. code-block:: bash
 
-    $ pip install -U pip
-    $ pip install aqtinstall
+    pip install -U pip
+    pip install aqtinstall
 
 You are recommended to update pip before installing aqtinstall.
 
@@ -284,9 +284,9 @@ Avoid installation of py7zr, python 7zip library, and force using external 7z co
 
 .. code-block:: bash
 
-    $ pip install -U pip
-    $ pip install requests==2.25.1 packaging texttable
-    $ pip install --no-deps aqtinstall
+    pip install -U pip
+    pip install requests==2.25.1 packaging texttable
+    pip install --no-deps aqtinstall
     $ python -m aqt --external /usr/local/bin/7z install 5.15.2 linux desktop
 
 
