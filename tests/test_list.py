@@ -568,13 +568,22 @@ def test_list_fetch_tool_by_simple_spec(monkeypatch):
     (
         (
             120,
-            "Tool Variant Name        Version         Release Date          Display Name                      Description            \n"
-            "========================================================================================================================\n"
-            "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   The Qt Installer Framework provides\n"
-            "                                                                                     a set of tools and utilities to    \n"
-            "                                                                                     create installers for the supported\n"
-            "                                                                                     desktop Qt platforms: Linux,       \n"
-            "                                                                                     Microsoft Windows, and macOS.      \n",
+            (
+                "Tool Variant Name        Version         Release Date          Display Name          "
+                "            Description            \n"
+                "====================================================================================="
+                "===================================\n"
+                "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   "
+                "The Qt Installer Framework provides\n"
+                "                                                                                     "
+                "a set of tools and utilities to    \n"
+                "                                                                                     "
+                "create installers for the supported\n"
+                "                                                                                     "
+                "desktop Qt platforms: Linux,       \n"
+                "                                                                                     "
+                "Microsoft Windows, and macOS.      \n"
+            ),
         ),
         (
             80,
@@ -585,14 +594,14 @@ def test_list_fetch_tool_by_simple_spec(monkeypatch):
         (
             0,
             "Tool Variant Name        Version         Release Date          Display Name          "
-            "                                                                           Description"
-            "                                                                            \n"
+            "                                                                           Descriptio"
+            "n                                                                            \n"
             "====================================================================================="
-            "======================================================================================"
-            "============================================================================\n"
+            "====================================================================================="
+            "=============================================================================\n"
             "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   "
-            "The Qt Installer Framework provides a set of tools and utilities to create installers "
-            "for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.\n",
+            "The Qt Installer Framework provides a set of tools and utilities to create installers"
+            " for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.\n",
         ),
     ),
 )
