@@ -691,35 +691,43 @@ class MetadataFactory:
         return "{} with minor version {}".format(self.archive_id, self.filter_minor)
 
 
-def suggested_follow_up(meta: MetadataFactory, printer: Callable[[str], None]) -> None:
+def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     """Makes an informed guess at what the user got wrong, in the event of an error."""
-    base_cmd = "aqt {0.category} {0.host} {0.target}".format(meta.archive_id)
+    msg = []
+    base_cmd = "aqt list {0.category} {0.host} {0.target}".format(meta.archive_id)
     if meta.archive_id.extension:
-        msg = "Please use '{} --extensions <QT_VERSION>' to list valid extensions.\n".format(
-            base_cmd
+        msg.append(
+            f"Please use '{base_cmd} --extensions <QT_VERSION>' to list valid extensions."
         )
-        printer(msg)
 
     if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
-        msg = "Please use '{}' to check what tools are available.".format(base_cmd)
-        printer(msg)
+        msg.append(f"Please use '{base_cmd}' to check what tools are available.")
     elif meta.filter_minor is not None:
-        msg = "Please use '{}' to check that versions of {} exist with the minor version '{}'".format(
-            base_cmd, meta.archive_id.category, meta.filter_minor
+        msg.append(
+            f"Please use '{base_cmd}' to check that versions of {meta.archive_id.category} "
+            f"exist with the minor version '{meta.filter_minor}'."
         )
-        printer(msg)
     elif meta.request_type in ("architectures", "modules", "extensions"):
-        msg = "Please use '{}' to show versions of Qt available".format(base_cmd)
-        printer(msg)
+        msg.append(f"Please use '{base_cmd}' to show versions of Qt available.")
+
+    return msg
 
 
 def show_list(meta: MetadataFactory) -> int:
     logger = getLogger("aqt.list")
+
+    def show_suggestion(printer):
+        suggestions = suggested_follow_up(meta)
+        if suggestions:
+            printer("=" * 30 + "Suggested follow-up:" + "=" * 30)
+            for suggestion in suggestions:
+                printer("* " + suggestion)
+
     try:
         output = meta.getList()
         if not output:
             logger.info("No {} available for this request.".format(meta.request_type))
-            suggested_follow_up(meta, logger.info)
+            show_suggestion(logger.info)
             return 1
         if isinstance(output, Versions):
             print(format(output))
@@ -741,5 +749,5 @@ def show_list(meta: MetadataFactory) -> int:
         return 1
     except (ArchiveConnectionError, ArchiveDownloadError) as e:
         logger.error("{}".format(e))
-        suggested_follow_up(meta, logger.error)
+        show_suggestion(logger.error)
         return 1
