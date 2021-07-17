@@ -124,30 +124,10 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
-    modules = MetadataFactory(archive_id).fetch_tool_modules(tool_name)
+    modules = MetadataFactory(archive_id, tool_name=tool_name).getList()
     assert modules == expect["modules"]
 
-
-@pytest.mark.parametrize(
-    "host, target, tool_name",
-    [
-        ("mac", "desktop", "tools_cmake"),
-        ("mac", "desktop", "tools_ifw"),
-        ("mac", "desktop", "tools_qtcreator"),
-    ],
-)
-def test_tool_long_listing(monkeypatch, host: str, target: str, tool_name: str):
-    archive_id = ArchiveId("tools", host, target)
-    in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
-    expect_out_file = "{}-{}-{}-expect.json".format(host, target, tool_name)
-    _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    expect = json.loads(
-        (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
-    )
-
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
-
-    table = MetadataFactory(archive_id).fetch_tool_long_listing(tool_name)
+    table = MetadataFactory(archive_id, tool_long_listing=tool_name).getList()
     assert table._rows() == expect["long_listing"]
 
 
