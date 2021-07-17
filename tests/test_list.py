@@ -1,8 +1,8 @@
 import json
 import re
 import sys
-import textwrap
 from pathlib import Path
+from typing import Generator
 
 import pytest
 
@@ -12,8 +12,54 @@ from aqt.metadata import (
     MetadataFactory,
     SimpleSpec,
     Version,
+    Versions,
     suggested_follow_up,
 )
+
+
+def test_versions():
+    versions = Versions(
+        [
+            (1, [Version("1.1.1"), Version("1.1.2")]),
+            (2, [Version("1.2.1"), Version("1.2.2")]),
+        ]
+    )
+    assert (
+        str(versions)
+        == "[[Version('1.1.1'), Version('1.1.2')], [Version('1.2.1'), Version('1.2.2')]]"
+    )
+    assert format(versions) == "1.1.1 1.1.2\n1.2.1 1.2.2"
+    assert format(versions, "s") == str(versions)
+    assert versions.flattened() == [
+        Version("1.1.1"),
+        Version("1.1.2"),
+        Version("1.2.1"),
+        Version("1.2.2"),
+    ]
+    assert isinstance(versions.__iter__(), Generator)
+    assert versions.latest() == Version("1.2.2")
+    assert versions
+
+    empty_versions = Versions(None)
+    assert str(empty_versions) == "[]"
+    assert format(empty_versions) == ""
+    assert empty_versions.flattened() == []
+    assert isinstance(empty_versions.__iter__(), Generator)
+    assert empty_versions.latest() is None
+    assert not empty_versions
+
+    one_version = Versions(Version("1.2.3"))
+    assert str(one_version) == "[[Version('1.2.3')]]"
+    assert format(one_version) == "1.2.3"
+    assert one_version.flattened() == [Version("1.2.3")]
+    assert isinstance(one_version.__iter__(), Generator)
+    assert one_version.latest() == Version("1.2.3")
+    assert one_version
+
+    with pytest.raises(TypeError) as pytest_wrapped_e:
+        format(versions, "x")
+    assert pytest_wrapped_e.type == TypeError
+
 
 MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
 

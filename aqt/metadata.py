@@ -160,9 +160,13 @@ class Versions:
             return None
         return self.versions[-1][-1]
 
-    def __iter__(self) -> List[Version]:
+    def __iter__(self) -> Generator[List[Version], None, None]:
         for item in self.versions:
             yield item
+
+    def flattened(self) -> List[Version]:
+        """Return a flattened list of all versions"""
+        return [version for row in self for version in row]
 
 
 def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
