@@ -439,15 +439,22 @@ def test_suggested_follow_up(meta: MetadataFactory, expected_message: List[str])
 @pytest.mark.parametrize(
     "meta, expect",
     (
-        (MetadataFactory(ArchiveId("qt5", "mac", "desktop"), filter_minor=42),
-         "qt5/mac/desktop with minor version 42"),
-        (MetadataFactory(ArchiveId("qt5", "mac", "desktop", "wasm"), filter_minor=42),
-         "qt5/mac/desktop/wasm with minor version 42"),
-        (MetadataFactory(ArchiveId("qt5", "mac", "desktop")),
-         "qt5/mac/desktop"),
-        (MetadataFactory(ArchiveId("qt5", "mac", "desktop", "wasm")),
-         "qt5/mac/desktop/wasm"),
-    )
+        (
+            MetadataFactory(ArchiveId("qt5", "mac", "desktop"), filter_minor=42),
+            "qt5/mac/desktop with minor version 42",
+        ),
+        (
+            MetadataFactory(
+                ArchiveId("qt5", "mac", "desktop", "wasm"), filter_minor=42
+            ),
+            "qt5/mac/desktop/wasm with minor version 42",
+        ),
+        (MetadataFactory(ArchiveId("qt5", "mac", "desktop")), "qt5/mac/desktop"),
+        (
+            MetadataFactory(ArchiveId("qt5", "mac", "desktop", "wasm")),
+            "qt5/mac/desktop/wasm",
+        ),
+    ),
 )
 def test_list_describe_filters(meta: MetadataFactory, expect: str):
     assert meta.describe_filters() == expect
