@@ -94,7 +94,7 @@ Usage
 
 General usage looks like this:
 
-.. code-block:: console
+::
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
         install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
@@ -126,9 +126,9 @@ Installing tool and utility (Experimental)
 
 You can install tools and utilities using following syntax;
 
-.. code-block:: console
+::
 
-    python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
+    aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E <7zip command>] \
         tool <host> <tool_name> <tool-version> <arch> [--timeout <timeout>]
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
@@ -146,13 +146,25 @@ Target directory
 aqt can take option '--outputdir' or '-O' that specify a target directory.
 
 The Qt packages are installed under current directory as such `Qt/<ver>/gcc_64/`
+
 If you want to install it in `C:\Qt` as same as standard gui installer default,
-run such as follows:
+run such as follows(on Windows):
 
-.. code-block:: doscon
+.. code-block:: console
 
-    C:\> mkdir Qt
-    C:\> aqt install --outputdir c:\Qt 5.11.3 windows desktop win64_msvc2019_64
+    cd c:\
+    mkdir Qt
+    py -m aqt install --outputdir c:\Qt 5.15.2 windows desktop win64_msvc2019_64
+
+
+If you want to install it in `/opt/Qt` as same as standard gui installer default,
+run such as follows(on mac/linux):
+
+.. code-block:: console
+
+    sudo mkdir /opt/Qt
+    sudo python -m aqt install --outputdir /opt/Qt 5.15.2 linux desktop gcc_64
+
 
 Command examples
 ----------------
@@ -181,11 +193,11 @@ Example: Installing Android Qt 5.15.2:
 
 Example: Install examples, doc and source:
 
-.. code-block:: doscon
+.. code-block:: console
 
-    C:\> aqt examples 5.15.0 windows desktop -m qtcharts qtnetworkauth
-    C:\> aqt doc 5.15.0 windows desktop -m qtcharts qtnetworkauth
-    C:\> aqt src 5.15.0 windows desktop
+    py -m aqt examples 5.15.0 windows desktop -m qtcharts qtnetworkauth
+    py -m aqt doc 5.15.0 windows desktop -m qtcharts qtnetworkauth
+    py -m aqt src 5.15.0 windows desktop
 
 
 Example: Install Web Assembly for Qt5
@@ -204,18 +216,18 @@ Example: Install an Install FrameWork (IFW):
 
 Example: Install vcredist:
 
-.. code-block:: doscon
+.. code-block:: console
 
-    C:\> aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
-    C:\> .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
+    py -m aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
+    .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
 Example: Install MinGW on Windows
 
-.. code-block:: doscon
+.. code-block:: console
 
-    C:\> aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
-    c:\> set PATH=C:\Qt\Tools\mingw810_64\bin
+    py -m aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810
+    set PATH=C:\Qt\Tools\mingw810_64\bin
 
 
 Example: Install Qt6 for android
