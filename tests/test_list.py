@@ -506,3 +506,52 @@ def test_list_to_version(monkeypatch, archive_id, filter_minor, version_str, exp
             )
             == expect
         )
+
+
+def test_list_fetch_tool_by_simple_spec(monkeypatch):
+    update_xml = (
+        Path(__file__).parent / "data" / "windows-desktop-tools_vcredist-update.xml"
+    ).read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: update_xml)
+
+    expect_json = (
+        Path(__file__).parent / "data" / "windows-desktop-tools_vcredist-expect.json"
+    ).read_text("utf-8")
+    expected = json.loads(expect_json)["modules_data"]
+
+    def check(actual, expect):
+        for key in (
+            "Description",
+            "DisplayName",
+            "DownloadableArchives",
+            "ReleaseDate",
+            "SHA1",
+            "Version",
+            "Virtual",
+        ):
+            assert actual[key] == expect[key]
+
+    meta = MetadataFactory(ArchiveId("tools", "windows", "desktop"))
+    check(
+        meta.fetch_tool_by_simple_spec(
+            tool_name="tools_vcredist", simple_spec=SimpleSpec("2011")
+        ),
+        expected["qt.tools.vcredist"],
+    )
+    check(
+        meta.fetch_tool_by_simple_spec(
+            tool_name="tools_vcredist", simple_spec=SimpleSpec("2014")
+        ),
+        expected["qt.tools.vcredist_msvc2013_x86"],
+    )
+    nonexistent = meta.fetch_tool_by_simple_spec(
+        tool_name="tools_vcredist", simple_spec=SimpleSpec("1970")
+    )
+    assert nonexistent is None
+
+    # Simulate a broken Updates.xml file, with invalid versions
+    highest_module_info = MetadataFactory.choose_highest_version_in_spec(
+        all_tools_data={"some_module": {"Version": "not_a_version"}},
+        simple_spec=SimpleSpec("*"),
+    )
+    assert highest_module_info is None
