@@ -287,7 +287,7 @@ Avoid installation of py7zr, python 7zip library, and force using external 7z co
     pip install -U pip
     pip install requests==2.25.1 packaging texttable
     pip install --no-deps aqtinstall
-    $ python -m aqt --external /usr/local/bin/7z install 5.15.2 linux desktop
+    python -m aqt --external /usr/local/bin/7z install 5.15.2 linux desktop
 
 
 Testimonies
