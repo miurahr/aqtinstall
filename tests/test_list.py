@@ -1,5 +1,7 @@
 import json
+import os
 import re
+import shutil
 import sys
 from pathlib import Path
 from typing import Generator, List
@@ -7,6 +9,7 @@ from typing import Generator, List
 import pytest
 
 from aqt.exceptions import CliInputError
+from aqt.helper import Settings
 from aqt.installer import Cli
 from aqt.metadata import (
     ArchiveId,
@@ -14,8 +17,11 @@ from aqt.metadata import (
     SimpleSpec,
     Version,
     Versions,
+    show_list,
     suggested_follow_up,
 )
+
+Settings.load_settings()
 
 
 def test_versions():
@@ -555,3 +561,56 @@ def test_list_fetch_tool_by_simple_spec(monkeypatch):
         simple_spec=SimpleSpec("*"),
     )
     assert highest_module_info is None
+
+
+@pytest.mark.parametrize(
+    "columns, expect",
+    (
+        (
+            120,
+            "Tool Variant Name        Version         Release Date          Display Name                      Description            \n"
+            "========================================================================================================================\n"
+            "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   The Qt Installer Framework provides\n"
+            "                                                                                     a set of tools and utilities to    \n"
+            "                                                                                     create installers for the supported\n"
+            "                                                                                     desktop Qt platforms: Linux,       \n"
+            "                                                                                     Microsoft Windows, and macOS.      \n",
+        ),
+        (
+            80,
+            "Tool Variant Name        Version         Release Date\n"
+            "=====================================================\n"
+            "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26  \n",
+        ),
+        (
+            0,
+            "Tool Variant Name        Version         Release Date          Display Name          "
+            "                                                                           Description"
+            "                                                                            \n"
+            "====================================================================================="
+            "======================================================================================"
+            "============================================================================\n"
+            "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   "
+            "The Qt Installer Framework provides a set of tools and utilities to create installers "
+            "for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.\n",
+        ),
+    ),
+)
+def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
+    update_xml = (
+        Path(__file__).parent / "data" / "mac-desktop-tools_ifw-update.xml"
+    ).read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: update_xml)
+
+    monkeypatch.setattr(
+        shutil, "get_terminal_size", lambda fallback: os.terminal_size((columns, 24))
+    )
+
+    meta = MetadataFactory(
+        ArchiveId("tools", "mac", "desktop"), tool_long_listing="tools_ifw"
+    )
+    assert show_list(meta) == 0
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+    assert out == expect
