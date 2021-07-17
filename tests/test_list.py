@@ -2,7 +2,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Generator
+from typing import Generator, List
 
 import pytest
 
@@ -432,5 +432,22 @@ wrong_ext_and_version_msg = [
         ),
     ),
 )
-def test_suggested_follow_up(meta: MetadataFactory, expected_message: str):
+def test_suggested_follow_up(meta: MetadataFactory, expected_message: List[str]):
     assert suggested_follow_up(meta) == expected_message
+
+
+@pytest.mark.parametrize(
+    "meta, expect",
+    (
+        (MetadataFactory(ArchiveId("qt5", "mac", "desktop"), filter_minor=42),
+         "qt5/mac/desktop with minor version 42"),
+        (MetadataFactory(ArchiveId("qt5", "mac", "desktop", "wasm"), filter_minor=42),
+         "qt5/mac/desktop/wasm with minor version 42"),
+        (MetadataFactory(ArchiveId("qt5", "mac", "desktop")),
+         "qt5/mac/desktop"),
+        (MetadataFactory(ArchiveId("qt5", "mac", "desktop", "wasm")),
+         "qt5/mac/desktop/wasm"),
+    )
+)
+def test_list_describe_filters(meta: MetadataFactory, expect: str):
+    assert meta.describe_filters() == expect
