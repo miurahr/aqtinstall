@@ -76,7 +76,7 @@ Install
 
 Same as usual, it can be installed with `pip`
 
-.. code-block:: bash
+.. code-block:: console
 
     pip install -U pip
     pip install aqtinstall
@@ -94,7 +94,7 @@ Usage
 
 General usage looks like this:
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
         install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
@@ -126,7 +126,7 @@ Installing tool and utility (Experimental)
 
 You can install tools and utilities using following syntax;
 
-.. code-block:: bash
+.. code-block:: console
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
         tool <host> <tool_name> <tool-version> <arch> [--timeout <timeout>]
@@ -149,7 +149,7 @@ The Qt packages are installed under current directory as such `Qt/<ver>/gcc_64/`
 If you want to install it in `C:\Qt` as same as standard gui installer default,
 run such as follows:
 
-.. code-block:: bash
+.. code-block:: doscon
 
     C:\> mkdir Qt
     C:\> aqt install --outputdir c:\Qt 5.11.3 windows desktop win64_msvc2019_64
@@ -159,7 +159,7 @@ Command examples
 
 Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 
-.. code-block:: bash
+.. code-block:: console
 
     pip install aqtinstall
     aqt install --outputdir /opt/Qt 5.12.0 linux desktop -m qtcharts qtnetworkauth
@@ -167,60 +167,60 @@ Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 
 Example: Installing Android (armv7) Qt 5.10.2:
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt install 5.10.2 linux android android_armv7
 
 
 Example: Installing Android Qt 5.15.2:
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt install 5.15.2 linux android android
 
 
 Example: Install examples, doc and source:
 
-.. code-block:: bash
+.. code-block:: doscon
 
-    C:\ aqt examples 5.15.0 windows desktop -m qtcharts qtnetworkauth
-    C:\ aqt doc 5.15.0 windows desktop -m qtcharts qtnetworkauth
-    C:\ aqt src 5.15.0 windows desktop
+    C:\> aqt examples 5.15.0 windows desktop -m qtcharts qtnetworkauth
+    C:\> aqt doc 5.15.0 windows desktop -m qtcharts qtnetworkauth
+    C:\> aqt src 5.15.0 windows desktop
 
 
 Example: Install Web Assembly for Qt5
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt install 5.15.0 linux desktop wasm_32
 
 
 Example: Install an Install FrameWork (IFW):
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt tool linux tools_ifw 4.0 qt.tools.ifw.40
 
 
 Example: Install vcredist:
 
-.. code-block:: bash
+.. code-block:: doscon
 
-    C:\ aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
-    C:\ .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
+    C:\> aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
+    C:\> .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
 Example: Install MinGW on Windows
 
-.. code-block:: bash
+.. code-block:: doscon
 
-    C:\ aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
-    c:\ set PATH=C:\Qt\Tools\mingw810_64\bin
+    C:\> aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810w
+    c:\> set PATH=C:\Qt\Tools\mingw810_64\bin
 
 
 Example: Install Qt6 for android
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt install -O qt 6.1.0 linux desktop
     aqt install -O qt 6.1.0 linux android android_armv7
@@ -229,7 +229,7 @@ Example: Install Qt6 for android
 
 Example: Install Qt6 for ios/mac
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt install -O qt 6.1.0 mac desktop
     aqt install -O qt 6.1.0 mac ios ios
@@ -238,7 +238,7 @@ Example: Install Qt6 for ios/mac
 
 Example: Show help message
 
-.. code-block:: bash
+.. code-block:: console
 
     aqt help
 
@@ -282,10 +282,10 @@ Example:
 
 Avoid installation of py7zr, python 7zip library, and force using external 7z command to extract archives.
 
-.. code-block:: bash
+.. code-block:: console
 
     pip install -U pip
-    pip install requests==2.25.1 packaging texttable
+    pip install requests==2.25.1 semantic_version texttable
     pip install --no-deps aqtinstall
     python -m aqt --external /usr/local/bin/7z install 5.15.2 linux desktop
 
