@@ -26,17 +26,7 @@ import random
 import re
 import shutil
 from logging import getLogger
-from typing import (
-    Callable,
-    Dict,
-    Generator,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 from xml.etree import ElementTree as ElementTree
 
 import bs4

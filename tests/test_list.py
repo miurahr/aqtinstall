@@ -6,6 +6,7 @@ from typing import Generator, List
 
 import pytest
 
+from aqt.exceptions import CliInputError
 from aqt.installer import Cli
 from aqt.metadata import (
     ArchiveId,
@@ -458,3 +459,50 @@ def test_suggested_follow_up(meta: MetadataFactory, expected_message: List[str])
 )
 def test_list_describe_filters(meta: MetadataFactory, expect: str):
     assert meta.describe_filters() == expect
+
+
+@pytest.mark.parametrize(
+    "archive_id, filter_minor, version_str, expect",
+    (
+        (mac_qt5, None, "5.12.42", Version("5.12.42")),
+        (
+            mac_qt5,
+            None,
+            "6.12.42",
+            CliInputError("Major version mismatch between qt5 and 6.12.42"),
+        ),
+        (
+            mac_qt5,
+            None,
+            "not a version",
+            CliInputError("Invalid version string: 'not a version'"),
+        ),
+        (mac_qt5, None, "latest", Version("5.15.2")),
+        (
+            mac_qt5,
+            0,
+            "latest",
+            CliInputError(
+                "There is no latest version of Qt with the criteria 'qt5/mac/desktop with minor version 0'"
+            ),
+        ),
+    ),
+)
+def test_list_to_version(monkeypatch, archive_id, filter_minor, version_str, expect):
+    _html = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
+
+    if isinstance(expect, Exception):
+        with pytest.raises(CliInputError) as error:
+            MetadataFactory(archive_id, filter_minor=filter_minor)._to_version(
+                version_str
+            )
+        assert error.type == CliInputError
+        assert str(expect) == str(error.value)
+    else:
+        assert (
+            MetadataFactory(archive_id, filter_minor=filter_minor)._to_version(
+                version_str
+            )
+            == expect
+        )
