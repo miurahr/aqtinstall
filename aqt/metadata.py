@@ -717,21 +717,21 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     return msg
 
 
+def show_suggestion(suggestions: List[str], printer: Callable[[str], None]):
+    if suggestions:
+        printer("=" * 30 + "Suggested follow-up:" + "=" * 30)
+        for suggestion in suggestions:
+            printer("* " + suggestion)
+
+
 def show_list(meta: MetadataFactory) -> int:
     logger = getLogger("aqt.list")
-
-    def show_suggestion(printer):
-        suggestions = suggested_follow_up(meta)
-        if suggestions:
-            printer("=" * 30 + "Suggested follow-up:" + "=" * 30)
-            for suggestion in suggestions:
-                printer("* " + suggestion)
 
     try:
         output = meta.getList()
         if not output:
             logger.info("No {} available for this request.".format(meta.request_type))
-            show_suggestion(logger.info)
+            show_suggestion(suggested_follow_up(meta), logger.info)
             return 1
         if isinstance(output, Versions):
             print(format(output))
@@ -753,5 +753,5 @@ def show_list(meta: MetadataFactory) -> int:
         return 1
     except (ArchiveConnectionError, ArchiveDownloadError) as e:
         logger.error("{}".format(e))
-        show_suggestion(logger.error)
+        show_suggestion(suggested_follow_up(meta), logger.error)
         return 1

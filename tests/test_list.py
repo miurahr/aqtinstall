@@ -13,6 +13,7 @@ from aqt.metadata import (
     SimpleSpec,
     Version,
     Versions,
+    show_suggestion,
     suggested_follow_up,
 )
 
@@ -454,3 +455,23 @@ wrong_ext_and_version_msg = [
 )
 def test_suggested_follow_up(meta: MetadataFactory, expected_message: str):
     assert suggested_follow_up(meta) == expected_message
+
+
+def test_show_suggestion():
+    suggestions = [
+        "Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+        "Please use 'aqt list tools mac desktop' to check what tools are available.",
+    ]
+    expected = (
+        "==============================Suggested follow-up:==============================\n"
+        "* Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
+        "* Please use 'aqt list tools mac desktop' to check what tools are available.\n"
+    )
+
+    output = [""]
+
+    def outputter(msg: str) -> None:
+        output[0] = output[0] + msg + "\n"
+
+    show_suggestion(suggestions, outputter)
+    assert output[0] == expected
