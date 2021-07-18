@@ -367,7 +367,7 @@ class MetadataFactory:
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
         """
-        self.logger = getLogger("aqt.archives")
+        self.logger = getLogger("aqt.metadata")
         self.archive_id = archive_id
         self.filter_minor = filter_minor
 
@@ -725,8 +725,7 @@ def show_suggestion(suggestions: List[str], printer: Callable[[str], None]):
 
 
 def show_list(meta: MetadataFactory) -> int:
-    logger = getLogger("aqt.list")
-
+    logger = getLogger("aqt.metadata")
     try:
         output = meta.getList()
         if not output:
