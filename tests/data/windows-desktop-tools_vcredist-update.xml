@@ -1,0 +1,127 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist</Name>
+  <DisplayName>VCRedist for MSVC 32bit</DisplayName>
+  <Description>Needed by all included Qt applications.</Description>
+  <Version>2011-03-03-1</Version>
+  <ReleaseDate>2014-11-17</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_x86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="9065989" UncompressedSize="8990592" OS="Any"/>
+  <SHA1>6ef633831c4f10e2a975f0cb8bfbbf572dcec1dd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_msvc2015_x86</Name>
+  <DisplayName>VCRedist for MSVC 2015 32bit</DisplayName>
+  <Description>Visual C++ Redistributable Packages for Visual Studio 2015 32 bit</Description>
+  <Version>2017-02-01-0</Version>
+  <ReleaseDate>2017-01-20</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_msvc2015_x86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12766475" UncompressedSize="14456912" OS="Any"/>
+  <SHA1>04c9b1bdc305877640643b1faae639c61f687b3b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_msvc2013_x64</Name>
+  <DisplayName>VCRedist for MSVC 2013 64bit</DisplayName>
+  <Description>Visual C++ Redistributable Packages for Visual Studio 2013 64 bit</Description>
+  <Version>2017-3-22-0</Version>
+  <ReleaseDate>2017-03-23</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_msvc2013_x64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="6985453" UncompressedSize="7194352" OS="Any"/>
+  <SHA1>51f48b502beb8600ec3a1a782513efdea76472ec</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_msvc2015_x64</Name>
+  <DisplayName>VCRedist for MSVC 2015 64bit</DisplayName>
+  <Description>Visual C++ Redistributable Packages for Visual Studio 2015 64 bit</Description>
+  <Version>2017-03-22-0</Version>
+  <ReleaseDate>2017-03-23</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_msvc2015_x64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="13606284" UncompressedSize="14572040" OS="Any"/>
+  <SHA1>5ee3387de572f380387ade03ae8ec258c08e30c1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_msvc2013_x86</Name>
+  <DisplayName>VCRedist for MSVC 2013 32bit</DisplayName>
+  <Description>Visual C++ Redistributable Packages for Visual Studio 2013 32 bit</Description>
+  <Version>2014-30-12-1</Version>
+  <ReleaseDate>2019-04-16</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_msvc2013_x86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="6233389" UncompressedSize="6504024" OS="Any"/>
+  <SHA1>cda6e0ce528e0d38b34f41a8ba5fb57269611578</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_msvc2017_x64</Name>
+  <DisplayName>VCRedist for MSVC 2017 64bit</DisplayName>
+  <Description>Visual C++ Redistributable Packages for Visual Studio 2017 64 bit</Description>
+  <Version>2019-02-13-1</Version>
+  <ReleaseDate>2019-04-16</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_msvc2017_x64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="13483747" UncompressedSize="15330104" OS="Any"/>
+  <SHA1>bec7506fdf840eeaa871c3b44b0c3064a81e9a40</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_msvc2017_x86</Name>
+  <DisplayName>VCRedist for MSVC 2017 32bit</DisplayName>
+  <Description>Visual C++ Redistributable Packages for Visual Studio 2017 32 bit</Description>
+  <Version>2019-02-13-1</Version>
+  <ReleaseDate>2019-04-16</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_msvc2017_x86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12811307" UncompressedSize="14648504" OS="Any"/>
+  <SHA1>26b5a9ae55b13a538791f549c98621a315d26969</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_64</Name>
+  <DisplayName>VCRedist for MSVC 64bit</DisplayName>
+  <Description>Needed by all included Qt applications.</Description>
+  <Version>2020-03-18</Version>
+  <ReleaseDate>2020-03-19</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_x64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="10249462" UncompressedSize="10274176" OS="Any"/>
+  <SHA1>3cb06ab7fc3a2633edeb1bc9f91ecf7048323b9e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_msvc2019_x64</Name>
+  <DisplayName>VCRedist for MSVC 2019 64bit</DisplayName>
+  <Description>Visual C++ Redistributable Packages for Visual Studio 2019 64 bit</Description>
+  <Version>2020-05-19-1</Version>
+  <ReleaseDate>2020-05-19</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_msvc2019_x64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="13209756" UncompressedSize="15060536" OS="Any"/>
+  <SHA1>5e1a6ebf086382c0f2f7e816fe0f15daecb07bf6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.vcredist_msvc2019_x86</Name>
+  <DisplayName>VCRedist for MSVC 2019 32bit</DisplayName>
+  <Description>Visual C++ Redistributable Packages for Visual Studio 2019 32 bit</Description>
+  <Version>2019-05-19-1</Version>
+  <ReleaseDate>2020-05-19</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>vcredist_msvc2019_x86.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12515252" UncompressedSize="14364480" OS="Any"/>
+  <SHA1>e82eeed4f19dd172944149a478c8bf48ff148b0d</SHA1>
+ </PackageUpdate>
+ <MetadataName>2020-08-21-1951_meta.7z</MetadataName>
+ <SHA1>04180f6cd965558942863afd0390eb57990ee354</SHA1>
+</Updates>

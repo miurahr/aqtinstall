@@ -1,11 +1,15 @@
 import json
+import os
 import re
+import shutil
 import sys
 from pathlib import Path
 from typing import Generator
 
 import pytest
 
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
+from aqt.helper import Settings
 from aqt.installer import Cli
 from aqt.metadata import (
     ArchiveId,
@@ -14,8 +18,11 @@ from aqt.metadata import (
     Version,
     Versions,
     format_suggested_follow_up,
+    show_list,
     suggested_follow_up,
 )
+
+Settings.load_settings()
 
 
 def test_versions():
@@ -178,30 +185,10 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
-    modules = MetadataFactory(archive_id).fetch_tool_modules(tool_name)
+    modules = MetadataFactory(archive_id, tool_name=tool_name).getList()
     assert modules == expect["modules"]
 
-
-@pytest.mark.parametrize(
-    "host, target, tool_name",
-    [
-        ("mac", "desktop", "tools_cmake"),
-        ("mac", "desktop", "tools_ifw"),
-        ("mac", "desktop", "tools_qtcreator"),
-    ],
-)
-def test_tool_long_listing(monkeypatch, host: str, target: str, tool_name: str):
-    archive_id = ArchiveId("tools", host, target)
-    in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
-    expect_out_file = "{}-{}-{}-expect.json".format(host, target, tool_name)
-    _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    expect = json.loads(
-        (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
-    )
-
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
-
-    table = MetadataFactory(archive_id).fetch_tool_long_listing(tool_name)
+    table = MetadataFactory(archive_id, tool_long_listing=tool_name).getList()
     assert table._rows() == expect["long_listing"]
 
 
@@ -469,3 +456,269 @@ def test_format_suggested_follow_up():
     )
 
     assert format_suggested_follow_up(suggestions) == expected
+
+
+def test_format_suggested_follow_up_empty():
+    assert format_suggested_follow_up([]) == ""
+
+
+@pytest.mark.parametrize(
+    "meta, expect",
+    (
+        (
+            MetadataFactory(ArchiveId("qt5", "mac", "desktop"), filter_minor=42),
+            "qt5/mac/desktop with minor version 42",
+        ),
+        (
+            MetadataFactory(
+                ArchiveId("qt5", "mac", "desktop", "wasm"), filter_minor=42
+            ),
+            "qt5/mac/desktop/wasm with minor version 42",
+        ),
+        (MetadataFactory(ArchiveId("qt5", "mac", "desktop")), "qt5/mac/desktop"),
+        (
+            MetadataFactory(ArchiveId("qt5", "mac", "desktop", "wasm")),
+            "qt5/mac/desktop/wasm",
+        ),
+    ),
+)
+def test_list_describe_filters(meta: MetadataFactory, expect: str):
+    assert meta.describe_filters() == expect
+
+
+@pytest.mark.parametrize(
+    "archive_id, filter_minor, version_str, expect",
+    (
+        (mac_qt5, None, "5.12.42", Version("5.12.42")),
+        (
+            mac_qt5,
+            None,
+            "6.12.42",
+            CliInputError("Major version mismatch between qt5 and 6.12.42"),
+        ),
+        (
+            mac_qt5,
+            None,
+            "not a version",
+            CliInputError("Invalid version string: 'not a version'"),
+        ),
+        (mac_qt5, None, "latest", Version("5.15.2")),
+        (
+            mac_qt5,
+            0,
+            "latest",
+            CliInputError(
+                "There is no latest version of Qt with the criteria 'qt5/mac/desktop with minor version 0'"
+            ),
+        ),
+    ),
+)
+def test_list_to_version(monkeypatch, archive_id, filter_minor, version_str, expect):
+    _html = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
+
+    if isinstance(expect, Exception):
+        with pytest.raises(CliInputError) as error:
+            MetadataFactory(archive_id, filter_minor=filter_minor)._to_version(
+                version_str
+            )
+        assert error.type == CliInputError
+        assert str(expect) == str(error.value)
+    else:
+        assert (
+            MetadataFactory(archive_id, filter_minor=filter_minor)._to_version(
+                version_str
+            )
+            == expect
+        )
+
+
+def test_list_fetch_tool_by_simple_spec(monkeypatch):
+    update_xml = (
+        Path(__file__).parent / "data" / "windows-desktop-tools_vcredist-update.xml"
+    ).read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: update_xml)
+
+    expect_json = (
+        Path(__file__).parent / "data" / "windows-desktop-tools_vcredist-expect.json"
+    ).read_text("utf-8")
+    expected = json.loads(expect_json)["modules_data"]
+
+    def check(actual, expect):
+        for key in (
+            "Description",
+            "DisplayName",
+            "DownloadableArchives",
+            "ReleaseDate",
+            "SHA1",
+            "Version",
+            "Virtual",
+        ):
+            assert actual[key] == expect[key]
+
+    meta = MetadataFactory(ArchiveId("tools", "windows", "desktop"))
+    check(
+        meta.fetch_tool_by_simple_spec(
+            tool_name="tools_vcredist", simple_spec=SimpleSpec("2011")
+        ),
+        expected["qt.tools.vcredist"],
+    )
+    check(
+        meta.fetch_tool_by_simple_spec(
+            tool_name="tools_vcredist", simple_spec=SimpleSpec("2014")
+        ),
+        expected["qt.tools.vcredist_msvc2013_x86"],
+    )
+    nonexistent = meta.fetch_tool_by_simple_spec(
+        tool_name="tools_vcredist", simple_spec=SimpleSpec("1970")
+    )
+    assert nonexistent is None
+
+    # Simulate a broken Updates.xml file, with invalid versions
+    highest_module_info = MetadataFactory.choose_highest_version_in_spec(
+        all_tools_data={"some_module": {"Version": "not_a_version"}},
+        simple_spec=SimpleSpec("*"),
+    )
+    assert highest_module_info is None
+
+
+@pytest.mark.parametrize(
+    "columns, expect",
+    (
+        (
+            120,
+            (
+                "Tool Variant Name        Version         Release Date          Display Name          "
+                "            Description            \n"
+                "====================================================================================="
+                "===================================\n"
+                "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   "
+                "The Qt Installer Framework provides\n"
+                "                                                                                     "
+                "a set of tools and utilities to    \n"
+                "                                                                                     "
+                "create installers for the supported\n"
+                "                                                                                     "
+                "desktop Qt platforms: Linux,       \n"
+                "                                                                                     "
+                "Microsoft Windows, and macOS.      \n"
+            ),
+        ),
+        (
+            80,
+            "Tool Variant Name        Version         Release Date\n"
+            "=====================================================\n"
+            "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26  \n",
+        ),
+        (
+            0,
+            "Tool Variant Name        Version         Release Date          Display Name          "
+            "                                                                           Descriptio"
+            "n                                                                            \n"
+            "====================================================================================="
+            "====================================================================================="
+            "=============================================================================\n"
+            "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   "
+            "The Qt Installer Framework provides a set of tools and utilities to create installers"
+            " for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.\n",
+        ),
+    ),
+)
+def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
+    update_xml = (
+        Path(__file__).parent / "data" / "mac-desktop-tools_ifw-update.xml"
+    ).read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: update_xml)
+
+    monkeypatch.setattr(
+        shutil, "get_terminal_size", lambda fallback: os.terminal_size((columns, 24))
+    )
+
+    meta = MetadataFactory(
+        ArchiveId("tools", "mac", "desktop"), tool_long_listing="tools_ifw"
+    )
+    assert show_list(meta) == 0
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+    assert out == expect
+
+
+def test_show_list_versions(monkeypatch, capsys):
+    _html = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args: _html)
+
+    expect_file = Path(__file__).parent / "data" / "mac-desktop-expect.json"
+    expected = "\n".join(json.loads(expect_file.read_text("utf-8"))["qt5"]["qt"]) + "\n"
+
+    assert show_list(MetadataFactory(mac_qt5)) == 0
+    out, err = capsys.readouterr()
+    assert out == expected
+
+
+def test_show_list_tools(monkeypatch, capsys):
+    page = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: page)
+
+    expect_file = Path(__file__).parent / "data" / "mac-desktop-expect.json"
+    expect = "\n".join(json.loads(expect_file.read_text("utf-8"))["tools"]) + "\n"
+
+    meta = MetadataFactory(ArchiveId("tools", "mac", "desktop"))
+    assert show_list(meta) == 0
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+    assert out == expect
+
+
+def test_fetch_http_ok(monkeypatch):
+    monkeypatch.setattr("aqt.metadata.getUrl", lambda **kwargs: "some_html_content")
+    assert MetadataFactory.fetch_http("some_url") == "some_html_content"
+
+
+def test_fetch_http_failover(monkeypatch):
+    urls_requested = set()
+
+    def _mock(url, **kwargs):
+        urls_requested.add(url)
+        if len(urls_requested) <= 1:
+            raise ArchiveDownloadError()
+        return "some_html_content"
+
+    monkeypatch.setattr("aqt.metadata.getUrl", _mock)
+
+    # Require that the first attempt failed, but the second did not
+    assert MetadataFactory.fetch_http("some_url") == "some_html_content"
+    assert len(urls_requested) == 2
+
+
+def test_fetch_http_download_error(monkeypatch):
+    urls_requested = set()
+
+    def _mock(url, **kwargs):
+        urls_requested.add(url)
+        raise ArchiveDownloadError()
+
+    monkeypatch.setattr("aqt.metadata.getUrl", _mock)
+    with pytest.raises(ArchiveDownloadError) as e:
+        MetadataFactory.fetch_http("some_url")
+    assert e.type == ArchiveDownloadError
+
+    # Require that a fallback url was tried
+    assert len(urls_requested) == 2
+
+
+def test_fetch_http_conn_error(monkeypatch):
+    urls_requested = set()
+
+    def _mock(url, **kwargs):
+        urls_requested.add(url)
+        raise ArchiveConnectionError()
+
+    monkeypatch.setattr("aqt.metadata.getUrl", _mock)
+    with pytest.raises(ArchiveConnectionError) as e:
+        MetadataFactory.fetch_http("some_url")
+    assert e.type == ArchiveConnectionError
+
+    # Require that a fallback url was tried
+    assert len(urls_requested) == 2
