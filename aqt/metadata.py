@@ -357,7 +357,7 @@ class MetadataFactory:
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
         """
-        self.logger = getLogger("aqt.archives")
+        self.logger = getLogger("aqt.metadata")
         self.archive_id = archive_id
         self.filter_minor = filter_minor
 
@@ -707,21 +707,23 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     return msg
 
 
+def format_suggested_follow_up(suggestions: Iterable[str]) -> str:
+    if not suggestions:
+        return ""
+    return ("=" * 30 + "Suggested follow-up:" + "=" * 30 + "\n") + "\n".join(
+        ["* " + suggestion for suggestion in suggestions]
+    )
+
+
 def show_list(meta: MetadataFactory) -> int:
-    logger = getLogger("aqt.list")
-
-    def show_suggestion(printer):
-        suggestions = suggested_follow_up(meta)
-        if suggestions:
-            printer("=" * 30 + "Suggested follow-up:" + "=" * 30)
-            for suggestion in suggestions:
-                printer("* " + suggestion)
-
+    logger = getLogger("aqt.metadata")
     try:
         output = meta.getList()
         if not output:
             logger.info("No {} available for this request.".format(meta.request_type))
-            show_suggestion(logger.info)
+            suggestions = suggested_follow_up(meta)
+            if suggestions:
+                logger.info(format_suggested_follow_up(suggestions))
             return 1
         if isinstance(output, Versions):
             print(format(output))
@@ -743,5 +745,7 @@ def show_list(meta: MetadataFactory) -> int:
         return 1
     except (ArchiveConnectionError, ArchiveDownloadError) as e:
         logger.error("{}".format(e))
-        show_suggestion(logger.error)
+        suggestions = suggested_follow_up(meta)
+        if suggestions:
+            logger.error(format_suggested_follow_up(suggestions))
         return 1
