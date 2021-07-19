@@ -18,7 +18,7 @@ This is a utility alternative to the official graphical Qt installer, for using 
 UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
 
 .. warning::
-    This is NOT franchised with The Qt Comapany and The Qt Project.
+    This is NOT franchised with The Qt Company and The Qt Project.
     there is NO guarantee and support. Please don't ask them about aqtinstall.
 
     When you need official and/or commercial support about unattended install,
@@ -36,7 +36,7 @@ Linux binaries on Linux; you could also download iOS binaries).
 It's working with Python >= 3.6 on Linux, macOS and Windows.
 
 When installing QtBase package on proper platforms (eg. install linux package on linux),
-aqt update Qt binaries(eg. qmake, and libQt5Core.so/Qt5Core.dll/Freamework.QtCore for Qt<5.14),
+aqt update Qt binaries(eg. qmake, and libQt5Core.so/Qt5Core.dll/Framework.QtCore for Qt<5.14),
 and change configurations(eg. qt.conf, and qconfig.pri) to make it working well with installed directory(Qt prefix).
 
 The aqtinstall does not update PATH environment variable.
