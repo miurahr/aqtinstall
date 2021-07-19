@@ -8,7 +8,7 @@ from typing import Generator, List
 
 import pytest
 
-from aqt.exceptions import CliInputError
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
 from aqt.helper import Settings
 from aqt.installer import Cli
 from aqt.metadata import (
@@ -623,3 +623,56 @@ def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
     sys.stdout.write(out)
     sys.stderr.write(err)
     assert out == expect
+
+
+def test_fetch_http_ok(monkeypatch):
+    monkeypatch.setattr("aqt.metadata.getUrl", lambda **kwargs: "some_html_content")
+    assert MetadataFactory.fetch_http("some_url") == "some_html_content"
+
+
+def test_fetch_http_failover(monkeypatch):
+    urls_requested = set()
+
+    def _mock(url, **kwargs):
+        urls_requested.add(url)
+        if len(urls_requested) <= 1:
+            raise ArchiveDownloadError()
+        return "some_html_content"
+
+    monkeypatch.setattr("aqt.metadata.getUrl", _mock)
+
+    # Require that the first attempt failed, but the second did not
+    assert MetadataFactory.fetch_http("some_url") == "some_html_content"
+    assert len(urls_requested) == 2
+
+
+def test_fetch_http_download_error(monkeypatch):
+    urls_requested = set()
+
+    def _mock(url, **kwargs):
+        urls_requested.add(url)
+        raise ArchiveDownloadError()
+
+    monkeypatch.setattr("aqt.metadata.getUrl", _mock)
+    with pytest.raises(ArchiveDownloadError) as e:
+        MetadataFactory.fetch_http("some_url")
+    assert e.type == ArchiveDownloadError
+
+    # Require that a fallback url was tried
+    assert len(urls_requested) == 2
+
+
+def test_fetch_http_conn_error(monkeypatch):
+    urls_requested = set()
+
+    def _mock(url, **kwargs):
+        urls_requested.add(url)
+        raise ArchiveConnectionError()
+
+    monkeypatch.setattr("aqt.metadata.getUrl", _mock)
+    with pytest.raises(ArchiveConnectionError) as e:
+        MetadataFactory.fetch_http("some_url")
+    assert e.type == ArchiveConnectionError
+
+    # Require that a fallback url was tried
+    assert len(urls_requested) == 2
