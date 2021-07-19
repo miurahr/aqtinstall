@@ -458,6 +458,10 @@ def test_format_suggested_follow_up():
     assert format_suggested_follow_up(suggestions) == expected
 
 
+def test_format_suggested_follow_up_empty():
+    assert format_suggested_follow_up([]) == ""
+
+
 @pytest.mark.parametrize(
     "meta, expect",
     (
@@ -633,6 +637,33 @@ def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
     meta = MetadataFactory(
         ArchiveId("tools", "mac", "desktop"), tool_long_listing="tools_ifw"
     )
+    assert show_list(meta) == 0
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+    assert out == expect
+
+
+def test_show_list_versions(monkeypatch, capsys):
+    _html = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args: _html)
+
+    expect_file = Path(__file__).parent / "data" / "mac-desktop-expect.json"
+    expected = "\n".join(json.loads(expect_file.read_text("utf-8"))["qt5"]["qt"]) + "\n"
+
+    assert show_list(MetadataFactory(mac_qt5)) == 0
+    out, err = capsys.readouterr()
+    assert out == expected
+
+
+def test_show_list_tools(monkeypatch, capsys):
+    page = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: page)
+
+    expect_file = Path(__file__).parent / "data" / "mac-desktop-expect.json"
+    expect = "\n".join(json.loads(expect_file.read_text("utf-8"))["tools"]) + "\n"
+
+    meta = MetadataFactory(ArchiveId("tools", "mac", "desktop"))
     assert show_list(meta) == 0
     out, err = capsys.readouterr()
     sys.stdout.write(out)
