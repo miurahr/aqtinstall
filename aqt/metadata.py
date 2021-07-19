@@ -20,7 +20,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import itertools
-import logging
 import operator
 import posixpath
 import random
@@ -28,7 +27,6 @@ import re
 import shutil
 from logging import getLogger
 from typing import (
-    Callable,
     Dict,
     Generator,
     Iterable,
