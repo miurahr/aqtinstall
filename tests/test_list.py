@@ -1,5 +1,4 @@
 import json
-import logging
 import re
 import sys
 from pathlib import Path
@@ -7,7 +6,6 @@ from typing import Generator
 
 import pytest
 
-from aqt.helper import setup_logging
 from aqt.installer import Cli
 from aqt.metadata import (
     ArchiveId,
@@ -15,7 +13,8 @@ from aqt.metadata import (
     SimpleSpec,
     Version,
     Versions,
-    suggested_follow_up, format_suggested_follow_up,
+    format_suggested_follow_up,
+    suggested_follow_up,
 )
 
 
