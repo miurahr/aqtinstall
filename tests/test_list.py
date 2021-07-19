@@ -7,7 +7,15 @@ from typing import Generator
 import pytest
 
 from aqt.installer import Cli
-from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version, Versions
+from aqt.metadata import (
+    ArchiveId,
+    MetadataFactory,
+    SimpleSpec,
+    Version,
+    Versions,
+    format_suggested_follow_up,
+    suggested_follow_up,
+)
 
 
 def test_versions():
@@ -368,3 +376,96 @@ def test_list_invalid_extensions(
     sys.stdout.write(out)
     sys.stderr.write(err)
     assert expected_msg in err
+
+
+mac_qt5 = ArchiveId("qt5", "mac", "desktop")
+mac_wasm = ArchiveId("qt5", "mac", "desktop", "wasm")
+wrong_qt_version_msg = [
+    "Please use 'aqt list qt5 mac desktop' to show versions of Qt available."
+]
+wrong_ext_and_version_msg = [
+    "Please use 'aqt list qt5 mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+    "Please use 'aqt list qt5 mac desktop' to show versions of Qt available.",
+]
+
+
+@pytest.mark.parametrize(
+    "meta, expected_message",
+    (
+        (MetadataFactory(mac_qt5), []),
+        (
+            MetadataFactory(mac_qt5, filter_minor=0),
+            [
+                "Please use 'aqt list qt5 mac desktop' to check that versions of qt5 exist with the minor version '0'."
+            ],
+        ),
+        (
+            MetadataFactory(ArchiveId("tools", "mac", "desktop"), tool_name="ifw"),
+            [
+                "Please use 'aqt list tools mac desktop' to check what tools are available."
+            ],
+        ),
+        (
+            MetadataFactory(mac_qt5, architectures_ver="1.2.3"),
+            wrong_qt_version_msg,
+        ),
+        (
+            MetadataFactory(mac_qt5, modules_ver="1.2.3"),
+            wrong_qt_version_msg,
+        ),
+        (
+            MetadataFactory(mac_qt5, extensions_ver="1.2.3"),
+            wrong_qt_version_msg,
+        ),
+        (
+            MetadataFactory(mac_wasm),
+            [
+                "Please use 'aqt list qt5 mac desktop --extensions <QT_VERSION>' to list valid extensions."
+            ],
+        ),
+        (
+            MetadataFactory(mac_wasm, filter_minor=0),
+            [
+                "Please use 'aqt list qt5 mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+                "Please use 'aqt list qt5 mac desktop' to check that versions of qt5 exist with the minor version '0'.",
+            ],
+        ),
+        (
+            MetadataFactory(
+                ArchiveId("tools", "mac", "desktop", "wasm"), tool_name="ifw"
+            ),
+            [
+                "Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+                "Please use 'aqt list tools mac desktop' to check what tools are available.",
+            ],
+        ),
+        (
+            MetadataFactory(mac_wasm, architectures_ver="1.2.3"),
+            wrong_ext_and_version_msg,
+        ),
+        (
+            MetadataFactory(mac_wasm, modules_ver="1.2.3"),
+            wrong_ext_and_version_msg,
+        ),
+        (
+            MetadataFactory(mac_wasm, extensions_ver="1.2.3"),
+            wrong_ext_and_version_msg,
+        ),
+    ),
+)
+def test_suggested_follow_up(meta: MetadataFactory, expected_message: str):
+    assert suggested_follow_up(meta) == expected_message
+
+
+def test_format_suggested_follow_up():
+    suggestions = [
+        "Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+        "Please use 'aqt list tools mac desktop' to check what tools are available.",
+    ]
+    expected = (
+        "==============================Suggested follow-up:==============================\n"
+        "* Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
+        "* Please use 'aqt list tools mac desktop' to check what tools are available."
+    )
+
+    assert format_suggested_follow_up(suggestions) == expected
