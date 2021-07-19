@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 import sys
 from pathlib import Path
@@ -6,6 +7,7 @@ from typing import Generator
 
 import pytest
 
+from aqt.helper import setup_logging
 from aqt.installer import Cli
 from aqt.metadata import (
     ArchiveId,
@@ -13,7 +15,7 @@ from aqt.metadata import (
     SimpleSpec,
     Version,
     Versions,
-    show_suggestion,
+    log_suggested_follow_up,
     suggested_follow_up,
 )
 
@@ -457,21 +459,17 @@ def test_suggested_follow_up(meta: MetadataFactory, expected_message: str):
     assert suggested_follow_up(meta) == expected_message
 
 
-def test_show_suggestion():
+def test_log_suggested_follow_up(caplog, monkeypatch):
     suggestions = [
         "Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
         "Please use 'aqt list tools mac desktop' to check what tools are available.",
     ]
-    expected = (
-        "==============================Suggested follow-up:==============================\n"
-        "* Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
-        "* Please use 'aqt list tools mac desktop' to check what tools are available.\n"
-    )
+    expected = [
+        "==============================Suggested follow-up:==============================",
+        "* Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+        "* Please use 'aqt list tools mac desktop' to check what tools are available.",
+    ]
 
-    output = [""]
-
-    def outputter(msg: str) -> None:
-        output[0] = output[0] + msg + "\n"
-
-    show_suggestion(suggestions, outputter)
-    assert output[0] == expected
+    log_suggested_follow_up(suggestions, logging.ERROR)
+    actual = [rec.message for rec in caplog.records]
+    assert actual == expected

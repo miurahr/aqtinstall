@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import itertools
+import logging
 import operator
 import posixpath
 import random
@@ -717,11 +718,12 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     return msg
 
 
-def show_suggestion(suggestions: List[str], printer: Callable[[str], None]):
+def log_suggested_follow_up(suggestions: List[str], log_level: int):
     if suggestions:
-        printer("=" * 30 + "Suggested follow-up:" + "=" * 30)
+        logger = getLogger("aqt.metadata")
+        logger.log(log_level, "=" * 30 + "Suggested follow-up:" + "=" * 30)
         for suggestion in suggestions:
-            printer("* " + suggestion)
+            logger.log(log_level, "* " + suggestion)
 
 
 def show_list(meta: MetadataFactory) -> int:
@@ -730,7 +732,7 @@ def show_list(meta: MetadataFactory) -> int:
         output = meta.getList()
         if not output:
             logger.info("No {} available for this request.".format(meta.request_type))
-            show_suggestion(suggested_follow_up(meta), logger.info)
+            log_suggested_follow_up(suggested_follow_up(meta), logging.INFO)
             return 1
         if isinstance(output, Versions):
             print(format(output))
@@ -752,5 +754,5 @@ def show_list(meta: MetadataFactory) -> int:
         return 1
     except (ArchiveConnectionError, ArchiveDownloadError) as e:
         logger.error("{}".format(e))
-        show_suggestion(suggested_follow_up(meta), logger.error)
+        log_suggested_follow_up(suggested_follow_up(meta), logging.ERROR)
         return 1
