@@ -15,8 +15,7 @@ from aqt.metadata import (
     SimpleSpec,
     Version,
     Versions,
-    log_suggested_follow_up,
-    suggested_follow_up,
+    suggested_follow_up, format_suggested_follow_up,
 )
 
 
@@ -459,17 +458,15 @@ def test_suggested_follow_up(meta: MetadataFactory, expected_message: str):
     assert suggested_follow_up(meta) == expected_message
 
 
-def test_log_suggested_follow_up(caplog, monkeypatch):
+def test_format_suggested_follow_up():
     suggestions = [
         "Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
         "Please use 'aqt list tools mac desktop' to check what tools are available.",
     ]
-    expected = [
-        "==============================Suggested follow-up:==============================",
-        "* Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-        "* Please use 'aqt list tools mac desktop' to check what tools are available.",
-    ]
+    expected = (
+        "==============================Suggested follow-up:==============================\n"
+        "* Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
+        "* Please use 'aqt list tools mac desktop' to check what tools are available."
+    )
 
-    log_suggested_follow_up(suggestions, logging.ERROR)
-    actual = [rec.message for rec in caplog.records]
-    assert actual == expected
+    assert format_suggested_follow_up(suggestions) == expected
