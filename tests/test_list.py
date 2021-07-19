@@ -4,7 +4,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Generator, List
+from typing import Generator
 
 import pytest
 
