@@ -192,7 +192,7 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 
 class ArchiveId:
-    CATEGORIES = ("tools", "qt5", "qt6")
+    CATEGORIES = ("tools", "qt")
     HOSTS = ("windows", "mac", "linux")
     TARGETS_FOR_HOST = {
         "windows": ["android", "desktop", "winrt"],
@@ -229,7 +229,7 @@ class ArchiveId:
         return "preview" in self.extension if self.extension else False
 
     def is_qt(self) -> bool:
-        return self.category.startswith("qt")
+        return self.category == "qt"
 
     def is_tools(self) -> bool:
         return self.category == "tools"
@@ -240,7 +240,8 @@ class ArchiveId:
 
     def is_major_ver_mismatch(self, qt_version: Version) -> bool:
         """Returns True if the version specifies a version different from the specified category"""
-        return self.is_qt() and int(self.category[-1]) != qt_version.major
+        # Not a thing anymore; this will be refactored out!
+        return False
 
     def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
         base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
@@ -338,7 +339,7 @@ class MetadataFactory:
         self,
         archive_id: ArchiveId,
         *,
-        filter_minor: Optional[int] = None,
+        spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
         modules_ver: Optional[str] = None,
         extensions_ver: Optional[str] = None,
@@ -349,17 +350,19 @@ class MetadataFactory:
         """
         Construct MetadataFactory.
 
-        :param filter_minor:        When set, the MetadataFactory will filter out all versions of
-                                    Qt that don't match this minor version.
+        :param spec:                When set, the MetadataFactory will filter out all versions of
+                                    Qt that don't fit this SimpleSpec.
         :param is_latest_version:   When True, the MetadataFactory will find all versions of Qt
                                     matching filters, and only print the most recent version
         :param modules_ver:         Version of Qt for which to list modules
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
+        :param tool_name:           Name of a tool, without architecture, ie "tools_qtcreator" or "tools_ifw"
+        :param tool_long_listing:   Name of a tool variant, ie "qt.tools.ifw.41" for tool_name "tools_ifw"
         """
         self.logger = getLogger("aqt.metadata")
         self.archive_id = archive_id
-        self.filter_minor = filter_minor
+        self.spec = spec
 
         if archive_id.is_tools():
             if tool_name:
@@ -415,7 +418,7 @@ class MetadataFactory:
             version, extension = ver_ext
             return (
                 version
-                and (self.filter_minor is None or self.filter_minor == version.minor)
+                and (self.spec is None or version in self.spec)
                 and (self.archive_id.extension == extension)
             )
 
@@ -680,9 +683,9 @@ class MetadataFactory:
         return naive_modules_arches(modules.keys())
 
     def describe_filters(self) -> str:
-        if self.filter_minor is None:
+        if self.spec is None:
             return str(self.archive_id)
-        return "{} with minor version {}".format(self.archive_id, self.filter_minor)
+        return "{} with spec '{}'".format(self.archive_id, self.spec)
 
 
 def suggested_follow_up(meta: MetadataFactory) -> List[str]:
@@ -696,10 +699,10 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
 
     if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
         msg.append(f"Please use '{base_cmd}' to check what tools are available.")
-    elif meta.filter_minor is not None:
+    elif meta.spec is not None:
         msg.append(
             f"Please use '{base_cmd}' to check that versions of {meta.archive_id.category} "
-            f"exist with the minor version '{meta.filter_minor}'."
+            f"exist within the spec '{meta.spec}'."
         )
     elif meta.request_type in ("architectures", "modules", "extensions"):
         msg.append(f"Please use '{base_cmd}' to show versions of Qt available.")
