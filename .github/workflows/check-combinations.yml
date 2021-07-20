@@ -5,7 +5,10 @@ on:
   # https://crontab.guru/once-a-month
   - cron: "0 0 1 * *"
 
+  workflow_dispatch:
   push:
+    paths:
+      - 'ci/**'
 
 jobs:
   check_combinations:
