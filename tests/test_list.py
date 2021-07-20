@@ -4,7 +4,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Generator
+from typing import Dict, Generator, Set, Union
 
 import pytest
 
@@ -69,7 +69,7 @@ def test_versions():
     assert pytest_wrapped_e.type == TypeError
 
 
-MINOR_REGEX = re.compile(r"^\d+\.(\d+)")
+SPEC_REGEX = re.compile(r"^(\d+\.\d+)")
 
 
 @pytest.mark.parametrize(
@@ -93,11 +93,11 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
     )
 
-    # Test 'aqt list tools'
+    # Test 'aqt list-tool'
     tools = MetadataFactory(ArchiveId("tools", os_name, target)).getList()
     assert tools == expected["tools"]
 
-    for qt in ("qt5", "qt6"):
+    for qt in ("qt",):
         for ext, expected_output in expected[qt].items():
             # Test 'aqt list qt'
             archive_id = ArchiveId(qt, os_name, target, ext if ext != "qt" else "")
@@ -117,22 +117,27 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
                 assert f"{latest_ver}" == expected_output[-1].split(" ")[-1]
 
             for row in expected_output:
-                minor = int(MINOR_REGEX.search(row).group(1))
+                spec_str = SPEC_REGEX.search(row).group(1)
+                spec = (
+                    SimpleSpec(spec_str)
+                    if not ext.endswith("preview")
+                    else SimpleSpec(spec_str + ".0-preview")
+                )
 
-                # Find the latest version for a particular minor version
-                latest_ver_for_minor = MetadataFactory(
+                # Find the latest version for a particular spec
+                latest_ver_for_spec = MetadataFactory(
                     archive_id,
-                    filter_minor=minor,
+                    spec=spec,
                     is_latest_version=True,
                 ).getList()
-                assert f"{latest_ver_for_minor}" == row.split(" ")[-1]
+                assert f"{latest_ver_for_spec}" == row.split(" ")[-1]
 
-                # Find all versions for a particular minor version
-                all_ver_for_minor = MetadataFactory(
+                # Find all versions for a particular spec
+                all_ver_for_spec = MetadataFactory(
                     archive_id,
-                    filter_minor=minor,
+                    spec=spec,
                 ).getList()
-                assert f"{all_ver_for_minor}" == row
+                assert f"{all_ver_for_spec}" == row
 
 
 @pytest.mark.parametrize(
@@ -151,7 +156,7 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
 def test_list_architectures_and_modules(
     monkeypatch, version: str, extension: str, in_file: str, expect_out_file: str
 ):
-    archive_id = ArchiveId("qt" + version[0], "windows", "desktop", extension)
+    archive_id = ArchiveId("qt", "windows", "desktop", extension)
     _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
     expect = json.loads(
         (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
@@ -188,18 +193,19 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
     modules = MetadataFactory(archive_id, tool_name=tool_name).getList()
     assert modules == expect["modules"]
 
-    table = MetadataFactory(archive_id, tool_long_listing=tool_name).getList()
+    table = MetadataFactory(
+        archive_id, tool_name=tool_name, is_long_listing=True
+    ).getList()
     assert table._rows() == expect["long_listing"]
 
 
 @pytest.mark.parametrize(
-    "cat, host, target, minor_ver, ver, ext, xmlfile, xmlexpect, htmlfile, htmlexpect",
+    "host, target, spec, ver, ext, xmlfile, xmlexpect, htmlfile, htmlexpect",
     [
         (
-            "qt5",
             "windows",
             "desktop",
-            "14",
+            "5.14",
             "5.14.0",
             "wasm",
             "windows-5140-update.xml",
@@ -209,13 +215,12 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
         ),
     ],
 )
-def test_list_cli(
+def test_list_qt_cli(
     capsys,
     monkeypatch,
-    cat,
     host,
     target,
-    minor_ver,
+    spec,
     ver,
     ext,
     xmlfile,
@@ -258,42 +263,42 @@ def test_list_cli(
         out, err = capsys.readouterr()
         assert set(out.strip().split()) == set(expect_arches)
 
-    _minor = ["--filter-minor", minor_ver]
+    _spec = ["--spec", spec]
     _ext = ["--extension", ext]
 
     cli = Cli()
-    # Query extensions by latest version, minor version, and specific version
-    cli.run(["list", cat, host, target, "--extensions", "latest"])
+    # Query extensions by latest version, spec, and specific version
+    cli.run(["list-qt", host, target, "--extensions", "latest"])
     check_extensions()
-    cli.run(["list", cat, host, target, *_minor, "--extensions", "latest"])
+    cli.run(["list-qt", host, target, *_spec, "--extensions", "latest"])
     check_extensions()
-    cli.run(["list", cat, host, target, "--extensions", ver])
+    cli.run(["list-qt", host, target, "--extensions", ver])
     check_extensions()
-    # Query modules by latest version, minor version, and specific version
-    cli.run(["list", cat, host, target, "--modules", "latest"])
+    # Query modules by latest version, spec, and specific version
+    cli.run(["list-qt", host, target, "--modules", "latest"])
     check_modules()
-    cli.run(["list", cat, host, target, *_minor, "--modules", "latest"])
+    cli.run(["list-qt", host, target, *_spec, "--modules", "latest"])
     check_modules()
-    cli.run(["list", cat, host, target, "--modules", ver])
+    cli.run(["list-qt", host, target, "--modules", ver])
     check_modules()
-    cli.run(["list", cat, host, target, *_ext, "--modules", "latest"])
+    cli.run(["list-qt", host, target, *_ext, "--modules", "latest"])
     check_modules()
-    cli.run(["list", cat, host, target, *_ext, *_minor, "--modules", "latest"])
+    cli.run(["list-qt", host, target, *_ext, *_spec, "--modules", "latest"])
     check_modules()
-    cli.run(["list", cat, host, target, *_ext, "--modules", ver])
+    cli.run(["list-qt", host, target, *_ext, "--modules", ver])
     check_modules()
-    # Query architectures by latest version, minor version, and specific version
-    cli.run(["list", cat, host, target, "--arch", "latest"])
+    # Query architectures by latest version, spec, and specific version
+    cli.run(["list-qt", host, target, "--arch", "latest"])
     check_arches()
-    cli.run(["list", cat, host, target, *_minor, "--arch", "latest"])
+    cli.run(["list-qt", host, target, *_spec, "--arch", "latest"])
     check_arches()
-    cli.run(["list", cat, host, target, "--arch", ver])
+    cli.run(["list-qt", host, target, "--arch", ver])
     check_arches()
-    cli.run(["list", cat, host, target, *_ext, "--arch", "latest"])
+    cli.run(["list-qt", host, target, *_ext, "--arch", "latest"])
     check_arches()
-    cli.run(["list", cat, host, target, *_ext, *_minor, "--arch", "latest"])
+    cli.run(["list-qt", host, target, *_ext, *_spec, "--arch", "latest"])
     check_arches()
-    cli.run(["list", cat, host, target, *_ext, "--arch", ver])
+    cli.run(["list-qt", host, target, *_ext, "--arch", ver])
     check_arches()
 
 
@@ -354,67 +359,66 @@ def test_list_invalid_extensions(
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", _mock)
 
-    cat = "qt" + version[0]
     host = "windows"
     extension_params = ["--extension", ext] if ext else []
     cli = Cli()
-    cli.run(["list", cat, host, target, *extension_params, "--arch", version])
+    cli.run(["list-qt", host, target, *extension_params, "--arch", version])
     out, err = capsys.readouterr()
     sys.stdout.write(out)
     sys.stderr.write(err)
     assert expected_msg in err
 
 
-mac_qt5 = ArchiveId("qt5", "mac", "desktop")
-mac_wasm = ArchiveId("qt5", "mac", "desktop", "wasm")
+mac_qt = ArchiveId("qt", "mac", "desktop")
+mac_wasm = ArchiveId("qt", "mac", "desktop", "wasm")
 wrong_qt_version_msg = [
-    "Please use 'aqt list qt5 mac desktop' to show versions of Qt available."
+    "Please use 'aqt list-qt mac desktop' to show versions of Qt available."
 ]
 wrong_ext_and_version_msg = [
-    "Please use 'aqt list qt5 mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-    "Please use 'aqt list qt5 mac desktop' to show versions of Qt available.",
+    "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+    "Please use 'aqt list-qt mac desktop' to show versions of Qt available.",
 ]
 
 
 @pytest.mark.parametrize(
     "meta, expected_message",
     (
-        (MetadataFactory(mac_qt5), []),
+        (MetadataFactory(mac_qt), []),
         (
-            MetadataFactory(mac_qt5, filter_minor=0),
+            MetadataFactory(mac_qt, spec=SimpleSpec("5.0")),
             [
-                "Please use 'aqt list qt5 mac desktop' to check that versions of qt5 exist with the minor version '0'."
+                "Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '5.0'."
             ],
         ),
         (
             MetadataFactory(ArchiveId("tools", "mac", "desktop"), tool_name="ifw"),
             [
-                "Please use 'aqt list tools mac desktop' to check what tools are available."
+                "Please use 'aqt list-tool mac desktop' to check what tools are available."
             ],
         ),
         (
-            MetadataFactory(mac_qt5, architectures_ver="1.2.3"),
+            MetadataFactory(mac_qt, architectures_ver="1.2.3"),
             wrong_qt_version_msg,
         ),
         (
-            MetadataFactory(mac_qt5, modules_ver="1.2.3"),
+            MetadataFactory(mac_qt, modules_ver="1.2.3"),
             wrong_qt_version_msg,
         ),
         (
-            MetadataFactory(mac_qt5, extensions_ver="1.2.3"),
+            MetadataFactory(mac_qt, extensions_ver="1.2.3"),
             wrong_qt_version_msg,
         ),
         (
             MetadataFactory(mac_wasm),
             [
-                "Please use 'aqt list qt5 mac desktop --extensions <QT_VERSION>' to list valid extensions."
+                "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions."
             ],
         ),
         (
-            MetadataFactory(mac_wasm, filter_minor=0),
+            MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9")),
             [
-                "Please use 'aqt list qt5 mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-                "Please use 'aqt list qt5 mac desktop' to check that versions of qt5 exist with the minor version '0'.",
+                "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+                "Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'.",
             ],
         ),
         (
@@ -422,8 +426,8 @@ wrong_ext_and_version_msg = [
                 ArchiveId("tools", "mac", "desktop", "wasm"), tool_name="ifw"
             ),
             [
-                "Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-                "Please use 'aqt list tools mac desktop' to check what tools are available.",
+                "Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+                "Please use 'aqt list-tool mac desktop' to check what tools are available.",
             ],
         ),
         (
@@ -446,13 +450,13 @@ def test_suggested_follow_up(meta: MetadataFactory, expected_message: str):
 
 def test_format_suggested_follow_up():
     suggestions = [
-        "Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-        "Please use 'aqt list tools mac desktop' to check what tools are available.",
+        "Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+        "Please use 'aqt list-tool mac desktop' to check what tools are available.",
     ]
     expected = (
         "==============================Suggested follow-up:==============================\n"
-        "* Please use 'aqt list tools mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
-        "* Please use 'aqt list tools mac desktop' to check what tools are available."
+        "* Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
+        "* Please use 'aqt list-tool mac desktop' to check what tools are available."
     )
 
     assert format_suggested_follow_up(suggestions) == expected
@@ -466,19 +470,19 @@ def test_format_suggested_follow_up_empty():
     "meta, expect",
     (
         (
-            MetadataFactory(ArchiveId("qt5", "mac", "desktop"), filter_minor=42),
-            "qt5/mac/desktop with minor version 42",
+            MetadataFactory(ArchiveId("qt", "mac", "desktop"), spec=SimpleSpec("5.42")),
+            "qt/mac/desktop with spec 5.42",
         ),
         (
             MetadataFactory(
-                ArchiveId("qt5", "mac", "desktop", "wasm"), filter_minor=42
+                ArchiveId("qt", "mac", "desktop", "wasm"), spec=SimpleSpec("5.42")
             ),
-            "qt5/mac/desktop/wasm with minor version 42",
+            "qt/mac/desktop/wasm with spec 5.42",
         ),
-        (MetadataFactory(ArchiveId("qt5", "mac", "desktop")), "qt5/mac/desktop"),
+        (MetadataFactory(ArchiveId("qt", "mac", "desktop")), "qt/mac/desktop"),
         (
-            MetadataFactory(ArchiveId("qt5", "mac", "desktop", "wasm")),
-            "qt5/mac/desktop/wasm",
+            MetadataFactory(ArchiveId("qt", "mac", "desktop", "wasm")),
+            "qt/mac/desktop/wasm",
         ),
     ),
 )
@@ -487,50 +491,37 @@ def test_list_describe_filters(meta: MetadataFactory, expect: str):
 
 
 @pytest.mark.parametrize(
-    "archive_id, filter_minor, version_str, expect",
+    "archive_id, spec, version_str, expect",
     (
-        (mac_qt5, None, "5.12.42", Version("5.12.42")),
+        (mac_qt, None, "5.12.42", Version("5.12.42")),
         (
-            mac_qt5,
-            None,
-            "6.12.42",
-            CliInputError("Major version mismatch between qt5 and 6.12.42"),
-        ),
-        (
-            mac_qt5,
+            mac_qt,
             None,
             "not a version",
             CliInputError("Invalid version string: 'not a version'"),
         ),
-        (mac_qt5, None, "latest", Version("5.15.2")),
+        (mac_qt, SimpleSpec("5"), "latest", Version("5.15.2")),
         (
-            mac_qt5,
-            0,
+            mac_qt,
+            SimpleSpec("5.0"),
             "latest",
             CliInputError(
-                "There is no latest version of Qt with the criteria 'qt5/mac/desktop with minor version 0'"
+                "There is no latest version of Qt with the criteria 'qt/mac/desktop with spec 5.0'"
             ),
         ),
     ),
 )
-def test_list_to_version(monkeypatch, archive_id, filter_minor, version_str, expect):
+def test_list_to_version(monkeypatch, archive_id, spec, version_str, expect):
     _html = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
 
     if isinstance(expect, Exception):
         with pytest.raises(CliInputError) as error:
-            MetadataFactory(archive_id, filter_minor=filter_minor)._to_version(
-                version_str
-            )
+            MetadataFactory(archive_id, spec=spec)._to_version(version_str)
         assert error.type == CliInputError
         assert str(expect) == str(error.value)
     else:
-        assert (
-            MetadataFactory(archive_id, filter_minor=filter_minor)._to_version(
-                version_str
-            )
-            == expect
-        )
+        assert MetadataFactory(archive_id, spec=spec)._to_version(version_str) == expect
 
 
 def test_list_fetch_tool_by_simple_spec(monkeypatch):
@@ -635,7 +626,9 @@ def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
     )
 
     meta = MetadataFactory(
-        ArchiveId("tools", "mac", "desktop"), tool_long_listing="tools_ifw"
+        ArchiveId("tools", "mac", "desktop"),
+        tool_name="tools_ifw",
+        is_long_listing=True,
     )
     assert show_list(meta) == 0
     out, err = capsys.readouterr()
@@ -649,9 +642,9 @@ def test_show_list_versions(monkeypatch, capsys):
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args: _html)
 
     expect_file = Path(__file__).parent / "data" / "mac-desktop-expect.json"
-    expected = "\n".join(json.loads(expect_file.read_text("utf-8"))["qt5"]["qt"]) + "\n"
+    expected = "\n".join(json.loads(expect_file.read_text("utf-8"))["qt"]["qt"]) + "\n"
 
-    assert show_list(MetadataFactory(mac_qt5)) == 0
+    assert show_list(MetadataFactory(mac_qt)) == 0
     out, err = capsys.readouterr()
     assert out == expected
 
