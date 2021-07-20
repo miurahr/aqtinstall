@@ -5,16 +5,7 @@ import json
 import logging
 import re
 from pathlib import Path
-from typing import (
-    Dict,
-    Generator,
-    Iterator,
-    List,
-    Optional,
-    Set,
-    Tuple,
-    Union,
-)
+from typing import Dict, Generator, Iterator, List, Optional, Set, Tuple, Union
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
 from aqt.helper import Settings, setup_logging
@@ -375,6 +366,7 @@ def get_tqdm(disable: bool):
         return lambda x: x
 
     from tqdm import tqdm as base_tqdm
+
     return lambda *a: base_tqdm(*a, disable=disable)
 
 
