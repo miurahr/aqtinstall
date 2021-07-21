@@ -2,7 +2,7 @@ Another Qt installer(aqt)
 =========================
 
 - Release: |pypi|
-- Documents: |docs|
+- Documentation: |docs|
 - Test status: |gha| and Coverage: |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
@@ -70,10 +70,10 @@ Requirements
 
 - Dependent libraries: requests, py7zr
 
-Documents
----------
+Documentation
+-------------
 
-There are versions of document
+There are two versions of documentation:
 
 - Stable versions (v1.2) : https://aqtinstall.readthedocs.io/en/stable/
 - Development version (v2.0b): https://aqtinstall.readthedocs.io/en/latest
