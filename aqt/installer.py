@@ -48,7 +48,7 @@ from aqt.helper import (
     getUrl,
     setup_logging,
 )
-from aqt.metadata import ArchiveId, MetadataFactory, Version, show_list
+from aqt.metadata import ArchiveId, MetadataFactory, Version, show_list, SimpleSpec
 from aqt.updater import Updater
 
 try:
@@ -473,8 +473,8 @@ class Cli:
             )
         )
 
-    def run_list(self, args: argparse.ArgumentParser) -> int:
-        """Print tools, versions of Qt, extensions, modules, architectures"""
+    def run_list_qt(self, args: argparse.ArgumentParser) -> int:
+        """Print versions of Qt, extensions, modules, architectures"""
 
         if not args.target:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
@@ -494,50 +494,49 @@ class Cli:
                         version_str
                     )
                 )
-                exit(1)
+                exit(1)  # TODO: maybe return 1 instead?
+
+        try:
+            spec = SimpleSpec(args.spec) if args.spec else None
+        except ValueError:
+            self.logger.error(
+                f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage()
+            )
+            return 1
 
         meta = MetadataFactory(
             archive_id=ArchiveId(
-                args.category,
+                "qt",
                 args.host,
                 args.target,
                 args.extension if args.extension else "",
             ),
-            filter_minor=args.filter_minor,
+            spec=spec,
             is_latest_version=args.latest_version,
             modules_ver=args.modules,
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
-            tool_name=args.tool,
-            tool_long_listing=args.tool_long,
         )
         return show_list(meta)
 
-    def _make_list_parser(self, subparsers: argparse._SubParsersAction):
+    def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: argparse.ArgumentParser = subparsers.add_parser(
             "list",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
-            "$ aqt list qt5 mac                                            # print all targets for Mac OS\n"
-            "$ aqt list tools mac desktop                                  # print all tools for mac desktop\n"
-            "$ aqt list tools mac desktop --tool tools_ifw                 # print all tool variant names for QtIFW\n"
-            "$ aqt list qt5 mac desktop                                    # print all versions of Qt 5\n"
-            "$ aqt list qt5 mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
-            "$ aqt list qt5 mac desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
-            "$ aqt list qt5 mac desktop --filter-minor 9 --latest-version  # print latest Qt 5.9\n"
-            "$ aqt list qt5 mac desktop --modules 5.12.0                   # print modules for 5.12.0\n"
-            "$ aqt list qt5 mac desktop --filter-minor 9 --modules latest  # print modules for latest 5.9\n"
-            "$ aqt list qt5 mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
-            "$ aqt list qt5 mac desktop --arch 5.9.9                       "
+            "$ aqt list-qt mac                                            # print all targets for Mac OS\n"
+            "$ aqt list-qt mac desktop                                    # print all versions of Qt 5\n"
+            "$ aqt list-qt mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
+            "$ aqt list-qt mac desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
+            "$ aqt list-qt mac desktop --filter-minor 9 --latest-version  # print latest Qt 5.9\n"
+            "$ aqt list-qt mac desktop --modules 5.12.0                   # print modules for 5.12.0\n"
+            "$ aqt list-qt mac desktop --spec 5.9 --modules latest  # print modules for latest 5.9\n"
+            "$ aqt list-qt mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
+            "$ aqt list-qt mac desktop --arch 5.9.9                       "
             "# print architectures for 5.9.9/mac/desktop\n"
-            "$ aqt list qt5 mac desktop --arch latest                      "
+            "$ aqt list-qt mac desktop --arch latest                      "
             "# print architectures for the latest Qt 5\n",
-        )
-        list_parser.add_argument(
-            "category",
-            choices=["tools", "qt5", "qt6"],
-            help="category of packages to list",
         )
         list_parser.add_argument(
             "host", choices=["linux", "mac", "windows"], help="host os name"
@@ -556,11 +555,11 @@ class Cli:
             "Use the `--extensions` flag to list all relevant options for a host/target.",
         )
         list_parser.add_argument(
-            "--filter-minor",
+            "--spec",
             type=int,
-            metavar="MINOR_VERSION",
-            help="print versions for a particular minor version. "
-            "IE: `aqt list qt5 windows desktop --filter-minor 12` prints all versions beginning with 5.12",
+            metavar="SPECIFICATION",
+            help="Filter output so that only versions that match the specification are printed. "
+            'IE: `aqt list-qt windows desktop --spec "5.12"` prints all versions beginning with 5.12',
         )
         output_modifier_exclusive_group = list_parser.add_mutually_exclusive_group()
         output_modifier_exclusive_group.add_argument(
@@ -610,7 +609,66 @@ class Cli:
             # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
             "The output of this command is formatted as a table.",
         )
-        list_parser.set_defaults(func=self.run_list)
+        list_parser.set_defaults(func=self.run_list_qt)
+
+    def run_list_tool(self, args: argparse.ArgumentParser) -> int:
+        """Print tools"""
+
+        if not args.target:
+            print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
+            return 0
+        if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
+            self.logger.error(
+                "'{0.target}' is not a valid target for host '{0.host}'".format(args)
+            )
+            return 1
+
+        meta = MetadataFactory(
+            archive_id=ArchiveId("tools", args.host, args.target),
+            tool_name=args.tool_name,
+            is_long_listing=args.long,
+        )
+        return show_list(meta)
+
+    def _make_list_tool_parser(self, subparsers: argparse._SubParsersAction):
+        """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
+        list_parser: argparse.ArgumentParser = subparsers.add_parser(
+            "list",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="Examples:\n"
+            "$ aqt list-tool mac desktop                 # print all tools for mac desktop\n"
+            "$ aqt list-tool mac desktop tools_ifw       # print all tool variant names for QtIFW\n"
+            "$ aqt list-tool mac desktop ifw             # print all tool variant names for QtIFW\n"
+            "$ aqt list-tool mac desktop -l tools_ifw    # print tool variant names with metadata for QtIFW\n"
+            "$ aqt list-tool mac desktop -l ifw          # print tool variant names with metadata for QtIFW\n",
+        )
+        list_parser.add_argument(
+            "host", choices=["linux", "mac", "windows"], help="host os name"
+        )
+        list_parser.add_argument(
+            "target",
+            nargs="?",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK. When omitted, this prints all the targets available for a host OS.",
+        )
+        list_parser.add_argument(
+            "tool_name",
+            nargs="?",
+            default=None,
+            help='Name of a tool, ie "tools_mingw" or "tools_ifw". '
+            "When omitted, this prints all the tool names available for a host OS/target SDK combination. "
+            "When present, this prints all the tool variant names available for this tool. ",
+        )
+        list_parser.add_argument(
+            "-l",
+            "--long",
+            action="store_true",
+            help="Long display: shows a table of metadata associated with each tool variant. "
+            "On narrow terminals, it displays tool variant names, versions, and release dates. "
+            "On terminals wider than 95 characters, it also displays descriptions of each tool.",
+        )
+        list_parser.set_defaults(func=self.run_list_tool)
 
     def show_help(self, args=None):
         """Display help message"""
@@ -766,11 +824,12 @@ class Cli:
         tools_parser.add_argument(
             "arch",
             help="Name of full tool name such as qt.tools.ifw.31. "
-            "Please use 'aqt list --tool' to list acceptable values for this parameter.",
+            "Please use 'aqt list-tool' to list acceptable values for this parameter.",
         )
         self._set_common_options(tools_parser)
 
-        self._make_list_parser(subparsers)
+        self._make_list_qt_parser(subparsers)
+        self._make_list_tools_parser(subparsers)
         #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)

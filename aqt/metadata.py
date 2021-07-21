@@ -41,6 +41,21 @@ from aqt.helper import Settings, getUrl, xml_to_modules
 class SimpleSpec(SemanticSimpleSpec):
     pass
 
+    @staticmethod
+    def usage() -> str:
+        return (
+            "See documentation at: "
+            "https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec\n"
+            "Examples:\n"
+            '* "*": matches everything\n'
+            '* "5": matches every version with major=5\n'
+            '* "5.6": matches every version beginning with 5.6\n'
+            '* "5.*.3": matches versions with major=5 and patch=3\n'
+            '* "<5": matches every version with major<5\n'
+            '* ">5,<6.2": matches versions starting with 6.0 and 6.1\n'
+            '* "<=5": matches major<=5, including all preview/prerelease versions'
+        )
+
 
 class Version(SemanticVersion):
     """Override semantic_version.Version class
