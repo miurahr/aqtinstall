@@ -199,107 +199,69 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
     assert table._rows() == expect["long_listing"]
 
 
-@pytest.mark.parametrize(
-    "host, target, spec, ver, ext, xmlfile, xmlexpect, htmlfile, htmlexpect",
-    [
-        (
-            "windows",
-            "desktop",
-            "5.14",
-            "5.14.0",
-            "wasm",
-            "windows-5140-update.xml",
-            "windows-5140-expect.json",
-            "windows-desktop.html",
-            "windows-desktop-expect.json",
-        ),
-    ],
-)
-def test_list_qt_cli(
-    capsys,
-    monkeypatch,
-    host,
-    target,
-    spec,
-    ver,
-    ext,
-    xmlfile,
-    xmlexpect,
-    htmlfile,
-    htmlexpect,
-):
-    def _mock(_, rest_of_url: str) -> str:
-        in_file = xmlfile if rest_of_url.endswith("Updates.xml") else htmlfile
-        text = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-        if not rest_of_url.endswith("Updates.xml"):
-            return text
-
-        # If we are serving an Updates.xml, `aqt list` will look for a Qt version number.
-        # We will replace the version numbers in the file with the requested version.
-        match = re.search(r"qt\d_(\d+)", rest_of_url)
-        assert match
-        desired_version = match.group(1)
-        ver_to_replace = ver.replace(".", "")
-        return text.replace(ver_to_replace, desired_version)
-
-    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock)
-
+@pytest.fixture
+def expected_windows_desktop_5140() -> Dict[str, Set[str]]:
+    xmlexpect = "windows-5140-expect.json"
     expected_modules_arches = json.loads(
         (Path(__file__).parent / "data" / xmlexpect).read_text("utf-8")
     )
-    expect_modules = expected_modules_arches["modules"]
-    expect_arches = expected_modules_arches["architectures"]
+    return {key: set(val) for key, val in expected_modules_arches.items()}
 
-    def check_extensions():
-        out, err = capsys.readouterr()
-        # We should probably generate expected from htmlexpect, but this will work for now
-        assert out.strip() == "wasm src_doc_examples"
 
-    def check_modules():
-        out, err = capsys.readouterr()
-        assert set(out.strip().split()) == set(expect_modules)
+@pytest.mark.parametrize(
+    "args, expect",
+    (
+        ("--extensions latest", {"src_doc_examples"}),
+        ("--spec 5.14 --extensions latest", {"wasm", "src_doc_examples"}),
+        ("--extensions 5.14.0", {"wasm", "src_doc_examples"}),
+        ("--modules latest", "modules"),
+        ("--spec 5.14 --modules latest", "modules"),
+        ("--modules 5.14.0", "modules"),
+        ("--extension wasm --modules latest", "modules"),
+        ("--extension wasm --spec 5.14 --modules latest", "modules"),
+        ("--extension wasm --modules 5.14.0", "modules"),
+        ("--arch latest", "architectures"),
+        ("--spec 5.14 --arch latest", "architectures"),
+        ("--arch 5.14.0", "architectures"),
+        ("--extension wasm --arch latest", "architectures"),
+        ("--extension wasm --spec 5.14 --arch latest", "architectures"),
+        ("--extension wasm --arch 5.14.0", "architectures"),
+    ),
+)
+def test_list_qt_cli(
+    monkeypatch,
+    capsys,
+    expected_windows_desktop_5140: Dict[str, Set[str]],
+    args: str,
+    expect: Union[Set[str], str],
+):
+    htmlfile, xmlfile = "windows-desktop.html", "windows-5140-update.xml"
+    version_string_to_replace = "qt5.5140"
 
-    def check_arches():
-        out, err = capsys.readouterr()
-        assert set(out.strip().split()) == set(expect_arches)
+    def _mock_fetch_http(_, rest_of_url: str) -> str:
+        htmltext = (Path(__file__).parent / "data" / htmlfile).read_text("utf-8")
+        if not rest_of_url.endswith("Updates.xml"):
+            return htmltext
 
-    _spec = ["--spec", spec]
-    _ext = ["--extension", ext]
+        xmltext = (Path(__file__).parent / "data" / xmlfile).read_text("utf-8")
+        # If we are serving an Updates.xml, `aqt list` will look for a Qt version number.
+        # We will replace the version numbers in the file with the requested version.
+        match = re.search(r"qt(\d)_(\d+)", rest_of_url)
+        assert match
+        major, version_nodot = match.groups()
+        desired_version_string = f"qt{major}.{version_nodot}"
+        return xmltext.replace(version_string_to_replace, desired_version_string)
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
 
     cli = Cli()
-    # Query extensions by latest version, spec, and specific version
-    cli.run(["list-qt", host, target, "--extensions", "latest"])
-    check_extensions()
-    cli.run(["list-qt", host, target, *_spec, "--extensions", "latest"])
-    check_extensions()
-    cli.run(["list-qt", host, target, "--extensions", ver])
-    check_extensions()
-    # Query modules by latest version, spec, and specific version
-    cli.run(["list-qt", host, target, "--modules", "latest"])
-    check_modules()
-    cli.run(["list-qt", host, target, *_spec, "--modules", "latest"])
-    check_modules()
-    cli.run(["list-qt", host, target, "--modules", ver])
-    check_modules()
-    cli.run(["list-qt", host, target, *_ext, "--modules", "latest"])
-    check_modules()
-    cli.run(["list-qt", host, target, *_ext, *_spec, "--modules", "latest"])
-    check_modules()
-    cli.run(["list-qt", host, target, *_ext, "--modules", ver])
-    check_modules()
-    # Query architectures by latest version, spec, and specific version
-    cli.run(["list-qt", host, target, "--arch", "latest"])
-    check_arches()
-    cli.run(["list-qt", host, target, *_spec, "--arch", "latest"])
-    check_arches()
-    cli.run(["list-qt", host, target, "--arch", ver])
-    check_arches()
-    cli.run(["list-qt", host, target, *_ext, "--arch", "latest"])
-    check_arches()
-    cli.run(["list-qt", host, target, *_ext, *_spec, "--arch", "latest"])
-    check_arches()
-    cli.run(["list-qt", host, target, *_ext, "--arch", ver])
-    check_arches()
+    cli.run(["list-qt", "windows", "desktop", *args.split()])
+    out, err = capsys.readouterr()
+    output_set = set(out.strip().split())
+    expect_set = (
+        expected_windows_desktop_5140[expect] if isinstance(expect, str) else expect
+    )
+    assert output_set == expect_set
 
 
 @pytest.mark.parametrize(
