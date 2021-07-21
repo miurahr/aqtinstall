@@ -2,13 +2,13 @@ Another Qt installer(aqt)
 =========================
 
 - Release: |pypi|
-- Documents: |docs|
+- Documentation: |docs|
 - Test status: |gha| and Coverage: |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
-.. |docs| image:: https://readthedocs.org/projects/aqtinstall/badge/?version=latest
-   :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
+.. |docs| image:: https://readthedocs.org/projects/aqtinstall/badge/?version=stable
+   :target: https://aqtinstall.readthedocs.io/en/latest/?badge=stable
 .. |gha| image:: https://github.com/miurahr/aqtinstall/workflows/Test%20on%20GH%20actions%20environment/badge.svg
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
 .. |coveralls| image:: https://coveralls.io/repos/github/miurahr/aqtinstall/badge.svg?branch=master
@@ -70,6 +70,15 @@ Requirements
 
 - Dependent libraries: requests, py7zr
 
+Documentation
+-------------
+
+There are two versions of documentation:
+
+- Stable versions (v1.2) : https://aqtinstall.readthedocs.io/en/stable/
+- Development version (v2.0b): https://aqtinstall.readthedocs.io/en/latest
+
+
 
 Install
 -------
@@ -89,8 +98,8 @@ You are recommended to update pip before installing aqtinstall.
     Older pip does not handle it expectedly(see #230).
 
 
-Usage
------
+Usage(as in v1.2.x)
+-------------------
 
 General usage looks like this:
 
