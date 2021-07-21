@@ -75,7 +75,7 @@ Documentation
 
 There are two versions of documentation:
 
-- Stable versions (v1.2) : https://aqtinstall.readthedocs.io/en/stable/
+- Stable version (v1.2) : https://aqtinstall.readthedocs.io/en/stable/
 - Development version (v2.0b): https://aqtinstall.readthedocs.io/en/latest
 
 
@@ -319,8 +319,6 @@ Some projects utilize aqtinstall.
 * GitHub Actions: `install_qt`_
 
 * Docker image: `docker aqtinstall`_
-
-* PyQt5 Tools: `pyqt5-tools`_
 
 * Yet another comic reader: `YACReader`_  utilize on Azure-Pipelines
 
