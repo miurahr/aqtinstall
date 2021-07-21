@@ -685,13 +685,14 @@ class MetadataFactory:
     def describe_filters(self) -> str:
         if self.spec is None:
             return str(self.archive_id)
-        return "{} with spec '{}'".format(self.archive_id, self.spec)
+        return "{} with spec {}".format(self.archive_id, self.spec)
 
 
 def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     """Makes an informed guess at what the user got wrong, in the event of an error."""
     msg = []
-    base_cmd = "aqt list {0.category} {0.host} {0.target}".format(meta.archive_id)
+    list_cmd = "list-tool" if meta.archive_id.is_tools() else "list-qt"
+    base_cmd = "aqt {0} {1.host} {1.target}".format(list_cmd, meta.archive_id)
     if meta.archive_id.extension:
         msg.append(
             f"Please use '{base_cmd} --extensions <QT_VERSION>' to list valid extensions."
