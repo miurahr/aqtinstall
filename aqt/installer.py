@@ -48,7 +48,7 @@ from aqt.helper import (
     getUrl,
     setup_logging,
 )
-from aqt.metadata import ArchiveId, MetadataFactory, Version, show_list, SimpleSpec
+from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version, show_list
 from aqt.updater import Updater
 
 try:
@@ -522,7 +522,7 @@ class Cli:
     def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: argparse.ArgumentParser = subparsers.add_parser(
-            "list",
+            "list-qt",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
             "$ aqt list-qt mac                                            # print all targets for Mac OS\n"
@@ -556,7 +556,7 @@ class Cli:
         )
         list_parser.add_argument(
             "--spec",
-            type=int,
+            type=str,
             metavar="SPECIFICATION",
             help="Filter output so that only versions that match the specification are printed. "
             'IE: `aqt list-qt windows desktop --spec "5.12"` prints all versions beginning with 5.12',
@@ -633,7 +633,7 @@ class Cli:
     def _make_list_tool_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: argparse.ArgumentParser = subparsers.add_parser(
-            "list",
+            "list-tool",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
             "$ aqt list-tool mac desktop                 # print all tools for mac desktop\n"
@@ -829,7 +829,7 @@ class Cli:
         self._set_common_options(tools_parser)
 
         self._make_list_qt_parser(subparsers)
-        self._make_list_tools_parser(subparsers)
+        self._make_list_tool_parser(subparsers)
         #
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
