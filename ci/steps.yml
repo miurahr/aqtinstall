@@ -72,10 +72,10 @@ steps:
         aqt list-qt $(HOST)                                                     # print all targets for host
         aqt list-tool $(HOST) $(TARGET)                                         # print all tools for host/target
         aqt list-tool $(HOST) $(TARGET) qt3dstudio_runtime_240                  # print all tool variant names for qt3dstudio
-        aqt list-tool $(HOST) $(TARGET) --long qt3dstudio_runtime_240           # print tool variant names, versions, release dates
+        aqt list-tool $(HOST) $(TARGET) qt3dstudio_runtime_240 --long           # print tool variant names, versions, release dates
         if [[ "$(TARGET)" == "desktop" ]]; then
           aqt list-tool $(HOST) $(TARGET) tools_qtcreator                       # print all tool variant names for qtcreator
-          aqt list-tool $(HOST) $(TARGET) -l tools_qtcreator                    # print tool variant names, versions, release dates
+          aqt list-tool $(HOST) $(TARGET) tools_qtcreator -l                    # print tool variant names, versions, release dates
         fi
         aqt list-qt $(HOST) $(TARGET)                                           # print all versions of Qt
         aqt list-qt $(HOST) $(TARGET) --extension wasm                          # print all wasm versions of Qt
