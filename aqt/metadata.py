@@ -253,11 +253,6 @@ class ArchiveId:
         """Returns True if there should be no arch attached to the module names"""
         return self.extension in ("src_doc_examples",)
 
-    def is_major_ver_mismatch(self, qt_version: Version) -> bool:
-        """Returns True if the version specifies a version different from the specified category"""
-        # Not a thing anymore; this will be refactored out!
-        return False
-
     def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
         base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
@@ -569,11 +564,6 @@ class MetadataFactory:
             version = Version(qt_ver)
         except ValueError as e:
             raise CliInputError(e)
-        if self.archive_id.is_major_ver_mismatch(version):
-            msg = "Major version mismatch between {} and {}".format(
-                self.archive_id.category, version
-            )
-            raise CliInputError(msg)
         return version
 
     @staticmethod
