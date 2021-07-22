@@ -361,7 +361,7 @@ class MetadataFactory:
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         tool_name: Optional[str] = None,
-        tool_long_listing: Optional[str] = None,
+        is_long_listing: bool = False,
     ):
         """
         Construct MetadataFactory.
@@ -374,7 +374,7 @@ class MetadataFactory:
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
         :param tool_name:           Name of a tool, without architecture, ie "tools_qtcreator" or "tools_ifw"
-        :param tool_long_listing:   Name of a tool variant, ie "qt.tools.ifw.41" for tool_name "tools_ifw"
+        :param is_long_listing:     If true, long listing is used for tools output
         """
         self.logger = getLogger("aqt.metadata")
         self.archive_id = archive_id
@@ -382,11 +382,12 @@ class MetadataFactory:
 
         if archive_id.is_tools():
             if tool_name:
-                self.request_type = "tool variant names"
-                self._action = lambda: self.fetch_tool_modules(tool_name)
-            elif tool_long_listing:
-                self.request_type = "tool long listing"
-                self._action = lambda: self.fetch_tool_long_listing(tool_long_listing)
+                if is_long_listing:
+                    self.request_type = "tool long listing"
+                    self._action = lambda: self.fetch_tool_long_listing(tool_name)
+                else:
+                    self.request_type = "tool variant names"
+                    self._action = lambda: self.fetch_tool_modules(tool_name)
             else:
                 self.request_type = "tools"
                 self._action = self.fetch_tools
