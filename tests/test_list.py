@@ -265,6 +265,67 @@ def test_list_qt_cli(
 
 
 @pytest.mark.parametrize(
+    "cmd, host, expect",
+    (
+        ("list-qt", "windows", {"desktop", "android", "winrt"}),
+        ("list-qt", "linux", {"desktop", "android"}),
+        ("list-qt", "mac", {"desktop", "android", "ios"}),
+        ("list-tool", "windows", {"desktop", "android", "winrt"}),
+        ("list-tool", "linux", {"desktop", "android"}),
+        ("list-tool", "mac", {"desktop", "android", "ios"}),
+    ),
+)
+def test_list_targets(capsys, cmd: str, host: str, expect: Set[str]):
+    cli = Cli()
+    cli.run([cmd, host])
+    out, err = capsys.readouterr()
+    output_set = set(out.strip().split())
+    assert output_set == expect
+
+
+@pytest.mark.parametrize(
+    "cmd, host, target",
+    (
+        ("list-qt", "windows", "ios"),
+        ("list-qt", "linux", "ios"),
+        ("list-qt", "linux", "winrt"),
+        ("list-qt", "mac", "winrt"),
+        ("list-tool", "windows", "ios"),
+        ("list-tool", "linux", "ios"),
+        ("list-tool", "linux", "winrt"),
+        ("list-tool", "mac", "winrt"),
+    ),
+)
+def test_list_wrong_target(capsys, cmd: str, host: str, target: str):
+    expect = f"'{target}' is not a valid target for host '{host}'"
+
+    cli = Cli()
+    return_code = cli.run([cmd, host, target])
+    out, err = capsys.readouterr()
+    assert return_code == 1
+    assert err.strip() == expect
+
+
+@pytest.mark.parametrize(
+    "cmd, spec",
+    (
+        ("list-qt", "not a spec"),
+        ("list-qt", "1...3"),
+        ("list-qt", ""),
+        ("list-qt", ">3 <5"),
+    ),
+)
+def test_invalid_spec(capsys, cmd: str, spec: str):
+    expect_prefix = f"Invalid version specification: '{spec}'"
+    host, target = "linux", "desktop"
+    cli = Cli()
+    return_code = cli.run([cmd, host, target, "--spec", spec])
+    out, err = capsys.readouterr()
+    assert return_code == 1
+    assert err.strip().startswith(expect_prefix)
+
+
+@pytest.mark.parametrize(
     "simple_spec, expected_name",
     (
         (SimpleSpec("*"), "mytool.999"),
@@ -624,6 +685,68 @@ def test_show_list_tools(monkeypatch, capsys):
     sys.stdout.write(out)
     sys.stderr.write(err)
     assert out == expect
+
+
+def fetch_expected_tooldata(json_filename: str) -> ToolData:
+    text = (Path(__file__).parent / "data" / json_filename).read_text("utf-8")
+    raw_tooldata: List[List[str]] = json.loads(text)["long_listing"]
+    keys = ("Version", "ReleaseDate", "DisplayName", "Description")
+
+    tools: Dict[str, Dict[str, str]] = {}
+    for variant_name, *values in raw_tooldata:
+        assert len(keys) == len(values)
+        tools[variant_name] = {k: v for k, v in zip(keys, values)}
+
+    return ToolData(tools)
+
+
+@pytest.mark.parametrize(
+    "host, target, tool_name", (("mac", "desktop", "tools_cmake"),)
+)
+def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: str):
+    html_file = f"{host}-{target}.html"
+    xml_file = f"{host}-{target}-{tool_name}-update.xml"
+    html_expect = f"{host}-{target}-expect.json"
+    xml_expect = f"{host}-{target}-{tool_name}-expect.json"
+    htmltext, xmltext, htmljson, xmljson = [
+        (Path(__file__).parent / "data" / filename).read_text("utf-8")
+        for filename in (html_file, xml_file, html_expect, xml_expect)
+    ]
+    expected_tools = set(json.loads(htmljson)["tools"])
+    xml_data = json.loads(xmljson)
+    expected_tool_modules = set(xml_data["modules"])
+
+    def _mock_fetch_http(_, rest_of_url: str) -> str:
+        if not rest_of_url.endswith("Updates.xml"):
+            return htmltext
+        return xmltext
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
+
+    cli = Cli()
+    cli.run(["list-tool", host, target])
+    out, err = capsys.readouterr()
+    output_set = set(out.strip().split())
+    assert output_set == expected_tools
+
+    cli.run(["list-tool", host, target, tool_name])
+    out, err = capsys.readouterr()
+    output_set = set(out.strip().split())
+    assert output_set == expected_tool_modules
+
+    # Test abbreviated tool name: "aqt list-tool mac desktop ifw"
+    assert tool_name.startswith("tools_")
+    short_tool_name = tool_name[6:]
+    cli.run(["list-tool", host, target, short_tool_name])
+    out, err = capsys.readouterr()
+    output_set = set(out.strip().split())
+    assert output_set == expected_tool_modules
+
+    cli.run(["list-tool", host, target, tool_name, "-l"])
+    out, err = capsys.readouterr()
+
+    expected_tooldata = format(fetch_expected_tooldata(xml_expect))
+    assert out.strip() == expected_tooldata
 
 
 def test_fetch_http_ok(monkeypatch):
