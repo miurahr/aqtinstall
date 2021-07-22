@@ -266,8 +266,9 @@ class ArchiveId:
         )
         if not qt_version_no_dots:
             return base
-        folder = "{category}_{ver}{ext}/".format(
+        folder = "{category}{major}_{ver}{ext}/".format(
             category=self.category,
+            major=qt_version_no_dots[0],
             ver=qt_version_no_dots,
             ext="_" + self.extension if self.extension else "",
         )
