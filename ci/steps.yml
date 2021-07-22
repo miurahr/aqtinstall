@@ -78,7 +78,11 @@ steps:
           aqt list-tool $(HOST) $(TARGET) tools_qtcreator -l                    # print tool variant names, versions, release dates
         fi
         aqt list-qt $(HOST) $(TARGET)                                           # print all versions of Qt
-        aqt list-qt $(HOST) $(TARGET) --extension wasm                          # print all wasm versions of Qt
+        if [[ $(HOST) == "desktop" ]]; then
+          aqt list-qt $(HOST) $(TARGET) --extension wasm                        # print all wasm versions of Qt
+        else
+          ! aqt list-qt $(HOST) $(TARGET) --extension wasm                      # there are no wasm versions of Qt
+        fi
         aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)"                     # print all versions of Qt in SimpleSpec
         ver=$(aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --latest-version)  # latest Qt in SimpleSpec
         [ $ver == $(QT_VERSION) ]                                               # latest version in SPEC must be QT_VERSION
