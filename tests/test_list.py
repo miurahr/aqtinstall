@@ -4,7 +4,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Dict, Generator, Set, Union
+from typing import Dict, Generator, List, Set, Union
 
 import pytest
 
@@ -15,6 +15,7 @@ from aqt.metadata import (
     ArchiveId,
     MetadataFactory,
     SimpleSpec,
+    ToolData,
     Version,
     Versions,
     format_suggested_follow_up,
@@ -69,7 +70,9 @@ def test_versions():
     assert pytest_wrapped_e.type == TypeError
 
 
-SPEC_REGEX = re.compile(r"^(\d+\.\d+)")
+@pytest.fixture
+def spec_regex() -> re.Pattern:
+    return re.compile(r"^(\d+\.\d+)")
 
 
 @pytest.mark.parametrize(
@@ -85,7 +88,9 @@ SPEC_REGEX = re.compile(r"^(\d+\.\d+)")
         ("mac", "ios", "mac-ios.html", "mac-ios-expect.json"),
     ],
 )
-def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_file):
+def test_list_versions_tools(
+    monkeypatch, spec_regex, os_name, target, in_file, expect_out_file
+):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
 
@@ -97,47 +102,46 @@ def test_list_versions_tools(monkeypatch, os_name, target, in_file, expect_out_f
     tools = MetadataFactory(ArchiveId("tools", os_name, target)).getList()
     assert tools == expected["tools"]
 
-    for qt in ("qt",):
-        for ext, expected_output in expected[qt].items():
-            # Test 'aqt list qt'
-            archive_id = ArchiveId(qt, os_name, target, ext if ext != "qt" else "")
-            all_versions = MetadataFactory(archive_id).getList()
+    for ext, expected_output in expected["qt"].items():
+        # Test 'aqt list-qt'
+        archive_id = ArchiveId("qt", os_name, target, ext if ext != "qt" else "")
+        all_versions = MetadataFactory(archive_id).getList()
 
-            if len(expected_output) == 0:
-                assert not all_versions
-            else:
-                assert f"{all_versions}" == "\n".join(expected_output)
+        if len(expected_output) == 0:
+            assert not all_versions
+        else:
+            assert f"{all_versions}" == "\n".join(expected_output)
 
-            # Filter for the latest version only
-            latest_ver = MetadataFactory(archive_id, is_latest_version=True).getList()
+        # Filter for the latest version only
+        latest_ver = MetadataFactory(archive_id, is_latest_version=True).getList()
 
-            if len(expected_output) == 0:
-                assert not latest_ver
-            else:
-                assert f"{latest_ver}" == expected_output[-1].split(" ")[-1]
+        if len(expected_output) == 0:
+            assert not latest_ver
+        else:
+            assert f"{latest_ver}" == expected_output[-1].split(" ")[-1]
 
-            for row in expected_output:
-                spec_str = SPEC_REGEX.search(row).group(1)
-                spec = (
-                    SimpleSpec(spec_str)
-                    if not ext.endswith("preview")
-                    else SimpleSpec(spec_str + ".0-preview")
-                )
+        for row in expected_output:
+            spec_str = spec_regex.search(row).group(1)
+            spec = (
+                SimpleSpec(spec_str)
+                if not ext.endswith("preview")
+                else SimpleSpec(spec_str + ".0-preview")
+            )
 
-                # Find the latest version for a particular spec
-                latest_ver_for_spec = MetadataFactory(
-                    archive_id,
-                    spec=spec,
-                    is_latest_version=True,
-                ).getList()
-                assert f"{latest_ver_for_spec}" == row.split(" ")[-1]
+            # Find the latest version for a particular spec
+            latest_ver_for_spec = MetadataFactory(
+                archive_id,
+                spec=spec,
+                is_latest_version=True,
+            ).getList()
+            assert f"{latest_ver_for_spec}" == row.split(" ")[-1]
 
-                # Find all versions for a particular spec
-                all_ver_for_spec = MetadataFactory(
-                    archive_id,
-                    spec=spec,
-                ).getList()
-                assert f"{all_ver_for_spec}" == row
+            # Find all versions for a particular spec
+            all_ver_for_spec = MetadataFactory(
+                archive_id,
+                spec=spec,
+            ).getList()
+            assert f"{all_ver_for_spec}" == row
 
 
 @pytest.mark.parametrize(
@@ -377,11 +381,6 @@ no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13 to 5.15 on desk
 def test_list_invalid_extensions(
     capsys, monkeypatch, target, ext, version, expected_msg
 ):
-    def _mock(_, rest_of_url: str) -> str:
-        return ""
-
-    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock)
-
     host = "windows"
     extension_params = ["--extension", ext] if ext else []
     cli = Cli()
