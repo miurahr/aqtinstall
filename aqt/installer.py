@@ -530,8 +530,8 @@ class Cli:
             "$ aqt list-qt mac                                            # print all targets for Mac OS\n"
             "$ aqt list-qt mac desktop                                    # print all versions of Qt 5\n"
             "$ aqt list-qt mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
-            "$ aqt list-qt mac desktop --filter-minor 9                   # print all versions of Qt 5.9\n"
-            "$ aqt list-qt mac desktop --filter-minor 9 --latest-version  # print latest Qt 5.9\n"
+            '$ aqt list-qt mac desktop --spec "5.9"                       # print all versions of Qt 5.9\n'
+            '$ aqt list-qt mac desktop --spec "5.9" --latest-version      # print latest Qt 5.9\n'
             "$ aqt list-qt mac desktop --modules 5.12.0                   # print modules for 5.12.0\n"
             "$ aqt list-qt mac desktop --spec 5.9 --modules latest  # print modules for latest 5.9\n"
             "$ aqt list-qt mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
