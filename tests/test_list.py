@@ -69,6 +69,10 @@ def test_versions(
     assert versions.latest() == expect_last
     assert bool(versions) == expect_bool
 
+    with pytest.raises(TypeError) as pytest_wrapped_e:
+        format(versions, "x")
+    assert pytest_wrapped_e.type == TypeError
+
 
 @pytest.fixture
 def spec_regex() -> re.Pattern:
