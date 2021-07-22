@@ -589,26 +589,6 @@ class Cli:
             action="store_true",
             help="print only the newest version available",
         )
-        output_modifier_exclusive_group.add_argument(
-            "--tool",
-            type=str,
-            metavar="TOOL_NAME",
-            help="The name of a tool. Use 'aqt list tools <host> <target>' to see accepted values. "
-            "This flag only works with the 'tools' category, and cannot be combined with any other flags. "
-            "When set, this prints all 'tool variant names' available. "
-            # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
-            "The output of this command is intended to be used with `aqt tool`.",
-        )
-        output_modifier_exclusive_group.add_argument(
-            "--tool-long",
-            type=str,
-            metavar="TOOL_NAME",
-            help="The name of a tool. Use 'aqt list tools <host> <target>' to see accepted values. "
-            "This flag only works with the 'tools' category, and cannot be combined with any other flags. "
-            "When set, this prints all 'tool variant names' available, along with versions and release dates. "
-            # TODO: find a better word ^^^^^^^^^^^^^^^^^^^^; this is a mysterious help message
-            "The output of this command is formatted as a table.",
-        )
         list_parser.set_defaults(func=self.run_list_qt)
 
     def run_list_tool(self, args: argparse.ArgumentParser) -> int:
