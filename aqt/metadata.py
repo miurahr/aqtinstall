@@ -377,6 +377,8 @@ class MetadataFactory:
 
         if archive_id.is_tools():
             if tool_name:
+                if not tool_name.startswith("tools_"):
+                    tool_name = "tools_" + tool_name
                 if is_long_listing:
                     self.request_type = "tool long listing"
                     self._action = lambda: self.fetch_tool_long_listing(tool_name)

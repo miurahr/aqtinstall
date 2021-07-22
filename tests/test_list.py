@@ -5,6 +5,7 @@ import shutil
 import sys
 from pathlib import Path
 from typing import Dict, List, Set, Union
+from urllib.parse import urlparse
 
 import pytest
 
@@ -722,6 +723,8 @@ def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: s
     def _mock_fetch_http(_, rest_of_url: str) -> str:
         if not rest_of_url.endswith("Updates.xml"):
             return htmltext
+        folder = urlparse(rest_of_url).path.split('/')[-2]
+        assert folder.startswith("tools_")
         return xmltext
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
