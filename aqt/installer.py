@@ -496,8 +496,10 @@ class Cli:
                 )
                 exit(1)  # TODO: maybe return 1 instead?
 
+        spec = None
         try:
-            spec = SimpleSpec(args.spec) if args.spec else None
+            if args.spec is not None:
+                spec = SimpleSpec(args.spec)
         except ValueError:
             self.logger.error(
                 f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage()
