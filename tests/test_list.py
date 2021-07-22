@@ -4,7 +4,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import Dict, Generator, List, Set, Union
+from typing import Dict, List, Set, Union
 
 import pytest
 
@@ -26,48 +26,48 @@ from aqt.metadata import (
 Settings.load_settings()
 
 
-def test_versions():
-    versions = Versions(
-        [
-            (1, [Version("1.1.1"), Version("1.1.2")]),
-            (2, [Version("1.2.1"), Version("1.2.2")]),
-        ]
-    )
-    assert (
-        str(versions)
-        == "[[Version('1.1.1'), Version('1.1.2')], [Version('1.2.1'), Version('1.2.2')]]"
-    )
-    assert format(versions) == "1.1.1 1.1.2\n1.2.1 1.2.2"
-    assert format(versions, "s") == str(versions)
-    assert versions.flattened() == [
-        Version("1.1.1"),
-        Version("1.1.2"),
-        Version("1.2.1"),
-        Version("1.2.2"),
-    ]
-    assert isinstance(versions.__iter__(), Generator)
-    assert versions.latest() == Version("1.2.2")
-    assert versions
-
-    empty_versions = Versions(None)
-    assert str(empty_versions) == "[]"
-    assert format(empty_versions) == ""
-    assert empty_versions.flattened() == []
-    assert isinstance(empty_versions.__iter__(), Generator)
-    assert empty_versions.latest() is None
-    assert not empty_versions
-
-    one_version = Versions(Version("1.2.3"))
-    assert str(one_version) == "[[Version('1.2.3')]]"
-    assert format(one_version) == "1.2.3"
-    assert one_version.flattened() == [Version("1.2.3")]
-    assert isinstance(one_version.__iter__(), Generator)
-    assert one_version.latest() == Version("1.2.3")
-    assert one_version
-
-    with pytest.raises(TypeError) as pytest_wrapped_e:
-        format(versions, "x")
-    assert pytest_wrapped_e.type == TypeError
+@pytest.mark.parametrize(
+    "init_data, expect_str, expect_fmt, expect_flat, expect_last, expect_bool",
+    (
+        (
+            [
+                (1, [Version("1.1.1"), Version("1.1.2")]),
+                (2, [Version("1.2.1"), Version("1.2.2")]),
+            ],
+            "[[Version('1.1.1'), Version('1.1.2')], [Version('1.2.1'), Version('1.2.2')]]",
+            "1.1.1 1.1.2\n1.2.1 1.2.2",
+            [Version("1.1.1"), Version("1.1.2"), Version("1.2.1"), Version("1.2.2")],
+            Version("1.2.2"),
+            True,
+        ),
+        (
+            [],
+            "[]",
+            "",
+            [],
+            None,
+            False,
+        ),
+        (
+            Version("1.2.3"),
+            "[[Version('1.2.3')]]",
+            "1.2.3",
+            [Version("1.2.3")],
+            Version("1.2.3"),
+            True,
+        ),
+    ),
+)
+def test_versions(
+    init_data, expect_str, expect_fmt, expect_flat, expect_last, expect_bool
+):
+    versions = Versions(init_data)
+    assert str(versions) == expect_str
+    assert format(versions) == expect_fmt
+    assert format(versions, "s") == expect_str
+    assert versions.flattened() == expect_flat
+    assert versions.latest() == expect_last
+    assert bool(versions) == expect_bool
 
 
 @pytest.fixture
