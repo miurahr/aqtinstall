@@ -295,14 +295,14 @@ class ToolData:
         "Release Date",
     ]
 
-    def __init__(self, tool_data):
-        self.tool_data = tool_data
+    def __init__(self, tool_data: Dict[str, Dict[str, str]]):
+        self.tool_data: Dict[str, Dict[str, str]] = tool_data
         for key in tool_data.keys():
             self.tool_data[key]["Description"] = tool_data[key]["Description"].replace(
                 "<br>", "\n"
             )
 
-    def __format__(self, format_spec) -> str:
+    def __format__(self, format_spec: str) -> str:
         short = False
         if format_spec == "{:s}":
             return str(self)
