@@ -253,7 +253,7 @@ class Cli:
             self.logger.error("Some of specified modules are unknown!")
             self.logger.error("Supported packages: {}".format(available))
             self.logger.error("Requested packages: {}".format(modules))
-            exit()
+            exit(1)
 
         try:
             qt_archives = QtArchives(
