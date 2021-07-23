@@ -310,6 +310,7 @@ class ToolArchives(QtArchives):
     def __init__(
         self,
         os_name: str,
+        target: str,
         tool_name: str,
         base: str,
         version_str: Optional[str] = None,
@@ -321,7 +322,7 @@ class ToolArchives(QtArchives):
         self.logger = getLogger("aqt.archives")
         super(ToolArchives, self).__init__(
             os_name=os_name,
-            target="desktop",
+            target=target,
             version_str=version_str,
             arch=arch,
             base=base,
@@ -367,14 +368,6 @@ class ToolArchives(QtArchives):
             else:
                 downloadable_archives = []
             named_version = packageupdate.find("Version").text
-            full_version = Version(named_version)
-            if full_version.truncate("patch") != self.version.truncate("patch"):
-                self.logger.warning(
-                    "Base Version of {} is different from requested version {} -- skip.".format(
-                        named_version, self.version
-                    )
-                )
-                continue
             package_desc = packageupdate.find("Description").text
             for archive in downloadable_archives:
                 package_url = posixpath.join(

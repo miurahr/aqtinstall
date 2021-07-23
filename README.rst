@@ -220,14 +220,14 @@ Example: Install an Install FrameWork (IFW):
 
 .. code-block:: console
 
-    aqt tool linux tools_ifw 4.0 qt.tools.ifw.40
+    aqt tool linux desktop tools_ifw
 
 
 Example: Install vcredist:
 
 .. code-block:: console
 
-    py -m aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
+    py -m aqt tool windows desktop tools_vcredist
     .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
@@ -235,7 +235,7 @@ Example: Install MinGW on Windows
 
 .. code-block:: console
 
-    py -m aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810
+    py -m aqt tool -O c:\Qt windows desktop tools_mingw qt.tools.win64_mingw810
     set PATH=C:\Qt\Tools\mingw810_64\bin
 
 
