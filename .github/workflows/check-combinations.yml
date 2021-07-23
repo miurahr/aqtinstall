@@ -47,4 +47,4 @@ jobs:
         branch: "update-combinations"
         path: "aqt/combinations.json"
         commit-message: "Update aqt/combinations.json"
-        author: "Qt Repo Watchbot <ddalcino@gmail.com>"
+        author: "Qt Repo Watchbot <qtrepowatchbot[bot]@users.noreply.github.com>"
