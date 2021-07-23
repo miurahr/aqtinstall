@@ -124,7 +124,7 @@ windows_build_jobs.extend(
             "desktop",
             "win64_msvc2019_64",
             "msvc2019_64",
-            module="qcharts qtnetworkauth",
+            module="qtcharts qtnetworkauth",
             mirror=random.choice(MIRRORS),
         ),
     ]
@@ -140,7 +140,7 @@ linux_build_jobs.extend(
             "desktop",
             "gcc_64",
             "gcc_64",
-            module="qcharts qtnetworkauth",
+            module="qtcharts qtnetworkauth",
         ),
         BuildJob(
             "install", "5.14.2", "linux", "desktop", "gcc_64", "gcc_64", module="all"
@@ -191,7 +191,7 @@ mac_build_jobs.extend(
             "desktop",
             "clang_64",
             "clang_64",
-            module="qcharts qtnetworkauth",
+            module="qtcharts qtnetworkauth",
         ),
     ]
 )
