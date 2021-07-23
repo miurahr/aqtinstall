@@ -295,7 +295,7 @@ Example: Install vcredist on Windows:
 .. code-block:: doscon
 
 
-    aqt tool windows tools_vcredist msvc2019_x64
+    aqt tool windows tools_vcredist
     .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
@@ -303,7 +303,7 @@ Example: Install MinGW on Windows
 
 .. code-block:: doscon
 
-    aqt tool -O c:\Qt windows tools_mingw 8.1.0
+    aqt tool -O c:\Qt windows tools_mingw qt.tools.win64_mingw810
     set PATH=C:\Qt\Tools\mingw810_64\bin
 
 
