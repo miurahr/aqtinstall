@@ -249,7 +249,12 @@ class Cli:
             )
         all_extra = True if modules is not None and "all" in modules else False
         if not all_extra and not self._check_modules_arg(qt_version, modules):
-            self.logger.warning("Some of specified modules are unknown.")
+            available = Settings.available_modules(qt_version)
+            self.logger.error("Some of specified modules are unknown!")
+            self.logger.error("Supported packages: {}".format(available))
+            self.logger.error("Requested packages: {}".format(modules))
+            exit()
+
         try:
             qt_archives = QtArchives(
                 os_name,
