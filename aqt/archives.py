@@ -97,24 +97,31 @@ class QtArchives:
             self.all_extra = True
         else:
             for m in modules if modules is not None else []:
-                self.mod_list.append(
-                    "qt.qt{0}.{0}{1}{2}.{3}.{4}".format(
+                if self.version.major == 6:
+                    mod_string = "{0}{1}{2}.addons.{3}.{4}".format(
                         self.version.major,
                         self.version.minor,
                         self.version.patch,
                         m,
                         arch,
                     )
-                )
-                self.mod_list.append(
-                    "qt.{0}{1}{2}.{3}.{4}".format(
+                elif self.version.major == 5:
+                    mod_string = "{0}{1}{2}.{3}.{4}".format(
                         self.version.major,
                         self.version.minor,
                         self.version.patch,
                         m,
                         arch,
                     )
-                )
+                else: 
+                    raise RuntimeError('unsupported qt version')
+
+                self.mod_list += [
+                    "qt.qt{0}.".format(self.version.major) + mod_string, 
+                    "qt." + mod_string
+                ]
+
+                
         self.timeout = timeout
         self._get_archives()
         if not all_archives:
