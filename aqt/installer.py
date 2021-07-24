@@ -27,6 +27,7 @@ import multiprocessing
 import os
 import platform
 import random
+import signal
 import subprocess
 import time
 from logging import getLogger
@@ -826,11 +827,18 @@ def run_installer(
     tasks = []
     for arc in archives:
         tasks.append((arc, base_dir, sevenzip, queue, keep))
+    original_sh = signal.signal(signal.SIGINT, signal.SIG_IGN)
     ctx = multiprocessing.get_context("spawn")
     pool = ctx.Pool(Settings.concurrency)
-    pool.starmap(installer, tasks)
-    #
-    pool.close()
+    signal.signal(signal.SIGINT, original_sh)
+    try:
+        pool.starmap(installer, tasks)
+        #
+        pool.close()
+    except KeyboardInterrupt:
+        pool.terminate()
+    else:
+        pool.close()
     pool.join()
     # all done, close logging service for sub-processes
     listener.enqueue_sentinel()
