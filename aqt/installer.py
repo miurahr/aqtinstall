@@ -365,7 +365,9 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        result = run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
+        result = run_installer(
+            srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep
+        )
         if result:
             self.logger.info("Finished installation")
         else:
@@ -842,7 +844,7 @@ def run_installer(
         pool.close()
         pool.join()
     except KeyboardInterrupt:
-        logger= getLogger("aqt.installer")
+        logger = getLogger("aqt.installer")
         logger.warning("Caught KeyboardInterrupt, terminating installer workers")
         pool.terminate()
         pool.join()
@@ -855,6 +857,7 @@ def run_installer(
 
 def init_worker_sh():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
+
 
 def installer(
     qt_archive: QtPackage,
