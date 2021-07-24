@@ -191,10 +191,10 @@ steps:
         jom
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
         if ( $env:ARCH -eq 'win64_mingw81' ) {
-          python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810
+          python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win64_mingw810
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_64\bin" + $env:Path, "Machine")
         } else {
-          python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) tools_mingw 8.1.0-1-202004170606 qt.tools.win32_mingw810
+          python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win32_mingw810
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_32\bin" + $env:Path, "Machine")
         }
         $env:Path = "$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin;$(WIN_QT_BINDIR);" + $env:Path

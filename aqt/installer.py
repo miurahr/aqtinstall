@@ -409,9 +409,9 @@ class Cli:
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
-        arch = args.arch
-        tool_name = args.tool_name
-        os_name = args.host
+        tool_name = args.tool_name  # such as tools_openssl_x64
+        os_name = args.host  # windows, linux and mac
+        target = args.target  # desktop, android and ios
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -421,7 +421,7 @@ class Cli:
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip(Settings.zipcmd)
-        version = args.version
+        version = "0.0.1"  # just store a dummy version
         keep = args.keep
         if args.base is not None:
             base = args.base
@@ -431,41 +431,55 @@ class Cli:
             timeout = (args.timeout, args.timeout)
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
-        if not self._check_tools_arg_combination(os_name, tool_name, arch):
-            self.logger.warning(
-                "Specified target combination is not valid: {} {} {}".format(
-                    os_name, tool_name, arch
-                )
-            )
-
-        try:
-            tool_archives = ToolArchives(
-                os_name=os_name,
+        if args.arch is None:
+            archs = MetadataFactory(
+                archive_id=ArchiveId("tools", os_name, target, ""),
+                is_latest_version=True,
                 tool_name=tool_name,
-                base=base,
-                version_str=version,
-                arch=arch,
-                timeout=timeout,
-            )
-        except ArchiveConnectionError:
-            try:
+            ).getList()
+        else:
+            archs = [args.arch]
+
+        for arch in archs:
+            if not self._check_tools_arg_combination(os_name, tool_name, arch):
                 self.logger.warning(
-                    "Connection to the download site failed and fallback to mirror site."
+                    "Specified target combination is not valid: {} {} {}".format(
+                        os_name, tool_name, arch
+                    )
                 )
+
+            try:
                 tool_archives = ToolArchives(
                     os_name=os_name,
                     tool_name=tool_name,
-                    base=random.choice(Settings.fallbacks),
+                    target=target,
+                    base=base,
                     version_str=version,
                     arch=arch,
                     timeout=timeout,
                 )
-            except Exception:
-                self.logger.error("Connection to the download site failed. Aborted...")
+            except ArchiveConnectionError:
+                try:
+                    self.logger.warning(
+                        "Connection to the download site failed and fallback to mirror site."
+                    )
+                    tool_archives = ToolArchives(
+                        os_name=os_name,
+                        target=target,
+                        tool_name=tool_name,
+                        base=random.choice(Settings.fallbacks),
+                        version_str=version,
+                        arch=arch,
+                        timeout=timeout,
+                    )
+                except Exception:
+                    self.logger.error(
+                        "Connection to the download site failed. Aborted..."
+                    )
+                    exit(1)
+            except ArchiveDownloadError or ArchiveListError:
                 exit(1)
-        except ArchiveDownloadError or ArchiveListError:
-            exit(1)
-        run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep)
+            run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
@@ -798,13 +812,19 @@ class Cli:
             "host", choices=["linux", "mac", "windows"], help="host os name"
         )
         tools_parser.add_argument(
+            "target",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK.",
+        )
+
+        tools_parser.add_argument(
             "tool_name", help="Name of tool such as tools_ifw, tools_mingw"
         )
         tools_parser.add_argument(
-            "version", help='Tool version in the format of "4.1.2"'
-        )
-        tools_parser.add_argument(
             "arch",
+            nargs="?",
+            default=None,
             help="Name of full tool name such as qt.tools.ifw.31. "
             "Please use 'aqt list-tool' to list acceptable values for this parameter.",
         )

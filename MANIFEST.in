@@ -26,3 +26,4 @@ exclude .gitignore
 exclude azure-pipelines.yml
 exclude qtaccount.ini
 exclude aqtinstall.log
+

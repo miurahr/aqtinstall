@@ -2,13 +2,13 @@ Another Qt installer(aqt)
 =========================
 
 - Release: |pypi|
-- Documents: |docs|
+- Documentation: |docs|
 - Test status: |gha| and Coverage: |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
-.. |docs| image:: https://readthedocs.org/projects/aqtinstall/badge/?version=latest
-   :target: https://aqtinstall.readthedocs.io/en/latest/?badge=latest
+.. |docs| image:: https://readthedocs.org/projects/aqtinstall/badge/?version=stable
+   :target: https://aqtinstall.readthedocs.io/en/latest/?badge=stable
 .. |gha| image:: https://github.com/miurahr/aqtinstall/workflows/Test%20on%20GH%20actions%20environment/badge.svg
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
 .. |coveralls| image:: https://coveralls.io/repos/github/miurahr/aqtinstall/badge.svg?branch=master
@@ -70,6 +70,15 @@ Requirements
 
 - Dependent libraries: requests, py7zr
 
+Documentation
+-------------
+
+There are two versions of documentation:
+
+- Stable version (v1.2) : https://aqtinstall.readthedocs.io/en/stable/
+- Development version (v2.0b): https://aqtinstall.readthedocs.io/en/latest
+
+
 
 Install
 -------
@@ -89,8 +98,8 @@ You are recommended to update pip before installing aqtinstall.
     Older pip does not handle it expectedly(see #230).
 
 
-Usage
------
+Usage(as in v1.2.x)
+-------------------
 
 General usage looks like this:
 
@@ -211,14 +220,14 @@ Example: Install an Install FrameWork (IFW):
 
 .. code-block:: console
 
-    aqt tool linux tools_ifw 4.0 qt.tools.ifw.40
+    aqt tool linux desktop tools_ifw
 
 
 Example: Install vcredist:
 
 .. code-block:: console
 
-    py -m aqt tool windows tools_vcredist 2019-02-13-1 qt.tools.vcredist_msvc2019_x64
+    py -m aqt tool windows desktop tools_vcredist
     .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
@@ -226,7 +235,7 @@ Example: Install MinGW on Windows
 
 .. code-block:: console
 
-    py -m aqt tool -O c:\Qt windows tools_mingw 8.1.0-1-202004170606 qt.tools.win64_mingw810
+    py -m aqt tool -O c:\Qt windows desktop tools_mingw qt.tools.win64_mingw810
     set PATH=C:\Qt\Tools\mingw810_64\bin
 
 
@@ -310,8 +319,6 @@ Some projects utilize aqtinstall.
 * GitHub Actions: `install_qt`_
 
 * Docker image: `docker aqtinstall`_
-
-* PyQt5 Tools: `pyqt5-tools`_
 
 * Yet another comic reader: `YACReader`_  utilize on Azure-Pipelines
 
