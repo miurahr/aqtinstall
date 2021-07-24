@@ -50,10 +50,7 @@ class SimpleSpec(SemanticSimpleSpec):
             '* "*": matches everything\n'
             '* "5": matches every version with major=5\n'
             '* "5.6": matches every version beginning with 5.6\n'
-            '* "5.*.3": matches versions with major=5 and patch=3\n'
-            '* "<5": matches every version with major<5\n'
-            '* ">5,<6.2": matches versions starting with 6.0 and 6.1\n'
-            '* "<=5": matches major<=5, including all preview/prerelease versions'
+            '* "5.*.3": matches versions with major=5 and patch=3'
         )
 
 
