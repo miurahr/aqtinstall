@@ -28,6 +28,7 @@ class BuildJob:
         subarchives=None,
         output_dir=None,
         list_options=None,
+        spec=None,
     ):
         self.command = command
         self.qt_version = qt_version
@@ -39,6 +40,8 @@ class BuildJob:
         self.mirror = mirror
         self.subarchives = subarchives
         self.list_options = list_options if list_options else {}
+        # `steps.yml` assumes that qt_version is the highest version that satisfies spec
+        self.spec = spec
         self.output_dir = output_dir
 
 
@@ -161,17 +164,16 @@ linux_build_jobs.extend(
             "doc", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtdoc"
         ),
         # test for list commands
-        BuildJob('list', '5.15.2', 'linux', 'desktop', '', '', list_options={
-            'HAS_WASM_EXTENSION': "True",
+        BuildJob('list', '5.15.2', 'linux', 'desktop', '', '', spec="<6", list_options={
             'HAS_EXTENSIONS': "True",
         }),
-        BuildJob('list', '6.1.0', 'linux', 'android', '', '', list_options={
+        BuildJob('list', '6.1.0', 'linux', 'android', '', '', spec=">6.0,<6.1.1", list_options={
             'HAS_EXTENSIONS': "True",
             'USE_EXTENSION': "armv7",
         }),
         # tests run on linux but query data about other platforms
-        BuildJob('list', '5.14.1', 'mac', 'ios', '', '', list_options={}),
-        BuildJob('list', '5.13.1', 'windows', 'winrt', '', '', list_options={}),
+        BuildJob('list', '5.14.1', 'mac', 'ios', '', '', spec="<=5.14.1", list_options={}),
+        BuildJob('list', '5.13.1', 'windows', 'winrt', '', '', spec=">5.13.0,<5.13.2", list_options={}),
     ]
 )
 mac_build_jobs.extend(
@@ -274,7 +276,7 @@ for platform_build_job in all_platform_build_jobs:
                 ("MODULE", build_job.module if build_job.module else ""),
                 ("QT_BASE_MIRROR", build_job.mirror if build_job.mirror else ""),
                 ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else ""),
-                ("HAS_WASM_EXTENSION", build_job.list_options.get("HAS_WASM_EXTENSION", "False")),
+                ("SPEC", build_job.spec if build_job.spec else ""),
                 ("HAS_EXTENSIONS", build_job.list_options.get("HAS_EXTENSIONS", "False")),
                 ("USE_EXTENSION", build_job.list_options.get("USE_EXTENSION", "None")),
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),

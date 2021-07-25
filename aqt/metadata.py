@@ -41,6 +41,18 @@ from aqt.helper import Settings, getUrl, xml_to_modules
 class SimpleSpec(SemanticSimpleSpec):
     pass
 
+    @staticmethod
+    def usage() -> str:
+        return (
+            "See documentation at: "
+            "https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec\n"
+            "Examples:\n"
+            '* "*": matches everything\n'
+            '* "5": matches every version with major=5\n'
+            '* "5.6": matches every version beginning with 5.6\n'
+            '* "5.*.3": matches versions with major=5 and patch=3'
+        )
+
 
 class Version(SemanticVersion):
     """Override semantic_version.Version class
@@ -192,7 +204,7 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 
 class ArchiveId:
-    CATEGORIES = ("tools", "qt5", "qt6")
+    CATEGORIES = ("tools", "qt")
     HOSTS = ("windows", "mac", "linux")
     TARGETS_FOR_HOST = {
         "windows": ["android", "desktop", "winrt"],
@@ -229,7 +241,7 @@ class ArchiveId:
         return "preview" in self.extension if self.extension else False
 
     def is_qt(self) -> bool:
-        return self.category.startswith("qt")
+        return self.category == "qt"
 
     def is_tools(self) -> bool:
         return self.category == "tools"
@@ -237,10 +249,6 @@ class ArchiveId:
     def is_no_arch(self) -> bool:
         """Returns True if there should be no arch attached to the module names"""
         return self.extension in ("src_doc_examples",)
-
-    def is_major_ver_mismatch(self, qt_version: Version) -> bool:
-        """Returns True if the version specifies a version different from the specified category"""
-        return self.is_qt() and int(self.category[-1]) != qt_version.major
 
     def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
         base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
@@ -250,8 +258,9 @@ class ArchiveId:
         )
         if not qt_version_no_dots:
             return base
-        folder = "{category}_{ver}{ext}/".format(
+        folder = "{category}{major}_{ver}{ext}/".format(
             category=self.category,
+            major=qt_version_no_dots[0],
             ver=qt_version_no_dots,
             ext="_" + self.extension if self.extension else "",
         )
@@ -283,14 +292,14 @@ class ToolData:
         "Release Date",
     ]
 
-    def __init__(self, tool_data):
-        self.tool_data = tool_data
+    def __init__(self, tool_data: Dict[str, Dict[str, str]]):
+        self.tool_data: Dict[str, Dict[str, str]] = tool_data
         for key in tool_data.keys():
             self.tool_data[key]["Description"] = tool_data[key]["Description"].replace(
                 "<br>", "\n"
             )
 
-    def __format__(self, format_spec) -> str:
+    def __format__(self, format_spec: str) -> str:
         short = False
         if format_spec == "{:s}":
             return str(self)
@@ -338,36 +347,41 @@ class MetadataFactory:
         self,
         archive_id: ArchiveId,
         *,
-        filter_minor: Optional[int] = None,
+        spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
         modules_ver: Optional[str] = None,
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         tool_name: Optional[str] = None,
-        tool_long_listing: Optional[str] = None,
+        is_long_listing: bool = False,
     ):
         """
         Construct MetadataFactory.
 
-        :param filter_minor:        When set, the MetadataFactory will filter out all versions of
-                                    Qt that don't match this minor version.
+        :param spec:                When set, the MetadataFactory will filter out all versions of
+                                    Qt that don't fit this SimpleSpec.
         :param is_latest_version:   When True, the MetadataFactory will find all versions of Qt
                                     matching filters, and only print the most recent version
         :param modules_ver:         Version of Qt for which to list modules
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
+        :param tool_name:           Name of a tool, without architecture, ie "tools_qtcreator" or "tools_ifw"
+        :param is_long_listing:     If true, long listing is used for tools output
         """
         self.logger = getLogger("aqt.metadata")
         self.archive_id = archive_id
-        self.filter_minor = filter_minor
+        self.spec = spec
 
         if archive_id.is_tools():
             if tool_name:
-                self.request_type = "tool variant names"
-                self._action = lambda: self.fetch_tool_modules(tool_name)
-            elif tool_long_listing:
-                self.request_type = "tool long listing"
-                self._action = lambda: self.fetch_tool_long_listing(tool_long_listing)
+                if not tool_name.startswith("tools_"):
+                    tool_name = "tools_" + tool_name
+                if is_long_listing:
+                    self.request_type = "tool long listing"
+                    self._action = lambda: self.fetch_tool_long_listing(tool_name)
+                else:
+                    self.request_type = "tool variant names"
+                    self._action = lambda: self.fetch_tool_modules(tool_name)
             else:
                 self.request_type = "tools"
                 self._action = self.fetch_tools
@@ -415,7 +429,7 @@ class MetadataFactory:
             version, extension = ver_ext
             return (
                 version
-                and (self.filter_minor is None or self.filter_minor == version.minor)
+                and (self.spec is None or version in self.spec)
                 and (self.archive_id.extension == extension)
             )
 
@@ -549,11 +563,6 @@ class MetadataFactory:
             version = Version(qt_ver)
         except ValueError as e:
             raise CliInputError(e)
-        if self.archive_id.is_major_ver_mismatch(version):
-            msg = "Major version mismatch between {} and {}".format(
-                self.archive_id.category, version
-            )
-            raise CliInputError(msg)
         return version
 
     @staticmethod
@@ -680,15 +689,16 @@ class MetadataFactory:
         return naive_modules_arches(modules.keys())
 
     def describe_filters(self) -> str:
-        if self.filter_minor is None:
+        if self.spec is None:
             return str(self.archive_id)
-        return "{} with minor version {}".format(self.archive_id, self.filter_minor)
+        return "{} with spec {}".format(self.archive_id, self.spec)
 
 
 def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     """Makes an informed guess at what the user got wrong, in the event of an error."""
     msg = []
-    base_cmd = "aqt list {0.category} {0.host} {0.target}".format(meta.archive_id)
+    list_cmd = "list-tool" if meta.archive_id.is_tools() else "list-qt"
+    base_cmd = "aqt {0} {1.host} {1.target}".format(list_cmd, meta.archive_id)
     if meta.archive_id.extension:
         msg.append(
             f"Please use '{base_cmd} --extensions <QT_VERSION>' to list valid extensions."
@@ -696,10 +706,10 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
 
     if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
         msg.append(f"Please use '{base_cmd}' to check what tools are available.")
-    elif meta.filter_minor is not None:
+    elif meta.spec is not None:
         msg.append(
             f"Please use '{base_cmd}' to check that versions of {meta.archive_id.category} "
-            f"exist with the minor version '{meta.filter_minor}'."
+            f"exist within the spec '{meta.spec}'."
         )
     elif meta.request_type in ("architectures", "modules", "extensions"):
         msg.append(f"Please use '{base_cmd}' to show versions of Qt available.")
