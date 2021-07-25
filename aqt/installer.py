@@ -487,7 +487,9 @@ class Cli:
                     exit(1)
             except ArchiveDownloadError or ArchiveListError:
                 exit(1)
-            if not run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep):
+            if not run_installer(
+                tool_archives.get_packages(), base_dir, sevenzip, keep
+            ):
                 exit(1)
         self.logger.info("Finished installation")
         self.logger.info(
