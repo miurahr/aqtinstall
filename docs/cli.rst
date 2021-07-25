@@ -9,7 +9,7 @@ long options may be truncated to the shortest unambiguous abbreviation.
 Generic commands
 ----------------
 
-.. program::  aqt help
+.. program::  help
 
 .. code-block:: bash
 
@@ -21,7 +21,7 @@ show generic help
 List Qt command
 ------------------
 
-.. program::  aqt list-qt
+.. program::  list-qt
 
 .. code-block:: bash
 
@@ -97,7 +97,7 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 List Tool command
 -----------------
 
-.. program::  aqt list-tool
+.. program::  list-tool
 
 .. code-block:: bash
 
@@ -146,14 +146,14 @@ List available tools
 
 
 
-Installation command
---------------------
+Qt Installation command
+-----------------------
 
-.. program::  aqt install
+.. program:: install-qt
 
 .. code-block:: bash
 
-    aqt install <Qt version> <target OS> <target variant> <target architecture>
+    aqt install-qt <Qt version> <target OS> <target variant> [<target architecture>]
 
 install Qt library specified version and target.
 There are various combinations to accept according to Qt version.
@@ -223,11 +223,11 @@ There are various combinations to accept according to Qt version.
 Source installation command
 ---------------------------
 
-.. program::  aqt src
+.. program::  install-src
 
 .. code-block:: bash
 
-    aqt src <Qt version> <target OS> <target variant> [--kde] [--archives <archive>]
+    aqt install-src <Qt version> <target OS> <target variant> [--kde] [--archives <archive>]
 
 install Qt sources specified version and target.
 
@@ -259,11 +259,11 @@ install Qt sources specified version and target.
 Document installation command
 -----------------------------
 
-.. program:: aqt doc
+.. program:: install-doc
 
 .. code-block:: bash
 
-    aqt doc <Qt version> <target OS> <target variant>
+    aqt install-doc <Qt version> <target OS> <target variant>
 
 install Qt documents specified version and target.
 
@@ -283,11 +283,11 @@ install Qt documents specified version and target.
 Example installation command
 ----------------------------
 
-.. program:: aqt examples
+.. program:: install-examples
 
 .. code-block:: bash
 
-    aqt examples <Qt version> <target OS> <target variant>
+    aqt install-examples <Qt version> <target OS> <target variant>
 
 install Qt examples specified version and target.
 
@@ -308,24 +308,29 @@ install Qt examples specified version and target.
 Tools installation command
 ---------------------------
 
-.. program::  aqt tool
+.. program::  install-tool
 
 .. code-block:: bash
 
-    aqt tool <target OS> <target variant> <tool name> [<tool variant name>]
+    aqt install-tool <target OS> <target variant> <tool name> [<tool variant name>]
 
 .. describe:: target OS
 
     linux, windows or mac
+
+.. describe:: target variant
+
+    desktop, ios or android
 
 .. describe:: tool name
 
     install tools specified. tool name may be 'tools_openssl_x64', 'tools_vcredist', 'tools_ninja',
     'tools_ifw', 'tools_cmake'
 
-.. describe:: tool variant name
+.. option:: tool variant name
 
-    tool variant names may be 'qt.tools.openssl.gcc_64', 'qt.tools.vcredist_msvc2013_x64'.
+    Optional field to specify tool variant. It may be required for vcredist and mingw installation.
+    tool variant names may be 'qt.tools.win64_mingw810', 'qt.tools.vcredist_msvc2013_x64'.
 
 You should use the :ref:`List Tool command` to display what tools and tool variant names are available.
     
