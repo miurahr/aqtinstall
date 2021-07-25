@@ -1,0 +1,52 @@
+name: "Check combinations.json"
+on:
+  schedule:
+  # Run at midnight on the first of every month
+  # https://crontab.guru/once-a-month
+  - cron: "0 0 1 * *"
+
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ci/**'
+
+jobs:
+  check_combinations:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 20
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Build and install
+      run: |
+        python setup.py --version
+        python -m pip install ./ --user
+
+    - name: Install generate_combinations dependencies
+      run: pip install -U jsoncomparison
+
+    - name: Check combinations.json
+      run: PYTHONPATH=$(pwd) python3 ci/generate_combinations.py --write --no-tqdm
+
+    - name: Commit and make pull request
+      uses: gr2m/create-or-update-pull-request-action@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        title: "Update `aqt/combinations.json`"
+        body: |
+          The `ci/generate_combinations.py` script has detected changes to the repo at https://download.qt.io.
+          This PR will update `aqt/combinations.json` to account for those changes.
+
+          Posted from [the `check_combinations` action](https://github.com/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }})
+
+        branch: "update-combinations"
+        path: "aqt/combinations.json"
+        commit-message: "Update aqt/combinations.json"
+        author: "Qt Repo Watchbot <qtrepowatchbot[bot]@users.noreply.github.com>"
