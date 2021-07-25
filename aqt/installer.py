@@ -27,6 +27,7 @@ import multiprocessing
 import os
 import platform
 import random
+import signal
 import subprocess
 import time
 from logging import getLogger
@@ -284,7 +285,9 @@ class Cli:
         except ArchiveDownloadError or ArchiveListError or NoPackageFound:
             exit(1)
         target_config = qt_archives.get_target_config()
-        run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
+        result = run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
+        if not result:
+            exit(1)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -362,8 +365,13 @@ class Cli:
                 exit(1)
         except ArchiveDownloadError or ArchiveListError:
             exit(1)
-        run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
-        self.logger.info("Finished installation")
+        result = run_installer(
+            srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep
+        )
+        if result:
+            self.logger.info("Finished installation")
+        else:
+            exit(1)
 
     def run_src(self, args):
         """Run src subcommand"""
@@ -479,7 +487,10 @@ class Cli:
                     exit(1)
             except ArchiveDownloadError or ArchiveListError:
                 exit(1)
-            run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep)
+            if not run_installer(
+                tool_archives.get_packages(), base_dir, sevenzip, keep
+            ):
+                exit(1)
         self.logger.info("Finished installation")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
@@ -838,7 +849,8 @@ class Cli:
 
 def run_installer(
     archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool
-):
+) -> bool:
+    result = True
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
@@ -847,14 +859,25 @@ def run_installer(
     for arc in archives:
         tasks.append((arc, base_dir, sevenzip, queue, keep))
     ctx = multiprocessing.get_context("spawn")
-    pool = ctx.Pool(Settings.concurrency)
-    pool.starmap(installer, tasks)
-    #
-    pool.close()
-    pool.join()
+    pool = ctx.Pool(Settings.concurrency, init_worker_sh)
+    try:
+        pool.starmap(installer, tasks)
+        pool.close()
+        pool.join()
+    except KeyboardInterrupt:
+        logger = getLogger("aqt.installer")
+        logger.warning("Caught KeyboardInterrupt, terminating installer workers")
+        pool.terminate()
+        pool.join()
+        result = False
     # all done, close logging service for sub-processes
     listener.enqueue_sentinel()
     listener.stop()
+    return result
+
+
+def init_worker_sh():
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
 def installer(
