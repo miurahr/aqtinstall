@@ -44,7 +44,7 @@ jobs:
           The `ci/generate_combinations.py` script has detected changes to the repo at https://download.qt.io.
           This PR will update `aqt/combinations.json` to account for those changes.
 
-          Posted from [the `check_combinations` action](https://github.com/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }})
+          Posted from [the `check_combinations` action](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
         branch: "update-combinations"
         path: "aqt/combinations.json"
