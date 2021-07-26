@@ -12,7 +12,7 @@ Added
 * Add error messages when user inputs an invalid semantic version(#291)
 * Security Policy document
 * CI: CodeQL static source analysis
-* CI: generate combination json in actions (#318)
+* CI: generate combination json in actions (#318,#343)
 
 Changed
 -------
@@ -27,6 +27,7 @@ Changed
 * README example command is now easy to copy-and-paste(#322)  
 * list subcommand update(#331)
 * Improve handle of Ctrl-C keyboard interrption(#337)
+* Update combinations.json(#344)
 
 Fixed
 -----
