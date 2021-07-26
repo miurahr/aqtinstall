@@ -10,6 +10,9 @@ All notable changes to this project will be documented in this file.
 Added
 -----
 * Add error messages when user inputs an invalid semantic version(#291)
+* Security Policy document
+* CI: CodeQL static source analysis
+* CI: generate combination json in actions (#318)
 
 Changed
 -------
@@ -20,6 +23,10 @@ Changed
 * Change log format for logging file.
 * Extension validation for tool subcommand(#314)
 * list subcommand has --tool-long option(#304, #319)
+* tool subcommand now install without version spec(#299)
+* README example command is now easy to copy-and-paste(#322)  
+* list subcommand update(#331)
+* Improve handle of Ctrl-C keyboard interrption(#337)
 
 Fixed
 -----
@@ -27,6 +34,8 @@ Fixed
 * Fix Qt 6.2.0 target path for macOS.(#289)
 * Fix WinRT installation patching(#311)
 * Fix Qt 5.9.0 installation (#312)
+* Link documentations for stable/latest on README
+
 
 `v1.2.2`_ (1, Jul. 2021)
 ========================
