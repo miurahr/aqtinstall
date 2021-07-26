@@ -25,46 +25,44 @@ def is_blacklisted_tool(tool_name: str) -> bool:
 
 def iter_archive_ids(
     *,
-    categories: Iterator[str] = ArchiveId.CATEGORIES,
+    category: str,
     hosts: Iterator[str] = ArchiveId.HOSTS,
     targets: Optional[Iterator[str]] = None,
     add_extensions: bool = False,
 ) -> Generator[ArchiveId, None, None]:
     def iter_extensions() -> Generator[str, None, None]:
-        if add_extensions:
-            if cat == "qt6" and target == "android":
-                yield from ("x86_64", "x86", "armv7", "arm64_v8a")
+        if add_extensions and category == "qt":
+            if target == "android":
+                yield from ("", "x86_64", "x86", "armv7", "arm64_v8a")
                 return
-            elif cat == "qt5" and target == "desktop":
+            elif target == "desktop":
                 yield from ("wasm", "")
                 return
         yield ""
 
-    for cat in categories:
-        for host in sorted(hosts):
-            use_targets = targets
-            if use_targets is None:
-                use_targets = ArchiveId.TARGETS_FOR_HOST[host]
-            for target in use_targets:
-                if target == "winrt" and cat == "qt6":
-                    # there is no qt6 for winrt
-                    continue
-                for ext in iter_extensions():
-                    yield ArchiveId(cat, host, target, ext)
+    for host in sorted(hosts):
+        use_targets = targets
+        if use_targets is None:
+            use_targets = ArchiveId.TARGETS_FOR_HOST[host]
+        for target in use_targets:
+            for ext in iter_extensions():
+                yield ArchiveId(category, host, target, ext)
 
 
 def iter_arches() -> Generator[dict, None, None]:
     logger.info("Fetching arches")
-    archive_ids = list(iter_archive_ids(categories=("qt5", "qt6"), add_extensions=True))
+    archive_ids = list(iter_archive_ids(category="qt", add_extensions=True))
     for archive_id in tqdm(archive_ids):
-        versions = (
-            ("latest",)
-            if archive_id.category == "qt6"
-            else ("latest", "5.13.2", "5.9.9")
-        )
-        for version in versions:
-            if version == "5.9.9" and archive_id.extension == "wasm":
+        for version in ("latest", "5.15.2", "5.13.2", "5.9.9"):
+            if archive_id.extension == "wasm" and (
+                version == "5.9.9" or version == "latest"
+            ):
                 continue
+            if archive_id.target == "android":
+                if version == "latest" and archive_id.extension == "":
+                    continue
+                if version != "latest" and archive_id.extension != "":
+                    continue
             for arch_name in MetadataFactory(
                 archive_id, architectures_ver=version
             ).getList():
@@ -76,7 +74,7 @@ def iter_arches() -> Generator[dict, None, None]:
 
 
 def iter_tool_variants() -> Generator[dict, None, None]:
-    for archive_id in iter_archive_ids(categories=("tools",)):
+    for archive_id in iter_archive_ids(category="tools"):
         logger.info("Fetching tool variants for {}".format(archive_id))
         for tool_name in tqdm(sorted(MetadataFactory(archive_id).getList())):
             if is_blacklisted_tool(tool_name):
@@ -95,14 +93,10 @@ def iter_tool_variants() -> Generator[dict, None, None]:
 def iter_qt_minor_groups(
     host: str = "linux", target: str = "desktop"
 ) -> Generator[Tuple[int, int], None, None]:
-    for cat in (
-        "qt5",
-        "qt6",
-    ):
-        versions: Versions = MetadataFactory(ArchiveId(cat, host, target)).getList()
-        for minor_group in versions:
-            v = minor_group[0]
-            yield v.major, v.minor
+    versions: Versions = MetadataFactory(ArchiveId("qt", host, target)).getList()
+    for minor_group in versions:
+        v = minor_group[0]
+        yield v.major, v.minor
 
 
 def iter_modules_for_qt_minor_groups(
@@ -110,24 +104,19 @@ def iter_modules_for_qt_minor_groups(
 ) -> Generator[Dict, None, None]:
     logger.info("Fetching qt modules for {}/{}".format(host, target))
     for major, minor in tqdm(list(iter_qt_minor_groups(host, target))):
-        cat = f"qt{major}"
         yield {
             "qt_version": f"{major}.{minor}",
             "modules": MetadataFactory(
-                ArchiveId(cat, host, target), modules_ver=f"{major}.{minor}.0"
+                ArchiveId("qt", host, target), modules_ver=f"{major}.{minor}.0"
             ).getList(),
         }
 
 
 def list_qt_versions(host: str = "linux", target: str = "desktop") -> List[str]:
     all_versions = list()
-    for cat in (
-        "qt5",
-        "qt6",
-    ):
-        versions: Versions = MetadataFactory(ArchiveId(cat, host, target)).getList()
-        for minor_group in versions:
-            all_versions.extend([str(ver) for ver in minor_group])
+    versions: Versions = MetadataFactory(ArchiveId("qt", host, target)).getList()
+    for minor_group in versions:
+        all_versions.extend([str(ver) for ver in minor_group])
     return all_versions
 
 
