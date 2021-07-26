@@ -4,8 +4,6 @@ Security Policy
 Supported Versions
 ------------------
 
-Only recent version of pyppmd are currently being supported with security updates.
-
 +---------+--------------------+
 | Version | Status             |
 +=========+====================+
