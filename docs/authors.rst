@@ -1,6 +1,6 @@
 :tocdepth: 2
 
-.. _authors:
+.. _authors_ref:
 
 Authors
 =======

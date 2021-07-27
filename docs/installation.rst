@@ -1,6 +1,6 @@
 :tocdepth: 2
 
-.. _installation:
+.. _installation_ref:
 
 Installation
 ============

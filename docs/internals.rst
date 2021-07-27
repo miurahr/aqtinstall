@@ -1,6 +1,6 @@
 :tocdepth: 2
 
-.. _internals:
+.. _internals_ref:
 
 Internals
 =========
