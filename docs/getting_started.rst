@@ -269,7 +269,29 @@ Output:
     tools_conan
     tools_cmake
 
-Let's see what's in `tools_mingw`, using the `-l` or `--long` flag:
+Let's see what tool variants are available in `tools_mingw`:
+
+.. code-block:: console
+
+    aqt list-tool windows desktop tools_mingw
+
+Output:
+
+.. code-block::
+
+qt.tools.mingw47
+qt.tools.win32_mingw48
+qt.tools.win32_mingw482
+qt.tools.win32_mingw491
+qt.tools.win32_mingw492
+qt.tools.win32_mingw530
+qt.tools.win32_mingw730
+qt.tools.win32_mingw810
+qt.tools.win64_mingw730
+qt.tools.win64_mingw810
+
+This gives us a list of things that we could install using ``aqt tool``.
+Let's see some more details, using the `-l` or `--long` flag:
 
 .. code-block:: console
 
