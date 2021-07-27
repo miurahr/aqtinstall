@@ -9,11 +9,13 @@ long options may be truncated to the shortest unambiguous abbreviation.
 Generic commands
 ----------------
 
-.. program::  aqt
+.. program::  help
 
-.. option:: help
+.. code-block:: bash
 
-    show generic help
+    aqt help
+
+show generic help
 
 
 .. _list qt command:
@@ -21,18 +23,20 @@ Generic commands
 List Qt command
 ------------------
 
-.. program::  aqt
+.. program::  list-qt
 
-.. option:: list-qt [-h | --help]
-                    [--extension <extension>]
-                    [--spec <specification>]
-                    [--modules    (<Qt version> | latest) |
-                     --extensions (<Qt version> | latest) |
-                     --arch       (<Qt version> | latest) |
-                     --latest-version]
-                    <target OS> [<target variant>]
+.. code-block:: bash
 
-    List available versions of Qt, targets, extensions, modules, and architectures.
+    aqt list-qt [-h | --help]
+                [--extension <extension>]
+                [--spec <specification>]
+                [--modules    (<Qt version> | latest) |
+                 --extensions (<Qt version> | latest) |
+                 --arch       (<Qt version> | latest) |
+                 --latest-version]
+                <target OS> [<target variant>]
+
+List available versions of Qt, targets, extensions, modules, and architectures.
 
 .. describe:: target OS (aka host in code/help text)
 
@@ -48,9 +52,11 @@ List Qt command
 
     Display help text
 
-.. option:: --extension {wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}
+.. option:: --extension <Extension>
 
-    Extension of packages to list.
+    Extension of packages to list
+    {wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}
+
     Use the `--extensions` flag to list all relevant options for a host/target.
     Incompatible with the `--extensions` flag, but may be combined with any other flag.
 
@@ -94,11 +100,14 @@ List Qt command
 
 List Tool command
 -----------------
-.. program::  aqt
 
-.. option:: list-tool [-h | --help] [-l | --long] <target OS> [<target variant>] [<tool name>]
+.. program::  list-tool
 
-    List available tools
+.. code-block:: bash
+
+    aqt list-tool [-h | --help] [-l | --long] <target OS> [<target variant>] [<tool name>]
+
+List available tools
 
 .. describe:: target OS (aka host in code/help text)
 
@@ -110,7 +119,7 @@ List Tool command
     When omitted, the command prints all the targets available for a host OS.
     Note that winrt is only available on Windows, and ios is only available on Mac OS.
 
-.. describe:: <tool name>
+.. describe:: tool name
 
     The name of a tool. Use `aqt list-tool <target OS> <target variant>` to see accepted values.
     When set, this prints all 'tool variant names' available.
@@ -143,15 +152,17 @@ List Tool command
 
 .. _installation command:
 
-Installation command
---------------------
+Qt Installation command
+-----------------------
 
-.. program::  aqt
+.. program:: install-qt
 
-.. option:: install <Qt version> <target OS> <target variant> <target architecture>
+.. code-block:: bash
 
-    install Qt library specified version and target.
-    There are various combinations to accept according to Qt version.
+    aqt install-qt <Qt version> <target OS> <target variant> [<target architecture>]
+
+install Qt library specified version and target.
+There are various combinations to accept according to Qt version.
 
 .. describe:: Qt version
 
@@ -218,32 +229,86 @@ Installation command
 Source installation command
 ---------------------------
 
-.. program::  aqt
+.. program::  install-src
 
-.. option:: src <Qt version> <target OS> <target variant> [--kde] [--archives <archive>]
+.. code-block:: bash
 
-    install Qt sources specified version and target. by adding --kde option,
+    aqt install-src <Qt version> <target OS> <target variant> [--kde] [--archives <archive>]
+
+install Qt sources specified version and target.
+
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9,7, 5.12.1 etc
+
+.. describe:: target OS
+
+    linux, windows or mac
+
+.. describe:: target variant
+
+    desktop, ios or android
+
+.. option:: --kde
+
+    by adding --kde option,
     KDE patch collection is applied for qtbase tree. It is only applied to
     Qt 5.15.2. When specified version is other than it, command will abort
     with error when using --kde.
+
+.. option:: --archives
+
     You can specify --archives option to install only a specified source
     such as qtbase.
-
 
 Document installation command
 -----------------------------
 
-.. option:: doc <Qt version> <target OS> <target variant>
+.. program:: install-doc
 
-    install Qt documents specified version and target.
+.. code-block:: bash
+
+    aqt install-doc <Qt version> <target OS> <target variant>
+
+install Qt documents specified version and target.
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9,7, 5.12.1 etc
+
+.. describe:: target OS
+
+    linux, windows or mac
+
+.. describe:: target variant
+
+    desktop, ios or android
 
 
 Example installation command
 ----------------------------
 
-.. option:: examples <Qt version> <target OS> <target variant>
+.. program:: install-examples
 
-    install Qt examples specified version and target.
+.. code-block:: bash
+
+    aqt install-examples <Qt version> <target OS> <target variant>
+
+install Qt examples specified version and target.
+
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9,7, 5.12.1 etc
+
+.. describe:: target OS
+
+    linux, windows or mac
+
+.. describe:: target variant
+
+    desktop, ios or android
 
 
 .. _tools installation command:
@@ -251,20 +316,37 @@ Example installation command
 Tools installation command
 ---------------------------
 
-.. program::  aqt
+.. program::  install-tool
 
-.. option:: tool <target OS> <target variant> <tool name> [<tool variant name>]
+.. code-block:: bash
+
+    aqt install-tool <target OS> <target variant> <tool name> [<tool variant name>]
+
+.. describe:: target OS
+
+    linux, windows or mac
+
+.. describe:: target variant
+
+    desktop, ios or android
+
+.. describe:: tool name
 
     install tools specified. tool name may be 'tools_openssl_x64', 'tools_vcredist', 'tools_ninja',
     'tools_ifw', 'tools_cmake'
-    tool variant names may be 'qt.tools.openssl.gcc_64', 'qt.tools.vcredist_msvc2013_x64'.
-    
-    You may use the :ref:`List Tool command` to display what tools and tool variant names are available.
+
+.. option:: tool variant name
+
+    Optional field to specify tool variant. It may be required for vcredist and mingw installation.
+    tool variant names may be 'qt.tools.win64_mingw810', 'qt.tools.vcredist_msvc2013_x64'.
+
+You should use the :ref:`List Tool command` to display what tools and tool variant names are available.
     
 
 Command examples
 ================
 
+.. program:: None
 
 Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 

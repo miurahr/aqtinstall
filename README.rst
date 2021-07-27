@@ -111,6 +111,10 @@ General usage looks like this:
 
 You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
 
+Many older Linux distributions symlink ``python`` to the older Python 2.7, which is incompatible with ``aqt``.
+If you are using such a system, please check your Python 3 version with ``python3 --version``, 
+and run ``aqt`` using ``python3 -m aqt``.
+
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
 * Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)
