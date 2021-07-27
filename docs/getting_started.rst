@@ -155,6 +155,93 @@ new names to install them successfully:
     aqt install-qt windows desktop 6.1.2 win64_mingw81 -m addons.qtcharts addons.qtnetworkauth
 
 
+Installing Qt for Android
+-------------------------
+
+Let's install Qt for Android. Installing Qt 5 will be similar to installing Qt
+for desktop on Windows, but there will be differences when we get to Qt 6.
+
+.. code-block:: console
+
+    $ aqt list-qt windows android                     # Print Qt versions available
+    5.9.0 5.9.1 ...
+    ...
+    6.2.0
+
+    $ aqt list-qt windows android --arch 5.15.2       # Print architectures available
+    android
+
+    $ aqt list-qt windows android --modules 5.15.2    # Print modules available
+    qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquick3d qtquicktimeline qtscript
+
+    $ aqt install-qt windows android 5.15.2 android -m qtcharts qtnetworkauth
+
+Let's see what happens when we try to list architectures and modules for Qt 6:
+
+.. code-block:: console
+
+    $ aqt list-qt windows android --arch 6.2.0       # Print architectures available
+    Command line input error: Qt 6 for Android requires one of the following extensions:
+    ('x86_64', 'x86', 'armv7', 'arm64_v8a').
+    Please add your extension using the `--extension` flag.
+
+    $ aqt list-qt windows android --modules 6.2.0    # Print modules available
+    Command line input error: Qt 6 for Android requires one of the following extensions:
+    ('x86_64', 'x86', 'armv7', 'arm64_v8a').
+    Please add your extension using the `--extension` flag.
+
+The Qt 6 for Android repositories are a little different than the Qt 5 repositories,
+and the ``aqt list-qt`` tool doesn't know where to look for modules and architectures
+if you don't tell it what architecture you need. I know, it sounds a little
+backwards, but that's how the Qt repo was put together.
+
+There are four architectures available, and the error message from ``aqt list-qt``
+just told us what they are: `x86_64`, `x86`, `armv7`, and `arm64_v8a`.
+If we want to install Qt 6.2.0 for armv7, we use this command to print available modules:
+
+.. code-block:: console
+
+    $ aqt list-qt windows android --extension armv7 --modules 6.2.0
+
+Output:
+
+.. code-block::
+
+    addons.qt3d addons.qtcharts addons.qtconnectivity addons.qtdatavis3d
+    addons.qtimageformats addons.qtlottie addons.qtmultimedia addons.qtnetworkauth
+    addons.qtpositioning addons.qtremoteobjects addons.qtscxml addons.qtsensors
+    addons.qtserialbus addons.qtvirtualkeyboard addons.qtwebchannel addons.qtwebsockets
+    addons.qtwebview qt5compat qtquick3d qtquicktimeline qtshadertools
+
+We know we want to use `armv7` for the architecture, but we don't know exactly
+what value for 'architecture' we need to pass to ``aqt install-qt`` yet, so we
+will use ``aqt list-qt`` again:
+
+.. code-block:: console
+
+    aqt list-qt windows android --extension armv7 --arch 6.2.0
+
+Output:
+
+.. code-block::
+
+    android_armv7
+
+You should be thinking, "Well, that was silly. All it did was add `android_` to
+the beginning of the architecture I gave it. Why do I need to use
+``aqt list-qt --arch`` for that?" The answer is, ``aqt list-qt --arch`` is
+checking to see what actually exists in the Qt repository. If it prints an error
+message, instead of the obvious `android_armv7`, we would know that Qt 6.2.0
+for that architecture doesn't exist for some reason, and any attempt to install
+it with ``aqt install-qt`` will fail.
+
+Finally, let's install Qt 6.2.0 for Android armv7 with some modules:
+
+.. code-block:: console
+
+    aqt install linux android 6.2.0 android_armv7 -m addons.qtcharts addons.qtnetworkauth
+
+
 Installing Tools
 ----------------
 
@@ -241,12 +328,6 @@ the tool variant you are interested in, like this:
 
 Installing Qt for WASM
 ----------------------
-Planned: discuss using the ``--extensions`` flags and ``--extension wasm``
-
-
-Installing Qt for Android
--------------------------
-Planned: discuss specifying the target architecture with the ``--extension`` flag
 
 
 
