@@ -143,7 +143,7 @@ steps:
       Install-PackageProvider NuGet -Force
       Import-PackageProvider NuGet -Force
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-      Install-Module Pscx -AllowClobber
+      Install-Module Pscx -AllowClobber -AllowPrerelease
       Install-Module VSSetup -Scope CurrentUser
       if ('$(ARCH)' -like '*msvc*') {
         Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MSVC'
@@ -178,7 +178,6 @@ steps:
       make
     condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''), eq(variables['SUBCOMMAND'], 'install'))
     displayName: Build test with qmake for Linux and macOS w/o extra module
-  # TODO: current PSCX release does not support VSVER 2019
   - powershell: |
       if ( $env:TOOLCHAIN -eq 'MSVC' ) {
         Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
@@ -223,6 +222,9 @@ steps:
       set -ex
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
+      if [[ "6" -eq "${QT_VERSION:0:1}" ]]; then
+        (cd $(Build.BinariesDirectory)/tests/redditclient;patch -i redditclient_6.diff -p1)
+      fi
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/redditclient
       make
