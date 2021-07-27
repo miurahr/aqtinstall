@@ -19,9 +19,13 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import platform
 import sys
 
 from . import main
 
 if __name__ == "__main__":
+    if platform.python_version_tuple() < (3, 6, 0):
+        print("aqtinstall requires python 3.6 or later.")
+        sys.exit(1)
     sys.exit(main())
