@@ -208,6 +208,7 @@ def xml_to_modules(
     """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
     Only report elements that satisfy `predicate(element)`.
     Only report keys in the list `keys_to_keep`.
+
     :param xml_text: The entire contents of an xml file
     :param predicate: A function that decides which elements to keep or discard
     :param keys_to_keep: A list of which tags in the element should be kept.
