@@ -11,7 +11,6 @@ Contents:
    cli
    available_versions
    configuration
-   internals
    changes
    devguide
    authors

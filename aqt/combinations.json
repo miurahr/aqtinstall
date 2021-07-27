@@ -1,112 +1,867 @@
-[{"qt": [
-  {"os_name": "linux",   "target": "desktop", "arch": "gcc_64"},
-  {"os_name": "linux",   "target": "desktop", "arch": "wasm_32"},
-  {"os_name": "linux",   "target": "android", "arch": "android"},
-  {"os_name": "linux",   "target": "android", "arch": "android_x86_64"},
-  {"os_name": "linux",   "target": "android", "arch": "android_arm64_v8a"},
-  {"os_name": "linux",   "target": "android", "arch": "android_x86"},
-  {"os_name": "linux",   "target": "android", "arch": "android_armv7"},
-  {"os_name": "mac",     "target": "desktop", "arch": "clang_64"},
-  {"os_name": "mac",     "target": "desktop", "arch": "wasm_32"},
-  {"os_name": "mac",     "target": "ios",     "arch": "ios"},
-  {"os_name": "mac",     "target": "android", "arch": "android"},
-  {"os_name": "windows", "target": "desktop", "arch": "win64_msvc2019_64"},
-  {"os_name": "windows", "target": "desktop", "arch": "win32_msvc2019"},
-  {"os_name": "windows", "target": "desktop", "arch": "win64_msvc2017_64"},
-  {"os_name": "windows", "target": "desktop", "arch": "win32_msvc2017"},
-  {"os_name": "windows", "target": "desktop", "arch": "win64_msvc2015_64"},
-  {"os_name": "windows", "target": "desktop", "arch": "win32_msvc2015"},
-  {"os_name": "windows", "target": "desktop", "arch": "win64_mingw81"},
-  {"os_name": "windows", "target": "desktop", "arch": "win32_mingw81"},
-  {"os_name": "windows", "target": "desktop", "arch": "win64_mingw73"},
-  {"os_name": "windows", "target": "desktop", "arch": "win32_mingw73"},
-  {"os_name": "windows", "target": "desktop", "arch": "win32_mingw53"},
-  {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2019_winrt_x64"},
-  {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2019_winrt_x86"},
-  {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2019_winrt_armv7"},
-  {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2017_winrt_x64"},
-  {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2017_winrt_x86"},
-  {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2017_winrt_armv7"},
-  {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2015_winrt_x64"},
-  {"os_name": "windows", "target": "winrt",   "arch": "win64_msvc2015_winrt_armv7"},
-  {"os_name": "windows", "target": "desktop", "arch": "wasm_32"},
-  {"os_name": "windows", "target": "android", "arch": "android"},
-  {"os_name": "windows", "target": "android", "arch": "android_x86_64"},
-  {"os_name": "windows", "target": "android", "arch": "android_arm64_v8a"},
-  {"os_name": "windows", "target": "android", "arch": "android_x86"},
-  {"os_name": "windows", "target": "android", "arch": "android_armv7"}
-], "tools": [
-  {"os_name": "linux",   "target": "desktop", "tool_name": "tools_ifw", "arch": "qt.tools.ifw.40"},
-  {"os_name": "linux",   "target": "desktop", "tool_name": "tools_maintainance", "arch": "qt.tools.maintainance"},
-  {"os_name": "linux",   "target": "desktop", "tool_name": "tools_qt3dstudio", "arch": "qt.tools.qt3dstudio"},
-  {"os_name": "linux",   "target": "desktop", "tool_name": "tools_qtcreator", "arch": "qt.tools.qtcreator"},
-  {"os_name": "linux",   "target": "desktop", "tool_name": "tools_telemetry", "arch": "qt.tools.qtcreator.telemetry"},
-  {"os_name": "linux",   "target": "desktop", "tool_name": "tools_openssl_x64",  "arch":"qt.tools.openssl.gcc_64"},
-  {"os_name": "linux",   "target": "desktop", "tool_name": "tools_openssl_src",  "arch":"qt.tools.openssl"},
-  {"os_name": "mac",     "target": "desktop", "tool_name": "tools_ifw", "arch": "qt.tools.ifw.40"},
-  {"os_name": "mac",     "target": "desktop", "tool_name": "tools_maintainance", "arch": "qt.tools.maintainance"},
-  {"os_name": "mac",     "target": "desktop", "tool_name": "tools_qt3dstudio", "arch": "qt.tools.qt3dstudio"},
-  {"os_name": "mac",     "target": "desktop", "tool_name": "tools_qtcreator", "arch": "qt.tools.qtcreator"},
-  {"os_name": "mac",     "target": "desktop", "tool_name": "tools_telemetry", "arch": "qt.tools.qtcreator.telemetry"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_openssl_x64", "arch": "qt.tools.openssl.win_x64"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_openssl_x86", "arch": "qt.tools.openssl.win_x86"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_msvc2019_x64"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_msvc2019_x86"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_msvc2017_x64"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_msvc2017_x86"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_msvc2015_x64"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_msvc2015_x86"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_msvc2013_x64"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_msvc2013_x86"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist_64"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_vcredist", "arch": "qt.tools.vcredist"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_ifw", "arch": "qt.tools.ifw.40"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win64_mingw810"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win32_mingw810"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win64_mingw730"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win32_mingw730"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win32_mingw530"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win32_mingw492"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win32_mingw491"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win32_mingw482"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.win32_mingw48"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_mingw", "arch": "qt.tools.mingw47"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_maintainance", "arch": "qt.tools.maintainance"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_qtcreator", "arch": "qt.tools.qtcreator"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_qt3dstudio", "arch": "qt.tools.qt3dstudio"},
-  {"os_name": "windows", "target": "desktop", "tool_name": "tools_telemetry", "arch": "qt.tools.qtcreator.telemetry"}
-], "modules": [
-  {"qt_version": "5.9", "modules": ["qtcharts", "qtnetworkauth", "qtpurchasing", "qtdatavis3d", "qtremoteobjects",
-    "qtscript", "qtspeech", "qtvirtualkeyboard", "qtwebengine"]},
-  {"qt_version": "5.10", "modules": ["qtcharts", "qtnetworkauth", "qtpurchasing", "qtdatavis3d", "qtremoteobjects",
-    "qtscript", "qtvirtualkeyboard", "qtwebengine", "qtwebglplugin"]},
-  {"qt_version": "5.11", "modules": ["qtcharts", "qtnetworkauth", "qtpurchasing", "qtdatavis3d", "qtremoteobjects",
-    "qtscript", "qtvirtualkeyboard", "qtwebengine","qtwebglplugin"]},
-  {"qt_version": "5.12", "modules": ["qtcharts", "qtnetworkauth", "qtpurchasing", "qtdatavis3d",
-    "qtscript", "qtvirtualkeyboard", "qtwebengine","qtwebglplugin"]},
-  {"qt_version": "5.13", "modules": ["qtcharts", "qtlottie", "qtnetworkauth", "qtpurchasing", "qtdatavis3d",
-    "qtquicktimeline", "qtscript", "qtvirtualkeyboard", "qtwebengine", "qtwebglplugin"]},
-  {"qt_version": "5.14", "modules": ["qtcharts", "qtlottie", "qtnetworkauth", "qtpurchasing", "qtdatavis3d",
-    "qtquick3d", "qtquicktimeline", "qtscript", "qtvirtualkeyboard", "qtwebengine", "qtwebglplugin"]},
-  {"qt_version": "5.15", "modules": ["qtcharts", "qtlottie", "qtnetworkauth", "qtpurchasing", "qtdatavis3d",
-    "qtquick3d", "qtquicktimeline", "qtscript", "qtvirtualkeyboard", "qtwebengine", "qtwebglplugin"]},
-  {"qt_version":  "6.0", "modules": ["qtwaylandcompositor", "qtshadertools", "qtquicktimeline", "qtquick3d",
-    "qt5compat"]},
-  {"qt_version":  "6.1", "modules": ["qtwaylandcompositor", "qtshadertools", "qtquicktimeline", "qtquick3d",
-    "qt5compat"]},
-  {"qt_version":  "6.2", "modules": ["qtwaylandcompositor", "qtshadertools", "qtquicktimeline", "qtquick3d",
-    "qt5compat"]}
-], "versions": [
-  "5.9", "5.9.1", "5.9.2", "5.9.3", "5.9.4", "5.9.5", "5.9.6", "5.9.7", "5.9.8", "5.9.9",
-  "5.10.0", "5.10.1", "5.11.0", "5.11.1", "5.11.2", "5.11.3",
-  "5.12.0", "5.12.1", "5.12.2", "5.12.3", "5.12.4", "5.12.5", "5.12.6", "5.12.7", "5.12.8", "5.12.9", "5.12.10", "5.12.11",
-  "5.13.0", "5.13.1", "5.13.2",
-  "5.14.0", "5.14.1", "5.14.2",
-  "5.15.0", "5.15.1", "5.15.2",
-  "6.0.0", "6.0.1", "6.0.2", "6.0.3", "6.0.4", "6.1.0", "6.1.1", "6.2.0"
-], "new_archive": [
-  "5.1.0", "5.2", "5.3.0", "5.3.1", "5.3.2", "5.4.0", "5.4.1", "5.4.2",
-  "5.5.0", "5.5.1", "5.6.0", "5.6.1", "5.6.2", "5.6.3",
-  "5.7.0", "5.7.1", "5.8.0"
+[
+  {
+    "modules": [
+      {
+        "modules": [
+          "qtcharts",
+          "qtdatavis3d",
+          "qtnetworkauth",
+          "qtpurchasing",
+          "qtremoteobjects",
+          "qtscript",
+          "qtspeech",
+          "qtvirtualkeyboard",
+          "qtwebengine"
+        ],
+        "qt_version": "5.9"
+      },
+      {
+        "modules": [
+          "qtcharts",
+          "qtdatavis3d",
+          "qtnetworkauth",
+          "qtpurchasing",
+          "qtremoteobjects",
+          "qtscript",
+          "qtvirtualkeyboard",
+          "qtwebengine",
+          "qtwebglplugin"
+        ],
+        "qt_version": "5.10"
+      },
+      {
+        "modules": [
+          "qtcharts",
+          "qtdatavis3d",
+          "qtnetworkauth",
+          "qtpurchasing",
+          "qtremoteobjects",
+          "qtscript",
+          "qtvirtualkeyboard",
+          "qtwebengine",
+          "qtwebglplugin"
+        ],
+        "qt_version": "5.11"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qtcharts",
+          "qtdatavis3d",
+          "qtnetworkauth",
+          "qtpurchasing",
+          "qtscript",
+          "qtvirtualkeyboard",
+          "qtwebengine",
+          "qtwebglplugin"
+        ],
+        "qt_version": "5.12"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qtcharts",
+          "qtdatavis3d",
+          "qtlottie",
+          "qtnetworkauth",
+          "qtpurchasing",
+          "qtscript",
+          "qtvirtualkeyboard",
+          "qtwebengine",
+          "qtwebglplugin"
+        ],
+        "qt_version": "5.13"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qtcharts",
+          "qtdatavis3d",
+          "qtlottie",
+          "qtnetworkauth",
+          "qtpurchasing",
+          "qtquick3d",
+          "qtquicktimeline",
+          "qtscript",
+          "qtvirtualkeyboard",
+          "qtwaylandcompositor",
+          "qtwebengine",
+          "qtwebglplugin"
+        ],
+        "qt_version": "5.14"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qtcharts",
+          "qtdatavis3d",
+          "qtlottie",
+          "qtnetworkauth",
+          "qtpurchasing",
+          "qtquick3d",
+          "qtquicktimeline",
+          "qtscript",
+          "qtvirtualkeyboard",
+          "qtwaylandcompositor",
+          "qtwebengine",
+          "qtwebglplugin"
+        ],
+        "qt_version": "5.15"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qt5compat",
+          "qtquick3d",
+          "qtquicktimeline",
+          "qtshadertools",
+          "qtwaylandcompositor"
+        ],
+        "qt_version": "6.0"
+      },
+      {
+        "modules": [
+          "addons.qt3d",
+          "addons.qtcharts",
+          "addons.qtdatavis3d",
+          "addons.qtimageformats",
+          "addons.qtlottie",
+          "addons.qtnetworkauth",
+          "addons.qtscxml",
+          "addons.qtvirtualkeyboard",
+          "debug_info",
+          "qt5compat",
+          "qtquick3d",
+          "qtquicktimeline",
+          "qtshadertools",
+          "qtwaylandcompositor"
+        ],
+        "qt_version": "6.1"
+      },
+      {
+        "modules": [
+          "addons.qt3d",
+          "addons.qtcharts",
+          "addons.qtconnectivity",
+          "addons.qtdatavis3d",
+          "addons.qtimageformats",
+          "addons.qtlottie",
+          "addons.qtmultimedia",
+          "addons.qtnetworkauth",
+          "addons.qtpositioning",
+          "addons.qtremoteobjects",
+          "addons.qtscxml",
+          "addons.qtsensors",
+          "addons.qtserialbus",
+          "addons.qtserialport",
+          "addons.qtvirtualkeyboard",
+          "addons.qtwebchannel",
+          "addons.qtwebengine",
+          "addons.qtwebsockets",
+          "addons.qtwebview",
+          "debug_info",
+          "qt5compat",
+          "qtquick3d",
+          "qtquicktimeline",
+          "qtshadertools",
+          "qtwaylandcompositor"
+        ],
+        "qt_version": "6.2"
+      }
+    ],
+    "new_archive": [
+      "5.1.0",
+      "5.2",
+      "5.3.0",
+      "5.3.1",
+      "5.3.2",
+      "5.4.0",
+      "5.4.1",
+      "5.4.2",
+      "5.5.0",
+      "5.5.1",
+      "5.6.0",
+      "5.6.1",
+      "5.6.2",
+      "5.6.3",
+      "5.7.0",
+      "5.7.1",
+      "5.8.0"
+    ],
+    "qt": [
+      {
+        "arch": "android",
+        "os_name": "linux",
+        "target": "android"
+      },
+      {
+        "arch": "android_arm64_v8a",
+        "os_name": "linux",
+        "target": "android"
+      },
+      {
+        "arch": "android_armv7",
+        "os_name": "linux",
+        "target": "android"
+      },
+      {
+        "arch": "android_x86",
+        "os_name": "linux",
+        "target": "android"
+      },
+      {
+        "arch": "android_x86_64",
+        "os_name": "linux",
+        "target": "android"
+      },
+      {
+        "arch": "gcc_64",
+        "os_name": "linux",
+        "target": "desktop"
+      },
+      {
+        "arch": "wasm_32",
+        "os_name": "linux",
+        "target": "desktop"
+      },
+      {
+        "arch": "android",
+        "os_name": "mac",
+        "target": "android"
+      },
+      {
+        "arch": "android_arm64_v8a",
+        "os_name": "mac",
+        "target": "android"
+      },
+      {
+        "arch": "android_armv7",
+        "os_name": "mac",
+        "target": "android"
+      },
+      {
+        "arch": "android_x86",
+        "os_name": "mac",
+        "target": "android"
+      },
+      {
+        "arch": "android_x86_64",
+        "os_name": "mac",
+        "target": "android"
+      },
+      {
+        "arch": "clang_64",
+        "os_name": "mac",
+        "target": "desktop"
+      },
+      {
+        "arch": "wasm_32",
+        "os_name": "mac",
+        "target": "desktop"
+      },
+      {
+        "arch": "ios",
+        "os_name": "mac",
+        "target": "ios"
+      },
+      {
+        "arch": "android",
+        "os_name": "windows",
+        "target": "android"
+      },
+      {
+        "arch": "android_arm64_v8a",
+        "os_name": "windows",
+        "target": "android"
+      },
+      {
+        "arch": "android_armv7",
+        "os_name": "windows",
+        "target": "android"
+      },
+      {
+        "arch": "android_x86",
+        "os_name": "windows",
+        "target": "android"
+      },
+      {
+        "arch": "android_x86_64",
+        "os_name": "windows",
+        "target": "android"
+      },
+      {
+        "arch": "wasm_32",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win32_mingw53",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win32_mingw73",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win32_mingw81",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win32_msvc2015",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win32_msvc2017",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win32_msvc2019",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_mingw73",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_mingw81",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_msvc2013_64",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_msvc2015_64",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_msvc2017_64",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_msvc2019_64",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_msvc2019_arm64",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_msvc2015_winrt_armv7",
+        "os_name": "windows",
+        "target": "winrt"
+      },
+      {
+        "arch": "win64_msvc2015_winrt_x64",
+        "os_name": "windows",
+        "target": "winrt"
+      },
+      {
+        "arch": "win64_msvc2015_winrt_x86",
+        "os_name": "windows",
+        "target": "winrt"
+      },
+      {
+        "arch": "win64_msvc2017_winrt_armv7",
+        "os_name": "windows",
+        "target": "winrt"
+      },
+      {
+        "arch": "win64_msvc2017_winrt_x64",
+        "os_name": "windows",
+        "target": "winrt"
+      },
+      {
+        "arch": "win64_msvc2017_winrt_x86",
+        "os_name": "windows",
+        "target": "winrt"
+      },
+      {
+        "arch": "win64_msvc2019_winrt_armv7",
+        "os_name": "windows",
+        "target": "winrt"
+      },
+      {
+        "arch": "win64_msvc2019_winrt_x64",
+        "os_name": "windows",
+        "target": "winrt"
+      },
+      {
+        "arch": "win64_msvc2019_winrt_x86",
+        "os_name": "windows",
+        "target": "winrt"
+      }
+    ],
+    "tools": [
+      {
+        "arch": "qt.tools.cmake",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_cmake"
+      },
+      {
+        "arch": "qt.tools.conan",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_conan"
+      },
+      {
+        "arch": "qt.tools.conan.cmake",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_conan"
+      },
+      {
+        "arch": "qt.tools.sdktools.doc",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_generic"
+      },
+      {
+        "arch": "qt.tools.ifw.41",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_ifw"
+      },
+      {
+        "arch": "qt.tools.maintenance",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_maintenance"
+      },
+      {
+        "arch": "qt.tools.ninja",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_ninja"
+      },
+      {
+        "arch": "qt.tools.openssl.src",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_openssl_src"
+      },
+      {
+        "arch": "qt.tools.openssl.gcc_64",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_openssl_x64"
+      },
+      {
+        "arch": "qt.tools.qt3dstudio",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qt3dstudio"
+      },
+      {
+        "arch": "qt.tools.qtcreator",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtcreator.src",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtcreatordbg",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtcreatordev",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtdesignstudio",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio"
+      },
+      {
+        "arch": "qt.tools.qtcreator.telemetry",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.cmake",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_cmake"
+      },
+      {
+        "arch": "qt.tools.conan",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_conan"
+      },
+      {
+        "arch": "qt.tools.conan.cmake",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_conan"
+      },
+      {
+        "arch": "qt.tools.sdktools.doc",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_generic"
+      },
+      {
+        "arch": "qt.tools.ifw.41",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_ifw"
+      },
+      {
+        "arch": "qt.tools.maintenance",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_maintenance"
+      },
+      {
+        "arch": "qt.tools.ninja",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_ninja"
+      },
+      {
+        "arch": "qt.tools.qt3dstudio",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qt3dstudio"
+      },
+      {
+        "arch": "qt.tools.qtcreator",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtcreatordbg",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtcreatordev",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtdesignstudio",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio"
+      },
+      {
+        "arch": "qt.tools.qtcreator.telemetry",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.cmake.win32",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_cmake"
+      },
+      {
+        "arch": "qt.tools.cmake.win64",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_cmake"
+      },
+      {
+        "arch": "qt.tools.conan",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_conan"
+      },
+      {
+        "arch": "qt.tools.conan.cmake",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_conan"
+      },
+      {
+        "arch": "qt.tools.sdktools.doc",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_generic"
+      },
+      {
+        "arch": "qt.tools.ifw.41",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_ifw"
+      },
+      {
+        "arch": "qt.tools.maintenance",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_maintenance"
+      },
+      {
+        "arch": "qt.tools.mingw47",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win32_mingw48",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win32_mingw482",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win32_mingw491",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win32_mingw492",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win32_mingw530",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win32_mingw730",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win32_mingw810",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win64_mingw730",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win64_mingw810",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.ninja",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_ninja"
+      },
+      {
+        "arch": "qt.tools.openssl.src",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_openssl_src"
+      },
+      {
+        "arch": "qt.tools.openssl.win_x64",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_openssl_x64"
+      },
+      {
+        "arch": "qt.tools.openssl.win_x86",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_openssl_x86"
+      },
+      {
+        "arch": "qt.tools.qt3dstudio",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qt3dstudio"
+      },
+      {
+        "arch": "qt.tools.qtcreator",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtcreatorcdbext",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtcreatordbg",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtcreatordev",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.windows_kits_debuggers",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator"
+      },
+      {
+        "arch": "qt.tools.qtdesignstudio",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio"
+      },
+      {
+        "arch": "qt.tools.qtcreator.telemetry",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.vcredist",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_msvc2015_x86",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_msvc2013_x64",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_msvc2015_x64",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_msvc2013_x86",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_msvc2017_x64",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_msvc2017_x86",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_64",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_msvc2019_x64",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
+        "arch": "qt.tools.vcredist_msvc2019_x86",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      }
+    ],
+    "versions": [
+      "5.9.0",
+      "5.9.1",
+      "5.9.2",
+      "5.9.3",
+      "5.9.4",
+      "5.9.5",
+      "5.9.6",
+      "5.9.7",
+      "5.9.8",
+      "5.9.9",
+      "5.10.0",
+      "5.10.1",
+      "5.11.0",
+      "5.11.1",
+      "5.11.2",
+      "5.11.3",
+      "5.12.0",
+      "5.12.1",
+      "5.12.2",
+      "5.12.3",
+      "5.12.4",
+      "5.12.5",
+      "5.12.6",
+      "5.12.7",
+      "5.12.8",
+      "5.12.9",
+      "5.12.10",
+      "5.12.11",
+      "5.13.0",
+      "5.13.1",
+      "5.13.2",
+      "5.14.0",
+      "5.14.1",
+      "5.14.2",
+      "5.15.0",
+      "5.15.1",
+      "5.15.2",
+      "6.0.0",
+      "6.0.1",
+      "6.0.2",
+      "6.0.3",
+      "6.0.4",
+      "6.1.0",
+      "6.1.1",
+      "6.1.2",
+      "6.2.0"
+    ]
+  }
 ]
-}]
