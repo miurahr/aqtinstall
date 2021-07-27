@@ -222,6 +222,9 @@ steps:
       set -ex
       mkdir $(Build.BinariesDirectory)/tests
       (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
+      if [[ "6" -eq "${QT_VERSION:0:1}" ]]; then
+        (cd $(Build.BinariesDirectory)/tests/redditclient;patch -i redditclient_6.diff -p1)
+      fi
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/redditclient
       make
