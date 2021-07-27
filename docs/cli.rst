@@ -128,6 +128,7 @@ List Tool command
     output is displayed below.
 
 .. code-block:: bash
+
     $ python -m aqt list-tool windows desktop tools_conan
 
      Tool Variant Name           Version         Release Date     Display Name              Description
