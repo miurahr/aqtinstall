@@ -16,6 +16,8 @@ Generic commands
     show generic help
 
 
+.. _list qt command:
+
 List Qt command
 ------------------
 
@@ -88,6 +90,8 @@ List Qt command
     May be combined with the `--extension` and/or `--spec` flags.
 
 
+.. _list tool command:
+
 List Tool command
 -----------------
 .. program::  aqt
@@ -137,6 +141,7 @@ List Tool command
     qt.tools.conan.cmake   0.16.0-202102101246   2021-02-10     Conan conan.cmake   Conan conan.cmake (0.16.0)
 
 
+.. _installation command:
 
 Installation command
 --------------------
@@ -240,6 +245,8 @@ Example installation command
 
     install Qt examples specified version and target.
 
+
+.. _tools installation command:
 
 Tools installation command
 ---------------------------
