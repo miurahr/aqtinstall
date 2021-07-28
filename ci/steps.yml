@@ -35,12 +35,12 @@ steps:
         if [[ "$(SUBARCHIVES)" != "" ]]; then
           opt+=" --archives $(SUBARCHIVES)"
         fi
-        python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) $opt
+        python -m aqt install-qt $(HOST) $(TARGET) $(QT_VERSION) $(ARCH) $opt
         if [[ "$(TARGET)" == "android" || "$(TARGET)" == "ios" ]]; then
           if [[ "$(HOST)" == "windows" ]]; then
-            python -m aqt install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
+            python -m aqt install-qt $(HOST) desktop $(QT_VERSION) mingw81_64 --archives qtbase
           else
-            python -m aqt install $(QT_VERSION) $(HOST) desktop --archives qtbase
+            python -m aqt install-qt $(HOST) desktop $(QT_VERSION) --archives qtbase
           fi
         fi
         if [[ "$(OUTPUT_DIR)" != "" ]]; then
@@ -99,10 +99,10 @@ steps:
         aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --arch latest
       fi
       if [[ "$(SUBCOMMAND)" == "src" ]]; then
-        python -m aqt $(SUBCOMMAND) $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
+        python -m aqt install-src $(HOST) $(TARGET) $(QT_VERSION) --archives $(SUBARCHIVES)
       fi
       if [[ "$(SUBCOMMAND)" == "doc" ]]; then
-        python -m aqt $(SUBCOMMAND) $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
+        python -m aqt install-doc $(HOST) $(TARGET) $(QT_VERSION) --archives $(SUBARCHIVES)
       fi
     workingDirectory: $(Build.BinariesDirectory)
     env:
@@ -190,10 +190,10 @@ steps:
         jom
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
         if ( $env:ARCH -eq 'win64_mingw81' ) {
-          python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win64_mingw810
+          python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win64_mingw810
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_64\bin" + $env:Path, "Machine")
         } else {
-          python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win32_mingw810
+          python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win32_mingw810
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_32\bin" + $env:Path, "Machine")
         }
         $env:Path = "$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin;$(WIN_QT_BINDIR);" + $env:Path
