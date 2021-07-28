@@ -1,5 +1,3 @@
-:tocdepth: 2
-
 .. _getting_started_ref:
 
 Getting Started
@@ -351,6 +349,40 @@ the tool variant you are interested in, like this:
 Installing Qt for WASM
 ----------------------
 
+To find out how to install Qt for WASM, we need to tell ``aqt list-qt`` that we are
+using the `wasm` architecture. We can do that by using the ``--extension wasm`` flag.
+
+.. code-block:: console
+
+    aqt list-qt windows desktop --extension wasm
+
+Output:
+
+.. code-block::
+
+    5.13.1 5.13.2
+    5.14.0 5.14.1 5.14.2
+    5.15.0 5.15.1 5.15.2
+
+There are only a few versions of Qt that support WASM, and they are only available
+for desktop targets. If we tried this command with `android`, `winrt`, or `ios`
+targets, we would have seen an error message.
+
+We can check the architecture and modules available as before:
+
+.. code-block:: console
+
+    $ aqt list-qt windows desktop --extension wasm --arch 5.15.2       # Print architectures available
+    wasm_32
+
+    $ aqt list-qt windows desktop --extension wasm --modules 5.15.2    # Print modules available
+    qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript qtvirtualkeyboard qtwebglplugin
+
+We can install Qt for WASM as before:
+
+.. code-block:: console
+
+    aqt install-qt windows desktop 5.15.2 wasm_32 -m qtcharts qtnetworkauth
 
 
 
