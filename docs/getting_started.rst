@@ -24,20 +24,15 @@ To install Qt, you will need to tell ``aqt`` four things:
 3. The version of Qt you would like to install
 4. The target architecture
 
-Keep in mind that Qt for ios is only available on Mac OS, and Qt for WinRT is 
+Keep in mind that Qt for IOS is only available on Mac OS, and Qt for WinRT is
 only available on Windows.
 
-To find out what versions of Qt are available, you can use the :ref:`List Qt command`.
-This command will print all versions of Qt available for Windows desktop:
+To find out what versions of Qt are available, you can use the :ref:`aqt list-qt command <list qt command>`.
+This command will print all versions of Qt available for Windows Desktop:
 
 .. code-block:: console
 
-    aqt list-qt windows desktop
-
-Output:
-
-.. code-block::
-
+    $ aqt list-qt windows desktop
     5.9.0 5.9.1 5.9.2 5.9.3 5.9.4 5.9.5 5.9.6 5.9.7 5.9.8 5.9.9
     5.10.0 5.10.1
     5.11.0 5.11.1 5.11.2 5.11.3
@@ -51,10 +46,10 @@ Output:
 
 Notice that the version numbers are sorted, grouped by minor version number,
 and separated by a single space-character. The output of all of the 
-``aqt list-qt`` commands is intended to make it easier for you to write programs
-that consume the output of ``aqt list-qt``.
+:ref:`aqt list-qt <list qt command>` commands is intended to make it easier for you to write programs
+that consume the output of :ref:`aqt list-qt <list qt command>`.
 
-Because the ``aqt list-qt`` command directly queries the Qt downloads repository
+Because the :ref:`aqt list-qt <list qt command>` command directly queries the Qt downloads repository
 at https://download.qt.io/, the results of this command will always be accurate.
 The :ref:`Available Qt versions` page of this documentation was written at some
 point in the past, so it may or may not be up to date.
@@ -62,84 +57,70 @@ point in the past, so it may or may not be up to date.
 Now that we know what versions of Qt are available, let's choose version 6.2.0.
 
 The next thing we need to do is find out what architectures are available for
-Qt 6.2.0 for Windows desktop. To do this, we can use ``aqt list-qt`` with the
-`--arch` flag:
+Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list qt command>` with the
+``--arch`` flag:
 
 .. code-block:: console
 
-    aqt list-qt windows desktop --arch 6.2.0
-
-Output:
-
-.. code-block::
-
-  win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64
+    $ aqt list-qt windows desktop --arch 6.2.0
+    win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64
 
 Notice that this is a very small subset of the architectures listed in the 
 :ref:`Available Qt versions` page. If we need to use some architecture that
 is not on this list, we can use the :ref:`Available Qt versions` page to get
 a rough idea of what versions support the architecture we want, and then use
-``aqt list-qt`` to confirm that the architecture is available.
+:ref:`aqt list-qt <list qt command>` to confirm that the architecture is available.
 
 Let's say that we want to install Qt 6.2.0 with architecture `win64_mingw81`.
 The installation command we need is:
 
 .. code-block:: console
 
-    aqt install-qt windows desktop 6.2.0 win64_mingw81
+    $ aqt install-qt windows desktop 6.2.0 win64_mingw81
 
 
 Installing Modules
 ------------------
 
-Let's say we need to install some modules for Qt 5.15.2 on Windows desktop. 
+Let's say we need to install some modules for Qt 5.15.2 on Windows Desktop.
 First we need to find out what the modules are called, and we can do that 
-with ``aqt list-qt`` with the `--modules` flag.
+with :ref:`aqt list-qt <list qt command>` with the ``--modules`` flag.
 Each version of Qt has a different list of modules for each host OS/ target SDK
-combination, so we will need to supply ``aqt list-qt`` with that information:
+combination, so we will need to supply :ref:`aqt list-qt <list qt command>` with that information:
 
 .. code-block:: console
 
-    aqt list-qt windows desktop --modules 5.15.2
-
-Output:
-
-.. code-block::
-
-    debug_info qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquick3d 
+    $ aqt list-qt windows desktop --modules 5.15.2
+    debug_info qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquick3d
     qtquicktimeline qtscript qtvirtualkeyboard qtwebengine qtwebglplugin
 
 Let's say that we want to install `qtcharts` and `qtnetworkauth`. 
-We can do that by using the `-m` flag with the ``aqt install-qt`` command.
+We can do that by using the `-m` flag with the :ref:`aqt install-qt <qt installation command>` command.
 This flag receives the name of at least one module as an argument:
 
 .. code-block:: console
 
-    aqt install-qt windows desktop 5.15.2 win64_mingw81 -m qtcharts qtnetworkauth
+    $ aqt install-qt windows desktop 5.15.2 win64_mingw81 -m qtcharts qtnetworkauth
 
-Remember that the ``aqt list-qt`` command is meant to be scriptable? If you want
+Remember that the :ref:`aqt list-qt <list qt command>` command is meant to be scriptable? If you want
 to install all modules available for Qt 5.15.2, we can do so by sending the
-output of ``aqt list-qt`` into ``aqt install-qt``, like this:
+output of :ref:`aqt list-qt <list qt command>` into :ref:`aqt install-qt <qt installation command>`, like this:
 
 .. code-block:: console
 
-    aqt install-qt windows desktop 5.15.2 win64_mingw81 -m $(aqt list-qt windows desktop --modules 5.15.2)
+    $ aqt install-qt windows desktop 5.15.2 win64_mingw81 \
+          -m $(aqt list-qt windows desktop --modules 5.15.2)
 
 You will need a Unix-style shell to run this command, or at least git-bash on Windows.
 The ``xargs`` equivalent to this command is an exercise left to the reader.
 
 Let's try to install `qtcharts` and `qtnetworkauth` for Qt 6.1.2 as well. 
-Before we do this, let's run ``aqt list-qt``:
+Before we do this, let's run :ref:`aqt list-qt <list qt command>`:
 
 .. code-block:: console
 
-    aqt list-qt windows desktop --modules 6.1.2
-
-Output:
-
-.. code-block::
-
-    addons.qt3d addons.qtactiveqt addons.qtcharts addons.qtdatavis3d addons.qtimageformats 
+    $ aqt list-qt windows desktop --modules 6.1.2
+    addons.qt3d addons.qtactiveqt addons.qtcharts addons.qtdatavis3d addons.qtimageformats
     addons.qtlottie addons.qtnetworkauth addons.qtscxml addons.qtvirtualkeyboard 
     debug_info qt5compat qtquick3d qtquicktimeline qtshadertools
 
@@ -150,14 +131,14 @@ new names to install them successfully:
 
 .. code-block:: console
 
-    aqt install-qt windows desktop 6.1.2 win64_mingw81 -m addons.qtcharts addons.qtnetworkauth
+    $ aqt install-qt windows desktop 6.1.2 win64_mingw81 -m addons.qtcharts addons.qtnetworkauth
 
 
 Installing Qt for Android
 -------------------------
 
 Let's install Qt for Android. Installing Qt 5 will be similar to installing Qt
-for desktop on Windows, but there will be differences when we get to Qt 6.
+for Desktop on Windows, but there will be differences when we get to Qt 6.
 
 .. code-block:: console
 
@@ -189,22 +170,17 @@ Let's see what happens when we try to list architectures and modules for Qt 6:
     Please add your extension using the `--extension` flag.
 
 The Qt 6 for Android repositories are a little different than the Qt 5 repositories,
-and the ``aqt list-qt`` tool doesn't know where to look for modules and architectures
+and the :ref:`aqt list-qt <list qt command>` tool doesn't know where to look for modules and architectures
 if you don't tell it what architecture you need. I know, it sounds a little
 backwards, but that's how the Qt repo was put together.
 
-There are four architectures available, and the error message from ``aqt list-qt``
+There are four architectures available, and the error message from :ref:`aqt list-qt <list qt command>`
 just told us what they are: `x86_64`, `x86`, `armv7`, and `arm64_v8a`.
 If we want to install Qt 6.2.0 for armv7, we use this command to print available modules:
 
 .. code-block:: console
 
     $ aqt list-qt windows android --extension armv7 --modules 6.2.0
-
-Output:
-
-.. code-block::
-
     addons.qt3d addons.qtcharts addons.qtconnectivity addons.qtdatavis3d
     addons.qtimageformats addons.qtlottie addons.qtmultimedia addons.qtnetworkauth
     addons.qtpositioning addons.qtremoteobjects addons.qtscxml addons.qtsensors
@@ -212,17 +188,12 @@ Output:
     addons.qtwebview qt5compat qtquick3d qtquicktimeline qtshadertools
 
 We know we want to use `armv7` for the architecture, but we don't know exactly
-what value for 'architecture' we need to pass to ``aqt install-qt`` yet, so we
-will use ``aqt list-qt`` again:
+what value for 'architecture' we need to pass to :ref:`aqt install-qt <qt installation command>` yet, so we
+will use :ref:`aqt list-qt <list qt command>` again:
 
 .. code-block:: console
 
-    aqt list-qt windows android --extension armv7 --arch 6.2.0
-
-Output:
-
-.. code-block::
-
+    $ aqt list-qt windows android --extension armv7 --arch 6.2.0
     android_armv7
 
 You should be thinking, "Well, that was silly. All it did was add `android_` to
@@ -231,29 +202,24 @@ the beginning of the architecture I gave it. Why do I need to use
 checking to see what actually exists in the Qt repository. If it prints an error
 message, instead of the obvious `android_armv7`, we would know that Qt 6.2.0
 for that architecture doesn't exist for some reason, and any attempt to install
-it with ``aqt install-qt`` will fail.
+it with :ref:`aqt install-qt <qt installation command>` will fail.
 
 Finally, let's install Qt 6.2.0 for Android armv7 with some modules:
 
 .. code-block:: console
 
-    aqt install linux android 6.2.0 android_armv7 -m addons.qtcharts addons.qtnetworkauth
+    $ aqt install linux android 6.2.0 android_armv7 -m addons.qtcharts addons.qtnetworkauth
 
 
 Installing Tools
 ----------------
 
-Let's find out what tools are available for Windows desktop by using the
-``aqt list-tool`` command:
+Let's find out what tools are available for Windows Desktop by using the
+:ref:`aqt list-tool <list tool command>` command:
 
 .. code-block:: console
 
-    aqt list-tool windows desktop
-
-Output:
-
-.. code-block::
-
+    $ aqt list-tool windows desktop
     tools_vcredist
     ...
     tools_qtcreator
@@ -271,33 +237,25 @@ Let's see what tool variants are available in `tools_mingw`:
 
 .. code-block:: console
 
-    aqt list-tool windows desktop tools_mingw
+    $ aqt list-tool windows desktop tools_mingw
+    qt.tools.mingw47
+    qt.tools.win32_mingw48
+    qt.tools.win32_mingw482
+    qt.tools.win32_mingw491
+    qt.tools.win32_mingw492
+    qt.tools.win32_mingw530
+    qt.tools.win32_mingw730
+    qt.tools.win32_mingw810
+    qt.tools.win64_mingw730
+    qt.tools.win64_mingw810
 
-Output:
-
-.. code-block::
-
-qt.tools.mingw47
-qt.tools.win32_mingw48
-qt.tools.win32_mingw482
-qt.tools.win32_mingw491
-qt.tools.win32_mingw492
-qt.tools.win32_mingw530
-qt.tools.win32_mingw730
-qt.tools.win32_mingw810
-qt.tools.win64_mingw730
-qt.tools.win64_mingw810
-
-This gives us a list of things that we could install using ``aqt tool``.
-Let's see some more details, using the `-l` or `--long` flag:
+This gives us a list of things that we could install using
+:ref:`aqt install-tool <tools installation command>`.
+Let's see some more details, using the ``-l`` or ``--long`` flag:
 
 .. code-block:: console
 
-    aqt list-tool windows desktop tools_mingw -l
-
-Output:
-
-.. code-block::
+    $ aqt list-tool windows desktop tools_mingw -l
 
        Tool Variant Name            Version          Release Date
     =============================================================
@@ -312,54 +270,49 @@ Output:
     qt.tools.win64_mingw730   7.3.0-1-202004170606   2020-04-17
     qt.tools.win64_mingw810   8.1.0-1-202004170606   2020-04-17
 
-The `-l` flag causes ``aqt list-tool`` to print a table that shows plenty of
-data pertinent to each tool variant available in `tools_mingw`.
-``aqt list-tool`` additionally prints the 'Display Name' and 'Description' for
-each tool if your terminal is wider than 95 characters; terminals that are
-narrower than this cannot display this table in a readable way.
+The ``-l`` flag causes :ref:`aqt list-tool <list tool command>` to print a table
+that shows plenty of data pertinent to each tool variant available in `tools_mingw`.
+:ref:`aqt list-tool <list tool command>` additionally prints the 'Display Name'
+and 'Description' for each tool if your terminal is wider than 95 characters;
+terminals that are narrower than this cannot display this table in a readable way.
 
-Now let's install `mingw`, using the ``aqt tool`` command.
+Now let's install `mingw`, using the :ref:`aqt install-tool <tools installation command>` command.
 This command receives four parameters:
 
 1. The host operating system (windows, mac, or linux)
 2. The target SDK (desktop, android, ios, or winrt)
 3. The name of the tool (this is `tools_mingw` in our case)
-4. (Optional) The tool variant name.
-   We saw a list of these when we ran ``aqt list-tool`` with the ``-l`` flag
+4. (Optional) The tool variant name. We saw a list of these when we ran
+   :ref:`aqt list-tool <list tool command>` with the ``-l`` flag.
 
 To install `mingw`, you could use this command (please don't):
 
 .. code-block:: console
 
-    aqt tool windows desktop tools_mingw    # please don't run this!
+    $ aqt install-tool windows desktop tools_mingw    # please don't run this!
 
 Using this command will install every tool variant available in `tools_mingw`;
 in this case, you would install 10 different versions of the same tool.
 For some tools, like `qtcreator` or `ifw`, this is an appropriate thing to do,
 since each tool variant is a different program.
 However, for tools like `mingw` and `vcredist`, it would make more sense to use
-``aqt list-tool`` to see what tool variants are available, and then install just
+:ref:`aqt list-tool <list tool command>` to see what tool variants are available, and then install just
 the tool variant you are interested in, like this:
 
 .. code-block:: console
 
-    aqt tool windows desktop tools_mingw qt.tools.win64_mingw730
+    $ aqt install-tool windows desktop tools_mingw qt.tools.win64_mingw730
 
 
 Installing Qt for WASM
 ----------------------
 
-To find out how to install Qt for WASM, we need to tell ``aqt list-qt`` that we are
+To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt <list qt command>` that we are
 using the `wasm` architecture. We can do that by using the ``--extension wasm`` flag.
 
 .. code-block:: console
 
-    aqt list-qt windows desktop --extension wasm
-
-Output:
-
-.. code-block::
-
+    $ aqt list-qt windows desktop --extension wasm
     5.13.1 5.13.2
     5.14.0 5.14.1 5.14.2
     5.15.0 5.15.1 5.15.2
@@ -372,17 +325,18 @@ We can check the architecture and modules available as before:
 
 .. code-block:: console
 
-    $ aqt list-qt windows desktop --extension wasm --arch 5.15.2       # Print architectures available
+    $ aqt list-qt windows desktop --extension wasm --arch 5.15.2     # Print architectures available
     wasm_32
 
-    $ aqt list-qt windows desktop --extension wasm --modules 5.15.2    # Print modules available
-    qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript qtvirtualkeyboard qtwebglplugin
+    $ aqt list-qt windows desktop --extension wasm --modules 5.15.2  # Print modules available
+    qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript
+    qtvirtualkeyboard qtwebglplugin
 
 We can install Qt for WASM as before:
 
 .. code-block:: console
 
-    aqt install-qt windows desktop 5.15.2 wasm_32 -m qtcharts qtnetworkauth
+    $ aqt install-qt windows desktop 5.15.2 wasm_32 -m qtcharts qtnetworkauth
 
 
 
