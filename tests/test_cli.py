@@ -11,7 +11,8 @@ def test_cli_help(capsys):
     expected = "".join(
         [
             "usage: aqt [-h] [-c CONFIG]\n",
-            "           {install,doc,examples,src,tool,list-qt,list-tool,help,version} ...\n",
+            "           {install-qt,install-doc,install-examples,install-src,install-tool,"
+            "list-qt,list-tool,install,doc,examples,src,tool,help,version} ...\n",
             "\n",
             "Installer for Qt SDK.\n",
             "\n",
@@ -23,7 +24,8 @@ def test_cli_help(capsys):
             "subcommands:\n",
             "  Valid subcommands\n",
             "\n",
-            "  {install,doc,examples,src,tool,list-qt,list-tool,help,version}\n",
+            "  {install-qt,install-doc,install-examples,install-src,install-tool,"
+            "list-qt,list-tool,install,doc,examples,src,tool,help,version}\n",
             "                        subcommand for aqt Qt installer\n",
         ]
     )
@@ -79,8 +81,8 @@ def test_cli_invalid_version(capsys, invalid_version):
     )
 
     for cmd in (
-        ("install", invalid_version, "mac", "desktop"),
-        ("doc", invalid_version, "mac", "desktop"),
+        ("install-qt", "mac", "desktop", invalid_version),
+        ("install-doc", "mac", "desktop", invalid_version),
         ("list-qt", "mac", "desktop", "--modules", invalid_version),
     ):
         with pytest.raises(SystemExit) as pytest_wrapped_e:
@@ -98,7 +100,7 @@ def test_cli_check_mirror():
     cli = Cli()
     cli._setup_settings()
     assert cli._check_mirror(None)
-    arg = ["install", "5.11.3", "linux", "desktop", "-b", "https://download.qt.io/"]
+    arg = ["install-qt", "linux", "desktop", "5.11.3", "-b", "https://download.qt.io/"]
     args = cli.parser.parse_args(arg)
     assert args.base == "https://download.qt.io/"
     assert cli._check_mirror(args.base)
@@ -108,7 +110,8 @@ def test_cli_launch_with_no_argument(capsys):
     expected = "".join(
         [
             "usage: aqt [-h] [-c CONFIG]\n",
-            "           {install,doc,examples,src,tool,list-qt,list-tool,help,version} ...\n",
+            "           {install-qt,install-doc,install-examples,install-src,install-tool,"
+            "list-qt,list-tool,install,doc,examples,src,tool,help,version} ...\n",
             "\n",
             "Installer for Qt SDK.\n",
             "\n",
@@ -120,7 +123,8 @@ def test_cli_launch_with_no_argument(capsys):
             "subcommands:\n",
             "  Valid subcommands\n",
             "\n",
-            "  {install,doc,examples,src,tool,list-qt,list-tool,help,version}\n",
+            "  {install-qt,install-doc,install-examples,install-src,install-tool,"
+            "list-qt,list-tool,install,doc,examples,src,tool,help,version}\n",
             "                        subcommand for aqt Qt installer\n",
         ]
     )
