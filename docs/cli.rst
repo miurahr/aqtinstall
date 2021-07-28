@@ -150,7 +150,7 @@ List available tools
     qt.tools.conan.cmake   0.16.0-202102101246   2021-02-10     Conan conan.cmake   Conan conan.cmake (0.16.0)
 
 
-.. _installation command:
+.. _qt installation command:
 
 Qt Installation command
 -----------------------
