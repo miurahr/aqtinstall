@@ -211,6 +211,41 @@ Finally, let's install Qt 6.2.0 for Android armv7 with some modules:
     $ aqt install linux android 6.2.0 android_armv7 -m addons.qtcharts addons.qtnetworkauth
 
 
+Installing Qt for WASM
+----------------------
+
+To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt <list qt command>` that we are
+using the `wasm` architecture. We can do that by using the ``--extension wasm`` flag.
+
+.. code-block:: console
+
+    $ aqt list-qt windows desktop --extension wasm
+    5.13.1 5.13.2
+    5.14.0 5.14.1 5.14.2
+    5.15.0 5.15.1 5.15.2
+
+There are only a few versions of Qt that support WASM, and they are only available
+for desktop targets. If we tried this command with `android`, `winrt`, or `ios`
+targets, we would have seen an error message.
+
+We can check the architecture and modules available as before:
+
+.. code-block:: console
+
+    $ aqt list-qt windows desktop --extension wasm --arch 5.15.2     # Print architectures available
+    wasm_32
+
+    $ aqt list-qt windows desktop --extension wasm --modules 5.15.2  # Print modules available
+    qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript
+    qtvirtualkeyboard qtwebglplugin
+
+We can install Qt for WASM as before:
+
+.. code-block:: console
+
+    $ aqt install-qt windows desktop 5.15.2 wasm_32 -m qtcharts qtnetworkauth
+
+
 Installing Tools
 ----------------
 
@@ -302,41 +337,6 @@ the tool variant you are interested in, like this:
 .. code-block:: console
 
     $ aqt install-tool windows desktop tools_mingw qt.tools.win64_mingw730
-
-
-Installing Qt for WASM
-----------------------
-
-To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt <list qt command>` that we are
-using the `wasm` architecture. We can do that by using the ``--extension wasm`` flag.
-
-.. code-block:: console
-
-    $ aqt list-qt windows desktop --extension wasm
-    5.13.1 5.13.2
-    5.14.0 5.14.1 5.14.2
-    5.15.0 5.15.1 5.15.2
-
-There are only a few versions of Qt that support WASM, and they are only available
-for desktop targets. If we tried this command with `android`, `winrt`, or `ios`
-targets, we would have seen an error message.
-
-We can check the architecture and modules available as before:
-
-.. code-block:: console
-
-    $ aqt list-qt windows desktop --extension wasm --arch 5.15.2     # Print architectures available
-    wasm_32
-
-    $ aqt list-qt windows desktop --extension wasm --modules 5.15.2  # Print modules available
-    qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript
-    qtvirtualkeyboard qtwebglplugin
-
-We can install Qt for WASM as before:
-
-.. code-block:: console
-
-    $ aqt install-qt windows desktop 5.15.2 wasm_32 -m qtcharts qtnetworkauth
 
 
 
