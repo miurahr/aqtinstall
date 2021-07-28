@@ -153,7 +153,7 @@ for Desktop on Windows, but there will be differences when we get to Qt 6.
     $ aqt list-qt windows android --modules 5.15.2    # Print modules available
     qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquick3d qtquicktimeline qtscript
 
-    $ aqt install-qt windows android 5.15.2 android -m qtcharts qtnetworkauth
+    $ aqt install-qt windows android 5.15.2 android -m qtcharts qtnetworkauth   # Install
 
 Let's see what happens when we try to list architectures and modules for Qt 6:
 
@@ -208,7 +208,7 @@ Finally, let's install Qt 6.2.0 for Android armv7 with some modules:
 
 .. code-block:: console
 
-    $ aqt install linux android 6.2.0 android_armv7 -m addons.qtcharts addons.qtnetworkauth
+    $ aqt install-qt linux android 6.2.0 android_armv7 -m addons.qtcharts addons.qtnetworkauth
 
 
 Installing Qt for WASM
