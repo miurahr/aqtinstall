@@ -18,6 +18,8 @@ Generic commands
 show generic help
 
 
+.. _list qt command:
+
 List Qt command
 ------------------
 
@@ -94,6 +96,8 @@ List available versions of Qt, targets, extensions, modules, and architectures.
     May be combined with the `--extension` and/or `--spec` flags.
 
 
+.. _list tool command:
+
 List Tool command
 -----------------
 
@@ -137,6 +141,7 @@ List available tools
     output is displayed below.
 
 .. code-block:: bash
+
     $ python -m aqt list-tool windows desktop tools_conan
 
      Tool Variant Name           Version         Release Date     Display Name              Description
@@ -145,6 +150,7 @@ List available tools
     qt.tools.conan.cmake   0.16.0-202102101246   2021-02-10     Conan conan.cmake   Conan conan.cmake (0.16.0)
 
 
+.. _qt installation command:
 
 Qt Installation command
 -----------------------
@@ -304,6 +310,8 @@ install Qt examples specified version and target.
 
     desktop, ios or android
 
+
+.. _tools installation command:
 
 Tools installation command
 ---------------------------
