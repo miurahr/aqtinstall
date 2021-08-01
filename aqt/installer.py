@@ -72,8 +72,8 @@ class Cli:
     def __init__(self):
         parser = argparse.ArgumentParser(
             prog="aqt",
-            description="Another unoffical Qt Installer.\n"
-            "aqt help you install Qt SDK, tools, examples and others\n",
+            description="Another unofficial Qt Installer.\n"
+            "aqt helps you install Qt SDK, tools, examples and others\n",
             formatter_class=argparse.RawTextHelpFormatter,
             add_help=True,
         )
@@ -85,11 +85,11 @@ class Cli:
         )
         subparsers = parser.add_subparsers(
             title="subcommands",
-            description="aqt accept several subcommands\n"
-            "install-* subcommands are installer of components\n"
-            "list-* subcommands are show available compoenets\n\n"
-            "commands {install|tool|src|examples|doc} are oblesolete now\n",
-            help="Please refer each help message shown with --help argument for each subcommands",
+            description="aqt accepts several subcommands:\n"
+            "install-* subcommands are commands that install components\n"
+            "list-* subcommands are commands that show available components\n\n"
+            "commands {install|tool|src|examples|doc} are deprecated and marked for removal\n",
+            help="Please refer to each help message by using '--help' with each subcommand",
         )
         self._make_install_parsers(subparsers)
         self._make_list_qt_parser(subparsers)
