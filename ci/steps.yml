@@ -128,7 +128,7 @@ steps:
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/accelbubble
       make
-    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['SUBCOMMAND'], 'list-qt'))
+    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['SUBCOMMAND'], 'list'))
     displayName: Build accelbubble example application to test for android
 
   - script: |
