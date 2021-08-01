@@ -70,7 +70,36 @@ class Cli:
     __slot__ = ["parser", "combinations", "logger"]
 
     def __init__(self):
-        self._create_parser()
+        parser = argparse.ArgumentParser(
+            prog="aqt",
+            description="Installer for Qt SDK.",
+            formatter_class=argparse.RawTextHelpFormatter,
+            add_help=True,
+        )
+        parser.add_argument(
+            "-c",
+            "--config",
+            type=argparse.FileType("r"),
+            help="Configuration ini file.",
+        )
+        subparsers = parser.add_subparsers(
+            title="subcommands",
+            description="Valid subcommands",
+            help="subcommand for aqt Qt installer",
+        )
+        self._make_install_parsers(subparsers)
+        self._make_list_qt_parser(subparsers)
+        self._make_list_tool_parser(subparsers)
+        self._make_legacy_parsers(subparsers)
+        self._make_common_parsers(subparsers)
+        parser.set_defaults(func=self.show_help)
+        self.parser = parser
+
+    def run(self, arg=None):
+        args = self.parser.parse_args(arg)
+        self._setup_settings(args)
+        result = args.func(args)
+        return result
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
         for c in Settings.tools_combinations:
@@ -182,7 +211,7 @@ class Cli:
             return False
         return all([m in available for m in modules])
 
-    def run_install(self, args):
+    def run_install_qt(self, args):
         """Run install subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
@@ -373,7 +402,7 @@ class Cli:
         else:
             exit(1)
 
-    def run_src(self, args):
+    def run_install_src(self, args):
         """Run src subcommand"""
         if args.kde:
             if args.qt_version != "5.15.2":
@@ -393,7 +422,7 @@ class Cli:
             )
         )
 
-    def run_examples(self, args):
+    def run_install_example(self, args):
         """Run example subcommand"""
         start_time = time.perf_counter()
         self._run_src_doc_examples("examples", args)
@@ -403,7 +432,7 @@ class Cli:
             )
         )
 
-    def run_doc(self, args):
+    def run_install_doc(self, args):
         """Run doc subcommand"""
         start_time = time.perf_counter()
         self._run_src_doc_examples("doc", args)
@@ -413,7 +442,7 @@ class Cli:
             )
         )
 
-    def run_tool(self, args):
+    def run_install_tool(self, args):
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
@@ -546,6 +575,139 @@ class Cli:
         )
         return show_list(meta)
 
+    def run_list_tool(self, args: argparse.ArgumentParser) -> int:
+        """Print tools"""
+
+        if not args.target:
+            print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
+            return 0
+        if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
+            self.logger.error(
+                "'{0.target}' is not a valid target for host '{0.host}'".format(args)
+            )
+            return 1
+
+        meta = MetadataFactory(
+            archive_id=ArchiveId("tools", args.host, args.target),
+            tool_name=args.tool_name,
+            is_long_listing=args.long,
+        )
+        return show_list(meta)
+
+    def show_help(self, args=None):
+        """Display help message"""
+        self.parser.print_help()
+
+    def show_aqt_version(self, args=None):
+        """Display version information"""
+        py_version = platform.python_version()
+        py_impl = platform.python_implementation()
+        py_build = platform.python_compiler()
+        self.logger.info(
+            "aqtinstall(aqt) v{} on Python {} [{} {}]".format(
+                aqt.__version__, py_version, py_impl, py_build
+            )
+        )
+
+    def _set_install_qt_parser(self, install_qt_parser):
+        install_qt_parser.set_defaults(func=self.run_install_qt)
+        self._set_common_argument(install_qt_parser)
+        self._set_common_options(install_qt_parser)
+        install_qt_parser.add_argument(
+            "arch",
+            nargs="?",
+            help="\ntarget linux/desktop: gcc_64, wasm_32"
+                 "\ntarget mac/desktop:   clang_64, wasm_32"
+                 "\ntarget mac/ios:       ios"
+                 "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
+                 "\n                      win64_msvc2017_64, win32_msvc2017"
+                 "\n                      win64_msvc2015_64, win32_msvc2015"
+                 "\n                      win64_mingw81, win32_mingw81"
+                 "\n                      win64_mingw73, win32_mingw73"
+                 "\n                      win32_mingw53"
+                 "\n                      wasm_32"
+                 "\nwindows/winrt:        win64_msvc2019_winrt_x64, win64_msvc2019_winrt_x86"
+                 "\n                      win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
+                 "\n                      win64_msvc2019_winrt_armv7"
+                 "\n                      win64_msvc2017_winrt_armv7"
+                 "\nandroid:              Qt 5.14:          android (optional)"
+                 "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
+                 "\n                                        android_x86, android_armv7",
+        )
+        self._set_module_options(install_qt_parser)
+        install_qt_parser.add_argument(
+            "--noarchives",
+            action="store_true",
+            help="No base packages; allow mod amendment with --modules option.",
+        )
+
+    def _set_install_tool_parser(self, install_tool_parser):
+        install_tool_parser.set_defaults(func=self.run_install_tool)
+        install_tool_parser.add_argument(
+            "host", choices=["linux", "mac", "windows"], help="host os name"
+        )
+        install_tool_parser.add_argument(
+            "target",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK.",
+        )
+        install_tool_parser.add_argument(
+            "tool_name", help="Name of tool such as tools_ifw, tools_mingw"
+        )
+        install_tool_parser.add_argument(
+            "arch",
+            nargs="?",
+            default=None,
+            help="Name of full tool name such as qt.tools.ifw.31. "
+                 "Please use 'aqt list-tool' to list acceptable values for this parameter.",
+        )
+        self._set_common_options(install_tool_parser)
+
+
+    def _make_legacy_parsers(self, subparsers: argparse._SubParsersAction):
+        install_parser = subparsers.add_parser(
+            "install", formatter_class=argparse.RawTextHelpFormatter
+        )
+        self._set_install_qt_parser(install_parser)
+        tool_parser = subparsers.add_parser("tool")
+        self._set_install_tool_parser(tool_parser)
+        #
+        for cmd, f in (
+                ("doc", self.run_install_doc),
+                ("example", self.run_install_example),
+                ("src", self.run_install_src)):
+            p = subparsers.add_parser(cmd)
+            p.set_defaults(func=f)
+            self._set_common_argument(p)
+            self._set_common_options(p)
+            self._set_module_options(p)
+
+    def _make_install_parsers(self, subparsers: argparse._SubParsersAction):
+        install_qt_parser = subparsers.add_parser(
+            "install-qt", formatter_class=argparse.RawTextHelpFormatter
+        )
+        self._set_install_qt_parser(install_qt_parser)
+        tool_parser = subparsers.add_parser("install-tool")
+        self._set_install_tool_parser(tool_parser)
+        #
+        for cmd, f in (
+                ("install-doc", self.run_install_doc),
+                ("install-example", self.run_install_example)):
+            p = subparsers.add_parser(cmd)
+            p.set_defaults(func=f)
+            self._set_common_argument(p)
+            self._set_common_options(p)
+            self._set_module_options(p)
+        src_parser = subparsers.add_parser("install-src")
+        src_parser.set_defaults(func=self.run_install_src)
+        self._set_common_argument(src_parser)
+        self._set_common_options(src_parser)
+        self._set_module_options(src_parser)
+        src_parser.add_argument(
+            "--kde", action="store_true", help="patching with KDE patch kit."
+        )
+
     def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: argparse.ArgumentParser = subparsers.add_parser(
@@ -618,25 +780,6 @@ class Cli:
         )
         list_parser.set_defaults(func=self.run_list_qt)
 
-    def run_list_tool(self, args: argparse.ArgumentParser) -> int:
-        """Print tools"""
-
-        if not args.target:
-            print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
-            return 0
-        if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
-            self.logger.error(
-                "'{0.target}' is not a valid target for host '{0.host}'".format(args)
-            )
-            return 1
-
-        meta = MetadataFactory(
-            archive_id=ArchiveId("tools", args.host, args.target),
-            tool_name=args.tool_name,
-            is_long_listing=args.long,
-        )
-        return show_list(meta)
-
     def _make_list_tool_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: argparse.ArgumentParser = subparsers.add_parser(
@@ -677,20 +820,12 @@ class Cli:
         )
         list_parser.set_defaults(func=self.run_list_tool)
 
-    def show_help(self, args=None):
-        """Display help message"""
-        self.parser.print_help()
-
-    def show_aqt_version(self, args=None):
-        """Display version information"""
-        py_version = platform.python_version()
-        py_impl = platform.python_implementation()
-        py_build = platform.python_compiler()
-        self.logger.info(
-            "aqtinstall(aqt) v{} on Python {} [{} {}]".format(
-                aqt.__version__, py_version, py_impl, py_build
-            )
-        )
+    def _make_common_parsers(self, subparsers: argparse._SubParsersAction):
+        help_parser = subparsers.add_parser("help")
+        help_parser.set_defaults(func=self.show_help)
+        #
+        version_parser = subparsers.add_parser("version")
+        version_parser.set_defaults(func=self.show_aqt_version)
 
     def _set_common_options(self, subparser):
         subparser.add_argument(
@@ -744,114 +879,6 @@ class Cli:
             "target", choices=["desktop", "winrt", "android", "ios"], help="target sdk"
         )
 
-    def _create_parser(self):
-        parser = argparse.ArgumentParser(
-            prog="aqt",
-            description="Installer for Qt SDK.",
-            formatter_class=argparse.RawTextHelpFormatter,
-            add_help=True,
-        )
-        parser.add_argument(
-            "-c",
-            "--config",
-            type=argparse.FileType("r"),
-            help="Configuration ini file.",
-        )
-        subparsers = parser.add_subparsers(
-            title="subcommands",
-            description="Valid subcommands",
-            help="subcommand for aqt Qt installer",
-        )
-        install_parser = subparsers.add_parser(
-            "install", formatter_class=argparse.RawTextHelpFormatter
-        )
-        install_parser.set_defaults(func=self.run_install)
-        self._set_common_argument(install_parser)
-        self._set_common_options(install_parser)
-        install_parser.add_argument(
-            "arch",
-            nargs="?",
-            help="\ntarget linux/desktop: gcc_64, wasm_32"
-            "\ntarget mac/desktop:   clang_64, wasm_32"
-            "\ntarget mac/ios:       ios"
-            "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
-            "\n                      win64_msvc2017_64, win32_msvc2017"
-            "\n                      win64_msvc2015_64, win32_msvc2015"
-            "\n                      win64_mingw81, win32_mingw81"
-            "\n                      win64_mingw73, win32_mingw73"
-            "\n                      win32_mingw53"
-            "\n                      wasm_32"
-            "\nwindows/winrt:        win64_msvc2019_winrt_x64, win64_msvc2019_winrt_x86"
-            "\n                      win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
-            "\n                      win64_msvc2019_winrt_armv7"
-            "\n                      win64_msvc2017_winrt_armv7"
-            "\nandroid:              Qt 5.14:          android (optional)"
-            "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
-            "\n                                        android_x86, android_armv7",
-        )
-        self._set_module_options(install_parser)
-        install_parser.add_argument(
-            "--noarchives",
-            action="store_true",
-            help="No base packages; allow mod amendment with --modules option.",
-        )
-        #
-        doc_parser = subparsers.add_parser("doc")
-        doc_parser.set_defaults(func=self.run_doc)
-        self._set_common_argument(doc_parser)
-        self._set_common_options(doc_parser)
-        self._set_module_options(doc_parser)
-        #
-        examples_parser = subparsers.add_parser("examples")
-        examples_parser.set_defaults(func=self.run_examples)
-        self._set_common_argument(examples_parser)
-        self._set_common_options(examples_parser)
-        self._set_module_options(examples_parser)
-        #
-        src_parser = subparsers.add_parser("src")
-        src_parser.set_defaults(func=self.run_src)
-        self._set_common_argument(src_parser)
-        self._set_common_options(src_parser)
-        self._set_module_options(src_parser)
-        src_parser.add_argument(
-            "--kde", action="store_true", help="patching with KDE patch kit."
-        )
-        #
-        tools_parser = subparsers.add_parser("tool")
-        tools_parser.set_defaults(func=self.run_tool)
-        tools_parser.add_argument(
-            "host", choices=["linux", "mac", "windows"], help="host os name"
-        )
-        tools_parser.add_argument(
-            "target",
-            default=None,
-            choices=["desktop", "winrt", "android", "ios"],
-            help="Target SDK.",
-        )
-
-        tools_parser.add_argument(
-            "tool_name", help="Name of tool such as tools_ifw, tools_mingw"
-        )
-        tools_parser.add_argument(
-            "arch",
-            nargs="?",
-            default=None,
-            help="Name of full tool name such as qt.tools.ifw.31. "
-            "Please use 'aqt list-tool' to list acceptable values for this parameter.",
-        )
-        self._set_common_options(tools_parser)
-
-        self._make_list_qt_parser(subparsers)
-        self._make_list_tool_parser(subparsers)
-        #
-        help_parser = subparsers.add_parser("help")
-        help_parser.set_defaults(func=self.show_help)
-        #
-        version_parser = subparsers.add_parser("version")
-        version_parser.set_defaults(func=self.show_aqt_version)
-        parser.set_defaults(func=self.show_help)
-        self.parser = parser
-
     def _setup_settings(self, args=None):
         # setup logging
         setup_logging()
@@ -866,12 +893,6 @@ class Cli:
                 self.logger.debug("Load configuration from {}".format(config))
             else:
                 Settings.load_settings()
-
-    def run(self, arg=None):
-        args = self.parser.parse_args(arg)
-        self._setup_settings(args)
-        result = args.func(args)
-        return result
 
     @staticmethod
     def _is_valid_version_str(
