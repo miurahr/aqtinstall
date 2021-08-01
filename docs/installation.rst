@@ -24,6 +24,38 @@ Same as usual, it can be installed with `pip`
     $ pip install aqtinstall
 
 
+
+Command changes
+===============
+
+From version 2.0.0, sub commands are changed. There has also been legacy commands for backward compatibility
+but are not recommended now.
+
++----------------- -+---------------------+------------------------+
+| New sub commands  | Legacy sub commands |  Note                  |
++===================+=====================+========================+
+| install-qt        | install             |                        |
++----------------- -+---------------------+------------------------+
+| install-tool      | tool                | Arguments are changed  |
+|                   |                     | new syntax doesn't take|
+|                   |                     | version                |
++----------------- -+---------------------+------------------------+
+| install-example   | examples            | caution with last (s)  |
++----------------- -+---------------------+------------------------+
+| install-src       | src                 | New command only can   |
+|                   |                     | take --kde option      |
++----------------- -+---------------------+------------------------+
+| install-doc       | doc                 |                        |
++----------------- -+---------------------+------------------------+
+|                   | list                | legacy list command are|
+|                   |                     | deprecated.            |
++----------------- -+---------------------+------------------------+
+| list-qt           |                     |                        |
++----------------- -+---------------------+------------------------+
+| list-tool         |                     |                        |
++----------------- -+---------------------+------------------------+
+
+
 Usage
 =====
 
@@ -32,7 +64,7 @@ General usage looks like this:
 .. code-block:: bash
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
+        install-qt <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
         [--archives <archive>[ <archive>...]] [--timeout <timeout(sec)>]
 
 You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
@@ -64,7 +96,7 @@ You can install tools and utilities using following syntax;
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        tool <host> <tool_name> <tool-version> <arch> [--timeout <timeout>]
+        install-tool <host> <tool_name> <tool-version> <arch> [--timeout <timeout>]
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
 * arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on Qt `archive_site`_

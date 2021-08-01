@@ -289,11 +289,11 @@ install Qt documents specified version and target.
 Example installation command
 ----------------------------
 
-.. program:: install-examples
+.. program:: install-example
 
 .. code-block:: bash
 
-    aqt install-examples <Qt version> <target OS> <target variant>
+    aqt install-example <Qt version> <target OS> <target variant>
 
 install Qt examples specified version and target.
 
@@ -353,30 +353,30 @@ Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 .. code-block:: console
 
     pip install aqtinstall
-    sudo aqt install --outputdir /opt 5.12.0 linux desktop -m qtcharts qtnetworkauth
+    sudo aqt install-qt --outputdir /opt 5.12.0 linux desktop -m qtcharts qtnetworkauth
 
 
 Example: Installing Android (armv7) Qt 5.10.2:
 
 .. code-block:: console
 
-    aqt install 5.10.2 linux android android_armv7
+    aqt install-qt 5.10.2 linux android android_armv7
 
 
 Example: Install examples, doc and source:
 
 .. code-block:: console
 
-    aqt examples 5.15.2 windows desktop -m qtcharts qtnetworkauth
-    aqt doc 5.15.2 windows desktop -m qtcharts qtnetworkauth
-    aqt src 5.15.2 windows desktop --archives qtbase --kde
+    aqt install-example 5.15.2 windows desktop -m qtcharts qtnetworkauth
+    aqt install-doc 5.15.2 windows desktop -m qtcharts qtnetworkauth
+    aqt install-src 5.15.2 windows desktop --archives qtbase --kde
 
 
 Example: Install Web Assembly
 
 .. code-block:: console
 
-    aqt install 5.15.0 linux desktop wasm_32
+    aqt install-qt 5.15.0 linux desktop wasm_32
 
 
 Example: List available versions of Qt on Linux
@@ -432,7 +432,7 @@ Example: Install an Install FrameWork (IFW):
 
 .. code-block:: console
 
-    aqt tool linux desktop tools_ifw
+    aqt install-tool linux desktop tools_ifw
 
 
 Example: Install vcredist on Windows:
@@ -440,7 +440,7 @@ Example: Install vcredist on Windows:
 .. code-block:: doscon
 
 
-    aqt tool windows tools_vcredist
+    aqt install-tool windows tools_vcredist
     .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
@@ -448,7 +448,7 @@ Example: Install MinGW on Windows
 
 .. code-block:: doscon
 
-    aqt tool -O c:\Qt windows tools_mingw qt.tools.win64_mingw810
+    aqt install-tool -O c:\Qt windows tools_mingw qt.tools.win64_mingw810
     set PATH=C:\Qt\Tools\mingw810_64\bin
 
 
