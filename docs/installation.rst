@@ -68,6 +68,7 @@ General usage looks like this:
         [--archives <archive>[ <archive>...]] [--timeout <timeout(sec)>]
 
 You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
+Some older operating systems may require you to specify Python version 3, like this: ``python3 -m aqt``.
 
 * The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
@@ -91,19 +92,18 @@ You can also call with ``python -m aqt`` syntax as well as command script ``aqt`
 Installing tool and utility (Experimental)
 ------------------------------------------
 
-You can install tools and utilities using following syntax;
+You can install tools and utilities using the :ref:`tools installation command`:
 
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install-tool <host> <tool_name> <tool-version> <arch> [--timeout <timeout>]
+        install-tool <host> <tool_name> [<arch>] [--timeout <timeout>]
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
-* arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on Qt `archive_site`_
+* arch is full qualified tool name such as `qt.tools.ifw.31`.
+  Please use :ref:`aqt list-tool <list tool command>` to list acceptable values for this parameter.
   This is a quite experimental feature, may not work and please use it with your understanding of what you are doing.
 * It does not recognize 'installscript.qs'. When using tools which depends on a qt script, you should do something by yourself.
-
-.. _`archive_site`: https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
 
 
 Target directory
