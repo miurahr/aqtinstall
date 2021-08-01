@@ -12,7 +12,7 @@ def test_cli_unknown_version(capsys):
     wrong_url_ending = "mac_x64/desktop/qt5_5160/Updates.xml"
     with pytest.raises(SystemExit) as pytest_wrapped_e:
         cli = aqt.installer.Cli()
-        cli.run(["install", wrong_version, "mac", "desktop"])
+        cli.run(["install-qt", "mac", "desktop", wrong_version])
     assert pytest_wrapped_e.type == SystemExit
     assert pytest_wrapped_e.value.code == 1
     out, err = capsys.readouterr()

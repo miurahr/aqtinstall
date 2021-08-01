@@ -87,8 +87,8 @@ def test_cli_invalid_version(capsys, invalid_version):
     )
 
     for cmd in (
-        ("install-qt", invalid_version, "mac", "desktop"),
-        ("install-doc", invalid_version, "mac", "desktop"),
+        ("install-qt", "mac", "desktop", invalid_version),
+        ("install-doc", "mac", "desktop", invalid_version),
         ("list-qt", "mac", "desktop", "--modules", invalid_version),
     ):
         with pytest.raises(SystemExit) as pytest_wrapped_e:
@@ -106,7 +106,7 @@ def test_cli_check_mirror():
     cli = Cli()
     cli._setup_settings()
     assert cli._check_mirror(None)
-    arg = ["install", "5.11.3", "linux", "desktop", "-b", "https://download.qt.io/"]
+    arg = ["install-qt", "linux", "desktop", "5.11.3", "-b", "https://download.qt.io/"]
     args = cli.parser.parse_args(arg)
     assert args.base == "https://download.qt.io/"
     assert cli._check_mirror(args.base)
