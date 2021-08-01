@@ -19,7 +19,7 @@ steps:
       sleep $number
       mkdir Qt
       cd Qt
-      if [[ "$(SUBCOMMAND)" == "install" ]]; then
+      if [[ "$(SUBCOMMAND)" == "install-qt" ]]; then
         opt=""
         if [[ "$(QT_BASE_MIRROR)" != "" ]]; then
           opt+=" -b $(QT_BASE_MIRROR)"
@@ -35,12 +35,12 @@ steps:
         if [[ "$(SUBARCHIVES)" != "" ]]; then
           opt+=" --archives $(SUBARCHIVES)"
         fi
-        python -m aqt install $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) $opt
+        python -m aqt install-qt $(QT_VERSION) $(HOST) $(TARGET) $(ARCH) $opt
         if [[ "$(TARGET)" == "android" || "$(TARGET)" == "ios" ]]; then
           if [[ "$(HOST)" == "windows" ]]; then
-            python -m aqt install $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
+            python -m aqt install-qt $(QT_VERSION) $(HOST) desktop mingw81_64 --archives qtbase
           else
-            python -m aqt install $(QT_VERSION) $(HOST) desktop --archives qtbase
+            python -m aqt install-qt $(QT_VERSION) $(HOST) desktop --archives qtbase
           fi
         fi
         if [[ "$(OUTPUT_DIR)" != "" ]]; then
@@ -98,10 +98,10 @@ steps:
         aqt list-qt $(HOST) $(TARGET) $ext --arch $(QT_VERSION)                 # print architectures for version/host/target
         aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --arch latest
       fi
-      if [[ "$(SUBCOMMAND)" == "src" ]]; then
+      if [[ "$(SUBCOMMAND)" == "install-src" ]]; then
         python -m aqt $(SUBCOMMAND) $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
       fi
-      if [[ "$(SUBCOMMAND)" == "doc" ]]; then
+      if [[ "$(SUBCOMMAND)" == "install-doc" ]]; then
         python -m aqt $(SUBCOMMAND) $(QT_VERSION) $(HOST) $(TARGET) --archives $(SUBARCHIVES)
       fi
     workingDirectory: $(Build.BinariesDirectory)
@@ -128,13 +128,13 @@ steps:
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/accelbubble
       make
-    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['SUBCOMMAND'], 'list'))
+    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['SUBCOMMAND'], 'list-qt'))
     displayName: Build accelbubble example application to test for android
 
   - script: |
       sudo apt-get update
       sudo apt-get install -y libgl1-mesa-dev
-    condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'), eq(variables['SUBCOMMAND'], 'install'))
+    condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'), eq(variables['SUBCOMMAND'], 'install-qt'))
     displayName: install test dependency for Linux
 
   ##----------------------------------------------------
@@ -176,7 +176,7 @@ steps:
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/helloworld
       make
-    condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''), eq(variables['SUBCOMMAND'], 'install'))
+    condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''), eq(variables['SUBCOMMAND'], 'install-qt'))
     displayName: Build test with qmake for Linux and macOS w/o extra module
   - powershell: |
       if ( $env:TOOLCHAIN -eq 'MSVC' ) {
@@ -190,10 +190,10 @@ steps:
         jom
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
         if ( $env:ARCH -eq 'win64_mingw81' ) {
-          python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win64_mingw810
+          python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win64_mingw810
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_64\bin" + $env:Path, "Machine")
         } else {
-          python -m aqt tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win32_mingw810
+          python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win32_mingw810
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_32\bin" + $env:Path, "Machine")
         }
         $env:Path = "$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin;$(WIN_QT_BINDIR);" + $env:Path

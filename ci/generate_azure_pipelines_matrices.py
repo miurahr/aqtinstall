@@ -70,20 +70,20 @@ all_platform_build_jobs = [
 # Linux Desktop
 for qt_version in qt_versions:
     linux_build_jobs.append(
-        BuildJob("install", qt_version, "linux", "desktop", "gcc_64", "gcc_64")
+        BuildJob("install-qt", qt_version, "linux", "desktop", "gcc_64", "gcc_64")
     )
 
 # Mac Desktop
 for qt_version in qt_versions:
     mac_build_jobs.append(
-        BuildJob("install", qt_version, "mac", "desktop", "clang_64", "clang_64")
+        BuildJob("install-qt", qt_version, "mac", "desktop", "clang_64", "clang_64")
     )
 
 # Windows Desktop
 windows_build_jobs.extend(
     [
         BuildJob(
-            "install",
+            "install-qt",
             "5.14.2",
             "windows",
             "desktop",
@@ -92,7 +92,7 @@ windows_build_jobs.extend(
             mirror=random.choice(MIRRORS),
         ),
         BuildJob(
-            "install",
+            "install-qt",
             "5.14.2",
             "windows",
             "desktop",
@@ -101,7 +101,7 @@ windows_build_jobs.extend(
             mirror=random.choice(MIRRORS),
         ),
         BuildJob(
-            "install",
+            "install-qt",
             "5.13.2",
             "windows",
             "desktop",
@@ -110,7 +110,7 @@ windows_build_jobs.extend(
             mirror=random.choice(MIRRORS),
         ),
         BuildJob(
-            "install",
+            "install-qt",
             "5.15.2",
             "windows",
             "desktop",
@@ -121,7 +121,7 @@ windows_build_jobs.extend(
         # Known issue with Azure-Pipelines environment: it has a pre-installed mingw81 which cause link error.
         # BuildJob('install', '5.15.0', 'windows', 'desktop', 'win32_mingw81', 'mingw81_32', mirror=MIRROR),
         BuildJob(
-            "install",
+            "install-qt",
             "5.15.2",
             "windows",
             "desktop",
@@ -137,7 +137,7 @@ windows_build_jobs.extend(
 linux_build_jobs.extend(
     [
         BuildJob(
-            "install",
+            "install-qt",
             "5.15.2",
             "linux",
             "desktop",
@@ -146,10 +146,10 @@ linux_build_jobs.extend(
             module="qtcharts qtnetworkauth",
         ),
         BuildJob(
-            "install", "5.14.2", "linux", "desktop", "gcc_64", "gcc_64", module="all"
+            "install-qt", "5.14.2", "linux", "desktop", "gcc_64", "gcc_64", module="all"
         ),
         BuildJob(
-            "install",
+            "install-qt",
             "5.15.2",
             "linux",
             "desktop",
@@ -158,28 +158,28 @@ linux_build_jobs.extend(
             subarchives="qtbase qttools qt icu",
         ),
         BuildJob(
-            "src", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qt"
+            "install-src", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qt"
         ),
         BuildJob(
-            "doc", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtdoc"
+            "install-doc", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtdoc"
         ),
         # test for list commands
-        BuildJob('list', '5.15.2', 'linux', 'desktop', '', '', spec="<6", list_options={
+        BuildJob('list-qt', '5.15.2', 'linux', 'desktop', '', '', spec="<6", list_options={
             'HAS_EXTENSIONS': "True",
         }),
-        BuildJob('list', '6.1.0', 'linux', 'android', '', '', spec=">6.0,<6.1.1", list_options={
+        BuildJob('list-qt', '6.1.0', 'linux', 'android', '', '', spec=">6.0,<6.1.1", list_options={
             'HAS_EXTENSIONS': "True",
             'USE_EXTENSION': "armv7",
         }),
         # tests run on linux but query data about other platforms
-        BuildJob('list', '5.14.1', 'mac', 'ios', '', '', spec="<=5.14.1", list_options={}),
-        BuildJob('list', '5.13.1', 'windows', 'winrt', '', '', spec=">5.13.0,<5.13.2", list_options={}),
+        BuildJob('list-qt', '5.14.1', 'mac', 'ios', '', '', spec="<=5.14.1", list_options={}),
+        BuildJob('list-qt', '5.13.1', 'windows', 'winrt', '', '', spec=">5.13.0,<5.13.2", list_options={}),
     ]
 )
 mac_build_jobs.extend(
     [
         BuildJob(
-            "install",
+            "install-qt",
             "6.2.0",
             "mac",
             "desktop",
@@ -188,7 +188,7 @@ mac_build_jobs.extend(
             module="addons.qtcharts addons.qtnetworkauth",
         ),
         BuildJob(
-            "install",
+            "install-qt",
             "5.14.2",
             "mac",
             "desktop",
@@ -201,23 +201,23 @@ mac_build_jobs.extend(
 
 # WASM
 linux_build_jobs.append(
-    BuildJob("install", "5.14.2", "linux", "desktop", "wasm_32", "wasm_32")
+    BuildJob("install-qt", "5.14.2", "linux", "desktop", "wasm_32", "wasm_32")
 )
 mac_build_jobs.append(
-    BuildJob("install", "5.14.2", "mac", "desktop", "wasm_32", "wasm_32")
+    BuildJob("install-qt", "5.14.2", "mac", "desktop", "wasm_32", "wasm_32")
 )
 
 # mobile SDK
 mac_build_jobs.extend(
     [
-        BuildJob("install", "5.15.2", "mac", "ios", "ios", "ios"),
+        BuildJob("install-qt", "5.15.2", "mac", "ios", "ios", "ios"),
         BuildJob(
-            "install", "6.1.0", "mac", "android", "android_armv7", "android_armv7"
+            "install-qt", "6.1.0", "mac", "android", "android_armv7", "android_armv7"
         ),
     ]
 )
 linux_build_jobs.extend(
-    [BuildJob("install", "6.1.0", "linux", "android", "android_armv7", "android_armv7")]
+    [BuildJob("install-qt", "6.1.0", "linux", "android", "android_armv7", "android_armv7")]
 )
 
 # Test binary patch of qmake
@@ -226,7 +226,7 @@ linux_build_jobs.extend(
         # New output dir is shorter than the default value; qmake could fail to
         # locate prefix dir if the value is patched wrong
         BuildJob(
-            "install",
+            "install-qt",
             "5.12.11",
             "linux",
             "desktop",
@@ -237,7 +237,7 @@ linux_build_jobs.extend(
         # New output dir is longer than the default value.
         # This case is meant to work without any bugfix; if this fails, the test is setup wrong
         BuildJob(
-            "install",
+            "install-qt",
             "5.12.11",
             "linux",
             "desktop",
