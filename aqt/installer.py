@@ -219,6 +219,8 @@ class Cli:
         """Run install subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
+        if args.is_legacy:
+            self._warn_on_deprecated_command("install", "install-qt")
         arch = args.arch
         target = args.target
         os_name = args.host
@@ -330,8 +332,15 @@ class Cli:
             )
         )
 
-    def _run_src_doc_examples(self, flavor, args):
+    def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
+        if not cmd_name:
+            cmd_name = flavor
+
         self.show_aqt_version()
+        if args.is_legacy:
+            self._warn_on_deprecated_command(
+                old_name=cmd_name, new_name=f"install-{cmd_name}"
+            )
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
@@ -429,7 +438,7 @@ class Cli:
     def run_install_example(self, args):
         """Run example subcommand"""
         start_time = time.perf_counter()
-        self._run_src_doc_examples("examples", args)
+        self._run_src_doc_examples("examples", args, cmd_name="example")
         self.logger.info(
             "Time elapsed: {time:.8f} second".format(
                 time=time.perf_counter() - start_time
@@ -450,6 +459,8 @@ class Cli:
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
+        if args.is_legacy:
+            self._warn_on_deprecated_command("tool", "install-tool")
         tool_name = args.tool_name  # such as tools_openssl_x64
         os_name = args.host  # windows, linux and mac
         target = args.target  # desktop, android and ios
@@ -614,7 +625,7 @@ class Cli:
         )
 
     def _set_install_qt_parser(self, install_qt_parser, *, is_legacy: bool):
-        install_qt_parser.set_defaults(func=self.run_install_qt)
+        install_qt_parser.set_defaults(func=self.run_install_qt, is_legacy=is_legacy)
         self._set_common_arguments(install_qt_parser, is_legacy=is_legacy)
         self._set_common_options(install_qt_parser)
         install_qt_parser.add_argument(
@@ -645,8 +656,10 @@ class Cli:
             help="No base packages; allow mod amendment with --modules option.",
         )
 
-    def _set_install_tool_parser(self, install_tool_parser):
-        install_tool_parser.set_defaults(func=self.run_install_tool)
+    def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
+        install_tool_parser.set_defaults(
+            func=self.run_install_tool, is_legacy=is_legacy
+        )
         install_tool_parser.add_argument(
             "host", choices=["linux", "mac", "windows"], help="host os name"
         )
@@ -669,23 +682,32 @@ class Cli:
         self._set_common_options(install_tool_parser)
 
     def _make_legacy_parsers(self, subparsers: argparse._SubParsersAction):
+        deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
         install_parser = subparsers.add_parser(
-            "install", formatter_class=argparse.RawTextHelpFormatter
+            "install",
+            description=deprecated_msg,
+            formatter_class=argparse.RawTextHelpFormatter,
         )
         self._set_install_qt_parser(install_parser, is_legacy=True)
         tool_parser = subparsers.add_parser("tool")
-        self._set_install_tool_parser(tool_parser)
+        self._set_install_tool_parser(tool_parser, is_legacy=True)
         #
         for cmd, f in (
             ("doc", self.run_install_doc),
             ("example", self.run_install_example),
             ("src", self.run_install_src),
         ):
-            p = subparsers.add_parser(cmd)
-            p.set_defaults(func=f)
+            p = subparsers.add_parser(cmd, description=deprecated_msg)
+            p.set_defaults(func=f, is_legacy=True)
             self._set_common_arguments(p, is_legacy=True)
             self._set_common_options(p)
             self._set_module_options(p)
+
+    def _warn_on_deprecated_command(self, old_name: str, new_name: str):
+        self.logger.warning(
+            f"Warning: The command '{old_name}' is deprecated and marked for removal in a future version of aqt.\n"
+            f"In the future, please use the command '{new_name}' instead."
+        )
 
     def _make_install_parsers(self, subparsers: argparse._SubParsersAction):
         install_qt_parser = subparsers.add_parser(
@@ -693,19 +715,19 @@ class Cli:
         )
         self._set_install_qt_parser(install_qt_parser, is_legacy=False)
         tool_parser = subparsers.add_parser("install-tool")
-        self._set_install_tool_parser(tool_parser)
+        self._set_install_tool_parser(tool_parser, is_legacy=False)
         #
         for cmd, f in (
             ("install-doc", self.run_install_doc),
             ("install-example", self.run_install_example),
         ):
             p = subparsers.add_parser(cmd)
-            p.set_defaults(func=f)
+            p.set_defaults(func=f, is_legacy=False)
             self._set_common_arguments(p, is_legacy=False)
             self._set_common_options(p)
             self._set_module_options(p)
         src_parser = subparsers.add_parser("install-src")
-        src_parser.set_defaults(func=self.run_install_src)
+        src_parser.set_defaults(func=self.run_install_src, is_legacy=False)
         self._set_common_arguments(src_parser, is_legacy=False)
         self._set_common_options(src_parser)
         self._set_module_options(src_parser)
