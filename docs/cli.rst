@@ -159,14 +159,10 @@ Qt Installation command
 
 .. code-block:: bash
 
-    aqt install-qt <Qt version> <target OS> <target variant> [<target architecture>]
+    aqt install-qt <target OS> <target variant> <Qt version> [<target architecture>]
 
 install Qt library specified version and target.
 There are various combinations to accept according to Qt version.
-
-.. describe:: Qt version
-
-    This is a Qt version such as 5.9,7, 5.12.1 etc
 
 .. describe:: target OS
 
@@ -175,6 +171,10 @@ There are various combinations to accept according to Qt version.
 .. describe:: target variant
 
     desktop, ios or android
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9,7, 5.12.1 etc
 
 .. describe:: target architecture
 
@@ -233,14 +233,10 @@ Source installation command
 
 .. code-block:: bash
 
-    aqt install-src <Qt version> <target OS> <target variant> [--kde] [--archives <archive>]
+    aqt install-src <target OS> <target variant> <Qt version> [--kde] [--archives <archive>]
 
 install Qt sources specified version and target.
 
-
-.. describe:: Qt version
-
-    This is a Qt version such as 5.9,7, 5.12.1 etc
 
 .. describe:: target OS
 
@@ -249,6 +245,10 @@ install Qt sources specified version and target.
 .. describe:: target variant
 
     desktop, ios or android
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9,7, 5.12.1 etc
 
 .. option:: --kde
 
@@ -269,13 +269,9 @@ Document installation command
 
 .. code-block:: bash
 
-    aqt install-doc <Qt version> <target OS> <target variant>
+    aqt install-doc <target OS> <target variant> <Qt version>
 
 install Qt documents specified version and target.
-
-.. describe:: Qt version
-
-    This is a Qt version such as 5.9,7, 5.12.1 etc
 
 .. describe:: target OS
 
@@ -284,6 +280,10 @@ install Qt documents specified version and target.
 .. describe:: target variant
 
     desktop, ios or android
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9,7, 5.12.1 etc
 
 
 Example installation command
@@ -293,14 +293,10 @@ Example installation command
 
 .. code-block:: bash
 
-    aqt install-example <Qt version> <target OS> <target variant>
+    aqt install-example <target OS> <target variant> <Qt version>
 
 install Qt examples specified version and target.
 
-
-.. describe:: Qt version
-
-    This is a Qt version such as 5.9,7, 5.12.1 etc
 
 .. describe:: target OS
 
@@ -309,6 +305,10 @@ install Qt examples specified version and target.
 .. describe:: target variant
 
     desktop, ios or android
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9,7, 5.12.1 etc
 
 
 .. _tools installation command:
@@ -353,30 +353,30 @@ Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 .. code-block:: console
 
     pip install aqtinstall
-    sudo aqt install-qt --outputdir /opt 5.12.0 linux desktop -m qtcharts qtnetworkauth
+    sudo aqt install-qt --outputdir /opt linux desktop 5.12.0 -m qtcharts qtnetworkauth
 
 
 Example: Installing Android (armv7) Qt 5.10.2:
 
 .. code-block:: console
 
-    aqt install-qt 5.10.2 linux android android_armv7
+    aqt install-qt linux android 5.10.2 android_armv7
 
 
 Example: Install examples, doc and source:
 
 .. code-block:: console
 
-    aqt install-example 5.15.2 windows desktop -m qtcharts qtnetworkauth
-    aqt install-doc 5.15.2 windows desktop -m qtcharts qtnetworkauth
-    aqt install-src 5.15.2 windows desktop --archives qtbase --kde
+    aqt install-example windows desktop 5.15.2 -m qtcharts qtnetworkauth
+    aqt install-doc windows desktop 5.15.2 -m qtcharts qtnetworkauth
+    aqt install-src windows desktop 5.15.2 --archives qtbase --kde
 
 
 Example: Install Web Assembly
 
 .. code-block:: console
 
-    aqt install-qt 5.15.0 linux desktop wasm_32
+    aqt install-qt linux desktop 5.15.0 wasm_32
 
 
 Example: List available versions of Qt on Linux
