@@ -72,7 +72,8 @@ class Cli:
     def __init__(self):
         parser = argparse.ArgumentParser(
             prog="aqt",
-            description="Installer for Qt SDK.",
+            description="Another unoffical Qt Installer.\n"
+            "aqt help you install Qt SDK, tools, examples and others\n",
             formatter_class=argparse.RawTextHelpFormatter,
             add_help=True,
         )
@@ -84,8 +85,11 @@ class Cli:
         )
         subparsers = parser.add_subparsers(
             title="subcommands",
-            description="Valid subcommands",
-            help="subcommand for aqt Qt installer",
+            description="aqt accept several subcommands\n"
+            "install-* subcommands are installer of components\n"
+            "list-* subcommands are show available compoenets\n\n"
+            "commands {install|tool|src|examples|doc} are oblesolete now\n",
+            help="Please refer each help message shown with --help argument for each subcommands",
         )
         self._make_install_parsers(subparsers)
         self._make_list_qt_parser(subparsers)
@@ -617,22 +621,22 @@ class Cli:
             "arch",
             nargs="?",
             help="\ntarget linux/desktop: gcc_64, wasm_32"
-                 "\ntarget mac/desktop:   clang_64, wasm_32"
-                 "\ntarget mac/ios:       ios"
-                 "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
-                 "\n                      win64_msvc2017_64, win32_msvc2017"
-                 "\n                      win64_msvc2015_64, win32_msvc2015"
-                 "\n                      win64_mingw81, win32_mingw81"
-                 "\n                      win64_mingw73, win32_mingw73"
-                 "\n                      win32_mingw53"
-                 "\n                      wasm_32"
-                 "\nwindows/winrt:        win64_msvc2019_winrt_x64, win64_msvc2019_winrt_x86"
-                 "\n                      win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
-                 "\n                      win64_msvc2019_winrt_armv7"
-                 "\n                      win64_msvc2017_winrt_armv7"
-                 "\nandroid:              Qt 5.14:          android (optional)"
-                 "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
-                 "\n                                        android_x86, android_armv7",
+            "\ntarget mac/desktop:   clang_64, wasm_32"
+            "\ntarget mac/ios:       ios"
+            "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
+            "\n                      win64_msvc2017_64, win32_msvc2017"
+            "\n                      win64_msvc2015_64, win32_msvc2015"
+            "\n                      win64_mingw81, win32_mingw81"
+            "\n                      win64_mingw73, win32_mingw73"
+            "\n                      win32_mingw53"
+            "\n                      wasm_32"
+            "\nwindows/winrt:        win64_msvc2019_winrt_x64, win64_msvc2019_winrt_x86"
+            "\n                      win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
+            "\n                      win64_msvc2019_winrt_armv7"
+            "\n                      win64_msvc2017_winrt_armv7"
+            "\nandroid:              Qt 5.14:          android (optional)"
+            "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
+            "\n                                        android_x86, android_armv7",
         )
         self._set_module_options(install_qt_parser)
         install_qt_parser.add_argument(
@@ -660,10 +664,9 @@ class Cli:
             nargs="?",
             default=None,
             help="Name of full tool name such as qt.tools.ifw.31. "
-                 "Please use 'aqt list-tool' to list acceptable values for this parameter.",
+            "Please use 'aqt list-tool' to list acceptable values for this parameter.",
         )
         self._set_common_options(install_tool_parser)
-
 
     def _make_legacy_parsers(self, subparsers: argparse._SubParsersAction):
         install_parser = subparsers.add_parser(
@@ -674,9 +677,10 @@ class Cli:
         self._set_install_tool_parser(tool_parser)
         #
         for cmd, f in (
-                ("doc", self.run_install_doc),
-                ("example", self.run_install_example),
-                ("src", self.run_install_src)):
+            ("doc", self.run_install_doc),
+            ("example", self.run_install_example),
+            ("src", self.run_install_src),
+        ):
             p = subparsers.add_parser(cmd)
             p.set_defaults(func=f)
             self._set_common_argument(p)
@@ -692,8 +696,9 @@ class Cli:
         self._set_install_tool_parser(tool_parser)
         #
         for cmd, f in (
-                ("install-doc", self.run_install_doc),
-                ("install-example", self.run_install_example)):
+            ("install-doc", self.run_install_doc),
+            ("install-example", self.run_install_example),
+        ):
             p = subparsers.add_parser(cmd)
             p.set_defaults(func=f)
             self._set_common_argument(p)
