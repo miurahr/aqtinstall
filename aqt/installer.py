@@ -613,9 +613,9 @@ class Cli:
             )
         )
 
-    def _set_install_qt_parser(self, install_qt_parser):
+    def _set_install_qt_parser(self, install_qt_parser, *, is_legacy: bool):
         install_qt_parser.set_defaults(func=self.run_install_qt)
-        self._set_common_argument(install_qt_parser)
+        self._set_common_arguments(install_qt_parser, is_legacy=is_legacy)
         self._set_common_options(install_qt_parser)
         install_qt_parser.add_argument(
             "arch",
@@ -672,7 +672,7 @@ class Cli:
         install_parser = subparsers.add_parser(
             "install", formatter_class=argparse.RawTextHelpFormatter
         )
-        self._set_install_qt_parser(install_parser)
+        self._set_install_qt_parser(install_parser, is_legacy=True)
         tool_parser = subparsers.add_parser("tool")
         self._set_install_tool_parser(tool_parser)
         #
@@ -683,7 +683,7 @@ class Cli:
         ):
             p = subparsers.add_parser(cmd)
             p.set_defaults(func=f)
-            self._set_common_argument(p)
+            self._set_common_arguments(p, is_legacy=True)
             self._set_common_options(p)
             self._set_module_options(p)
 
@@ -691,7 +691,7 @@ class Cli:
         install_qt_parser = subparsers.add_parser(
             "install-qt", formatter_class=argparse.RawTextHelpFormatter
         )
-        self._set_install_qt_parser(install_qt_parser)
+        self._set_install_qt_parser(install_qt_parser, is_legacy=False)
         tool_parser = subparsers.add_parser("install-tool")
         self._set_install_tool_parser(tool_parser)
         #
@@ -701,12 +701,12 @@ class Cli:
         ):
             p = subparsers.add_parser(cmd)
             p.set_defaults(func=f)
-            self._set_common_argument(p)
+            self._set_common_arguments(p, is_legacy=False)
             self._set_common_options(p)
             self._set_module_options(p)
         src_parser = subparsers.add_parser("install-src")
         src_parser.set_defaults(func=self.run_install_src)
-        self._set_common_argument(src_parser)
+        self._set_common_arguments(src_parser, is_legacy=False)
         self._set_common_options(src_parser)
         self._set_module_options(src_parser)
         src_parser.add_argument(
@@ -875,14 +875,25 @@ class Cli:
             help="Specify subset packages to install (Default: all standard and extra modules).",
         )
 
-    def _set_common_argument(self, subparser):
-        subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
+    def _set_common_arguments(self, subparser, *, is_legacy: bool):
+        """
+        Legacy commands require that the version comes before host and target.
+        Non-legacy commands require that the host and target are before the version.
+        """
+        if is_legacy:
+            subparser.add_argument(
+                "qt_version", help='Qt version in the format of "5.X.Y"'
+            )
         subparser.add_argument(
             "host", choices=["linux", "mac", "windows"], help="host os name"
         )
         subparser.add_argument(
             "target", choices=["desktop", "winrt", "android", "ios"], help="target sdk"
         )
+        if not is_legacy:
+            subparser.add_argument(
+                "qt_version", help='Qt version in the format of "5.X.Y"'
+            )
 
     def _setup_settings(self, args=None):
         # setup logging
