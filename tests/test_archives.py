@@ -21,9 +21,7 @@ def test_parse_update_xml(monkeypatch, os_name, version, target, datafile):
 
     monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
 
-    Settings.load_settings(
-        os.path.join(os.path.dirname(__file__), "data", "settings.ini")
-    )
+    Settings.load_settings(os.path.join(os.path.dirname(__file__), "data", "settings.ini"))
     qt_archives = QtArchives(os_name, "desktop", version, target, Settings.baseurl)
     assert qt_archives.archives is not None
 

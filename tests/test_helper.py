@@ -52,17 +52,13 @@ def test_helper_altlink(monkeypatch):
 
 
 def test_settings(tmp_path):
-    helper.Settings.load_settings(
-        os.path.join(os.path.dirname(__file__), "data", "settings.ini")
-    )
+    helper.Settings.load_settings(os.path.join(os.path.dirname(__file__), "data", "settings.ini"))
     assert helper.Settings.concurrency == 3
     assert "http://mirror.example.com" in helper.Settings.blacklist
 
 
 def mocked_iter_content(chunk_size):
-    with open(
-        os.path.join(os.path.dirname(__file__), "data", "windows-5150-update.xml"), "rb"
-    ) as f:
+    with open(os.path.join(os.path.dirname(__file__), "data", "windows-5150-update.xml"), "rb") as f:
         data = f.read(chunk_size)
         while len(data) > 0:
             yield data
@@ -90,13 +86,9 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
 
     monkeypatch.setattr(requests.Session, "get", mocked_requests_get)
 
-    expected = binascii.unhexlify(
-        "07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd"
-    )
+    expected = binascii.unhexlify("07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd")
     out = tmp_path.joinpath("text.xml")
-    helper.downloadBinaryFile(
-        "http://example.com/test.xml", out, "sha256", expected, 60
-    )
+    helper.downloadBinaryFile("http://example.com/test.xml", out, "sha256", expected, 60)
 
 
 @pytest.mark.parametrize(

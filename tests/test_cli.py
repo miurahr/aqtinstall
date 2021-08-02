@@ -81,9 +81,7 @@ def test_cli_invalid_version(capsys, invalid_version):
 
     matcher = re.compile(
         r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-        r".*Invalid version: '"
-        + invalid_version
-        + r"'! Please use the form '5\.X\.Y'\.\n.*"
+        r".*Invalid version: '" + invalid_version + r"'! Please use the form '5\.X\.Y'\.\n.*"
     )
 
     for cmd in (
