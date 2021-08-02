@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    installation
+   getting_started
    cli
    available_versions
    configuration
