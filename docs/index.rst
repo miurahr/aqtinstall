@@ -9,7 +9,6 @@ Contents:
    installation
    getting_started
    cli
-   available_versions
    configuration
    changes
    devguide
