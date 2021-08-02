@@ -28,32 +28,35 @@ Same as usual, it can be installed with `pip`
 Command changes
 ===============
 
-From version 2.0.0, sub commands are changed. There has also been legacy commands for backward compatibility
-but are not recommended now.
+From version 2.0.0, sub commands are changed.
+The previous versions of these sub commands have been retained for backwards
+compatibility, but are no longer recommended.
 
-+----------------- -+---------------------+------------------------+
-| New sub commands  | Legacy sub commands |  Note                  |
-+===================+=====================+========================+
-| install-qt        | install             |                        |
-+----------------- -+---------------------+------------------------+
-| install-tool      | tool                | Arguments are changed  |
-|                   |                     | new syntax doesn't take|
-|                   |                     | version                |
-+----------------- -+---------------------+------------------------+
-| install-example   | examples            | caution with last (s)  |
-+----------------- -+---------------------+------------------------+
-| install-src       | src                 | New command only can   |
-|                   |                     | take --kde option      |
-+----------------- -+---------------------+------------------------+
-| install-doc       | doc                 |                        |
-+----------------- -+---------------------+------------------------+
-|                   | list                | legacy list command are|
-|                   |                     | deprecated.            |
-+----------------- -+---------------------+------------------------+
-| list-qt           |                     |                        |
-+----------------- -+---------------------+------------------------+
-| list-tool         |                     |                        |
-+----------------- -+---------------------+------------------------+
++----------------- -+---------------------+----------------------------+
+| New sub commands  | Legacy sub commands |  Note                      |
++===================+=====================+============================+
+| install-qt        | install             | version moved after target |
++----------------- -+---------------------+----------------------------+
+| install-tool      | tool                | Arguments are changed      |
+|                   |                     | new syntax doesn't take    |
+|                   |                     | version                    |
++----------------- -+---------------------+----------------------------+
+| install-example   | examples            | version moved after target |
+|                   |                     | caution with last (s)      |
++----------------- -+---------------------+----------------------------+
+| install-src       | src                 | version moved after target |
+|                   |                     | New command only can       |
+|                   |                     | take --kde option          |
++----------------- -+---------------------+----------------------------+
+| install-doc       | doc                 | version moved after target |
++----------------- -+---------------------+----------------------------+
+|                   | list                | legacy list commands are   |
+|                   |                     | removed.                   |
++----------------- -+---------------------+----------------------------+
+| list-qt           |                     |                            |
++----------------- -+---------------------+----------------------------+
+| list-tool         |                     |                            |
++----------------- -+---------------------+----------------------------+
 
 
 Usage
@@ -64,14 +67,15 @@ General usage looks like this:
 .. code-block:: bash
 
     aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install-qt <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
+        install-qt <host> <target> <qt-version> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
         [--archives <archive>[ <archive>...]] [--timeout <timeout(sec)>]
 
 You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
+Some older operating systems may require you to specify Python version 3, like this: ``python3 -m aqt``.
 
-* The Qt version is formatted like this: `5.11.3`
 * Host is one of: `linux`, `mac`, `windows`
 * Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)
+* The Qt version is formatted like this: `5.11.3`
 * For some platforms you also need to specify an arch:
     * For windows, choose one of:
         * `win64_msvc2019_64`, `win32_msvc2019`,
@@ -91,19 +95,18 @@ You can also call with ``python -m aqt`` syntax as well as command script ``aqt`
 Installing tool and utility (Experimental)
 ------------------------------------------
 
-You can install tools and utilities using following syntax;
+You can install tools and utilities using the :ref:`tools installation command`:
 
 .. code-block:: bash
 
     python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install-tool <host> <tool_name> <tool-version> <arch> [--timeout <timeout>]
+        install-tool <host> <target> <tool_name> [<arch>] [--timeout <timeout>]
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
-* arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on Qt `archive_site`_
+* arch is full qualified tool name such as `qt.tools.ifw.31`.
+  Please use :ref:`aqt list-tool <list tool command>` to list acceptable values for this parameter.
   This is a quite experimental feature, may not work and please use it with your understanding of what you are doing.
 * It does not recognize 'installscript.qs'. When using tools which depends on a qt script, you should do something by yourself.
-
-.. _`archive_site`: https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
 
 
 Target directory
@@ -118,4 +121,4 @@ run such as follows:
 .. code-block:: bash
 
     C:\> mkdir Qt
-    C:\> aqt install --outputdir c:\Qt 5.11.3 windows desktop win64_msvc2019_64
+    C:\> aqt install-qt --outputdir c:\Qt windows desktop 5.11.3 win64_msvc2019_64

@@ -164,16 +164,16 @@ linux_build_jobs.extend(
             "install-doc", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtdoc"
         ),
         # test for list commands
-        BuildJob('list-qt', '5.15.2', 'linux', 'desktop', '', '', spec="<6", list_options={
+        BuildJob('list', '5.15.2', 'linux', 'desktop', '', '', spec="<6", list_options={
             'HAS_EXTENSIONS': "True",
         }),
-        BuildJob('list-qt', '6.1.0', 'linux', 'android', '', '', spec=">6.0,<6.1.1", list_options={
+        BuildJob('list', '6.1.0', 'linux', 'android', '', '', spec=">6.0,<6.1.1", list_options={
             'HAS_EXTENSIONS': "True",
             'USE_EXTENSION': "armv7",
         }),
         # tests run on linux but query data about other platforms
-        BuildJob('list-qt', '5.14.1', 'mac', 'ios', '', '', spec="<=5.14.1", list_options={}),
-        BuildJob('list-qt', '5.13.1', 'windows', 'winrt', '', '', spec=">5.13.0,<5.13.2", list_options={}),
+        BuildJob('list', '5.14.1', 'mac', 'ios', '', '', spec="<=5.14.1", list_options={}),
+        BuildJob('list', '5.13.1', 'windows', 'winrt', '', '', spec=">5.13.0,<5.13.2", list_options={}),
     ]
 )
 mac_build_jobs.extend(

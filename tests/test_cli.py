@@ -15,8 +15,8 @@ def test_cli_help(capsys):
             "install,tool,doc,example,src,help,version}\n",
             "           ...\n",
             "\n",
-            "Another unoffical Qt Installer.\n",
-            "aqt help you install Qt SDK, tools, examples and others\n",
+            "Another unofficial Qt Installer.\n",
+            "aqt helps you install Qt SDK, tools, examples and others\n",
             "\n",
             "optional arguments:\n",
             "  -h, --help            show this help message and exit\n",
@@ -24,15 +24,15 @@ def test_cli_help(capsys):
             "                        Configuration ini file.\n",
             "\n",
             "subcommands:\n",
-            "  aqt accept several subcommands\n",
-            "  install-* subcommands are installer of components\n",
-            "  list-* subcommands are show available compoenets\n",
+            "  aqt accepts several subcommands:\n",
+            "  install-* subcommands are commands that install components\n",
+            "  list-* subcommands are commands that show available components\n",
             "  \n",
-            "  commands {install|tool|src|examples|doc} are oblesolete now\n",
+            "  commands {install|tool|src|examples|doc} are deprecated and marked for removal\n",
             "\n",
             "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,list-tool,",
             "install,tool,doc,example,src,help,version}\n",
-            "                        Please refer each help message shown with --help argument for each subcommands\n",
+            "                        Please refer to each help message by using '--help' with each subcommand\n",
         ]
     )
     cli = Cli()
@@ -87,8 +87,8 @@ def test_cli_invalid_version(capsys, invalid_version):
     )
 
     for cmd in (
-        ("install-qt", invalid_version, "mac", "desktop"),
-        ("install-doc", invalid_version, "mac", "desktop"),
+        ("install-qt", "mac", "desktop", invalid_version),
+        ("install-doc", "mac", "desktop", invalid_version),
         ("list-qt", "mac", "desktop", "--modules", invalid_version),
     ):
         with pytest.raises(SystemExit) as pytest_wrapped_e:
@@ -106,7 +106,7 @@ def test_cli_check_mirror():
     cli = Cli()
     cli._setup_settings()
     assert cli._check_mirror(None)
-    arg = ["install", "5.11.3", "linux", "desktop", "-b", "https://download.qt.io/"]
+    arg = ["install-qt", "linux", "desktop", "5.11.3", "-b", "https://download.qt.io/"]
     args = cli.parser.parse_args(arg)
     assert args.base == "https://download.qt.io/"
     assert cli._check_mirror(args.base)
