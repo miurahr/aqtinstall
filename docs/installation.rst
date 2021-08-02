@@ -32,31 +32,34 @@ From version 2.0.0, sub commands are changed.
 The previous versions of these sub commands have been retained for backwards
 compatibility, but are no longer recommended.
 
-+----------------- -+---------------------+----------------------------+
-| New sub commands  | Legacy sub commands |  Note                      |
-+===================+=====================+============================+
-| install-qt        | install             | version moved after target |
-+----------------- -+---------------------+----------------------------+
-| install-tool      | tool                | Arguments are changed      |
-|                   |                     | new syntax doesn't take    |
-|                   |                     | version                    |
-+----------------- -+---------------------+----------------------------+
-| install-example   | examples            | version moved after target |
-|                   |                     | caution with last (s)      |
-+----------------- -+---------------------+----------------------------+
-| install-src       | src                 | version moved after target |
-|                   |                     | New command only can       |
-|                   |                     | take --kde option          |
-+----------------- -+---------------------+----------------------------+
-| install-doc       | doc                 | version moved after target |
-+----------------- -+---------------------+----------------------------+
-|                   | list                | legacy list commands are   |
-|                   |                     | removed.                   |
-+----------------- -+---------------------+----------------------------+
-| list-qt           |                     |                            |
-+----------------- -+---------------------+----------------------------+
-| list-tool         |                     |                            |
-+----------------- -+---------------------+----------------------------+
++------------------+---------------------+----------------------------+
+| New sub commands | Legacy sub commands |  Note                      |
++==================+=====================+============================+
+| install-qt       | install             | Version moved after target |
++------------------+---------------------+----------------------------+
+| install-tool     | tool                | Arguments are changed      |
+|                  |                     |                            |
+|                  |                     | New syntax doesn't take    |
+|                  |                     | version                    |
++------------------+---------------------+----------------------------+
+| install-example  | examples            | Version moved after target |
+|                  |                     |                            |
+|                  |                     | Caution with last (s)      |
++------------------+---------------------+----------------------------+
+| install-src      | src                 | Version moved after target |
+|                  |                     |                            |
+|                  |                     | New command only can       |
+|                  |                     | take --kde option          |
++------------------+---------------------+----------------------------+
+| install-doc      | doc                 | Version moved after target |
++------------------+---------------------+----------------------------+
+|                  | list                | Legacy list commands are   |
+|                  |                     | removed.                   |
++------------------+---------------------+----------------------------+
+| list-qt          |                     |                            |
++------------------+---------------------+----------------------------+
+| list-tool        |                     |                            |
++------------------+---------------------+----------------------------+
 
 
 Usage
