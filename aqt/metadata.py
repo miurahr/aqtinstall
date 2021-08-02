@@ -136,19 +136,14 @@ class Versions:
         elif isinstance(versions, Version):
             self.versions = [[versions]]
         else:
-            self.versions: List[List[Version]] = [
-                list(versions_iterator) for _, versions_iterator in versions
-            ]
+            self.versions: List[List[Version]] = [list(versions_iterator) for _, versions_iterator in versions]
 
     def __str__(self) -> str:
         return str(self.versions)
 
     def __format__(self, format_spec) -> str:
         if format_spec == "":
-            return "\n".join(
-                " ".join(str(version) for version in minor_list)
-                for minor_list in self.versions
-            )
+            return "\n".join(" ".join(str(version) for version in minor_list) for minor_list in self.versions)
         elif format_spec == "s":
             return str(self.versions)
         else:
@@ -191,13 +186,9 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
             prerelease=("preview",),
         )
     elif len(qt_ver) >= 4:
-        return Version(
-            major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:])
-        )
+        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:]))
     elif len(qt_ver) == 3:
-        return Version(
-            major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:])
-        )
+        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:]))
     elif len(qt_ver) == 2:
         return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
     raise ValueError("Invalid version string '{}'".format(qt_ver))
@@ -295,9 +286,7 @@ class ToolData:
     def __init__(self, tool_data: Dict[str, Dict[str, str]]):
         self.tool_data: Dict[str, Dict[str, str]] = tool_data
         for key in tool_data.keys():
-            self.tool_data[key]["Description"] = tool_data[key]["Description"].replace(
-                "<br>", "\n"
-            )
+            self.tool_data[key]["Description"] = tool_data[key]["Description"].replace("<br>", "\n")
 
     def __format__(self, format_spec: str) -> str:
         short = False
@@ -327,17 +316,11 @@ class ToolData:
 
     def _rows(self):
         keys = ("Version", "ReleaseDate", "DisplayName", "Description")
-        return [
-            [name, *[content[key] for key in keys]]
-            for name, content in self.tool_data.items()
-        ]
+        return [[name, *[content[key] for key in keys]] for name, content in self.tool_data.items()]
 
     def _short_rows(self):
         keys = ("Version", "ReleaseDate")
-        return [
-            [name, *[content[key] for key in keys]]
-            for name, content in self.tool_data.items()
-        ]
+        return [[name, *[content[key] for key in keys]] for name, content in self.tool_data.items()]
 
 
 class MetadataFactory:
@@ -393,14 +376,10 @@ class MetadataFactory:
             self._action = lambda: self.fetch_modules(self._to_version(modules_ver))
         elif extensions_ver:
             self.request_type = "extensions"
-            self._action = lambda: self.fetch_extensions(
-                self._to_version(extensions_ver)
-            )
+            self._action = lambda: self.fetch_extensions(self._to_version(extensions_ver))
         elif architectures_ver:
             self.request_type = "architectures"
-            self._action = lambda: self.fetch_arches(
-                self._to_version(architectures_ver)
-            )
+            self._action = lambda: self.fetch_arches(self._to_version(architectures_ver))
         else:
             self.request_type = "versions"
             self._action = self.fetch_versions
@@ -427,11 +406,7 @@ class MetadataFactory:
     def fetch_versions(self) -> Versions:
         def filter_by(ver_ext: Tuple[Optional[Version], str]) -> bool:
             version, extension = ver_ext
-            return (
-                version
-                and (self.spec is None or version in self.spec)
-                and (self.archive_id.extension == extension)
-            )
+            return version and (self.spec is None or version in self.spec) and (self.archive_id.extension == extension)
 
         def get_version(ver_ext: Tuple[Version, str]):
             return ver_ext[0]
@@ -439,9 +414,7 @@ class MetadataFactory:
         versions_extensions = MetadataFactory.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url()), self.archive_id.category
         )
-        versions = sorted(
-            filter(None, map(get_version, filter(filter_by, versions_extensions)))
-        )
+        versions = sorted(filter(None, map(get_version, filter(filter_by, versions_extensions))))
         iterables = itertools.groupby(versions, lambda version: version.minor)
         return Versions(iterables)
 
@@ -452,9 +425,7 @@ class MetadataFactory:
         html_doc = self.fetch_http(self.archive_id.to_url())
         return list(MetadataFactory.iterate_folders(html_doc, "tools"))
 
-    def _fetch_tool_data(
-        self, tool_name: str, keys_to_keep: Optional[Iterable[str]] = None
-    ) -> Dict[str, Dict[str, str]]:
+    def _fetch_tool_data(self, tool_name: str, keys_to_keep: Optional[Iterable[str]] = None) -> Dict[str, Dict[str, str]]:
         # raises ArchiveDownloadError, ArchiveConnectionError
         rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
         xml = self.fetch_http(rest_of_url)
@@ -469,9 +440,7 @@ class MetadataFactory:
         tool_data = self._fetch_tool_data(tool_name, keys_to_keep=())
         return list(tool_data.keys())
 
-    def fetch_tool_by_simple_spec(
-        self, tool_name: str, simple_spec: SimpleSpec
-    ) -> Optional[Dict[str, str]]:
+    def fetch_tool_by_simple_spec(self, tool_name: str, simple_spec: SimpleSpec) -> Optional[Dict[str, str]]:
         # Get data for all the tool modules
         all_tools_data = self._fetch_tool_data(tool_name)
         return self.choose_highest_version_in_spec(all_tools_data, simple_spec)
@@ -492,8 +461,7 @@ class MetadataFactory:
         if (
             self.archive_id.target == "android"
             and qt_ver.major == 6
-            and self.archive_id.extension
-            not in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6
+            and self.archive_id.extension not in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6
         ):
             raise CliInputError(
                 "Qt 6 for Android requires one of the following extensions: "
@@ -503,9 +471,7 @@ class MetadataFactory:
         if self.archive_id.extension in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6 and (
             self.archive_id.target != "android" or qt_ver.major != 6
         ):
-            raise CliInputError(
-                f"The extension '{self.archive_id.extension}' is only valid for Qt 6 for Android"
-            )
+            raise CliInputError(f"The extension '{self.archive_id.extension}' is only valid for Qt 6 for Android")
         if "wasm" in self.archive_id.extension and (
             qt_ver not in SimpleSpec(">=5.13,<6") or self.archive_id.target != "desktop"
         ):
@@ -520,16 +486,13 @@ class MetadataFactory:
         # Get versions of all modules. Fail if version cannot be determined.
         try:
             tools_versions = [
-                (name, tool_data, Version.permissive(tool_data["Version"]))
-                for name, tool_data in all_tools_data.items()
+                (name, tool_data, Version.permissive(tool_data["Version"])) for name, tool_data in all_tools_data.items()
             ]
         except ValueError:
             return None
 
         # Remove items that don't conform to simple_spec
-        tools_versions = filter(
-            lambda tool_item: tool_item[2] in simple_spec, tools_versions
-        )
+        tools_versions = filter(lambda tool_item: tool_item[2] in simple_spec, tools_versions)
 
         try:
             # Return the conforming item with the highest version.
@@ -554,9 +517,7 @@ class MetadataFactory:
         if qt_ver == "latest":
             latest_version = self.fetch_latest_version()
             if not latest_version:
-                msg = "There is no latest version of Qt with the criteria '{}'".format(
-                    self.describe_filters()
-                )
+                msg = "There is no latest version of Qt with the criteria '{}'".format(self.describe_filters())
                 raise CliInputError(msg)
             return latest_version
         try:
@@ -581,9 +542,7 @@ class MetadataFactory:
                     raise e
 
     @staticmethod
-    def iterate_folders(
-        html_doc: str, filter_category: str = ""
-    ) -> Generator[str, None, None]:
+    def iterate_folders(html_doc: str, filter_category: str = "") -> Generator[str, None, None]:
         def table_row_to_folder(tr: bs4.element.Tag) -> str:
             try:
                 return tr.find_all("td")[1].a.contents[0].rstrip("/")
@@ -599,9 +558,7 @@ class MetadataFactory:
                 yield content
 
     @staticmethod
-    def get_versions_extensions(
-        html_doc: str, category: str
-    ) -> Iterator[Tuple[Optional[Version], str]]:
+    def get_versions_extensions(html_doc: str, category: str) -> Iterator[Tuple[Optional[Version], str]]:
         def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
             components = folder.split("_", maxsplit=2)
             ext = "" if len(components) < 3 else components[2]
@@ -622,28 +579,18 @@ class MetadataFactory:
         downloads = element.find("DownloadableArchives")
         return downloads is not None and downloads.text
 
-    def get_modules_architectures_for_version(
-        self, version: Version
-    ) -> Tuple[List[str], List[str]]:
+    def get_modules_architectures_for_version(self, version: Version) -> Tuple[List[str], List[str]]:
         """Returns [list of modules, list of architectures]"""
         self.validate_extension(version)
         # NOTE: The url at `<base>/<host>/<target>/qt5_590/` does not exist; the real one is `qt5_590`
         patch = (
             ""
-            if version.prerelease
-            or self.archive_id.is_preview()
-            or version in SimpleSpec("5.9.0")
+            if version.prerelease or self.archive_id.is_preview() or version in SimpleSpec("5.9.0")
             else str(version.patch)
         )
         qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
-        pattern = re.compile(
-            r"^(preview\.)?qt\.(qt"
-            + str(version.major)
-            + r"\.)?"
-            + qt_ver_str
-            + r"\.(.+)$"
-        )
+        pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
 
         def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
             _match = pattern.match(name)
@@ -655,9 +602,7 @@ class MetadataFactory:
             module, arch = module_with_arch.rsplit(".", 1)
             return module, arch
 
-        rest_of_url = self.archive_id.to_url(
-            qt_version_no_dots=qt_ver_str, file="Updates.xml"
-        )
+        rest_of_url = self.archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")
         xml = self.fetch_http(rest_of_url)  # raises RequestException
 
         # We want the names of modules, regardless of architecture:
@@ -700,9 +645,7 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     list_cmd = "list-tool" if meta.archive_id.is_tools() else "list-qt"
     base_cmd = "aqt {0} {1.host} {1.target}".format(list_cmd, meta.archive_id)
     if meta.archive_id.extension:
-        msg.append(
-            f"Please use '{base_cmd} --extensions <QT_VERSION>' to list valid extensions."
-        )
+        msg.append(f"Please use '{base_cmd} --extensions <QT_VERSION>' to list valid extensions.")
 
     if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
         msg.append(f"Please use '{base_cmd}' to check what tools are available.")
