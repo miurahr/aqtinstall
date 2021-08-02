@@ -18,19 +18,19 @@ show_missing = true
 exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", "def __repr__"]
 
 [tool.black]
-line-length = 88
+line-length = 125
 target-version = ['py38']
 
 # flake8 does not support pyproject.toml as in Aug., 2021
 # now it is not effective.
 # Current live config is in setup.cfg
 [tool.flake8]
-max-line-length = 88
+max-line-length = 125
 extend-ignore = "E203, W50"
 exclude = [".git", "__pycache__", "docs/conf.py", "build", "dist", "tmp", "venv"]
 
 [tool.isort]
-line_length = 88
+line_length = 125
 known_first_party = "aqt"
 known_third_party = ["docutils", "flake8", "pyannotate_runtime", "pytest", "pytz", "requests", "setuptools", "sphinx", "yaml", "packaging"]
 multi_line_output = 3
