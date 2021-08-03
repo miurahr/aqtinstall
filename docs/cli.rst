@@ -391,6 +391,15 @@ Tools installation command
 You should use the :ref:`List Tool command` to display what tools and tool variant names are available.
     
 
+Legacy subcommands
+---------------
+
+The subcommands ``install``, ``tool``, ``src``, ``doc``, and ``examples`` have
+been deprecated in favor of the newer ``install-*`` commands, but they remain
+in aqt in case you still need to use them. Documentation for these older
+commands is still available at https://aqtinstall.readthedocs.io/en/v1.2.4/
+
+
 Command examples
 ================
 
