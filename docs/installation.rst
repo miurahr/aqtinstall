@@ -69,18 +69,22 @@ General usage looks like this:
 
 .. code-block:: bash
 
-    aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install-qt <host> <target> <qt-version> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
-        [--archives <archive>[ <archive>...]] [--timeout <timeout(sec)>]
+    aqt install-qt
+        [-h | --help]
+        [-O | --outputdir <directory>]
+        [-E | --external <7zip command>]
+        [-m | --modules (all | <module> [<module>...])]
+        <host> <target> <Qt version> [<arch>]
 
 You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
 Some older operating systems may require you to specify Python version 3, like this: ``python3 -m aqt``.
 
 * Host is one of: `linux`, `mac`, `windows`
-* Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)
+* Target is one of: `desktop`, `android`, `winrt`, `ios`
+  (iOS only works with mac host, and winrt only works with windows host)
 * The Qt version is formatted like this: `5.11.3`
-* For some platforms you also need to specify an arch:
-    * For windows, choose one of:
+* For some host/target combinations, you also need to specify an arch:
+    * For windows desktop, choose one of:
         * `win64_msvc2019_64`, `win32_msvc2019`,
         * `win64_msvc2017_64`, `win32_msvc2017`,
         * `win64_msvc2015_64`, `win32_msvc2015`,
@@ -89,11 +93,15 @@ Some older operating systems may require you to specify Python version 3, like t
         * `win64_mingw53`, `win32_mingw53`,
         * `win64_msvc2019_winrt_x64`, `win64_msvc2019_winrt_x86`, `win64_msvc2019_winrt_armv7`
         * `win64_msvc2017_winrt_x64`, `win64_msvc2017_winrt_x86`, `win64_msvc2017_winrt_armv7`
-    * For android and Qt 5.13 or below, choose one of: `android_x86_64`, `android_arm64_v8a`, `android_x86`,
-      `android_armv7`
-* You can specify external 7zip command path instead of built-in extractor.
-* When specifying `all` for extra modules option `-m` all extra modules are installed.
+    * For android and Qt 5.11 or below, choose one of: `android_x86`, `android_armv7`
+    * For android and Qt 5.12 or Qt 5.13 or Qt 6, choose one of:
+      `android_x86_64`, `android_arm64_v8a`, `android_x86`, `android_armv7`
+* You can specify external 7zip command path instead of built-in extractor by using the ``-E`` or ``--external`` flag.
+* You can specify an alternate output directory by using the ``-O`` or ``--outputdir`` flag.
+* To install all available modules, you can use the option ``-m all``.
 
+A full description of the options for ``aqt install-qt`` is available in the documentation
+for the :ref:`Qt installation command`.
 
 Installing tool and utility (Experimental)
 ------------------------------------------
@@ -102,10 +110,10 @@ You can install tools and utilities using the :ref:`tools installation command`:
 
 .. code-block:: bash
 
-    python -m aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install-tool <host> <target> <tool_name> [<arch>] [--timeout <timeout>]
+    aqt install-tool [-h | --help] <host> <target> <tool_name> [<arch>]
 
 * tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
+  Use the :ref:`aqt list-tool <list tool command>` to show what tools are available.
 * arch is full qualified tool name such as `qt.tools.ifw.31`.
   Please use :ref:`aqt list-tool <list tool command>` to list acceptable values for this parameter.
   This is a quite experimental feature, may not work and please use it with your understanding of what you are doing.
