@@ -123,13 +123,19 @@ You can install tools and utilities using the :ref:`tools installation command`:
 Target directory
 ----------------
 
-aqt can take option '--outputdir' or '-O' that specify a target directory.
+You can change the installation directory by using the option ``--outputdir`` or ``-O``.
+This option works for ``aqt install-qt``, ``aqt install-tool``, and any other subcommand
+that begins with ``install-``.
 
-The Qt packages are installed under current directory as such `Qt/<ver>/gcc_64/`
-If you want to install it in `C:\Qt` as same as standard gui installer default,
-run such as follows:
+By default, the Qt packages are installed in the current working directory, in
+the subdirectory ``./<Qt version>/<arch>/``.
+For example, if you install Qt 5.11.3 for Windows desktop with arch `win64_msvc2019_64`,
+it would end up in ``./5.11.3/win64_msvc2019_64``.
 
-.. code-block:: bash
+To install to ``C:\Qt``, the default directory used by the standard gui installer,
+you may use this command:
+
+.. code-block:: doscon
 
     C:\> mkdir Qt
     C:\> aqt install-qt --outputdir c:\Qt windows desktop 5.11.3 win64_msvc2019_64
