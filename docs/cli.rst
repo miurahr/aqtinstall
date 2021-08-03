@@ -57,43 +57,43 @@ List available versions of Qt, targets, extensions, modules, and architectures.
     Extension of packages to list
     {wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}
 
-    Use the `--extensions` flag to list all relevant options for a host/target.
-    Incompatible with the `--extensions` flag, but may be combined with any other flag.
+    Use the ``--extensions`` flag to list all relevant options for a host/target.
+    Incompatible with the ``--extensions`` flag, but may be combined with any other flag.
 
 .. option:: --spec <Specification>
 
     Print versions of Qt within a version specification, as explained here:
     https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec
     You can specify partial versions, inequalities, etc.
-    `"*"` would match all versions of Qt; `">6.0.2,<6.2.0"` would match all
+    ``"*"`` would match all versions of Qt; ``">6.0.2,<6.2.0"`` would match all
     versions of Qt between 6.0.2 and 6.2.0, etc.
-    For example, `aqt list-qt windows desktop --spec "5.12"` would print
+    For example, ``aqt list-qt windows desktop --spec "5.12"`` would print
     all versions of Qt for Windows Desktop beginning with 5.12.
     May be combined with any other flag to filter the output of that flag.
 
 .. option:: --extensions (<Qt version> | latest)
 
-    Qt version in the format of "5.X.Y", or the keyword `latest`.
-    When set, this prints all valid arguments for the `--extension` flag for
-    Qt 5.X.Y, or the latest version of Qt if `latest` is specified.
-    Incompatible with the `--extension` flag.
+    Qt version in the format of "5.X.Y", or the keyword ``latest``.
+    When set, this prints all valid arguments for the ``--extension`` flag for
+    Qt 5.X.Y, or the latest version of Qt if ``latest`` is specified.
+    Incompatible with the ``--extension`` flag.
 
 .. option:: --modules (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this lists all the modules
     available for Qt 5.X.Y with a host/target/extension, or the latest version
-    of Qt if `latest` is specified.
+    of Qt if ``latest`` is specified.
 
 .. option:: --arch (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this prints all architectures
     available for Qt 5.X.Y with a host/target/extension, or the latest version
-    of Qt if `latest` is specified.
+    of Qt if ``latest`` is specified.
 
 .. option:: --latest-version
 
     Print only the newest version available
-    May be combined with the `--extension` and/or `--spec` flags.
+    May be combined with the ``--extension`` and/or ``--spec`` flags.
 
 
 .. _list tool command:
@@ -136,7 +136,7 @@ List available tools
 
     Long display: shows extra metadata associated with each tool variant.
     This metadata is displayed in a table, and includes versions and release dates
-    for each tool. If your terminal is wider than 95 characters, `aqt list-tool`
+    for each tool. If your terminal is wider than 95 characters, ``aqt list-tool``
     will also display the names and descriptions for each tool. An example of this
     output is displayed below.
 
@@ -222,7 +222,7 @@ There are various combinations to accept according to Qt version.
 .. option:: --noarchives
 
     [Advanced] Specify not to install all base packages.
-    This is advanced option and you should use with --modules option.
+    This is advanced option and you should use it with ``--modules`` option.
     This allow you to add modules to existent Qt installation.
 
 
@@ -252,14 +252,14 @@ install Qt sources specified version and target.
 
 .. option:: --kde
 
-    by adding --kde option,
+    by adding ``--kde`` option,
     KDE patch collection is applied for qtbase tree. It is only applied to
     Qt 5.15.2. When specified version is other than it, command will abort
-    with error when using --kde.
+    with error when using ``--kde``.
 
 .. option:: --archives
 
-    You can specify --archives option to install only a specified source
+    You can specify ``--archives`` option to install only a specified source
     such as qtbase.
 
 Document installation command
