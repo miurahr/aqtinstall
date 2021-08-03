@@ -334,7 +334,7 @@ This command receives four parameters:
 2. The target SDK (desktop, android, ios, or winrt)
 3. The name of the tool (this is `tools_mingw` in our case)
 4. (Optional) The tool variant name. We saw a list of these when we ran
-   :ref:`aqt list-tool <list tool command>` with the ``-l`` flag.
+   :ref:`aqt list-tool <list tool command>` with the `tool name` argument filled in.
 
 To install `mingw`, you could use this command (please don't):
 
@@ -347,8 +347,8 @@ in this case, you would install 10 different versions of the same tool.
 For some tools, like `qtcreator` or `ifw`, this is an appropriate thing to do,
 since each tool variant is a different program.
 However, for tools like `mingw` and `vcredist`, it would make more sense to use
-:ref:`aqt list-tool <list tool command>` to see what tool variants are available, and then install just
-the tool variant you are interested in, like this:
+:ref:`aqt list-tool <list tool command>` to see what tool variants are available,
+and then install just the tool variant you are interested in, like this:
 
 .. code-block:: console
 
