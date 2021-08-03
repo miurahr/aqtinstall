@@ -17,6 +17,14 @@ Generic commands
 
 show generic help
 
+.. program::  version
+
+.. code-block:: bash
+
+    aqt version
+
+display version
+
 
 .. _list qt command:
 
@@ -159,7 +167,18 @@ Qt Installation command
 
 .. code-block:: bash
 
-    aqt install-qt <target OS> <target variant> <Qt version> [<target architecture>]
+    aqt install-qt
+        [-h | --help]
+        [-O | --outputdir <directory>]
+        [-b | --base <mirror url>]
+        [--timeout <timeout(sec)>]
+        [-E | --external <7zip command>]
+        [--internal]
+        [-k | --keep]
+        [-m | --modules (all | <module> [<module>...])]
+        [--archives <archive> [<archive>...]]
+        [--noarchives]
+        <host> <target> <Qt version> [<arch>]
 
 install Qt library specified version and target.
 There are various combinations to accept according to Qt version.
@@ -196,13 +215,32 @@ There are various combinations to accept according to Qt version.
 .. option:: --outputdir, -O <Output Directory>
 
     specify output directory.
+    By default, aqt installs to the current working directory.
 
 .. option:: --base, -b <base url>
 
     specify mirror site base url such as  -b 'https://mirrors.ocf.berkeley.edu/qt/'
     where 'online' folder exist.
 
-.. option:: --modules, -m <list of modules>
+.. option:: --timeout <timeout(sec)>
+
+    the connection timeout, in seconds, for the download site. (default: 5 sec)
+
+.. option:: --external, -E <7zip command>
+
+    Specify external 7zip command path. By default, aqt uses py7zr_ for this task.
+
+.. _py7zr: https://pypi.org/project/py7zr/
+
+.. option:: --internal
+
+    Use the internal extractor, py7zr_
+
+.. option:: --keep, -k
+
+    Keep downloaded archive when specified, otherwise remove after install
+
+.. option:: --modules, -m (<list of modules> | all)
 
     specify extra modules to install as a list.
     Use the :ref:`List Qt Command` to list available modules.
@@ -210,6 +248,14 @@ There are various combinations to accept according to Qt version.
 .. code-block::
 
     -m qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript qtvirtualkeyboard qtwebglplugin
+
+
+If you wish to install every module available, you may use the ``all`` keyword
+instead of a list of modules, like this:
+
+.. code-block:: bash
+
+    aqt install-qt <host> <target> <Qt version> <arch> -m all
 
 
 .. option:: --archives <list of archives>
