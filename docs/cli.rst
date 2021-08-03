@@ -274,8 +274,8 @@ instead of a list of modules, like this:
     This allow you to add modules to existent Qt installation.
 
 
-Source installation command
----------------------------
+Source code installation command
+--------------------------------
 
 .. program::  install-src
 
@@ -283,7 +283,7 @@ Source installation command
 
     aqt install-src <host> <target> <Qt version> [--kde] [--archives <archive>]
 
-install Qt sources specified version and target.
+install Qt source code for the specified version and target.
 
 
 .. describe:: host
@@ -296,7 +296,7 @@ install Qt sources specified version and target.
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9,7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc
 
 .. option:: --kde
 
@@ -310,8 +310,8 @@ install Qt sources specified version and target.
     You can specify ``--archives`` option to install only a specified source
     such as qtbase.
 
-Document installation command
------------------------------
+Documentation installation command
+----------------------------------
 
 .. program:: install-doc
 
@@ -319,7 +319,7 @@ Document installation command
 
     aqt install-doc <host> <target> <Qt version>
 
-install Qt documents specified version and target.
+install Qt documentation for the specified version and target.
 
 .. describe:: host
 
@@ -331,7 +331,7 @@ install Qt documents specified version and target.
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9,7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc
 
 
 Example installation command
@@ -343,7 +343,7 @@ Example installation command
 
     aqt install-example <host> <target> <Qt version>
 
-install Qt examples specified version and target.
+install Qt examples for the specified version and target.
 
 
 .. describe:: host
@@ -356,7 +356,7 @@ install Qt examples specified version and target.
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9,7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc
 
 
 .. _tools installation command:
