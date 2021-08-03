@@ -104,9 +104,15 @@ This flag receives the name of at least one module as an argument:
 
     $ aqt install-qt windows desktop 5.15.2 win64_mingw81 -m qtcharts qtnetworkauth
 
-Remember that the :ref:`aqt list-qt <list qt command>` command is meant to be scriptable? If you want
-to install all modules available for Qt 5.15.2, we can do so by sending the
-output of :ref:`aqt list-qt <list qt command>` into :ref:`aqt install-qt <qt installation command>`, like this:
+If we wish to install all the modules that are available, we can do that with the ``all`` keyword:
+
+.. code-block:: console
+
+    $ aqt install-qt windows desktop 5.15.2 win64_mingw81 -m all
+
+Remember that the :ref:`aqt list-qt <list qt command>` command is meant to be scriptable?
+One way to install all modules available for Qt 5.15.2 is to send the output of
+:ref:`aqt list-qt <list qt command>` into :ref:`aqt install-qt <qt installation command>`, like this:
 
 .. code-block:: console
 
@@ -115,6 +121,14 @@ output of :ref:`aqt list-qt <list qt command>` into :ref:`aqt install-qt <qt ins
 
 You will need a Unix-style shell to run this command, or at least git-bash on Windows.
 The ``xargs`` equivalent to this command is an exercise left to the reader.
+
+If you want to install all available modules, you are probably better off using
+the ``all`` keyword, as discussed above. This scripting example is presented to
+give you a sense of how to accomplish something more complicated.
+Perhaps you want to install all modules except `qtnetworkauth`; you could write a script
+that removes `qtnetworkauth` from the output of :ref:`aqt list-qt <list qt command>`,
+and pipe that into :ref:`aqt install-qt <qt installation command>`.
+This exercise is left to the reader.
 
 Let's try to install `qtcharts` and `qtnetworkauth` for Qt 6.1.2 as well. 
 Before we do this, let's run :ref:`aqt list-qt <list qt command>`:
