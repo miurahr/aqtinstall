@@ -42,15 +42,15 @@ List Qt command
                  --extensions (<Qt version> | latest) |
                  --arch       (<Qt version> | latest) |
                  --latest-version]
-                <target OS> [<target variant>]
+                <host> [<target>]
 
 List available versions of Qt, targets, extensions, modules, and architectures.
 
-.. describe:: target OS (aka host in code/help text)
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant (aka target in code/help text)
+.. describe:: target
 
     desktop, winrt, ios or android.
     When omitted, the command prints all the targets available for a host OS.
@@ -113,15 +113,15 @@ List Tool command
 
 .. code-block:: bash
 
-    aqt list-tool [-h | --help] [-l | --long] <target OS> [<target variant>] [<tool name>]
+    aqt list-tool [-h | --help] [-l | --long] <host> [<target>] [<tool name>]
 
 List available tools
 
-.. describe:: target OS (aka host in code/help text)
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant (aka target in code/help text)
+.. describe:: target
 
     desktop, winrt, ios or android.
     When omitted, the command prints all the targets available for a host OS.
@@ -129,11 +129,11 @@ List available tools
 
 .. describe:: tool name
 
-    The name of a tool. Use `aqt list-tool <target OS> <target variant>` to see accepted values.
+    The name of a tool. Use ``aqt list-tool <host> <target>`` to see accepted values.
     When set, this prints all 'tool variant names' available.
 
-    The output of this command is meant to be used with the `aqt tool` command:
-    See the :ref:`Tools installation command` below.
+    The output of this command is meant to be used with the
+    :ref:`aqt install-tool <Tools installation command>` below.
 
 .. option:: --help, -h
 
@@ -183,20 +183,22 @@ Qt Installation command
 install Qt library specified version and target.
 There are various combinations to accept according to Qt version.
 
-.. describe:: target OS
+.. describe:: host
 
-    linux, windows or mac
+    linux, windows or mac. The operating system on which the Qt development tools will run.
 
-.. describe:: target variant
+.. describe:: target
 
-    desktop, ios or android
+    desktop, ios, winrt, or android. The type of device for which you are developing Qt programs.
 
 .. describe:: Qt version
 
     This is a Qt version such as 5.9.7, 5.12.1 etc.
     Use the :ref:`List Qt Command` to list available versions.
 
-.. describe:: target architecture
+.. describe:: arch
+
+   The compiler architecture for which you are developing. Options:
 
    * gcc_64 for linux desktop
 
@@ -279,16 +281,16 @@ Source installation command
 
 .. code-block:: bash
 
-    aqt install-src <target OS> <target variant> <Qt version> [--kde] [--archives <archive>]
+    aqt install-src <host> <target> <Qt version> [--kde] [--archives <archive>]
 
 install Qt sources specified version and target.
 
 
-.. describe:: target OS
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant
+.. describe:: target
 
     desktop, ios or android
 
@@ -315,15 +317,15 @@ Document installation command
 
 .. code-block:: bash
 
-    aqt install-doc <target OS> <target variant> <Qt version>
+    aqt install-doc <host> <target> <Qt version>
 
 install Qt documents specified version and target.
 
-.. describe:: target OS
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant
+.. describe:: target
 
     desktop, ios or android
 
@@ -339,16 +341,16 @@ Example installation command
 
 .. code-block:: bash
 
-    aqt install-example <target OS> <target variant> <Qt version>
+    aqt install-example <host> <target> <Qt version>
 
 install Qt examples specified version and target.
 
 
-.. describe:: target OS
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant
+.. describe:: target
 
     desktop, ios or android
 
@@ -366,13 +368,13 @@ Tools installation command
 
 .. code-block:: bash
 
-    aqt install-tool <target OS> <target variant> <tool name> [<tool variant name>]
+    aqt install-tool <host> <target> <tool name> [<tool variant name>]
 
-.. describe:: target OS
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant
+.. describe:: target
 
     desktop, ios or android
 
