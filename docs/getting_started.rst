@@ -51,8 +51,10 @@ that consume the output of :ref:`aqt list-qt <list qt command>`.
 
 Because the :ref:`aqt list-qt <list qt command>` command directly queries the Qt downloads repository
 at https://download.qt.io/, the results of this command will always be accurate.
-The :ref:`Available Qt versions` page of this documentation was written at some
-point in the past, so it may or may not be up to date.
+The `Available Qt versions`_ wiki page was last modified at some point in the past,
+so it may or may not be up to date.
+
+.. _Available Qt versions: https://github.com/miurahr/aqtinstall/wiki/Available-Qt-versions
 
 Now that we know what versions of Qt are available, let's choose version 6.2.0.
 
@@ -66,8 +68,8 @@ Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list qt 
     win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64
 
 Notice that this is a very small subset of the architectures listed in the 
-:ref:`Available Qt versions` page. If we need to use some architecture that
-is not on this list, we can use the :ref:`Available Qt versions` page to get
+`Available Qt versions`_ wiki page. If we need to use some architecture that
+is not on this list, we can use the `Available Qt versions`_ wiki page to get
 a rough idea of what versions support the architecture we want, and then use
 :ref:`aqt list-qt <list qt command>` to confirm that the architecture is available.
 

@@ -174,7 +174,8 @@ There are various combinations to accept according to Qt version.
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9,7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc.
+    Use the :ref:`List Qt Command` to list available versions.
 
 .. describe:: target architecture
 
@@ -186,9 +187,7 @@ There are various combinations to accept according to Qt version.
 
    * android_armv7, android_arm64_v8a, android_x86, android_x86_64 for android
 
-.. option:: --version, -v
-
-    Display version
+    Use the :ref:`List Qt Command` to list available architectures.
 
 .. option:: --help, -h
 
@@ -206,6 +205,7 @@ There are various combinations to accept according to Qt version.
 .. option:: --modules, -m <list of modules>
 
     specify extra modules to install as a list.
+    Use the :ref:`List Qt Command` to list available modules.
 
 .. code-block::
 
