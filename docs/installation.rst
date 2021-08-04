@@ -11,7 +11,7 @@ Requirements
 - Minimum Python version:  3.6
 - Recommended Python version: 3.7.5 or later
 
-- Dependent libraries: requests, py7zr
+- Dependent libraries: requests, py7zr, semantic_version, patch, texttable, bs4
 
 
 Install by pip command
