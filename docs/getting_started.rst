@@ -17,7 +17,17 @@ it if you are having trouble!
 Installing Qt
 -------------
 
-To install Qt, you will need to tell ``aqt`` four things:
+General usage of ``aqt`` looks like this:
+
+.. code-block:: bash
+
+    aqt install-qt <host> <target> <Qt version> [<arch>]
+
+If you have installed ``aqt`` with pip, you can run it with the command script ``aqt``,
+but in some cases you may need to run it as ``python -m aqt``.
+Some older operating systems may require you to specify Python version 3, like this: ``python3 -m aqt``.
+
+To use ``aqt`` to install Qt, you will need to tell ``aqt`` four things:
 
 1. The host operating system (windows, mac, or linux)
 2. The target SDK (desktop, android, ios, or winrt)
@@ -79,6 +89,28 @@ The installation command we need is:
 .. code-block:: console
 
     $ aqt install-qt windows desktop 6.2.0 win64_mingw81
+
+
+Changing the output directory
+-----------------------------
+
+By default, ``aqt`` will install all of the Qt packages into the current
+working directory, in the subdirectory ``./<Qt version>/<arch>/``.
+For example, if we install Qt 6.2.0 for Windows desktop with arch `win64_mingw81`,
+it would end up in ``./6.2.0/win64_mingw81``.
+
+If you would prefer to install it to another location, you
+will need to use the :ref:`-O | --outputdir <outputdir_flag>`. flag.
+This option also works for all of the other subcommands that begin with
+``aqt install-``.
+
+To install to ``C:\Qt``, the default directory used by the standard gui installer,
+you may use this command:
+
+.. code-block:: doscon
+
+    C:\> mkdir Qt
+    C:\> aqt install-qt --outputdir c:\Qt windows desktop 6.2.0 win64_mingw81
 
 
 Installing Modules
@@ -355,4 +387,9 @@ and then install just the tool variant you are interested in, like this:
     $ aqt install-tool windows desktop tools_mingw qt.tools.win64_mingw730
 
 
+Please note that ``aqt install-tool`` does not recognize the ``installscript.qs``
+related to each tool. When you install these tools with the standard gui installer,
+the installer may use the ``installscript.qs`` script to make additional changes
+to your system. If you need those changes to occur, it will be your responsibility
+to make those changes happen, because ``aqt`` is not capable of running this script.
 
