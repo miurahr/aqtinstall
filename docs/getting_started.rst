@@ -90,6 +90,28 @@ The installation command we need is:
 
     $ aqt install-qt windows desktop 6.2.0 win64_mingw81
 
+External 7-zip extractor
+------------------------
+
+By default, ``aqt`` extracts the 7zip archives stored in the Qt repository using
+py7zr_, which is installed alongside ``aqt``. You can specify an alternate 7zip
+command path instead by using the ``-E`` or ``--external`` flag. For example,
+you could use 7-zip_ on a Windows desktop, using this command:
+
+.. code-block:: doscon
+
+    C:\> aqt install-qt windows desktop 6.2.0 gcc_64 --external 7za.exe
+
+On Linux, you can specify p7zip_, a Linux port of 7-zip_, which is often
+installed by default, using this command:
+
+.. code-block:: console
+
+    $ aqt install-qt linux desktop 6.2.0 gcc_64 --external 7z
+
+.. _py7zr: https://pypi.org/project/py7zr/
+.. _p7zip: http://p7zip.sourceforge.net/
+.. _7-zip: https://www.7-zip.org/
 
 Changing the output directory
 -----------------------------
