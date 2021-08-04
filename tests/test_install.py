@@ -130,7 +130,7 @@ def make_mock_geturl_download_archive(
 
 
 @pytest.fixture(autouse=True)
-def apply_mocked_geturl(monkeypatch):
+def disable_sockets_and_multiprocessing(monkeypatch):
     # This blocks all network connections, causing test failure if we used monkeypatch wrong
     disable_socket()
 
