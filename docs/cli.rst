@@ -70,14 +70,16 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 
 .. option:: --spec <Specification>
 
-    Print versions of Qt within a version specification, as explained here:
-    https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec
+    Print versions of Qt within a `SimpleSpec`_ that specifies a range of versions.
     You can specify partial versions, inequalities, etc.
     ``"*"`` would match all versions of Qt; ``">6.0.2,<6.2.0"`` would match all
     versions of Qt between 6.0.2 and 6.2.0, etc.
     For example, ``aqt list-qt windows desktop --spec "5.12"`` would print
     all versions of Qt for Windows Desktop beginning with 5.12.
     May be combined with any other flag to filter the output of that flag.
+
+.. _SimpleSpec: https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec
+
 
 .. option:: --extensions (<Qt version> | latest)
 
