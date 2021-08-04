@@ -249,7 +249,7 @@ def test_install(
     arch_dir: str,
     updates_url: str,
     files: Iterable[Dict[str, str]],
-    expect_out: re.Pattern,
+    expect_out,  # type: re.Pattern
 ):
 
     archive_filename = f"qtbase-{host}-{arch}.7z"
