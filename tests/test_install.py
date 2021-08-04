@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 import textwrap
@@ -213,7 +214,7 @@ def apply_mocked_geturl(monkeypatch):
                     UNPATCHED_CONTENT: "Prefix=/Users/qt/work/install/target\n"
                     "HostPrefix=../../\n"
                     "HostData=target\n",
-                    PATCHED_CONTENT: "Prefix={base_dir}\\6.1.0\\android_armv7\\target\n"
+                    PATCHED_CONTENT: "Prefix={base_dir}{sep}6.1.0{sep}android_armv7{sep}target\n"
                     "HostPrefix=../../mingw81_64\n"
                     "HostData=../android_armv7\n",
                 },
@@ -277,6 +278,8 @@ def test_install(
         for patched_file in files:
             file_path = installed_path / patched_file[FILENAME]
             assert file_path.is_file()
-            expect_content = patched_file[PATCHED_CONTENT].format(base_dir=output_dir)
+            expect_content = patched_file[PATCHED_CONTENT].format(
+                base_dir=output_dir, sep=os.sep
+            )
             patched_content = file_path.read_text(encoding="utf_8")
             assert patched_content == expect_content
