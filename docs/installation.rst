@@ -96,9 +96,9 @@ Some older operating systems may require you to specify Python version 3, like t
     * For android and Qt 5.11 or below, choose one of: `android_x86`, `android_armv7`
     * For android and Qt 5.12 or Qt 5.13 or Qt 6, choose one of:
       `android_x86_64`, `android_arm64_v8a`, `android_x86`, `android_armv7`
-* You can specify external 7zip command path instead of built-in extractor by using the ``-E`` or ``--external`` flag.
-* You can specify an alternate output directory by using the ``-O`` or ``--outputdir`` flag.
-* To install all available modules, you can use the option ``-m all``.
+* You can specify external 7zip command path instead of built-in extractor by using the :ref:`-E | --external <external_flag>` flag.
+* You can specify an alternate output directory by using the :ref:`-O | --outputdir <outputdir_flag>` flag.
+* To install all available modules, you can use the option :ref:`-m all <modules_flag>`.
 
 A full description of the options for ``aqt install-qt`` is available in the documentation
 for the :ref:`Qt installation command`.
@@ -122,7 +122,7 @@ You can install tools and utilities using the :ref:`tools installation command`:
 Target directory
 ----------------
 
-You can change the installation directory by using the option ``--outputdir`` or ``-O``.
+You can change the installation directory by using the option :ref:`-O | --outputdir <outputdir_flag>`.
 This option works for ``aqt install-qt``, ``aqt install-tool``, and any other subcommand
 that begins with ``install-``.
 

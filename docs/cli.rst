@@ -60,13 +60,17 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 
     Display help text
 
+.. _extension_flag:
+
 .. option:: --extension <Extension>
 
     Extension of packages to list
     {wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}
 
-    Use the ``--extensions`` flag to list all relevant options for a host/target.
-    Incompatible with the ``--extensions`` flag, but may be combined with any other flag.
+    Use the :ref:`--extensions <extensions_flag>` flag to list all relevant options for a host/target.
+    Incompatible with the :ref:`--extensions <extensions_flag>` flag, but may be combined with any other flag.
+
+.. _spec_flag:
 
 .. option:: --spec <Specification>
 
@@ -79,18 +83,25 @@ List available versions of Qt, targets, extensions, modules, and architectures.
     all versions of Qt for Windows Desktop beginning with 5.12.
     May be combined with any other flag to filter the output of that flag.
 
+.. _extensions_flag:
+
 .. option:: --extensions (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y", or the keyword ``latest``.
-    When set, this prints all valid arguments for the ``--extension`` flag for
-    Qt 5.X.Y, or the latest version of Qt if ``latest`` is specified.
-    Incompatible with the ``--extension`` flag.
+    When set, this prints all valid arguments for the
+    :ref:`--extension <extension_flag>` flag for Qt 5.X.Y, or the latest
+    version of Qt if ``latest`` is specified.
+    Incompatible with the :ref:`--extension <extension_flag>` flag.
+
+.. _list_qt_modules_flag:
 
 .. option:: --modules (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this lists all the modules
     available for Qt 5.X.Y with a host/target/extension, or the latest version
     of Qt if ``latest`` is specified.
+
+.. _list_qt_arch_flag:
 
 .. option:: --arch (<Qt version> | latest)
 
@@ -101,7 +112,7 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 .. option:: --latest-version
 
     Print only the newest version available
-    May be combined with the ``--extension`` and/or ``--spec`` flags.
+    May be combined with the :ref:`--extension <extension_flag>` and/or :ref:`--spec <spec_flag>` flags.
 
 
 .. _list tool command:
@@ -139,6 +150,8 @@ List available tools
 
     Display help text
 
+
+.. _list_tool_long_flag:
 
 .. option:: --long, -l
 
@@ -214,6 +227,8 @@ There are various combinations to accept according to Qt version.
 
     Display help text
 
+.. _outputdir_flag:
+
 .. option:: --outputdir, -O <Output Directory>
 
     specify output directory.
@@ -228,6 +243,8 @@ There are various combinations to accept according to Qt version.
 
     the connection timeout, in seconds, for the download site. (default: 5 sec)
 
+.. _external_flag:
+
 .. option:: --external, -E <7zip command>
 
     Specify external 7zip command path. By default, aqt uses py7zr_ for this task.
@@ -241,6 +258,8 @@ There are various combinations to accept according to Qt version.
 .. option:: --keep, -k
 
     Keep downloaded archive when specified, otherwise remove after install
+
+.. _modules_flag:
 
 .. option:: --modules, -m (<list of modules> | all)
 
@@ -270,7 +289,7 @@ instead of a list of modules, like this:
 .. option:: --noarchives
 
     [Advanced] Specify not to install all base packages.
-    This is advanced option and you should use it with ``--modules`` option.
+    This is advanced option and you should use it with :ref:`--modules <modules_flag>` option.
     This allow you to add modules to existent Qt installation.
 
 

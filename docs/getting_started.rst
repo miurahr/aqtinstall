@@ -60,7 +60,7 @@ Now that we know what versions of Qt are available, let's choose version 6.2.0.
 
 The next thing we need to do is find out what architectures are available for
 Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list qt command>` with the
-``--arch`` flag:
+:ref:`--arch <list_qt_arch_flag>` flag:
 
 .. code-block:: console
 
@@ -86,7 +86,7 @@ Installing Modules
 
 Let's say we need to install some modules for Qt 5.15.2 on Windows Desktop.
 First we need to find out what the modules are called, and we can do that 
-with :ref:`aqt list-qt <list qt command>` with the ``--modules`` flag.
+with :ref:`aqt list-qt <list qt command>` with the :ref:`--modules <list_qt_modules_flag>` flag.
 Each version of Qt has a different list of modules for each host OS/ target SDK
 combination, so we will need to supply :ref:`aqt list-qt <list qt command>` with that information:
 
@@ -231,7 +231,7 @@ Installing Qt for WASM
 ----------------------
 
 To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt <list qt command>` that we are
-using the `wasm` architecture. We can do that by using the ``--extension wasm`` flag.
+using the `wasm` architecture. We can do that by using the :ref:`--extension wasm <extension_flag>` flag.
 
 .. code-block:: console
 
@@ -302,7 +302,7 @@ Let's see what tool variants are available in `tools_mingw`:
 
 This gives us a list of things that we could install using
 :ref:`aqt install-tool <tools installation command>`.
-Let's see some more details, using the ``-l`` or ``--long`` flag:
+Let's see some more details, using the :ref:`-l | --long <list_tool_long_flag>` flag:
 
 .. code-block:: console
 
@@ -321,7 +321,7 @@ Let's see some more details, using the ``-l`` or ``--long`` flag:
     qt.tools.win64_mingw730   7.3.0-1-202004170606   2020-04-17
     qt.tools.win64_mingw810   8.1.0-1-202004170606   2020-04-17
 
-The ``-l`` flag causes :ref:`aqt list-tool <list tool command>` to print a table
+The :ref:`-l <list_tool_long_flag>` flag causes :ref:`aqt list-tool <list tool command>` to print a table
 that shows plenty of data pertinent to each tool variant available in `tools_mingw`.
 :ref:`aqt list-tool <list tool command>` additionally prints the 'Display Name'
 and 'Description' for each tool if your terminal is wider than 95 characters;
