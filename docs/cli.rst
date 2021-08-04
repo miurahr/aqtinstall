@@ -392,7 +392,7 @@ You should use the :ref:`List Tool command` to display what tools and tool varia
     
 
 Legacy subcommands
----------------
+------------------
 
 The subcommands ``install``, ``tool``, ``src``, ``doc``, and ``examples`` have
 been deprecated in favor of the newer ``install-*`` commands, but they remain
