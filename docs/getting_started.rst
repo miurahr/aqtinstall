@@ -100,7 +100,7 @@ For example, if we install Qt 6.2.0 for Windows desktop with arch `win64_mingw81
 it would end up in ``./6.2.0/win64_mingw81``.
 
 If you would prefer to install it to another location, you
-will need to use the :ref:`-O | --outputdir <outputdir_flag>`. flag.
+will need to use the :ref:`-O | --outputdir <outputdir_flag>` flag.
 This option also works for all of the other subcommands that begin with
 ``aqt install-``.
 
