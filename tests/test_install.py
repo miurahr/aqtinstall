@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import sys
@@ -5,7 +6,7 @@ import textwrap
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Callable, Dict, Iterable, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import py7zr
 import pytest
@@ -44,6 +45,21 @@ class MockMultiprocessingContext:
 
         def terminate(self):
             assert False, "Did not expect to call terminate during unit test"
+
+
+class MockMultiprocessingManager:
+    class Queue:
+        def __init__(self, *args):
+            pass
+
+        def put_nowait(self, log_record: Optional[logging.LogRecord]):
+            # NOTE: This is certainly not the right way to do this, but it works locally
+            if not log_record or log_record.levelno < logging.INFO:
+                return
+            print(log_record.message, file=sys.stderr)
+
+        def get(self, *args):
+            return None
 
 
 FILENAME = "filename"
@@ -122,6 +138,11 @@ def apply_mocked_geturl(monkeypatch):
     monkeypatch.setattr(
         "aqt.installer.multiprocessing.get_context",
         lambda *args: MockMultiprocessingContext(),
+    )
+
+    monkeypatch.setattr(
+        "aqt.installer.multiprocessing.Manager",
+        MockMultiprocessingManager,
     )
 
 
