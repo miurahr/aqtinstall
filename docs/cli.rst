@@ -68,6 +68,13 @@ List available versions of Qt, targets, extensions, modules, and architectures.
     Use the ``--extensions`` flag to list all relevant options for a host/target.
     Incompatible with the ``--extensions`` flag, but may be combined with any other flag.
 
+.. option:: --extensions (<Qt version> | latest)
+
+    Qt version in the format of "5.X.Y", or the keyword ``latest``.
+    When set, this prints all valid arguments for the ``--extension`` flag for
+    Qt 5.X.Y, or the latest version of Qt if ``latest`` is specified.
+    Incompatible with the ``--extension`` flag.
+
 .. option:: --spec <Specification>
 
     Print versions of Qt within a `SimpleSpec`_ that specifies a range of versions.
@@ -80,13 +87,6 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 
 .. _SimpleSpec: https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec
 
-
-.. option:: --extensions (<Qt version> | latest)
-
-    Qt version in the format of "5.X.Y", or the keyword ``latest``.
-    When set, this prints all valid arguments for the ``--extension`` flag for
-    Qt 5.X.Y, or the latest version of Qt if ``latest`` is specified.
-    Incompatible with the ``--extension`` flag.
 
 .. option:: --modules (<Qt version> | latest)
 
