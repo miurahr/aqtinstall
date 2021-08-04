@@ -103,8 +103,8 @@ Some older operating systems may require you to specify Python version 3, like t
 A full description of the options for ``aqt install-qt`` is available in the documentation
 for the :ref:`Qt installation command`.
 
-Installing tool and utility (Experimental)
-------------------------------------------
+Installing tool and utility
+---------------------------
 
 You can install tools and utilities using the :ref:`tools installation command`:
 
@@ -116,7 +116,6 @@ You can install tools and utilities using the :ref:`tools installation command`:
   Use the :ref:`aqt list-tool <list tool command>` to show what tools are available.
 * arch is full qualified tool name such as `qt.tools.ifw.31`.
   Please use :ref:`aqt list-tool <list tool command>` to list acceptable values for this parameter.
-  This is a quite experimental feature, may not work and please use it with your understanding of what you are doing.
 * It does not recognize 'installscript.qs'. When using tools which depends on a qt script, you should do something by yourself.
 
 
