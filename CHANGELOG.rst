@@ -10,14 +10,21 @@ All notable changes to this project will be documented in this file.
 Added
 -----
 * Add error messages when user inputs an invalid semantic version(#291)
-* Security Policy document
-* CI: CodeQL static source analysis
+* Security Policy document(#341)
+* CodeQL static code analysis(#341)
 * CI: generate combination json in actions (#318,#343)
+* Test: add and improve unit tests(#327,#359)
+* Docs: getting started section(#351)
+* Docs: recommend python3 for old systems(#349)
+* Automatically update combinations.json (#343,#344,#345)
+* CI: test with Qt6.2 with modules(#346)
+* README: link documentation for stable(#329)
 
 Changed
 -------
 * list subcommand now support tool information(#235)
 * list subcommand can show versions, archiectures and modules.(#235)
+* C: bundle jom.zip in source(#295)
 * Add max_retries configuration for connection(#296)
 * Change settings.ini to introduce [requests] section(#297)
 * Change log format for logging file.
@@ -28,6 +35,11 @@ Changed
 * list subcommand update(#331)
 * Improve handle of Ctrl-C keyboard interrption(#337)
 * Update combinations.json(#344)
+* Turn warnings into errors when building docs(#360)
+* Update documentations(#358,#357)
+* Test: consolidate lint configuration to pyproject.toml(#356)
+* Test: black configuration to max_line_length=125 (#356)
+* New subcommand syntax (#354,#355)
 
 Fixed
 -----
@@ -36,6 +48,10 @@ Fixed
 * Fix WinRT installation patching(#311)
 * Fix Qt 5.9.0 installation (#312)
 * Link documentations for stable/latest on README
+* Check python version when starting command (#352)
+* README: remove '$' from example command line(#321)
+* README: fix command line example lexer(#322)
+* CI: fix release script launch conditions(#298)
 
 
 `v1.2.2`_ (1, Jul. 2021)
@@ -87,6 +103,8 @@ Fixed
 * Update patching pkgconfig/lib on mac(#267)
 * CI: fix check workflow(#248)
 * CI: fix error on Azure/Windows(connection error)(#246)
+* Fix typo in README(#326)
+
 
 `v1.1.6`_ (2, May. 2021)
 ========================
