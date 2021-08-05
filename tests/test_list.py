@@ -74,7 +74,7 @@ def test_versions(init_data, expect_str, expect_fmt, expect_flat, expect_last, e
 
 
 @pytest.fixture
-def spec_regex() -> re.Pattern:
+def spec_regex():
     return re.compile(r"^(\d+\.\d+)")
 
 
