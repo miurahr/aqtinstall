@@ -109,9 +109,7 @@ def make_mock_geturl_download_archive(
         """Make a mocked 7z archive at out_filename"""
         assert out == archive_filename
 
-        with TemporaryDirectory() as temp_dir, py7zr.SevenZipFile(
-            archive_filename, "w"
-        ) as archive:
+        with TemporaryDirectory() as temp_dir, py7zr.SevenZipFile(archive_filename, "w") as archive:
             temp_path = Path(temp_dir)
 
             for folder in ("bin", "lib", "mkspecs"):
@@ -232,18 +230,14 @@ def disable_sockets_and_multiprocessing(monkeypatch):
                 },
                 {
                     FILENAME: "bin/target_qt.conf",
-                    UNPATCHED_CONTENT: "Prefix=/Users/qt/work/install/target\n"
-                    "HostPrefix=../../\n"
-                    "HostData=target\n",
+                    UNPATCHED_CONTENT: "Prefix=/Users/qt/work/install/target\n" "HostPrefix=../../\n" "HostData=target\n",
                     PATCHED_CONTENT: "Prefix={base_dir}{sep}6.1.0{sep}android_armv7{sep}target\n"
                     "HostPrefix=../../mingw81_64\n"
                     "HostData=../android_armv7\n",
                 },
                 {
                     FILENAME: "bin/qmake.bat",
-                    UNPATCHED_CONTENT: "... blah blah blah ...\n"
-                    "/Users/qt/work/install/bin\n"
-                    "... blah blah blah ...\n",
+                    UNPATCHED_CONTENT: "... blah blah blah ...\n" "/Users/qt/work/install/bin\n" "... blah blah blah ...\n",
                     PATCHED_CONTENT: "... blah blah blah ...\n"
                     "{base_dir}\\6.1.0\\mingw81_64\\bin\n"
                     "... blah blah blah ...\n",
@@ -299,8 +293,6 @@ def test_install(
         for patched_file in files:
             file_path = installed_path / patched_file[FILENAME]
             assert file_path.is_file()
-            expect_content = patched_file[PATCHED_CONTENT].format(
-                base_dir=output_dir, sep=os.sep
-            )
+            expect_content = patched_file[PATCHED_CONTENT].format(base_dir=output_dir, sep=os.sep)
             patched_content = file_path.read_text(encoding="utf_8")
             assert patched_content == expect_content
