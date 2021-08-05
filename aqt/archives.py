@@ -149,9 +149,7 @@ class QtArchives:
             )
         )
         target_packages.append(
-            "qt.{0}{1}{2}.{3}".format(
-                self.version.major, self.version.minor, self.version.patch, self.arch
-            )
+            "qt.{0}{1}{2}.{3}".format(self.version.major, self.version.minor, self.version.patch, self.arch)
         )
         target_packages.extend(self.mod_list)
         self._download_update_xml(update_xml_url)
@@ -174,10 +172,7 @@ class QtArchives:
             if self.all_extra:
                 # Check platform
                 name_last_section = name.split(".")[-1]
-                if (
-                    name_last_section in self.arch_list
-                    and self.arch != name_last_section
-                ):
+                if name_last_section in self.arch_list and self.arch != name_last_section:
                     continue
                 # Check doc/examples
                 if self.arch in ["doc", "examples"]:
@@ -185,9 +180,7 @@ class QtArchives:
                         continue
             if self.all_extra or name in target_packages:
                 if packageupdate.find("DownloadableArchives").text is not None:
-                    downloadable_archives = packageupdate.find(
-                        "DownloadableArchives"
-                    ).text.split(", ")
+                    downloadable_archives = packageupdate.find("DownloadableArchives").text.split(", ")
                     full_version = packageupdate.find("Version").text
                     package_desc = packageupdate.find("Description").text
                     for archive in downloadable_archives:
@@ -211,9 +204,7 @@ class QtArchives:
                             )
                         )
         if len(self.archives) == 0:
-            self.logger.error(
-                "Specified packages are not found while parsing XML of package information!"
-            )
+            self.logger.error("Specified packages are not found while parsing XML of package information!")
             raise NoPackageFound
 
     def get_packages(self) -> List[QtPackage]:

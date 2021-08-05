@@ -59,9 +59,7 @@ Settings.load_settings()
         ),
     ),
 )
-def test_versions(
-    init_data, expect_str, expect_fmt, expect_flat, expect_last, expect_bool
-):
+def test_versions(init_data, expect_str, expect_fmt, expect_flat, expect_last, expect_bool):
     versions = Versions(init_data)
     assert str(versions) == expect_str
     assert format(versions) == expect_fmt
@@ -93,15 +91,11 @@ def spec_regex() -> re.Pattern:
         ("mac", "ios", "mac-ios.html", "mac-ios-expect.json"),
     ],
 )
-def test_list_versions_tools(
-    monkeypatch, spec_regex, os_name, target, in_file, expect_out_file
-):
+def test_list_versions_tools(monkeypatch, spec_regex, os_name, target, in_file, expect_out_file):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
 
-    expected = json.loads(
-        (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
-    )
+    expected = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
 
     # Test 'aqt list-tool'
     tools = MetadataFactory(ArchiveId("tools", os_name, target)).getList()
@@ -127,11 +121,7 @@ def test_list_versions_tools(
 
         for row in expected_output:
             spec_str = spec_regex.search(row).group(1)
-            spec = (
-                SimpleSpec(spec_str)
-                if not ext.endswith("preview")
-                else SimpleSpec(spec_str + ".0-preview")
-            )
+            spec = SimpleSpec(spec_str) if not ext.endswith("preview") else SimpleSpec(spec_str + ".0-preview")
 
             # Find the latest version for a particular spec
             latest_ver_for_spec = MetadataFactory(
@@ -162,14 +152,10 @@ def test_list_versions_tools(
         ),
     ],
 )
-def test_list_architectures_and_modules(
-    monkeypatch, version: str, extension: str, in_file: str, expect_out_file: str
-):
+def test_list_architectures_and_modules(monkeypatch, version: str, extension: str, in_file: str, expect_out_file: str):
     archive_id = ArchiveId("qt", "windows", "desktop", extension)
     _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    expect = json.loads(
-        (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
-    )
+    expect = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
@@ -193,27 +179,21 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
     in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
     expect_out_file = "{}-{}-{}-expect.json".format(host, target, tool_name)
     _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    expect = json.loads(
-        (Path(__file__).parent / "data" / expect_out_file).read_text("utf-8")
-    )
+    expect = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
     modules = MetadataFactory(archive_id, tool_name=tool_name).getList()
     assert modules == expect["modules"]
 
-    table = MetadataFactory(
-        archive_id, tool_name=tool_name, is_long_listing=True
-    ).getList()
+    table = MetadataFactory(archive_id, tool_name=tool_name, is_long_listing=True).getList()
     assert table._rows() == expect["long_listing"]
 
 
 @pytest.fixture
 def expected_windows_desktop_5140() -> Dict[str, Set[str]]:
     xmlexpect = "windows-5140-expect.json"
-    expected_modules_arches = json.loads(
-        (Path(__file__).parent / "data" / xmlexpect).read_text("utf-8")
-    )
+    expected_modules_arches = json.loads((Path(__file__).parent / "data" / xmlexpect).read_text("utf-8"))
     return {key: set(val) for key, val in expected_modules_arches.items()}
 
 
@@ -267,9 +247,7 @@ def test_list_qt_cli(
     cli.run(["list-qt", "windows", "desktop", *args.split()])
     out, err = capsys.readouterr()
     output_set = set(out.strip().split())
-    expect_set = (
-        expected_windows_desktop_5140[expect] if isinstance(expect, str) else expect
-    )
+    expect_set = expected_windows_desktop_5140[expect] if isinstance(expect, str) else expect
     assert output_set == expect_set
 
 
@@ -383,9 +361,7 @@ no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13 to 5.15 on desk
         ("android", "wasm", "6.2.0", qt6_android_requires_ext_msg),
     ),
 )
-def test_list_invalid_extensions(
-    capsys, monkeypatch, target, ext, version, expected_msg
-):
+def test_list_invalid_extensions(capsys, monkeypatch, target, ext, version, expected_msg):
     host = "windows"
     extension_params = ["--extension", ext] if ext else []
     cli = Cli()
@@ -398,9 +374,7 @@ def test_list_invalid_extensions(
 
 mac_qt = ArchiveId("qt", "mac", "desktop")
 mac_wasm = ArchiveId("qt", "mac", "desktop", "wasm")
-wrong_qt_version_msg = [
-    "Please use 'aqt list-qt mac desktop' to show versions of Qt available."
-]
+wrong_qt_version_msg = ["Please use 'aqt list-qt mac desktop' to show versions of Qt available."]
 wrong_ext_and_version_msg = [
     "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.",
     "Please use 'aqt list-qt mac desktop' to show versions of Qt available.",
@@ -413,15 +387,11 @@ wrong_ext_and_version_msg = [
         (MetadataFactory(mac_qt), []),
         (
             MetadataFactory(mac_qt, spec=SimpleSpec("5.0")),
-            [
-                "Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '5.0'."
-            ],
+            ["Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '5.0'."],
         ),
         (
             MetadataFactory(ArchiveId("tools", "mac", "desktop"), tool_name="ifw"),
-            [
-                "Please use 'aqt list-tool mac desktop' to check what tools are available."
-            ],
+            ["Please use 'aqt list-tool mac desktop' to check what tools are available."],
         ),
         (
             MetadataFactory(mac_qt, architectures_ver="1.2.3"),
@@ -437,9 +407,7 @@ wrong_ext_and_version_msg = [
         ),
         (
             MetadataFactory(mac_wasm),
-            [
-                "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions."
-            ],
+            ["Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions."],
         ),
         (
             MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9")),
@@ -449,9 +417,7 @@ wrong_ext_and_version_msg = [
             ],
         ),
         (
-            MetadataFactory(
-                ArchiveId("tools", "mac", "desktop", "wasm"), tool_name="ifw"
-            ),
+            MetadataFactory(ArchiveId("tools", "mac", "desktop", "wasm"), tool_name="ifw"),
             [
                 "Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.",
                 "Please use 'aqt list-tool mac desktop' to check what tools are available.",
@@ -501,9 +467,7 @@ def test_format_suggested_follow_up_empty():
             "qt/mac/desktop with spec 5.42",
         ),
         (
-            MetadataFactory(
-                ArchiveId("qt", "mac", "desktop", "wasm"), spec=SimpleSpec("5.42")
-            ),
+            MetadataFactory(ArchiveId("qt", "mac", "desktop", "wasm"), spec=SimpleSpec("5.42")),
             "qt/mac/desktop/wasm with spec 5.42",
         ),
         (MetadataFactory(ArchiveId("qt", "mac", "desktop")), "qt/mac/desktop"),
@@ -532,9 +496,7 @@ def test_list_describe_filters(meta: MetadataFactory, expect: str):
             mac_qt,
             SimpleSpec("5.0"),
             "latest",
-            CliInputError(
-                "There is no latest version of Qt with the criteria 'qt/mac/desktop with spec 5.0'"
-            ),
+            CliInputError("There is no latest version of Qt with the criteria 'qt/mac/desktop with spec 5.0'"),
         ),
     ),
 )
@@ -552,14 +514,10 @@ def test_list_to_version(monkeypatch, archive_id, spec, version_str, expect):
 
 
 def test_list_fetch_tool_by_simple_spec(monkeypatch):
-    update_xml = (
-        Path(__file__).parent / "data" / "windows-desktop-tools_vcredist-update.xml"
-    ).read_text("utf-8")
+    update_xml = (Path(__file__).parent / "data" / "windows-desktop-tools_vcredist-update.xml").read_text("utf-8")
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: update_xml)
 
-    expect_json = (
-        Path(__file__).parent / "data" / "windows-desktop-tools_vcredist-expect.json"
-    ).read_text("utf-8")
+    expect_json = (Path(__file__).parent / "data" / "windows-desktop-tools_vcredist-expect.json").read_text("utf-8")
     expected = json.loads(expect_json)["modules_data"]
 
     def check(actual, expect):
@@ -576,20 +534,14 @@ def test_list_fetch_tool_by_simple_spec(monkeypatch):
 
     meta = MetadataFactory(ArchiveId("tools", "windows", "desktop"))
     check(
-        meta.fetch_tool_by_simple_spec(
-            tool_name="tools_vcredist", simple_spec=SimpleSpec("2011")
-        ),
+        meta.fetch_tool_by_simple_spec(tool_name="tools_vcredist", simple_spec=SimpleSpec("2011")),
         expected["qt.tools.vcredist"],
     )
     check(
-        meta.fetch_tool_by_simple_spec(
-            tool_name="tools_vcredist", simple_spec=SimpleSpec("2014")
-        ),
+        meta.fetch_tool_by_simple_spec(tool_name="tools_vcredist", simple_spec=SimpleSpec("2014")),
         expected["qt.tools.vcredist_msvc2013_x86"],
     )
-    nonexistent = meta.fetch_tool_by_simple_spec(
-        tool_name="tools_vcredist", simple_spec=SimpleSpec("1970")
-    )
+    nonexistent = meta.fetch_tool_by_simple_spec(tool_name="tools_vcredist", simple_spec=SimpleSpec("1970"))
     assert nonexistent is None
 
     # Simulate a broken Updates.xml file, with invalid versions
@@ -643,14 +595,10 @@ def test_list_fetch_tool_by_simple_spec(monkeypatch):
     ),
 )
 def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
-    update_xml = (
-        Path(__file__).parent / "data" / "mac-desktop-tools_ifw-update.xml"
-    ).read_text("utf-8")
+    update_xml = (Path(__file__).parent / "data" / "mac-desktop-tools_ifw-update.xml").read_text("utf-8")
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: update_xml)
 
-    monkeypatch.setattr(
-        shutil, "get_terminal_size", lambda fallback: os.terminal_size((columns, 24))
-    )
+    monkeypatch.setattr(shutil, "get_terminal_size", lambda fallback: os.terminal_size((columns, 24)))
 
     meta = MetadataFactory(
         ArchiveId("tools", "mac", "desktop"),
@@ -704,9 +652,7 @@ def fetch_expected_tooldata(json_filename: str) -> ToolData:
     return ToolData(tools)
 
 
-@pytest.mark.parametrize(
-    "host, target, tool_name", (("mac", "desktop", "tools_cmake"),)
-)
+@pytest.mark.parametrize("host, target, tool_name", (("mac", "desktop", "tools_cmake"),))
 def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: str):
     html_file = f"{host}-{target}.html"
     xml_file = f"{host}-{target}-{tool_name}-update.xml"

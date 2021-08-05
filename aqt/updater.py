@@ -77,9 +77,7 @@ class Updater:
             if not qmake_path.exists():
                 continue
             try:
-                result = subprocess.run(
-                    [str(qmake_path), "-query"], stdout=subprocess.PIPE
-                )
+                result = subprocess.run([str(qmake_path), "-query"], stdout=subprocess.PIPE)
             except subprocess.SubprocessError:
                 return False
             if result.returncode == 0:
@@ -207,34 +205,22 @@ class Updater:
 
     def make_qtconf(self, base_dir, qt_version, arch_dir):
         """Prepare qt.conf"""
-        with open(
-            os.path.join(base_dir, qt_version, arch_dir, "bin", "qt.conf"), "w"
-        ) as f:
+        with open(os.path.join(base_dir, qt_version, arch_dir, "bin", "qt.conf"), "w") as f:
             f.write("[Paths]\n")
             f.write("Prefix=..\n")
 
     def make_qtenv2(self, base_dir, qt_version, arch_dir):
         """Prepare qtenv2.bat"""
-        with open(
-            os.path.join(base_dir, qt_version, arch_dir, "bin", "qtenv2.bat"), "w"
-        ) as f:
+        with open(os.path.join(base_dir, qt_version, arch_dir, "bin", "qtenv2.bat"), "w") as f:
             f.write("@echo off\n")
             f.write("echo Setting up environment for Qt usage...\n")
-            f.write(
-                "set PATH={};%PATH%\n".format(
-                    os.path.join(base_dir, qt_version, arch_dir, "bin")
-                )
-            )
+            f.write("set PATH={};%PATH%\n".format(os.path.join(base_dir, qt_version, arch_dir, "bin")))
             f.write("cd /D {}\n".format(os.path.join(base_dir, qt_version, arch_dir)))
-            f.write(
-                "echo Remember to call vcvarsall.bat to complete environment setup!\n"
-            )
+            f.write("echo Remember to call vcvarsall.bat to complete environment setup!\n")
 
     def set_license(self, base_dir, qt_version, arch_dir):
         """Update qtconfig.pri as OpenSource"""
-        with open(
-            os.path.join(base_dir, qt_version, arch_dir, "mkspecs", "qconfig.pri"), "r+"
-        ) as f:
+        with open(os.path.join(base_dir, qt_version, arch_dir, "mkspecs", "qconfig.pri"), "r+") as f:
             lines = f.readlines()
             f.seek(0)
             f.truncate()
@@ -256,9 +242,7 @@ class Updater:
         else:
             old_targetprefix = "Prefix=/Users/qt/work/install/target"
             new_hostprefix = "HostPrefix=../../mingw81_64"
-        new_targetprefix = "Prefix={}".format(
-            str(pathlib.Path(base_dir).joinpath(qt_version, arch_dir, "target"))
-        )
+        new_targetprefix = "Prefix={}".format(str(pathlib.Path(base_dir).joinpath(qt_version, arch_dir, "target")))
         new_hostdata = "HostData=../{}".format(arch_dir)
         self._patch_textfile(target_qt_conf, old_targetprefix, new_targetprefix)
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
@@ -287,9 +271,7 @@ class Updater:
                 arch_dir = b + "_" + a
             else:
                 arch_dir = arch[6:]
-        elif (
-            version in SimpleSpec(">=6.1.2") and os_name == "mac" and arch == "clang_64"
-        ):
+        elif version in SimpleSpec(">=6.1.2") and os_name == "mac" and arch == "clang_64":
             arch_dir = "macos"
         else:
             arch_dir = arch
@@ -322,18 +304,14 @@ class Updater:
                 updater.patch_qmake()
             else:  # qt6 non-desktop
                 updater.patch_qmake_script(base_dir, target.version, target.os_name)
-                updater.patch_target_qt_conf(
-                    base_dir, target.version, arch_dir, target.os_name
-                )
+                updater.patch_target_qt_conf(base_dir, target.version, arch_dir, target.os_name)
         except IOError as e:
             raise e
 
     @classmethod
     def patch_kde(cls, src_dir):
         logger = logging.getLogger("aqt")
-        PATCH_URL_BASE = (
-            "https://raw.githubusercontent.com/miurahr/kde-qt-patch/main/patches/"
-        )
+        PATCH_URL_BASE = "https://raw.githubusercontent.com/miurahr/kde-qt-patch/main/patches/"
         for p in Settings.kde_patches:
             logger.info("Apply patch: " + p)
             patchfile = patch.fromurl(PATCH_URL_BASE + p)
