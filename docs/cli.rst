@@ -17,6 +17,14 @@ Generic commands
 
 show generic help
 
+.. program::  version
+
+.. code-block:: bash
+
+    aqt version
+
+display version
+
 
 .. _list qt command:
 
@@ -34,15 +42,15 @@ List Qt command
                  --extensions (<Qt version> | latest) |
                  --arch       (<Qt version> | latest) |
                  --latest-version]
-                <target OS> [<target variant>]
+                <host> [<target>]
 
 List available versions of Qt, targets, extensions, modules, and architectures.
 
-.. describe:: target OS (aka host in code/help text)
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant (aka target in code/help text)
+.. describe:: target
 
     desktop, winrt, ios or android.
     When omitted, the command prints all the targets available for a host OS.
@@ -57,43 +65,45 @@ List available versions of Qt, targets, extensions, modules, and architectures.
     Extension of packages to list
     {wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}
 
-    Use the `--extensions` flag to list all relevant options for a host/target.
-    Incompatible with the `--extensions` flag, but may be combined with any other flag.
-
-.. option:: --spec <Specification>
-
-    Print versions of Qt within a version specification, as explained here:
-    https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec
-    You can specify partial versions, inequalities, etc.
-    `"*"` would match all versions of Qt; `">6.0.2,<6.2.0"` would match all
-    versions of Qt between 6.0.2 and 6.2.0, etc.
-    For example, `aqt list-qt windows desktop --spec "5.12"` would print
-    all versions of Qt for Windows Desktop beginning with 5.12.
-    May be combined with any other flag to filter the output of that flag.
+    Use the ``--extensions`` flag to list all relevant options for a host/target.
+    Incompatible with the ``--extensions`` flag, but may be combined with any other flag.
 
 .. option:: --extensions (<Qt version> | latest)
 
-    Qt version in the format of "5.X.Y", or the keyword `latest`.
-    When set, this prints all valid arguments for the `--extension` flag for
-    Qt 5.X.Y, or the latest version of Qt if `latest` is specified.
-    Incompatible with the `--extension` flag.
+    Qt version in the format of "5.X.Y", or the keyword ``latest``.
+    When set, this prints all valid arguments for the ``--extension`` flag for
+    Qt 5.X.Y, or the latest version of Qt if ``latest`` is specified.
+    Incompatible with the ``--extension`` flag.
+
+.. option:: --spec <Specification>
+
+    Print versions of Qt within a `SimpleSpec`_ that specifies a range of versions.
+    You can specify partial versions, inequalities, etc.
+    ``"*"`` would match all versions of Qt; ``">6.0.2,<6.2.0"`` would match all
+    versions of Qt between 6.0.2 and 6.2.0, etc.
+    For example, ``aqt list-qt windows desktop --spec "5.12"`` would print
+    all versions of Qt for Windows Desktop beginning with 5.12.
+    May be combined with any other flag to filter the output of that flag.
+
+.. _SimpleSpec: https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec
+
 
 .. option:: --modules (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this lists all the modules
     available for Qt 5.X.Y with a host/target/extension, or the latest version
-    of Qt if `latest` is specified.
+    of Qt if ``latest`` is specified.
 
 .. option:: --arch (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this prints all architectures
     available for Qt 5.X.Y with a host/target/extension, or the latest version
-    of Qt if `latest` is specified.
+    of Qt if ``latest`` is specified.
 
 .. option:: --latest-version
 
     Print only the newest version available
-    May be combined with the `--extension` and/or `--spec` flags.
+    May be combined with the ``--extension`` and/or ``--spec`` flags.
 
 
 .. _list tool command:
@@ -105,15 +115,15 @@ List Tool command
 
 .. code-block:: bash
 
-    aqt list-tool [-h | --help] [-l | --long] <target OS> [<target variant>] [<tool name>]
+    aqt list-tool [-h | --help] [-l | --long] <host> [<target>] [<tool name>]
 
 List available tools
 
-.. describe:: target OS (aka host in code/help text)
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant (aka target in code/help text)
+.. describe:: target
 
     desktop, winrt, ios or android.
     When omitted, the command prints all the targets available for a host OS.
@@ -121,11 +131,11 @@ List available tools
 
 .. describe:: tool name
 
-    The name of a tool. Use `aqt list-tool <target OS> <target variant>` to see accepted values.
+    The name of a tool. Use ``aqt list-tool <host> <target>`` to see accepted values.
     When set, this prints all 'tool variant names' available.
 
-    The output of this command is meant to be used with the `aqt tool` command:
-    See the :ref:`Tools installation command` below.
+    The output of this command is meant to be used with the
+    :ref:`aqt install-tool <Tools installation command>` below.
 
 .. option:: --help, -h
 
@@ -136,7 +146,7 @@ List available tools
 
     Long display: shows extra metadata associated with each tool variant.
     This metadata is displayed in a table, and includes versions and release dates
-    for each tool. If your terminal is wider than 95 characters, `aqt list-tool`
+    for each tool. If your terminal is wider than 95 characters, ``aqt list-tool``
     will also display the names and descriptions for each tool. An example of this
     output is displayed below.
 
@@ -159,24 +169,38 @@ Qt Installation command
 
 .. code-block:: bash
 
-    aqt install-qt <target OS> <target variant> <Qt version> [<target architecture>]
+    aqt install-qt
+        [-h | --help]
+        [-O | --outputdir <directory>]
+        [-b | --base <mirror url>]
+        [--timeout <timeout(sec)>]
+        [-E | --external <7zip command>]
+        [--internal]
+        [-k | --keep]
+        [-m | --modules (all | <module> [<module>...])]
+        [--archives <archive> [<archive>...]]
+        [--noarchives]
+        <host> <target> <Qt version> [<arch>]
 
 install Qt library specified version and target.
 There are various combinations to accept according to Qt version.
 
-.. describe:: target OS
+.. describe:: host
 
-    linux, windows or mac
+    linux, windows or mac. The operating system on which the Qt development tools will run.
 
-.. describe:: target variant
+.. describe:: target
 
-    desktop, ios or android
+    desktop, ios, winrt, or android. The type of device for which you are developing Qt programs.
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9,7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc.
+    Use the :ref:`List Qt Command` to list available versions.
 
-.. describe:: target architecture
+.. describe:: arch
+
+   The compiler architecture for which you are developing. Options:
 
    * gcc_64 for linux desktop
 
@@ -186,9 +210,7 @@ There are various combinations to accept according to Qt version.
 
    * android_armv7, android_arm64_v8a, android_x86, android_x86_64 for android
 
-.. option:: --version, -v
-
-    Display version
+    Use the :ref:`List Qt Command` to list available architectures.
 
 .. option:: --help, -h
 
@@ -197,19 +219,47 @@ There are various combinations to accept according to Qt version.
 .. option:: --outputdir, -O <Output Directory>
 
     specify output directory.
+    By default, aqt installs to the current working directory.
 
 .. option:: --base, -b <base url>
 
     specify mirror site base url such as  -b 'https://mirrors.ocf.berkeley.edu/qt/'
     where 'online' folder exist.
 
-.. option:: --modules, -m <list of modules>
+.. option:: --timeout <timeout(sec)>
+
+    the connection timeout, in seconds, for the download site. (default: 5 sec)
+
+.. option:: --external, -E <7zip command>
+
+    Specify external 7zip command path. By default, aqt uses py7zr_ for this task.
+
+.. _py7zr: https://pypi.org/project/py7zr/
+
+.. option:: --internal
+
+    Use the internal extractor, py7zr_
+
+.. option:: --keep, -k
+
+    Keep downloaded archive when specified, otherwise remove after install
+
+.. option:: --modules, -m (<list of modules> | all)
 
     specify extra modules to install as a list.
+    Use the :ref:`List Qt Command` to list available modules.
 
 .. code-block::
 
     -m qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript qtvirtualkeyboard qtwebglplugin
+
+
+If you wish to install every module available, you may use the ``all`` keyword
+instead of a list of modules, like this:
+
+.. code-block:: bash
+
+    aqt install-qt <host> <target> <Qt version> <arch> -m all
 
 
 .. option:: --archives <list of archives>
@@ -222,68 +272,68 @@ There are various combinations to accept according to Qt version.
 .. option:: --noarchives
 
     [Advanced] Specify not to install all base packages.
-    This is advanced option and you should use with --modules option.
+    This is advanced option and you should use it with ``--modules`` option.
     This allow you to add modules to existent Qt installation.
 
 
-Source installation command
----------------------------
+Source code installation command
+--------------------------------
 
 .. program::  install-src
 
 .. code-block:: bash
 
-    aqt install-src <target OS> <target variant> <Qt version> [--kde] [--archives <archive>]
+    aqt install-src <host> <target> <Qt version> [--kde] [--archives <archive>]
 
-install Qt sources specified version and target.
+install Qt source code for the specified version and target.
 
 
-.. describe:: target OS
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant
+.. describe:: target
 
     desktop, ios or android
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9,7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc
 
 .. option:: --kde
 
-    by adding --kde option,
+    by adding ``--kde`` option,
     KDE patch collection is applied for qtbase tree. It is only applied to
     Qt 5.15.2. When specified version is other than it, command will abort
-    with error when using --kde.
+    with error when using ``--kde``.
 
 .. option:: --archives
 
-    You can specify --archives option to install only a specified source
+    You can specify ``--archives`` option to install only a specified source
     such as qtbase.
 
-Document installation command
------------------------------
+Documentation installation command
+----------------------------------
 
 .. program:: install-doc
 
 .. code-block:: bash
 
-    aqt install-doc <target OS> <target variant> <Qt version>
+    aqt install-doc <host> <target> <Qt version>
 
-install Qt documents specified version and target.
+install Qt documentation for the specified version and target.
 
-.. describe:: target OS
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant
+.. describe:: target
 
     desktop, ios or android
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9,7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc
 
 
 Example installation command
@@ -293,22 +343,22 @@ Example installation command
 
 .. code-block:: bash
 
-    aqt install-example <target OS> <target variant> <Qt version>
+    aqt install-example <host> <target> <Qt version>
 
-install Qt examples specified version and target.
+install Qt examples for the specified version and target.
 
 
-.. describe:: target OS
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant
+.. describe:: target
 
     desktop, ios or android
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9,7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc
 
 
 .. _tools installation command:
@@ -320,13 +370,13 @@ Tools installation command
 
 .. code-block:: bash
 
-    aqt install-tool <target OS> <target variant> <tool name> [<tool variant name>]
+    aqt install-tool <host> <target> <tool name> [<tool variant name>]
 
-.. describe:: target OS
+.. describe:: host
 
     linux, windows or mac
 
-.. describe:: target variant
+.. describe:: target
 
     desktop, ios or android
 
@@ -342,6 +392,15 @@ Tools installation command
 
 You should use the :ref:`List Tool command` to display what tools and tool variant names are available.
     
+
+Legacy subcommands
+------------------
+
+The subcommands ``install``, ``tool``, ``src``, ``doc``, and ``examples`` have
+been deprecated in favor of the newer ``install-*`` commands, but they remain
+in aqt in case you still need to use them. Documentation for these older
+commands is still available at https://aqtinstall.readthedocs.io/en/v1.2.4/
+
 
 Command examples
 ================

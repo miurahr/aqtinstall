@@ -17,7 +17,17 @@ it if you are having trouble!
 Installing Qt
 -------------
 
-To install Qt, you will need to tell ``aqt`` four things:
+General usage of ``aqt`` looks like this:
+
+.. code-block:: bash
+
+    aqt install-qt <host> <target> <Qt version> [<arch>]
+
+If you have installed ``aqt`` with pip, you can run it with the command script ``aqt``,
+but in some cases you may need to run it as ``python -m aqt``.
+Some older operating systems may require you to specify Python version 3, like this: ``python3 -m aqt``.
+
+To use ``aqt`` to install Qt, you will need to tell ``aqt`` four things:
 
 1. The host operating system (windows, mac, or linux)
 2. The target SDK (desktop, android, ios, or winrt)
@@ -51,8 +61,10 @@ that consume the output of :ref:`aqt list-qt <list qt command>`.
 
 Because the :ref:`aqt list-qt <list qt command>` command directly queries the Qt downloads repository
 at https://download.qt.io/, the results of this command will always be accurate.
-The :ref:`Available Qt versions` page of this documentation was written at some
-point in the past, so it may or may not be up to date.
+The `Available Qt versions`_ wiki page was last modified at some point in the past,
+so it may or may not be up to date.
+
+.. _Available Qt versions: https://github.com/miurahr/aqtinstall/wiki/Available-Qt-versions
 
 Now that we know what versions of Qt are available, let's choose version 6.2.0.
 
@@ -66,8 +78,8 @@ Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list qt 
     win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64
 
 Notice that this is a very small subset of the architectures listed in the 
-:ref:`Available Qt versions` page. If we need to use some architecture that
-is not on this list, we can use the :ref:`Available Qt versions` page to get
+`Available Qt versions`_ wiki page. If we need to use some architecture that
+is not on this list, we can use the `Available Qt versions`_ wiki page to get
 a rough idea of what versions support the architecture we want, and then use
 :ref:`aqt list-qt <list qt command>` to confirm that the architecture is available.
 
@@ -77,6 +89,50 @@ The installation command we need is:
 .. code-block:: console
 
     $ aqt install-qt windows desktop 6.2.0 win64_mingw81
+
+External 7-zip extractor
+------------------------
+
+By default, ``aqt`` extracts the 7zip archives stored in the Qt repository using
+py7zr_, which is installed alongside ``aqt``. You can specify an alternate 7zip
+command path instead by using the ``-E`` or ``--external`` flag. For example,
+you could use 7-zip_ on a Windows desktop, using this command:
+
+.. code-block:: doscon
+
+    C:\> aqt install-qt windows desktop 6.2.0 gcc_64 --external 7za.exe
+
+On Linux, you can specify p7zip_, a Linux port of 7-zip_, which is often
+installed by default, using this command:
+
+.. code-block:: console
+
+    $ aqt install-qt linux desktop 6.2.0 gcc_64 --external 7z
+
+.. _py7zr: https://pypi.org/project/py7zr/
+.. _p7zip: http://p7zip.sourceforge.net/
+.. _7-zip: https://www.7-zip.org/
+
+Changing the output directory
+-----------------------------
+
+By default, ``aqt`` will install all of the Qt packages into the current
+working directory, in the subdirectory ``./<Qt version>/<arch>/``.
+For example, if we install Qt 6.2.0 for Windows desktop with arch `win64_mingw81`,
+it would end up in ``./6.2.0/win64_mingw81``.
+
+If you would prefer to install it to another location, you
+will need to use the ``-O`` or ``--outputdir`` flag.
+This option also works for all of the other subcommands that begin with
+``aqt install-``.
+
+To install to ``C:\Qt``, the default directory used by the standard gui installer,
+you may use this command:
+
+.. code-block:: doscon
+
+    C:\> mkdir Qt
+    C:\> aqt install-qt --outputdir c:\Qt windows desktop 6.2.0 win64_mingw81
 
 
 Installing Modules
@@ -102,9 +158,15 @@ This flag receives the name of at least one module as an argument:
 
     $ aqt install-qt windows desktop 5.15.2 win64_mingw81 -m qtcharts qtnetworkauth
 
-Remember that the :ref:`aqt list-qt <list qt command>` command is meant to be scriptable? If you want
-to install all modules available for Qt 5.15.2, we can do so by sending the
-output of :ref:`aqt list-qt <list qt command>` into :ref:`aqt install-qt <qt installation command>`, like this:
+If we wish to install all the modules that are available, we can do that with the ``all`` keyword:
+
+.. code-block:: console
+
+    $ aqt install-qt windows desktop 5.15.2 win64_mingw81 -m all
+
+Remember that the :ref:`aqt list-qt <list qt command>` command is meant to be scriptable?
+One way to install all modules available for Qt 5.15.2 is to send the output of
+:ref:`aqt list-qt <list qt command>` into :ref:`aqt install-qt <qt installation command>`, like this:
 
 .. code-block:: console
 
@@ -113,6 +175,14 @@ output of :ref:`aqt list-qt <list qt command>` into :ref:`aqt install-qt <qt ins
 
 You will need a Unix-style shell to run this command, or at least git-bash on Windows.
 The ``xargs`` equivalent to this command is an exercise left to the reader.
+
+If you want to install all available modules, you are probably better off using
+the ``all`` keyword, as discussed above. This scripting example is presented to
+give you a sense of how to accomplish something more complicated.
+Perhaps you want to install all modules except `qtnetworkauth`; you could write a script
+that removes `qtnetworkauth` from the output of :ref:`aqt list-qt <list qt command>`,
+and pipe that into :ref:`aqt install-qt <qt installation command>`.
+This exercise is left to the reader.
 
 Let's try to install `qtcharts` and `qtnetworkauth` for Qt 6.1.2 as well. 
 Before we do this, let's run :ref:`aqt list-qt <list qt command>`:
@@ -318,7 +388,7 @@ This command receives four parameters:
 2. The target SDK (desktop, android, ios, or winrt)
 3. The name of the tool (this is `tools_mingw` in our case)
 4. (Optional) The tool variant name. We saw a list of these when we ran
-   :ref:`aqt list-tool <list tool command>` with the ``-l`` flag.
+   :ref:`aqt list-tool <list tool command>` with the `tool name` argument filled in.
 
 To install `mingw`, you could use this command (please don't):
 
@@ -331,12 +401,17 @@ in this case, you would install 10 different versions of the same tool.
 For some tools, like `qtcreator` or `ifw`, this is an appropriate thing to do,
 since each tool variant is a different program.
 However, for tools like `mingw` and `vcredist`, it would make more sense to use
-:ref:`aqt list-tool <list tool command>` to see what tool variants are available, and then install just
-the tool variant you are interested in, like this:
+:ref:`aqt list-tool <list tool command>` to see what tool variants are available,
+and then install just the tool variant you are interested in, like this:
 
 .. code-block:: console
 
     $ aqt install-tool windows desktop tools_mingw qt.tools.win64_mingw730
 
 
+Please note that ``aqt install-tool`` does not recognize the ``installscript.qs``
+related to each tool. When you install these tools with the standard gui installer,
+the installer may use the ``installscript.qs`` script to make additional changes
+to your system. If you need those changes to occur, it will be your responsibility
+to make those changes happen, because ``aqt`` is not capable of running this script.
 
