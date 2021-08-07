@@ -26,10 +26,15 @@ show generic help
 display version
 
 
+List-* Commands
+---------------
+
+These commands are used to list the packages available for installation with ``aqt``.
+
 .. _list qt command:
 
-List Qt command
-------------------
+list-qt command
+~~~~~~~~~~~~~~~
 
 .. program::  list-qt
 
@@ -108,8 +113,8 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 
 .. _list tool command:
 
-List Tool command
------------------
+list-tool command
+~~~~~~~~~~~~~~~~~
 
 .. program::  list-tool
 
@@ -150,7 +155,7 @@ List available tools
     will also display the names and descriptions for each tool. An example of this
     output is displayed below.
 
-.. code-block:: bash
+.. code-block:: console
 
     $ python -m aqt list-tool windows desktop tools_conan
 
@@ -160,10 +165,90 @@ List available tools
     qt.tools.conan.cmake   0.16.0-202102101246   2021-02-10     Conan conan.cmake   Conan conan.cmake (0.16.0)
 
 
+Install-* Commands
+------------------
+
+These commands are used to install Qt, tools, source, docs, and examples.
+
+
+.. _common options:
+
+Common Options
+~~~~~~~~~~~~~~
+
+Most of these commands share the same command line options, and these options
+are described here:
+
+
+.. option:: --help, -h
+
+    Display help text
+
+.. option:: --outputdir, -O <Output Directory>
+
+    Specify output directory.
+    By default, aqt installs to the current working directory.
+
+.. option:: --base, -b <base url>
+
+    Specify mirror site base url such as  -b 'https://mirrors.ocf.berkeley.edu/qt/'
+    where 'online' folder exist.
+
+.. option:: --timeout <timeout(sec)>
+
+    The connection timeout, in seconds, for the download site. (default: 5 sec)
+
+.. option:: --external, -E <7zip command>
+
+    Specify external 7zip command path. By default, aqt uses py7zr_ for this task.
+
+.. _py7zr: https://pypi.org/project/py7zr/
+
+.. option:: --internal
+
+    Use the internal extractor, py7zr_
+
+.. option:: --keep, -k
+
+    Keep downloaded archive when specified, otherwise remove after install
+
+.. option:: --modules, -m (<list of modules> | all)
+
+    Specify extra modules to install as a list.
+    Use the :ref:`List Qt Command` to list available modules.
+
+    This option is applicable to all the ``install-*`` commands except for ``install-tool``.
+
+    You can install multiple modules like this:
+
+    .. code-block:: console
+
+        $ aqt install-* <host> <target> <Qt version> -m qtcharts qtdatavis3d qtlottie qtnetworkauth \
+            qtpurchasing qtquicktimeline qtscript qtvirtualkeyboard qtwebglplugin
+
+
+    If you wish to install every module available, you may use the ``all`` keyword
+    instead of a list of modules, like this:
+
+    .. code-block:: bash
+
+        aqt install-* <host> <target> <Qt version> <arch> -m all
+
+
+.. option:: --archives <list of archives>
+
+    [Advanced] Specify subset of archives to **limit** installed archives.
+    This is advanced option and not recommended to use for general usage.
+    Main purpose is speed up CI/CD process by limiting installed modules.
+    It can cause broken installation of Qt SDK.
+
+    This option is applicable to all the ``install-*`` commands except for ``install-tool``.
+
+
 .. _qt installation command:
 
-Qt Installation command
------------------------
+install-qt command
+~~~~~~~~~~~~~~~~~~
 
 .. program:: install-qt
 
@@ -182,7 +267,7 @@ Qt Installation command
         [--noarchives]
         <host> <target> <Qt version> [<arch>]
 
-install Qt library specified version and target.
+Install Qt library, with specified version and target.
 There are various combinations to accept according to Qt version.
 
 .. describe:: host
@@ -212,80 +297,36 @@ There are various combinations to accept according to Qt version.
 
     Use the :ref:`List Qt Command` to list available architectures.
 
-.. option:: --help, -h
-
-    Display help text
-
-.. option:: --outputdir, -O <Output Directory>
-
-    specify output directory.
-    By default, aqt installs to the current working directory.
-
-.. option:: --base, -b <base url>
-
-    specify mirror site base url such as  -b 'https://mirrors.ocf.berkeley.edu/qt/'
-    where 'online' folder exist.
-
-.. option:: --timeout <timeout(sec)>
-
-    the connection timeout, in seconds, for the download site. (default: 5 sec)
-
-.. option:: --external, -E <7zip command>
-
-    Specify external 7zip command path. By default, aqt uses py7zr_ for this task.
-
-.. _py7zr: https://pypi.org/project/py7zr/
-
-.. option:: --internal
-
-    Use the internal extractor, py7zr_
-
-.. option:: --keep, -k
-
-    Keep downloaded archive when specified, otherwise remove after install
-
-.. option:: --modules, -m (<list of modules> | all)
-
-    specify extra modules to install as a list.
-    Use the :ref:`List Qt Command` to list available modules.
-
-.. code-block::
-
-    -m qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript qtvirtualkeyboard qtwebglplugin
-
-
-If you wish to install every module available, you may use the ``all`` keyword
-instead of a list of modules, like this:
-
-.. code-block:: bash
-
-    aqt install-qt <host> <target> <Qt version> <arch> -m all
-
-
-.. option:: --archives <list of archives>
-
-    [Advanced] Specify subset of archives to **limit** installed archives.
-    This is advanced option and not recommended to use for general usage.
-    Main purpose is speed up CI/CD process by limiting installed modules.
-    It can cause broken installation of Qt SDK.
-
 .. option:: --noarchives
 
     [Advanced] Specify not to install all base packages.
     This is advanced option and you should use it with ``--modules`` option.
     This allow you to add modules to existent Qt installation.
 
+See `common options`_.
 
-Source code installation command
---------------------------------
+
+install-src command
+~~~~~~~~~~~~~~~~~~~
 
 .. program::  install-src
 
 .. code-block:: bash
 
-    aqt install-src <host> <target> <Qt version> [--kde] [--archives <archive>]
+    aqt install-src
+        [-h | --help]
+        [-O | --outputdir <directory>]
+        [-b | --base <mirror url>]
+        [--timeout <timeout(sec)>]
+        [-E | --external <7zip command>]
+        [--internal]
+        [-k | --keep]
+        [-m | --modules (all | <module> [<module>...])]
+        [--archives <archive> [<archive>...]]
+        [--kde]
+        <host> <target> <Qt version>
 
-install Qt source code for the specified version and target.
+Install Qt source code for the specified version and target.
 
 
 .. describe:: host
@@ -307,21 +348,29 @@ install Qt source code for the specified version and target.
     Qt 5.15.2. When specified version is other than it, command will abort
     with error when using ``--kde``.
 
-.. option:: --archives
+See `common options`_.
 
-    You can specify ``--archives`` option to install only a specified source
-    such as qtbase.
 
-Documentation installation command
-----------------------------------
+install-doc command
+~~~~~~~~~~~~~~~~~~~
 
 .. program:: install-doc
 
 .. code-block:: bash
 
-    aqt install-doc <host> <target> <Qt version>
+    aqt install-doc
+        [-h | --help]
+        [-O | --outputdir <directory>]
+        [-b | --base <mirror url>]
+        [--timeout <timeout(sec)>]
+        [-E | --external <7zip command>]
+        [--internal]
+        [-k | --keep]
+        [-m | --modules (all | <module> [<module>...])]
+        [--archives <archive> [<archive>...]]
+        <host> <target> <Qt version>
 
-install Qt documentation for the specified version and target.
+Install Qt documentation for the specified version and target.
 
 .. describe:: host
 
@@ -335,17 +384,29 @@ install Qt documentation for the specified version and target.
 
     This is a Qt version such as 5.9.7, 5.12.1 etc
 
+See `common options`_.
 
-Example installation command
-----------------------------
+
+install-example command
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. program:: install-example
 
 .. code-block:: bash
 
-    aqt install-example <host> <target> <Qt version>
+    aqt install-example
+        [-h | --help]
+        [-O | --outputdir <directory>]
+        [-b | --base <mirror url>]
+        [--timeout <timeout(sec)>]
+        [-E | --external <7zip command>]
+        [--internal]
+        [-k | --keep]
+        [-m | --modules (all | <module> [<module>...])]
+        [--archives <archive> [<archive>...]]
+        <host> <target> <Qt version>
 
-install Qt examples for the specified version and target.
+Install Qt examples for the specified version and target.
 
 
 .. describe:: host
@@ -361,16 +422,29 @@ install Qt examples for the specified version and target.
     This is a Qt version such as 5.9.7, 5.12.1 etc
 
 
+See `common options`_.
+
+
 .. _tools installation command:
 
-Tools installation command
----------------------------
+install-tool command
+~~~~~~~~~~~~~~~~~~~~
 
 .. program::  install-tool
 
 .. code-block:: bash
 
-    aqt install-tool <host> <target> <tool name> [<tool variant name>]
+    aqt install-tool
+        [-h | --help]
+        [-O | --outputdir <directory>]
+        [-b | --base <mirror url>]
+        [--timeout <timeout(sec)>]
+        [-E | --external <7zip command>]
+        [--internal]
+        [-k | --keep]
+        <host> <target> <tool name> [<tool variant name>]
+
+Install tools like QtIFW, mingw, Cmake, Conan, and vcredist.
 
 .. describe:: host
 
@@ -392,6 +466,9 @@ Tools installation command
 
 You should use the :ref:`List Tool command` to display what tools and tool variant names are available.
     
+
+See `common options`_.
+
 
 Legacy subcommands
 ------------------
