@@ -21,14 +21,6 @@ exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", 
 line-length = 125
 target-version = ['py38']
 
-# flake8 does not support pyproject.toml as in Aug., 2021
-# now it is not effective.
-# Current live config is in setup.cfg
-[tool.flake8]
-max-line-length = 125
-extend-ignore = "E203, W50"
-exclude = [".git", "__pycache__", "docs/conf.py", "build", "dist", "tmp", "venv"]
-
 [tool.isort]
 line_length = 125
 known_first_party = "aqt"
@@ -38,3 +30,46 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = check, docs, py36, py37, py38
+
+[testenv]
+passenv =
+    GITHUB_*
+    APPVEYOR APPVEYOR_*
+    TRAVIS TRAVIS_*
+    COVERALLS_*
+    PYTEST_ADDOPTS
+extras = test, check, docs
+commands =
+    python -m pytest -vv
+
+[testenv:check]
+basepython = python3.8
+extras = check
+commands =
+    check-manifest {toxinidir}
+    flake8 aqt tests setup.py
+
+[testenv:docs]
+basepython = python3.8
+extras = docs
+commands =
+    sphinx-build {posargs:-E} -W -b html docs build/docs
+    sphinx-build -W -b linkcheck docs build/docs
+
+[testenv:coveralls]
+deps =
+    coveralls
+skip_install = true
+commands =
+    coveralls []
+
+[gh-actions]
+python =
+    3.6: py36
+    3.8: py38, docs, check
+"""
