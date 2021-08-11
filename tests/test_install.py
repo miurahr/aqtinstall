@@ -86,7 +86,7 @@ def make_mock_geturl_download_archive(
 
     def mock_getUrl(url: str, *args) -> str:
         if url.endswith(updates_url):
-            qt_major_nodot = f"qt{qt_version[0]}.{qt_version.replace('.', '')}"
+            qt_major_nodot = "59" if qt_version == "5.9.0" else f"qt{qt_version[0]}.{qt_version.replace('.', '')}"
             _xml = textwrap.dedent(
                 f"""\
                 <Updates>
@@ -174,6 +174,66 @@ def disable_sockets_and_multiprocessing(monkeypatch):
                 r"In the future, please use the command 'install-qt' instead.\n"
                 r"Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win32_mingw73.7z in .*\n"
+                r"Finished installation\n"
+                r"Time elapsed: .* second"
+            ),
+        ),
+        (
+            "install 5.9.0 windows desktop win32_mingw53".split(),
+            "windows",
+            "desktop",
+            "5.9.0",
+            "win32_mingw53",
+            "mingw53_32",
+            "windows_x86/desktop/qt5_59/Updates.xml",
+            (
+                {
+                    FILENAME: "mkspecs/qconfig.pri",
+                    UNPATCHED_CONTENT: "... blah blah blah ...\n"
+                    "QT_EDITION = Not OpenSource\n"
+                    "QT_LICHECK = Not Empty\n"
+                    "... blah blah blah ...\n",
+                    PATCHED_CONTENT: "... blah blah blah ...\n"
+                    "QT_EDITION = OpenSource\n"
+                    "QT_LICHECK =\n"
+                    "... blah blah blah ...\n",
+                },
+            ),
+            re.compile(
+                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"Warning: The command 'install' is deprecated and marked for removal in a future version of aqt.\n"
+                r"In the future, please use the command 'install-qt' instead.\n"
+                r"Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win32_mingw53.7z in .*\n"
+                r"Finished installation\n"
+                r"Time elapsed: .* second"
+            ),
+        ),
+        (
+            "install-qt windows desktop 5.9.0 win32_mingw53".split(),
+            "windows",
+            "desktop",
+            "5.9.0",
+            "win32_mingw53",
+            "mingw53_32",
+            "windows_x86/desktop/qt5_59/Updates.xml",
+            (
+                {
+                    FILENAME: "mkspecs/qconfig.pri",
+                    UNPATCHED_CONTENT: "... blah blah blah ...\n"
+                    "QT_EDITION = Not OpenSource\n"
+                    "QT_LICHECK = Not Empty\n"
+                    "... blah blah blah ...\n",
+                    PATCHED_CONTENT: "... blah blah blah ...\n"
+                    "QT_EDITION = OpenSource\n"
+                    "QT_LICHECK =\n"
+                    "... blah blah blah ...\n",
+                },
+            ),
+            re.compile(
+                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win32_mingw53.7z in .*\n"
                 r"Finished installation\n"
                 r"Time elapsed: .* second"
             ),
