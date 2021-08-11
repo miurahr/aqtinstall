@@ -122,7 +122,8 @@ def make_mock_geturl_download_archive(
                     full_path.parent.mkdir(parents=True)
                 full_path.write_text(file[UNPATCHED_CONTENT], "utf_8")
 
-            archive.writeall(path=temp_path, arcname=qt_version)
+            archive_name = "5.9" if qt_version == "5.9.0" else qt_version
+            archive.writeall(path=temp_path, arcname=archive_name)
 
     return mock_getUrl, mock_download_archive
 
@@ -349,6 +350,8 @@ def test_install(
         assert expect_out.match(err)
 
         installed_path = Path(output_dir) / version / arch_dir
+        if version == "5.9.0":
+            installed_path = Path(output_dir) / "5.9" / arch_dir
         assert installed_path.is_dir()
         for patched_file in files:
             file_path = installed_path / patched_file[FILENAME]
