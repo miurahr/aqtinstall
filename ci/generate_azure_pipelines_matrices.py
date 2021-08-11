@@ -39,6 +39,14 @@ class BuildJob:
         self.subarchives = subarchives
         self.output_dir = output_dir
 
+    def qt_bindir(self, *, sep='/') -> str:
+        out_dir = f"$(Build.BinariesDirectory){sep}Qt" if not self.output_dir else self.output_dir
+        version_dir = "5.9" if self.qt_version == "5.9.0" else self.qt_version
+        return f"{out_dir}{sep}{version_dir}{sep}{self.archdir}{sep}bin"
+
+    def win_qt_bindir(self) -> str:
+        return self.qt_bindir(sep='\\')
+
 
 class PlatformBuildJobs:
     def __init__(self, platform, build_jobs):
@@ -263,24 +271,8 @@ for platform_build_job in all_platform_build_jobs:
                 ("QT_BASE_MIRROR", build_job.mirror if build_job.mirror else ""),
                 ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else ""),
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
-                (
-                    "QT_BINDIR",
-                    "{0}/{1.qt_version}/{1.archdir}/bin".format(
-                        "$(Build.BinariesDirectory)/Qt"
-                        if not build_job.output_dir
-                        else build_job.output_dir,
-                        build_job,
-                    ),
-                ),
-                (
-                    "WIN_QT_BINDIR",
-                    "{0}\\{1.qt_version}\\{1.archdir}\\bin".format(
-                        "$(Build.BinariesDirectory)\\Qt"
-                        if not build_job.output_dir
-                        else build_job.output_dir,
-                        build_job,
-                    ),
-                ),
+                ("QT_BINDIR", build_job.qt_bindir()),
+                ("WIN_QT_BINDIR", build_job.win_qt_bindir()),
             ]
         )
 
