@@ -44,6 +44,14 @@ class BuildJob:
         self.spec = spec
         self.output_dir = output_dir
 
+    def qt_bindir(self, *, sep='/') -> str:
+        out_dir = f"$(Build.BinariesDirectory){sep}Qt" if not self.output_dir else self.output_dir
+        version_dir = "5.9" if self.qt_version == "5.9.0" else self.qt_version
+        return f"{out_dir}{sep}{version_dir}{sep}{self.archdir}{sep}bin"
+
+    def win_qt_bindir(self) -> str:
+        return self.qt_bindir(sep='\\')
+
 
 class PlatformBuildJobs:
     def __init__(self, platform, build_jobs):
@@ -127,6 +135,16 @@ windows_build_jobs.extend(
             "desktop",
             "win64_msvc2019_64",
             "msvc2019_64",
+            module="qtcharts qtnetworkauth",
+            mirror=random.choice(MIRRORS),
+        ),
+        BuildJob(
+            "install-qt",
+            "5.9.0",
+            "windows",
+            "desktop",
+            "win64_msvc2017_64",
+            "msvc2017_64",
             module="qtcharts qtnetworkauth",
             mirror=random.choice(MIRRORS),
         ),
@@ -281,24 +299,8 @@ for platform_build_job in all_platform_build_jobs:
                 ("HAS_EXTENSIONS", build_job.list_options.get("HAS_EXTENSIONS", "False")),
                 ("USE_EXTENSION", build_job.list_options.get("USE_EXTENSION", "None")),
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
-                (
-                    "QT_BINDIR",
-                    "{0}/{1.qt_version}/{1.archdir}/bin".format(
-                        "$(Build.BinariesDirectory)/Qt"
-                        if not build_job.output_dir
-                        else build_job.output_dir,
-                        build_job,
-                    ),
-                ),
-                (
-                    "WIN_QT_BINDIR",
-                    "{0}\\{1.qt_version}\\{1.archdir}\\bin".format(
-                        "$(Build.BinariesDirectory)\\Qt"
-                        if not build_job.output_dir
-                        else build_job.output_dir,
-                        build_job,
-                    ),
-                ),
+                ("QT_BINDIR", build_job.qt_bindir()),
+                ("WIN_QT_BINDIR", build_job.win_qt_bindir()),
             ]
         )
 

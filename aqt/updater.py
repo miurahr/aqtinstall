@@ -258,6 +258,7 @@ class Updater:
         arch = target.arch
         version = Version(target.version)
         os_name = target.os_name
+        version_dir = "5.9" if version == Version("5.9.0") else target.version
         if arch is None:
             arch_dir = ""
         elif arch.startswith("win64_mingw"):
@@ -276,9 +277,9 @@ class Updater:
         else:
             arch_dir = arch
         try:
-            prefix = pathlib.Path(base_dir) / target.version / arch_dir
+            prefix = pathlib.Path(base_dir) / version_dir / arch_dir
             updater = Updater(prefix, logger)
-            updater.set_license(base_dir, target.version, arch_dir)
+            updater.set_license(base_dir, version_dir, arch_dir)
             if target.arch not in [
                 "ios",
                 "android",
@@ -288,7 +289,7 @@ class Updater:
                 "android_x86",
                 "android_armv7",
             ]:  # desktop version
-                updater.make_qtconf(base_dir, target.version, arch_dir)
+                updater.make_qtconf(base_dir, version_dir, arch_dir)
                 updater.patch_qmake()
                 if target.os_name == "linux":
                     updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
@@ -297,14 +298,14 @@ class Updater:
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
                 elif target.os_name == "windows":
-                    updater.make_qtenv2(base_dir, target.version, arch_dir)
-                if Version(target.version) < Version("5.14.0"):
+                    updater.make_qtenv2(base_dir, version_dir, arch_dir)
+                if version < Version("5.14.0"):
                     updater.patch_qtcore(target)
-            elif Version(target.version) in SimpleSpec(">=5.0,<6.0"):
+            elif version in SimpleSpec(">=5.0,<6.0"):
                 updater.patch_qmake()
             else:  # qt6 non-desktop
-                updater.patch_qmake_script(base_dir, target.version, target.os_name)
-                updater.patch_target_qt_conf(base_dir, target.version, arch_dir, target.os_name)
+                updater.patch_qmake_script(base_dir, version_dir, target.os_name)
+                updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name)
         except IOError as e:
             raise e
 
