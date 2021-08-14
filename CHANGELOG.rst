@@ -7,6 +7,15 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+
+`v1.2.5`_ (14, Jul. 2021)
+=============-===========
+
+Fixed
+-----
+* Handle Qt 5.9 installation special case(#363,#365)
+
+
 `v1.2.4`_ (17, Jul. 2021)
 =============-===========
 
@@ -192,7 +201,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.4...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.5...HEAD
+.. _v1.2.5: https://github.com/miurahr/aqtinstall/compare/v1.2.4...v1.2.5
 .. _v1.2.4: https://github.com/miurahr/aqtinstall/compare/v1.2.3...v1.2.4
 .. _v1.2.3: https://github.com/miurahr/aqtinstall/compare/v1.2.2...v1.2.3
 .. _v1.2.2: https://github.com/miurahr/aqtinstall/compare/v1.2.1...v1.2.2
