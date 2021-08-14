@@ -134,7 +134,7 @@ windows_build_jobs.extend(
             mirror=random.choice(MIRRORS),
         ),
         BuildJob(
-            "install-qt",
+            "install",
             "5.9.0",
             "windows",
             "desktop",
