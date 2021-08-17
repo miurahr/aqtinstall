@@ -1,0 +1,34 @@
+{
+  "modules": [
+    "debug_info",
+    "qt3d",
+    "qt5compat",
+    "qtactiveqt",
+    "qtcharts",
+    "qtconnectivity",
+    "qtdatavis3d",
+    "qtimageformats",
+    "qtlottie",
+    "qtmultimedia",
+    "qtnetworkauth",
+    "qtpositioning",
+    "qtquick3d",
+    "qtquicktimeline",
+    "qtremoteobjects",
+    "qtscxml",
+    "qtsensors",
+    "qtserialbus",
+    "qtserialport",
+    "qtshadertools",
+    "qtvirtualkeyboard",
+    "qtwebchannel",
+    "qtwebengine",
+    "qtwebsockets",
+    "qtwebview"
+  ],
+  "architectures": [
+    "win64_mingw81",
+    "win64_msvc2019_64",
+    "win64_msvc2019_arm64"
+  ]
+}
