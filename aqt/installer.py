@@ -96,32 +96,6 @@ class Cli:
         return False
 
     def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
-        if os_name == "windows" and target == "desktop":
-            major_minor = qt_version[: qt_version.rfind(".")]
-            # check frequent mistakes
-            if major_minor in ["5.15", "6.0", "6.1"]:
-                if arch in [
-                    "win64_msvc2017_64",
-                    "win32_msvc2017",
-                    "win64_mingw73",
-                    "win32_mingw73",
-                ]:
-                    return False
-            elif major_minor in ["5.9", "5.10", "5.11"]:
-                if arch in [
-                    "win64_mingw73",
-                    "win32_mingw73",
-                    "win64_mingw81",
-                    "win32_mingw81",
-                ]:
-                    return False
-            elif arch in [
-                "win64_msvc2019_64",
-                "win32_msvc2019",
-                "win64_mingw81",
-                "win32_mingw81",
-            ]:
-                return False
         for c in Settings.qt_combinations:
             if c["os_name"] == os_name and c["target"] == target and c["arch"] == arch:
                 return True
