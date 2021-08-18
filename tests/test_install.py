@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import textwrap
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -10,7 +11,6 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import py7zr
 import pytest
-from dataclasses import dataclass
 from pytest_socket import disable_socket
 
 from aqt.installer import Cli
