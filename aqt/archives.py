@@ -90,7 +90,7 @@ class QtArchives:
         self.all_extra: bool = all_extra
         self.arch_list: List[str] = [item.get("arch") for item in Settings.qt_combinations]
         all_archives = subarchives is None
-        self.base = base + "/online/qtsdkrepository/"
+        self.base: str = posixpath.join(base, "online/qtsdkrepository")
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
         self.mod_list: List[str] = []
@@ -137,8 +137,8 @@ class QtArchives:
             self._version_str(),
             arch_ext,
         )
-        update_xml_url = "{0}{1}Updates.xml".format(self.base, archive_path)
-        archive_url = "{0}{1}".format(self.base, archive_path)
+        update_xml_url = posixpath.join(self.base, archive_path, "Updates.xml")
+        archive_url = posixpath.join(self.base, archive_path)
         target_packages = []
         target_packages.append(
             "qt.qt{0}.{1}.{2}".format(
