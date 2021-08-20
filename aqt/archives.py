@@ -49,6 +49,7 @@ class QtPackage:
     archive: str
     package_desc: str
     hashurl: str
+    pkg_update_name: str
     version: Optional[Version] = field(default=None)
 
     def __repr__(self):
@@ -199,6 +200,7 @@ class QtArchives:
                                 archive=archive,
                                 package_desc=package_desc,
                                 hashurl=hashurl,
+                                pkg_update_name=name,  # For testing purposes
                             )
                         )
         if len(self.archives) == 0:
@@ -375,6 +377,7 @@ class ToolArchives(QtArchives):
                         archive=archive,
                         package_desc=package_desc,
                         hashurl=hashurl,
+                        pkg_update_name=name,  # Redundant
                     )
                 )
 
