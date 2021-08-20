@@ -6,6 +6,11 @@ from aqt.archives import QtArchives
 from aqt.helper import Settings
 
 
+@pytest.fixture(autouse=True)
+def setup():
+    Settings.load_settings(os.path.join(os.path.dirname(__file__), "data", "settings.ini"))
+
+
 @pytest.mark.parametrize(
     "os_name,version,target,datafile",
     [("windows", "5.15.2", "doc", "windows-5152-src-doc-example-update.xml")],
