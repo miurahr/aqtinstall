@@ -24,7 +24,7 @@ import posixpath
 import xml.etree.ElementTree as ElementTree
 from dataclasses import dataclass, field
 from logging import getLogger
-from typing import List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl
@@ -73,30 +73,28 @@ class QtArchives:
 
     def __init__(
         self,
-        os_name,
-        target,
-        version_str,
-        arch,
-        base,
-        subarchives=None,
-        modules=None,
-        all_extra=False,
+        os_name: str,
+        target: str,
+        version_str: str,
+        arch: str,
+        base: str,
+        subarchives: Optional[Iterable[str]] = None,
+        modules: Optional[Iterable[str]] = None,
+        all_extra: bool = False,
         timeout=(5, 5),
     ):
-        self.version = Version(version_str)
-        self.target = target
-        self.arch = arch
-        self.os_name = os_name
-        self.all_extra = all_extra
-        self.arch_list = [item.get("arch") for item in Settings.qt_combinations]
+        self.version: Version = Version(version_str)
+        self.target: str = target
+        self.arch: str = arch
+        self.os_name: str = os_name
+        self.all_extra: bool = all_extra
+        self.arch_list: List[str] = [item.get("arch") for item in Settings.qt_combinations]
         all_archives = subarchives is None
         self.base = base + "/online/qtsdkrepository/"
         self.logger = getLogger("aqt.archives")
-        self.archives = []
-        self.mod_list = []
-        if all_extra:
-            self.all_extra = True
-        else:
+        self.archives: List[QtPackage] = []
+        self.mod_list: List[str] = []
+        if not all_extra:
             for m in modules if modules is not None else []:
                 self.mod_list.append(
                     "qt.qt{0}.{1}.{2}.{3}".format(
