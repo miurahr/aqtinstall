@@ -600,6 +600,8 @@ class MetadataFactory:
             if self.archive_id.is_no_arch() or "." not in module_with_arch:
                 return module_with_arch, None
             module, arch = module_with_arch.rsplit(".", 1)
+            if module.startswith("addons."):
+                module = module[len("addons.") :]
             return module, arch
 
         rest_of_url = self.archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")

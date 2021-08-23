@@ -184,25 +184,6 @@ that removes `qtnetworkauth` from the output of :ref:`aqt list-qt <list qt comma
 and pipe that into :ref:`aqt install-qt <qt installation command>`.
 This exercise is left to the reader.
 
-Let's try to install `qtcharts` and `qtnetworkauth` for Qt 6.1.2 as well. 
-Before we do this, let's run :ref:`aqt list-qt <list qt command>`:
-
-.. code-block:: console
-
-    $ aqt list-qt windows desktop --modules 6.1.2
-    addons.qt3d addons.qtactiveqt addons.qtcharts addons.qtdatavis3d addons.qtimageformats
-    addons.qtlottie addons.qtnetworkauth addons.qtscxml addons.qtvirtualkeyboard 
-    debug_info qt5compat qtquick3d qtquicktimeline qtshadertools
-
-What's this? There's no `qtcharts` or `qtnetworkauth`, but there are 
-`addons.qtcharts` and `addons.qtnetworkauth`. Sometime after Qt 6, the module
-naming conventions changed, so we will have to refer to these modules by their
-new names to install them successfully:
-
-.. code-block:: console
-
-    $ aqt install-qt windows desktop 6.1.2 win64_mingw81 -m addons.qtcharts addons.qtnetworkauth
-
 
 Installing Qt for Android
 -------------------------
@@ -251,11 +232,10 @@ If we want to install Qt 6.2.0 for armv7, we use this command to print available
 .. code-block:: console
 
     $ aqt list-qt windows android --extension armv7 --modules 6.2.0
-    addons.qt3d addons.qtcharts addons.qtconnectivity addons.qtdatavis3d
-    addons.qtimageformats addons.qtlottie addons.qtmultimedia addons.qtnetworkauth
-    addons.qtpositioning addons.qtremoteobjects addons.qtscxml addons.qtsensors
-    addons.qtserialbus addons.qtvirtualkeyboard addons.qtwebchannel addons.qtwebsockets
-    addons.qtwebview qt5compat qtquick3d qtquicktimeline qtshadertools
+    qt3d qt5compat qtcharts qtconnectivity qtdatavis3d qtimageformats qtlottie
+    qtmultimedia qtnetworkauth qtpositioning qtquick3d qtquicktimeline
+    qtremoteobjects qtscxml qtsensors qtserialbus qtserialport qtshadertools
+    qtvirtualkeyboard qtwebchannel qtwebsockets qtwebview
 
 We know we want to use `armv7` for the architecture, but we don't know exactly
 what value for 'architecture' we need to pass to :ref:`aqt install-qt <qt installation command>` yet, so we
@@ -278,7 +258,7 @@ Finally, let's install Qt 6.2.0 for Android armv7 with some modules:
 
 .. code-block:: console
 
-    $ aqt install-qt linux android 6.2.0 android_armv7 -m addons.qtcharts addons.qtnetworkauth
+    $ aqt install-qt linux android 6.2.0 android_armv7 -m qtcharts qtnetworkauth
 
 
 Installing Qt for WASM

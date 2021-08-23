@@ -150,6 +150,7 @@ def test_list_versions_tools(monkeypatch, spec_regex, os_name, target, in_file, 
             "windows-5152-src-doc-example-update.xml",
             "windows-5152-src-doc-example-expect.json",
         ),
+        ("6.2.0", "", "windows-620-update.xml", "windows-620-expect.json"),
     ],
 )
 def test_list_architectures_and_modules(monkeypatch, version: str, extension: str, in_file: str, expect_out_file: str):

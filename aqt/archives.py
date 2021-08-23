@@ -97,6 +97,15 @@ class QtArchives:
             self.all_extra = True
         else:
             for m in modules if modules is not None else []:
+                if self.version.major >= 6 and not m.startswith("addons."):
+                    self.mod_list.append(
+                        "qt.qt{0}.{1}.addons.{2}.{3}".format(
+                            self.version.major,
+                            self._version_str(),
+                            m,
+                            arch,
+                        )
+                    )
                 self.mod_list.append(
                     "qt.qt{0}.{1}.{2}.{3}".format(
                         self.version.major,
