@@ -62,16 +62,21 @@ def test_parse_update_xml(monkeypatch, os_name, version, arch, datafile):
 
 
 @pytest.mark.parametrize(
-    "arch, expected_mod_names, unexpected_mod_names",
+    "arch, requested_module_names, has_nonexistent_modules",
     (
-        ("win32_mingw73", ("qtlottie", "qtcharts"), ("debug_info", "qtwebengine")),
-        ("win32_msvc2017", ("debug_info", "qtwebengine"), ("nonexistent",)),
-        ("win64_mingw73", ("qtlottie", "qtcharts"), ("debug_info", "qtwebengine")),
-        ("win64_msvc2015_64", ("debug_info", "qtnetworkauth"), ("qtwebengine",)),
-        ("win64_msvc2017_64", ("debug_info", "qtwebengine"), ("nonexistent",)),
+        ("win32_mingw73", ("qtlottie", "qtcharts"), False),
+        ("win32_mingw73", ("all",), False),
+        ("win32_msvc2017", ("debug_info", "qtwebengine"), False),
+        ("win64_mingw73", ("qtlottie", "qtcharts"), False),
+        ("win64_msvc2015_64", ("debug_info", "qtnetworkauth"), False),
+        ("win64_msvc2017_64", ("debug_info", "qtwebengine"), False),
+        ("win64_msvc2017_64", ("all",), False),
+        ("win32_mingw73", ("debug_info", "qtwebengine"), True),
+        ("win64_mingw73", ("debug_info", "qtwebengine"), True),
+        ("win64_msvc2015_64", ("qtwebengine", "nonexistent"), True),
     ),
 )
-def test_qt_archives_modules(monkeypatch, arch, expected_mod_names, unexpected_mod_names):
+def test_qt_archives_modules(monkeypatch, arch, requested_module_names, has_nonexistent_modules: bool):
     update_xml = (Path(__file__).parent / "data" / "windows-5140-update.xml").read_text("utf-8")
 
     def _mock(self, *args):
@@ -83,8 +88,7 @@ def test_qt_archives_modules(monkeypatch, arch, expected_mod_names, unexpected_m
     expected = expect_json["modules_metadata_by_arch"][arch]
     base_expected = expect_json["qt_base_pkgs_by_arch"][arch]
 
-    version = Version("5.14.0")
-    os_name, target, base = "windows", "desktop", "https://example.com"
+    os_name, target, base, version = "windows", "desktop", "https://example.com", Version("5.14.0")
     qt_base = "QT-BASE"
 
     def locate_module_data(haystack: Iterable[Dict[str, str]], name: str) -> Dict[str, str]:
@@ -119,19 +123,24 @@ def test_qt_archives_modules(monkeypatch, arch, expected_mod_names, unexpected_m
             expected_7z_files.remove(archive_name)
         assert len(expected_7z_files) == 0, "Actual number of packages was fewer than expected"
 
-    # TODO compare all_modules to expected
-    # qt_pkgs = QtArchives(os_name, target, str(version), arch, base, modules=("all",).archives
+    if has_nonexistent_modules:
+        for unexpected_module in requested_module_names:
+            with pytest.raises(NoPackageFound) as e:
+                mod_names = ("qtcharts", unexpected_module)
+                QtArchives(os_name, target, str(version), arch, base, modules=mod_names)
+            assert e.type == NoPackageFound
+            assert unexpected_module in str(e.value), "Message should include the missing module"
+        return
 
-    for unexpected_module in unexpected_mod_names:
-        with pytest.raises(NoPackageFound) as e:
-            mod_names = ("qtcharts", unexpected_module)
-            QtArchives(os_name, target, str(version), arch, base, modules=mod_names)
-        assert e.type == NoPackageFound
-        assert unexpected_module in str(e.value), "Message should include the missing module"
+    is_all_modules = "all" in requested_module_names
+    qt_pkgs = QtArchives(
+        os_name, target, str(version), arch, base, modules=requested_module_names, all_extra=is_all_modules
+    ).archives
 
-    qt_pkgs = QtArchives(os_name, target, str(version), arch, base, modules=expected_mod_names).archives
+    if is_all_modules:
+        requested_module_names = [module["Name"].split(".")[-2] for module in expected]
 
-    unvisited_modules = {*expected_mod_names, qt_base}
+    unvisited_modules = {*requested_module_names, qt_base}
 
     # This assumes that qt_pkgs are in a specific order
     for pkg_update_name, qt_packages in groupby(qt_pkgs, lambda x: x.pkg_update_name):
