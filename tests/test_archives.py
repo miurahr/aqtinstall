@@ -125,8 +125,7 @@ def test_qt_archives_modules(monkeypatch, arch, expected_mod_names, unexpected_m
     for unexpected_module in unexpected_mod_names:
         with pytest.raises(NoPackageFound) as e:
             mod_names = ("qtcharts", unexpected_module)
-            qt_pkgs = QtArchives(os_name, target, str(version), arch, base, modules=mod_names).archives
-            print(qt_pkgs)
+            QtArchives(os_name, target, str(version), arch, base, modules=mod_names)
         assert e.type == NoPackageFound
         assert unexpected_module in str(e.value), "Message should include the missing module"
 
@@ -136,7 +135,9 @@ def test_qt_archives_modules(monkeypatch, arch, expected_mod_names, unexpected_m
 
     # This assumes that qt_pkgs are in a specific order
     for pkg_update_name, qt_packages in groupby(qt_pkgs, lambda x: x.pkg_update_name):
-        mod_name = re.match(r"^qt\.qt5\.5140(\.addons\.\w+|\.\w+|)\." + arch + r"$", pkg_update_name).group(1)
+        match = re.match(r"^qt\.qt5\.5140(\.addons\.\w+|\.\w+|)\." + arch + r"$", pkg_update_name)
+        assert match, f"QtArchive includes package named '{pkg_update_name}' with unexpected naming convention"
+        mod_name = match.group(1)
         mod_name = mod_name[1:] if mod_name else qt_base
         assert mod_name in unvisited_modules
         unvisited_modules.remove(mod_name)
