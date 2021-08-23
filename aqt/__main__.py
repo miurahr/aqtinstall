@@ -24,7 +24,4 @@ import sys
 from . import main
 
 if __name__ == "__main__":
-    if sys.version_info[0] == "2":
-        print("aqtinstall requires python 3!")
-        sys.exit(1)
     sys.exit(main())

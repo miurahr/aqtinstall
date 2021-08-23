@@ -52,6 +52,7 @@ Fixed
 * README: remove '$' from example command line(#321)
 * README: fix command line example lexer(#322)
 * CI: fix release script launch conditions(#298)
+* Handle special case for Qt 5.9.0(#364)
 
 
 `v1.2.2`_ (1, Jul. 2021)

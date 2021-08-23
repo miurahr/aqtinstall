@@ -203,7 +203,7 @@ mac_build_jobs.extend(
             "desktop",
             "clang_64",
             "macos",
-            module="addons.qtcharts addons.qtnetworkauth",
+            module="qtcharts qtnetworkauth",
         ),
         BuildJob(
             "install-qt",
