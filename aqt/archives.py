@@ -321,7 +321,7 @@ class ToolArchives(QtArchives):
         super(ToolArchives, self).__init__(
             os_name=os_name,
             target=target,
-            version_str=version_str,
+            version_str=version_str or "0.0.1",  # dummy value
             arch=arch,
             base=base,
             timeout=timeout,
