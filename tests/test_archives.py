@@ -8,7 +8,7 @@ from typing import Dict, Iterable
 
 import pytest
 
-from aqt.archives import QtArchives, QtPackage, ToolArchives
+from aqt.archives import ModuleToPackage, QtArchives, QtPackage, ToolArchives
 from aqt.exceptions import NoPackageFound
 from aqt.helper import Settings
 from aqt.metadata import Version
@@ -205,3 +205,27 @@ def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fai
         assert archive_name in expected_7z_files
         expected_7z_files.remove(archive_name)
     assert len(expected_7z_files) == 0, f"Failed to produce QtPackages for {expected_7z_files}"
+
+
+# Test the helper class
+def test_module_to_package():
+    qt_base_names = ["qt.999.clang", "qt9.999.clang", "qt9.999.addon.clang"]
+    qtcharts_names = ["qt.qt6.620.addons.qtcharts.arch", "qt.qt6.620.qtcharts.arch", "qt.620.addons.qtcharts.arch"]
+
+    mapping = ModuleToPackage({"qt_base": qt_base_names})
+    for package_name in qt_base_names:
+        assert mapping.has_package(package_name), "Package must exist in reverse mapping"
+    mapping.add("qtcharts", qtcharts_names)
+    for package_name in qtcharts_names:
+        assert mapping.has_package(package_name), "Package must exist in reverse mapping"
+    assert mapping.has_package(qt_base_names[0]), "Mapping for existing packages must remain unaffected"
+
+    mapping.remove_module_for_package(qt_base_names[0])
+    for package_name in qt_base_names:
+        assert not mapping.has_package(package_name), "None of the qt_base packages may remain after removal"
+    assert len(mapping) == 1, "There must be one remaining module name"
+
+    mapping.remove_module_for_package(qtcharts_names[2])
+    for package_name in qtcharts_names:
+        assert not mapping.has_package(package_name), "None of the qtcharts packages may remain after removal"
+    assert len(mapping) == 0, "There must be no remaining module names"
