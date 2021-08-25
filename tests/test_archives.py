@@ -1,9 +1,19 @@
+import json
 import os
+import posixpath
+import re
+from pathlib import Path
 
 import pytest
 
-from aqt.archives import QtArchives
+from aqt.archives import QtArchives, ToolArchives
+from aqt.exceptions import NoPackageFound
 from aqt.helper import Settings
+
+
+@pytest.fixture(autouse=True)
+def setup():
+    Settings.load_settings(os.path.join(os.path.dirname(__file__), "data", "settings.ini"))
 
 
 @pytest.mark.parametrize(
@@ -49,3 +59,54 @@ def test_parse_update_xml(monkeypatch, os_name, version, target, datafile):
 
     # Assert if list_diff contains urls without target specified
     assert unwanted_targets == []
+
+
+@pytest.mark.parametrize(
+    "tool_name, tool_variant_name, is_expect_fail",
+    (
+        ("tools_qtcreator", "qt.tools.qtcreator", False),
+        ("tools_qtcreator", "qt.tools.qtcreatordbg", False),
+        ("tools_qtcreator", "qt.tools.qtcreatordev", False),
+        ("tools_qtcreator", "qt.tools.qtifw", True),
+    ),
+)
+def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fail: bool):
+    host, target, base = "mac", "desktop", "https://example.com"
+    datafile = f"{host}-{target}-{tool_name}"
+    update_xml = (Path(__file__).parent / "data" / f"{datafile}-update.xml").read_text("utf-8")
+
+    def _mock(self, *args):
+        self.update_xml_text = update_xml
+
+    monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
+
+    if is_expect_fail:
+        with pytest.raises(NoPackageFound) as e:
+            ToolArchives(host, target, tool_name, base, arch=tool_variant_name)
+        assert e.type == NoPackageFound
+        assert tool_variant_name in str(e.value), "Message should include the missing variant"
+        return
+
+    expect_json = json.loads((Path(__file__).parent / "data" / f"{datafile}-expect.json").read_text("utf-8"))
+    expect = next(filter(lambda x: x["Name"] == tool_variant_name, expect_json["variants_metadata"]))
+    expected_7z_files = set(expect["DownloadableArchives"])
+    qt_pkgs = ToolArchives(host, target, tool_name, base, arch=tool_variant_name).archives
+    url_begin = posixpath.join(base, f"online/qtsdkrepository/mac_x64/{target}/{tool_name}")
+    expected_archive_url_pattern = re.compile(
+        r"^" + re.escape(url_begin) + "/(" + expect["Name"] + ")/" + re.escape(expect["Version"]) + r"(.+\.7z)$"
+    )
+
+    for pkg in qt_pkgs:
+        if not expect["Description"]:
+            assert not pkg.package_desc
+        else:
+            assert pkg.package_desc == expect["Description"]
+        url_match = expected_archive_url_pattern.match(pkg.archive_url)
+        assert url_match
+        actual_variant_name, archive_name = url_match.groups()
+        assert actual_variant_name == tool_variant_name
+        assert pkg.archive == archive_name
+        assert pkg.hashurl == pkg.archive_url + ".sha1"
+        assert archive_name in expected_7z_files
+        expected_7z_files.remove(archive_name)
+    assert len(expected_7z_files) == 0, f"Failed to produce QtPackages for {expected_7z_files}"

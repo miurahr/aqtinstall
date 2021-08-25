@@ -321,7 +321,7 @@ class ToolArchives(QtArchives):
         super(ToolArchives, self).__init__(
             os_name=os_name,
             target=target,
-            version_str=version_str,
+            version_str=version_str or "0.0.1",  # dummy value
             arch=arch,
             base=base,
             timeout=timeout,
@@ -347,45 +347,47 @@ class ToolArchives(QtArchives):
         )
         update_xml_url = posixpath.join(archive_url, "Updates.xml")
         self._download_update_xml(update_xml_url)  # call super method.
-        self._parse_update_xml(archive_url, [])
+        self._parse_update_xml(archive_url, None)
 
-    def _parse_update_xml(self, archive_url, target_packages):
+    def _parse_update_xml(self, archive_url, *ignored):
         try:
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
             self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
             raise ArchiveListError("Downloaded metadata is corrupted.")
 
-        for packageupdate in self.update_xml.iter("PackageUpdate"):
-            name = packageupdate.find("Name").text
-            if name != self.arch:
-                continue
-            _archives = packageupdate.find("DownloadableArchives").text
-            if _archives is not None:
-                downloadable_archives = _archives.split(", ")
-            else:
-                downloadable_archives = []
-            named_version = packageupdate.find("Version").text
-            package_desc = packageupdate.find("Description").text
-            for archive in downloadable_archives:
-                package_url = posixpath.join(
-                    # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
-                    archive_url,
-                    # qt.tools.ifw.41/
-                    name,
-                    #  4.1.1-202105261130ifw-linux-x64.7z
-                    f"{named_version}{archive}",
+        try:
+            packageupdate = next(filter(lambda x: x.find("Name").text == self.arch, self.update_xml.iter("PackageUpdate")))
+        except StopIteration:
+            message = f"The package {self.arch} was not found while parsing XML of package information!"
+            raise NoPackageFound(message)
+
+        name = packageupdate.find("Name").text
+        named_version = packageupdate.find("Version").text
+        package_desc = packageupdate.find("Description").text
+        downloadable_archives = packageupdate.find("DownloadableArchives").text
+        if not downloadable_archives:
+            message = f"The package {self.arch} contains no downloadable archives!"
+            raise NoPackageFound(message)
+        for archive in downloadable_archives.split(", "):
+            package_url = posixpath.join(
+                # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
+                archive_url,
+                # qt.tools.ifw.41/
+                name,
+                #  4.1.1-202105261130ifw-linux-x64.7z
+                f"{named_version}{archive}",
+            )
+            hashurl = package_url + ".sha1"
+            self.archives.append(
+                QtPackage(
+                    name=name,
+                    archive_url=package_url,
+                    archive=archive,
+                    package_desc=package_desc,
+                    hashurl=hashurl,
                 )
-                hashurl = package_url + ".sha1"
-                self.archives.append(
-                    QtPackage(
-                        name=name,
-                        archive_url=package_url,
-                        archive=archive,
-                        package_desc=package_desc,
-                        hashurl=hashurl,
-                    )
-                )
+            )
 
     def get_target_config(self) -> TargetConfig:
         """Get target configuration.
