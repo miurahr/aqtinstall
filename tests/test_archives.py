@@ -19,11 +19,6 @@ def setup():
     Settings.load_settings(os.path.join(os.path.dirname(__file__), "data", "settings.ini"))
 
 
-@pytest.fixture(autouse=True)
-def setup():
-    Settings.load_settings(os.path.join(os.path.dirname(__file__), "data", "settings.ini"))
-
-
 @pytest.mark.parametrize(
     "os_name, version, arch, datafile",
     [
