@@ -451,3 +451,61 @@ def test_install(
                 expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
                 actual_content = file_path.read_text(encoding="utf_8")
                 assert actual_content == expect_content
+
+
+@pytest.mark.parametrize(
+    "cmd, xml_file, expected_re, expect_missing",
+    (
+        (
+            "install-qt windows desktop 5.15.0 win32_mingw73 -m nonexistent foo",
+            "windows-5150-update.xml",
+            # Match output: Note that the set of missing package names will be in random order.
+            re.compile(
+                r"^aqtinstall\(aqt\) v.+\n"
+                r"Some of specified modules are unknown\.\n"
+                r"The packages {(.+)} were not found while parsing XML of package information!$"
+            ),
+            {"qt_base", "nonexistent", "foo"},
+        ),
+        (
+            "install-src windows desktop 5.15.0 -m nonexistent foo",
+            "windows-5152-src-doc-example-update.xml",
+            # Match output: Note that the set of missing package names will be in random order.
+            re.compile(
+                r"^aqtinstall\(aqt\) v.+\n" r"The packages {(.+)} were not found while parsing XML of package information!$"
+            ),
+            {"src", "nonexistent", "foo"},
+        ),
+        # (
+        #     "install-tool windows desktop tools_nonexistent nonexistent",
+        #     # Match output: Note that the set of missing package names will be in random order.
+        #     re.compile(
+        #         r"^aqtinstall\(aqt\) v.+\n"
+        #         r"Specified target combination is not valid: windows tools_nonexistent nonexistent\n"
+        #         r"The packages {(.+)} were not found while parsing XML of package information!$"
+        #     ),
+        #     {'nonexistent'}
+        # )
+    ),
+)
+def test_install_bad_tools_modules(monkeypatch, capsys, cmd, xml_file, expected_re, expect_missing):
+    xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
+
+    def mock_get_url(self, url):
+        return xml
+
+    monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
+
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        cli = Cli()
+        cli._setup_settings()
+        cli.run(cmd.split())
+    assert pytest_wrapped_e.type == SystemExit
+    assert pytest_wrapped_e.value.code == 1
+
+    out, err = capsys.readouterr()
+    match = expected_re.match(err)
+    assert match
+    actual = set(map(lambda x: x[1:-1], match.group(1).split(", ")))
+    assert actual == expect_missing

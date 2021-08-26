@@ -249,7 +249,7 @@ class Cli:
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
-        except ArchiveDownloadError or ArchiveListError or NoPackageFound:
+        except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
             exit(1)
         target_config = qt_archives.get_target_config()
         result = run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
@@ -325,7 +325,7 @@ class Cli:
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
                 exit(1)
-        except ArchiveDownloadError or ArchiveListError:
+        except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
             exit(1)
         result = run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
         if result:
@@ -427,7 +427,7 @@ class Cli:
                 except Exception:
                     self.logger.error("Connection to the download site failed. Aborted...")
                     exit(1)
-            except ArchiveDownloadError or ArchiveListError:
+            except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
                 exit(1)
             if not run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep):
                 exit(1)
