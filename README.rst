@@ -39,8 +39,6 @@ When installing QtBase package on proper platforms (eg. install linux package on
 aqt update Qt binaries(eg. qmake, and libQt5Core.so/Qt5Core.dll/Framework.QtCore for Qt<5.14),
 and change configurations(eg. qt.conf, and qconfig.pri) to make it working well with installed directory(Qt prefix).
 
-The aqtinstall does not update PATH environment variable.
-
 .. note::
     Because it is an installer utility, it can download from Qt distribution site and its mirror.
     The site is operated by The Qt Company who may remove versions you may want to use that become end of support.
@@ -128,21 +126,9 @@ When you decided to install Qt SDK version 6.2.0 for mingw v8.1 gcc.
 
     aqt install-qt windows desktop 6.2.0 win64_mingw81
 
-
-Environment Variables
----------------------
-
-It is users task to set some environment variables to fit your platform such as
-
-
-.. code-block:: bash
-
-   export PATH=/path/to/qt/x.x.x/clang_64/bin/:$PATH
-   export QT_PLUGIN_PATH=/path/to/qt/x.x.x/clang_64/plugins/
-   export QML_IMPORT_PATH=/path/to/qt/x.x.x/clang_64/qml/
-   export QML2_IMPORT_PATH=/path/to/qt/x.x.x/clang_64/qml/
-
-aqtinstall never do it for you because not to break multiple installation versions.
+.. note::
+   It is users task to set some environment variables to fit your platform such as PATH, QT_PLUGIN_PATH, QML_IMPORT_PATH, and QML2_IMPORT_PATH
+   aqtinstall never do it for you because not to break multiple installation versions.
 
 Testimonies
 -----------
