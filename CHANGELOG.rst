@@ -40,6 +40,10 @@ Changed
 * Test: consolidate lint configuration to pyproject.toml(#356)
 * Test: black configuration to max_line_length=125 (#356)
 * New subcommand syntax (#354,#355)
+* Failed on missing modules(#374)
+* Failed on missing tools(#375)
+* Remove 'addons' prefix for some modules for Qt6+ (#368)
+* Fix inappropriate warnings(#370)
 
 Fixed
 -----
@@ -53,6 +57,7 @@ Fixed
 * README: fix command line example lexer(#322)
 * CI: fix release script launch conditions(#298)
 * Handle special case for Qt 5.9.0(#364)
+* Running python2 -m aqt does not trigger Python version check (#372,#373)
 
 
 `v1.2.2`_ (1, Jul. 2021)
