@@ -147,7 +147,7 @@ aqtinstall never do it for you because not to break multiple installation versio
 Testimonies
 -----------
 
-Some projects utilize aqtinstall.
+Some projects utilize aqtinstall, and there are several articles and discussions
 
 * GitHub Actions: `install_qt`_
 
@@ -161,8 +161,6 @@ Some projects utilize aqtinstall.
 .. _`YACReader`: https://github.com/YACReader/yacreader
 
 
-Media, slide, articles and discussions
---------------------------------------
 
 * Contributor Nelson's blog article: `Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`_
 
@@ -174,6 +172,8 @@ Media, slide, articles and discussions
 
 * Qt Forum: `Qt silent, unattended install`_
 
+* Reddit: `Qt Maintenance tool now requires you to enter your company name`_
+
 * Qt Study group presentation: `Another Qt CLI installer`_
 
 
@@ -182,6 +182,7 @@ Media, slide, articles and discussions
 .. _`Using Azure CI for cross-platform Linux and Windows Qt application builds`: https://www.wincak.name/programming/using-azure-ci-for-cross-platform-linux-and-windows-qt-application-builds/
 .. _`Automatic installation for Travis CI (or any other CI)`: https://forum.qt.io/topic/114520/automatic-installation-for-travis-ci-or-any-other-ci/2
 .. _`Qt silent, unattended install`: https://forum.qt.io/topic/122185/qt-silent-unattended-install
+.. _`Qt Maintenance tool now requires you to enter your company name`: https://www.reddit.com/r/QtFramework/comments/grgrux/qt_maintenance_tool_now_requires_you_to_enter/
 .. _`Another Qt CLI installer`: https://www.slideshare.net/miurahr-nttdata/aqt-install-for-qt-tokyo-r-2-20196
 
 
@@ -189,7 +190,6 @@ History
 -------
 
 This program is originally shown in Kaidan project as a name `qli-installer`_.
-A project `aqtinstall` extend the original to run with standard python features with Linux, Mac and Windows,
-to be tested on CI platform, and to improve performance with a concurrent downloading.
+The `aqtinstall` project extend and improve it.
 
 .. _`qli-installer`: https://lnj.gitlab.io/post/qli-installer
