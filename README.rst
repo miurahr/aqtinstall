@@ -82,7 +82,7 @@ Documentation
 -------------
 
 There is precise documentation with many examples.
-You are recommended to read *Getting started* section.
+You are recommended to read the *Getting started* section.
 
 - Getting started: https://aqtinstall.readthedocs.io/en/latest/getting_started.html
 - Stable (v2.0.x): https://aqtinstall.readthedocs.io/en/stable
