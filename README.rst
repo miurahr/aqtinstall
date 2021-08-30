@@ -113,18 +113,34 @@ Example
 
 When installing Qt SDK 6.2.0 for Windows.
 
-Check the options that can be used with the `list-qt` subcommand, and query available architectures
+Check the options that can be used with the ``list-qt`` subcommand, and query available architectures
 
 .. code-block:: console
 
     aqt list-qt windows desktop --arch 6.2.0
 
-Then you may get candidates: `win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64`.
+Then you may get candidates: ``win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64``.
+You can also query the available modules:
+
+.. code-block:: console
+
+    aqt list-qt windows desktop --modules 6.2.0
+
+
 When you decide to install Qt SDK version 6.2.0 for mingw v8.1
 
 .. code-block:: console
 
-    aqt install-qt windows desktop 6.2.0 win64_mingw81
+    aqt install-qt windows desktop 6.2.0 win64_mingw81 -m all
+ 
+The optional `-m all` argument installs all the modules available for Qt 6.2.0; you can leave it off if you don't want the modules.
+
+To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use this command (note that the module names are lowercase):
+
+.. code-block:: console
+
+    aqt install-qt windows desktop 6.2.0 win64_mingw81 -m qtcharts qtnetworking
+
 
 .. note::
    It is your own task to set some environment variables to fit your platform, such as PATH, QT_PLUGIN_PATH, QML_IMPORT_PATH, and QML2_IMPORT_PATH. aqtinstall will never do it for you, in order not to break the installation of multiple versions.
@@ -175,6 +191,6 @@ History
 -------
 
 This program is originally shown in Kaidan project as a name `qli-installer`_.
-The `aqtinstall` project extend and improve it.
+The ``aqtinstall`` project extend and improve it.
 
 .. _`qli-installer`: https://lnj.gitlab.io/post/qli-installer
