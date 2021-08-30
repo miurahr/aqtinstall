@@ -127,8 +127,7 @@ When you decided to install Qt SDK version 6.2.0 for mingw v8.1 gcc.
     aqt install-qt windows desktop 6.2.0 win64_mingw81
 
 .. note::
-   It is users task to set some environment variables to fit your platform such as PATH, QT_PLUGIN_PATH, QML_IMPORT_PATH, and QML2_IMPORT_PATH
-   aqtinstall never do it for you because not to break multiple installation versions.
+   It is your own task to set some environment variables to fit your platform, such as PATH, QT_PLUGIN_PATH, QML_IMPORT_PATH, and QML2_IMPORT_PATH. aqtinstall will never do it for you, in order not to break the installation of multiple versions.
 
 Testimonies
 -----------
