@@ -119,7 +119,7 @@ Check what options you can take by `list-qt` subcommand
 
     aqt list-qt windows desktop --arch 6.2.0
 
-Then you may get candidates; `win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64t`
+Then you may get candidates: `win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64`.
 When you decided to install Qt SDK version 6.2.0 for mingw v8.1 gcc.
 
 .. code-block:: console
