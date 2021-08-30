@@ -113,7 +113,7 @@ Example
 
 When installing Qt SDK 6.2.0 for Windows.
 
-Check what options you can take by `list-qt` subcommand
+Check the options that can be used with the `list-qt` subcommand
 
 .. code-block:: console
 
