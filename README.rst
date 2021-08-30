@@ -93,7 +93,7 @@ You are recommended to read the *Getting started* section.
 Install
 -------
 
-Same as usual, it can be installed with `pip`
+Same as usual, it can be installed with ``pip``.
 
 .. code-block:: console
 
