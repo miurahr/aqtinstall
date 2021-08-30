@@ -113,14 +113,14 @@ Example
 
 When installing Qt SDK 6.2.0 for Windows.
 
-Check the options that can be used with the `list-qt` subcommand
+Check the options that can be used with the `list-qt` subcommand, and query available architectures
 
 .. code-block:: console
 
     aqt list-qt windows desktop --arch 6.2.0
 
 Then you may get candidates: `win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64`.
-When you decide to install Qt SDK version 6.2.0 for mingw v8.1 gcc
+When you decide to install Qt SDK version 6.2.0 for mingw v8.1
 
 .. code-block:: console
 
