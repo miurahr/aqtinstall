@@ -121,7 +121,7 @@ When you decide to install Qt SDK version 6.2.0 for mingw v8.1
 
     aqt install-qt windows desktop 6.2.0 win64_mingw81 -m all
  
-The optional `-m all` argument installs all the modules available for Qt 6.2.0; you can leave it off if you don't want the modules.
+The optional `-m all` argument installs all the modules available for Qt 6.2.0; you can leave it off if you don't want those modules.
 
 To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use this command (note that the module names are lowercase):
 
