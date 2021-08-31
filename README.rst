@@ -14,36 +14,19 @@ Another Qt installer(aqt)
 .. |coveralls| image:: https://coveralls.io/repos/github/miurahr/aqtinstall/badge.svg?branch=master
    :target: https://coveralls.io/github/miurahr/aqtinstall?branch=master
 
-This is a utility alternative to the official graphical Qt installer, for using in CI environment where an interactive
-UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
+This is a utility alternative to the official graphical Qt installer, for using in CI environment
+where an interactive UI is not usable, or just on command line.
 
-.. warning::
-    This is NOT franchised with The Qt Company and The Qt Project.
-    there is NO guarantee and support. Please don't ask them about aqtinstall.
-
-    When you need official and/or commercial support about unattended install,
-    please ask your Qt reseller, or help desk according to your contract.
-
-    The official installer has a capability to scripting installation process,
-    please ask a consult with `the official documents`_.
-
-
-.. _`the official documents`: https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html#unattended-usage
-
-
-It can automatically download prebuilt Qt binaries for any target (you're not bound to
-Linux binaries on Linux; you could also download iOS binaries).
-It's working with Python >= 3.6 on Linux, macOS and Windows.
-
-When installing QtBase package on proper platforms (eg. install linux package on linux),
-aqt update Qt binaries(eg. qmake, and libQt5Core.so/Qt5Core.dll/Framework.QtCore for Qt<5.14),
-and change configurations(eg. qt.conf, and qconfig.pri) to make it working well with installed directory(Qt prefix).
+It can automatically download prebuilt Qt binaries, documents and sources for target specified,
+when the versions are on Qt download mirror sites.
 
 .. note::
     Because it is an installer utility, it can download from Qt distribution site and its mirror.
     The site is operated by The Qt Company who may remove versions you may want to use that become end of support.
-    Please don't blame us. When you keep your old mirror archives and operate an archive site,
-    you may be able to use aqtinstall with base URL option specified to your site.
+    Please don't blame us.
+
+.. warning::
+    This is NOT franchised with The Qt Company and The Qt Project. Please don't ask them about aqtinstall.
 
 
 License and copyright
@@ -66,6 +49,7 @@ Requirements
 
 - Minimum Python version:
     3.6
+
 - Recommended Python version:
     3.9 (frequently tested on)
 
@@ -77,6 +61,10 @@ Requirements
     texttable
     bs4
     dataclasses
+
+- Operating Systems:
+    Linux, macOS, MS Windows
+
 
 Documentation
 -------------
@@ -141,6 +129,10 @@ To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use 
 
     aqt install-qt windows desktop 6.2.0 win64_mingw81 -m qtcharts qtnetworking
 
+
+When aqtinstall downloads and installs packages, it updates package configurations
+such as prefix directory in ``bin/qt.conf``, and ``bin/qconfig.pri``
+to make it working well with installed directory.
 
 .. note::
    It is your own task to set some environment variables to fit your platform, such as PATH, QT_PLUGIN_PATH, QML_IMPORT_PATH, and QML2_IMPORT_PATH. aqtinstall will never do it for you, in order not to break the installation of multiple versions.
