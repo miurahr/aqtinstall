@@ -349,6 +349,10 @@ class SettingsClass:
     def kde_patches(self):
         return self.config.getlist("kde_patches", "patches", fallback=[])
 
+    @property
+    def print_stacktrace_on_error(self):
+        return self.config.getboolean("aqt", "print_stacktrace_on_error", fallback=False)
+
 
 Settings = SettingsClass()
 
