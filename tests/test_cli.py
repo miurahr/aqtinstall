@@ -89,11 +89,8 @@ def test_cli_invalid_version(capsys, invalid_version):
         ("install-doc", "mac", "desktop", invalid_version),
         ("list-qt", "mac", "desktop", "--modules", invalid_version),
     ):
-        with pytest.raises(SystemExit) as pytest_wrapped_e:
-            cli = Cli()
-            cli.run(cmd)
-        assert pytest_wrapped_e.type == SystemExit
-        assert pytest_wrapped_e.value.code == 1
+        cli = Cli()
+        assert cli.run(cmd) == 1
         out, err = capsys.readouterr()
         sys.stdout.write(out)
         sys.stderr.write(err)
