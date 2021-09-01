@@ -36,7 +36,15 @@ from typing import List, Optional
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, NoPackageFound
+from aqt.exceptions import (
+    AqtException,
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    CliInputError,
+    CliKeyboardInterrupt,
+    NoPackageFound,
+)
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
 from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version, show_list
 from aqt.updater import Updater
@@ -83,11 +91,17 @@ class Cli:
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
-    def run(self, arg=None):
+    def run(self, arg=None) -> int:
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
-        result = args.func(args)
-        return result
+        try:
+            args.func(args)
+            return 0
+        except AqtException as e:
+            self.logger.error(format(e), exc_info=Settings.print_stacktrace_on_error)
+            if e.should_show_help:
+                self.show_help()
+            return 1
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
         for c in Settings.tools_combinations:
@@ -119,7 +133,7 @@ class Cli:
                 stderr=subprocess.DEVNULL,
             )
         except FileNotFoundError as e:
-            raise Exception("Specified 7zip command executable does not exist: {!r}".format(sevenzip)) from e
+            raise CliInputError("Specified 7zip command executable does not exist: {!r}".format(sevenzip)) from e
 
         return sevenzip
 
@@ -135,13 +149,9 @@ class Cli:
             elif target == "android" and Version(qt_version) >= Version("5.14.0"):
                 arch = "android"
             else:
-                print("Please supply a target architecture.")
-                self.show_help(args)
-                exit(1)
+                raise CliInputError("Please supply a target architecture.", should_show_help=True)
         if arch == "":
-            print("Please supply a target architecture.")
-            self.show_help(args)
-            exit(1)
+            raise CliInputError("Please supply a target architecture.", should_show_help=True)
         return arch
 
     def _check_mirror(self, mirror):
@@ -192,19 +202,19 @@ class Cli:
             sevenzip = self._set_sevenzip("7z")
         if args.base is not None:
             if not self._check_mirror(args.base):
-                self.show_help()
-                exit(1)
+                raise CliInputError(
+                    "The `--base` option requires a url where the path `online/qtsdkrepository` exists.",
+                    should_show_help=True,
+                )
             base = args.base
         else:
             base = Settings.baseurl
         archives = args.archives
         if args.noarchives:
             if modules is None:
-                print("When specified option --no-archives, an option --modules is mandatory.")
-                exit(1)
+                raise CliInputError("When `--noarchives` is set, the `--modules` option is mandatory.")
             if archives is not None:
-                print("Option --archives and --no-archives  are conflicted. Aborting...")
-                exit(1)
+                raise CliInputError("Options `--archives` and `--noarchives` are mutually exclusive.")
             else:
                 archives = modules
         else:
@@ -252,9 +262,7 @@ class Cli:
         except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
             exit(1)
         target_config = qt_archives.get_target_config()
-        result = run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
-        if not result:
-            exit(1)
+        run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -327,18 +335,13 @@ class Cli:
                 exit(1)
         except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
             exit(1)
-        result = run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
-        if result:
-            self.logger.info("Finished installation")
-        else:
-            exit(1)
+        run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
+        self.logger.info("Finished installation")
 
     def run_install_src(self, args):
         """Run src subcommand"""
-        if args.kde:
-            if args.qt_version != "5.15.2":
-                print("KDE patch: unsupported version!!")
-                exit(1)
+        if args.kde and args.qt_version != "5.15.2":
+            raise CliInputError("KDE patch: unsupported version!!")
         start_time = time.perf_counter()
         self._run_src_doc_examples("src", args)
         if args.kde:
@@ -441,8 +444,7 @@ class Cli:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
             return 0
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
-            self.logger.error("'{0.target}' is not a valid target for host '{0.host}'".format(args))
-            return 1
+            raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
 
         for version_str in (args.modules, args.extensions, args.arch):
             if not Cli._is_valid_version_str(version_str, allow_latest=True, allow_empty=True):
@@ -454,8 +456,7 @@ class Cli:
             if args.spec is not None:
                 spec = SimpleSpec(args.spec)
         except ValueError:
-            self.logger.error(f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage())
-            return 1
+            raise CliInputError(f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage())
 
         meta = MetadataFactory(
             archive_id=ArchiveId(
@@ -479,8 +480,7 @@ class Cli:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
             return 0
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
-            self.logger.error("'{0.target}' is not a valid target for host '{0.host}'".format(args))
-            return 1
+            raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
 
         meta = MetadataFactory(
             archive_id=ArchiveId("tools", args.host, args.target),
@@ -790,8 +790,8 @@ class Cli:
             return False
 
 
-def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool) -> bool:
-    result = True
+def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool):
+    key_interrupt = False
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
@@ -810,11 +810,12 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
         logger.warning("Caught KeyboardInterrupt, terminating installer workers")
         pool.terminate()
         pool.join()
-        result = False
+        key_interrupt = True
     # all done, close logging service for sub-processes
     listener.enqueue_sentinel()
     listener.stop()
-    return result
+    if key_interrupt:
+        raise CliKeyboardInterrupt("Installer halted by keyboard interrupt.")
 
 
 def init_worker_sh():
