@@ -262,7 +262,6 @@ class QtArchives:
         # if we have located every requested package, then target_packages will be empty
         if len(target_packages) > 0:
             message = f"The packages {target_packages} were not found while parsing XML of package information!"
-            self.logger.error(message)
             raise NoPackageFound(message)
 
     def get_packages(self) -> List[QtPackage]:
