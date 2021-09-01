@@ -433,12 +433,12 @@ class Cli:
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
-    def run_list_qt(self, args: argparse.ArgumentParser) -> int:
+    def run_list_qt(self, args: argparse.ArgumentParser):
         """Print versions of Qt, extensions, modules, architectures"""
 
         if not args.target:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
-            return 0
+            return
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
             raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
 
@@ -465,14 +465,14 @@ class Cli:
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
         )
-        return show_list(meta)
+        show_list(meta)
 
-    def run_list_tool(self, args: argparse.ArgumentParser) -> int:
+    def run_list_tool(self, args: argparse.ArgumentParser):
         """Print tools"""
 
         if not args.target:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
-            return 0
+            return
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
             raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
 
@@ -481,7 +481,7 @@ class Cli:
             tool_name=args.tool_name,
             is_long_listing=args.long,
         )
-        return show_list(meta)
+        show_list(meta)
 
     def show_help(self, args=None):
         """Display help message"""
