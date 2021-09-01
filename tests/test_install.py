@@ -497,12 +497,9 @@ def test_install_bad_tools_modules(monkeypatch, capsys, cmd, xml_file, expected_
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
 
-    with pytest.raises(SystemExit) as pytest_wrapped_e:
-        cli = Cli()
-        cli._setup_settings()
-        cli.run(cmd.split())
-    assert pytest_wrapped_e.type == SystemExit
-    assert pytest_wrapped_e.value.code == 1
+    cli = Cli()
+    cli._setup_settings()
+    assert cli.run(cmd.split()) == 1
 
     out, err = capsys.readouterr()
     match = expected_re.match(err)
