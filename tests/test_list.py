@@ -345,7 +345,7 @@ qt6_android_requires_ext_msg = (
     "Please add your extension using the `--extension` flag."
 )
 no_arm64_v8_msg = "The extension 'arm64_v8a' is only valid for Qt 6 for Android"
-no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13 to 5.15 on desktop."
+no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13-5.15 and 6.2+ on desktop."
 
 
 @pytest.mark.parametrize(
@@ -356,10 +356,10 @@ no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13 to 5.15 on desk
         ("desktop", "arm64_v8a", "5.13.0", no_arm64_v8_msg),
         ("desktop", "arm64_v8a", "6.2.0", no_arm64_v8_msg),
         ("desktop", "wasm", "5.12.11", no_wasm_msg),  # out of range
-        ("desktop", "wasm", "6.2.0", no_wasm_msg),  # out of range
+        ("desktop", "wasm", "6.1.9", no_wasm_msg),  # out of range
         ("android", "wasm", "5.12.11", no_wasm_msg),  # in range, wrong target
         ("android", "wasm", "5.14.0", no_wasm_msg),  # in range, wrong target
-        ("android", "wasm", "6.2.0", qt6_android_requires_ext_msg),
+        ("android", "wasm", "6.1.9", qt6_android_requires_ext_msg),
     ),
 )
 def test_list_invalid_extensions(capsys, monkeypatch, target, ext, version, expected_msg):

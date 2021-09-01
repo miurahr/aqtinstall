@@ -456,7 +456,7 @@ class MetadataFactory:
         1. On Qt6 for Android, an extension for processor architecture is required.
         2. On any platform other than Android, or on Qt5, an extension for
         processor architecture is forbidden.
-        3. The "wasm" extension only works on desktop targets for Qt 5.13-5.15.
+        3. The "wasm" extension only works on desktop targets for Qt 5.13-5.15, or for 6.2+
         """
         if (
             self.archive_id.target == "android"
@@ -472,11 +472,10 @@ class MetadataFactory:
             self.archive_id.target != "android" or qt_ver.major != 6
         ):
             raise CliInputError(f"The extension '{self.archive_id.extension}' is only valid for Qt 6 for Android")
-        if "wasm" in self.archive_id.extension and (
-            qt_ver not in SimpleSpec(">=5.13,<6") or self.archive_id.target != "desktop"
-        ):
+        is_in_wasm_range = qt_ver in SimpleSpec(">=5.13,<6") or qt_ver in SimpleSpec(">=6.2.0")
+        if "wasm" in self.archive_id.extension and (self.archive_id.target != "desktop" or not is_in_wasm_range):
             raise CliInputError(
-                f"The extension '{self.archive_id.extension}' is only available in Qt 5.13 to 5.15 on desktop."
+                f"The extension '{self.archive_id.extension}' is only available in Qt 5.13-5.15 and 6.2+ on desktop."
             )
 
     @staticmethod
