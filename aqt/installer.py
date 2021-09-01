@@ -32,19 +32,11 @@ import subprocess
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
-from typing import List, Optional
+from typing import Any, Callable, List, Optional
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
-from aqt.exceptions import (
-    AqtException,
-    ArchiveConnectionError,
-    ArchiveDownloadError,
-    ArchiveListError,
-    CliInputError,
-    CliKeyboardInterrupt,
-    NoPackageFound,
-)
+from aqt.exceptions import AqtException, ArchiveConnectionError, CliInputError, CliKeyboardInterrupt
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
 from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version, show_list
 from aqt.updater import Updater
@@ -228,37 +220,21 @@ class Cli:
         all_extra = True if modules is not None and "all" in modules else False
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
-        try:
-            qt_archives = QtArchives(
+
+        qt_archives = self.retry_on_bad_connection(
+            lambda base_url: QtArchives(
                 os_name,
                 target,
                 qt_version,
                 arch,
-                base,
+                base=base_url,
                 subarchives=archives,
                 modules=modules,
                 all_extra=all_extra,
                 timeout=timeout,
-            )
-        except ArchiveConnectionError:
-            try:
-                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                qt_archives = QtArchives(
-                    os_name,
-                    target,
-                    qt_version,
-                    arch,
-                    random.choice(Settings.fallbacks),
-                    subarchives=archives,
-                    modules=modules,
-                    all_extra=all_extra,
-                    timeout=timeout,
-                )
-            except Exception:
-                self.logger.error("Connection to the download site failed. Aborted...")
-                exit(1)
-        except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-            exit(1)
+            ),
+            base,
+        )
         target_config = qt_archives.get_target_config()
         run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
         if not nopatch:
@@ -300,37 +276,21 @@ class Cli:
         all_extra = True if modules is not None and "all" in modules else False
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
-        try:
-            srcdocexamples_archives = SrcDocExamplesArchives(
+
+        srcdocexamples_archives: SrcDocExamplesArchives = self.retry_on_bad_connection(
+            lambda base_url: SrcDocExamplesArchives(
                 flavor,
                 os_name,
                 target,
                 qt_version,
-                base,
+                base=base_url,
                 subarchives=archives,
                 modules=modules,
                 all_extra=all_extra,
                 timeout=timeout,
-            )
-        except ArchiveConnectionError:
-            try:
-                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                srcdocexamples_archives = SrcDocExamplesArchives(
-                    flavor,
-                    os_name,
-                    target,
-                    qt_version,
-                    random.choice(Settings.fallbacks),
-                    subarchives=archives,
-                    modules=modules,
-                    all_extra=all_extra,
-                    timeout=timeout,
-                )
-            except Exception:
-                self.logger.error("Connection to the download site failed. Aborted...")
-                exit(1)
-        except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-            exit(1)
+            ),
+            base,
+        )
         run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
 
@@ -401,35 +361,19 @@ class Cli:
             if not self._check_tools_arg_combination(os_name, tool_name, arch):
                 self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
 
-            try:
-                tool_archives = ToolArchives(
+            tool_archives: ToolArchives = self.retry_on_bad_connection(
+                lambda base_url: ToolArchives(
                     os_name=os_name,
                     tool_name=tool_name,
                     target=target,
-                    base=base,
+                    base=base_url,
                     version_str=version,
                     arch=arch,
                     timeout=timeout,
-                )
-            except ArchiveConnectionError:
-                try:
-                    self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                    tool_archives = ToolArchives(
-                        os_name=os_name,
-                        target=target,
-                        tool_name=tool_name,
-                        base=random.choice(Settings.fallbacks),
-                        version_str=version,
-                        arch=arch,
-                        timeout=timeout,
-                    )
-                except Exception:
-                    self.logger.error("Connection to the download site failed. Aborted...")
-                    exit(1)
-            except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-                exit(1)
-            if not run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep):
-                exit(1)
+                ),
+                base,
+            )
+            run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -781,6 +725,14 @@ class Cli:
             Version(version_str)
         except ValueError as e:
             raise CliInputError(f"Invalid version: '{version_str}'! Please use the form '5.X.Y'.") from e
+
+    def retry_on_bad_connection(self, function: Callable[[str], Any], base_url: str):
+        fallback_url = random.choice(Settings.fallbacks)
+        try:
+            return function(base_url)
+        except ArchiveConnectionError:
+            self.logger.warning(f"Connection to '{base_url}' failed. Retrying with fallback '{fallback_url}'.")
+            return function(fallback_url)
 
 
 def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool):
