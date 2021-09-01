@@ -36,7 +36,7 @@ from typing import Any, Callable, List, Optional
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
-from aqt.exceptions import AqtException, ArchiveConnectionError, CliInputError, CliKeyboardInterrupt
+from aqt.exceptions import AqtException, ArchiveConnectionError, ArchiveExtractionError, CliInputError, CliKeyboardInterrupt
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
 from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version, show_list
 from aqt.updater import Updater
@@ -823,12 +823,8 @@ def installer(
             proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
             logger.debug(proc.stdout)
         except subprocess.CalledProcessError as cpe:
-            logger.error("Extraction error: %d" % cpe.returncode)
-            if cpe.stdout is not None:
-                logger.error(cpe.stdout)
-            if cpe.stderr is not None:
-                logger.error(cpe.stderr)
-            raise cpe
+            msg = "\n".join(filter(None, [f"Extraction error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+            raise ArchiveExtractionError(msg) from cpe
     if not keep:
         os.unlink(archive)
     logger.info("Finished installation of {} in {:.8f}".format(archive, time.perf_counter() - start_time))

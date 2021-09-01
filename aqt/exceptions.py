@@ -65,3 +65,7 @@ class CliInputError(AqtException):
 
 class CliKeyboardInterrupt(AqtException):
     pass
+
+
+class ArchiveExtractionError(AqtException):
+    pass
