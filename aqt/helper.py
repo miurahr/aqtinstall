@@ -102,17 +102,12 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
                         fd.write(chunk)
                         hash.update(chunk)
                     fd.flush()
-                if exp is not None:
-                    if hash.digest() != exp:
-                        raise ArchiveDownloadError(
-                            "Download file is corrupted! Detect checksum error.\nExpected {}, Actual {}".format(
-                                exp, hash.digest()
-                            )
-                        )
             except Exception as e:
-                exc = sys.exc_info()
-                logger.error("Download error: %s" % exc[1])
-                raise e
+                raise ArchiveDownloadError(f"Download error: {e}") from e
+            if exp is not None and hash.digest() != exp:
+                raise ArchiveDownloadError(
+                    f"Download file is corrupted! Detect checksum error.\nExpected {exp}, Actual {hash.digest()}"
+                )
 
 
 def altlink(url: str, alt: str):
