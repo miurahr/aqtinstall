@@ -9,7 +9,7 @@ from typing import Dict, Iterable
 import pytest
 
 from aqt.archives import ModuleToPackage, QtArchives, QtPackage, ToolArchives
-from aqt.exceptions import NoPackageFound, ArchiveListError
+from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings
 from aqt.metadata import Version
 
@@ -71,10 +71,10 @@ def corrupt_xmlfile():
     (
         (QtArchives, ("mac", "desktop", "1.2.3", "clang", Settings.baseurl)),
         (ToolArchives, ("mac", "desktop", "tools_qtifw", Settings.baseurl)),
-    )
+    ),
 )
 def test_qtarchive_parse_corrupt_xmlfile(monkeypatch, corrupt_xmlfile, archives_class, init_args):
-    monkeypatch.setattr('aqt.archives.getUrl', lambda self, url: corrupt_xmlfile)
+    monkeypatch.setattr("aqt.archives.getUrl", lambda self, url: corrupt_xmlfile)
 
     with pytest.raises(ArchiveListError) as error:
         archives_class(*init_args)
