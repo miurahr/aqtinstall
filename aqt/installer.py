@@ -29,6 +29,7 @@ import platform
 import random
 import signal
 import subprocess
+import sys
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
@@ -93,6 +94,17 @@ class Cli:
             self.logger.error(format(e), exc_info=Settings.print_stacktrace_on_error)
             if e.should_show_help:
                 self.show_help()
+            return 1
+        except Exception as e:
+            # If we didn't account for it, and wrap it in an AqtException, it's a bug.
+            self.logger.exception(e)  # Print stack trace
+            self.logger.error(
+                f"Arguments: `{sys.argv}` Host: `{platform.uname()}`\n"
+                "===========================PLEASE FILE A BUG REPORT===========================\n"
+                "You have discovered a bug in aqt.\n"
+                "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
+                "Please remember to include a copy of this program's output in your report."
+            )
             return 1
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
