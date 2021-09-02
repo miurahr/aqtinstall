@@ -9,7 +9,7 @@ from typing import Dict, Iterable
 import pytest
 
 from aqt.archives import ModuleToPackage, QtArchives, QtPackage, ToolArchives
-from aqt.exceptions import NoPackageFound
+from aqt.exceptions import NoPackageFound, ArchiveListError
 from aqt.helper import Settings
 from aqt.metadata import Version
 
@@ -59,6 +59,27 @@ def test_parse_update_xml(monkeypatch, os_name, version, arch, datafile):
 
     # Assert if list_diff contains urls without target specified
     assert unwanted_targets == []
+
+
+@pytest.fixture()
+def corrupt_xmlfile():
+    return "<UnclosedTag></SomeOtherTag>"
+
+
+@pytest.mark.parametrize(
+    "archives_class, init_args",
+    (
+        (QtArchives, ("mac", "desktop", "1.2.3", "clang", Settings.baseurl)),
+        (ToolArchives, ("mac", "desktop", "tools_qtifw", Settings.baseurl)),
+    )
+)
+def test_qtarchive_parse_corrupt_xmlfile(monkeypatch, corrupt_xmlfile, archives_class, init_args):
+    monkeypatch.setattr('aqt.archives.getUrl', lambda self, url: corrupt_xmlfile)
+
+    with pytest.raises(ArchiveListError) as error:
+        archives_class(*init_args)
+    assert error.type == ArchiveListError
+    assert format(error.value) == "Downloaded metadata is corrupted. mismatched tag: line 1, column 15"
 
 
 @pytest.mark.parametrize(
