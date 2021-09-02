@@ -526,7 +526,7 @@ class MetadataFactory:
         try:
             version = Version(qt_ver)
         except ValueError as e:
-            raise CliInputError(e)
+            raise CliInputError(e) from e
         return version
 
     @staticmethod
@@ -542,7 +542,7 @@ class MetadataFactory:
 
             except (ArchiveDownloadError, ArchiveConnectionError) as e:
                 if i == len(base_urls) - 1:
-                    raise e
+                    raise e from e
 
     @staticmethod
     def iterate_folders(html_doc: str, filter_category: str = "") -> Generator[str, None, None]:

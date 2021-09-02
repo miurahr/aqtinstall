@@ -66,15 +66,12 @@ def getUrl(url: str, timeout) -> str:
             ConnectionResetError,
             requests.exceptions.ConnectionError,
             requests.exceptions.Timeout,
-        ):
-            raise ArchiveConnectionError("Failure to connect to  {}".format(url))
+        ) as e:
+            raise ArchiveConnectionError(f"Failure to connect to {url}: {type(e).__name__}") from e
         else:
             if r.status_code != 200:
-                logger.error(
-                    "Failed to retrieve file at {}\n"
-                    "Server response code: {}, reason: {}".format(url, r.status_code, r.reason)
-                )
-                raise ArchiveDownloadError("Failure to retrieve {}".format(url))
+                msg = f"Failed to retrieve file at {url}\nServer response code: {r.status_code}, reason: {r.reason}"
+                raise ArchiveDownloadError(msg)
         result = r.text
     return result
 
@@ -94,11 +91,9 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except requests.exceptions.ConnectionError as e:
-            logger.error("Connection error: %s" % e.args)
-            raise e
+            raise ArchiveConnectionError(f"Connection error: {e.args}") from e
         except requests.exceptions.Timeout as e:
-            logger.error("Connection timeout: %s" % e.args)
-            raise e
+            raise ArchiveConnectionError(f"Connection timeout: {e.args}") from e
         else:
             hash = hashlib.new(hash_algo)
             try:

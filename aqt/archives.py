@@ -212,8 +212,7 @@ class QtArchives:
         try:
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
-            self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
-            raise ArchiveListError("Downloaded metadata is corrupted.")
+            raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
 
         for packageupdate in self.update_xml.iter("PackageUpdate"):
             pkg_name = packageupdate.find("Name").text
@@ -387,8 +386,7 @@ class ToolArchives(QtArchives):
         try:
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
-            self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
-            raise ArchiveListError("Downloaded metadata is corrupted.")
+            raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
 
         try:
             packageupdate = next(filter(lambda x: x.find("Name").text == self.arch, self.update_xml.iter("PackageUpdate")))

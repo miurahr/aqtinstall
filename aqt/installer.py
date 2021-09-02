@@ -393,8 +393,8 @@ class Cli:
         try:
             if args.spec is not None:
                 spec = SimpleSpec(args.spec)
-        except ValueError:
-            raise CliInputError(f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage())
+        except ValueError as e:
+            raise CliInputError(f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage()) from e
 
         meta = MetadataFactory(
             archive_id=ArchiveId(
