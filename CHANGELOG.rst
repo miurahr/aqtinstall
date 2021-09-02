@@ -19,6 +19,7 @@ Added
 * Automatically update combinations.json (#343,#344,#345)
 * CI: test with Qt6.2 with modules(#346)
 * README: link documentation for stable(#329)
+* Support WASM on Qt 6.2.0(#384)
 
 Changed
 -------
@@ -33,7 +34,7 @@ Changed
 * tool subcommand now install without version spec(#299)
 * README example command is now easy to copy-and-paste(#322)  
 * list subcommand update(#331)
-* Improve handle of Ctrl-C keyboard interrption(#337)
+* Improve handle of Ctrl-C keyboard interruption(#337)
 * Update combinations.json(#344)
 * Turn warnings into errors when building docs(#360)
 * Update documentations(#358,#357)
@@ -44,6 +45,7 @@ Changed
 * Failed on missing tools(#375)
 * Remove 'addons' prefix for some modules for Qt6+ (#368)
 * Fix inappropriate warnings(#370)
+* Update README to fix version 2 (#377)
 
 Fixed
 -----
@@ -89,7 +91,7 @@ Added
 * Document for settings.ini configuration parameters(#246)
 * Patching libtool file(.la) on mac(#267)
 * CI: Add more blacklist mirrors
-* Add --kde option for src subommand(#274)
+* Add --kde option for src subcommand(#274)
 
 Changed
 -------
