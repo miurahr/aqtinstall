@@ -69,3 +69,7 @@ class CliKeyboardInterrupt(AqtException):
 
 class ArchiveExtractionError(AqtException):
     pass
+
+
+class UpdaterError(AqtException):
+    pass
