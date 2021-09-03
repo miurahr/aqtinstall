@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 local_scheme = "no-local-version"
 
 [tool.check-manifest]
-ignore = ["aqt/version.py","azure-pipelines.yml","ci/*"]
+ignore = ["aqt/version.py","azure-pipelines.yml", ".readthedocs.yml", "ci/*"]
 
 [tool.coverage.run]
 branch = true
