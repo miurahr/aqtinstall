@@ -16,6 +16,7 @@ recursive-include tests *.py
 recursive-include tests *.xml
 prune .github
 exclude .gitignore
+exclude .readthedocs.yml
 exclude azure-pipelines.yml
 exclude qtaccount.ini
 exclude aqtinstall.log
