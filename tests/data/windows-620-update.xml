@@ -1,0 +1,1486 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons</Name>
+  <DisplayName>Additional Libraries</DisplayName>
+  <Description>Additional Libraries for Qt 6.2.0.&lt;br>&lt;br>Most of the additional libraries are available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <SortingPriority>3</SortingPriority>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>71a33b69d030e6811b23dda0bbd496ed98ec522e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qt3d</Name>
+  <DisplayName>Qt 3D</DisplayName>
+  <Description>Qt 3D Prebuilt Components for Qt 6.2.0. Qt 3D provides functionality for near-realtime simulation systems with support for 2D and 3D rendering in both Qt C++ and Qt Quick applications.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qt3d, qt.qt6.620.examples.qt3d</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>0d25f7b1059ce335ee6367dfd7727c635270de3d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qt3d.win64_mingw81</Name>
+  <DisplayName>Qt 3D for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qt3d, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2888991" UncompressedSize="23210765" OS="Any"/>
+  <SHA1>7df6a9ac926bf469c175baa38362327bca2ee511</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qt3d.win64_msvc2019_64</Name>
+  <DisplayName>Qt 3D Module for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qt3d, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="7052877" UncompressedSize="61727779" OS="Any"/>
+  <SHA1>ece092faa0e3e40f700f3f99f83ff3112571a4fb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qt3d.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt 3D Module for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qt3d, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="6537259" UncompressedSize="78009401" OS="Any"/>
+  <SHA1>8e11260d2f54f3170a62f5aff94d00b20cfe6704</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtactiveqt</Name>
+  <DisplayName>Active Qt</DisplayName>
+  <Description>Qt's ActiveX and COM support.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtactiveqt, qt.qt6.620.examples.qtactiveqt</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>0a9a4951307896b18f427bda42840e91ccb26634</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtactiveqt.win64_mingw81</Name>
+  <DisplayName>Qt 3D for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qt3d, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtactiveqt-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="8869632" UncompressedSize="58797878" OS="Any"/>
+  <SHA1>d0d02b26ea163aeb5ed43729bb30f7bbce45c292</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtactiveqt.win64_msvc2019_64</Name>
+  <DisplayName>Active Qt for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtactiveqt, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtactiveqt-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="7324937" UncompressedSize="64891754" OS="Any"/>
+  <SHA1>9c78dde17ff2c1d36d9dbda6b404ce9d50c4b158</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtactiveqt.win64_msvc2019_arm64</Name>
+  <DisplayName>Active Qt for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtactiveqt, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtactiveqt-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="6997872" UncompressedSize="63657161" OS="Any"/>
+  <SHA1>a4e58b9e3b57d0bec5f4760bd836a40ae30e369c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtcharts, qt.qt6.620.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>c8dab0d7575d3d63e75b4467b48438dbef0e3086</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtcharts.win64_mingw81</Name>
+  <DisplayName>Qt Charts for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtcharts, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="785534" UncompressedSize="8285003" OS="Any"/>
+  <SHA1>9a985abf0cca3a9dd4fea335545d290b340ddd2d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtcharts.win64_msvc2019_64</Name>
+  <DisplayName>Qt Charts for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtcharts, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1648314" UncompressedSize="14561030" OS="Any"/>
+  <SHA1>6b98678afe6ce986e173314cd04ee4a1bb8cf7d0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtcharts.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Charts for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtcharts, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1490400" UncompressedSize="17050340" OS="Any"/>
+  <SHA1>8ee8fc4c5d192646c88986f781c213c76861d00a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtconnectivity</Name>
+  <DisplayName>Qt Connectivity</DisplayName>
+  <Description>This component includes two Qt modules. The two modules provide access to Bluetooth and NFC hardware.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtbluetooth, qt.qt6.620.doc.qtnfc, qt.qt6.620.examples.qtconnectivity</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>88f947211acefc0899d0c7c76be31853a98258d4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtconnectivity.win64_mingw81</Name>
+  <DisplayName>Qt Connectivity for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtconnectivity, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtconnectivity-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="213008" UncompressedSize="1659350" OS="Any"/>
+  <SHA1>f44fdc5e98ff9521c44018dc93ff28ba42843884</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtconnectivity.win64_msvc2019_64</Name>
+  <DisplayName>Qt Connectivity for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtconnectivity, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtconnectivity-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="779120" UncompressedSize="5791857" OS="Any"/>
+  <SHA1>0fe6632c979bc5da0e19a8880dd062516a3f0439</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtdatavis3d, qt.qt6.620.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>71a42d18e94bf4d7ae9d58e8debd99b2ddc95508</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtdatavis3d.win64_mingw81</Name>
+  <DisplayName>Qt Data Visualization for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtdatavis3d, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="609178" UncompressedSize="4459783" OS="Any"/>
+  <SHA1>5f93bea7534313019aed3e39f7a6a4acae0cf596</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtdatavis3d.win64_msvc2019_64</Name>
+  <DisplayName>Qt Data Visualization for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtdatavis3d, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1169661" UncompressedSize="9161398" OS="Any"/>
+  <SHA1>f4a196b8b975ac975589f2625ddd2faed2aa3aa6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtdatavis3d.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Data Visualization for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtdatavis3d, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1063405" UncompressedSize="11098613" OS="Any"/>
+  <SHA1>f21ebb34eba7865ab224c344e54a8924da7cd71e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtimageformats</Name>
+  <DisplayName>Qt Image Formats</DisplayName>
+  <Description>The Qt Image Formats  provides optional support for other image file formats. The core Qt Gui library by default supports reading and writing image files of the most common file formats: PNG, JPEG, BMP, GIF and a few more.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtimageformats, qt.qt6.620.examples.qtimageformats</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>6390919fd8e0a2090d021df6e5078dae69afc844</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtimageformats.win64_mingw81</Name>
+  <DisplayName>Qt Image Formats for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtimageformats, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="171115" UncompressedSize="666675" OS="Any"/>
+  <SHA1>92fa5cde9b1452fd7cb33de465d74decfb079682</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtimageformats.win64_msvc2019_64</Name>
+  <DisplayName>Qt Image Formats for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtimageformats, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="720527" UncompressedSize="3889206" OS="Any"/>
+  <SHA1>afeaf214b26e30b1e85b7b394f876fc6dc46d827</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtimageformats.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Image Formats for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtimageformats, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="528187" UncompressedSize="3620694" OS="Any"/>
+  <SHA1>4f90a4336e49cb13120ecee2b3e52384366fb32a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtlottie, qt.qt6.620.examples.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>385189e843b32183d04768d5af2faeb1bd380ce7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtlottie.win64_mingw81</Name>
+  <DisplayName>Qt Lottie Animation for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtlottie, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="175528" UncompressedSize="902489" OS="Any"/>
+  <SHA1>4626d2c74c22f0031fcafc4606f8ea4ea25b5333</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtlottie.win64_msvc2019_64</Name>
+  <DisplayName>Qt Lottie Animation for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtlottie, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="312350" UncompressedSize="2009452" OS="Any"/>
+  <SHA1>6d28ee800dd8f349ac2f41466fd54722420bb353</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtlottie.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Lottie Animation for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtlottie, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="265620" UncompressedSize="2442411" OS="Any"/>
+  <SHA1>cf15095ad48de5dcc81644a5001d28187fd11334</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtmultimedia</Name>
+  <DisplayName>Qt Multimedia</DisplayName>
+  <Description>Qt Multimedia provides a rich set of QML types and C++ classes to handle multimedia content.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtmultimedia, qt.qt6.620.examples.qtmultimedia</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>f296c05a05e1676715899e65b6115ea8002803ba</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtmultimedia.win64_mingw81</Name>
+  <DisplayName>Qt Multimedia for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtmultimedia, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="345427" UncompressedSize="2939798" OS="Any"/>
+  <SHA1>d37b3065b34db0fcccf8bb393973fc55a58711c8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtmultimedia.win64_msvc2019_64</Name>
+  <DisplayName>Qt Multimedia for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtmultimedia, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="927828" UncompressedSize="6763576" OS="Any"/>
+  <SHA1>212b4fb1f57d62549651dde97669c200bb3454fb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtnetworkauth</Name>
+  <DisplayName>Qt Network Authorization</DisplayName>
+  <Description>Qt Network Authorization provides a set of APIs that enable Qt applications to obtain limited access to online accounts and HTTP services without exposing users' passwords.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtnetworkauth, qt.qt6.620.examples.qtnetworkauth</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>4d43d668133a0e4587f2f909e405548fa8b362a2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtnetworkauth.win64_mingw81</Name>
+  <DisplayName>Qt Network Authorization for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtnetworkauth, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="95597" UncompressedSize="566770" OS="Any"/>
+  <SHA1>cf0addbef380f7d253fcf745f6346ba12de92bd8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtnetworkauth.win64_msvc2019_64</Name>
+  <DisplayName>Qt Network Authorization for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtnetworkauth, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="189803" UncompressedSize="1217095" OS="Any"/>
+  <SHA1>0704b4cf8155aad4674e766384ada0afb0e87ab5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtnetworkauth.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Network Authorization for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtnetworkauth, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="167711" UncompressedSize="1502950" OS="Any"/>
+  <SHA1>a35f8f35d04e0c06b19e004996857ec2293650da</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtpositioning</Name>
+  <DisplayName>Qt Positioning</DisplayName>
+  <Description>The Qt Positioning API provides positioning information via QML and C++ interfaces.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtpositioning, qt.qt6.620.examples.qtpositioning</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>b82cf4b089f91d16008190550496e3c8f47da1d5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtpositioning.win64_mingw81</Name>
+  <DisplayName>Qt Positioning for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtpositioning, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlocation-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="356159" UncompressedSize="2313287" OS="Any"/>
+  <SHA1>30ab7ee2af7125690fed2cc560554a2adf9bf162</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtpositioning.win64_msvc2019_64</Name>
+  <DisplayName>Qt Positioning for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtpositioning, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlocation-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="869632" UncompressedSize="6666823" OS="Any"/>
+  <SHA1>bb3b203df01bc7ad76280ca15d43d00663430a51</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtpositioning.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Positioning for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtpositioning, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlocation-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="788885" UncompressedSize="8112645" OS="Any"/>
+  <SHA1>0b481bca8adfd47ded6de62e9dcf096d47f18598</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtremoteobjects</Name>
+  <DisplayName>Qt Remote Objects</DisplayName>
+  <Description>Qt Remote Objects is an add-on library that provides an easy way to share Qt APIs between processes/devices.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtremoteobjects, qt.qt6.620.examples.qtremoteobjects</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>617192d64f23cf028f260a1151a017a47d6c6593</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtremoteobjects.win64_mingw81</Name>
+  <DisplayName>Qt Remote Objects for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtremoteobjects, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtremoteobjects-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="414479" UncompressedSize="1974735" OS="Any"/>
+  <SHA1>1d0c436eda7873d1771c48a6209267fa9e9413b2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtremoteobjects.win64_msvc2019_64</Name>
+  <DisplayName>Qt Remote Objects for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtremoteobjects, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtremoteobjects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="787105" UncompressedSize="5016581" OS="Any"/>
+  <SHA1>add6667006327a886bd06fb3e144cb75bcb3c919</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtremoteobjects.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Remote Objects for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtremoteobjects, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtremoteobjects-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="620123" UncompressedSize="6207221" OS="Any"/>
+  <SHA1>28cc8e503094d0739b3ed84d5b7be8a7fbb4b283</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtscxml</Name>
+  <DisplayName>Qt State Machines</DisplayName>
+  <Description>The Qt State Machines package provides API's and execution models that can be used to effectively embed the elements and semantics of statecharts in Qt applications. For advanced use cases the state machines can even be created from State Chart XML (SCXML) files.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtscxml, qt.qt6.620.examples.qtscxml</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>c90f4a0b08e4dad1811ad06b0c3b45a643874f23</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtscxml.win64_mingw81</Name>
+  <DisplayName>Qt State Machine for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtscxml, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="460959" UncompressedSize="3048566" OS="Any"/>
+  <SHA1>833a9a9c568896866db8e1c4e5770cf59a1c7491</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtscxml.win64_msvc2019_64</Name>
+  <DisplayName>Qt State Machine for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtscxml, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1013951" UncompressedSize="7560091" OS="Any"/>
+  <SHA1>8b0737fde7fef3b44d46804192df603a14887182</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtscxml.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt State Machine for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtscxml, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="822405" UncompressedSize="9142633" OS="Any"/>
+  <SHA1>4c3399ec76f383bda2798390fe6e9d4066432910</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtsensors</Name>
+  <DisplayName>Qt Sensors</DisplayName>
+  <Description>Qt Sensors provides classes for reading sensor data.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtsensors, qt.qt6.620.examples.qtsensors</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>5c8c0e262bc78cdc13628887b962ea99aecb0df0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtsensors.win64_mingw81</Name>
+  <DisplayName>Qt Sensors for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtsensors, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtsensors-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="236029" UncompressedSize="2531182" OS="Any"/>
+  <SHA1>a3ed0e5d1959281538ba220195b16f04b5bb96b5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtsensors.win64_msvc2019_64</Name>
+  <DisplayName>Qt Sensors for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtsensors, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtsensors-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="670939" UncompressedSize="6259275" OS="Any"/>
+  <SHA1>2974115e09b9e2e1b60556f9f2b54c2dcf08f489</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtsensors.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Sensors for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtsensors, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtsensors-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="605711" UncompressedSize="7281993" OS="Any"/>
+  <SHA1>342fd3041fe360a4d1838579cf805e4f3bf84d86</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialbus</Name>
+  <DisplayName>Qt Serial Bus</DisplayName>
+  <Description>The Qt Serial Bus API provides classes and functions to access the various industrial serial buses and protocols, such as CAN, ModBus, and others.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtserialbus, qt.qt6.620.examples.qtserialbus</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>2727d6a474239fc6bee11488cd25c20323cb316f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialbus.win64_mingw81</Name>
+  <DisplayName>Qt SerialBus for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtserialbus, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialbus-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="221140" UncompressedSize="1252364" OS="Any"/>
+  <SHA1>e13ca70ab6b7340903b61bcddb3430729dd4c1f2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialbus.win64_msvc2019_64</Name>
+  <DisplayName>Qt SerialBus for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtserialbus, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialbus-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="487694" UncompressedSize="3416797" OS="Any"/>
+  <SHA1>9695ba9b1a0c9d3ced3ed9e3feb1d2c26b47072f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialbus.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt SerialBus for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtserialbus, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialbus-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="409564" UncompressedSize="4096025" OS="Any"/>
+  <SHA1>ab7c273bc7f3e0fd16b3bc2e0cdc49530cde4947</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialport</Name>
+  <DisplayName>Qt Serial Port</DisplayName>
+  <Description>Qt Serial Port provides the basic functionality, which includes configuring, I/O operations, getting and setting the control signals of the RS-232 pinouts.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtserialport, qt.qt6.620.examples.qtserialport</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>917a3f796504b13f9ed902f4b52a76d00b563d2f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialport.win64_mingw81</Name>
+  <DisplayName>Qt SerialPort for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtserialport, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialport-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="52960" UncompressedSize="255569" OS="Any"/>
+  <SHA1>a1f287e641acff06f9889efdb3463607a3001f0a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialport.win64_msvc2019_64</Name>
+  <DisplayName>Qt SerialPort for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtserialport, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialport-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="108626" UncompressedSize="582353" OS="Any"/>
+  <SHA1>d3e4057327a49e06af6fd9308fbca1d6d6d00bac</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialport.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt SerialPort for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtserialport, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialport-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="92684" UncompressedSize="705392" OS="Any"/>
+  <SHA1>f5a838709858b8584ac5e68da56834d3c476fe71</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your ownlayouts and styles.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtvirtualkeyboard, qt.qt6.620.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>b96c32731a3611b7b97c59954ca0905f4f8ca7b1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtvirtualkeyboard.win64_mingw81</Name>
+  <DisplayName>Qt Virtual Keyboard for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtvirtualkeyboard, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2156547" UncompressedSize="5807106" OS="Any"/>
+  <SHA1>ed5ede916c63333cfe65a7ff7db47629000dadd5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtvirtualkeyboard.win64_msvc2019_64</Name>
+  <DisplayName>Qt Virtual Keyboard for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtvirtualkeyboard, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2601787" UncompressedSize="13636427" OS="Any"/>
+  <SHA1>4a5055ba666554e36e099a2e146bcab5ddf69de8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtvirtualkeyboard.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Virtual Keyboard for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtvirtualkeyboard, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2499874" UncompressedSize="14893450" OS="Any"/>
+  <SHA1>20564259f69e926ce0c77d9d9f7cffb9dd89893e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebchannel</Name>
+  <DisplayName>Qt WebChannel</DisplayName>
+  <Description>Qt WebChannel enables peer-to-peer communication between a server (QML/C++ application) and a client (HTML/JavaScript or QML application). It is supported out of the box by Qt WebEngine. In addition it can work on all browsers that support WebSockets, enabling Qt WebChannel clients to run in any JavaScript environment (including QML). This requires the implementation of a custom transport based on Qt WebSockets.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtwebchannel, qt.qt6.620.examples.qtwebchannel</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>93a0c9fe2e87446369a15ac4f70d48ed0a1337da</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebchannel.win64_mingw81</Name>
+  <DisplayName>Qt WebChannel for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebchannel, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="105864" UncompressedSize="482080" OS="Any"/>
+  <SHA1>31f4e5393b732534bc30b6076e6d84b672532c82</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebchannel.win64_msvc2019_64</Name>
+  <DisplayName>Qt WebChannel for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebchannel, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="233822" UncompressedSize="1458128" OS="Any"/>
+  <SHA1>1a58b169116a869a5db03b8ca93f40b6627770b2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebchannel.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt WebChannel for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebchannel, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="202642" UncompressedSize="1870095" OS="Any"/>
+  <SHA1>8417acd0e2c8082350baa304a7fb52685a453a53</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebengine</Name>
+  <DisplayName>Qt WebEngine</DisplayName>
+  <Description>The Qt WebEngine module integrates the fast moving Chromium web platform into Qt and provides a convenient API for both Qt Widgets and Qt Quick to utilize Chromium's web capabilities. Qt WebEngine takes full benefit of the whole Qt graphics stack integration allowing seamless mix and overlay of native Qt controls with web content and OpenGL shaders.&lt;br>&lt;br>On Windows, the module is only available under MSVC2019.&lt;br>&lt;br>This component contains Third-Party Content licensed under LGPLv2.1. Please note the additional requirements of the license.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>13</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtwebengine, qt.qt6.620.examples.qtwebengine</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>4a04b5cf358666fb7915e4b61890c01a9f72cfdc</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebengine.win64_msvc2019_64</Name>
+  <DisplayName>Qt WebEngine for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebengine, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebengine-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="146397140" UncompressedSize="664103860" OS="Any"/>
+  <SHA1>2ffcacc06a3a0186502bf83be628e20897a02486</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebsockets</Name>
+  <DisplayName>Qt WebSockets</DisplayName>
+  <Description>WebSocket is a web-based protocol designed to enable two-way communication between a client application and a remote host. It enables the two entities to send data back and forth if the initial handshake succeeds. WebSocket is the solution for applications that struggle to get real-time data feeds with less network latency and minimum data exchange.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtwebsockets, qt.qt6.620.examples.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>cfad869ac0a4353702ae6e37e2b4eb930e1c21e7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebsockets.win64_mingw81</Name>
+  <DisplayName>Qt WebSockets for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebsockets, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="101059" UncompressedSize="546141" OS="Any"/>
+  <SHA1>8cda1f7746e662a8dc6c4b90d0b5029b98386d32</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebsockets.win64_msvc2019_64</Name>
+  <DisplayName>Qt WebSockets for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebsockets, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="231160" UncompressedSize="1477698" OS="Any"/>
+  <SHA1>be1a796fa47cb0b0d9b13527e7338d4c5e2d996a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebsockets.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt WebSockets for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebsockets, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="203577" UncompressedSize="1817473" OS="Any"/>
+  <SHA1>c3fd79de40f2cb1e694db469f77383923719e3df</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebview</Name>
+  <DisplayName>Qt WebView</DisplayName>
+  <Description>Qt WebView provides a way to display web content in a QML application without necessarily including a full web browser stack by using native APIs where it makes sense. This is useful on mobile platforms such as Android, iOS, and UWP (Universal Windows Platform); especially on iOS, where policy dictates that all web content is displayed using the operating system's web view. On Windows, Linux, and macOS, Qt WebView depends on the Qt WebEngine module to render content.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtwebview, qt.qt6.620.examples.qtwebview</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>04a27261e0853722a04f3b04b9d577446527b692</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebview.win64_mingw81</Name>
+  <DisplayName>Qt WebView for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebview, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebview-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="64401" UncompressedSize="465373" OS="Any"/>
+  <SHA1>8a6f48615a96e602c42e80cc998159fb79f63053</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebview.win64_msvc2019_64</Name>
+  <DisplayName>Qt WebView for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebview, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebview-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="151798" UncompressedSize="1196959" OS="Any"/>
+  <SHA1>69368ffba56608b10c56333a52d15de9c905a1ec</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.debug_info</Name>
+  <DisplayName>Qt Debug Information Files</DisplayName>
+  <Description>Qt 6.2.0 debug information files. Requires selection of target binary like gcc or MSVC.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>77ede36a3433093537765ebbab375565509e87ff</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.debug_info.win64_mingw81</Name>
+  <DisplayName>Desktop MinGW 8.1.0 64-bit debug information files</DisplayName>
+  <Description>Qt 6.2.0 debug information files for Desktop MinGW 8.1.0 64-bit</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.debug_info, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtsvg-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtdeclarative-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qttools-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtquickcontrols2-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qt5compat-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtshadertools-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtquick3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtquicktimeline-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qt3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtcharts-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtcoap-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtconnectivity-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtdatavis3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtimageformats-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtlottie-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtmqtt-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtmultimedia-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtnetworkauth-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtopcua-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtlocation-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtremoteobjects-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtscxml-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtsensors-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialbus-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialport-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtvirtualkeyboard-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebchannel-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebsockets-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebview-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1324112452" UncompressedSize="9086284354" OS="Any"/>
+  <SHA1>9bc1b3efe23b82cd1dbddc1f9af7571fd9c1fa21</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.debug_info.win64_msvc2019_64</Name>
+  <DisplayName>Desktop MSVC 2019 64-bit debug information files</DisplayName>
+  <Description>Qt 6.2.0 debug information files for Desktop MSVC 2019 64-bit</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.debug_info, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtsvg-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtdeclarative-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qttools-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtquickcontrols2-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qt5compat-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtshadertools-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtquick3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtquicktimeline-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qt3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtcharts-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtcoap-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtconnectivity-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtdatavis3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtimageformats-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtlottie-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtmqtt-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtmultimedia-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtnetworkauth-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtopcua-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtlocation-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtremoteobjects-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtscxml-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtsensors-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialbus-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtserialport-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtvirtualkeyboard-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebchannel-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebengine-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebsockets-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z, qtwebview-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1248188320" UncompressedSize="9161127128" OS="Any"/>
+  <SHA1>610273d952135a039ad9ff604bc163d391916521</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.debug_info.win64_msvc2019_arm64</Name>
+  <DisplayName>Desktop MSVC 2019 ARM64 debug information files</DisplayName>
+  <Description>Qt 6.2.0 debug information files for Desktop MSVC 2019 ARM64</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.debug_info, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtsvg-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtdeclarative-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qttools-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtquickcontrols2-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qt5compat-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtshadertools-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtquick3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtquicktimeline-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qt3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtcharts-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtcoap-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtdatavis3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtimageformats-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtlottie-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtmqtt-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtmultimedia-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtnetworkauth-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtlocation-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtremoteobjects-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtscxml-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtsensors-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtserialbus-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtserialport-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtvirtualkeyboard-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtwebchannel-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z, qtwebsockets-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="514431840" UncompressedSize="3688703032" OS="Any"/>
+  <SHA1>d7315223ece2791ef98b5fa80cda28877f0862d9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qt5compat</Name>
+  <DisplayName>Qt 5 Compatibility Module</DisplayName>
+  <Description>Qt 5 Compatibility Module Prebuilt Components for Qt 6.2.0. Qt 5 Compatibility Module allows to continue using some dedicated functionality which has been removed in Qt 6.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qt5compat, qt.qt6.620.examples.qt5compat</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>a26cf2a7edc78dad3e56f65d1396ff080f71fcd1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qt5compat.win64_mingw81</Name>
+  <DisplayName>Qt 5 Compatibility Module for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qt5compat, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="564969" UncompressedSize="1961933" OS="Any"/>
+  <SHA1>fa5cdfa5b3614639228f78799215b57b88d82498</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qt5compat.win64_msvc2019_64</Name>
+  <DisplayName> Qt 5 Compatibility Module for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qt5compat, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="799440" UncompressedSize="4540179" OS="Any"/>
+  <SHA1>6a38fdf91745c78e985a04be0cb8c62ece9a938d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qt5compat.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt 5 Compatibility Module for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qt5compat, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="739686" UncompressedSize="5142258" OS="Any"/>
+  <SHA1>3d0e392a74b1bfacd1856da806fadbd10c6f48a5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquick3d</Name>
+  <DisplayName>Qt Quick 3D</DisplayName>
+  <Description>Qt Quick 3D provides high-level 3D API for Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>89</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtquick3d, qt.qt6.620.examples.qtquick3d, qt.qt6.620.qtshadertools, qt.qt6.620.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>a660c49b009f8f8188a9ad73c7645a68d7c51d88</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquick3d.win64_mingw81</Name>
+  <DisplayName>Qt Quick 3D for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtquick3d, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2370970" UncompressedSize="12276370" OS="Any"/>
+  <SHA1>f21b2eb70376be6ae1ce72a073b9e9e0994c9633</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquick3d.win64_msvc2019_64</Name>
+  <DisplayName>Qt Quick 3D for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtquick3d, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4672884" UncompressedSize="31931106" OS="Any"/>
+  <SHA1>1c61c89ef60897e8265a003d8d2308f0829f1590</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquick3d.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Quick 3D for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtquick3d, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4252714" UncompressedSize="40216285" OS="Any"/>
+  <SHA1>e18cfc2a04b4ccc060b27172932bfeab720d8d59</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline</DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>0</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtquicktimeline, qt.qt6.620.examples.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>cc4aff7360d3ec9908124ccfee3380e584436559</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquicktimeline.win64_mingw81</Name>
+  <DisplayName>Qt Quick Timeline for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtquicktimeline, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="55452" UncompressedSize="314536" OS="Any"/>
+  <SHA1>177eb2ab66217f1e3e8d55c1dea7fb40f3534aad</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquicktimeline.win64_msvc2019_64</Name>
+  <DisplayName>Qt Quick Timeline for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtquicktimeline, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="116817" UncompressedSize="842625" OS="Any"/>
+  <SHA1>e532a065144f0db6b10a389491e3d879fede45a2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquicktimeline.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Quick Timeline for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtquicktimeline, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="99986" UncompressedSize="980672" OS="Any"/>
+  <SHA1>47c8644be6af2d6852c19a6a3458ebf0f1bfb918</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtshadertools</Name>
+  <DisplayName>Qt Shader Tools</DisplayName>
+  <Description>Qt Shader conditioning tool Prebuilt Components for Qt 6.2.0.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtshadertools, qt.qt6.620.examples.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>d636ca70eb1da7d30464fa72bd1cd31542ae7637</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtshadertools.win64_mingw81</Name>
+  <DisplayName>Qt Shader Tools for MinGW 8.1.0 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtshadertools, qt.qt6.620.win64_mingw81</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_mingw81</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1155401" UncompressedSize="3918106" OS="Any"/>
+  <SHA1>daec8270f02cd40c6c6cbbfa8f0705355f1bfed7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtshadertools.win64_msvc2019_64</Name>
+  <DisplayName>Qt Shader Tools for MSVC 2019 64-bit</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtshadertools, qt.qt6.620.win64_msvc2019_64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2513291" UncompressedSize="14763910" OS="Any"/>
+  <SHA1>43e12448738181edd0df61401a856c5228b5d535</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtshadertools.win64_msvc2019_arm64</Name>
+  <DisplayName>Qt Shader Tools for MSVC 2019 ARM64</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtshadertools, qt.qt6.620.win64_msvc2019_arm64</AutoDependOn>
+  <Dependencies>qt.qt6.620.win64_msvc2019_arm64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2337737" UncompressedSize="19311385" OS="Any"/>
+  <SHA1>3c445218e20e85e93d4d6c88339a003d8a1bed4f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.win64_mingw81</Name>
+  <DisplayName>MinGW 8.1.0 64-bit</DisplayName>
+  <Description>Qt 6.2.0 Prebuilt Components for MinGW 8.1.0 64-bit</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.tools.win64_mingw810, qt.qt6.620.doc, qt.qt6.620.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtsvg-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtdeclarative-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qttools-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qtquickcontrols2-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, qttranslations-Windows-Windows_10-Mingw-Windows-Windows_10-X86_64.7z, x86_64-8.1.0-release-posix-seh-rt_v6-rev0-runtime.7z, d3dcompiler_47-x64.7z, opengl32sw-64-mesa_11_2_2-signed.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="97677571" UncompressedSize="591896413" OS="Any"/>
+  <SHA1>4921588226df63095ee26c35e2d66239d0db5255</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.win64_msvc2019_64</Name>
+  <DisplayName>MSVC 2019 64-bit</DisplayName>
+  <Description>Qt 6.2.0 Prebuilt Components for MSVC 2019 64-bit</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt6.620.doc, qt.qt6.620.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>590</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtsvg-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtdeclarative-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qttools-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qtquickcontrols2-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, qttranslations-Windows-Windows_10-MSVC2019-Windows-Windows_10-X86_64.7z, d3dcompiler_47-x64.7z, opengl32sw-64-mesa_11_2_2-signed.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="124095532" UncompressedSize="980265720" OS="Any"/>
+  <SHA1>cb065293f84b4a9497da008f9f30c54179d679d5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.win64_msvc2019_arm64</Name>
+  <DisplayName>MSVC 2019 ARM64</DisplayName>
+  <Description>Qt 6.2.0 Prebuilt Components for MSVC 2019 ARM64</Description>
+  <Version>6.2.0-0-202107280443</Version>
+  <ReleaseDate>2021-07-28</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt6.620.doc, qt.qt6.620.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>595</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z, qtsvg-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z, qtdeclarative-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z, qttools-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z, qtquickcontrols2-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z, qttranslations-Windows-Windows_10-MSVC2019-Windows-Windows_10-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="91644726" UncompressedSize="949415143" OS="Any"/>
+  <SHA1>1164afa0cff3a5255d4fbf8332a4f0eca32a0c75</SHA1>
+ </PackageUpdate>
+ <SHA1>b8769a3bd389bbde962268e551a0cf4221c5aa98</SHA1>
+ <MetadataName>2021-07-28-0533_meta.7z</MetadataName>
+</Updates>

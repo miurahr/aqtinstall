@@ -14,38 +14,19 @@ Another Qt installer(aqt)
 .. |coveralls| image:: https://coveralls.io/repos/github/miurahr/aqtinstall/badge.svg?branch=master
    :target: https://coveralls.io/github/miurahr/aqtinstall?branch=master
 
-This is a utility alternative to the official graphical Qt installer, for using in CI environment where an interactive
-UI is not usable such as Github Actions, Travis-CI, CircleCI, Azure-Pipelines, AppVeyor and others.
+This is a utility alternative to the official graphical Qt installer, for using in CI environment
+where an interactive UI is not usable, or just on command line.
 
-.. warning::
-    This is NOT franchised with The Qt Company and The Qt Project.
-    there is NO guarantee and support. Please don't ask them about aqtinstall.
-
-    When you need official and/or commercial support about unattended install,
-    please ask your Qt reseller, or help desk according to your contract.
-
-    The official installer has a capability to scripting installation process,
-    please ask a consult with `the official documents`_.
-
-
-.. _`the official documents`: https://doc.qt.io/qtinstallerframework/ifw-use-cases-cli.html#unattended-usage
-
-
-It can automatically download prebuilt Qt binaries for any target (you're not bound to
-Linux binaries on Linux; you could also download iOS binaries).
-It's working with Python >= 3.6 on Linux, macOS and Windows.
-
-When installing QtBase package on proper platforms (eg. install linux package on linux),
-aqt update Qt binaries(eg. qmake, and libQt5Core.so/Qt5Core.dll/Framework.QtCore for Qt<5.14),
-and change configurations(eg. qt.conf, and qconfig.pri) to make it working well with installed directory(Qt prefix).
-
-The aqtinstall does not update PATH environment variable.
+It can automatically download prebuilt Qt binaries, documents and sources for target specified,
+when the versions are on Qt download mirror sites.
 
 .. note::
     Because it is an installer utility, it can download from Qt distribution site and its mirror.
     The site is operated by The Qt Company who may remove versions you may want to use that become end of support.
-    Please don't blame us. When you keep your old mirror archives and operate an archive site,
-    you may be able to use aqtinstall with base URL option specified to your site.
+    Please don't blame us.
+
+.. warning::
+    This is NOT franchised with The Qt Company and The Qt Project. Please don't ask them about aqtinstall.
 
 
 License and copyright
@@ -62,28 +43,45 @@ For details see `Qt licensing`_ and `Licenses used in Qt5`_
 
 .. _`Licenses used in Qt5`: https://doc.qt.io/qt-5/licenses-used-in-qt.html
 
+
 Requirements
 ------------
 
-- Minimum Python version:  3.6
-- Recommended Python version: 3.8, 3.9 (frequently tested on)
+- Minimum Python version:
+    3.6
 
-- Dependent libraries: requests, py7zr
+- Recommended Python version:
+    3.9 (frequently tested on)
+
+- Dependencies:
+    requests
+    semantic_version
+    patch
+    py7zr
+    texttable
+    bs4
+    dataclasses
+
+- Operating Systems:
+    Linux, macOS, MS Windows
+
 
 Documentation
 -------------
 
-There are two versions of documentation:
+There is precise documentation with many examples.
+You are recommended to read the *Getting started* section.
 
-- Stable version (v1.2) : https://aqtinstall.readthedocs.io/en/stable/
-- Development version (v2.0b): https://aqtinstall.readthedocs.io/en/latest
+- Getting started: https://aqtinstall.readthedocs.io/en/latest/getting_started.html
+- Stable (v2.0.x): https://aqtinstall.readthedocs.io/en/stable
+- Latest: https://aqtinstall.readthedocs.io/en/latest
 
-
+- Old (v1.2.5) : https://aqtinstall.readthedocs.io/en/v1.2.5/index.html
 
 Install
 -------
 
-Same as usual, it can be installed with `pip`
+Same as usual, it can be installed with ``pip``:
 
 .. code-block:: console
 
@@ -98,223 +96,50 @@ You are recommended to update pip before installing aqtinstall.
     Older pip does not handle it expectedly(see #230).
 
 
-Usage(as in v1.2.x)
--------------------
+Example
+--------
 
-General usage looks like this:
+When installing Qt SDK 6.2.0 for Windows.
 
-::
-
-    aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E | --external <7zip command>] \
-        install <qt-version> <host> <target> [<arch>] [-m all | -m [extra module] [extra module]...] [--internal]
-        [--archives <archive>[ <archive>...]] [--timeout <timeout(sec)>]
-
-You can also call with ``python -m aqt`` syntax as well as command script ``aqt``.
-
-* The Qt version is formatted like this: `5.11.3`
-* Host is one of: `linux`, `mac`, `windows`
-* Target is one of: `desktop`, `android`, `ios` (iOS only works with mac host)
-* For some platforms you also need to specify an arch:
-    * For windows, choose one of:
-        * `win64_msvc2019_64`, `win32_msvc2019`,
-        * `win64_msvc2017_64`, `win32_msvc2017`,
-        * `win64_msvc2015_64`, `win32_msvc2015`,
-        * `win64_mingw81`, `win32_mingw81`,
-        * `win64_mingw73`, `win32_mingw73`,
-        * `win64_mingw53`, `win32_mingw53`,
-        * `win64_msvc2019_winrt_x64`, `win64_msvc2019_winrt_x86`, `win64_msvc2019_winrt_armv7`
-        * `win64_msvc2017_winrt_x64`, `win64_msvc2017_winrt_x86`, `win64_msvc2017_winrt_armv7`
-    * For android and Qt 6 or Qt 5.13 and below, choose one of: `android_x86_64`, `android_arm64_v8a`, `android_x86`,
-      `android_armv7`
-* You can specify external 7zip command path instead of built-in extractor.
-* When specifying `all` for extra modules option `-m` all extra modules are installed.
-
-
-Installing tool and utility (Experimental)
-------------------------------------------
-
-You can install tools and utilities using following syntax;
-
-::
-
-    aqt [-h][--help][-O | --outputdir <directory>][-b | --base <mirror url>][-E <7zip command>] \
-        tool <host> <tool_name> <tool-version> <arch> [--timeout <timeout>]
-
-* tool_name is one of `tools_ifw`, `tools_vcredist`, and `tools_openssl`.
-* arch is full qualified tool name such as `qt.tools.ifw.31` which values can be seen on Qt `archive_site`_
-  This is a quite experimental feature, may not work and please use it with your understanding what you are doing.
-* It does not recognize 'installscript.qs'.
-  When using tools which depends on a qt script, you should do something by yourself.
-
-.. _`archive_site`: https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
-
-
-Target directory
-----------------
-
-aqt can take option '--outputdir' or '-O' that specify a target directory.
-
-The Qt packages are installed under current directory as such `Qt/<ver>/gcc_64/`
-
-If you want to install it in `C:\Qt` as same as standard gui installer default,
-run such as follows(on Windows):
+Check the options that can be used with the ``list-qt`` subcommand, and query available architectures:
 
 .. code-block:: console
 
-    cd c:\
-    mkdir Qt
-    py -m aqt install --outputdir c:\Qt 5.15.2 windows desktop win64_msvc2019_64
+    aqt list-qt windows desktop --arch 6.2.0
 
-
-If you want to install it in `/opt/Qt` as same as standard gui installer default,
-run such as follows(on mac/linux):
+Then you may get candidates: ``win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64``. You can also query the available modules:
 
 .. code-block:: console
 
-    sudo mkdir /opt/Qt
-    sudo python -m aqt install --outputdir /opt/Qt 5.15.2 linux desktop gcc_64
+    aqt list-qt windows desktop --modules 6.2.0
 
 
-Command examples
-----------------
-
-Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
+When you decide to install Qt SDK version 6.2.0 for mingw v8.1:
 
 .. code-block:: console
 
-    pip install aqtinstall
-    aqt install --outputdir /opt/Qt 5.12.0 linux desktop -m qtcharts qtnetworkauth
+    aqt install-qt windows desktop 6.2.0 win64_mingw81 -m all
+ 
+The optional `-m all` argument installs all the modules available for Qt 6.2.0; you can leave it off if you don't want those modules.
 
-
-Example: Installing Android (armv7) Qt 5.10.2:
-
-.. code-block:: console
-
-    aqt install 5.10.2 linux android android_armv7
-
-
-Example: Installing Android Qt 5.15.2:
+To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use this command (note that the module names are lowercase):
 
 .. code-block:: console
 
-    aqt install 5.15.2 linux android android
+    aqt install-qt windows desktop 6.2.0 win64_mingw81 -m qtcharts qtnetworking
 
 
-Example: Install examples, doc and source:
+When aqtinstall downloads and installs packages, it updates package configurations
+such as prefix directory in ``bin/qt.conf``, and ``bin/qconfig.pri``
+to make it working well with installed directory.
 
-.. code-block:: console
-
-    py -m aqt examples 5.15.0 windows desktop -m qtcharts qtnetworkauth
-    py -m aqt doc 5.15.0 windows desktop -m qtcharts qtnetworkauth
-    py -m aqt src 5.15.0 windows desktop
-
-
-Example: Install Web Assembly for Qt5
-
-.. code-block:: console
-
-    aqt install 5.15.0 linux desktop wasm_32
-
-
-Example: Install an Install FrameWork (IFW):
-
-.. code-block:: console
-
-    aqt tool linux desktop tools_ifw
-
-
-Example: Install vcredist:
-
-.. code-block:: console
-
-    py -m aqt tool windows desktop tools_vcredist
-    .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
-
-
-Example: Install MinGW on Windows
-
-.. code-block:: console
-
-    py -m aqt tool -O c:\Qt windows desktop tools_mingw qt.tools.win64_mingw810
-    set PATH=C:\Qt\Tools\mingw810_64\bin
-
-
-Example: Install Qt6 for android
-
-.. code-block:: console
-
-    aqt install -O qt 6.1.0 linux desktop
-    aqt install -O qt 6.1.0 linux android android_armv7
-    qt/6.1.0/android_armv7/bin/qmake -query
-
-
-Example: Install Qt6 for ios/mac
-
-.. code-block:: console
-
-    aqt install -O qt 6.1.0 mac desktop
-    aqt install -O qt 6.1.0 mac ios ios
-    qt/6.1.0/ios/bin/qmake -query
-
-
-Example: Show help message
-
-.. code-block:: console
-
-    aqt help
-
-
-Environment Variables
----------------------
-
-It is users task to set some environment variables to fit your platform such as
-
-
-.. code-block:: bash
-
-   export PATH=/path/to/qt/x.x.x/clang_64/bin/:$PATH
-   export QT_PLUGIN_PATH=/path/to/qt/x.x.x/clang_64/plugins/
-   export QML_IMPORT_PATH=/path/to/qt/x.x.x/clang_64/qml/
-   export QML2_IMPORT_PATH=/path/to/qt/x.x.x/clang_64/qml/
-
-aqtinstall never do it for you because not to break multiple installation versions.
-
-
-
-Supported CI platforms
-----------------------
-
-There are no limitation for CI platform but currently it is tested on Azure Pipelines and Github actions.
-If you want to use it with Github actions, `install_qt`_ action will help you.
-If you want to use it with Azure Pipelines, blog article `Using Azure DevOps Pipelines with Qt`_ may be informative.
-
-
-(Advanced) Force dependency
----------------------------
-
-(Here is a note for advanced user who knows python/pip well.)
-
-When you have a trouble on your (minor) platform to install aqtinstall's dependency,
-you can force dependencies and its versions (not recommended for ordinary use).
-You can run `pip` to install individual dependencies in manual and install aqtinstall with `--no-deps`.
-
-Example:
-^^^^^^^^
-
-Avoid installation of py7zr, python 7zip library, and force using external 7z command to extract archives.
-
-.. code-block:: console
-
-    pip install -U pip
-    pip install requests==2.25.1 semantic_version texttable
-    pip install --no-deps aqtinstall
-    python -m aqt --external /usr/local/bin/7z install 5.15.2 linux desktop
-
+.. note::
+   It is your own task to set some environment variables to fit your platform, such as PATH, QT_PLUGIN_PATH, QML_IMPORT_PATH, and QML2_IMPORT_PATH. aqtinstall will never do it for you, in order not to break the installation of multiple versions.
 
 Testimonies
 -----------
 
-Some projects utilize aqtinstall.
+Some projects utilize aqtinstall, and there are several articles and discussions
 
 * GitHub Actions: `install_qt`_
 
@@ -328,8 +153,6 @@ Some projects utilize aqtinstall.
 .. _`YACReader`: https://github.com/YACReader/yacreader
 
 
-Media, slide, articles and discussions
---------------------------------------
 
 * Contributor Nelson's blog article: `Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`_
 
@@ -339,7 +162,9 @@ Media, slide, articles and discussions
 
 * Qt Forum: `Automatic installation for Travis CI (or any other CI)`_
 
-* Qt Form: `Qt silent, unattended install`_
+* Qt Forum: `Qt silent, unattended install`_
+
+* Reddit: `Qt Maintenance tool now requires you to enter your company name`_
 
 * Qt Study group presentation: `Another Qt CLI installer`_
 
@@ -349,6 +174,7 @@ Media, slide, articles and discussions
 .. _`Using Azure CI for cross-platform Linux and Windows Qt application builds`: https://www.wincak.name/programming/using-azure-ci-for-cross-platform-linux-and-windows-qt-application-builds/
 .. _`Automatic installation for Travis CI (or any other CI)`: https://forum.qt.io/topic/114520/automatic-installation-for-travis-ci-or-any-other-ci/2
 .. _`Qt silent, unattended install`: https://forum.qt.io/topic/122185/qt-silent-unattended-install
+.. _`Qt Maintenance tool now requires you to enter your company name`: https://www.reddit.com/r/QtFramework/comments/grgrux/qt_maintenance_tool_now_requires_you_to_enter/
 .. _`Another Qt CLI installer`: https://www.slideshare.net/miurahr-nttdata/aqt-install-for-qt-tokyo-r-2-20196
 
 
@@ -356,7 +182,6 @@ History
 -------
 
 This program is originally shown in Kaidan project as a name `qli-installer`_.
-A project `aqtinstall` extend the original to run with standard python features with Linux, Mac and Windows,
-to be tested on CI platform, and to improve performance with a concurrent downloading.
+The ``aqtinstall`` project extend and improve it.
 
 .. _`qli-installer`: https://lnj.gitlab.io/post/qli-installer

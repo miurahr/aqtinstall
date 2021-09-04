@@ -11,9 +11,12 @@ def test_cli_help(capsys):
     expected = "".join(
         [
             "usage: aqt [-h] [-c CONFIG]\n",
-            "           {install,doc,examples,src,tool,list-qt,list-tool,help,version} ...\n",
+            "           {install-qt,install-tool,install-doc,install-example,install-src,list-qt,list-tool,",
+            "install,tool,doc,example,src,help,version}\n",
+            "           ...\n",
             "\n",
-            "Installer for Qt SDK.\n",
+            "Another unofficial Qt Installer.\n",
+            "aqt helps you install Qt SDK, tools, examples and others\n",
             "\n",
             "optional arguments:\n",
             "  -h, --help            show this help message and exit\n",
@@ -21,10 +24,15 @@ def test_cli_help(capsys):
             "                        Configuration ini file.\n",
             "\n",
             "subcommands:\n",
-            "  Valid subcommands\n",
+            "  aqt accepts several subcommands:\n",
+            "  install-* subcommands are commands that install components\n",
+            "  list-* subcommands are commands that show available components\n",
+            "  \n",
+            "  commands {install|tool|src|examples|doc} are deprecated and marked for removal\n",
             "\n",
-            "  {install,doc,examples,src,tool,list-qt,list-tool,help,version}\n",
-            "                        subcommand for aqt Qt installer\n",
+            "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,list-tool,",
+            "install,tool,doc,example,src,help,version}\n",
+            "                        Please refer to each help message by using '--help' with each subcommand\n",
         ]
     )
     cli = Cli()
@@ -73,14 +81,12 @@ def test_cli_invalid_version(capsys, invalid_version):
 
     matcher = re.compile(
         r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-        r".*Invalid version: '"
-        + invalid_version
-        + r"'! Please use the form '5\.X\.Y'\.\n.*"
+        r".*Invalid version: '" + invalid_version + r"'! Please use the form '5\.X\.Y'\.\n.*"
     )
 
     for cmd in (
-        ("install", invalid_version, "mac", "desktop"),
-        ("doc", invalid_version, "mac", "desktop"),
+        ("install-qt", "mac", "desktop", invalid_version),
+        ("install-doc", "mac", "desktop", invalid_version),
         ("list-qt", "mac", "desktop", "--modules", invalid_version),
     ):
         with pytest.raises(SystemExit) as pytest_wrapped_e:
@@ -98,33 +104,7 @@ def test_cli_check_mirror():
     cli = Cli()
     cli._setup_settings()
     assert cli._check_mirror(None)
-    arg = ["install", "5.11.3", "linux", "desktop", "-b", "https://download.qt.io/"]
+    arg = ["install-qt", "linux", "desktop", "5.11.3", "-b", "https://download.qt.io/"]
     args = cli.parser.parse_args(arg)
     assert args.base == "https://download.qt.io/"
     assert cli._check_mirror(args.base)
-
-
-def test_cli_launch_with_no_argument(capsys):
-    expected = "".join(
-        [
-            "usage: aqt [-h] [-c CONFIG]\n",
-            "           {install,doc,examples,src,tool,list-qt,list-tool,help,version} ...\n",
-            "\n",
-            "Installer for Qt SDK.\n",
-            "\n",
-            "optional arguments:\n",
-            "  -h, --help            show this help message and exit\n",
-            "  -c CONFIG, --config CONFIG\n",
-            "                        Configuration ini file.\n",
-            "\n",
-            "subcommands:\n",
-            "  Valid subcommands\n",
-            "\n",
-            "  {install,doc,examples,src,tool,list-qt,list-tool,help,version}\n",
-            "                        subcommand for aqt Qt installer\n",
-        ]
-    )
-    cli = Cli()
-    cli.run([])
-    out, err = capsys.readouterr()
-    assert out == expected

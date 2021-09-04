@@ -26,5 +26,66 @@
       "Qt Creator 4.15.1 Plugin Development",
       "Headers and libs required to develop additional plugins"
     ]
+  ],
+  "variants_metadata": [
+    {
+      "Name": "qt.tools.qtcreator",
+      "DisplayName": "Qt Creator 4.15.1",
+      "Description": "IDE for Qt application development",
+      "Version": "4.15.1-0-202106081242",
+      "ReleaseDate": "2021-06-08",
+      "Script": "installscript.qs",
+      "Dependencies": "",
+      "SortingPriority": "1000",
+      "ForcedInstallation": "true",
+      "DownloadableArchives": [
+        "qtcreator.7z",
+        "qtcreator_sdktool.7z"
+      ],
+      "UpdateFile": {
+        "CompressedSize": "136099945",
+        "UncompressedSize": "533316311",
+        "OS": "Any"
+      },
+      "UserInterfaces": [
+        "associatecommonfiletypesform.ui",
+        "launchqtcreatorcheckboxform.ui"
+      ],
+      "SHA1": "684ee4525e6412623167a5442b7c262cac52c9bb"
+    },
+    {
+      "Name": "qt.tools.qtcreatordbg",
+      "DisplayName": "Qt Creator 4.15.1 Debug Symbols",
+      "Description": "Additional symbol files required to debug Qt Creator",
+      "Version": "4.15.1-0-202106081242",
+      "ReleaseDate": "2021-06-08",
+      "SortingPriority": "994",
+      "DownloadableArchives": [
+        "qtcreator-debug.7z"
+      ],
+      "UpdateFile": {
+        "CompressedSize": "235240929",
+        "UncompressedSize": "1570679561",
+        "OS": "Any"
+      },
+      "SHA1": "c71f2e138df7232f7482e66a4cc2db5f94a3c7b4"
+    },
+    {
+      "Name": "qt.tools.qtcreatordev",
+      "DisplayName": "Qt Creator 4.15.1 Plugin Development",
+      "Description": "Headers and libs required to develop additional plugins",
+      "Version": "4.15.1-0-202106081242",
+      "ReleaseDate": "2021-06-08",
+      "SortingPriority": "990",
+      "DownloadableArchives": [
+        "qtcreator_dev.7z"
+      ],
+      "UpdateFile": {
+        "CompressedSize": "12377799",
+        "UncompressedSize": "104362249",
+        "OS": "Any"
+      },
+      "SHA1": "0e2127ef128a87f6bc04e0c9eccab677aac21ec0"
+    }
   ]
 }

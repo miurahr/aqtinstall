@@ -49,9 +49,7 @@ def _check_content_type(ct: str) -> bool:
 def getUrl(url: str, timeout) -> str:
     logger = getLogger("aqt.helper")
     with requests.Session() as session:
-        retries = requests.adapters.Retry(
-            total=Settings.max_retries, backoff_factor=Settings.backoff_factor
-        )
+        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
@@ -60,11 +58,7 @@ def getUrl(url: str, timeout) -> str:
             num_redirects = 0
             while 300 < r.status_code < 309 and num_redirects < 10:
                 num_redirects += 1
-                logger.debug(
-                    "Asked to redirect({}) to: {}".format(
-                        r.status_code, r.headers["Location"]
-                    )
-                )
+                logger.debug("Asked to redirect({}) to: {}".format(r.status_code, r.headers["Location"]))
                 newurl = altlink(r.url, r.headers["Location"])
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
@@ -78,9 +72,7 @@ def getUrl(url: str, timeout) -> str:
             if r.status_code != 200:
                 logger.error(
                     "Failed to retrieve file at {}\n"
-                    "Server response code: {}, reason: {}".format(
-                        url, r.status_code, r.reason
-                    )
+                    "Server response code: {}, reason: {}".format(url, r.status_code, r.reason)
                 )
                 raise ArchiveDownloadError("Failure to retrieve {}".format(url))
         result = r.text
@@ -90,20 +82,14 @@ def getUrl(url: str, timeout) -> str:
 def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
     logger = getLogger("aqt.helper")
     with requests.Session() as session:
-        retries = requests.adapters.Retry(
-            total=Settings.max_retries, backoff_factor=Settings.backoff_factor
-        )
+        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         try:
             r = session.get(url, allow_redirects=False, stream=True, timeout=timeout)
             if 300 < r.status_code < 309:
-                logger.debug(
-                    "Asked to redirect({}) to: {}".format(
-                        r.status_code, r.headers["Location"]
-                    )
-                )
+                logger.debug("Asked to redirect({}) to: {}".format(r.status_code, r.headers["Location"]))
                 newurl = altlink(r.url, r.headers["Location"])
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
@@ -151,11 +137,7 @@ def altlink(url: str, alt: str):
     else:
         # Expected response->'application/metalink4+xml; charset=utf-8'
         if not _check_content_type(m.headers["content-type"]):
-            logger.error(
-                "Unexpected meta4 response;content-type: {}".format(
-                    m.headers["content-type"]
-                )
-            )
+            logger.error("Unexpected meta4 response;content-type: {}".format(m.headers["content-type"]))
             return alt
         try:
             mirror_xml = ElementTree.fromstring(m.text)
@@ -163,9 +145,7 @@ def altlink(url: str, alt: str):
             for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
                 for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
                     meta_urls[u.attrib["priority"]] = u.text
-            mirrors = [
-                meta_urls[i] for i in sorted(meta_urls.keys(), key=lambda x: int(x))
-            ]
+            mirrors = [meta_urls[i] for i in sorted(meta_urls.keys(), key=lambda x: int(x))]
         except Exception:
             exc_info = sys.exc_info()
             logger.error("Unexpected meta4 file; parse error: {}".format(exc_info[1]))
@@ -175,9 +155,7 @@ def altlink(url: str, alt: str):
             # if not found then return alt in default
             return next(
                 filter(
-                    lambda mirror: not any(
-                        mirror.startswith(b) for b in Settings.blacklist
-                    ),
+                    lambda mirror: not any(mirror.startswith(b) for b in Settings.blacklist),
                     mirrors,
                 ),
                 alt,
@@ -208,6 +186,7 @@ def xml_to_modules(
     """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
     Only report elements that satisfy `predicate(element)`.
     Only report keys in the list `keys_to_keep`.
+
     :param xml_text: The entire contents of an xml file
     :param predicate: A function that decides which elements to keep or discard
     :param keys_to_keep: A list of which tags in the element should be kept.
