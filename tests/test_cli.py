@@ -192,3 +192,12 @@ def test_cli_unexpected_error(monkeypatch, capsys):
         "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
         "Please remember to include a copy of this program's output in your report."
     )
+
+
+def test_cli_set_7zip(monkeypatch):
+    cli = Cli()
+    cli._setup_settings()
+    with pytest.raises(CliInputError) as err:
+        cli._set_sevenzip("some_nonexistent_binary")
+    assert err.type == CliInputError
+    assert format(err.value) == "Specified 7zip command executable does not exist: 'some_nonexistent_binary'"
