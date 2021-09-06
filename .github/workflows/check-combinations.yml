@@ -17,6 +17,14 @@ jobs:
     - uses: actions/checkout@master
       with:
         fetch-depth: 20
+      
+    - name: Update the "update-combinations" branch (ff merge to master)
+      uses: MaximeHeckel/github-action-merge-fast-forward@b4e9b28dce30a682e5fbe3135be4053ea2a75e15
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        branchtomerge: "origin/master"
+        branch: "update-combinations"
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
