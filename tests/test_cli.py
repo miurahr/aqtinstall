@@ -173,3 +173,22 @@ def test_cli_input_errors(capsys, expected_help, cmd, expect_msg, should_show_he
     out, err = capsys.readouterr()
     assert out == (expected_help if should_show_help else "")
     assert err.rstrip().endswith(expect_msg)
+
+
+def test_cli_unexpected_error(monkeypatch, capsys):
+    def _mocked_run(*args):
+        raise RuntimeError("Some unexpected error")
+
+    monkeypatch.setattr("aqt.installer.Cli.run_install_qt", _mocked_run)
+
+    cli = Cli()
+    cli._setup_settings()
+    assert 1 == cli.run(["install-qt", "mac", "ios", "6.2.0"])
+    out, err = capsys.readouterr()
+    assert err.startswith("Some unexpected error")
+    assert err.rstrip().endswith(
+        "===========================PLEASE FILE A BUG REPORT===========================\n"
+        "You have discovered a bug in aqt.\n"
+        "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
+        "Please remember to include a copy of this program's output in your report."
+    )
