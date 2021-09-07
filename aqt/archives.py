@@ -28,7 +28,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl
-from aqt.metadata import Version
+from aqt.metadata import QtRepoProperty, Version
 
 
 @dataclass
@@ -152,12 +152,8 @@ class QtArchives:
         )
 
     def _arch_ext(self) -> str:
-        if self.arch == "wasm_32":
-            return "_wasm"
-        elif self.arch.startswith("android_") and self.version.major == 6:
-            return "{}".format(self.arch[7:])
-        else:
-            return ""
+        ext = QtRepoProperty.extension_for_arch(self.arch, self.version >= Version("6.0.0"))
+        return ("_" + ext) if ext else ""
 
     def _base_target_package_name(self) -> str:
         return "qt_base"
