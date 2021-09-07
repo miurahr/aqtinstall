@@ -29,6 +29,7 @@ import platform
 import random
 import signal
 import subprocess
+import sys
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
@@ -137,11 +138,11 @@ class Cli:
             else:
                 print("Please supply a target architecture.")
                 self.show_help(args)
-                exit(1)
+                sys.exit(1)
         if arch == "":
             print("Please supply a target architecture.")
             self.show_help(args)
-            exit(1)
+            sys.exit(1)
         return arch
 
     def _check_mirror(self, mirror):
@@ -173,7 +174,7 @@ class Cli:
         qt_version = args.qt_version
         if not Cli._is_valid_version_str(qt_version):
             self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version))
-            exit(1)
+            sys.exit(1)
         keep = args.keep
         output_dir = args.outputdir
         if output_dir is None:
@@ -193,7 +194,7 @@ class Cli:
         if args.base is not None:
             if not self._check_mirror(args.base):
                 self.show_help()
-                exit(1)
+                sys.exit(1)
             base = args.base
         else:
             base = Settings.baseurl
@@ -201,10 +202,10 @@ class Cli:
         if args.noarchives:
             if modules is None:
                 print("When specified option --no-archives, an option --modules is mandatory.")
-                exit(1)
+                sys.exit(1)
             if archives is not None:
                 print("Option --archives and --no-archives  are conflicted. Aborting...")
-                exit(1)
+                sys.exit(1)
             else:
                 archives = modules
         else:
@@ -248,13 +249,13 @@ class Cli:
                 )
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
-                exit(1)
+                sys.exit(1)
         except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-            exit(1)
+            sys.exit(1)
         target_config = qt_archives.get_target_config()
         result = run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
         if not result:
-            exit(1)
+            sys.exit(1)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -272,7 +273,7 @@ class Cli:
         qt_version = args.qt_version
         if not Cli._is_valid_version_str(qt_version):
             self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version))
-            exit(1)
+            sys.exit(1)
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -324,21 +325,21 @@ class Cli:
                 )
             except Exception:
                 self.logger.error("Connection to the download site failed. Aborted...")
-                exit(1)
+                sys.exit(1)
         except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-            exit(1)
+            sys.exit(1)
         result = run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
         if result:
             self.logger.info("Finished installation")
         else:
-            exit(1)
+            sys.exit(1)
 
     def run_install_src(self, args):
         """Run src subcommand"""
         if args.kde:
             if args.qt_version != "5.15.2":
                 print("KDE patch: unsupported version!!")
-                exit(1)
+                sys.exit(1)
         start_time = time.perf_counter()
         self._run_src_doc_examples("src", args)
         if args.kde:
@@ -426,11 +427,11 @@ class Cli:
                     )
                 except Exception:
                     self.logger.error("Connection to the download site failed. Aborted...")
-                    exit(1)
+                    sys.exit(1)
             except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-                exit(1)
+                sys.exit(1)
             if not run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep):
-                exit(1)
+                sys.exit(1)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -447,7 +448,7 @@ class Cli:
         for version_str in (args.modules, args.extensions, args.arch):
             if not Cli._is_valid_version_str(version_str, allow_latest=True, allow_empty=True):
                 self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(version_str))
-                exit(1)  # TODO: maybe return 1 instead?
+                sys.exit(1)  # TODO: maybe return 1 instead?
 
         spec = None
         try:

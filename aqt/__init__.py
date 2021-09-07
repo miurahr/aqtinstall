@@ -21,6 +21,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import sys
+from multiprocessing import freeze_support
 
 if sys.version_info.major == 2:
     print("aqtinstall requires python 3!")
@@ -33,5 +34,7 @@ __all__ = ["__version__"]
 
 
 def main():
+    # For Windows standalone binaries, this is a noop on all other environments.
+    freeze_support()
     cli = Cli()
     return cli.run()
