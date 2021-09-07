@@ -148,6 +148,16 @@ windows_build_jobs.extend(
             module="qtcharts qtnetworkauth",
             mirror=random.choice(MIRRORS),
         ),
+        BuildJob(
+            "install-qt",
+            "5.14.2",
+            "windows",
+            "desktop",
+            "win64_msvc2017_64",
+            "msvc2017_64",
+            spec=">1,<5.15",  # Don't redirect output! Must be wrapped in quotes!
+            mirror=random.choice(MIRRORS),
+        ),
     ]
 )
 

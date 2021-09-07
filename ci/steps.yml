@@ -35,7 +35,11 @@ steps:
         if [[ "$(SUBARCHIVES)" != "" ]]; then
           opt+=" --archives $(SUBARCHIVES)"
         fi
-        python -m aqt install-qt $(HOST) $(TARGET) $(QT_VERSION) $(ARCH) $opt
+        if [[ "$(SPEC)" == "" ]]; then
+          python -m aqt install-qt $(HOST) $(TARGET) $(QT_VERSION) $(ARCH) $opt
+        else
+          python -m aqt install-qt $(HOST) $(TARGET) "$(SPEC)" $(ARCH) $opt
+        fi
         if [[ "$(TARGET)" == "android" || "$(TARGET)" == "ios" ]]; then
           if [[ "$(HOST)" == "windows" ]]; then
             python -m aqt install-qt $(HOST) desktop $(QT_VERSION) mingw81_64 --archives qtbase
