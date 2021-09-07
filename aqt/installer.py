@@ -23,6 +23,7 @@
 
 import argparse
 import binascii
+import functools
 import multiprocessing
 import os
 import platform
@@ -36,9 +37,9 @@ from typing import List, Optional
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, NoPackageFound
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, NoPackageFound
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
-from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version, show_list
+from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list
 from aqt.updater import Updater
 
 try:
@@ -161,6 +162,40 @@ class Cli:
             return False
         return all([m in available for m in modules])
 
+    @staticmethod
+    def _determine_qt_version(qt_version_or_spec: str, host: str, target: str, arch: str) -> Version:
+        def choose_highest(x: Optional[Version], y: Optional[Version]) -> Optional[Version]:
+            if not x or not y:
+                return x or y
+            return x if x > y else y
+
+        def opt_version_for_spec(ext: str, _spec: SimpleSpec) -> Optional[Version]:
+            try:
+                return MetadataFactory(ArchiveId("qt", host, target, ext), spec=_spec).getList().latest()
+            except (CliInputError, ArchiveConnectionError, ArchiveDownloadError):
+                return None
+
+        try:
+            return Version(qt_version_or_spec)
+        except ValueError:
+            pass
+        try:
+            spec = SimpleSpec(qt_version_or_spec)
+        except ValueError as e:
+            raise CliInputError(f"Invalid version or SimpleSpec: '{qt_version_or_spec}'\n" + SimpleSpec.usage()) from e
+        else:
+            version: Optional[Version] = functools.reduce(
+                choose_highest,
+                [opt_version_for_spec(ext, spec) for ext in QtRepoProperty.possible_extensions_for_arch(arch)],
+                None,
+            )
+            if not version:
+                raise CliInputError(
+                    f"No versions of Qt exist for spec={spec} with host={host}, target={target}, arch={arch}"
+                )
+            getLogger("aqt.installer").info(f"Resolved spec '{qt_version_or_spec}' to {version}")
+            return version
+
     def run_install_qt(self, args):
         """Run install subcommand"""
         start_time = time.perf_counter()
@@ -170,10 +205,13 @@ class Cli:
         arch = args.arch
         target = args.target
         os_name = args.host
-        qt_version = args.qt_version
-        if not Cli._is_valid_version_str(qt_version):
-            self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version))
-            exit(1)
+        if hasattr(args, "qt_version_spec"):
+            qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch))
+        else:
+            qt_version = args.qt_version
+            if not Cli._is_valid_version_str(qt_version):
+                self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version))
+                exit(1)
         keep = args.keep
         output_dir = args.outputdir
         if output_dir is None:
@@ -269,10 +307,13 @@ class Cli:
             self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
         target = args.target
         os_name = args.host
-        qt_version = args.qt_version
-        if not Cli._is_valid_version_str(qt_version):
-            self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version))
-            exit(1)
+        if hasattr(args, "qt_version_spec"):
+            qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch=""))
+        else:
+            qt_version = args.qt_version
+            if not Cli._is_valid_version_str(qt_version):
+                self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version))
+                exit(1)
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -762,7 +803,9 @@ class Cli:
         subparser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
         subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
         if not is_legacy:
-            subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
+            subparser.add_argument(
+                "qt_version_spec", help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"'
+            )
 
     def _setup_settings(self, args=None):
         # setup logging
