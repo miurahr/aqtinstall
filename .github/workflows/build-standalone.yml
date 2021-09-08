@@ -1,0 +1,172 @@
+name: Build and Test standalone binary
+
+on: push
+
+jobs:
+  build-standalone:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        py: [3.9]
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 20
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.py }}
+
+      - name: Build standalone binary
+        run: |
+          ci/build_standalone.bat
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: aqt-${{ matrix.os }}-standalone
+          path: .gravitybee\dist\latest\aqt.exe
+
+  test-standalone:
+    needs: build-standalone
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        py: [3.9]
+        qtver: [5.9.9, 5.12.8, 6.1.0]
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 20
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.py }}
+
+      - name: Download aqt from previous job
+        uses: actions/download-artifact@v2
+        with:
+          name: aqt-${{ matrix.os }}-standalone
+          path: .
+
+      - name: Run aqt
+        run: |
+          import os
+          import pathlib
+          import subprocess
+          timeout = 300
+          os.mkdir("Qt")
+          os.chdir("Qt")
+          platform = "${{ matrix.os }}"
+          qtver = "${{ matrix.qtver }}"
+          if platform == "windows-latest":
+              command_line = ["../aqt.exe", "install"]
+          else:
+              command_line = ["../aqt", "install"]
+          if platform == "windows-latest":
+            if qtver.startswith('5.15'):
+              args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
+            elif qtver.startswith('5.14'):
+              args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
+            elif qtver.startswith('6'):
+              args = [qtver, "windows", "desktop", "win64_mingw81"]
+            else:
+              args = [qtver, "windows", "desktop", "win64_msvc2015_64"]
+          elif platform == "macOS-latest":
+            args = [qtver, "mac", "desktop", "clang_64"]
+          else:
+            args = [qtver, "linux", "desktop", "gcc_64"]
+          command_line.extend(args)
+          command_line.extend(["--archives", "qtbase", "icu", "qt"])
+          env = os.environ.copy()
+          github_workspace = pathlib.Path(".")
+          env["AQT_CONFIG"] = (github_workspace / "ci" / "settings.ini").as_posix()
+          env["LOG_CFG"] = (github_workspace / "ci" / "logging.ini").as_posix()
+          print("Execute: {}".format(command_line))
+          try:
+            res = subprocess.run(command_line, timeout=timeout, check=True, env=env)
+          except subprocess.CalledProcessError as cpe:
+            exit(cpe.returncode)
+          assert res.returncode == 0
+          if qtver.startswith('6'):
+            if platform == 'ubuntu-20.04':
+              command_line = ["../aqt", "install", qtver, "linux", "android", "android_armv7"]
+              timeout = 360
+            elif platform == "macOS-latest":
+              command_line = ["../aqt",  "install", qtver, "mac", "ios", "ios"]
+              timeout = 360
+            else:
+              command_line = ["../aqt.exe", "install", qtver, "windows", "android", "android_armv7"]
+              timeout = 360
+            try:
+              res = subprocess.run(command_line, timeout=timeout, check=True)
+            except subprocess.CalledProcessError as cpe:
+              exit(cpe.returncode)
+            assert res.returncode == 0
+        shell: python
+        working-directory: ${{ github.workspace }}
+
+      - name: Test qmake -query
+        run: |
+          import os
+          import pathlib
+          from subprocess import CalledProcessError, PIPE, run
+          os.chdir("Qt")
+          platform = "${{ matrix.os }}"
+          qtver = "${{ matrix.qtver }}"
+          if platform == "windows-latest":
+            if qtver.startswith('5.15'):
+              arch_dir = 'msvc2019_64'
+            elif qtver.startswith('5.14'):
+              arch_dir = 'msvc2017_64'
+            elif qtver.startswith('6'):
+              arch_dir = 'mingw81_64'
+            else:
+              arch_dir = 'msvc2015_64'
+          elif platform == "macOS-latest":
+            arch_dir = 'clang_64'
+          else:
+            arch_dir = 'gcc_64'
+          try:
+            res = run([f"{qtver}/{arch_dir}/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
+          except CalledProcessError as cpe:
+            print(qmake)
+            exit(cpe.returncode)
+          except:
+            print(qmake)
+            exit(1)
+
+          if res.returncode == 0:
+            qt_prefix_path = pathlib.Path.cwd() / qtver / arch_dir
+            for line in res.stdout.splitlines():
+              if line.startswith(b'QT_INSTALL_PREFIX'):
+                result = line[18:].decode('UTF-8')
+                assert qt_prefix_path.samefile(result)
+            print('PREFIX {}'.format(result))
+            if qtver.startswith('6'):
+              if platform == "windows-latest" and qtver.startswith('6'):
+                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
+              elif platform == "macOS-latest" and qtver.startswith('6'):
+                qmake = os.path.join(qtver, 'ios', 'bin', 'qmake')
+              else:
+                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
+              try:
+                res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
+              except CalledProcessError as cpe:
+                print(qmake)
+                exit(cpe.returncode)
+              except:
+                print(qmake)
+                exit(1)
+
+              assert res.returncode == 0
+              for line in res.stdout.splitlines():
+                if line.startswith(b'QT_INSTALL_PREFIX'):
+                  result = line[18:].decode('UTF-8')
+              print('PREFIX {}'.format(result))
+        shell: python
+        working-directory: ${{ github.workspace }}
