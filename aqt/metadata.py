@@ -34,7 +34,7 @@ from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError, EmptyMetadata
 from aqt.helper import Settings, getUrl, xml_to_modules
 
 
@@ -314,6 +314,9 @@ class ToolData:
             table.add_rows(self._rows(), header=False)
         return table.draw()
 
+    def __bool__(self):
+        return bool(self.tool_data)
+
     def _rows(self):
         keys = ("Version", "ReleaseDate", "DisplayName", "Description")
         return [[name, *[content[key] for key in keys]] for name, content in self.tool_data.items()]
@@ -522,7 +525,7 @@ class MetadataFactory:
         try:
             version = Version(qt_ver)
         except ValueError as e:
-            raise CliInputError(e)
+            raise CliInputError(e) from e
         return version
 
     @staticmethod
@@ -538,7 +541,7 @@ class MetadataFactory:
 
             except (ArchiveDownloadError, ArchiveConnectionError) as e:
                 if i == len(base_urls) - 1:
-                    raise e
+                    raise e from e
 
     @staticmethod
     def iterate_folders(html_doc: str, filter_category: str = "") -> Generator[str, None, None]:
@@ -661,24 +664,13 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     return msg
 
 
-def format_suggested_follow_up(suggestions: Iterable[str]) -> str:
-    if not suggestions:
-        return ""
-    return ("=" * 30 + "Suggested follow-up:" + "=" * 30 + "\n") + "\n".join(
-        ["* " + suggestion for suggestion in suggestions]
-    )
-
-
-def show_list(meta: MetadataFactory) -> int:
-    logger = getLogger("aqt.metadata")
+def show_list(meta: MetadataFactory):
     try:
         output = meta.getList()
         if not output:
-            logger.info("No {} available for this request.".format(meta.request_type))
-            suggestions = suggested_follow_up(meta)
-            if suggestions:
-                logger.info(format_suggested_follow_up(suggestions))
-            return 1
+            raise EmptyMetadata(
+                f"No {meta.request_type} available for this request.", suggested_action=suggested_follow_up(meta)
+            )
         if isinstance(output, Versions):
             print(format(output))
         elif isinstance(output, ToolData):
@@ -693,13 +685,6 @@ def show_list(meta: MetadataFactory) -> int:
             print(*output, sep="\n")
         else:
             print(*output, sep=" ")
-        return 0
-    except CliInputError as e:
-        logger.error("Command line input error: {}".format(e))
-        return 1
-    except (ArchiveConnectionError, ArchiveDownloadError) as e:
-        logger.error("{}".format(e))
-        suggestions = suggested_follow_up(meta)
-        if suggestions:
-            logger.error(format_suggested_follow_up(suggestions))
-        return 1
+    except (ArchiveDownloadError, ArchiveConnectionError) as e:
+        e.suggested_action = suggested_follow_up(meta)
+        raise e from e
