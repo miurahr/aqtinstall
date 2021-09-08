@@ -32,7 +32,7 @@ Changed
 * Extension validation for tool subcommand(#314)
 * list subcommand has --tool-long option(#304, #319)
 * tool subcommand now install without version spec(#299)
-* README example command is now easy to copy-and-paste(#322)  
+* README example command is now easy to copy-and-paste(#322)
 * list subcommand update(#331)
 * Improve handle of Ctrl-C keyboard interruption(#337)
 * Update combinations.json(#344)
@@ -61,6 +61,34 @@ Fixed
 * Handle special case for Qt 5.9.0(#364)
 * Running python2 -m aqt does not trigger Python version check (#372,#373)
 
+
+`v1.2.5`_ (14, Aug. 2021)
+=========================
+
+Fixed
+-----
+* Handle Qt 5.9 installation special case(#363,#365)
+
+
+`v1.2.4`_ (17, Jul. 2021)
+=========================
+
+Fixed
+-----
+* Fix crash when installing Qt6.1.2 on mac(#288,#320)
+
+`v1.2.3`_ (14, Jul. 2021)
+=========================
+
+Changed
+-------
+* helper: set max_retries (#296)
+
+Fixed
+-----
+* Patching for winrt packages(#311)
+* CI: Fix release note script
+* CI: bundle jom.zip for test
 
 `v1.2.2`_ (1, Jul. 2021)
 ========================
@@ -229,7 +257,10 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.5...HEAD
+.. _v1.2.5: https://github.com/miurahr/aqtinstall/compare/v1.2.4...v1.2.5
+.. _v1.2.4: https://github.com/miurahr/aqtinstall/compare/v1.2.3...v1.2.4
+.. _v1.2.3: https://github.com/miurahr/aqtinstall/compare/v1.2.2...v1.2.3
 .. _v1.2.2: https://github.com/miurahr/aqtinstall/compare/v1.2.1...v1.2.2
 .. _v1.2.1: https://github.com/miurahr/aqtinstall/compare/v1.2.0...v1.2.1
 .. _v1.2.0: https://github.com/miurahr/aqtinstall/compare/v1.1.6...v1.2.0
