@@ -66,15 +66,12 @@ def getUrl(url: str, timeout) -> str:
             ConnectionResetError,
             requests.exceptions.ConnectionError,
             requests.exceptions.Timeout,
-        ):
-            raise ArchiveConnectionError("Failure to connect to  {}".format(url))
+        ) as e:
+            raise ArchiveConnectionError(f"Failure to connect to {url}: {type(e).__name__}") from e
         else:
             if r.status_code != 200:
-                logger.error(
-                    "Failed to retrieve file at {}\n"
-                    "Server response code: {}, reason: {}".format(url, r.status_code, r.reason)
-                )
-                raise ArchiveDownloadError("Failure to retrieve {}".format(url))
+                msg = f"Failed to retrieve file at {url}\nServer response code: {r.status_code}, reason: {r.reason}"
+                raise ArchiveDownloadError(msg)
         result = r.text
     return result
 
@@ -94,11 +91,9 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except requests.exceptions.ConnectionError as e:
-            logger.error("Connection error: %s" % e.args)
-            raise e
+            raise ArchiveConnectionError(f"Connection error: {e.args}") from e
         except requests.exceptions.Timeout as e:
-            logger.error("Connection timeout: %s" % e.args)
-            raise e
+            raise ArchiveConnectionError(f"Connection timeout: {e.args}") from e
         else:
             hash = hashlib.new(hash_algo)
             try:
@@ -107,17 +102,12 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
                         fd.write(chunk)
                         hash.update(chunk)
                     fd.flush()
-                if exp is not None:
-                    if hash.digest() != exp:
-                        raise ArchiveDownloadError(
-                            "Download file is corrupted! Detect checksum error.\nExpected {}, Actual {}".format(
-                                exp, hash.digest()
-                            )
-                        )
             except Exception as e:
-                exc = sys.exc_info()
-                logger.error("Download error: %s" % exc[1])
-                raise e
+                raise ArchiveDownloadError(f"Download error: {e}") from e
+            if exp is not None and hash.digest() != exp:
+                raise ArchiveDownloadError(
+                    f"Download file is corrupted! Detect checksum error.\nExpected {exp}, Actual {hash.digest()}"
+                )
 
 
 def altlink(url: str, alt: str):
@@ -348,6 +338,10 @@ class SettingsClass:
     @property
     def kde_patches(self):
         return self.config.getlist("kde_patches", "patches", fallback=[])
+
+    @property
+    def print_stacktrace_on_error(self):
+        return self.config.getboolean("aqt", "print_stacktrace_on_error", fallback=False)
 
 
 Settings = SettingsClass()

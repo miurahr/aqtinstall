@@ -33,11 +33,11 @@ import sys
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
-from typing import List, Optional
+from typing import Any, Callable, List, Optional
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, NoPackageFound
+from aqt.exceptions import AqtException, ArchiveConnectionError, ArchiveExtractionError, CliInputError, CliKeyboardInterrupt
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
 from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version, show_list
 from aqt.updater import Updater
@@ -84,11 +84,28 @@ class Cli:
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
-    def run(self, arg=None):
+    def run(self, arg=None) -> int:
         args = self.parser.parse_args(arg)
         self._setup_settings(args)
-        result = args.func(args)
-        return result
+        try:
+            args.func(args)
+            return 0
+        except AqtException as e:
+            self.logger.error(format(e), exc_info=Settings.print_stacktrace_on_error)
+            if e.should_show_help:
+                self.show_help()
+            return 1
+        except Exception as e:
+            # If we didn't account for it, and wrap it in an AqtException, it's a bug.
+            self.logger.exception(e)  # Print stack trace
+            self.logger.error(
+                f"Arguments: `{sys.argv}` Host: `{platform.uname()}`\n"
+                "===========================PLEASE FILE A BUG REPORT===========================\n"
+                "You have discovered a bug in aqt.\n"
+                "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
+                "Please remember to include a copy of this program's output in your report."
+            )
+            return 1
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
         for c in Settings.tools_combinations:
@@ -120,7 +137,7 @@ class Cli:
                 stderr=subprocess.DEVNULL,
             )
         except FileNotFoundError as e:
-            raise Exception("Specified 7zip command executable does not exist: {!r}".format(sevenzip)) from e
+            raise CliInputError("Specified 7zip command executable does not exist: {!r}".format(sevenzip)) from e
 
         return sevenzip
 
@@ -136,13 +153,9 @@ class Cli:
             elif target == "android" and Version(qt_version) >= Version("5.14.0"):
                 arch = "android"
             else:
-                print("Please supply a target architecture.")
-                self.show_help(args)
-                sys.exit(1)
+                raise CliInputError("Please supply a target architecture.", should_show_help=True)
         if arch == "":
-            print("Please supply a target architecture.")
-            self.show_help(args)
-            sys.exit(1)
+            raise CliInputError("Please supply a target architecture.", should_show_help=True)
         return arch
 
     def _check_mirror(self, mirror):
@@ -172,9 +185,7 @@ class Cli:
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
-        if not Cli._is_valid_version_str(qt_version):
-            self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version))
-            sys.exit(1)
+        Cli._validate_version_str(qt_version)
         keep = args.keep
         output_dir = args.outputdir
         if output_dir is None:
@@ -193,19 +204,19 @@ class Cli:
             sevenzip = self._set_sevenzip("7z")
         if args.base is not None:
             if not self._check_mirror(args.base):
-                self.show_help()
-                sys.exit(1)
+                raise CliInputError(
+                    "The `--base` option requires a url where the path `online/qtsdkrepository` exists.",
+                    should_show_help=True,
+                )
             base = args.base
         else:
             base = Settings.baseurl
         archives = args.archives
         if args.noarchives:
             if modules is None:
-                print("When specified option --no-archives, an option --modules is mandatory.")
-                sys.exit(1)
+                raise CliInputError("When `--noarchives` is set, the `--modules` option is mandatory.")
             if archives is not None:
-                print("Option --archives and --no-archives  are conflicted. Aborting...")
-                sys.exit(1)
+                raise CliInputError("Options `--archives` and `--noarchives` are mutually exclusive.")
             else:
                 archives = modules
         else:
@@ -221,41 +232,23 @@ class Cli:
         all_extra = True if modules is not None and "all" in modules else False
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
-        try:
-            qt_archives = QtArchives(
+
+        qt_archives = self.retry_on_bad_connection(
+            lambda base_url: QtArchives(
                 os_name,
                 target,
                 qt_version,
                 arch,
-                base,
+                base=base_url,
                 subarchives=archives,
                 modules=modules,
                 all_extra=all_extra,
                 timeout=timeout,
-            )
-        except ArchiveConnectionError:
-            try:
-                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                qt_archives = QtArchives(
-                    os_name,
-                    target,
-                    qt_version,
-                    arch,
-                    random.choice(Settings.fallbacks),
-                    subarchives=archives,
-                    modules=modules,
-                    all_extra=all_extra,
-                    timeout=timeout,
-                )
-            except Exception:
-                self.logger.error("Connection to the download site failed. Aborted...")
-                sys.exit(1)
-        except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-            sys.exit(1)
+            ),
+            base,
+        )
         target_config = qt_archives.get_target_config()
-        result = run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
-        if not result:
-            sys.exit(1)
+        run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -271,9 +264,7 @@ class Cli:
         target = args.target
         os_name = args.host
         qt_version = args.qt_version
-        if not Cli._is_valid_version_str(qt_version):
-            self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(qt_version))
-            sys.exit(1)
+        Cli._validate_version_str(qt_version)
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -297,49 +288,28 @@ class Cli:
         all_extra = True if modules is not None and "all" in modules else False
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
-        try:
-            srcdocexamples_archives = SrcDocExamplesArchives(
+
+        srcdocexamples_archives: SrcDocExamplesArchives = self.retry_on_bad_connection(
+            lambda base_url: SrcDocExamplesArchives(
                 flavor,
                 os_name,
                 target,
                 qt_version,
-                base,
+                base=base_url,
                 subarchives=archives,
                 modules=modules,
                 all_extra=all_extra,
                 timeout=timeout,
-            )
-        except ArchiveConnectionError:
-            try:
-                self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                srcdocexamples_archives = SrcDocExamplesArchives(
-                    flavor,
-                    os_name,
-                    target,
-                    qt_version,
-                    random.choice(Settings.fallbacks),
-                    subarchives=archives,
-                    modules=modules,
-                    all_extra=all_extra,
-                    timeout=timeout,
-                )
-            except Exception:
-                self.logger.error("Connection to the download site failed. Aborted...")
-                sys.exit(1)
-        except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-            sys.exit(1)
-        result = run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
-        if result:
-            self.logger.info("Finished installation")
-        else:
-            sys.exit(1)
+            ),
+            base,
+        )
+        run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
+        self.logger.info("Finished installation")
 
     def run_install_src(self, args):
         """Run src subcommand"""
-        if args.kde:
-            if args.qt_version != "5.15.2":
-                print("KDE patch: unsupported version!!")
-                sys.exit(1)
+        if args.kde and args.qt_version != "5.15.2":
+            raise CliInputError("KDE patch: unsupported version!!")
         start_time = time.perf_counter()
         self._run_src_doc_examples("src", args)
         if args.kde:
@@ -403,60 +373,40 @@ class Cli:
             if not self._check_tools_arg_combination(os_name, tool_name, arch):
                 self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
 
-            try:
-                tool_archives = ToolArchives(
+            tool_archives: ToolArchives = self.retry_on_bad_connection(
+                lambda base_url: ToolArchives(
                     os_name=os_name,
                     tool_name=tool_name,
                     target=target,
-                    base=base,
+                    base=base_url,
                     version_str=version,
                     arch=arch,
                     timeout=timeout,
-                )
-            except ArchiveConnectionError:
-                try:
-                    self.logger.warning("Connection to the download site failed and fallback to mirror site.")
-                    tool_archives = ToolArchives(
-                        os_name=os_name,
-                        target=target,
-                        tool_name=tool_name,
-                        base=random.choice(Settings.fallbacks),
-                        version_str=version,
-                        arch=arch,
-                        timeout=timeout,
-                    )
-                except Exception:
-                    self.logger.error("Connection to the download site failed. Aborted...")
-                    sys.exit(1)
-            except (ArchiveDownloadError, ArchiveListError, NoPackageFound):
-                sys.exit(1)
-            if not run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep):
-                sys.exit(1)
+                ),
+                base,
+            )
+            run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
-    def run_list_qt(self, args: argparse.ArgumentParser) -> int:
+    def run_list_qt(self, args: argparse.ArgumentParser):
         """Print versions of Qt, extensions, modules, architectures"""
 
         if not args.target:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
-            return 0
+            return
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
-            self.logger.error("'{0.target}' is not a valid target for host '{0.host}'".format(args))
-            return 1
+            raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
 
         for version_str in (args.modules, args.extensions, args.arch):
-            if not Cli._is_valid_version_str(version_str, allow_latest=True, allow_empty=True):
-                self.logger.error("Invalid version: '{}'! Please use the form '5.X.Y'.".format(version_str))
-                sys.exit(1)  # TODO: maybe return 1 instead?
+            Cli._validate_version_str(version_str, allow_latest=True, allow_empty=True)
 
         spec = None
         try:
             if args.spec is not None:
                 spec = SimpleSpec(args.spec)
-        except ValueError:
-            self.logger.error(f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage())
-            return 1
+        except ValueError as e:
+            raise CliInputError(f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage()) from e
 
         meta = MetadataFactory(
             archive_id=ArchiveId(
@@ -471,24 +421,23 @@ class Cli:
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
         )
-        return show_list(meta)
+        show_list(meta)
 
-    def run_list_tool(self, args: argparse.ArgumentParser) -> int:
+    def run_list_tool(self, args: argparse.ArgumentParser):
         """Print tools"""
 
         if not args.target:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
-            return 0
+            return
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
-            self.logger.error("'{0.target}' is not a valid target for host '{0.host}'".format(args))
-            return 1
+            raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
 
         meta = MetadataFactory(
             archive_id=ArchiveId("tools", args.host, args.target),
             tool_name=args.tool_name,
             is_long_listing=args.long,
         )
-        return show_list(meta)
+        show_list(meta)
 
     def show_help(self, args=None):
         """Display help message"""
@@ -781,18 +730,25 @@ class Cli:
                 Settings.load_settings()
 
     @staticmethod
-    def _is_valid_version_str(version_str: str, *, allow_latest: bool = False, allow_empty: bool = False) -> bool:
+    def _validate_version_str(version_str: str, *, allow_latest: bool = False, allow_empty: bool = False):
         if (allow_latest and version_str == "latest") or (allow_empty and not version_str):
-            return True
+            return
         try:
             Version(version_str)
-            return True
-        except ValueError:
-            return False
+        except ValueError as e:
+            raise CliInputError(f"Invalid version: '{version_str}'! Please use the form '5.X.Y'.") from e
+
+    def retry_on_bad_connection(self, function: Callable[[str], Any], base_url: str):
+        fallback_url = random.choice(Settings.fallbacks)
+        try:
+            return function(base_url)
+        except ArchiveConnectionError:
+            self.logger.warning(f"Connection to '{base_url}' failed. Retrying with fallback '{fallback_url}'.")
+            return function(fallback_url)
 
 
-def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool) -> bool:
-    result = True
+def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool):
+    key_interrupt = False
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
@@ -811,11 +767,12 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
         logger.warning("Caught KeyboardInterrupt, terminating installer workers")
         pool.terminate()
         pool.join()
-        result = False
+        key_interrupt = True
     # all done, close logging service for sub-processes
     listener.enqueue_sentinel()
     listener.stop()
-    return result
+    if key_interrupt:
+        raise CliKeyboardInterrupt("Installer halted by keyboard interrupt.")
 
 
 def init_worker_sh():
@@ -878,12 +835,8 @@ def installer(
             proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
             logger.debug(proc.stdout)
         except subprocess.CalledProcessError as cpe:
-            logger.error("Extraction error: %d" % cpe.returncode)
-            if cpe.stdout is not None:
-                logger.error(cpe.stdout)
-            if cpe.stderr is not None:
-                logger.error(cpe.stderr)
-            raise cpe
+            msg = "\n".join(filter(None, [f"Extraction error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+            raise ArchiveExtractionError(msg) from cpe
     if not keep:
         os.unlink(archive)
     logger.info("Finished installation of {} in {:.8f}".format(archive, time.perf_counter() - start_time))

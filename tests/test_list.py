@@ -9,20 +9,10 @@ from urllib.parse import urlparse
 
 import pytest
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError
+from aqt.exceptions import AqtException, ArchiveConnectionError, ArchiveDownloadError, CliInputError, EmptyMetadata
 from aqt.helper import Settings
 from aqt.installer import Cli
-from aqt.metadata import (
-    ArchiveId,
-    MetadataFactory,
-    SimpleSpec,
-    ToolData,
-    Version,
-    Versions,
-    format_suggested_follow_up,
-    show_list,
-    suggested_follow_up,
-)
+from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, ToolData, Version, Versions, show_list, suggested_follow_up
 
 Settings.load_settings()
 
@@ -452,12 +442,13 @@ def test_format_suggested_follow_up():
         "* Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
         "* Please use 'aqt list-tool mac desktop' to check what tools are available."
     )
-
-    assert format_suggested_follow_up(suggestions) == expected
+    ex = AqtException("msg", suggested_action=suggestions)
+    assert ex._format_suggested_follow_up() == expected
 
 
 def test_format_suggested_follow_up_empty():
-    assert format_suggested_follow_up([]) == ""
+    ex = AqtException("msg", suggested_action=[])
+    assert format(ex) == "msg"
 
 
 @pytest.mark.parametrize(
@@ -606,7 +597,7 @@ def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
         tool_name="tools_ifw",
         is_long_listing=True,
     )
-    assert show_list(meta) == 0
+    show_list(meta)
     out, err = capsys.readouterr()
     sys.stdout.write(out)
     sys.stderr.write(err)
@@ -620,7 +611,7 @@ def test_show_list_versions(monkeypatch, capsys):
     expect_file = Path(__file__).parent / "data" / "mac-desktop-expect.json"
     expected = "\n".join(json.loads(expect_file.read_text("utf-8"))["qt"]["qt"]) + "\n"
 
-    assert show_list(MetadataFactory(mac_qt)) == 0
+    show_list(MetadataFactory(mac_qt))
     out, err = capsys.readouterr()
     assert out == expected
 
@@ -633,11 +624,42 @@ def test_show_list_tools(monkeypatch, capsys):
     expect = "\n".join(json.loads(expect_file.read_text("utf-8"))["tools"]) + "\n"
 
     meta = MetadataFactory(ArchiveId("tools", "mac", "desktop"))
-    assert show_list(meta) == 0
+    show_list(meta)
     out, err = capsys.readouterr()
     sys.stdout.write(out)
     sys.stderr.write(err)
     assert out == expect
+
+
+def test_show_list_empty(monkeypatch, capsys):
+    monkeypatch.setattr(MetadataFactory, "getList", lambda self: [])
+    meta = MetadataFactory(ArchiveId("tools", "mac", "desktop"))
+    with pytest.raises(EmptyMetadata) as error:
+        show_list(meta)
+    assert error.type == EmptyMetadata
+    assert format(error.value) == "No tools available for this request."
+
+
+def test_show_list_bad_connection(monkeypatch, capsys):
+    for exception_class, error_msg in (
+        (ArchiveConnectionError, "Failure to connect to some url"),
+        (ArchiveDownloadError, "Failure to download some xml file"),
+    ):
+
+        def mock(self):
+            raise exception_class(error_msg)
+
+        monkeypatch.setattr(MetadataFactory, "getList", mock)
+        meta = MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9"))
+        with pytest.raises(exception_class) as error:
+            show_list(meta)
+        assert error.type == exception_class
+        assert format(error.value) == (
+            f"{error_msg}\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
+            "* Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'."
+        )
 
 
 def fetch_expected_tooldata(json_filename: str) -> ToolData:

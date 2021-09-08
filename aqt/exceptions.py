@@ -18,23 +18,58 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+from typing import Iterable
 
 
-class ArchiveDownloadError(Exception):
+class AqtException(Exception):
+    def __init__(self, *args, **kwargs):
+        self.suggested_action: Iterable[str] = kwargs.pop("suggested_action", [])
+        self.should_show_help: bool = kwargs.pop("should_show_help", False)
+        super(AqtException, self).__init__(*args, **kwargs)
+
+    def __format__(self, format_spec) -> str:
+        base_msg = "{}".format(super(AqtException, self).__format__(format_spec))
+        if not self.suggested_action:
+            return base_msg
+        return f"{base_msg}\n{self._format_suggested_follow_up()}"
+
+    def _format_suggested_follow_up(self) -> str:
+        return ("=" * 30 + "Suggested follow-up:" + "=" * 30 + "\n") + "\n".join(
+            ["* " + suggestion for suggestion in self.suggested_action]
+        )
+
+
+class ArchiveDownloadError(AqtException):
     pass
 
 
-class ArchiveConnectionError(Exception):
+class ArchiveConnectionError(AqtException):
     pass
 
 
-class ArchiveListError(Exception):
+class ArchiveListError(AqtException):
     pass
 
 
-class NoPackageFound(Exception):
+class NoPackageFound(AqtException):
     pass
 
 
-class CliInputError(Exception):
+class EmptyMetadata(AqtException):
+    pass
+
+
+class CliInputError(AqtException):
+    pass
+
+
+class CliKeyboardInterrupt(AqtException):
+    pass
+
+
+class ArchiveExtractionError(AqtException):
+    pass
+
+
+class UpdaterError(AqtException):
     pass
