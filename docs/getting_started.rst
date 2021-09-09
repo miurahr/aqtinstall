@@ -21,7 +21,7 @@ General usage of ``aqt`` looks like this:
 
 .. code-block:: bash
 
-    aqt install-qt <host> <target> <Qt version> [<arch>]
+    aqt install-qt <host> <target> (<Qt version> | <spec>) [<arch>]
 
 If you have installed ``aqt`` with pip, you can run it with the command script ``aqt``,
 but in some cases you may need to run it as ``python -m aqt``.
@@ -89,6 +89,16 @@ The installation command we need is:
 .. code-block:: console
 
     $ aqt install-qt windows desktop 6.2.0 win64_mingw81
+
+Let's say that we want to install the next version of Qt 6.2 as soon as it is available.
+We can do this by using a
+`SimpleSpec <https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec>`_
+instead of an explicit version:
+
+.. code-block:: console
+
+    $ aqt install-qt windows desktop 6.2 win64_mingw81
+
 
 External 7-zip extractor
 ------------------------
