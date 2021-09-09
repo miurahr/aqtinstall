@@ -753,7 +753,9 @@ class Cli:
         subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
         if not is_legacy:
             subparser.add_argument(
-                "qt_version_spec", help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"'
+                "qt_version_spec",
+                metavar="(VERSION | SPECIFICATION)",
+                help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
             )
 
     def _setup_settings(self, args=None):
