@@ -358,6 +358,8 @@ class Cli:
 
     def run_install_src(self, args):
         """Run src subcommand"""
+        if not hasattr(args, "qt_version"):
+            args.qt_version = str(Cli._determine_qt_version(args.qt_version_spec, args.host, args.target, arch=""))
         if args.kde and args.qt_version != "5.15.2":
             raise CliInputError("KDE patch: unsupported version!!")
         start_time = time.perf_counter()
