@@ -23,7 +23,6 @@
 
 import argparse
 import binascii
-import functools
 import multiprocessing
 import os
 import platform
@@ -38,16 +37,7 @@ from typing import Any, Callable, List, Optional
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
-from aqt.exceptions import (
-    AqtException,
-    ArchiveConnectionError,
-    ArchiveDownloadError,
-    ArchiveExtractionError,
-    ArchiveListError,
-    CliInputError,
-    CliKeyboardInterrupt,
-    NoPackageFound,
-)
+from aqt.exceptions import AqtException, ArchiveConnectionError, ArchiveExtractionError, CliInputError, CliKeyboardInterrupt
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list
 from aqt.updater import Updater
@@ -188,14 +178,14 @@ class Cli:
     @staticmethod
     def _determine_qt_version(qt_version_or_spec: str, host: str, target: str, arch: str) -> Version:
         def choose_highest(x: Optional[Version], y: Optional[Version]) -> Optional[Version]:
-            if not x or not y:
-                return x or y
-            return x if x > y else y
+            if x and y:
+                return max(x, y)
+            return x or y
 
         def opt_version_for_spec(ext: str, _spec: SimpleSpec) -> Optional[Version]:
             try:
                 return MetadataFactory(ArchiveId("qt", host, target, ext), spec=_spec).getList().latest()
-            except (CliInputError, ArchiveConnectionError, ArchiveDownloadError):
+            except AqtException:
                 return None
 
         try:
@@ -207,11 +197,9 @@ class Cli:
         except ValueError as e:
             raise CliInputError(f"Invalid version or SimpleSpec: '{qt_version_or_spec}'\n" + SimpleSpec.usage()) from e
         else:
-            version: Optional[Version] = functools.reduce(
-                choose_highest,
-                [opt_version_for_spec(ext, spec) for ext in QtRepoProperty.possible_extensions_for_arch(arch)],
-                None,
-            )
+            version: Optional[Version] = None
+            for ext in QtRepoProperty.possible_extensions_for_arch(arch):
+                version = choose_highest(version, opt_version_for_spec(ext, spec))
             if not version:
                 raise CliInputError(
                     f"No versions of Qt exist for spec={spec} with host={host}, target={target}, arch={arch}"
