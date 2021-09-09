@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import subprocess
 import sys
 import textwrap
 from dataclasses import dataclass
@@ -13,7 +14,9 @@ import py7zr
 import pytest
 from pytest_socket import disable_socket
 
-from aqt.installer import Cli
+from aqt.archives import QtPackage
+from aqt.exceptions import ArchiveExtractionError
+from aqt.installer import Cli, installer
 
 
 class MockMultiprocessingContext:
@@ -45,7 +48,7 @@ class MockMultiprocessingContext:
             pass
 
         def terminate(self):
-            assert False, "Did not expect to call terminate during unit test"
+            pass
 
 
 class MockMultiprocessingManager:
@@ -497,15 +500,62 @@ def test_install_bad_tools_modules(monkeypatch, capsys, cmd, xml_file, expected_
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
 
-    with pytest.raises(SystemExit) as pytest_wrapped_e:
-        cli = Cli()
-        cli._setup_settings()
-        cli.run(cmd.split())
-    assert pytest_wrapped_e.type == SystemExit
-    assert pytest_wrapped_e.value.code == 1
+    cli = Cli()
+    cli._setup_settings()
+    assert cli.run(cmd.split()) == 1
 
     out, err = capsys.readouterr()
     match = expected_re.match(err)
     assert match
     actual = set(map(lambda x: x[1:-1], match.group(1).split(", ")))
     assert actual == expect_missing
+
+
+def test_install_keyboard_interrupt(monkeypatch, capsys):
+    def mock_keyboard_interrupt(*args):
+        raise KeyboardInterrupt()
+
+    host, target, ver, arch = "windows", "desktop", "6.1.0", "win64_mingw81"
+    updates_url = "windows_x86/desktop/qt6_610/Updates.xml"
+    archives = [plain_qtbase_archive("qt.qt6.610.win64_mingw81", "win64_mingw81")]
+
+    cmd = ["install-qt", host, target, ver, arch]
+    mock_get_url, mock_download_archive = make_mock_geturl_download_archive(archives, arch, host, updates_url)
+    monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.installer.installer", mock_keyboard_interrupt)
+
+    cli = Cli()
+    cli._setup_settings()
+    assert cli.run(cmd) == 1
+    out, err = capsys.readouterr()
+    assert err.rstrip().endswith(
+        "Caught KeyboardInterrupt, terminating installer workers\nInstaller halted by keyboard interrupt."
+    )
+
+
+def test_install_installer_archive_extraction_err(monkeypatch):
+    def mock_extractor_that_fails(*args, **kwargs):
+        raise subprocess.CalledProcessError(returncode=1, cmd="some command", output="out", stderr="err")
+
+    monkeypatch.setattr("aqt.installer.getUrl", lambda *args: "")
+    monkeypatch.setattr("aqt.installer.downloadBinaryFile", lambda *args: None)
+    monkeypatch.setattr("aqt.installer.subprocess.run", mock_extractor_that_fails)
+
+    with pytest.raises(ArchiveExtractionError) as err, TemporaryDirectory() as temp_dir:
+        installer(
+            qt_archive=QtPackage(
+                "name",
+                "archive-url",
+                "archive",
+                "package_desc",
+                "hashurl",
+                "pkg_update_name",
+            ),
+            base_dir=temp_dir,
+            command="some_nonexistent_7z_extractor",
+            queue=MockMultiprocessingManager.Queue(),
+        )
+    assert err.type == ArchiveExtractionError
+    err_msg = format(err.value).rstrip()
+    assert err_msg == "Extraction error: 1\nout\nerr"

@@ -208,8 +208,7 @@ class QtArchives:
         try:
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
-            self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
-            raise ArchiveListError("Downloaded metadata is corrupted.")
+            raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
 
         for packageupdate in self.update_xml.iter("PackageUpdate"):
             pkg_name = packageupdate.find("Name").text
@@ -258,7 +257,6 @@ class QtArchives:
         # if we have located every requested package, then target_packages will be empty
         if len(target_packages) > 0:
             message = f"The packages {target_packages} were not found while parsing XML of package information!"
-            self.logger.error(message)
             raise NoPackageFound(message)
 
     def get_packages(self) -> List[QtPackage]:
@@ -384,8 +382,7 @@ class ToolArchives(QtArchives):
         try:
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
-            self.logger.error("Downloaded metadata is corrupted. {}".format(perror))
-            raise ArchiveListError("Downloaded metadata is corrupted.")
+            raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
 
         try:
             packageupdate = next(filter(lambda x: x.find("Name").text == self.arch, self.update_xml.iter("PackageUpdate")))

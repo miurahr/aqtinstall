@@ -27,6 +27,8 @@ from logging import getLogger
 
 import patch
 
+from aqt.archives import TargetConfig
+from aqt.exceptions import UpdaterError
 from aqt.helper import Settings
 from aqt.metadata import SimpleSpec, Version
 
@@ -249,7 +251,7 @@ class Updater:
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
     @classmethod
-    def update(cls, target, base_dir: str):
+    def update(cls, target: TargetConfig, base_dir: str):
         """
         Make Qt configuration files, qt.conf and qtconfig.pri.
         And update pkgconfig and patch Qt5Core and qmake
@@ -307,7 +309,7 @@ class Updater:
                 updater.patch_qmake_script(base_dir, version_dir, target.os_name)
                 updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name)
         except IOError as e:
-            raise e
+            raise UpdaterError(f"Updater caused an IO error: {e}") from e
 
     @classmethod
     def patch_kde(cls, src_dir):
