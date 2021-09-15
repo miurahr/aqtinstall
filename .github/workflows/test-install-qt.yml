@@ -59,9 +59,9 @@ jobs:
           qtver = "${{ matrix.qtver }}"
           if artifact == "binary":
             if platform.startswith("windows"):
-              prefix = ["../aqt.exe", "install"]
+              prefix = ["../.gravitybee/dist/latest/aqt.exe", "install"]
             else:
-              prefix = ["../aqt", "install"]
+              prefix = ["../.gravitybee/dist/latest/aqt", "install"]
           else:
             prefix = ["python", "-m", "aqt", "install"]
           command_line = []
