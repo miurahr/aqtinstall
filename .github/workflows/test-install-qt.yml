@@ -15,10 +15,15 @@ jobs:
           - os: ubuntu-20.04
             py: 3.9
             qtver: 6.1.0
+            artifact: standard
         exclude:
           - os: ubuntu-latest
             py: 3.9
             qtver: 6.1.0
+          - os: ubuntu-latest
+            artifact: binary
+          - os: macOS-latest
+            artifact: binary
     steps:
       - uses: actions/checkout@v1
         with:
