@@ -199,6 +199,67 @@ def test_list_architectures_and_modules(monkeypatch, version: str, extension: st
 
 
 @pytest.mark.parametrize(
+    "version, arch, modules_to_query, modules_failed_query",
+    (
+        ("5.14.0", "win32_mingw73", [], []),
+        ("5.14.0", "win32_mingw73", ["qtcharts"], []),
+        ("5.14.0", "win32_mingw73", ["all"], []),
+        ("5.14.0", "win32_mingw73", ["debug_info"], ["debug_info"]),
+        ("5.14.0", "win64_msvc2017_64", [], []),
+        ("5.14.0", "win64_msvc2017_64", ["debug_info"], []),
+    ),
+)
+def test_list_archives(
+    monkeypatch, capsys, version: str, arch: str, modules_to_query: List[str], modules_failed_query: List[str]
+):
+    archive_id = ArchiveId("qt", "windows", "desktop")
+    in_file = f"{archive_id.host}-{version.replace('.', '')}-update.xml"
+    expect_out_file = f"{archive_id.host}-{version.replace('.', '')}-expect.json"
+    _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
+    expect = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
+
+    if not modules_to_query:
+        expected_qt_archives = expect["qt_base_pkgs_by_arch"][arch]["DownloadableArchives"]
+        expected = set([arc.split("-")[0] for arc in expected_qt_archives])
+    else:
+        expected_mod_metadata = expect["modules_metadata_by_arch"][arch]
+        if "all" not in modules_to_query:
+            expected_mod_metadata = filter(lambda mod: mod["Name"].split(".")[-2] in modules_to_query, expected_mod_metadata)
+        expected = set([arc.split("-")[0] for mod in expected_mod_metadata for arc in mod["DownloadableArchives"]])
+
+    archives_query = [version, arch, *modules_to_query]
+    cli_args = ["list-qt", "windows", "desktop", "--archives", *archives_query]
+    if not modules_failed_query:
+        meta = set(MetadataFactory(archive_id, archives_query=archives_query).getList())
+        assert meta == expected
+
+        cli = Cli()
+        assert 0 == cli.run(cli_args)
+        out, err = capsys.readouterr()
+        assert out.rstrip() == " ".join(sorted(expected))
+        return
+
+    expected_err_msg = f"The requested modules were not located: {sorted(modules_failed_query)}"
+    with pytest.raises(CliInputError) as err:
+        MetadataFactory(archive_id, archives_query=archives_query).getList()
+    assert err.type == CliInputError
+    assert format(err.value) == expected_err_msg
+
+    cli = Cli()
+    assert 1 == cli.run(cli_args)
+    out, err = capsys.readouterr()
+    assert expected_err_msg in err
+
+
+def test_list_archives_insufficient_args(capsys):
+    cli = Cli()
+    assert 1 == cli.run("list-qt mac desktop --archives 5.14.0".split())
+    out, err = capsys.readouterr()
+    assert err.strip() == "The '--archives' flag requires a 'QT_VERSION' and an 'ARCHITECTURE' parameter."
+
+
+@pytest.mark.parametrize(
     "host, target, tool_name",
     [
         ("mac", "desktop", "tools_cmake"),
@@ -436,6 +497,21 @@ wrong_ext_and_version_msg = [
         (
             MetadataFactory(mac_qt, extensions_ver="1.2.3"),
             wrong_qt_version_msg,
+        ),
+        (
+            MetadataFactory(mac_qt, archives_query=["1.2.3", "clang_64", "a module", "another module"]),
+            [
+                "Please use 'aqt list-qt mac desktop' to show versions of Qt available.",
+                "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to show architectures available.",
+                "Please use 'aqt list-qt mac desktop --modules <QT_VERSION>' to show modules available.",
+            ],
+        ),
+        (
+            MetadataFactory(mac_qt, archives_query=["1.2.3", "clang_64"]),
+            [
+                "Please use 'aqt list-qt mac desktop' to show versions of Qt available.",
+                "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to show architectures available.",
+            ],
         ),
         (
             MetadataFactory(mac_wasm),
