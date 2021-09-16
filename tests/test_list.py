@@ -12,9 +12,50 @@ import pytest
 from aqt.exceptions import AqtException, ArchiveConnectionError, ArchiveDownloadError, CliInputError, EmptyMetadata
 from aqt.helper import Settings
 from aqt.installer import Cli
-from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, ToolData, Version, Versions, show_list, suggested_follow_up
+from aqt.metadata import (
+    ArchiveId,
+    MetadataFactory,
+    QtRepoProperty,
+    SimpleSpec,
+    ToolData,
+    Version,
+    Versions,
+    show_list,
+    suggested_follow_up,
+)
 
 Settings.load_settings()
+
+
+@pytest.mark.parametrize(
+    "arch, version, expect",
+    (
+        ("wasm_32", Version("5.13.1"), "wasm"),
+        ("mingw", Version("5.13.1"), ""),
+        ("android_fake", Version("5.13.1"), ""),
+        ("android_x86", Version("5.13.1"), ""),
+        ("android_x86", Version("6.13.1"), "x86"),
+        ("android_x86", Version("6.0.0"), "x86"),
+    ),
+)
+def test_list_extension_for_arch(arch: str, version: Version, expect: str):
+    ext = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+    assert ext == expect
+
+
+@pytest.mark.parametrize(
+    "arch, expect",
+    (
+        ("wasm_32", ["wasm"]),
+        ("mingw", [""]),
+        ("android_fake", [""]),
+        ("android", [""]),
+        ("android_x86", ["", "x86"]),
+    ),
+)
+def test_list_possible_extension_for_arch(arch: str, expect: List[str]):
+    exts = QtRepoProperty.possible_extensions_for_arch(arch)
+    assert set(exts) == set(expect)
 
 
 @pytest.mark.parametrize(

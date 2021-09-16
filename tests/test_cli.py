@@ -1,11 +1,12 @@
 import re
 import sys
+from pathlib import Path
 
 import pytest
 
 from aqt.exceptions import CliInputError
 from aqt.installer import Cli
-from aqt.metadata import Version
+from aqt.metadata import MetadataFactory, SimpleSpec, Version
 
 
 @pytest.fixture()
@@ -69,6 +70,47 @@ def test_cli_check_version():
 
 
 @pytest.mark.parametrize(
+    "host, target, arch, version_or_spec, expected_version, is_bad_spec",
+    (
+        ("windows", "desktop", "wasm_32", "6.1", None, False),
+        ("windows", "desktop", "wasm_32", "5.12", None, False),
+        ("windows", "desktop", "wasm_32", "5.13", Version("5.13.2"), False),
+        ("windows", "desktop", "wasm_32", "5", Version("5.15.2"), False),
+        ("windows", "desktop", "wasm_32", "<5.14.5", Version("5.14.2"), False),
+        ("windows", "desktop", "mingw32", "6.0", Version("6.0.3"), False),
+        ("windows", "winrt", "mingw32", "6", None, False),
+        ("windows", "winrt", "mingw32", "bad spec", None, True),
+        ("windows", "android", "android_x86", "6", Version("6.1.0"), False),
+        ("windows", "desktop", "android_x86", "6", Version("6.1.0"), False),  # does not validate arch
+        ("windows", "desktop", "android_fake", "6", Version("6.1.0"), False),  # does not validate arch
+    ),
+)
+def test_cli_determine_qt_version(
+    monkeypatch, host, target, arch, version_or_spec: str, expected_version: Version, is_bad_spec: bool
+):
+    _html = (Path(__file__).parent / "data" / f"{host}-{target}.html").read_text("utf-8")
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
+    cli = Cli()
+    cli._setup_settings()
+
+    if is_bad_spec:
+        with pytest.raises(CliInputError) as e:
+            Cli._determine_qt_version(version_or_spec, host, target, arch)
+        assert e.type == CliInputError
+        assert format(e.value) == f"Invalid version or SimpleSpec: '{version_or_spec}'\n" + SimpleSpec.usage()
+    elif not expected_version:
+        with pytest.raises(CliInputError) as e:
+            Cli._determine_qt_version(version_or_spec, host, target, arch)
+        assert e.type == CliInputError
+        expect_msg = f"No versions of Qt exist for spec={version_or_spec} with host={host}, target={target}, arch={arch}"
+        actual_msg = format(e.value)
+        assert actual_msg == expect_msg
+    else:
+        ver = Cli._determine_qt_version(version_or_spec, host, target, arch)
+        assert ver == expected_version
+
+
+@pytest.mark.parametrize(
     "invalid_version",
     ("5.15", "five-dot-fifteen", "5", "5.5.5.5"),
 )
@@ -84,12 +126,13 @@ def test_cli_invalid_version(capsys, invalid_version):
 
     matcher = re.compile(
         r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+        r"(.*\n)*"
         r".*Invalid version: '" + invalid_version + r"'! Please use the form '5\.X\.Y'\.\n.*"
     )
 
     for cmd in (
-        ("install-qt", "mac", "desktop", invalid_version),
-        ("install-doc", "mac", "desktop", invalid_version),
+        ("install", invalid_version, "mac", "desktop"),
+        ("doc", invalid_version, "mac", "desktop"),
         ("list-qt", "mac", "desktop", "--modules", invalid_version),
     ):
         cli = Cli()

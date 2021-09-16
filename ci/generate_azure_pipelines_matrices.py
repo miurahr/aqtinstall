@@ -148,6 +148,16 @@ windows_build_jobs.extend(
             module="qtcharts qtnetworkauth",
             mirror=random.choice(MIRRORS),
         ),
+        BuildJob(
+            "install-qt",
+            "5.14.2",
+            "windows",
+            "desktop",
+            "win64_msvc2017_64",
+            "msvc2017_64",
+            spec=">1,<5.15",  # Don't redirect output! Must be wrapped in quotes!
+            mirror=random.choice(MIRRORS),
+        ),
     ]
 )
 
@@ -277,6 +287,8 @@ for platform_build_job in all_platform_build_jobs:
         key = "{} {} {} for {}".format(
             build_job.command, build_job.qt_version, build_job.arch, build_job.target
         )
+        if build_job.spec:
+            key = '{} (spec="{}")'.format(key, build_job.spec)
         if build_job.module:
             key = "{} ({})".format(key, build_job.module)
         if build_job.subarchives:

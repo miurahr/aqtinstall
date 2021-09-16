@@ -39,7 +39,7 @@ import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import AqtException, ArchiveConnectionError, ArchiveExtractionError, CliInputError, CliKeyboardInterrupt
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
-from aqt.metadata import ArchiveId, MetadataFactory, SimpleSpec, Version, show_list
+from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list
 from aqt.updater import Updater
 
 try:
@@ -175,6 +175,38 @@ class Cli:
             return False
         return all([m in available for m in modules])
 
+    @staticmethod
+    def _determine_qt_version(qt_version_or_spec: str, host: str, target: str, arch: str) -> Version:
+        def choose_highest(x: Optional[Version], y: Optional[Version]) -> Optional[Version]:
+            if x and y:
+                return max(x, y)
+            return x or y
+
+        def opt_version_for_spec(ext: str, _spec: SimpleSpec) -> Optional[Version]:
+            try:
+                return MetadataFactory(ArchiveId("qt", host, target, ext), spec=_spec).getList().latest()
+            except AqtException:
+                return None
+
+        try:
+            return Version(qt_version_or_spec)
+        except ValueError:
+            pass
+        try:
+            spec = SimpleSpec(qt_version_or_spec)
+        except ValueError as e:
+            raise CliInputError(f"Invalid version or SimpleSpec: '{qt_version_or_spec}'\n" + SimpleSpec.usage()) from e
+        else:
+            version: Optional[Version] = None
+            for ext in QtRepoProperty.possible_extensions_for_arch(arch):
+                version = choose_highest(version, opt_version_for_spec(ext, spec))
+            if not version:
+                raise CliInputError(
+                    f"No versions of Qt exist for spec={spec} with host={host}, target={target}, arch={arch}"
+                )
+            getLogger("aqt.installer").info(f"Resolved spec '{qt_version_or_spec}' to {version}")
+            return version
+
     def run_install_qt(self, args):
         """Run install subcommand"""
         start_time = time.perf_counter()
@@ -184,8 +216,11 @@ class Cli:
         arch = args.arch
         target = args.target
         os_name = args.host
-        qt_version = args.qt_version
-        Cli._validate_version_str(qt_version)
+        if hasattr(args, "qt_version_spec"):
+            qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch))
+        else:
+            qt_version = args.qt_version
+            Cli._validate_version_str(qt_version)
         keep = args.keep
         output_dir = args.outputdir
         if output_dir is None:
@@ -263,8 +298,11 @@ class Cli:
             self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
         target = args.target
         os_name = args.host
-        qt_version = args.qt_version
-        Cli._validate_version_str(qt_version)
+        if hasattr(args, "qt_version_spec"):
+            qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch=""))
+        else:
+            qt_version = args.qt_version
+            Cli._validate_version_str(qt_version)
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -308,6 +346,8 @@ class Cli:
 
     def run_install_src(self, args):
         """Run src subcommand"""
+        if not hasattr(args, "qt_version"):
+            args.qt_version = str(Cli._determine_qt_version(args.qt_version_spec, args.host, args.target, arch=""))
         if args.kde and args.qt_version != "5.15.2":
             raise CliInputError("KDE patch: unsupported version!!")
         start_time = time.perf_counter()
@@ -712,7 +752,11 @@ class Cli:
         subparser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
         subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
         if not is_legacy:
-            subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
+            subparser.add_argument(
+                "qt_version_spec",
+                metavar="(VERSION | SPECIFICATION)",
+                help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+            )
 
     def _setup_settings(self, args=None):
         # setup logging

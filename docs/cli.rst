@@ -265,7 +265,7 @@ install-qt command
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
         [--noarchives]
-        <host> <target> <Qt version> [<arch>]
+        <host> <target> (<Qt version> | <spec>) [<arch>]
 
 Install Qt library, with specified version and target.
 There are various combinations to accept according to Qt version.
@@ -282,6 +282,20 @@ There are various combinations to accept according to Qt version.
 
     This is a Qt version such as 5.9.7, 5.12.1 etc.
     Use the :ref:`List Qt Command` to list available versions.
+
+.. describe:: spec
+
+    This is a `SimpleSpec`_ that specifies a range of versions.
+    If you type something in the ``<Qt version>`` positional argument that
+    cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
+    and ``aqt`` will select the highest available version within that `SimpleSpec`_.
+
+    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
+    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
+    install the highest version of Qt available.
+
+    When using this option, ``aqt`` will print the version that it has installed
+    in the logs so that you can verify it easily.
 
 .. describe:: arch
 
@@ -324,7 +338,7 @@ install-src command
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
         [--kde]
-        <host> <target> <Qt version>
+        <host> <target> (<Qt version> | <spec>)
 
 Install Qt source code for the specified version and target.
 
@@ -339,7 +353,19 @@ Install Qt source code for the specified version and target.
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9.7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc.
+    Use the :ref:`List Qt Command` to list available versions.
+
+.. describe:: spec
+
+    This is a `SimpleSpec`_ that specifies a range of versions.
+    If you type something in the ``<Qt version>`` positional argument that
+    cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
+    and ``aqt`` will select the highest available version within that `SimpleSpec`_.
+
+    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
+    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
+    install the highest version of Qt available.
 
 .. option:: --kde
 
@@ -368,7 +394,7 @@ install-doc command
         [-k | --keep]
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
-        <host> <target> <Qt version>
+        <host> <target> (<Qt version> | <spec>)
 
 Install Qt documentation for the specified version and target.
 
@@ -382,7 +408,19 @@ Install Qt documentation for the specified version and target.
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9.7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc.
+    Use the :ref:`List Qt Command` to list available versions.
+
+.. describe:: spec
+
+    This is a `SimpleSpec`_ that specifies a range of versions.
+    If you type something in the ``<Qt version>`` positional argument that
+    cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
+    and ``aqt`` will select the highest available version within that `SimpleSpec`_.
+
+    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
+    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
+    install the highest version of Qt available.
 
 See `common options`_.
 
@@ -404,7 +442,7 @@ install-example command
         [-k | --keep]
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
-        <host> <target> <Qt version>
+        <host> <target> (<Qt version> | <spec>)
 
 Install Qt examples for the specified version and target.
 
@@ -419,7 +457,19 @@ Install Qt examples for the specified version and target.
 
 .. describe:: Qt version
 
-    This is a Qt version such as 5.9.7, 5.12.1 etc
+    This is a Qt version such as 5.9.7, 5.12.1 etc.
+    Use the :ref:`List Qt Command` to list available versions.
+
+.. describe:: spec
+
+    This is a `SimpleSpec`_ that specifies a range of versions.
+    If you type something in the ``<Qt version>`` positional argument that
+    cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
+    and ``aqt`` will select the highest available version within that `SimpleSpec`_.
+
+    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
+    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
+    install the highest version of Qt available.
 
 
 See `common options`_.
@@ -490,6 +540,14 @@ Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
 
     pip install aqtinstall
     sudo aqt install-qt --outputdir /opt linux desktop 5.12.0 -m qtcharts qtnetworkauth
+
+
+Example: Installing the newest LTS version of Qt 5.12:
+
+.. code-block:: console
+
+    pip install aqtinstall
+    sudo aqt install-qt linux desktop 5.12 win64_mingw73
 
 
 Example: Installing Android (armv7) Qt 5.10.2:

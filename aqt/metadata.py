@@ -326,6 +326,34 @@ class ToolData:
         return [[name, *[content[key] for key in keys]] for name, content in self.tool_data.items()]
 
 
+class QtRepoProperty:
+    """
+    Describes properties of the Qt repository at https://download.qt.io/online/qtsdkrepository.
+    Intended to help decouple the logic of aqt from specific properties of the Qt repository.
+    """
+
+    @staticmethod
+    def extension_for_arch(architecture: str, is_version_ge_6: bool) -> str:
+        if architecture == "wasm_32":
+            return "wasm"
+        elif architecture.startswith("android_") and is_version_ge_6:
+            ext = architecture[len("android_") :]
+            if ext in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6:
+                return ext
+        return ""
+
+    @staticmethod
+    def possible_extensions_for_arch(arch: str) -> List[str]:
+        """Assumes no knowledge of the Qt version"""
+
+        # ext_ge_6: the extension if the version is greater than or equal to 6.0.0
+        # ext_lt_6: the extension if the version is less than 6.0.0
+        ext_lt_6, ext_ge_6 = [QtRepoProperty.extension_for_arch(arch, is_ge_6) for is_ge_6 in (False, True)]
+        if ext_lt_6 == ext_ge_6:
+            return [ext_lt_6]
+        return [ext_lt_6, ext_ge_6]
+
+
 class MetadataFactory:
     """Retrieve metadata of Qt variations, versions, and descriptions from Qt site."""
 
