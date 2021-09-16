@@ -96,9 +96,9 @@ You are recommended to update pip before installing aqtinstall.
     Older pip does not handle it expectedly(see #230).
 
 
-It may be difficult to set up some Windows systems with the correct version of Python and all of aqt's dependencies.
-To get around this problem, aqtinstall offers `aqt.exe`, a Windows executable that contains Python and all required dependencies.
-You may access `aqt.exe` from the `Releases section`_, under "assets".
+It may be difficult to set up some Windows systems with the correct version of Python and all of ``aqt``'s dependencies.
+To get around this problem, ``aqtinstall`` offers ``aqt.exe``, a Windows executable that contains Python and all required dependencies.
+You may access ``aqt.exe`` from the `Releases section`_, under "assets".
 
 .. _`Releases section`: https://github.com/miurahr/aqtinstall/releases
 
