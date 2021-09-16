@@ -581,12 +581,6 @@
         "tool_name": "tools_telemetry"
       },
       {
-        "arch": "qt.tools.cmake.win32",
-        "os_name": "windows",
-        "target": "desktop",
-        "tool_name": "tools_cmake"
-      },
-      {
         "arch": "qt.tools.cmake.win64",
         "os_name": "windows",
         "target": "desktop",
