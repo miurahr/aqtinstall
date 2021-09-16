@@ -20,6 +20,7 @@ Added
 * CI: test with Qt6.2 with modules(#346)
 * README: link documentation for stable(#329)
 * Support WASM on Qt 6.2.0(#384)
+* Add Binary distribution for Windows(#393)
 
 Changed
 -------
@@ -35,7 +36,7 @@ Changed
 * README example command is now easy to copy-and-paste(#322)
 * list subcommand update(#331)
 * Improve handle of Ctrl-C keyboard interruption(#337)
-* Update combinations.json(#344)
+* Update combinations.json(#344,#386)
 * Turn warnings into errors when building docs(#360)
 * Update documentations(#358,#357)
 * Test: consolidate lint configuration to pyproject.toml(#356)

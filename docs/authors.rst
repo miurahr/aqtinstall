@@ -25,6 +25,7 @@ All contributors, listed alphabetically, are:
 * Martin Delille (Documents)
 * Mizux Seihax (Qt versions)
 * Nelson Chen (CI tests)
+* @nikitalita (Binary distribution)
 * @pylipp (Documents)
 * Sztergbaum Roman (Version database)
 * Thomas Grainger (CLI entry point)
