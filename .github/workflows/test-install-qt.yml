@@ -10,14 +10,20 @@ jobs:
         os: [windows-latest, macOS-latest, ubuntu-latest]
         py: [3.9]
         qtver: [5.9.9, 5.12.8, 6.1.0]
+        artifact: [standard, binary]
         include:
           - os: ubuntu-20.04
             py: 3.9
             qtver: 6.1.0
+            artifact: standard
         exclude:
           - os: ubuntu-latest
             py: 3.9
             qtver: 6.1.0
+          - os: ubuntu-latest
+            artifact: binary
+          - os: macOS-latest
+            artifact: binary
     steps:
       - uses: actions/checkout@v1
         with:
@@ -32,9 +38,14 @@ jobs:
           python -m pip install tox-gh-actions build
           tox
       - name: Build and install
+        if: matrix.artifact == 'standard'
         run: |
           python setup.py --version
           python -m pip install ./ --user
+      - name: Build Standalone binary
+        if: matrix.artifact == 'binary'
+        run: |
+          ci/build_standalone.bat
       - name: Run aqt
         run: |
           import os
@@ -43,9 +54,18 @@ jobs:
           timeout = 300
           os.mkdir("Qt")
           os.chdir("Qt")
-          command_line = ["python", "-m", "aqt", "install"]
+          artifact = "${{ matrix.artifact }}"
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
+          if artifact == "binary":
+            if platform.startswith("windows"):
+              prefix = ["../.gravitybee/dist/latest/aqt.exe", "install"]
+            else:
+              prefix = ["../.gravitybee/dist/latest/aqt", "install"]
+          else:
+            prefix = ["python", "-m", "aqt", "install"]
+          command_line = []
+          command_line.extend(prefix)
           if platform == "windows-latest":
             if qtver.startswith('5.15'):
               args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
@@ -72,17 +92,19 @@ jobs:
             exit(cpe.returncode)
           assert res.returncode == 0
           if qtver.startswith('6'):
+            command_line6 = []
+            command_line6.extend(prefix)
             if platform == 'ubuntu-20.04':
-              command_line = ["python", "-m", "aqt", "install", qtver, "linux", "android", "android_armv7"]
+              command_line6.extend([qtver, "linux", "android", "android_armv7"])
               timeout = 360
             elif platform == "macOS-latest":
-              command_line = ["python", "-m", "aqt", "install", qtver, "mac", "ios", "ios"]
+              command_line6.extend([qtver, "mac", "ios", "ios"])
               timeout = 360
             else:
-              command_line = ["python", "-m", "aqt", "install", qtver, "windows", "android", "android_armv7"]
+              command_line6.extend([qtver, "windows", "android", "android_armv7"])
               timeout = 360
             try:
-              res = subprocess.run(command_line, timeout=timeout, check=True)
+              res = subprocess.run(command_line6, timeout=timeout, check=True)
             except subprocess.CalledProcessError as cpe:
               exit(cpe.returncode)
             assert res.returncode == 0
@@ -138,3 +160,8 @@ jobs:
               print('PREFIX {}'.format(result))
         shell: python
         working-directory: ${{ github.workspace }}
+      - uses: actions/upload-artifact@v2
+        if: matrix.artifact == 'binary'
+        with:
+          name: aqt-${{ matrix.os }}-standalone
+          path: .gravitybee\dist\latest\aqt*

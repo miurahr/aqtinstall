@@ -2,6 +2,7 @@ build
 aqt/version.py
 dist
 venv
+build_venv
 *.pyc
 *.egg-info
 __pycache__
@@ -13,3 +14,5 @@ ci/*.matrix.gen.yml
 docs/_build
 aqtinstall.log
 Qt/
+.gravitybee
+.eggs
