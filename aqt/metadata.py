@@ -675,6 +675,8 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
         )
     elif meta.request_type in ("architectures", "modules", "extensions"):
         msg.append(f"Please use '{base_cmd}' to show versions of Qt available.")
+        if meta.request_type == "modules":
+            msg.append(f"Please use '{base_cmd} --arch <QT_VERSION>' to list valid architectures.")
 
     return msg
 

@@ -419,11 +419,10 @@ def test_list_invalid_extensions(capsys, monkeypatch, target, ext, version, expe
 
 mac_qt = ArchiveId("qt", "mac", "desktop")
 mac_wasm = ArchiveId("qt", "mac", "desktop", "wasm")
-wrong_qt_version_msg = ["Please use 'aqt list-qt mac desktop' to show versions of Qt available."]
-wrong_ext_and_version_msg = [
-    "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-    "Please use 'aqt list-qt mac desktop' to show versions of Qt available.",
-]
+wrong_tool_name_msg = "Please use 'aqt list-tool mac desktop' to check what tools are available."
+wrong_qt_version_msg = "Please use 'aqt list-qt mac desktop' to show versions of Qt available."
+wrong_ext_msg = "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions."
+wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to list valid architectures."
 
 
 @pytest.mark.parametrize(
@@ -436,28 +435,28 @@ wrong_ext_and_version_msg = [
         ),
         (
             MetadataFactory(ArchiveId("tools", "mac", "desktop"), tool_name="ifw"),
-            ["Please use 'aqt list-tool mac desktop' to check what tools are available."],
+            [wrong_tool_name_msg],
         ),
         (
             MetadataFactory(mac_qt, architectures_ver="1.2.3"),
-            wrong_qt_version_msg,
+            [wrong_qt_version_msg],
         ),
         (
             MetadataFactory(mac_qt, modules_query=("1.2.3", "clang_64")),
-            wrong_qt_version_msg,
+            [wrong_qt_version_msg, wrong_arch_msg],
         ),
         (
             MetadataFactory(mac_qt, extensions_ver="1.2.3"),
-            wrong_qt_version_msg,
+            [wrong_qt_version_msg],
         ),
         (
             MetadataFactory(mac_wasm),
-            ["Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions."],
+            [wrong_ext_msg],
         ),
         (
             MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9")),
             [
-                "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+                wrong_ext_msg,
                 "Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'.",
             ],
         ),
@@ -465,20 +464,20 @@ wrong_ext_and_version_msg = [
             MetadataFactory(ArchiveId("tools", "mac", "desktop", "wasm"), tool_name="ifw"),
             [
                 "Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-                "Please use 'aqt list-tool mac desktop' to check what tools are available.",
+                wrong_tool_name_msg,
             ],
         ),
         (
             MetadataFactory(mac_wasm, architectures_ver="1.2.3"),
-            wrong_ext_and_version_msg,
+            [wrong_ext_msg, wrong_qt_version_msg],
         ),
         (
             MetadataFactory(mac_wasm, modules_query=("1.2.3", "clang_64")),
-            wrong_ext_and_version_msg,
+            [wrong_ext_msg, wrong_qt_version_msg, wrong_arch_msg],
         ),
         (
             MetadataFactory(mac_wasm, extensions_ver="1.2.3"),
-            wrong_ext_and_version_msg,
+            [wrong_ext_msg, wrong_qt_version_msg],
         ),
     ),
 )
