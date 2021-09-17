@@ -45,4 +45,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: true
           automatic_release_tag: Continuous
-          file: .gravitybee\dist\latest\aqt.exe
+          files: .gravitybee\dist\latest\aqt.exe
