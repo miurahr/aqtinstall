@@ -413,6 +413,8 @@ class MetadataFactory:
             self.request_type = "architectures"
             self._action = lambda: self.fetch_arches(self._to_version(architectures_ver))
         elif archives_query:
+            if len(archives_query) < 2:
+                raise CliInputError("The '--archives' flag requires a 'QT_VERSION' and an 'ARCHITECTURE' parameter.")
             self.request_type = "archives for modules" if len(archives_query) > 2 else "archives for qt"
             version, arch, modules = archives_query[0], archives_query[1], archives_query[2:]
             self._action = lambda: self.fetch_archives(self._to_version(version), arch, modules)
