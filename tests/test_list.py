@@ -244,7 +244,7 @@ def test_list_archives(
     with pytest.raises(CliInputError) as err:
         MetadataFactory(archive_id, archives_query=archives_query).getList()
     assert err.type == CliInputError
-    assert format(err.value) == expected_err_msg
+    assert format(err.value).startswith(expected_err_msg)
 
     cli = Cli()
     assert 1 == cli.run(cli_args)

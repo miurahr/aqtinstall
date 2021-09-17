@@ -699,7 +699,7 @@ class MetadataFactory:
                 raise CliInputError(f"The requested modules were not located: {not_found}")
 
         csv_lists = [mod["DownloadableArchives"] for mod in mod_metadata.values()]
-        return sorted([arc.split("-")[0] for csv in csv_lists for arc in csv.split(", ")])
+        return sorted(set([arc.split("-")[0] for csv in csv_lists for arc in csv.split(", ")]))
 
     def describe_filters(self) -> str:
         if self.spec is None:
