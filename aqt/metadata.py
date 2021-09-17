@@ -363,7 +363,7 @@ class MetadataFactory:
         *,
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
-        modules_ver: Optional[str] = None,
+        modules_query: Optional[Tuple[str, str]] = None,
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         tool_name: Optional[str] = None,
@@ -376,7 +376,7 @@ class MetadataFactory:
                                     Qt that don't fit this SimpleSpec.
         :param is_latest_version:   When True, the MetadataFactory will find all versions of Qt
                                     matching filters, and only print the most recent version
-        :param modules_ver:         Version of Qt for which to list modules
+        :param modules_query:       [Version of Qt, architecture] for which to list modules
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
         :param tool_name:           Name of a tool, without architecture, ie "tools_qtcreator" or "tools_ifw"
@@ -402,9 +402,10 @@ class MetadataFactory:
         elif is_latest_version:
             self.request_type = "latest version"
             self._action = lambda: Versions(self.fetch_latest_version())
-        elif modules_ver:
+        elif modules_query:
             self.request_type = "modules"
-            self._action = lambda: self.fetch_modules(self._to_version(modules_ver))
+            version, arch = modules_query
+            self._action = lambda: self.fetch_modules(self._to_version(version), arch)
         elif extensions_ver:
             self.request_type = "extensions"
             self._action = lambda: self.fetch_extensions(self._to_version(extensions_ver))
@@ -418,7 +419,7 @@ class MetadataFactory:
     def getList(self) -> Union[List[str], Versions, ToolData]:
         return self._action()
 
-    def fetch_modules(self, version: Version) -> List[str]:
+    def fetch_modules(self, version: Version, arch: str) -> List[str]:
         return self.get_modules_architectures_for_version(version=version)[0]
 
     def fetch_arches(self, version: Version) -> List[str]:
