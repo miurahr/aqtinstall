@@ -418,11 +418,20 @@ class MetadataFactory:
     def getList(self) -> Union[List[str], Versions, ToolData]:
         return self._action()
 
-    def fetch_modules(self, version: Version, arch: str) -> List[str]:
-        return self.get_modules_architectures_for_version(version=version)[0]
-
     def fetch_arches(self, version: Version) -> List[str]:
-        return self.get_modules_architectures_for_version(version=version)[1]
+        self.validate_extension(version)
+        if self.archive_id.extension == "src_doc_examples":
+            return []
+        qt_ver_str = self._get_qt_version_str(version)
+        modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
+
+        arches = []
+        for name in modules.keys():
+            ver, arch = name.split('.')[-2:]
+            if ver == qt_ver_str:
+                arches.append(arch)
+
+        return arches
 
     def fetch_extensions(self, version: Version) -> List[str]:
         versions_extensions = MetadataFactory.get_versions_extensions(
@@ -616,12 +625,13 @@ class MetadataFactory:
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
         )
 
-    def get_modules_architectures_for_version(self, version: Version) -> Tuple[List[str], List[str]]:
-        """Returns [list of modules, list of architectures]"""
+    def fetch_modules(self, version: Version, arch: str) -> List[str]:
+        """Returns list of modules"""
         self.validate_extension(version)
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
 
         def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
             _match = pattern.match(name)
@@ -635,28 +645,12 @@ class MetadataFactory:
                 module = module[len("addons.") :]
             return module, arch
 
-        modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
-
-        def naive_modules_arches(
-            names: Iterable[str],
-        ) -> Tuple[List[str], List[str]]:
-            modules_and_arches, _modules, arches = set(), set(), set()
-            for name in names:
-                # First term could be a module name or an architecture
-                first_term, arch = to_module_arch(name)
-                if first_term:
-                    modules_and_arches.add(first_term)
-                if arch:
-                    arches.add(arch)
-            for first_term in modules_and_arches:
-                if first_term not in arches:
-                    _modules.add(first_term)
-            return (
-                sorted(_modules),
-                sorted(arches),
-            )
-
-        return naive_modules_arches(modules.keys())
+        modules = set()
+        for name in modules_meta.keys():
+            module, _arch = to_module_arch(name)
+            if _arch == arch:
+                modules.add(module)
+        return sorted(modules)
 
     def describe_filters(self) -> str:
         if self.spec is None:
