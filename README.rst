@@ -101,7 +101,7 @@ To get around this problem, ``aqtinstall`` offers ``aqt.exe``, a Windows executa
 You may access ``aqt.exe`` from the `Releases section`_, under "assets", or via the persistent link to `the continuous build`_ of ``aqt.exe``.
 
 .. _`Releases section`: https://github.com/miurahr/aqtinstall/releases
-.. _`the continuous build`: https://github.com/miurahr/aqtinstall/releases/download/continuous/aqt.exe
+.. _`the continuous build`: https://github.com/miurahr/aqtinstall/releases/download/Continuous/aqt.exe
 
 
 Example
