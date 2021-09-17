@@ -619,6 +619,8 @@ Example: List the variants of IFW available:
 
 Example: List the variants of IFW, including version, release date, description, etc.:
 
+.. code-block:: console
+
     aqt list-tool linux desktop tools_ifw -l    # prints a table of metadata
 
 
