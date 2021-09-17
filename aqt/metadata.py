@@ -427,7 +427,7 @@ class MetadataFactory:
 
         arches = []
         for name in modules.keys():
-            ver, arch = name.split('.')[-2:]
+            ver, arch = name.split(".")[-2:]
             if ver == qt_ver_str:
                 arches.append(arch)
 
