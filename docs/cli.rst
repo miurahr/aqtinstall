@@ -46,6 +46,7 @@ list-qt command
                 [--modules    (<Qt version> | latest) |
                  --extensions (<Qt version> | latest) |
                  --arch       (<Qt version> | latest) |
+                 --archives   (<Qt version> | latest) architecture [modules...]
                  --latest-version]
                 <host> [<target>]
 
@@ -104,6 +105,25 @@ List available versions of Qt, targets, extensions, modules, and architectures.
     Qt version in the format of "5.X.Y". When set, this prints all architectures
     available for Qt 5.X.Y with a host/target/extension, or the latest version
     of Qt if ``latest`` is specified.
+
+.. _`list archives flag`:
+.. option:: --archives (<Qt version> | latest) architecture [modules...]
+
+    This flag requires a list of at least two arguments: 'Qt version' and 'architecture'.
+    The 'Qt version' argument can be in the format "5.X.Y" or the "latest" keyword.
+    You can use the ``--arch`` flag to see a list of acceptable values for the 'architecture' argument.
+    Any following arguments must be the names of modules available for the preceding version and architecture.
+    You can use the ``--modules`` flag to see a list of acceptable values.
+
+    If you do not add a list of modules to this flag, this command will print a
+    list of all the archives that make up the base Qt installation.
+
+    If you add a list of modules to this flag, this command will print a list
+    of all the archives that make up the specified modules.
+
+    The purpose of this command is to show you what arguments you can pass to the
+    :ref:`archives flag <install archives flag>` when using the ``install-*`` commands.
+    This flag allows you to avoid installing parts of Qt that you do not need.
 
 .. option:: --latest-version
 
@@ -235,6 +255,7 @@ are described here:
         aqt install-* <host> <target> <Qt version> <arch> -m all
 
 
+.. _install archives flag:
 .. option:: --archives <list of archives>
 
     [Advanced] Specify subset of archives to **limit** installed archives.
@@ -243,6 +264,9 @@ are described here:
     It can cause broken installation of Qt SDK.
 
     This option is applicable to all the ``install-*`` commands except for ``install-tool``.
+
+    You can print a list of all acceptable values to use with this command by
+    using ``aqt list-qt`` with the :ref:`archives flag <list archives flag>`.
 
 
 .. _qt installation command:

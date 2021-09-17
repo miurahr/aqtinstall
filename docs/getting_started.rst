@@ -405,3 +405,127 @@ the installer may use the ``installscript.qs`` script to make additional changes
 to your system. If you need those changes to occur, it will be your responsibility
 to make those changes happen, because ``aqt`` is not capable of running this script.
 
+
+Installing a subset of Qt archives [Advanced]
+---------------------------------------------
+
+You may have noticed that by default, ``aqt install-qt`` installs a lot of
+archives that you may or may not need, and a typical installation can take up
+more disk space than necessary. If you installed the module ``debug_info``, it
+may have installed more than 1 gigabyte of data. This section will help you to
+reduce the footprint of your Qt installation.
+
+Usually, when you run ``aqt install-qt``, the program will print a long list
+of archives that it is downloading, extracting, and installing,
+including ``qtbase``, ``qtmultimedia``, ``qt3d``, and around 20 more items.
+We can use the ``--archives`` flag to choose which of these archives we will
+actually install.
+
+Let's say that we want to install Qt 5.15.2 for Linux desktop, using the gcc_64 architecture.
+Many package managers will allow you to install something called ``qtbase``, which
+is a version of the Qt SDK that is stripped down to the absolute bare minimum.
+If you don't need any more the bare essentials, you can install this version of
+Qt using the ``--archives`` flag:
+
+.. code-block:: console
+
+    $ aqt install-qt linux desktop 5.15.2 --archives qtbase
+
+This time, ``aqt install-qt`` will only install one archive instead of the 27
+archives it installs by default.
+
+Let's say that ``qtbase`` is missing a few features that you need.
+To print a list of all the archives that are part of the base Qt installation,
+we can use the ``aqt list-qt --archives`` command:
+
+.. code-block:: console
+
+    $ aqt list-qt linux desktop --archives 5.15.2 gcc_64
+    icu qt3d qtbase qtconnectivity qtdeclarative qtgamepad qtgraphicaleffects qtimageformats
+    qtlocation qtmultimedia qtquickcontrols qtquickcontrols2 qtremoteobjects qtscxml
+    qtsensors qtserialbus qtserialport qtspeech qtsvg qttools qttranslations qtwayland
+    qtwebchannel qtwebsockets qtwebview qtx11extras qtxmlpatterns
+
+Notice what happened here: We used the ``--archives`` flag with two arguments:
+the version of Qt we are interested in, and the architecture we are using.
+As a result, the command printed a list of archives that are part of the base
+(non-minimal) Qt installation.
+
+Let's say we need to use ``qtmultimedia``, ``qtdeclarative``, ``qtsvg``, and
+nothing else. Remember that the ``qtbase`` archive is required for a minimal
+working Qt installation. We can install these archives using this command:
+
+.. code-block:: console
+
+    $ aqt install-qt linux desktop 5.15.2 --archives qtbase qtmultimedia qtdeclarative qtsvg
+
+Now let's say we need to install the ``qtcharts`` and ``qtlottie`` modules.
+Let's see what archives are part of these modules:
+
+.. code-block:: console
+
+    $ aqt list-qt linux desktop --archives 5.15.2 gcc_64 qtcharts qtlottie
+    qtcharts qtlottie
+
+This time, the command only printed two archives.
+The ``qtcharts`` and ``qtlottie`` modules are comprised of a single archive per module.
+Notice that the command printed all archives associated with the modules we provided it,
+and it did not print any of the archives associated with the base Qt installation.
+The ``--archives`` flag with a Qt version and architecture alone will print
+archives for the base Qt installation and none of the modules.
+When you add a list of modules to the command, it will print a list of all archives
+associated with those modules.
+
+Now let's say we need to install the ``debug_info`` module, which is particularly large.
+We do not want to install all of it, so we can use the ``--archives`` flag again
+to print which archives are part of the ``debug_info`` module:
+
+.. code-block:: console
+
+    $ aqt list-qt linux desktop --archives 5.15.2 gcc_64 debug_info
+    qt3d qtbase qtcharts qtconnectivity qtdatavis3d qtdeclarative qtgamepad qtgraphicaleffects
+    qtimageformats qtlocation qtlottie qtmultimedia qtnetworkauth qtpurchasing qtquick3d
+    qtquickcontrols qtquickcontrols2 qtquicktimeline qtremoteobjects qtscript qtscxml qtsensors
+    qtserialbus qtserialport qtspeech qtsvg qttools qtvirtualkeyboard qtwayland qtwebchannel
+    qtwebengine qtwebglplugin qtwebsockets qtwebview qtx11extras qtxmlpatterns
+
+This is a lot of archives. Notice that the names in this list are a superset of
+all the archive names associated with the base Qt installation. These names do
+not refer to the same archives; the full names of the archives have been abridged
+to make them easier to read and type.
+The ``qtcharts`` archive from the ``qtcharts`` module is not the same as the
+``qtcharts`` archive from the ``debug_info`` module, but their abridged names
+are the same.
+
+Also notice that this list overlaps with most of the list of modules available
+for this version of Qt. This is because the ``debug_info`` module is intended to
+provide debug info for most of the modules as well as the base Qt installation.
+
+Let's install Qt with ``qtcharts``, ``qtlottie``, and ``debug_info`` with some
+archives specified:
+
+.. code-block:: console
+
+    $ aqt install-qt linux desktop --modules qtcharts qtlottie debug_info \
+                                   --archives qtcharts qtbase qtdeclarative
+
+Notice what we did here: We specified the ``qtlottie`` module, but we did not
+add ``qtlottie`` to the ``--archives`` flag. The ``--archives`` flag is used to
+filter out any archives not in that list, which means ``qtlottie`` will not be installed.
+This command is presented as a warning to you that in order to install a module
+when you are using the ``--archives`` flag, you need to add the archive name
+to the list of archives.
+
+This command would successfully install the ``qtcharts`` and ``qtlottie`` modules:
+
+.. code-block:: console
+
+    $ aqt install-qt linux desktop --modules qtcharts qtlottie debug_info \
+                                   --archives qtcharts qtlottie qtbase qtdeclarative
+
+Also notice that we are installing part of the ``debug_info`` module.
+Remember that this module includes archives called ``qtcharts``, ``qtlottie``,
+``qtbase``, and ``qtdeclarative``. The base Qt installation and the modules
+``qtcharts`` and ``qtlottie`` also contain archives by these names.
+This command will install 8 archives: 4 as part of ``debug_info``, 2 from the
+base Qt installation, and 2 from the modules.
