@@ -710,6 +710,8 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     msg = []
     list_cmd = "list-tool" if meta.archive_id.is_tools() else "list-qt"
     base_cmd = "aqt {0} {1.host} {1.target}".format(list_cmd, meta.archive_id)
+    versions_msg = f"Please use '{base_cmd}' to show versions of Qt available."
+    arches_msg = f"Please use '{base_cmd} --arch <QT_VERSION>' to show architectures available."
     if meta.archive_id.extension:
         msg.append(f"Please use '{base_cmd} --extensions <QT_VERSION>' to list valid extensions.")
 
@@ -722,7 +724,10 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
         )
     elif meta.request_type in ("architectures", "modules", "extensions"):
         msg.append(f"Please use '{base_cmd}' to show versions of Qt available.")
-
+    elif meta.request_type == "archives for modules":
+        msg.extend([versions_msg, arches_msg, f"Please use '{base_cmd} --modules <QT_VERSION>' to show modules available."])
+    elif meta.request_type == "archives for qt":
+        msg.extend([versions_msg, arches_msg])
     return msg
 
 
