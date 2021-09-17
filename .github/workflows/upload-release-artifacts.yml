@@ -38,3 +38,11 @@ jobs:
           file: .gravitybee\dist\latest\aqt.exe
           tag: ${{ github.ref }}
           overwrite: true
+          
+      - name: Update continuous build
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          automatic_release_tag: Continuous
+          files: .gravitybee\dist\latest\aqt.exe
