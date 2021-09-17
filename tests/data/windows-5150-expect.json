@@ -1,23 +1,76 @@
 {
-  "modules": [
-    "debug_info",
-    "qtcharts",
-    "qtdatavis3d",
-    "qtlottie",
-    "qtnetworkauth",
-    "qtpurchasing",
-    "qtquick3d",
-    "qtquicktimeline",
-    "qtscript",
-    "qtvirtualkeyboard",
-    "qtwebengine",
-    "qtwebglplugin"
-  ],
   "architectures": [
     "win32_mingw81",
     "win32_msvc2019",
     "win64_mingw81",
     "win64_msvc2015_64",
     "win64_msvc2019_64"
-  ]
+  ],
+  "modules_by_arch": {
+    "win32_mingw81": [
+      "qtcharts",
+      "qtdatavis3d",
+      "qtlottie",
+      "qtnetworkauth",
+      "qtpurchasing",
+      "qtquick3d",
+      "qtquicktimeline",
+      "qtscript",
+      "qtvirtualkeyboard",
+      "qtwebglplugin"
+    ],
+    "win32_msvc2019": [
+      "debug_info",
+      "qtcharts",
+      "qtdatavis3d",
+      "qtlottie",
+      "qtnetworkauth",
+      "qtpurchasing",
+      "qtquick3d",
+      "qtquicktimeline",
+      "qtscript",
+      "qtvirtualkeyboard",
+      "qtwebengine",
+      "qtwebglplugin"
+    ],
+    "win64_mingw81": [
+      "qtcharts",
+      "qtdatavis3d",
+      "qtlottie",
+      "qtnetworkauth",
+      "qtpurchasing",
+      "qtquick3d",
+      "qtquicktimeline",
+      "qtscript",
+      "qtvirtualkeyboard",
+      "qtwebglplugin"
+    ],
+    "win64_msvc2015_64": [
+      "debug_info",
+      "qtcharts",
+      "qtdatavis3d",
+      "qtlottie",
+      "qtnetworkauth",
+      "qtpurchasing",
+      "qtquick3d",
+      "qtquicktimeline",
+      "qtscript",
+      "qtvirtualkeyboard",
+      "qtwebglplugin"
+    ],
+    "win64_msvc2019_64": [
+      "debug_info",
+      "qtcharts",
+      "qtdatavis3d",
+      "qtlottie",
+      "qtnetworkauth",
+      "qtpurchasing",
+      "qtquick3d",
+      "qtquicktimeline",
+      "qtscript",
+      "qtvirtualkeyboard",
+      "qtwebengine",
+      "qtwebglplugin"
+    ]
+  }
 }
