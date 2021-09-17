@@ -696,7 +696,9 @@ class MetadataFactory:
             actual_set = set([_name.split(".")[-2] for _name in mod_metadata.keys()])
             not_found = sorted(requested_set.difference(actual_set))
             if not_found:
-                raise CliInputError(f"The requested modules were not located: {not_found}")
+                raise CliInputError(
+                    f"The requested modules were not located: {not_found}", suggested_action=suggested_follow_up(self)
+                )
 
         csv_lists = [mod["DownloadableArchives"] for mod in mod_metadata.values()]
         return sorted(set([arc.split("-")[0] for csv in csv_lists for arc in csv.split(", ")]))

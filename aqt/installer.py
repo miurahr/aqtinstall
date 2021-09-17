@@ -667,11 +667,11 @@ class Cli:
             type=str,
             nargs="+",
             help="print the archives available for Qt base or modules. "
-                 "If two arguments are provided, the first two arguments must be 'VERSION | latest' and "
-                 "'ARCHITECTURE', and this command will print all archives associated with the base Qt package. "
-                 "If more than two arguments are provided, the remaining arguments will be interpreted as modules, "
-                 "and this command will print all archives associated with those modules. "
-                 "At least two arguments are required.",
+            "If two arguments are provided, the first two arguments must be 'VERSION | latest' and "
+            "'ARCHITECTURE', and this command will print all archives associated with the base Qt package. "
+            "If more than two arguments are provided, the remaining arguments will be interpreted as modules, "
+            "and this command will print all archives associated with those modules. "
+            "At least two arguments are required.",
         )
         list_parser.set_defaults(func=self.run_list_qt)
 
