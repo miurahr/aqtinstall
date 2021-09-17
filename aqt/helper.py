@@ -181,8 +181,8 @@ def xml_to_modules(
     """
     try:
         parsed_xml = ElementTree.fromstring(xml_text)
-    except ElementTree.ParseError:
-        return {}
+    except ElementTree.ParseError as perror:
+        raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
     packages = {}
     for packageupdate in parsed_xml.iter("PackageUpdate"):
         if predicate and not predicate(packageupdate):

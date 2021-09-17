@@ -34,7 +34,7 @@ from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError, EmptyMetadata
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
 from aqt.helper import Settings, getUrl, xml_to_modules
 
 
@@ -670,17 +670,11 @@ class MetadataFactory:
         nonempty = MetadataFactory._has_nonempty_downloads
 
         def all_modules(element: ElementTree.Element) -> bool:
-            name: Optional[str] = element.find("Name").text
-            if not name:
-                return False
-            _module, _arch = name.split(".")[-2:]
+            _module, _arch = element.find("Name").text.split(".")[-2:]
             return _arch == arch and _module != qt_version_str and nonempty(element)
 
         def specify_modules(element: ElementTree.Element) -> bool:
-            name: Optional[str] = element.find("Name").text
-            if not name:
-                return False
-            _module, _arch = name.split(".")[-2:]
+            _module, _arch = element.find("Name").text.split(".")[-2:]
             return _arch == arch and _module in modules and nonempty(element)
 
         def no_modules(element: ElementTree.Element) -> bool:
@@ -688,7 +682,10 @@ class MetadataFactory:
             return name and name.endswith(f".{qt_version_str}.{arch}") and nonempty(element)
 
         predicate = no_modules if not modules else all_modules if "all" in modules else specify_modules
-        mod_metadata = self._fetch_module_metadata(self.archive_id.to_folder(qt_version_str), predicate=predicate)
+        try:
+            mod_metadata = self._fetch_module_metadata(self.archive_id.to_folder(qt_version_str), predicate=predicate)
+        except (AttributeError,) as e:
+            raise ArchiveListError(f"Downloaded metadata is corrupted. {e}") from e
 
         # Did we find all requested modules?
         if modules and "all" not in modules:

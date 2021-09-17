@@ -9,7 +9,14 @@ from urllib.parse import urlparse
 
 import pytest
 
-from aqt.exceptions import AqtException, ArchiveConnectionError, ArchiveDownloadError, CliInputError, EmptyMetadata
+from aqt.exceptions import (
+    AqtException,
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    CliInputError,
+    EmptyMetadata,
+)
 from aqt.helper import Settings
 from aqt.installer import Cli
 from aqt.metadata import (
@@ -257,6 +264,21 @@ def test_list_archives_insufficient_args(capsys):
     assert 1 == cli.run("list-qt mac desktop --archives 5.14.0".split())
     out, err = capsys.readouterr()
     assert err.strip() == "The '--archives' flag requires a 'QT_VERSION' and an 'ARCHITECTURE' parameter."
+
+
+def test_list_archives_bad_xml(monkeypatch):
+    archive_id = ArchiveId("qt", "windows", "desktop")
+    archives_query = ["5.15.2", "win32_mingw81", "qtcharts"]
+
+    xml_no_name = "<Updates><PackageUpdate><badname></badname></PackageUpdate></Updates>"
+    xml_empty_name = "<Updates><PackageUpdate><Name></Name></PackageUpdate></Updates>"
+    xml_broken = "<Updates></PackageUpdate><PackageUpdate></Updates><Name></Name>"
+
+    for _xml in (xml_no_name, xml_empty_name, xml_broken):
+        monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
+        with pytest.raises(ArchiveListError) as e:
+            MetadataFactory(archive_id, archives_query=archives_query).getList()
+        assert e.type == ArchiveListError
 
 
 @pytest.mark.parametrize(
