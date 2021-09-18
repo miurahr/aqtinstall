@@ -157,7 +157,7 @@ List available tools
 
 .. code-block:: console
 
-    $ python -m aqt list-tool windows desktop tools_conan
+    $ python -m aqt list-tool windows desktop tools_conan -l
 
      Tool Variant Name           Version         Release Date     Display Name              Description
     ============================================================================================================
