@@ -34,7 +34,7 @@ from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError, EmptyMetadata
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
 from aqt.helper import Settings, getUrl, xml_to_modules
 
 
@@ -457,9 +457,12 @@ class MetadataFactory:
         return list(MetadataFactory.iterate_folders(html_doc, "tools"))
 
     def _fetch_tool_data(self, tool_name: str, keys_to_keep: Optional[Iterable[str]] = None) -> Dict[str, Dict[str, str]]:
-        # raises ArchiveDownloadError, ArchiveConnectionError
         rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
-        xml = self.fetch_http(rest_of_url)
+        try:
+            xml = self.fetch_http(rest_of_url)
+        except ArchiveDownloadError as e:
+            msg = f"Failed to locate XML data for the tool '{tool_name}'."
+            raise ArchiveListError(msg, suggested_action=suggested_follow_up(self)) from e
         modules = xml_to_modules(
             xml,
             predicate=MetadataFactory._has_nonempty_downloads,

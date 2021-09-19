@@ -145,12 +145,14 @@ def test_qt_archives_modules(monkeypatch, arch, requested_module_names, has_none
         assert len(expected_7z_files) == 0, "Actual number of packages was fewer than expected"
 
     if has_nonexistent_modules:
+        expect_help = [f"Please use 'aqt list-qt {os_name} {target} --modules {version} <arch>' to show modules available."]
         for unexpected_module in requested_module_names:
             with pytest.raises(NoPackageFound) as e:
                 mod_names = ("qtcharts", unexpected_module)
                 QtArchives(os_name, target, str(version), arch, base, modules=mod_names)
             assert e.type == NoPackageFound
             assert unexpected_module in str(e.value), "Message should include the missing module"
+            assert e.value.suggested_action == expect_help
         return
 
     is_all_modules = "all" in requested_module_names
@@ -197,10 +199,12 @@ def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fai
     monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
 
     if is_expect_fail:
+        expect_help = [f"Please use 'aqt list-tool {host} {target} {tool_name}' to show tool variants available."]
         with pytest.raises(NoPackageFound) as e:
             ToolArchives(host, target, tool_name, base, arch=tool_variant_name)
         assert e.type == NoPackageFound
         assert tool_variant_name in str(e.value), "Message should include the missing variant"
+        assert e.value.suggested_action == expect_help
         return
 
     expect_json = json.loads((Path(__file__).parent / "data" / f"{datafile}-expect.json").read_text("utf-8"))
