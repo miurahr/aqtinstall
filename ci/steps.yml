@@ -90,8 +90,8 @@ steps:
         aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)"                     # print all versions of Qt in SimpleSpec
         ver=$(aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --latest-version)  # latest Qt in SimpleSpec
         [ $ver == $(QT_VERSION) ]                                               # latest version in SPEC must be QT_VERSION
-        aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --modules latest    # print modules for latest in SimpleSpec
-        aqt list-qt $(HOST) $(TARGET) $ext --modules $(QT_VERSION)              # print modules for version/host/target
+        aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --modules latest $(ARCH)    # print modules for latest in SimpleSpec
+        aqt list-qt $(HOST) $(TARGET) $ext --modules $(QT_VERSION) $(ARCH)      # print modules for version/host/target/arch
         if [[ $(HAS_EXTENSIONS) == "True" ]]; then
           aqt list-qt $(HOST) $(TARGET) --extensions $(QT_VERSION)              # print choices for --extension flag
           aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --extensions latest

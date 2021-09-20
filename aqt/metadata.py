@@ -26,7 +26,7 @@ import random
 import re
 import shutil
 from logging import getLogger
-from typing import Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
+from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 from xml.etree import ElementTree as ElementTree
 
 import bs4
@@ -241,21 +241,20 @@ class ArchiveId:
         """Returns True if there should be no arch attached to the module names"""
         return self.extension in ("src_doc_examples",)
 
-    def to_url(self, qt_version_no_dots: Optional[str] = None, file: str = "") -> str:
-        base = "online/qtsdkrepository/{os}{arch}/{target}/".format(
+    def to_url(self) -> str:
+        return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
             arch="_x86" if self.host == "windows" else "_x64",
             target=self.target,
         )
-        if not qt_version_no_dots:
-            return base
-        folder = "{category}{major}_{ver}{ext}/".format(
+
+    def to_folder(self, qt_version_no_dots: str) -> str:
+        return "{category}{major}_{ver}{ext}".format(
             category=self.category,
             major=qt_version_no_dots[0],
             ver=qt_version_no_dots,
             ext="_" + self.extension if self.extension else "",
         )
-        return base + folder + file
 
     def __str__(self) -> str:
         return "{cat}/{host}/{target}{ext}".format(
@@ -363,7 +362,7 @@ class MetadataFactory:
         *,
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
-        modules_ver: Optional[str] = None,
+        modules_query: Optional[Tuple[str, str]] = None,
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         tool_name: Optional[str] = None,
@@ -376,7 +375,7 @@ class MetadataFactory:
                                     Qt that don't fit this SimpleSpec.
         :param is_latest_version:   When True, the MetadataFactory will find all versions of Qt
                                     matching filters, and only print the most recent version
-        :param modules_ver:         Version of Qt for which to list modules
+        :param modules_query:       [Version of Qt, architecture] for which to list modules
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
         :param tool_name:           Name of a tool, without architecture, ie "tools_qtcreator" or "tools_ifw"
@@ -402,9 +401,10 @@ class MetadataFactory:
         elif is_latest_version:
             self.request_type = "latest version"
             self._action = lambda: Versions(self.fetch_latest_version())
-        elif modules_ver:
+        elif modules_query:
             self.request_type = "modules"
-            self._action = lambda: self.fetch_modules(self._to_version(modules_ver))
+            version, arch = modules_query
+            self._action = lambda: self.fetch_modules(self._to_version(version), arch)
         elif extensions_ver:
             self.request_type = "extensions"
             self._action = lambda: self.fetch_extensions(self._to_version(extensions_ver))
@@ -418,11 +418,20 @@ class MetadataFactory:
     def getList(self) -> Union[List[str], Versions, ToolData]:
         return self._action()
 
-    def fetch_modules(self, version: Version) -> List[str]:
-        return self.get_modules_architectures_for_version(version=version)[0]
-
     def fetch_arches(self, version: Version) -> List[str]:
-        return self.get_modules_architectures_for_version(version=version)[1]
+        self.validate_extension(version)
+        if self.archive_id.extension == "src_doc_examples":
+            return []
+        qt_ver_str = self._get_qt_version_str(version)
+        modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
+
+        arches = []
+        for name in modules.keys():
+            ver, arch = name.split(".")[-2:]
+            if ver == qt_ver_str:
+                arches.append(arch)
+
+        return arches
 
     def fetch_extensions(self, version: Version) -> List[str]:
         versions_extensions = MetadataFactory.get_versions_extensions(
@@ -456,28 +465,17 @@ class MetadataFactory:
         html_doc = self.fetch_http(self.archive_id.to_url())
         return list(MetadataFactory.iterate_folders(html_doc, "tools"))
 
-    def _fetch_tool_data(self, tool_name: str, keys_to_keep: Optional[Iterable[str]] = None) -> Dict[str, Dict[str, str]]:
-        # raises ArchiveDownloadError, ArchiveConnectionError
-        rest_of_url = self.archive_id.to_url() + tool_name + "/Updates.xml"
-        xml = self.fetch_http(rest_of_url)
-        modules = xml_to_modules(
-            xml,
-            predicate=MetadataFactory._has_nonempty_downloads,
-            keys_to_keep=keys_to_keep,
-        )
-        return modules
-
     def fetch_tool_modules(self, tool_name: str) -> List[str]:
-        tool_data = self._fetch_tool_data(tool_name, keys_to_keep=())
+        tool_data = self._fetch_module_metadata(tool_name)
         return list(tool_data.keys())
 
     def fetch_tool_by_simple_spec(self, tool_name: str, simple_spec: SimpleSpec) -> Optional[Dict[str, str]]:
         # Get data for all the tool modules
-        all_tools_data = self._fetch_tool_data(tool_name)
+        all_tools_data = self._fetch_module_metadata(tool_name)
         return self.choose_highest_version_in_spec(all_tools_data, simple_spec)
 
     def fetch_tool_long_listing(self, tool_name: str) -> ToolData:
-        return ToolData(self._fetch_tool_data(tool_name))
+        return ToolData(self._fetch_module_metadata(tool_name))
 
     def validate_extension(self, qt_ver: Version) -> None:
         """
@@ -609,18 +607,31 @@ class MetadataFactory:
         downloads = element.find("DownloadableArchives")
         return downloads is not None and downloads.text
 
-    def get_modules_architectures_for_version(self, version: Version) -> Tuple[List[str], List[str]]:
-        """Returns [list of modules, list of architectures]"""
-        self.validate_extension(version)
-        # NOTE: The url at `<base>/<host>/<target>/qt5_590/` does not exist; the real one is `qt5_590`
+    def _get_qt_version_str(self, version: Version) -> str:
+        """Returns a Qt version, without dots, that works in the Qt repo urls and Updates.xml files"""
+        # NOTE: The url at `<base>/<host>/<target>/qt5_590/` does not exist; the real one is `qt5_59`
         patch = (
             ""
             if version.prerelease or self.archive_id.is_preview() or version in SimpleSpec("5.9.0")
             else str(version.patch)
         )
-        qt_ver_str = "{}{}{}".format(version.major, version.minor, patch)
+        return f"{version.major}{version.minor}{patch}"
+
+    def _fetch_module_metadata(self, folder: str, predicate: Optional[Callable[[ElementTree.Element], bool]] = None):
+        rest_of_url = posixpath.join(self.archive_id.to_url(), folder, "Updates.xml")
+        xml = self.fetch_http(rest_of_url)
+        return xml_to_modules(
+            xml,
+            predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
+        )
+
+    def fetch_modules(self, version: Version, arch: str) -> List[str]:
+        """Returns list of modules"""
+        self.validate_extension(version)
+        qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
 
         def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
             _match = pattern.match(name)
@@ -634,36 +645,12 @@ class MetadataFactory:
                 module = module[len("addons.") :]
             return module, arch
 
-        rest_of_url = self.archive_id.to_url(qt_version_no_dots=qt_ver_str, file="Updates.xml")
-        xml = self.fetch_http(rest_of_url)  # raises RequestException
-
-        # We want the names of modules, regardless of architecture:
-        modules = xml_to_modules(
-            xml,
-            predicate=MetadataFactory._has_nonempty_downloads,
-            keys_to_keep=(),  # Just want names
-        )
-
-        def naive_modules_arches(
-            names: Iterable[str],
-        ) -> Tuple[List[str], List[str]]:
-            modules_and_arches, _modules, arches = set(), set(), set()
-            for name in names:
-                # First term could be a module name or an architecture
-                first_term, arch = to_module_arch(name)
-                if first_term:
-                    modules_and_arches.add(first_term)
-                if arch:
-                    arches.add(arch)
-            for first_term in modules_and_arches:
-                if first_term not in arches:
-                    _modules.add(first_term)
-            return (
-                sorted(_modules),
-                sorted(arches),
-            )
-
-        return naive_modules_arches(modules.keys())
+        modules = set()
+        for name in modules_meta.keys():
+            module, _arch = to_module_arch(name)
+            if _arch == arch:
+                modules.add(module)
+        return sorted(modules)
 
     def describe_filters(self) -> str:
         if self.spec is None:
@@ -688,6 +675,8 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
         )
     elif meta.request_type in ("architectures", "modules", "extensions"):
         msg.append(f"Please use '{base_cmd}' to show versions of Qt available.")
+        if meta.request_type == "modules":
+            msg.append(f"Please use '{base_cmd} --arch <QT_VERSION>' to list valid architectures.")
 
     return msg
 

@@ -133,7 +133,7 @@ def test_cli_invalid_version(capsys, invalid_version):
     for cmd in (
         ("install", invalid_version, "mac", "desktop"),
         ("doc", invalid_version, "mac", "desktop"),
-        ("list-qt", "mac", "desktop", "--modules", invalid_version),
+        ("list-qt", "mac", "desktop", "--arch", invalid_version),
     ):
         cli = Cli()
         assert cli.run(cmd) == 1

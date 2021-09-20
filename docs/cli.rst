@@ -43,7 +43,7 @@ list-qt command
     aqt list-qt [-h | --help]
                 [--extension <extension>]
                 [--spec <specification>]
-                [--modules    (<Qt version> | latest) |
+                [--modules    (<Qt version> | latest) <architecture> |
                  --extensions (<Qt version> | latest) |
                  --arch       (<Qt version> | latest) |
                  --latest-version]
@@ -93,11 +93,12 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 .. _SimpleSpec: https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec
 
 
-.. option:: --modules (<Qt version> | latest)
+.. option:: --modules (<Qt version> | latest) <architecture>
 
-    Qt version in the format of "5.X.Y". When set, this lists all the modules
-    available for Qt 5.X.Y with a host/target/extension, or the latest version
-    of Qt if ``latest`` is specified.
+    This flag lists all the modules available for Qt 5.X.Y with a host/target/extension/architecture
+    combination, or the latest version of Qt if ``latest`` is specified.
+    You can list available architectures by using ``aqt list-qt`` with the
+    ``--arch`` flag described below.
 
 .. option:: --arch (<Qt version> | latest)
 
@@ -591,7 +592,7 @@ Example: List available modules for latest version of Qt on macOS
 
 .. code-block:: console
 
-    aqt list-qt mac desktop --modules latest    # prints 'qtquick3d qtshadertools', etc
+    aqt list-qt mac desktop --modules latest clang_64   # prints 'qtquick3d qtshadertools', etc
 
 
 Example: List available architectures for Qt 6.1.2 on windows
