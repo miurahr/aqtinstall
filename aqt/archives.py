@@ -271,17 +271,16 @@ class QtArchives:
             raise NoPackageFound(message, suggested_action=self.help_msg(target_packages.get_modules()))
 
     def help_msg(self, missing_modules: Iterable[str]) -> Iterable[str]:
-        num_missing = len(list(missing_modules))
-        assert num_missing > 0
-        arch = "Please use 'aqt list-qt {0.os_name} {0.target} --arch {0.version}' to show architectures available."
-        mods = "Please use 'aqt list-qt {0.os_name} {0.target} --modules {0.version} <arch>' to show modules available."
+        base_cmd = f"aqt list-qt {self.os_name} {self.target}"
+        arch = f"Please use '{base_cmd} --arch {self.version}' to show architectures available."
+        mods = f"Please use '{base_cmd} --modules {self.version} <arch>' to show modules available."
         has_base_pkg: bool = self._base_target_package_name() in missing_modules
-        has_non_base_pkg: bool = num_missing > 1 or not has_base_pkg
+        has_non_base_pkg: bool = len(list(missing_modules)) > 1 or not has_base_pkg
         messages = []
         if has_base_pkg:
-            messages.append(arch.format(self))
+            messages.append(arch)
         if has_non_base_pkg:
-            messages.append(mods.format(self))
+            messages.append(mods)
         return messages
 
     def get_packages(self) -> List[QtPackage]:
