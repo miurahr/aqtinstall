@@ -602,19 +602,17 @@ class Cli:
             "list-qt",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
-            "$ aqt list-qt mac                                            # print all targets for Mac OS\n"
-            "$ aqt list-qt mac desktop                                    # print all versions of Qt 5\n"
-            "$ aqt list-qt mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
-            '$ aqt list-qt mac desktop --spec "5.9"                       # print all versions of Qt 5.9\n'
-            '$ aqt list-qt mac desktop --spec "5.9" --latest-version      # print latest Qt 5.9\n'
-            "$ aqt list-qt mac desktop --modules 5.12.0 clang_64          # print modules for 5.12.0\n"
-            "$ aqt list-qt mac desktop --spec 5.9 --modules latest        # print modules for latest 5.9\n"
-            "$ aqt list-qt mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
-            "$ aqt list-qt mac desktop --arch 5.9.9                       "
-            "# print architectures for 5.9.9/mac/desktop\n"
-            "$ aqt list-qt mac desktop --arch latest                      "
-            "# print architectures for the latest Qt 5\n"
-            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64          # list archives in base Qt installation\n"
+            "$ aqt list-qt mac                                                # print all targets for Mac OS\n"
+            "$ aqt list-qt mac desktop                                        # print all versions of Qt 5\n"
+            "$ aqt list-qt mac desktop --extension wasm                       # print all wasm versions of Qt 5\n"
+            '$ aqt list-qt mac desktop --spec "5.9"                           # print all versions of Qt 5.9\n'
+            '$ aqt list-qt mac desktop --spec "5.9" --latest-version          # print latest Qt 5.9\n'
+            "$ aqt list-qt mac desktop --modules 5.12.0 clang_64              # print modules for 5.12.0\n"
+            "$ aqt list-qt mac desktop --spec 5.9 --modules latest clang_64   # print modules for latest 5.9\n"
+            "$ aqt list-qt mac desktop --extensions 5.9.0                     # print choices for --extension flag\n"
+            "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for 5.9.9/mac/desktop\n"
+            "$ aqt list-qt mac desktop --arch latest                          # print architectures for the latest Qt 5\n"
+            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
             "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n",
         )
         list_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
