@@ -437,8 +437,12 @@ class Cli:
             return
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
             raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
+        if args.modules:
+            modules_ver, modules_query = args.modules[0], tuple(args.modules)
+        else:
+            modules_ver, modules_query = None, None
 
-        for version_str in (args.modules, args.extensions, args.arch, args.archives[0] if args.archives else None):
+        for version_str in (modules_ver, args.extensions, args.arch, args.archives[0] if args.archives else None):
             Cli._validate_version_str(version_str, allow_latest=True, allow_empty=True)
 
         spec = None
@@ -457,7 +461,7 @@ class Cli:
             ),
             spec=spec,
             is_latest_version=args.latest_version,
-            modules_ver=args.modules,
+            modules_query=modules_query,
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
             archives_query=args.archives,
@@ -603,7 +607,7 @@ class Cli:
             "$ aqt list-qt mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
             '$ aqt list-qt mac desktop --spec "5.9"                       # print all versions of Qt 5.9\n'
             '$ aqt list-qt mac desktop --spec "5.9" --latest-version      # print latest Qt 5.9\n'
-            "$ aqt list-qt mac desktop --modules 5.12.0                   # print modules for 5.12.0\n"
+            "$ aqt list-qt mac desktop --modules 5.12.0 clang_64          # print modules for 5.12.0\n"
             "$ aqt list-qt mac desktop --spec 5.9 --modules latest        # print modules for latest 5.9\n"
             "$ aqt list-qt mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
             "$ aqt list-qt mac desktop --arch 5.9.9                       "
@@ -638,8 +642,10 @@ class Cli:
         output_modifier_exclusive_group.add_argument(
             "--modules",
             type=str,
-            metavar="(VERSION | latest)",
-            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
+            nargs=2,
+            metavar=("(VERSION | latest)", "ARCHITECTURE"),
+            help='First arg: Qt version in the format of "5.X.Y", or the keyword "latest". '
+            'Second arg: an architecture, which may be printed with the "--arch" flag. '
             "When set, this prints all the modules available for either Qt 5.X.Y or the latest version of Qt.",
         )
         output_modifier_exclusive_group.add_argument(

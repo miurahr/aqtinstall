@@ -100,14 +100,14 @@ def iter_qt_minor_groups(
 
 
 def iter_modules_for_qt_minor_groups(
-    host: str = "linux", target: str = "desktop"
+    host: str = "linux", target: str = "desktop", arch: str = "gcc_64"
 ) -> Generator[Dict, None, None]:
     logger.info("Fetching qt modules for {}/{}".format(host, target))
     for major, minor in tqdm(list(iter_qt_minor_groups(host, target))):
         yield {
             "qt_version": f"{major}.{minor}",
             "modules": MetadataFactory(
-                ArchiveId("qt", host, target), modules_ver=f"{major}.{minor}.0"
+                ArchiveId("qt", host, target), modules_query=(f"{major}.{minor}.0", arch)
             ).getList(),
         }
 

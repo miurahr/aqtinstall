@@ -362,7 +362,7 @@ class MetadataFactory:
         *,
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
-        modules_ver: Optional[str] = None,
+        modules_query: Optional[Tuple[str, str]] = None,
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         archives_query: Optional[List[str]] = None,
@@ -376,7 +376,7 @@ class MetadataFactory:
                                     Qt that don't fit this SimpleSpec.
         :param is_latest_version:   When True, the MetadataFactory will find all versions of Qt
                                     matching filters, and only print the most recent version
-        :param modules_ver:         Version of Qt for which to list modules
+        :param modules_query:       [Version of Qt, architecture] for which to list modules
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
         :param archives_query:      [Qt_Version, architecture, *module_names]: used to print list of archives
@@ -403,9 +403,10 @@ class MetadataFactory:
         elif is_latest_version:
             self.request_type = "latest version"
             self._action = lambda: Versions(self.fetch_latest_version())
-        elif modules_ver:
+        elif modules_query:
             self.request_type = "modules"
-            self._action = lambda: self.fetch_modules(self._to_version(modules_ver))
+            version, arch = modules_query
+            self._action = lambda: self.fetch_modules(self._to_version(version), arch)
         elif extensions_ver:
             self.request_type = "extensions"
             self._action = lambda: self.fetch_extensions(self._to_version(extensions_ver))
@@ -425,11 +426,20 @@ class MetadataFactory:
     def getList(self) -> Union[List[str], Versions, ToolData]:
         return self._action()
 
-    def fetch_modules(self, version: Version) -> List[str]:
-        return self.get_modules_architectures_for_version(version=version)[0]
-
     def fetch_arches(self, version: Version) -> List[str]:
-        return self.get_modules_architectures_for_version(version=version)[1]
+        self.validate_extension(version)
+        if self.archive_id.extension == "src_doc_examples":
+            return []
+        qt_ver_str = self._get_qt_version_str(version)
+        modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
+
+        arches = []
+        for name in modules.keys():
+            ver, arch = name.split(".")[-2:]
+            if ver == qt_ver_str:
+                arches.append(arch)
+
+        return arches
 
     def fetch_extensions(self, version: Version) -> List[str]:
         versions_extensions = MetadataFactory.get_versions_extensions(
@@ -623,12 +633,13 @@ class MetadataFactory:
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
         )
 
-    def get_modules_architectures_for_version(self, version: Version) -> Tuple[List[str], List[str]]:
-        """Returns [list of modules, list of architectures]"""
+    def fetch_modules(self, version: Version, arch: str) -> List[str]:
+        """Returns list of modules"""
         self.validate_extension(version)
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
 
         def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
             _match = pattern.match(name)
@@ -642,28 +653,12 @@ class MetadataFactory:
                 module = module[len("addons.") :]
             return module, arch
 
-        modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
-
-        def naive_modules_arches(
-            names: Iterable[str],
-        ) -> Tuple[List[str], List[str]]:
-            modules_and_arches, _modules, arches = set(), set(), set()
-            for name in names:
-                # First term could be a module name or an architecture
-                first_term, arch = to_module_arch(name)
-                if first_term:
-                    modules_and_arches.add(first_term)
-                if arch:
-                    arches.add(arch)
-            for first_term in modules_and_arches:
-                if first_term not in arches:
-                    _modules.add(first_term)
-            return (
-                sorted(_modules),
-                sorted(arches),
-            )
-
-        return naive_modules_arches(modules.keys())
+        modules = set()
+        for name in modules_meta.keys():
+            module, _arch = to_module_arch(name)
+            if _arch == arch:
+                modules.add(module)
+        return sorted(modules)
 
     def fetch_archives(self, version: Version, arch: str, modules: List[str]) -> List[str]:
         qt_version_str = self._get_qt_version_str(version)
@@ -725,10 +720,13 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
         )
     elif meta.request_type in ("architectures", "modules", "extensions"):
         msg.append(f"Please use '{base_cmd}' to show versions of Qt available.")
+        if meta.request_type == "modules":
+            msg.append(f"Please use '{base_cmd} --arch <QT_VERSION>' to list valid architectures.")
     elif meta.request_type == "archives for modules":
         msg.extend([versions_msg, arches_msg, f"Please use '{base_cmd} --modules <QT_VERSION>' to show modules available."])
     elif meta.request_type == "archives for qt":
         msg.extend([versions_msg, arches_msg])
+
     return msg
 
 

@@ -198,8 +198,9 @@ def test_list_architectures_and_modules(monkeypatch, version: str, extension: st
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
-    modules = MetadataFactory(archive_id).fetch_modules(Version(version))
-    assert modules == expect["modules"]
+    for arch in expect["architectures"]:
+        modules = MetadataFactory(archive_id).fetch_modules(Version(version), arch)
+        assert modules == sorted(expect["modules_by_arch"][arch])
 
     arches = MetadataFactory(archive_id).fetch_arches(Version(version))
     assert arches == expect["architectures"]
@@ -306,10 +307,9 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
 
 
 @pytest.fixture
-def expected_windows_desktop_5140() -> Dict[str, Set[str]]:
+def expected_windows_desktop_5140() -> Dict:
     xmlexpect = "windows-5140-expect.json"
-    expected_modules_arches = json.loads((Path(__file__).parent / "data" / xmlexpect).read_text("utf-8"))
-    return {key: set(val) for key, val in expected_modules_arches.items()}
+    return json.loads((Path(__file__).parent / "data" / xmlexpect).read_text("utf-8"))
 
 
 @pytest.mark.parametrize(
@@ -318,18 +318,22 @@ def expected_windows_desktop_5140() -> Dict[str, Set[str]]:
         ("--extensions latest", {"src_doc_examples"}),
         ("--spec 5.14 --extensions latest", {"wasm", "src_doc_examples"}),
         ("--extensions 5.14.0", {"wasm", "src_doc_examples"}),
-        ("--modules latest", "modules"),
-        ("--spec 5.14 --modules latest", "modules"),
-        ("--modules 5.14.0", "modules"),
-        ("--extension wasm --modules latest", "modules"),
-        ("--extension wasm --spec 5.14 --modules latest", "modules"),
-        ("--extension wasm --modules 5.14.0", "modules"),
-        ("--arch latest", "architectures"),
-        ("--spec 5.14 --arch latest", "architectures"),
-        ("--arch 5.14.0", "architectures"),
-        ("--extension wasm --arch latest", "architectures"),
-        ("--extension wasm --spec 5.14 --arch latest", "architectures"),
-        ("--extension wasm --arch 5.14.0", "architectures"),
+        ("--modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--spec 5.14 --modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--modules 5.14.0 win32_mingw73", ["modules_by_arch", "win32_mingw73"]),
+        ("--modules 5.14.0 win32_msvc2017", ["modules_by_arch", "win32_msvc2017"]),
+        ("--modules 5.14.0 win64_mingw73", ["modules_by_arch", "win64_mingw73"]),
+        ("--modules 5.14.0 win64_msvc2015_64", ["modules_by_arch", "win64_msvc2015_64"]),
+        ("--modules 5.14.0 win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--extension wasm --modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--extension wasm --spec 5.14 --modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--extension wasm --modules 5.14.0 win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--arch latest", ["architectures"]),
+        ("--spec 5.14 --arch latest", ["architectures"]),
+        ("--arch 5.14.0", ["architectures"]),
+        ("--extension wasm --arch latest", ["architectures"]),
+        ("--extension wasm --spec 5.14 --arch latest", ["architectures"]),
+        ("--extension wasm --arch 5.14.0", ["architectures"]),
     ),
 )
 def test_list_qt_cli(
@@ -337,10 +341,20 @@ def test_list_qt_cli(
     capsys,
     expected_windows_desktop_5140: Dict[str, Set[str]],
     args: str,
-    expect: Union[Set[str], str],
+    expect: Union[Set[str], List[str]],
 ):
     htmlfile, xmlfile = "windows-desktop.html", "windows-5140-update.xml"
     version_string_to_replace = "qt5.5140"
+    if isinstance(expect, list):
+        # In this case, 'expect' is a list of keys to follow to the expected values.
+        expected_dict = expected_windows_desktop_5140
+        for key in expect:  # Follow the chain of keys to the list of values.
+            expected_dict = expected_dict[key]
+        assert isinstance(expected_dict, list)
+        expect_set = set(expected_dict)
+    else:
+        expect_set = expect
+    assert isinstance(expect_set, set)
 
     def _mock_fetch_http(_, rest_of_url: str) -> str:
         htmltext = (Path(__file__).parent / "data" / htmlfile).read_text("utf-8")
@@ -362,7 +376,6 @@ def test_list_qt_cli(
     cli.run(["list-qt", "windows", "desktop", *args.split()])
     out, err = capsys.readouterr()
     output_set = set(out.strip().split())
-    expect_set = expected_windows_desktop_5140[expect] if isinstance(expect, str) else expect
     assert output_set == expect_set
 
 
@@ -489,11 +502,10 @@ def test_list_invalid_extensions(capsys, monkeypatch, target, ext, version, expe
 
 mac_qt = ArchiveId("qt", "mac", "desktop")
 mac_wasm = ArchiveId("qt", "mac", "desktop", "wasm")
-wrong_qt_version_msg = ["Please use 'aqt list-qt mac desktop' to show versions of Qt available."]
-wrong_ext_and_version_msg = [
-    "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-    "Please use 'aqt list-qt mac desktop' to show versions of Qt available.",
-]
+wrong_tool_name_msg = "Please use 'aqt list-tool mac desktop' to check what tools are available."
+wrong_qt_version_msg = "Please use 'aqt list-qt mac desktop' to show versions of Qt available."
+wrong_ext_msg = "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions."
+wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to list valid architectures."
 
 
 @pytest.mark.parametrize(
@@ -506,19 +518,19 @@ wrong_ext_and_version_msg = [
         ),
         (
             MetadataFactory(ArchiveId("tools", "mac", "desktop"), tool_name="ifw"),
-            ["Please use 'aqt list-tool mac desktop' to check what tools are available."],
+            [wrong_tool_name_msg],
         ),
         (
             MetadataFactory(mac_qt, architectures_ver="1.2.3"),
-            wrong_qt_version_msg,
+            [wrong_qt_version_msg],
         ),
         (
-            MetadataFactory(mac_qt, modules_ver="1.2.3"),
-            wrong_qt_version_msg,
+            MetadataFactory(mac_qt, modules_query=("1.2.3", "clang_64")),
+            [wrong_qt_version_msg, wrong_arch_msg],
         ),
         (
             MetadataFactory(mac_qt, extensions_ver="1.2.3"),
-            wrong_qt_version_msg,
+            [wrong_qt_version_msg],
         ),
         (
             MetadataFactory(mac_qt, archives_query=["1.2.3", "clang_64", "a module", "another module"]),
@@ -537,12 +549,12 @@ wrong_ext_and_version_msg = [
         ),
         (
             MetadataFactory(mac_wasm),
-            ["Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions."],
+            [wrong_ext_msg],
         ),
         (
             MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9")),
             [
-                "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+                wrong_ext_msg,
                 "Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'.",
             ],
         ),
@@ -550,20 +562,20 @@ wrong_ext_and_version_msg = [
             MetadataFactory(ArchiveId("tools", "mac", "desktop", "wasm"), tool_name="ifw"),
             [
                 "Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-                "Please use 'aqt list-tool mac desktop' to check what tools are available.",
+                wrong_tool_name_msg,
             ],
         ),
         (
             MetadataFactory(mac_wasm, architectures_ver="1.2.3"),
-            wrong_ext_and_version_msg,
+            [wrong_ext_msg, wrong_qt_version_msg],
         ),
         (
-            MetadataFactory(mac_wasm, modules_ver="1.2.3"),
-            wrong_ext_and_version_msg,
+            MetadataFactory(mac_wasm, modules_query=("1.2.3", "clang_64")),
+            [wrong_ext_msg, wrong_qt_version_msg, wrong_arch_msg],
         ),
         (
             MetadataFactory(mac_wasm, extensions_ver="1.2.3"),
-            wrong_ext_and_version_msg,
+            [wrong_ext_msg, wrong_qt_version_msg],
         ),
     ),
 )
