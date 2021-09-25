@@ -34,7 +34,7 @@ from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, CliInputError, EmptyMetadata
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
 from aqt.helper import Settings, getUrl, xml_to_modules
 
 
@@ -365,6 +365,7 @@ class MetadataFactory:
         modules_query: Optional[Tuple[str, str]] = None,
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
+        archives_query: Optional[List[str]] = None,
         tool_name: Optional[str] = None,
         is_long_listing: bool = False,
     ):
@@ -378,6 +379,7 @@ class MetadataFactory:
         :param modules_query:       [Version of Qt, architecture] for which to list modules
         :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
+        :param archives_query:      [Qt_Version, architecture, *module_names]: used to print list of archives
         :param tool_name:           Name of a tool, without architecture, ie "tools_qtcreator" or "tools_ifw"
         :param is_long_listing:     If true, long listing is used for tools output
         """
@@ -411,6 +413,12 @@ class MetadataFactory:
         elif architectures_ver:
             self.request_type = "architectures"
             self._action = lambda: self.fetch_arches(self._to_version(architectures_ver))
+        elif archives_query:
+            if len(archives_query) < 2:
+                raise CliInputError("The '--archives' flag requires a 'QT_VERSION' and an 'ARCHITECTURE' parameter.")
+            self.request_type = "archives for modules" if len(archives_query) > 2 else "archives for qt"
+            version, arch, modules = archives_query[0], archives_query[1], archives_query[2:]
+            self._action = lambda: self.fetch_archives(self._to_version(version), arch, modules)
         else:
             self.request_type = "versions"
             self._action = self.fetch_versions
@@ -652,6 +660,41 @@ class MetadataFactory:
                 modules.add(module)
         return sorted(modules)
 
+    def fetch_archives(self, version: Version, arch: str, modules: List[str]) -> List[str]:
+        qt_version_str = self._get_qt_version_str(version)
+        nonempty = MetadataFactory._has_nonempty_downloads
+
+        def all_modules(element: ElementTree.Element) -> bool:
+            _module, _arch = element.find("Name").text.split(".")[-2:]
+            return _arch == arch and _module != qt_version_str and nonempty(element)
+
+        def specify_modules(element: ElementTree.Element) -> bool:
+            _module, _arch = element.find("Name").text.split(".")[-2:]
+            return _arch == arch and _module in modules and nonempty(element)
+
+        def no_modules(element: ElementTree.Element) -> bool:
+            name: Optional[str] = element.find("Name").text
+            return name and name.endswith(f".{qt_version_str}.{arch}") and nonempty(element)
+
+        predicate = no_modules if not modules else all_modules if "all" in modules else specify_modules
+        try:
+            mod_metadata = self._fetch_module_metadata(self.archive_id.to_folder(qt_version_str), predicate=predicate)
+        except (AttributeError,) as e:
+            raise ArchiveListError(f"Downloaded metadata is corrupted. {e}") from e
+
+        # Did we find all requested modules?
+        if modules and "all" not in modules:
+            requested_set = set(modules)
+            actual_set = set([_name.split(".")[-2] for _name in mod_metadata.keys()])
+            not_found = sorted(requested_set.difference(actual_set))
+            if not_found:
+                raise CliInputError(
+                    f"The requested modules were not located: {not_found}", suggested_action=suggested_follow_up(self)
+                )
+
+        csv_lists = [mod["DownloadableArchives"] for mod in mod_metadata.values()]
+        return sorted(set([arc.split("-")[0] for csv in csv_lists for arc in csv.split(", ")]))
+
     def describe_filters(self) -> str:
         if self.spec is None:
             return str(self.archive_id)
@@ -663,6 +706,8 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     msg = []
     list_cmd = "list-tool" if meta.archive_id.is_tools() else "list-qt"
     base_cmd = "aqt {0} {1.host} {1.target}".format(list_cmd, meta.archive_id)
+    versions_msg = f"Please use '{base_cmd}' to show versions of Qt available."
+    arches_msg = f"Please use '{base_cmd} --arch <QT_VERSION>' to show architectures available."
     if meta.archive_id.extension:
         msg.append(f"Please use '{base_cmd} --extensions <QT_VERSION>' to list valid extensions.")
 
@@ -677,6 +722,10 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
         msg.append(f"Please use '{base_cmd}' to show versions of Qt available.")
         if meta.request_type == "modules":
             msg.append(f"Please use '{base_cmd} --arch <QT_VERSION>' to list valid architectures.")
+    elif meta.request_type == "archives for modules":
+        msg.extend([versions_msg, arches_msg, f"Please use '{base_cmd} --modules <QT_VERSION>' to show modules available."])
+    elif meta.request_type == "archives for qt":
+        msg.extend([versions_msg, arches_msg])
 
     return msg
 

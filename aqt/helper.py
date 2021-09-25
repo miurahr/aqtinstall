@@ -28,13 +28,13 @@ import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from logging.handlers import QueueListener
-from typing import Callable, Dict, Iterable, List, Optional
+from typing import Callable, Dict, List
 from urllib.parse import urlparse
 
 import requests
 import requests.adapters
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
+from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError
 
 
 def _get_meta(url: str):
@@ -171,34 +171,26 @@ class MyQueueListener(QueueListener):
 def xml_to_modules(
     xml_text: str,
     predicate: Callable[[ElementTree.Element], bool],
-    keys_to_keep: Optional[Iterable[str]] = None,
 ) -> Dict[str, Dict[str, str]]:
     """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
     Only report elements that satisfy `predicate(element)`.
-    Only report keys in the list `keys_to_keep`.
+    Reports all keys available in the PackageUpdate tag as strings.
 
     :param xml_text: The entire contents of an xml file
     :param predicate: A function that decides which elements to keep or discard
-    :param keys_to_keep: A list of which tags in the element should be kept.
-                        If the list is empty, then no tags will be kept.
-                        If the list is None, then all tags will be kept.
     """
     try:
         parsed_xml = ElementTree.fromstring(xml_text)
-    except ElementTree.ParseError:
-        return {}
+    except ElementTree.ParseError as perror:
+        raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
     packages = {}
     for packageupdate in parsed_xml.iter("PackageUpdate"):
         if predicate and not predicate(packageupdate):
             continue
         name = packageupdate.find("Name").text
         packages[name] = {}
-        if keys_to_keep is None:
-            for child in packageupdate:
-                packages[name][child.tag] = child.text
-        else:
-            for key in keys_to_keep:
-                packages[name][key] = getattr(packageupdate.find(key), "text", None)
+        for child in packageupdate:
+            packages[name][child.tag] = child.text
     return packages
 
 

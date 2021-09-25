@@ -442,7 +442,7 @@ class Cli:
         else:
             modules_ver, modules_query = None, None
 
-        for version_str in (modules_ver, args.extensions, args.arch):
+        for version_str in (modules_ver, args.extensions, args.arch, args.archives[0] if args.archives else None):
             Cli._validate_version_str(version_str, allow_latest=True, allow_empty=True)
 
         spec = None
@@ -464,6 +464,7 @@ class Cli:
             modules_query=modules_query,
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
+            archives_query=args.archives,
         )
         show_list(meta)
 
@@ -601,18 +602,18 @@ class Cli:
             "list-qt",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
-            "$ aqt list-qt mac                                            # print all targets for Mac OS\n"
-            "$ aqt list-qt mac desktop                                    # print all versions of Qt 5\n"
-            "$ aqt list-qt mac desktop --extension wasm                   # print all wasm versions of Qt 5\n"
-            '$ aqt list-qt mac desktop --spec "5.9"                       # print all versions of Qt 5.9\n'
-            '$ aqt list-qt mac desktop --spec "5.9" --latest-version      # print latest Qt 5.9\n'
-            "$ aqt list-qt mac desktop --modules 5.12.0 clang_64          # print modules for 5.12.0\n"
-            "$ aqt list-qt mac desktop --spec 5.9 --modules latest  # print modules for latest 5.9\n"
-            "$ aqt list-qt mac desktop --extensions 5.9.0                 # print choices for --extension flag\n"
-            "$ aqt list-qt mac desktop --arch 5.9.9                       "
-            "# print architectures for 5.9.9/mac/desktop\n"
-            "$ aqt list-qt mac desktop --arch latest                      "
-            "# print architectures for the latest Qt 5\n",
+            "$ aqt list-qt mac                                                # print all targets for Mac OS\n"
+            "$ aqt list-qt mac desktop                                        # print all versions of Qt 5\n"
+            "$ aqt list-qt mac desktop --extension wasm                       # print all wasm versions of Qt 5\n"
+            '$ aqt list-qt mac desktop --spec "5.9"                           # print all versions of Qt 5.9\n'
+            '$ aqt list-qt mac desktop --spec "5.9" --latest-version          # print latest Qt 5.9\n'
+            "$ aqt list-qt mac desktop --modules 5.12.0 clang_64              # print modules for 5.12.0\n"
+            "$ aqt list-qt mac desktop --spec 5.9 --modules latest clang_64   # print modules for latest 5.9\n"
+            "$ aqt list-qt mac desktop --extensions 5.9.0                     # print choices for --extension flag\n"
+            "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for 5.9.9/mac/desktop\n"
+            "$ aqt list-qt mac desktop --arch latest                          # print architectures for the latest Qt 5\n"
+            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
+            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n",
         )
         list_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
         list_parser.add_argument(
@@ -664,6 +665,17 @@ class Cli:
             "--latest-version",
             action="store_true",
             help="print only the newest version available",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--archives",
+            type=str,
+            nargs="+",
+            help="print the archives available for Qt base or modules. "
+            "If two arguments are provided, the first two arguments must be 'VERSION | latest' and "
+            "'ARCHITECTURE', and this command will print all archives associated with the base Qt package. "
+            "If more than two arguments are provided, the remaining arguments will be interpreted as modules, "
+            "and this command will print all archives associated with those modules. "
+            "At least two arguments are required.",
         )
         list_parser.set_defaults(func=self.run_list_qt)
 
