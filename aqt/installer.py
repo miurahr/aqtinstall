@@ -37,9 +37,17 @@ from typing import Any, Callable, List, Optional
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
-from aqt.exceptions import AqtException, ArchiveConnectionError, ArchiveExtractionError, CliInputError, CliKeyboardInterrupt
+from aqt.exceptions import (
+    AqtException,
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveExtractionError,
+    ArchiveListError,
+    CliInputError,
+    CliKeyboardInterrupt,
+)
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
-from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list
+from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
 from aqt.updater import Updater
 
 try:
@@ -401,11 +409,14 @@ class Cli:
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
         if args.arch is None:
-            archs = MetadataFactory(
-                archive_id=ArchiveId("tools", os_name, target, ""),
-                is_latest_version=True,
-                tool_name=tool_name,
-            ).getList()
+            archive_id = ArchiveId("tools", os_name, target, "")
+            meta = MetadataFactory(archive_id, is_latest_version=True, tool_name=tool_name)
+            try:
+                archs = meta.getList()
+            except ArchiveDownloadError as e:
+                msg = f"Failed to locate XML data for the tool '{tool_name}'."
+                raise ArchiveListError(msg, suggested_action=suggested_follow_up(meta)) from e
+
         else:
             archs = [args.arch]
 

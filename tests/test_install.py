@@ -15,7 +15,7 @@ import pytest
 from pytest_socket import disable_socket
 
 from aqt.archives import QtPackage
-from aqt.exceptions import ArchiveExtractionError
+from aqt.exceptions import ArchiveDownloadError, ArchiveExtractionError
 from aqt.installer import Cli, installer
 
 
@@ -434,7 +434,7 @@ def test_install(
         cli = Cli()
         cli._setup_settings()
 
-        cli.run(cmd + ["--outputdir", output_dir])
+        assert 0 == cli.run(cmd + ["--outputdir", output_dir])
 
         out, err = capsys.readouterr()
         sys.stdout.write(out)
@@ -457,58 +457,83 @@ def test_install(
 
 
 @pytest.mark.parametrize(
-    "cmd, xml_file, expected_re, expect_missing",
+    "cmd, xml_file, expected",
     (
+        (
+            "install-qt windows desktop 5.16.0 win32_mingw73",
+            None,
+            "Specified Qt version is unknown: 5.16.0.\n"
+            "Failed to locate XML data for Qt version '5.16.0'.\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-qt windows desktop' to show versions available.\n",
+        ),
+        (
+            "install-qt windows desktop 5.15.0 bad_arch",
+            "windows-5150-update.xml",
+            "Specified target combination is not valid or unknown: windows desktop bad_arch\n"
+            "The packages ['qt_base'] were not found while parsing XML of package information!\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n",
+        ),
         (
             "install-qt windows desktop 5.15.0 win32_mingw73 -m nonexistent foo",
             "windows-5150-update.xml",
-            # Match output: Note that the set of missing package names will be in random order.
-            re.compile(
-                r"^aqtinstall\(aqt\) v.+\n"
-                r"Some of specified modules are unknown\.\n"
-                r"The packages {(.+)} were not found while parsing XML of package information!$"
-            ),
-            {"qt_base", "nonexistent", "foo"},
+            "Some of specified modules are unknown.\n"
+            "The packages ['foo', 'nonexistent', 'qt_base'] were not found while parsing XML of package information!\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n"
+            "* Please use 'aqt list-qt windows desktop --modules 5.15.0 <arch>' to show modules available.\n",
         ),
         (
             "install-src windows desktop 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            # Match output: Note that the set of missing package names will be in random order.
-            re.compile(
-                r"^aqtinstall\(aqt\) v.+\n" r"The packages {(.+)} were not found while parsing XML of package information!$"
-            ),
-            {"src", "nonexistent", "foo"},
+            "The packages ['foo', 'nonexistent', 'src'] were not found while parsing XML of package information!\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n"
+            "* Please use 'aqt list-qt windows desktop --modules 5.15.0 <arch>' to show modules available.\n",
         ),
-        # (
-        #     "install-tool windows desktop tools_nonexistent nonexistent",
-        #     # Match output: Note that the set of missing package names will be in random order.
-        #     re.compile(
-        #         r"^aqtinstall\(aqt\) v.+\n"
-        #         r"Specified target combination is not valid: windows tools_nonexistent nonexistent\n"
-        #         r"The packages {(.+)} were not found while parsing XML of package information!$"
-        #     ),
-        #     {'nonexistent'}
-        # )
+        (
+            "install-tool windows desktop tools_vcredist nonexistent",
+            "windows-desktop-tools_vcredist-update.xml",
+            "Specified target combination is not valid: windows tools_vcredist nonexistent\n"
+            "The package 'nonexistent' was not found while parsing XML of package information!\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-tool windows desktop tools_vcredist' to show tool variants available.\n",
+        ),
+        (
+            "install-tool windows desktop tools_nonexistent nonexistent",
+            None,
+            "Specified target combination is not valid: windows tools_nonexistent nonexistent\n"
+            "Failed to locate XML data for the tool 'tools_nonexistent'.\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-tool windows desktop' to show tools available.\n",
+        ),
+        (
+            "install-tool windows desktop tools_nonexistent",
+            None,
+            "Failed to locate XML data for the tool 'tools_nonexistent'.\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-tool windows desktop' to check what tools are available.\n",
+        ),
     ),
 )
-def test_install_bad_tools_modules(monkeypatch, capsys, cmd, xml_file, expected_re, expect_missing):
-    xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
-
-    def mock_get_url(self, url):
-        return xml
+def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Optional[str], expected):
+    def mock_get_url(url, *args, **kwargs):
+        if not xml_file:
+            raise ArchiveDownloadError(f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found")
+        return (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
 
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.metadata.getUrl", mock_get_url)
 
     cli = Cli()
     cli._setup_settings()
     assert cli.run(cmd.split()) == 1
 
     out, err = capsys.readouterr()
-    match = expected_re.match(err)
-    assert match
-    actual = set(map(lambda x: x[1:-1], match.group(1).split(", ")))
-    assert actual == expect_missing
+    actual = err[err.index("\n") + 1 :]
+    assert actual == expected, "{0} != {1}".format(actual, expected)
 
 
 def test_install_keyboard_interrupt(monkeypatch, capsys):

@@ -9,7 +9,6 @@ import aqt
 @pytest.mark.remote_data
 def test_cli_unknown_version(capsys):
     wrong_version = "5.16.0"
-    wrong_url_ending = "mac_x64/desktop/qt5_5160/Updates.xml"
     cli = aqt.installer.Cli()
     assert cli.run(["install-qt", "mac", "desktop", wrong_version]) == 1
     out, err = capsys.readouterr()
@@ -22,24 +21,26 @@ def test_cli_unknown_version(capsys):
 
     aqtinstall(aqt) v.* on Python 3.*
     Specified Qt version is unknown: 5.16.0.
-    Failed to retrieve file at https://download.qt.io/online/qtsdkrepository/mac_x64/desktop/qt5_5160/Updates.xml
-    Server response code: 404, reason: Not Found
+    Failed to locate XML data for Qt version '5.16.0'.
+    ==============================Suggested follow-up:==============================
+    * Please use 'aqt list-qt mac desktop' to show versions available.
 
     Expected result when redirect occurs:
 
     aqtinstall(aqt) v.* on Python 3.*
     Specified Qt version is unknown: 5.16.0.
     Connection to the download site failed and fallback to mirror site.
-    Failed to retrieve file at .*/mac_x64/desktop/qt5_5160/Updates.xml
-    Server response code: 404, reason: Not Found
-    Connection to the download site failed. Aborted...
+    Failed to locate XML data for Qt version '5.16.0'.
+    ==============================Suggested follow-up:==============================
+    * Please use 'aqt list-qt mac desktop' to show versions available.
     """
 
     matcher = re.compile(
         r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
         r".*Specified Qt version is unknown: " + re.escape(wrong_version) + r"\.\n"
-        r".*Failed to retrieve file at .*" + re.escape(wrong_url_ending) + r"\n"
-        r".*Server response code: 404, reason: Not Found.*"
+        r".*Failed to locate XML data for Qt version '" + re.escape(wrong_version) + r"'\.\n"
+        r"==============================Suggested follow-up:==============================\n"
+        r"\* Please use 'aqt list-qt mac desktop' to show versions available\.\n",
     )
 
     assert matcher.match(err)

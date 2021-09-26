@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from aqt.exceptions import ArchiveListError, NoPackageFound
+from aqt.exceptions import ArchiveDownloadError, ArchiveListError, NoPackageFound
 from aqt.helper import Settings, getUrl
 from aqt.metadata import QtRepoProperty, Version
 
@@ -105,11 +105,14 @@ class ModuleToPackage:
     def has_package(self, package_name: str):
         return package_name in self._packages_to_modules
 
+    def get_modules(self) -> Iterable[str]:
+        return self._modules_to_packages.keys()
+
     def __len__(self) -> int:
         return len(self._modules_to_packages)
 
     def __format__(self, format_spec) -> str:
-        return str(set(self._modules_to_packages.keys()))
+        return str(sorted(set(self._modules_to_packages.keys())))
 
 
 class QtArchives:
@@ -142,9 +145,17 @@ class QtArchives:
         self.archives: List[QtPackage] = []
         self.mod_list: Iterable[str] = modules or []
         self.timeout = timeout
-        self._get_archives()
+        try:
+            self._get_archives()
+        except ArchiveDownloadError as e:
+            self.handle_missing_updates_xml(e)
         if not all_archives:
             self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
+
+    def handle_missing_updates_xml(self, e: ArchiveDownloadError):
+        msg = f"Failed to locate XML data for Qt version '{self.version}'."
+        help_msg = f"Please use 'aqt list-qt {self.os_name} {self.target}' to show versions available."
+        raise ArchiveListError(msg, suggested_action=[help_msg]) from e
 
     def _version_str(self) -> str:
         return ("{0.major}{0.minor}" if self.version == Version("5.9.0") else "{0.major}{0.minor}{0.patch}").format(
@@ -257,7 +268,20 @@ class QtArchives:
         # if we have located every requested package, then target_packages will be empty
         if len(target_packages) > 0:
             message = f"The packages {target_packages} were not found while parsing XML of package information!"
-            raise NoPackageFound(message)
+            raise NoPackageFound(message, suggested_action=self.help_msg(target_packages.get_modules()))
+
+    def help_msg(self, missing_modules: Iterable[str]) -> Iterable[str]:
+        base_cmd = f"aqt list-qt {self.os_name} {self.target}"
+        arch = f"Please use '{base_cmd} --arch {self.version}' to show architectures available."
+        mods = f"Please use '{base_cmd} --modules {self.version} <arch>' to show modules available."
+        has_base_pkg: bool = self._base_target_package_name() in missing_modules
+        has_non_base_pkg: bool = len(list(missing_modules)) > 1 or not has_base_pkg
+        messages = []
+        if has_base_pkg:
+            messages.append(arch)
+        if has_non_base_pkg:
+            messages.append(mods)
+        return messages
 
     def get_packages(self) -> List[QtPackage]:
         """
@@ -359,6 +383,11 @@ class ToolArchives(QtArchives):
     def __str__(self):
         return f"ToolArchives(tool_name={self.tool_name}, version={self.version}, arch={self.arch})"
 
+    def handle_missing_updates_xml(self, e: ArchiveDownloadError):
+        msg = f"Failed to locate XML data for the tool '{self.tool_name}'."
+        help_msg = f"Please use 'aqt list-tool {self.os_name} {self.target}' to show tools available."
+        raise ArchiveListError(msg, suggested_action=[help_msg]) from e
+
     def _get_archives(self):
         _a = "_x64"
         if self.os_name == "windows":
@@ -387,15 +416,15 @@ class ToolArchives(QtArchives):
         try:
             packageupdate = next(filter(lambda x: x.find("Name").text == self.arch, self.update_xml.iter("PackageUpdate")))
         except StopIteration:
-            message = f"The package {self.arch} was not found while parsing XML of package information!"
-            raise NoPackageFound(message)
+            message = f"The package '{self.arch}' was not found while parsing XML of package information!"
+            raise NoPackageFound(message, suggested_action=self.help_msg())
 
         name = packageupdate.find("Name").text
         named_version = packageupdate.find("Version").text
         package_desc = packageupdate.find("Description").text
         downloadable_archives = packageupdate.find("DownloadableArchives").text
         if not downloadable_archives:
-            message = f"The package {self.arch} contains no downloadable archives!"
+            message = f"The package '{self.arch}' contains no downloadable archives!"
             raise NoPackageFound(message)
         for archive in downloadable_archives.split(", "):
             package_url = posixpath.join(
@@ -417,6 +446,9 @@ class ToolArchives(QtArchives):
                     pkg_update_name=name,  # Redundant
                 )
             )
+
+    def help_msg(self, *args) -> Iterable[str]:
+        return [f"Please use 'aqt list-tool {self.os_name} {self.target} {self.tool_name}' to show tool variants available."]
 
     def get_target_config(self) -> TargetConfig:
         """Get target configuration.
