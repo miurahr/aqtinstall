@@ -40,9 +40,10 @@ jobs:
           overwrite: true
           
       - name: Update continuous build
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: svenstaro/upload-release-action@v2
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          overwrite: true
           prerelease: true
-          automatic_release_tag: Continuous
-          files: .gravitybee\dist\latest\aqt.exe
+          tag: Continuous
+          file: .gravitybee\dist\latest\aqt.exe
