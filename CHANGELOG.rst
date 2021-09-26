@@ -16,16 +16,18 @@ Added
 * Test: add and improve unit tests(#327,#359)
 * Docs: getting started section(#351)
 * Docs: recommend python3 for old systems(#349)
-* Automatically update combinations.json (#343,#344,#345)
+* Automatically update combinations.json (#343,#344,#345,#386,#390,#395)
 * CI: test with Qt6.2 with modules(#346)
 * README: link documentation for stable(#329)
 * Support WASM on Qt 6.2.0(#384)
-* Add Binary distribution for Windows(#393)
+* Add Binary distribution for Windows(#393,#397)
+* Add list-qt --archives feature(#400)
+* Require architecture when listing modules(#401)
 
 Changed
 -------
 * list subcommand now support tool information(#235)
-* list subcommand can show versions, archiectures and modules.(#235)
+* list subcommand can show versions, architectures and modules.(#235)
 * C: bundle jom.zip in source(#295)
 * Add max_retries configuration for connection(#296)
 * Change settings.ini to introduce [requests] section(#297)
@@ -47,6 +49,8 @@ Changed
 * Remove 'addons' prefix for some modules for Qt6+ (#368)
 * Fix inappropriate warnings(#370)
 * Update README to fix version 2 (#377)
+* list-qt: Specify version by SimpleSpec(#392)
+* Add helpful error messages when modules/tools/Qt version does not exist(#402)
 
 Fixed
 -----
@@ -61,7 +65,8 @@ Fixed
 * CI: fix release script launch conditions(#298)
 * Handle special case for Qt 5.9.0(#364)
 * Running python2 -m aqt does not trigger Python version check (#372,#373)
-
+* docs(cli): correct the parameter of "list-tool" in an example(#399)
+* Doc: Fix broken mirror link in cli.rst (#403)
 
 `v1.2.5`_ (14, Aug. 2021)
 =========================
