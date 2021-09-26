@@ -212,7 +212,7 @@ are described here:
 
 .. option:: --base, -b <base url>
 
-    Specify mirror site base url such as  -b 'https://mirrors.ocf.berkeley.edu/qt/'
+    Specify mirror site base url such as  -b ``https://mirrors.dotsrc.org/qtproject``
     where 'online' folder exist.
 
 .. option:: --timeout <timeout(sec)>
