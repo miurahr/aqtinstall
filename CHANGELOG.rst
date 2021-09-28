@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.0.0`_ (29, Sep. 2021)
+=========================
+
 Added
 -----
 * Add error messages when user inputs an invalid semantic version(#291)
@@ -67,6 +70,8 @@ Fixed
 * Running python2 -m aqt does not trigger Python version check (#372,#373)
 * docs(cli): correct the parameter of "list-tool" in an example(#399)
 * Doc: Fix broken mirror link in cli.rst (#403)
+* CI: fix release action fails with no files found(#405)
+
 
 `v1.2.5`_ (14, Aug. 2021)
 =========================
@@ -263,7 +268,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v1.2.5...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.0...HEAD
+.. _v2.0.0: https://github.com/miurahr/aqtinstall/compare/v1.2.5...v2.0.0
 .. _v1.2.5: https://github.com/miurahr/aqtinstall/compare/v1.2.4...v1.2.5
 .. _v1.2.4: https://github.com/miurahr/aqtinstall/compare/v1.2.3...v1.2.4
 .. _v1.2.3: https://github.com/miurahr/aqtinstall/compare/v1.2.2...v1.2.3
