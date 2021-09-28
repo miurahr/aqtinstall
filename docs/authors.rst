@@ -24,6 +24,7 @@ All contributors, listed alphabetically, are:
 * lightmare (Documents)
 * Martin Delille (Documents)
 * Mizux Seihax (Qt versions)
+* Mozi (CI/workflow improvement)
 * Nelson Chen (CI tests)
 * @nikitalita (Binary distribution)
 * @pylipp (Documents)
