@@ -10,8 +10,12 @@ jobs:
         os: [windows-latest, macOS-latest, ubuntu-latest]
         py: [3.9]
         qtver: [5.9.9, 5.12.8, 6.1.0]
-        artifact: [standard, binary]
+        artifact: [standard]
         include:
+          - os: windows-latest
+            py: 3.9
+            qtver: 6.1.0
+            artifact: binary
           - os: ubuntu-20.04
             py: 3.9
             qtver: 6.1.0
@@ -20,10 +24,6 @@ jobs:
           - os: ubuntu-latest
             py: 3.9
             qtver: 6.1.0
-          - os: ubuntu-latest
-            artifact: binary
-          - os: macOS-latest
-            artifact: binary
     steps:
       - uses: actions/checkout@v1
         with:
