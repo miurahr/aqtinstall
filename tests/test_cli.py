@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from pytest_socket import disable_socket
 
 from aqt.exceptions import CliInputError
 from aqt.installer import Cli
@@ -216,6 +217,51 @@ def test_cli_input_errors(capsys, expected_help, cmd, expect_msg, should_show_he
     out, err = capsys.readouterr()
     assert out == (expected_help if should_show_help else "")
     assert err.rstrip().endswith(expect_msg)
+
+
+# These commands use the new syntax with the legacy commands
+@pytest.mark.parametrize(
+    "cmd",
+    (
+        "install linux desktop 5.10.0",
+        "install linux desktop 5.10.0 gcc_64",
+        "src linux desktop 5.10.0",
+        "doc linux desktop 5.10.0",
+        "example linux desktop 5.10.0",
+        "tool windows desktop tools_ifw",
+        "tool windows desktop tools_ifw qt.tools.ifw.31",
+    ),
+)
+def test_cli_legacy_commands_with_wrong_syntax(cmd):
+    disable_socket()
+    cli = Cli()
+    cli._setup_settings()
+    with pytest.raises(SystemExit) as e:
+        cli.run(cmd.split())
+    assert e.type == SystemExit
+
+
+# These commands come directly from examples in the legacy documentation
+@pytest.mark.parametrize(
+    "cmd",
+    (
+        "install 5.10.0 linux desktop",  # default arch
+        "install 5.10.2 linux android android_armv7",
+        "src 5.15.2 windows desktop --archives qtbase --kde",
+        "doc 5.15.2 windows desktop -m qtcharts qtnetworkauth",
+        "examples 5.15.2 windows desktop -m qtcharts qtnetworkauth",
+        "tool linux tools_ifw 4.0 qt.tools.ifw.40",
+    ),
+)
+def test_cli_legacy_commands_with_correct_syntax(monkeypatch, cmd):
+    # Pretend to install correctly when any command is run
+    for func in ("run_install_qt", "run_install_src", "run_install_doc", "run_install_example", "run_install_tool"):
+        monkeypatch.setattr(Cli, func, lambda *args, **kwargs: 0)
+
+    disable_socket()
+    cli = Cli()
+    cli._setup_settings()
+    assert 0 == cli.run(cmd.split())
 
 
 def test_cli_unexpected_error(monkeypatch, capsys):
