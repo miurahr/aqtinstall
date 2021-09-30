@@ -388,7 +388,7 @@ class Cli:
             self._warn_on_deprecated_command("tool", "install-tool")
         tool_name = args.tool_name  # such as tools_openssl_x64
         os_name = args.host  # windows, linux and mac
-        target = args.target  # desktop, android and ios
+        target = "desktop" if args.is_legacy else args.target  # desktop, android and ios
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -408,7 +408,7 @@ class Cli:
             timeout = (args.timeout, args.timeout)
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
-        if args.arch is None:
+        if args.tool_variant is None:
             archive_id = ArchiveId("tools", os_name, target, "")
             meta = MetadataFactory(archive_id, is_latest_version=True, tool_name=tool_name)
             try:
@@ -418,7 +418,7 @@ class Cli:
                 raise ArchiveListError(msg, suggested_action=suggested_follow_up(meta)) from e
 
         else:
-            archs = [args.arch]
+            archs = [args.tool_variant]
 
         for arch in archs:
             if not self._check_tools_arg_combination(os_name, tool_name, arch):
@@ -541,18 +541,22 @@ class Cli:
     def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
         install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
         install_tool_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-        install_tool_parser.add_argument(
-            "target",
-            default=None,
-            choices=["desktop", "winrt", "android", "ios"],
-            help="Target SDK.",
-        )
+        if not is_legacy:
+            install_tool_parser.add_argument(
+                "target",
+                default=None,
+                choices=["desktop", "winrt", "android", "ios"],
+                help="Target SDK.",
+            )
         install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
+        if is_legacy:
+            install_tool_parser.add_argument("version", help="Version of tool variant")
+
+        tool_variant_opts = {} if is_legacy else {"nargs": "?", "default": None}
         install_tool_parser.add_argument(
-            "arch",
-            nargs="?",
-            default=None,
-            help="Name of full tool name such as qt.tools.ifw.31. "
+            "tool_variant",
+            **tool_variant_opts,
+            help="Name of tool variant, such as qt.tools.ifw.41. "
             "Please use 'aqt list-tool' to list acceptable values for this parameter.",
         )
         self._set_common_options(install_tool_parser)
