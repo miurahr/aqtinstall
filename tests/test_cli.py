@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from pytest_socket import disable_socket
 
-from aqt.exceptions import CliInputError
+from aqt.exceptions import ArchiveDownloadError, CliInputError
 from aqt.installer import Cli
 from aqt.metadata import MetadataFactory, SimpleSpec, Version
 
@@ -15,7 +15,7 @@ def expected_help():
     return (
         "usage: aqt [-h] [-c CONFIG]\n"
         "           {install-qt,install-tool,install-doc,install-example,install-src,list-qt,list-tool,"
-        "install,tool,doc,example,src,help,version}\n"
+        "install,tool,doc,examples,src,help,version}\n"
         "           ...\n"
         "\n"
         "Another unofficial Qt Installer.\n"
@@ -34,7 +34,7 @@ def expected_help():
         "  commands {install|tool|src|examples|doc} are deprecated and marked for removal\n"
         "\n"
         "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,list-tool,"
-        "install,tool,doc,example,src,help,version}\n"
+        "install,tool,doc,examples,src,help,version}\n"
         "                        Please refer to each help message by using '--help' with each subcommand\n"
     )
 
@@ -229,7 +229,6 @@ def test_cli_input_errors(capsys, expected_help, cmd, expect_msg, should_show_he
         "doc linux desktop 5.10.0",
         "example linux desktop 5.10.0",
         "tool windows desktop tools_ifw",
-        "tool windows desktop tools_ifw qt.tools.ifw.31",
     ),
 )
 def test_cli_legacy_commands_with_wrong_syntax(cmd):
@@ -239,6 +238,47 @@ def test_cli_legacy_commands_with_wrong_syntax(cmd):
     with pytest.raises(SystemExit) as e:
         cli.run(cmd.split())
     assert e.type == SystemExit
+
+
+@pytest.mark.parametrize(
+    "cmd",
+    (
+        "tool windows desktop tools_ifw qt.tools.ifw.31",  # New syntax
+        "tool windows desktop tools_ifw 1.2.3",
+    ),
+)
+def test_cli_legacy_tool_new_syntax(monkeypatch, capsys, cmd):
+    # These incorrect commands cannot be filtered out directly by argparse because
+    # they have the correct number of arguments.
+    command = cmd.split()
+    disable_socket()
+
+    expected = (
+        "Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
+        "In the future, please use the command 'install-tool' instead.\n"
+        f"Specified target combination is not valid: {command[1]} {command[2]} {command[4]}\n"
+        f"Failed to locate XML data for the tool '{command[2]}'.\n"
+        "==============================Suggested follow-up:==============================\n"
+        "* Please use 'aqt list-tool windows desktop' to show tools available.\n"
+    )
+    arch = "x86" if command[1] == "windows" else "x64"
+    expect_url_end = f"{command[1]}_{arch}/desktop/{command[2]}/Updates.xml"
+
+    def mock_get(url: str, *args):
+        assert url.endswith(expect_url_end), "Failure means test is setup wrong"
+        # command[2] is a tool that doesn't exist, so:
+        raise ArchiveDownloadError(
+            f"Failed to retrieve file at {url}\n" f"Server response code: 404, reason: tool {command[2]} does not exist"
+        )
+
+    monkeypatch.setattr("aqt.archives.getUrl", mock_get)
+
+    cli = Cli()
+    cli._setup_settings()
+    assert 1 == cli.run(command)
+    out, err = capsys.readouterr()
+    actual = err[err.index("\n") + 1 :]
+    assert actual == expected
 
 
 # These commands come directly from examples in the legacy documentation
