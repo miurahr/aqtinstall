@@ -232,6 +232,38 @@ def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fai
     assert len(expected_7z_files) == 0, f"Failed to produce QtPackages for {expected_7z_files}"
 
 
+def to_xml(package_updates: Iterable[Dict]) -> str:
+    def wrap(tag: str, content: str, is_multiline: bool = True):
+        newline = "\n" if is_multiline else ""
+        return f"<{tag}>{newline}{content}{newline}</{tag}>"
+
+    return wrap(
+        "Updates",
+        "\n".join(
+            [
+                wrap("PackageUpdate", "\n".join([wrap(key, value, False) for key, value in pu.items()]))
+                for pu in package_updates
+            ]
+        ),
+    )
+
+
+@pytest.mark.parametrize(
+    "tool_name, variant_name, version, actual_version",
+    (("tools_qtcreator", "qt.tools.qtcreator", "1.2.3", "3.2.1"),),
+)
+def test_tool_archive_wrong_version(monkeypatch, tool_name, variant_name, version, actual_version):
+    def _mock(self, *args):
+        self.update_xml_text = to_xml([dict(Name=variant_name, Version=actual_version)])
+
+    monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
+
+    host, target, base = "mac", "desktop", "https://example.com"
+    with pytest.raises(NoPackageFound) as e:
+        ToolArchives(host, target, tool_name, base, version_str=version, arch=variant_name)
+    assert e.type == NoPackageFound
+
+
 # Test the helper class
 def test_module_to_package():
     qt_base_names = ["qt.999.clang", "qt9.999.clang", "qt9.999.addon.clang"]

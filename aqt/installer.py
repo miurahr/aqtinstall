@@ -66,7 +66,7 @@ class Cli:
     def __init__(self):
         parser = argparse.ArgumentParser(
             prog="aqt",
-            description="Another unofficial Qt Installer.\n" "aqt helps you install Qt SDK, tools, examples and others\n",
+            description="Another unofficial Qt Installer.\naqt helps you install Qt SDK, tools, examples and others\n",
             formatter_class=argparse.RawTextHelpFormatter,
             add_help=True,
         )
@@ -84,11 +84,7 @@ class Cli:
             "commands {install|tool|src|examples|doc} are deprecated and marked for removal\n",
             help="Please refer to each help message by using '--help' with each subcommand",
         )
-        self._make_install_parsers(subparsers)
-        self._make_list_qt_parser(subparsers)
-        self._make_list_tool_parser(subparsers)
-        self._make_legacy_parsers(subparsers)
-        self._make_common_parsers(subparsers)
+        self._make_all_parsers(subparsers)
         parser.set_defaults(func=self.show_help)
         self.parser = parser
 
@@ -388,7 +384,7 @@ class Cli:
             self._warn_on_deprecated_command("tool", "install-tool")
         tool_name = args.tool_name  # such as tools_openssl_x64
         os_name = args.host  # windows, linux and mac
-        target = args.target  # desktop, android and ios
+        target = "desktop" if args.is_legacy else args.target  # desktop, android and ios
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -398,7 +394,8 @@ class Cli:
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip(Settings.zipcmd)
-        version = "0.0.1"  # just store a dummy version
+        version = getattr(args, "version", "0.0.1")  # for legacy aqt tool
+        Cli._validate_version_str(version)
         keep = args.keep
         if args.base is not None:
             base = args.base
@@ -408,7 +405,7 @@ class Cli:
             timeout = (args.timeout, args.timeout)
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
-        if args.arch is None:
+        if args.tool_variant is None:
             archive_id = ArchiveId("tools", os_name, target, "")
             meta = MetadataFactory(archive_id, is_latest_version=True, tool_name=tool_name)
             try:
@@ -418,7 +415,7 @@ class Cli:
                 raise ArchiveListError(msg, suggested_action=suggested_follow_up(meta)) from e
 
         else:
-            archs = [args.arch]
+            archs = [args.tool_variant]
 
         for arch in archs:
             if not self._check_tools_arg_combination(os_name, tool_name, arch):
@@ -541,43 +538,25 @@ class Cli:
     def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
         install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
         install_tool_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-        install_tool_parser.add_argument(
-            "target",
-            default=None,
-            choices=["desktop", "winrt", "android", "ios"],
-            help="Target SDK.",
-        )
+        if not is_legacy:
+            install_tool_parser.add_argument(
+                "target",
+                default=None,
+                choices=["desktop", "winrt", "android", "ios"],
+                help="Target SDK.",
+            )
         install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
+        if is_legacy:
+            install_tool_parser.add_argument("version", help="Version of tool variant")
+
+        tool_variant_opts = {} if is_legacy else {"nargs": "?", "default": None}
         install_tool_parser.add_argument(
-            "arch",
-            nargs="?",
-            default=None,
-            help="Name of full tool name such as qt.tools.ifw.31. "
+            "tool_variant",
+            **tool_variant_opts,
+            help="Name of tool variant, such as qt.tools.ifw.41. "
             "Please use 'aqt list-tool' to list acceptable values for this parameter.",
         )
         self._set_common_options(install_tool_parser)
-
-    def _make_legacy_parsers(self, subparsers: argparse._SubParsersAction):
-        deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
-        install_parser = subparsers.add_parser(
-            "install",
-            description=deprecated_msg,
-            formatter_class=argparse.RawTextHelpFormatter,
-        )
-        self._set_install_qt_parser(install_parser, is_legacy=True)
-        tool_parser = subparsers.add_parser("tool")
-        self._set_install_tool_parser(tool_parser, is_legacy=True)
-        #
-        for cmd, f in (
-            ("doc", self.run_install_doc),
-            ("example", self.run_install_example),
-            ("src", self.run_install_src),
-        ):
-            p = subparsers.add_parser(cmd, description=deprecated_msg)
-            p.set_defaults(func=f, is_legacy=True)
-            self._set_common_arguments(p, is_legacy=True)
-            self._set_common_options(p)
-            self._set_module_options(p)
 
     def _warn_on_deprecated_command(self, old_name: str, new_name: str):
         self.logger.warning(
@@ -585,27 +564,41 @@ class Cli:
             f"In the future, please use the command '{new_name}' instead."
         )
 
-    def _make_install_parsers(self, subparsers: argparse._SubParsersAction):
-        install_qt_parser = subparsers.add_parser("install-qt", formatter_class=argparse.RawTextHelpFormatter)
-        self._set_install_qt_parser(install_qt_parser, is_legacy=False)
-        tool_parser = subparsers.add_parser("install-tool")
-        self._set_install_tool_parser(tool_parser, is_legacy=False)
-        #
-        for cmd, f in (
-            ("install-doc", self.run_install_doc),
-            ("install-example", self.run_install_example),
-        ):
-            p = subparsers.add_parser(cmd)
-            p.set_defaults(func=f, is_legacy=False)
-            self._set_common_arguments(p, is_legacy=False)
-            self._set_common_options(p)
-            self._set_module_options(p)
-        src_parser = subparsers.add_parser("install-src")
-        src_parser.set_defaults(func=self.run_install_src, is_legacy=False)
-        self._set_common_arguments(src_parser, is_legacy=False)
-        self._set_common_options(src_parser)
-        self._set_module_options(src_parser)
-        src_parser.add_argument("--kde", action="store_true", help="patching with KDE patch kit.")
+    def _make_all_parsers(self, subparsers: argparse._SubParsersAction):
+        deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
+
+        def make_parser_it(cmd: str, desc: str, is_legacy: bool, set_parser_cmd, formatter_class):
+            description = f"{desc} {deprecated_msg}" if is_legacy else desc
+            kwargs = {"formatter_class": formatter_class} if formatter_class else {}
+            p = subparsers.add_parser(cmd, description=description, **kwargs)
+            set_parser_cmd(p, is_legacy=is_legacy)
+
+        def make_parser_sde(cmd: str, desc: str, is_legacy: bool, action, is_add_kde: bool):
+            description = f"{desc} {deprecated_msg}" if is_legacy else desc
+            parser = subparsers.add_parser(cmd, description=description)
+            parser.set_defaults(func=action, is_legacy=is_legacy)
+            self._set_common_arguments(parser, is_legacy=is_legacy)
+            self._set_common_options(parser)
+            self._set_module_options(parser)
+            if is_add_kde:
+                parser.add_argument("--kde", action="store_true", help="patching with KDE patch kit.")
+
+        make_parser_it("install-qt", "Install Qt.", False, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
+        make_parser_it("install-tool", "Install tools.", False, self._set_install_tool_parser, None)
+        make_parser_sde("install-doc", "Install documentation.", False, self.run_install_doc, False)
+        make_parser_sde("install-example", "Install examples.", False, self.run_install_example, False)
+        make_parser_sde("install-src", "Install source.", False, self.run_install_src, True)
+
+        self._make_list_qt_parser(subparsers)
+        self._make_list_tool_parser(subparsers)
+
+        make_parser_it("install", "Install Qt.", True, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
+        make_parser_it("tool", "Install tools.", True, self._set_install_tool_parser, None)
+        make_parser_sde("doc", "Install documentation.", True, self.run_install_doc, False)
+        make_parser_sde("examples", "Install examples.", True, self.run_install_example, False)
+        make_parser_sde("src", "Install source.", True, self.run_install_src, True)
+
+        self._make_common_parsers(subparsers)
 
     def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
