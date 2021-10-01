@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 
 import pytest
-from pytest_socket import disable_socket
 
 from aqt.exceptions import ArchiveDownloadError, CliInputError
 from aqt.installer import Cli
@@ -232,7 +231,6 @@ def test_cli_input_errors(capsys, expected_help, cmd, expect_msg, should_show_he
     ),
 )
 def test_cli_legacy_commands_with_wrong_syntax(cmd):
-    disable_socket()
     cli = Cli()
     cli._setup_settings()
     with pytest.raises(SystemExit) as e:
@@ -251,7 +249,6 @@ def test_cli_legacy_tool_new_syntax(monkeypatch, capsys, cmd):
     # These incorrect commands cannot be filtered out directly by argparse because
     # they have the correct number of arguments.
     command = cmd.split()
-    disable_socket()
 
     expected = (
         "Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
@@ -298,7 +295,6 @@ def test_cli_legacy_commands_with_correct_syntax(monkeypatch, cmd):
     for func in ("run_install_qt", "run_install_src", "run_install_doc", "run_install_example", "run_install_tool"):
         monkeypatch.setattr(Cli, func, lambda *args, **kwargs: 0)
 
-    disable_socket()
     cli = Cli()
     cli._setup_settings()
     assert 0 == cli.run(cmd.split())
