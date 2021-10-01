@@ -253,22 +253,8 @@ def test_cli_legacy_tool_new_syntax(monkeypatch, capsys, cmd):
     expected = (
         "Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
         "In the future, please use the command 'install-tool' instead.\n"
-        f"Specified target combination is not valid: {command[1]} {command[2]} {command[4]}\n"
-        f"Failed to locate XML data for the tool '{command[2]}'.\n"
-        "==============================Suggested follow-up:==============================\n"
-        "* Please use 'aqt list-tool windows desktop' to show tools available.\n"
+        "Invalid version: 'tools_ifw'! Please use the form '5.X.Y'.\n"
     )
-    arch = "x86" if command[1] == "windows" else "x64"
-    expect_url_end = f"{command[1]}_{arch}/desktop/{command[2]}/Updates.xml"
-
-    def mock_get(url: str, *args):
-        assert url.endswith(expect_url_end), "Failure means test is setup wrong"
-        # command[2] is a tool that doesn't exist, so:
-        raise ArchiveDownloadError(
-            f"Failed to retrieve file at {url}\n" f"Server response code: 404, reason: tool {command[2]} does not exist"
-        )
-
-    monkeypatch.setattr("aqt.archives.getUrl", mock_get)
 
     cli = Cli()
     cli._setup_settings()
