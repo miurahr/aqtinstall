@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from aqt.exceptions import ArchiveDownloadError, CliInputError
+from aqt.exceptions import CliInputError
 from aqt.installer import Cli
 from aqt.metadata import MetadataFactory, SimpleSpec, Version
 
