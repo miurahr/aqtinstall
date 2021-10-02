@@ -103,6 +103,8 @@ class Cli:
             # If we didn't account for it, and wrap it in an AqtException, it's a bug.
             self.logger.exception(e)  # Print stack trace
             self.logger.error(
+                f"{self._format_aqt_version()}\n"
+                f"Working dir: `{os.getcwd()}`\n"
                 f"Arguments: `{sys.argv}` Host: `{platform.uname()}`\n"
                 "===========================PLEASE FILE A BUG REPORT===========================\n"
                 "You have discovered a bug in aqt.\n"
@@ -496,12 +498,15 @@ class Cli:
         """Display help message"""
         self.parser.print_help()
 
-    def show_aqt_version(self, args=None):
-        """Display version information"""
+    def _format_aqt_version(self) -> str:
         py_version = platform.python_version()
         py_impl = platform.python_implementation()
         py_build = platform.python_compiler()
-        self.logger.info("aqtinstall(aqt) v{} on Python {} [{} {}]".format(aqt.__version__, py_version, py_impl, py_build))
+        return f"aqtinstall(aqt) v{aqt.__version__} on Python {py_version} [{py_impl} {py_build}]"
+
+    def show_aqt_version(self, args=None):
+        """Display version information"""
+        self.logger.info(self._format_aqt_version())
 
     def _set_install_qt_parser(self, install_qt_parser, *, is_legacy: bool):
         install_qt_parser.set_defaults(func=self.run_install_qt, is_legacy=is_legacy)
