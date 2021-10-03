@@ -16,6 +16,7 @@ from pytest_socket import disable_socket
 
 from aqt.archives import QtPackage
 from aqt.exceptions import ArchiveDownloadError, ArchiveExtractionError
+from aqt.helper import Settings
 from aqt.installer import Cli, installer
 
 
@@ -536,9 +537,44 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
     assert actual == expected, "{0} != {1}".format(actual, expected)
 
 
-def test_install_keyboard_interrupt(monkeypatch, capsys):
-    def mock_keyboard_interrupt(*args):
-        raise KeyboardInterrupt()
+@pytest.mark.parametrize(
+    "make_exception, expect_end_msg, settings_file",
+    (
+        (
+            "RuntimeError()",
+            "===========================PLEASE FILE A BUG REPORT===========================\n"
+            "You have discovered a bug in aqt.\n"
+            "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
+            "Please remember to include a copy of this program's output in your report.",
+            "../aqt/settings.ini",
+        ),
+        (
+            "KeyboardInterrupt()",
+            "Caught KeyboardInterrupt, terminating installer workers\n" "Installer halted by keyboard interrupt.",
+            "../aqt/settings.ini",
+        ),
+        (
+            "MemoryError()",
+            "Caught MemoryError, terminating installer workers\n"
+            "Out of memory when downloading and extracting archives in parallel.\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please reduce your 'concurrency' setting (see "
+            "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration)",
+            "../aqt/settings.ini",
+        ),
+        (
+            "MemoryError()",
+            "Caught MemoryError, terminating installer workers\n"
+            "Out of memory when downloading and extracting archives.\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please free up more memory.",
+            "data/settings_no_concurrency.ini",
+        ),
+    ),
+)
+def test_install_pool_exception(monkeypatch, capsys, make_exception, expect_end_msg, settings_file):
+    def mock_installer_func(*args):
+        raise eval(make_exception)
 
     host, target, ver, arch = "windows", "desktop", "6.1.0", "win64_mingw81"
     updates_url = "windows_x86/desktop/qt6_610/Updates.xml"
@@ -548,15 +584,13 @@ def test_install_keyboard_interrupt(monkeypatch, capsys):
     mock_get_url, mock_download_archive = make_mock_geturl_download_archive(archives, arch, host, updates_url)
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
-    monkeypatch.setattr("aqt.installer.installer", mock_keyboard_interrupt)
+    monkeypatch.setattr("aqt.installer.installer", mock_installer_func)
 
+    Settings.load_settings(str(Path(__file__).parent / settings_file))
     cli = Cli()
-    cli._setup_settings()
     assert cli.run(cmd) == 1
     out, err = capsys.readouterr()
-    assert err.rstrip().endswith(
-        "Caught KeyboardInterrupt, terminating installer workers\nInstaller halted by keyboard interrupt."
-    )
+    assert err.rstrip().endswith(expect_end_msg)
 
 
 def test_install_installer_archive_extraction_err(monkeypatch):

@@ -45,6 +45,7 @@ from aqt.exceptions import (
     ArchiveListError,
     CliInputError,
     CliKeyboardInterrupt,
+    OutOfMemory,
 )
 from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
@@ -814,7 +815,12 @@ class Cli:
 
 
 def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool):
-    key_interrupt = False
+    def close_worker_pool_on_exception():
+        logger = getLogger("aqt.installer")
+        logger.warning(f"Caught {e.__class__.__name__}, terminating installer workers")
+        pool.terminate()
+        pool.join()
+
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
@@ -828,17 +834,27 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
         pool.starmap(installer, tasks)
         pool.close()
         pool.join()
-    except KeyboardInterrupt:
-        logger = getLogger("aqt.installer")
-        logger.warning("Caught KeyboardInterrupt, terminating installer workers")
-        pool.terminate()
-        pool.join()
-        key_interrupt = True
-    # all done, close logging service for sub-processes
-    listener.enqueue_sentinel()
-    listener.stop()
-    if key_interrupt:
-        raise CliKeyboardInterrupt("Installer halted by keyboard interrupt.")
+    except KeyboardInterrupt as e:
+        close_worker_pool_on_exception()
+        raise CliKeyboardInterrupt("Installer halted by keyboard interrupt.") from e
+    except MemoryError as e:
+        close_worker_pool_on_exception()
+        if Settings.concurrency > 1:
+            docs_url = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration"
+            raise OutOfMemory(
+                "Out of memory when downloading and extracting archives in parallel.",
+                suggested_action=[f"Please reduce your 'concurrency' setting (see {docs_url})"],
+            ) from e
+        raise OutOfMemory(
+            "Out of memory when downloading and extracting archives.", suggested_action=["Please free up more memory."]
+        )
+    except Exception as e:
+        close_worker_pool_on_exception()
+        raise e from e
+    finally:
+        # all done, close logging service for sub-processes
+        listener.enqueue_sentinel()
+        listener.stop()
 
 
 def init_worker_sh():
