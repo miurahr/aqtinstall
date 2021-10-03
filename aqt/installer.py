@@ -815,12 +815,6 @@ class Cli:
 
 
 def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool):
-    def close_worker_pool_on_exception():
-        logger = getLogger("aqt.installer")
-        logger.warning(f"Caught {e.__class__.__name__}, terminating installer workers")
-        pool.terminate()
-        pool.join()
-
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
@@ -830,15 +824,22 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
         tasks.append((arc, base_dir, sevenzip, queue, keep))
     ctx = multiprocessing.get_context("spawn")
     pool = ctx.Pool(Settings.concurrency, init_worker_sh)
+
+    def close_worker_pool_on_exception(exception: BaseException):
+        logger = getLogger("aqt.installer")
+        logger.warning(f"Caught {exception.__class__.__name__}, terminating installer workers")
+        pool.terminate()
+        pool.join()
+
     try:
         pool.starmap(installer, tasks)
         pool.close()
         pool.join()
     except KeyboardInterrupt as e:
-        close_worker_pool_on_exception()
+        close_worker_pool_on_exception(e)
         raise CliKeyboardInterrupt("Installer halted by keyboard interrupt.") from e
     except MemoryError as e:
-        close_worker_pool_on_exception()
+        close_worker_pool_on_exception(e)
         if Settings.concurrency > 1:
             docs_url = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration"
             raise OutOfMemory(
@@ -849,7 +850,7 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
             "Out of memory when downloading and extracting archives.", suggested_action=["Please free up more memory."]
         )
     except Exception as e:
-        close_worker_pool_on_exception()
+        close_worker_pool_on_exception(e)
         raise e from e
     finally:
         # all done, close logging service for sub-processes
