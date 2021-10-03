@@ -73,3 +73,7 @@ class ArchiveExtractionError(AqtException):
 
 class UpdaterError(AqtException):
     pass
+
+
+class OutOfMemory(AqtException):
+    pass
