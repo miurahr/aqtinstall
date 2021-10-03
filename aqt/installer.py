@@ -39,6 +39,7 @@ import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import (
     AqtException,
+    ArchiveChecksumError,
     ArchiveConnectionError,
     ArchiveDownloadError,
     ArchiveExtractionError,
@@ -47,7 +48,7 @@ from aqt.exceptions import (
     CliKeyboardInterrupt,
     OutOfMemory,
 )
-from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, setup_logging
+from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, retry_on_errors, setup_logging
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
 from aqt.updater import Updater
 
@@ -895,14 +896,18 @@ def installer(
         logger.removeHandler(handler)
     logger.addHandler(qh)
     #
-    logger.info("Downloading {}...".format(name))
     logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
         timeout = (Settings.connection_timeout, Settings.response_timeout)
     else:
         timeout = (Settings.connection_timeout, response_timeout)
     hash = binascii.unhexlify(getUrl(hashurl, timeout))
-    downloadBinaryFile(url, archive, "sha1", hash, timeout)
+    retry_on_errors(
+        action=lambda: downloadBinaryFile(url, archive, "sha1", hash, timeout),
+        acceptable_errors=(ArchiveChecksumError,),
+        num_retries=Settings.max_retries_on_checksum_error,
+        name=f"Downloading {name}",
+    )
     if command is None:
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)

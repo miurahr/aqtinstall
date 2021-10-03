@@ -10,8 +10,8 @@ from pytest_socket import disable_socket
 from requests.models import Response
 
 from aqt import helper
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError
-from aqt.helper import getUrl
+from aqt.exceptions import ArchiveChecksumError, ArchiveConnectionError, ArchiveDownloadError
+from aqt.helper import getUrl, retry_on_errors
 from aqt.metadata import Version
 
 
@@ -129,17 +129,21 @@ def test_helper_downloadBinary_wrong_checksum(tmp_path, monkeypatch):
 
     actual_hash = binascii.unhexlify("1d41a93e4a585bb01e4518d4af431933")
     wrong_hash = binascii.unhexlify("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    expected_err = f"Download file is corrupted! Detect checksum error.\nExpected {wrong_hash}, Actual {actual_hash}"
-    out = tmp_path.joinpath("text.xml")
-    with pytest.raises(ArchiveDownloadError) as e:
+    expected_err = (
+        f"Downloaded file test.xml is corrupted! Detect checksum error.\nExpected {wrong_hash}, Actual {actual_hash}"
+    )
+    out = tmp_path.joinpath("test.xml")
+    with pytest.raises(ArchiveChecksumError) as e:
         helper.downloadBinaryFile("http://example.com/test.xml", out, "md5", wrong_hash, 60)
-    assert e.type == ArchiveDownloadError
+    assert e.type == ArchiveChecksumError
     assert format(e.value) == expected_err
 
 
 def test_helper_downloadBinary_response_error_undefined(tmp_path, monkeypatch):
+    contained_error_msg = "This chunk of downloaded content contains an error."
+
     def iter_broken_content(*args, **kwargs):
-        raise RuntimeError("This chunk of downloaded content contains an error.")
+        raise RuntimeError(contained_error_msg)
 
     def mock_requests_get(*args, **kwargs):
         response = Response()
@@ -154,7 +158,33 @@ def test_helper_downloadBinary_response_error_undefined(tmp_path, monkeypatch):
     with pytest.raises(ArchiveDownloadError) as e:
         helper.downloadBinaryFile("http://example.com/test.xml", out, "md5", expected, 60)
     assert e.type == ArchiveDownloadError
-    assert format(e.value) == "Download error: This chunk of downloaded content contains an error."
+    assert format(e.value) == f"Download of test.xml has error: {contained_error_msg}"
+
+
+@pytest.mark.parametrize(
+    "num_attempts_before_success, num_retries_allowed",
+    (
+        (2, 5),
+        (5, 5),
+        (5, 2),
+    ),
+)
+def test_helper_retry_on_error(num_attempts_before_success, num_retries_allowed):
+    enclosed = {"call_count": 0}
+
+    def action():
+        enclosed["call_count"] += 1
+        more_attempts_needed = num_attempts_before_success - enclosed["call_count"]
+        if more_attempts_needed <= 0:
+            return True
+        raise RuntimeError(f"Must retry {more_attempts_needed} more times before success")
+
+    if num_attempts_before_success > num_retries_allowed:
+        with pytest.raises(RuntimeError) as e:
+            retry_on_errors(action, (RuntimeError,), num_retries_allowed, "do something")
+        assert e.type == RuntimeError
+    else:
+        assert retry_on_errors(action, (RuntimeError,), num_retries_allowed, "do something")
 
 
 @pytest.mark.parametrize(
