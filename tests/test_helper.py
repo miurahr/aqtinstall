@@ -129,12 +129,15 @@ def test_helper_downloadBinary_wrong_checksum(tmp_path, monkeypatch):
 
     actual_hash = binascii.unhexlify("1d41a93e4a585bb01e4518d4af431933")
     wrong_hash = binascii.unhexlify("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    expected_err = (
-        f"Downloaded file test.xml is corrupted! Detect checksum error.\nExpected {wrong_hash}, Actual {actual_hash}"
-    )
     out = tmp_path.joinpath("test.xml")
+    url = "http://example.com/test.xml"
+    expected_err = (
+        f"Downloaded file test.xml is corrupted! Detect checksum error."
+        f"\nExpect {wrong_hash.hex()}: {url}"
+        f"\nActual {actual_hash.hex()}: {out}"
+    )
     with pytest.raises(ArchiveChecksumError) as e:
-        helper.downloadBinaryFile("http://example.com/test.xml", out, "md5", wrong_hash, 60)
+        helper.downloadBinaryFile(url, str(out), "md5", wrong_hash, 60)
     assert e.type == ArchiveChecksumError
     assert format(e.value) == expected_err
 

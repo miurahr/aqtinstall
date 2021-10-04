@@ -77,7 +77,7 @@ def getUrl(url: str, timeout) -> str:
     return result
 
 
-def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
+def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: bytes, timeout):
     logger = getLogger("aqt.helper")
     filename = Path(url).name
     with requests.Session() as session:
@@ -109,7 +109,8 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
             if exp is not None and hash.digest() != exp:
                 raise ArchiveChecksumError(
                     f"Downloaded file {filename} is corrupted! Detect checksum error.\n"
-                    f"Expected {exp}, Actual {hash.digest()}"
+                    f"Expect {exp.hex()}: {url}\n"
+                    f"Actual {hash.digest().hex()}: {out}"
                 )
 
 
