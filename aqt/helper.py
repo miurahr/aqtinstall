@@ -50,7 +50,9 @@ def _check_content_type(ct: str) -> bool:
 def getUrl(url: str, timeout) -> str:
     logger = getLogger("aqt.helper")
     with requests.Session() as session:
-        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries_on_connection_error, backoff_factor=Settings.backoff_factor
+        )
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
@@ -81,7 +83,9 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: bytes, timeout):
     logger = getLogger("aqt.helper")
     filename = Path(url).name
     with requests.Session() as session:
-        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries_on_connection_error, backoff_factor=Settings.backoff_factor
+        )
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
@@ -333,7 +337,12 @@ class SettingsClass:
 
     @property
     def max_retries(self):
+        """Deprecated: please use `max_retries_on_connection_error` and `max_retries_on_checksum_error` instead!"""
         return self.config.getfloat("requests", "max_retries", fallback=5)
+
+    @property
+    def max_retries_on_connection_error(self):
+        return self.config.getfloat("requests", "max_retries_on_connection_error", fallback=self.max_retries)
 
     @property
     def max_retries_on_checksum_error(self):
