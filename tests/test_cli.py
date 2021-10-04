@@ -294,7 +294,7 @@ def test_cli_unexpected_error(monkeypatch, capsys):
 
     cli = Cli()
     cli._setup_settings()
-    assert 1 == cli.run(["install-qt", "mac", "ios", "6.2.0"])
+    assert Cli.UNHANDLED_EXCEPTION_CODE == cli.run(["install-qt", "mac", "ios", "6.2.0"])
     out, err = capsys.readouterr()
     assert err.startswith("Some unexpected error")
     assert err.rstrip().endswith(

@@ -64,6 +64,8 @@ class Cli:
 
     __slot__ = ["parser", "combinations", "logger"]
 
+    UNHANDLED_EXCEPTION_CODE = 254
+
     def __init__(self):
         parser = argparse.ArgumentParser(
             prog="aqt",
@@ -112,7 +114,7 @@ class Cli:
                 "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
                 "Please remember to include a copy of this program's output in your report."
             )
-            return 1
+            return Cli.UNHANDLED_EXCEPTION_CODE
 
     def _check_tools_arg_combination(self, os_name, tool_name, arch):
         for c in Settings.tools_combinations:

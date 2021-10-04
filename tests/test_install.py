@@ -12,7 +12,6 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import py7zr
 import pytest
-from pytest_socket import disable_socket
 
 from aqt.archives import QtPackage
 from aqt.exceptions import ArchiveDownloadError, ArchiveExtractionError
@@ -155,10 +154,7 @@ def make_mock_geturl_download_archive(
 
 
 @pytest.fixture(autouse=True)
-def disable_sockets_and_multiprocessing(monkeypatch):
-    # This blocks all network connections, causing test failure if we used monkeypatch wrong
-    disable_socket()
-
+def disable_multiprocessing(monkeypatch):
     # This blocks all multiprocessing, which would otherwise spawn processes that are not monkeypatched
     monkeypatch.setattr(
         "aqt.installer.multiprocessing.get_context",
@@ -538,41 +534,45 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
 
 
 @pytest.mark.parametrize(
-    "make_exception, expect_end_msg, settings_file",
+    "make_exception, settings_file, expect_end_msg, expect_return",
     (
         (
             "RuntimeError()",
+            "../aqt/settings.ini",
             "===========================PLEASE FILE A BUG REPORT===========================\n"
             "You have discovered a bug in aqt.\n"
             "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
             "Please remember to include a copy of this program's output in your report.",
-            "../aqt/settings.ini",
+            Cli.UNHANDLED_EXCEPTION_CODE,
         ),
         (
             "KeyboardInterrupt()",
-            "Caught KeyboardInterrupt, terminating installer workers\n" "Installer halted by keyboard interrupt.",
             "../aqt/settings.ini",
+            "Caught KeyboardInterrupt, terminating installer workers\nInstaller halted by keyboard interrupt.",
+            1,
         ),
         (
             "MemoryError()",
+            "../aqt/settings.ini",
             "Caught MemoryError, terminating installer workers\n"
             "Out of memory when downloading and extracting archives in parallel.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please reduce your 'concurrency' setting (see "
             "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration)",
-            "../aqt/settings.ini",
+            1,
         ),
         (
             "MemoryError()",
+            "data/settings_no_concurrency.ini",
             "Caught MemoryError, terminating installer workers\n"
             "Out of memory when downloading and extracting archives.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please free up more memory.",
-            "data/settings_no_concurrency.ini",
+            1,
         ),
     ),
 )
-def test_install_pool_exception(monkeypatch, capsys, make_exception, expect_end_msg, settings_file):
+def test_install_pool_exception(monkeypatch, capsys, make_exception, settings_file, expect_end_msg, expect_return):
     def mock_installer_func(*args):
         raise eval(make_exception)
 
@@ -588,7 +588,7 @@ def test_install_pool_exception(monkeypatch, capsys, make_exception, expect_end_
 
     Settings.load_settings(str(Path(__file__).parent / settings_file))
     cli = Cli()
-    assert cli.run(cmd) == 1
+    assert expect_return == cli.run(cmd)
     out, err = capsys.readouterr()
     assert err.rstrip().endswith(expect_end_msg)
 

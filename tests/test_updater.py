@@ -2,18 +2,11 @@ import re
 from tempfile import TemporaryDirectory
 
 import pytest
-from pytest_socket import disable_socket
 
 from aqt.archives import TargetConfig
 from aqt.exceptions import UpdaterError
 from aqt.helper import Settings
 from aqt.updater import Updater
-
-
-@pytest.fixture(autouse=True)
-def disable_sockets():
-    # This blocks all network connections, causing test failure if we used monkeypatch wrong
-    disable_socket()
 
 
 @pytest.fixture(autouse=True)
