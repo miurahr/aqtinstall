@@ -6,19 +6,12 @@ from urllib.parse import urlparse
 
 import pytest
 import requests
-from pytest_socket import disable_socket
 from requests.models import Response
 
 from aqt import helper
 from aqt.exceptions import ArchiveChecksumError, ArchiveConnectionError, ArchiveDownloadError
 from aqt.helper import getUrl, retry_on_errors
 from aqt.metadata import Version
-
-
-@pytest.fixture(autouse=True)
-def disable_sockets():
-    # This blocks all network connections, causing test failure if we used monkeypatch wrong
-    disable_socket()
 
 
 def test_helper_altlink(monkeypatch):

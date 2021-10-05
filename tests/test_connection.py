@@ -6,6 +6,7 @@ import pytest
 import aqt
 
 
+@pytest.mark.enable_socket
 @pytest.mark.remote_data
 def test_cli_unknown_version(capsys):
     wrong_version = "5.16.0"
