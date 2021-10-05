@@ -43,6 +43,10 @@ class ArchiveDownloadError(AqtException):
     pass
 
 
+class ArchiveChecksumError(ArchiveDownloadError):
+    pass
+
+
 class ArchiveConnectionError(AqtException):
     pass
 

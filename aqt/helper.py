@@ -28,13 +28,14 @@ import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from logging.handlers import QueueListener
-from typing import Callable, Dict, List
+from pathlib import Path
+from typing import Callable, Dict, List, Tuple
 from urllib.parse import urlparse
 
 import requests
 import requests.adapters
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError
+from aqt.exceptions import ArchiveChecksumError, ArchiveConnectionError, ArchiveDownloadError, ArchiveListError
 
 
 def _get_meta(url: str):
@@ -49,7 +50,9 @@ def _check_content_type(ct: str) -> bool:
 def getUrl(url: str, timeout) -> str:
     logger = getLogger("aqt.helper")
     with requests.Session() as session:
-        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries_on_connection_error, backoff_factor=Settings.backoff_factor
+        )
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
@@ -76,10 +79,13 @@ def getUrl(url: str, timeout) -> str:
     return result
 
 
-def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
+def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: bytes, timeout):
     logger = getLogger("aqt.helper")
+    filename = Path(url).name
     with requests.Session() as session:
-        retries = requests.adapters.Retry(total=Settings.max_retries, backoff_factor=Settings.backoff_factor)
+        retries = requests.adapters.Retry(
+            total=Settings.max_retries_on_connection_error, backoff_factor=Settings.backoff_factor
+        )
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
@@ -103,11 +109,29 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: str, timeout):
                         hash.update(chunk)
                     fd.flush()
             except Exception as e:
-                raise ArchiveDownloadError(f"Download error: {e}") from e
+                raise ArchiveDownloadError(f"Download of {filename} has error: {e}") from e
             if exp is not None and hash.digest() != exp:
-                raise ArchiveDownloadError(
-                    f"Download file is corrupted! Detect checksum error.\nExpected {exp}, Actual {hash.digest()}"
+                raise ArchiveChecksumError(
+                    f"Downloaded file {filename} is corrupted! Detect checksum error.\n"
+                    f"Expect {exp.hex()}: {url}\n"
+                    f"Actual {hash.digest().hex()}: {out}"
                 )
+
+
+def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_retries: int, name: str):
+    logger = getLogger("aqt.helper")
+    for i in range(num_retries):
+        try:
+            retry_msg = f": attempt #{1 + i}" if i > 0 else ""
+            logger.info(f"{name}{retry_msg}...")
+            ret = action()
+            if i > 0:
+                logger.info(f"Success on attempt #{1 + i}: {name}")
+            return ret
+        except acceptable_errors as e:
+            if i < num_retries - 1:
+                continue  # just try again
+            raise e from e
 
 
 def altlink(url: str, alt: str):
@@ -313,7 +337,16 @@ class SettingsClass:
 
     @property
     def max_retries(self):
+        """Deprecated: please use `max_retries_on_connection_error` and `max_retries_on_checksum_error` instead!"""
         return self.config.getfloat("requests", "max_retries", fallback=5)
+
+    @property
+    def max_retries_on_connection_error(self):
+        return self.config.getfloat("requests", "max_retries_on_connection_error", fallback=self.max_retries)
+
+    @property
+    def max_retries_on_checksum_error(self):
+        return self.config.getint("requests", "max_retries_on_checksum_error", fallback=int(self.max_retries))
 
     @property
     def backoff_factor(self):
