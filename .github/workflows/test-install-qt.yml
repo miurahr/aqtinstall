@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 20
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.py }}
       - name: Run pytest
