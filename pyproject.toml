@@ -34,7 +34,7 @@ ensure_newline_before_comments = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py36, py37, py38
+envlist = check, docs, py{36,37,38,39,310}
 
 [testenv]
 passenv =
@@ -72,4 +72,6 @@ commands =
 python =
     3.6: py36
     3.8: py38, docs, check
+    3.9: py39
+    3.10: py310
 """
