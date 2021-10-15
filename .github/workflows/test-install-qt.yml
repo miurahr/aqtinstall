@@ -17,7 +17,7 @@ jobs:
             qtver: 6.1.0
             artifact: binary
           - os: ubuntu-20.04
-            py: 3.10
+            py: "3.10"
             qtver: 6.1.0
             artifact: standard
         exclude:
