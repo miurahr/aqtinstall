@@ -1,4 +1,4 @@
-name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+name: Publish Python 🐍 distributions 📦 to PyPI
 
 on:
   push:
@@ -11,13 +11,13 @@ on:
 
 jobs:
   build-n-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
-    runs-on: ubuntu-18.04
+    name: Build and publish Python 🐍 distributions 📦 to PyPI
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
         with:
-          fetch-depth: 20
+          fetch-depth: 50
       - name: Fetch release tag
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Set up Python 3.7🐍
@@ -30,8 +30,8 @@ jobs:
         run: python -m build ./
       - name: twine check
         run: python -m twine check dist/*
-      - name: Publish distribution 📦 to Test PyPI
-        if: ${{ !startsWith(github.event.ref, 'refs/tags') }}
+      - name: Publish distribution 📦 to Test PyPI when releases branch
+        if: ${{ startsWith(github.event.ref, 'refs/heads/releases') }}
         uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.testpypi_password }}
