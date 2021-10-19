@@ -9,18 +9,18 @@ from aqt.installer import Cli
 from aqt.metadata import MetadataFactory, SimpleSpec, Version
 
 
-@pytest.fixture()
-def expected_help():
-    return (
+def expected_help(actual, prefix=None):
+    expected = (
         "usage: aqt [-h] [-c CONFIG]\n"
-        "           {install-qt,install-tool,install-doc,install-example,install-src,list-qt,list-tool,"
+        "           {install-qt,install-tool,install-doc,install-example,install-src,"
+        "list-qt,list-tool,"
         "install,tool,doc,examples,src,help,version}\n"
         "           ...\n"
         "\n"
         "Another unofficial Qt Installer.\n"
         "aqt helps you install Qt SDK, tools, examples and others\n"
         "\n"
-        "optional arguments:\n"
+        "option",
         "  -h, --help            show this help message and exit\n"
         "  -c CONFIG, --config CONFIG\n"
         "                        Configuration ini file.\n"
@@ -30,19 +30,25 @@ def expected_help():
         "  install-* subcommands are commands that install components\n"
         "  list-* subcommands are commands that show available components\n"
         "  \n"
-        "  commands {install|tool|src|examples|doc} are deprecated and marked for removal\n"
+        "  commands {install|tool|src|examples|doc} are deprecated and marked for "
+        "removal\n"
         "\n"
-        "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,list-tool,"
+        "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,"
+        "list-tool,"
         "install,tool,doc,examples,src,help,version}\n"
-        "                        Please refer to each help message by using '--help' with each subcommand\n"
+        "                        Please refer to each help message by using '--help' "
+        "with each subcommand\n",
     )
+    if prefix is not None:
+        return actual.startswith(prefix + expected[0]) and actual.endswith(expected[1])
+    return actual.startswith(expected[0]) and actual.endswith(expected[1])
 
 
-def test_cli_help(capsys, expected_help):
+def test_cli_help(capsys):
     cli = Cli()
     cli.run(["help"])
     out, err = capsys.readouterr()
-    assert out == expected_help
+    assert expected_help(out)
 
 
 def test_cli_check_module():
@@ -209,12 +215,15 @@ def test_set_arch(arch, host, target, version, expect):
         ),
     ),
 )
-def test_cli_input_errors(capsys, expected_help, cmd, expect_msg, should_show_help):
+def test_cli_input_errors(capsys, cmd, expect_msg, should_show_help):
     cli = Cli()
     cli._setup_settings()
     assert 1 == cli.run(cmd.split())
     out, err = capsys.readouterr()
-    assert out == (expected_help if should_show_help else "")
+    if should_show_help:
+        assert expected_help(out)
+    else:
+        assert out == ""
     assert err.rstrip().endswith(expect_msg)
 
 
