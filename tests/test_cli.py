@@ -21,7 +21,6 @@ def expected_help(actual, prefix=None):
         "aqt helps you install Qt SDK, tools, examples and others\n"
         "\n"
         "option",
-
         "  -h, --help            show this help message and exit\n"
         "  -c CONFIG, --config CONFIG\n"
         "                        Configuration ini file.\n"
@@ -38,7 +37,7 @@ def expected_help(actual, prefix=None):
         "list-tool,"
         "install,tool,doc,examples,src,help,version}\n"
         "                        Please refer to each help message by using '--help' "
-        "with each subcommand\n"
+        "with each subcommand\n",
     )
     if prefix is not None:
         return actual.startswith(prefix + expected[0]) and actual.endswith(expected[1])
