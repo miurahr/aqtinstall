@@ -1,0 +1,3 @@
+*.xml        text eol=lf
+*.html       text eol=lf
+*.json       text eol=lf
