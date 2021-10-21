@@ -7,6 +7,22 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Added
+-----
+* Allow retries on checksum error(#420)
+* Run on Python 3.10(#424)
+
+Fixed
+-----
+* `--noarchives` inconsistency(#429)
+* Allow multiprocessing error propagation(#419)
+* Legacy command behavior, reproduce also old bugs (#414)
+
+Changed
+-------
+* Print working directory and version in error message(#418)
+
+
 `v2.0.0`_ (29, Sep. 2021)
 =========================
 
