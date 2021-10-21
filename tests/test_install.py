@@ -90,6 +90,7 @@ class MockArchive:
     contents: Iterable[PatchedFile]
     version: str = ""
     arch_dir: str = ""
+    should_install: bool = True
 
     def xml_package_update(self) -> str:
         return textwrap.dedent(
@@ -199,7 +200,39 @@ def qtcharts_module(ver: str, arch: str) -> MockArchive:
     )
 
 
-def plain_qtbase_archive(update_xml_name: str, arch: str) -> MockArchive:
+def qtpositioning_module(ver: str, arch: str) -> MockArchive:
+    addons = "addons." if ver[0] == "6" else ""
+    prefix = "qt" if ver.startswith("5.9.") else f"qt.qt{ver[0]}"
+    return MockArchive(
+        filename_7z=f"qtlocation-windows-{arch}.7z",
+        update_xml_name=f"{prefix}.{ver.replace('.', '')}.{addons}qtpositioning.{arch}",
+        version=ver,
+        # arch_dir: filled in later
+        contents=(
+            PatchedFile(
+                filename="modules/Positioning.json",
+                unpatched_content=textwrap.dedent(
+                    f"""\
+                    {{
+                        "module_name": "Positioning",
+                        "version": "{ver}",
+                        "built_with": {{
+                            "compiler_id": "GNU",
+                            "compiler_target": "",
+                            "compiler_version": "1.2.3.4",
+                            "cross_compiled": false,
+                            "target_system": "Windows"
+                        }}
+                    }}
+                    """
+                ),
+                patched_content=None,  # it doesn't get patched
+            ),
+        ),
+    )
+
+
+def plain_qtbase_archive(update_xml_name: str, arch: str, should_install: bool = True) -> MockArchive:
     return MockArchive(
         filename_7z=f"qtbase-windows-{arch}.7z",
         update_xml_name=update_xml_name,
@@ -216,6 +249,7 @@ def plain_qtbase_archive(update_xml_name: str, arch: str) -> MockArchive:
                 "... blah blah blah ...\n",
             ),
         ),
+        should_install=should_install,
     )
 
 
@@ -320,6 +354,26 @@ def plain_qtbase_archive(update_xml_name: str, arch: str) -> MockArchive:
                 r"Finished installation of qtbase-windows-win64_mingw73.7z in .*\n"
                 r"Downloading qtcharts...\n"
                 r"Finished installation of qtcharts-windows-win64_mingw73.7z in .*\n"
+                r"Finished installation\n"
+                r"Time elapsed: .* second"
+            ),
+        ),
+        (
+            "install-qt windows desktop 6.2.0 win64_mingw73 -m qtpositioning --noarchives".split(),
+            "windows",
+            "desktop",
+            "6.2.0",
+            "win64_mingw73",
+            "mingw73_64",
+            "windows_x86/desktop/qt6_620/Updates.xml",
+            [
+                plain_qtbase_archive("qt.qt6.620.win64_mingw73", "win64_mingw73", should_install=False),
+                qtpositioning_module("6.2.0", "win64_mingw73"),
+            ],
+            re.compile(
+                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"Downloading qtlocation...\n"
+                r"Finished installation of qtlocation-windows-win64_mingw73.7z in .*\n"
                 r"Finished installation\n"
                 r"Time elapsed: .* second"
             ),
@@ -444,6 +498,8 @@ def test_install(
             installed_path = Path(output_dir) / "5.9" / arch_dir
         assert installed_path.is_dir()
         for archive in archives:
+            if not archive.should_install:
+                continue
             for patched_file in archive.contents:
                 file_path = installed_path / patched_file.filename
                 assert file_path.is_file()

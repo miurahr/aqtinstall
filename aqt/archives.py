@@ -131,6 +131,7 @@ class QtArchives:
         subarchives: Optional[Iterable[str]] = None,
         modules: Optional[Iterable[str]] = None,
         all_extra: bool = False,
+        is_include_base_package: bool = True,
         timeout=(5, 5),
     ):
         self.version: Version = Version(version_str)
@@ -139,17 +140,18 @@ class QtArchives:
         self.os_name: str = os_name
         self.all_extra: bool = all_extra
         self.arch_list: List[str] = [item.get("arch") for item in Settings.qt_combinations]
-        all_archives = subarchives is None
         self.base: str = posixpath.join(base, "online/qtsdkrepository")
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
         self.mod_list: Iterable[str] = modules or []
+        self.is_include_base_package: bool = is_include_base_package
         self.timeout = timeout
         try:
             self._get_archives()
         except ArchiveDownloadError as e:
             self.handle_missing_updates_xml(e)
-        if not all_archives:
+        should_install_all_archives = subarchives is None
+        if not should_install_all_archives:
             self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
 
     def handle_missing_updates_xml(self, e: ArchiveDownloadError):
@@ -181,7 +183,7 @@ class QtArchives:
                 f"qt.{self._version_str()}.{self.arch}",
             ]
         }
-        target_packages = ModuleToPackage(base_package)
+        target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
         if self.all_extra:
             return target_packages
         for module in self.mod_list:
