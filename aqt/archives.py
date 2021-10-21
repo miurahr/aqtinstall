@@ -140,7 +140,6 @@ class QtArchives:
         self.os_name: str = os_name
         self.all_extra: bool = all_extra
         self.arch_list: List[str] = [item.get("arch") for item in Settings.qt_combinations]
-        all_archives = subarchives is None
         self.base: str = posixpath.join(base, "online/qtsdkrepository")
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
@@ -151,7 +150,8 @@ class QtArchives:
             self._get_archives()
         except ArchiveDownloadError as e:
             self.handle_missing_updates_xml(e)
-        if not all_archives:
+        should_install_all_archives = subarchives is None
+        if not should_install_all_archives:
             self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
 
     def handle_missing_updates_xml(self, e: ArchiveDownloadError):
