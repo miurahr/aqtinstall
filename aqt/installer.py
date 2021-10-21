@@ -262,8 +262,6 @@ class Cli:
                 raise CliInputError("When `--noarchives` is set, the `--modules` option is mandatory.")
             if archives is not None:
                 raise CliInputError("Options `--archives` and `--noarchives` are mutually exclusive.")
-            else:
-                archives = modules
         else:
             if modules is not None and archives is not None:
                 archives.append(modules)
@@ -288,6 +286,7 @@ class Cli:
                 subarchives=archives,
                 modules=modules,
                 all_extra=all_extra,
+                is_include_base_package=not args.noarchives,
                 timeout=timeout,
             ),
             base,

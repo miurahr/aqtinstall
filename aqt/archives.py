@@ -131,6 +131,7 @@ class QtArchives:
         subarchives: Optional[Iterable[str]] = None,
         modules: Optional[Iterable[str]] = None,
         all_extra: bool = False,
+        is_include_base_package: bool = True,
         timeout=(5, 5),
     ):
         self.version: Version = Version(version_str)
@@ -144,6 +145,7 @@ class QtArchives:
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
         self.mod_list: Iterable[str] = modules or []
+        self.is_include_base_package: bool = is_include_base_package
         self.timeout = timeout
         try:
             self._get_archives()
@@ -181,7 +183,7 @@ class QtArchives:
                 f"qt.{self._version_str()}.{self.arch}",
             ]
         }
-        target_packages = ModuleToPackage(base_package)
+        target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
         if self.all_extra:
             return target_packages
         for module in self.mod_list:
