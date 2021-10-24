@@ -14,7 +14,7 @@ Added
 
 Fixed
 -----
-* `--noarchives` inconsistency(#429)
+* ``--noarchives`` inconsistency(#429)
 * Allow multiprocessing error propagation(#419)
 * Legacy command behavior, reproduce also old bugs (#414)
 
