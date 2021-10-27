@@ -113,3 +113,4 @@ blacklist:
 fallbacks:
     It is a list of URL where is a good for access.
     When mirror site cause an error, aqt use fallbacks when possible.
+    You can find a list of mirrors at: https://download.qt.io/static/mirrorlist/
