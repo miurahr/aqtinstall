@@ -517,6 +517,7 @@ class Cli:
         self._set_common_options(install_qt_parser)
         install_qt_parser.add_argument(
             "arch",
+            default="",
             nargs="?",
             help="\ntarget linux/desktop: gcc_64, wasm_32"
             "\ntarget mac/desktop:   clang_64, wasm_32"
