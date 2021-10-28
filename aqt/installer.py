@@ -225,9 +225,11 @@ class Cli:
         self.show_aqt_version()
         if args.is_legacy:
             self._warn_on_deprecated_command("install", "install-qt")
-        arch: Optional[str] = args.arch
         target: str = args.target
         os_name: str = args.host
+        arch: str = self._set_arch(
+            args.arch, os_name, target, getattr(args, "qt_version", getattr(args, "qt_version_spec", None))
+        )
         if hasattr(args, "qt_version_spec"):
             qt_version: str = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch))
         else:
@@ -243,7 +245,6 @@ class Cli:
             timeout = (args.timeout, args.timeout)
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
-        arch = self._set_arch(arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args.external)
         if EXT7Z and sevenzip is None:
