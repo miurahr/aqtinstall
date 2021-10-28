@@ -151,22 +151,24 @@ class Cli:
 
         return sevenzip
 
-    def _set_arch(self, args, oarch, os_name, target, qt_version):
-        arch = oarch
-        if arch is None:
-            if os_name == "linux" and target == "desktop":
-                arch = "gcc_64"
-            elif os_name == "mac" and target == "desktop":
-                arch = "clang_64"
-            elif os_name == "mac" and target == "ios":
-                arch = "ios"
-            elif target == "android" and Version(qt_version) >= Version("5.14.0"):
-                arch = "android"
-            else:
-                raise CliInputError("Please supply a target architecture.", should_show_help=True)
-        if arch == "":
-            raise CliInputError("Please supply a target architecture.", should_show_help=True)
-        return arch
+    @staticmethod
+    def _set_arch(arch: Optional[str], os_name: str, target: str, qt_version_or_spec: str) -> str:
+        """Choose a default architecture, if one can be determined"""
+        if arch is not None and arch != "":
+            return arch
+        if os_name == "linux" and target == "desktop":
+            return "gcc_64"
+        elif os_name == "mac" and target == "desktop":
+            return "clang_64"
+        elif os_name == "mac" and target == "ios":
+            return "ios"
+        elif target == "android":
+            try:
+                if Version(qt_version_or_spec) >= Version("5.14.0"):
+                    return "android"
+            except ValueError:
+                pass
+        raise CliInputError("Please supply a target architecture.", should_show_help=True)
 
     def _check_mirror(self, mirror):
         if mirror is None:
@@ -223,13 +225,13 @@ class Cli:
         self.show_aqt_version()
         if args.is_legacy:
             self._warn_on_deprecated_command("install", "install-qt")
-        arch = args.arch
-        target = args.target
-        os_name = args.host
+        arch: Optional[str] = args.arch
+        target: str = args.target
+        os_name: str = args.host
         if hasattr(args, "qt_version_spec"):
-            qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch))
+            qt_version: str = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch))
         else:
-            qt_version = args.qt_version
+            qt_version: str = args.qt_version
             Cli._validate_version_str(qt_version)
         keep = args.keep
         output_dir = args.outputdir
@@ -241,7 +243,7 @@ class Cli:
             timeout = (args.timeout, args.timeout)
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
-        arch = self._set_arch(args, arch, os_name, target, qt_version)
+        arch = self._set_arch(arch, os_name, target, qt_version)
         modules = args.modules
         sevenzip = self._set_sevenzip(args.external)
         if EXT7Z and sevenzip is None:

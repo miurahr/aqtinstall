@@ -1,6 +1,7 @@
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 import pytest
 
@@ -162,27 +163,34 @@ def test_cli_check_mirror():
 @pytest.mark.parametrize(
     "arch, host, target, version, expect",
     (
-        (None, "windows", "desktop", "6.2.0", None),
+        ("impossible_arch", "windows", "desktop", "6.2.0", "impossible_arch"),
         ("", "windows", "desktop", "6.2.0", None),
+        (None, "windows", "desktop", "6.2.0", None),
         (None, "linux", "desktop", "6.2.0", "gcc_64"),
         (None, "mac", "desktop", "6.2.0", "clang_64"),
         (None, "mac", "ios", "6.2.0", "ios"),
         (None, "mac", "android", "6.2.0", "android"),
         (None, "mac", "android", "5.12.0", None),
+        # SimpleSpec instead of Version
+        ("impossible_arch", "windows", "desktop", "6.2", "impossible_arch"),
+        ("", "windows", "desktop", "6.2", None),
+        (None, "windows", "desktop", "6.2", None),
+        (None, "linux", "desktop", "6.2", "gcc_64"),
+        (None, "mac", "desktop", "6.2", "clang_64"),
+        (None, "mac", "ios", "6.2", "ios"),
+        (None, "mac", "android", "6.2", None),  # No way to determine arch for android target w/o version
     ),
 )
-def test_set_arch(arch, host, target, version, expect):
-    cli = Cli()
-    cli._setup_settings()
+def test_set_arch(arch: Optional[str], host: str, target: str, version: str, expect: Optional[str]):
 
     if not expect:
         with pytest.raises(CliInputError) as e:
-            cli._set_arch([], arch, host, target, version)
+            Cli._set_arch(arch, host, target, version)
         assert e.type == CliInputError
         assert format(e.value) == "Please supply a target architecture."
         assert e.value.should_show_help is True
     else:
-        assert cli._set_arch([], arch, host, target, version) == expect
+        assert Cli._set_arch(arch, host, target, version) == expect
 
 
 @pytest.mark.parametrize(
