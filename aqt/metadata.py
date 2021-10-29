@@ -576,6 +576,10 @@ class MetadataFactory:
             except (ArchiveDownloadError, ArchiveConnectionError) as e:
                 if i == len(base_urls) - 1:
                     raise e from e
+                else:
+                    getLogger("aqt.metadata").debug(
+                        f"Connection to '{base_url}' failed. Retrying with fallback '{base_urls[i + 1]}'."
+                    )
 
     @staticmethod
     def iterate_folders(html_doc: str, filter_category: str = "") -> Generator[str, None, None]:
