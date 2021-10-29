@@ -614,7 +614,9 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
             "Out of memory when downloading and extracting archives in parallel.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please reduce your 'concurrency' setting (see "
-            "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration)",
+            "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration)\n"
+            "* Please try using the '--external' flag to specify an alternate 7z extraction tool "
+            "(see https://aqtinstall.readthedocs.io/en/latest/cli.html#cmdoption-list-tool-external)",
             1,
         ),
         (
@@ -623,7 +625,9 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
             "Caught MemoryError, terminating installer workers\n"
             "Out of memory when downloading and extracting archives.\n"
             "==============================Suggested follow-up:==============================\n"
-            "* Please free up more memory.",
+            "* Please free up more memory.\n"
+            "* Please try using the '--external' flag to specify an alternate 7z extraction tool "
+            "(see https://aqtinstall.readthedocs.io/en/latest/cli.html#cmdoption-list-tool-external)",
             1,
         ),
     ),
