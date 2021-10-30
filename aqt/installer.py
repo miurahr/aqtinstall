@@ -402,8 +402,9 @@ class Cli:
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip(Settings.zipcmd)
-        version = getattr(args, "version", "0.0.1")  # for legacy aqt tool
-        Cli._validate_version_str(version)
+        version = getattr(args, "version", None)
+        if version is not None:
+            Cli._validate_version_str(version)
         keep = args.keep
         if args.base is not None:
             base = args.base
