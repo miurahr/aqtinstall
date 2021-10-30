@@ -223,7 +223,15 @@ are described here:
 
     Specify external 7zip command path. By default, aqt uses py7zr_ for this task.
 
+    In the past, our users have had success using 7-zip_ on Windows, Linux and Mac.
+    You can install 7-zip on Windows with Choco_.
+    The Linux/Mac port of 7-zip is called ``p7zip``, and you can install it with brew_ on Mac,
+    or on Linux with your package manager.
+
 .. _py7zr: https://pypi.org/project/py7zr/
+.. _7-zip: https://www.7-zip.org/
+.. _Choco: https://community.chocolatey.org/packages/7zip/19.0
+.. _brew: https://formulae.brew.sh/formula/p7zip
 
 .. option:: --internal
 

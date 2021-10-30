@@ -850,14 +850,19 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
         raise CliKeyboardInterrupt("Installer halted by keyboard interrupt.") from e
     except MemoryError as e:
         close_worker_pool_on_exception(e)
+        alt_extractor_msg = (
+            "Please try using the '--external' flag to specify an alternate 7z extraction tool "
+            "(see https://aqtinstall.readthedocs.io/en/latest/cli.html#cmdoption-list-tool-external)"
+        )
         if Settings.concurrency > 1:
             docs_url = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration"
             raise OutOfMemory(
                 "Out of memory when downloading and extracting archives in parallel.",
-                suggested_action=[f"Please reduce your 'concurrency' setting (see {docs_url})"],
+                suggested_action=[f"Please reduce your 'concurrency' setting (see {docs_url})", alt_extractor_msg],
             ) from e
         raise OutOfMemory(
-            "Out of memory when downloading and extracting archives.", suggested_action=["Please free up more memory."]
+            "Out of memory when downloading and extracting archives.",
+            suggested_action=["Please free up more memory.", alt_extractor_msg],
         )
     except Exception as e:
         close_worker_pool_on_exception(e)
