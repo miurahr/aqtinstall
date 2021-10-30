@@ -7,20 +7,30 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.0.1`_ (29, Oct. 2021)
+=========================
+
 Added
 -----
 * Allow retries on checksum error(#420)
 * Run on Python 3.10(#424)
+* Add more mirrors for fallback(#432)
+* Add fallback URL message(#434)
 
 Fixed
 -----
 * ``--noarchives`` inconsistency(#429)
 * Allow multiprocessing error propagation(#419)
 * Legacy command behavior, reproduce also old bugs (#414)
+* Fix crash on ``crash install-qt <host> <tgt> <spec>`` with no specified arch(#435)
 
 Changed
 -------
 * Print working directory and version in error message(#418)
+
+Security
+--------
+* Use HTTPS for mirror site(#430)
 
 
 `v2.0.0`_ (29, Sep. 2021)
@@ -284,7 +294,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.1...HEAD
+.. _v2.0.1: https://github.com/miurahr/aqtinstall/compare/v2.0.0...v2.0.1
 .. _v2.0.0: https://github.com/miurahr/aqtinstall/compare/v1.2.5...v2.0.0
 .. _v1.2.5: https://github.com/miurahr/aqtinstall/compare/v1.2.4...v1.2.5
 .. _v1.2.4: https://github.com/miurahr/aqtinstall/compare/v1.2.3...v1.2.4
