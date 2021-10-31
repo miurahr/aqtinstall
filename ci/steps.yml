@@ -195,9 +195,19 @@ steps:
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
         if ( $env:ARCH -eq 'win64_mingw81' ) {
           python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win64_mingw810
+          if ($?) {
+            Write-Host 'Successfully installed tools_mingw'
+          } else {
+            throw 'Failed to install tools_mingw'
+          }
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_64\bin" + $env:Path, "Machine")
         } else {
           python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win32_mingw810
+          if ($?) {
+            Write-Host 'Successfully installed tools_mingw'
+          } else {
+            throw 'Failed to install tools_mingw'
+          }
           [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_32\bin" + $env:Path, "Machine")
         }
         $env:Path = "$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin;$(WIN_QT_BINDIR);" + $env:Path
