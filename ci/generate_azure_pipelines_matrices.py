@@ -5,6 +5,7 @@ import collections
 import json
 import random
 from itertools import product
+from typing import Dict, Optional
 
 MIRRORS = [
     "https://ftp.jaist.ac.jp/pub/qtproject",
@@ -29,6 +30,7 @@ class BuildJob:
         output_dir=None,
         list_options=None,
         spec=None,
+        tool_options: Optional[Dict[str, str]] = None,
     ):
         self.command = command
         self.qt_version = qt_version
@@ -40,6 +42,7 @@ class BuildJob:
         self.mirror = mirror
         self.subarchives = subarchives
         self.list_options = list_options if list_options else {}
+        self.tool_options: Dict[str, str] = tool_options if tool_options else {}
         # `steps.yml` assumes that qt_version is the highest version that satisfies spec
         self.spec = spec
         self.output_dir = output_dir
@@ -276,6 +279,33 @@ linux_build_jobs.extend(
     ]
 )
 
+qt_creator_bin_path = "./Tools/QtCreator/bin/"
+qt_creator_mac_bin_path = "./Qt Creator.app/Contents/MacOS/"
+qt_ifw_bin_path = "./Tools/QtInstallerFramework/4.1/bin/"
+tool_options = {
+    "TOOL1_ARGS": "tools_qtcreator qt.tools.qtcreator",
+    "LIST_TOOL1_CMD": f"ls {qt_creator_bin_path}",
+    "TEST_TOOL1_CMD": f"{qt_creator_bin_path}qbs --version",
+    "TOOL2_ARGS": "tools_ifw",
+    "TEST_TOOL2_CMD": f"{qt_ifw_bin_path}archivegen --version",
+    "LIST_TOOL2_CMD": f"ls {qt_ifw_bin_path}",
+}
+# Mac Qt Creator is a .app, or "Package Bundle", so the path is changed:
+tool_options_mac = {
+    **tool_options,
+    "TEST_TOOL1_CMD": f'"{qt_creator_mac_bin_path}qbs" --version',
+    "LIST_TOOL1_CMD": f'ls "{qt_creator_mac_bin_path}"',
+}
+windows_build_jobs.append(
+    BuildJob("install-tool", "", "windows", "desktop", "", "", tool_options=tool_options)
+)
+linux_build_jobs.append(
+    BuildJob("install-tool", "", "linux", "desktop", "", "", tool_options=tool_options)
+)
+mac_build_jobs.append(
+    BuildJob("install-tool", "", "mac", "desktop", "", "", tool_options=tool_options_mac)
+)
+
 matrices = {}
 
 for platform_build_job in all_platform_build_jobs:
@@ -313,6 +343,12 @@ for platform_build_job in all_platform_build_jobs:
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
                 ("QT_BINDIR", build_job.qt_bindir()),
                 ("WIN_QT_BINDIR", build_job.win_qt_bindir()),
+                ("TOOL1_ARGS", build_job.tool_options.get("TOOL1_ARGS", "")),
+                ("LIST_TOOL1_CMD", build_job.tool_options.get("LIST_TOOL1_CMD", "")),
+                ("TEST_TOOL1_CMD", build_job.tool_options.get("TEST_TOOL1_CMD", "")),
+                ("TOOL2_ARGS", build_job.tool_options.get("TOOL2_ARGS", "")),
+                ("LIST_TOOL2_CMD", build_job.tool_options.get("LIST_TOOL2_CMD", "")),
+                ("TEST_TOOL2_CMD", build_job.tool_options.get("TEST_TOOL2_CMD", "")),
             ]
         )
 

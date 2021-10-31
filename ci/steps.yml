@@ -7,6 +7,13 @@ steps:
       pip install -e .
     displayName: install package
 
+  # Install linux dependencies
+  - bash: |
+      sudo apt-get update
+      sudo apt-get install -y libgl1-mesa-dev libxkbcommon-x11-0
+    condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'))
+    displayName: install test dependency for Linux
+
   # Run Aqt
   ##----------------------------------------------------
   ## we insert sleep in random 1sec < duration < 60sec to reduce
@@ -108,6 +115,22 @@ steps:
       if [[ "$(SUBCOMMAND)" == "install-doc" ]]; then
         python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(QT_VERSION) --archives $(SUBARCHIVES)
       fi
+      if [[ "$(SUBCOMMAND)" == "install-tool" ]]; then
+        opt=""
+        if [[ "$(OUTPUT_DIR)" != "" ]]; then
+          opt+=" --outputdir $(OUTPUT_DIR)"
+          sudo mkdir -p "$(OUTPUT_DIR)"
+          sudo chown $(whoami) "$(OUTPUT_DIR)"
+        fi
+        python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(TOOL1_ARGS) $opt
+        $(LIST_TOOL1_CMD)
+        echo "Testing $(TOOL1_ARGS) with '$(TEST_TOOL1_CMD)'"
+        $(TEST_TOOL1_CMD)
+        python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(TOOL2_ARGS) $opt
+        $(LIST_TOOL2_CMD)
+        echo "Testing $(TOOL2_ARGS) with '$(TEST_TOOL2_CMD)'"
+        $(TEST_TOOL2_CMD)
+      fi
     workingDirectory: $(Build.BinariesDirectory)
     env:
       AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
@@ -132,14 +155,8 @@ steps:
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/accelbubble
       make
-    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['SUBCOMMAND'], 'list'))
+    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['SUBCOMMAND'], 'list'), ne(variables['SUBCOMMAND'], 'install-tool'))
     displayName: Build accelbubble example application to test for android
-
-  - script: |
-      sudo apt-get update
-      sudo apt-get install -y libgl1-mesa-dev
-    condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'), eq(variables['SUBCOMMAND'], 'install-qt'))
-    displayName: install test dependency for Linux
 
   ##----------------------------------------------------
   # determine Windows build system
@@ -169,7 +186,7 @@ steps:
       }
       cd $(WIN_QT_BINDIR)
       unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
-    condition: eq( variables['Agent.OS'], 'Windows_NT')
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['SUBCOMMAND'], 'install-qt'))
     displayName: Detect toolchain for Windows and update PATH
 
   # When no modules
@@ -218,7 +235,7 @@ steps:
         qmake $(Build.BinariesDirectory)\tests\helloworld
         mingw32-make
       }
-    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['MODULE'], ''))
+    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['MODULE'], ''), eq(variables['SUBCOMMAND'], 'install-qt'))
     displayName: build test with qmake w/o extra module
   - powershell: |
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
