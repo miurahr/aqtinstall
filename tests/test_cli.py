@@ -150,6 +150,28 @@ def test_cli_invalid_version(capsys, invalid_version):
         assert matcher.match(err)
 
 
+@pytest.mark.parametrize(
+    "version, allow_latest, allow_empty, allow_minus, expect_ok",
+    (
+        ("1.2.3", False, False, False, True),
+        ("1.2.", False, False, False, False),
+        ("latest", True, False, False, True),
+        ("latest", False, False, False, False),
+        ("", False, True, False, True),
+        ("", False, False, False, False),
+        ("1.2.3-0-123", False, False, True, True),
+        ("1.2.3-0-123", False, False, False, False),
+    ),
+)
+def test_cli_validate_version(version: str, allow_latest: bool, allow_empty: bool, allow_minus: bool, expect_ok: bool):
+    if expect_ok:
+        Cli._validate_version_str(version, allow_latest=allow_latest, allow_empty=allow_empty, allow_minus=allow_minus)
+    else:
+        with pytest.raises(CliInputError) as err:
+            Cli._validate_version_str(version, allow_latest=allow_latest, allow_empty=allow_empty, allow_minus=allow_minus)
+        assert err.type == CliInputError
+
+
 def test_cli_check_mirror():
     cli = Cli()
     cli._setup_settings()
