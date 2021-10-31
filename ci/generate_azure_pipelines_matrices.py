@@ -4,12 +4,13 @@ This sets variables for a matrix of QT versions to test downloading against with
 import collections
 import json
 import random
+import re
 from itertools import product
 from typing import Dict, Optional
 
 MIRRORS = [
     "https://ftp.jaist.ac.jp/pub/qtproject",
-    "http://ftp1.nluug.nl/languages/qt",
+    "https://ftp1.nluug.nl/languages/qt",
     "https://mirrors.dotsrc.org/qtproject",
 ]
 
@@ -30,6 +31,7 @@ class BuildJob:
         output_dir=None,
         list_options=None,
         spec=None,
+        mingw_variant: str = "",
         tool_options: Optional[Dict[str, str]] = None,
     ):
         self.command = command
@@ -41,6 +43,7 @@ class BuildJob:
         self.module = module
         self.mirror = mirror
         self.subarchives = subarchives
+        self.mingw_variant: str = mingw_variant
         self.list_options = list_options if list_options else {}
         self.tool_options: Dict[str, str] = tool_options if tool_options else {}
         # `steps.yml` assumes that qt_version is the highest version that satisfies spec
@@ -54,6 +57,12 @@ class BuildJob:
 
     def win_qt_bindir(self) -> str:
         return self.qt_bindir(sep='\\')
+
+    def mingw_folder(self) -> str:
+        if not self.mingw_variant:
+            return ""
+        match = re.match(r"^win(\d+)_(mingw\d+)$", self.mingw_variant)
+        return f"{match[2]}_{match[1]}"
 
 
 class PlatformBuildJobs:
@@ -95,11 +104,11 @@ windows_build_jobs.extend(
     [
         BuildJob(
             "install-qt",
-            "5.14.2",
+            "5.15.2",
             "windows",
             "desktop",
-            "win64_msvc2017_64",
-            "msvc2017_64",
+            "win32_msvc2019",
+            "msvc2019",
             mirror=random.choice(MIRRORS),
         ),
         BuildJob(
@@ -107,8 +116,9 @@ windows_build_jobs.extend(
             "5.14.2",
             "windows",
             "desktop",
-            "win32_msvc2017",
-            "msvc2017",
+            "win32_mingw73",
+            "mingw73_32",
+            mingw_variant="win32_mingw730",
             mirror=random.choice(MIRRORS),
         ),
         BuildJob(
@@ -127,6 +137,7 @@ windows_build_jobs.extend(
             "desktop",
             "win64_mingw81",
             "mingw81_64",
+            mingw_variant="win64_mingw810",
             mirror=random.choice(MIRRORS),
         ),
         # Known issue with Azure-Pipelines environment: it has a pre-installed mingw81 which cause link error.
@@ -146,8 +157,8 @@ windows_build_jobs.extend(
             "5.9.0",
             "windows",
             "desktop",
-            "win64_msvc2017_64",
-            "msvc2017_64",
+            "win64_msvc2015_64",
+            "msvc2015_64",
             module="qtcharts qtnetworkauth",
             mirror=random.choice(MIRRORS),
         ),
@@ -156,8 +167,9 @@ windows_build_jobs.extend(
             "5.14.2",
             "windows",
             "desktop",
-            "win64_msvc2017_64",
-            "msvc2017_64",
+            "win64_mingw73",
+            "mingw73_64",
+            mingw_variant="win64_mingw730",
             spec=">1,<5.15",  # Don't redirect output! Must be wrapped in quotes!
             mirror=random.choice(MIRRORS),
         ),
@@ -338,6 +350,8 @@ for platform_build_job in all_platform_build_jobs:
                 ("QT_BASE_MIRROR", build_job.mirror if build_job.mirror else ""),
                 ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else ""),
                 ("SPEC", build_job.spec if build_job.spec else ""),
+                ("MINGW_VARIANT", build_job.mingw_variant),
+                ("MINGW_FOLDER", build_job.mingw_folder()),
                 ("HAS_EXTENSIONS", build_job.list_options.get("HAS_EXTENSIONS", "False")),
                 ("USE_EXTENSION", build_job.list_options.get("USE_EXTENSION", "None")),
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),

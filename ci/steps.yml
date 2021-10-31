@@ -210,24 +210,14 @@ steps:
         qmake $(Build.BinariesDirectory)\tests\helloworld
         jom
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
-        if ( $env:ARCH -eq 'win64_mingw81' ) {
-          python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win64_mingw810
-          if ($?) {
-            Write-Host 'Successfully installed tools_mingw'
-          } else {
-            throw 'Failed to install tools_mingw'
-          }
-          [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_64\bin" + $env:Path, "Machine")
+        python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.$(MINGW_VARIANT)
+        if ($?) {
+          Write-Host 'Successfully installed tools_mingw'
         } else {
-          python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.win32_mingw810
-          if ($?) {
-            Write-Host 'Successfully installed tools_mingw'
-          } else {
-            throw 'Failed to install tools_mingw'
-          }
-          [Environment]::SetEnvironmentVariable("Path", ";$(Build.BinariesDirectory)\Qt\Tools\mingw810_32\bin" + $env:Path, "Machine")
+          throw 'Failed to install tools_mingw'
         }
-        $env:Path = "$(Build.BinariesDirectory)\Qt\Tools\$(ARCHDIR)\bin;$(WIN_QT_BINDIR);" + $env:Path
+        Set-Item -Path Env:Path -Value ("$(Build.BinariesDirectory)\Qt\Tools\$(MINGW_FOLDER)\bin;$(WIN_QT_BINDIR);" + $Env:Path)
+        Write-Host "Path == " + $env:Path
         mkdir $(Build.BinariesDirectory)\tests
         cd $(Build.BinariesDirectory)\tests
         7z x $(Build.SourcesDirectory)\ci\helloworld.7z
