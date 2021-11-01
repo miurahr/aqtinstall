@@ -7,6 +7,22 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.0.2`_ (1, Nov. 2021)
+=========================
+
+Added
+-----
+* Support Qt 6.2.1 (#441)
+
+Fixed
+-----
+* Degraded install-tool (#442,#443)
+
+Changed
+-------
+* Add suggestion to use ``--external`` for MemoryError (#439)
+
+
 `v2.0.1`_ (29, Oct. 2021)
 =========================
 
@@ -248,7 +264,7 @@ Fixed
 =========================
 
 Added
------
+-----.. _v2.0.1: https://github.com/miurahr/aqtinstall/compare/v2.0.0...v2.0.1
 
 * Patching android installation for Qt6
   - patch target_qt.conf
@@ -294,7 +310,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.2...HEAD
+.. _v2.0.2: https://github.com/miurahr/aqtinstall/compare/v2.0.1...v2.0.2
 .. _v2.0.1: https://github.com/miurahr/aqtinstall/compare/v2.0.0...v2.0.1
 .. _v2.0.0: https://github.com/miurahr/aqtinstall/compare/v1.2.5...v2.0.0
 .. _v1.2.5: https://github.com/miurahr/aqtinstall/compare/v1.2.4...v1.2.5
