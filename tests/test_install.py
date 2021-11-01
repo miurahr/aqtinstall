@@ -91,13 +91,14 @@ class MockArchive:
     version: str = ""
     arch_dir: str = ""
     should_install: bool = True
+    date: datetime = datetime.now()
 
     def xml_package_update(self) -> str:
         return textwrap.dedent(
             f"""\
              <PackageUpdate>
               <Name>{self.update_xml_name}</Name>
-              <Version>{self.version}-0-{datetime.now().strftime("%Y%m%d%H%M")}</Version>
+              <Version>{self.version}-0-{self.date.strftime("%Y%m%d%H%M")}</Version>
               <Description>none</Description>
               <DownloadableArchives>{self.filename_7z}</DownloadableArchives>
              </PackageUpdate>"""
@@ -253,9 +254,65 @@ def plain_qtbase_archive(update_xml_name: str, arch: str, should_install: bool =
     )
 
 
+def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datetime.now()) -> MockArchive:
+    return MockArchive(
+        filename_7z=f"{tool_name}-{host}-{variant}.7z",
+        update_xml_name=variant,
+        contents=(
+            PatchedFile(
+                filename=f"bin/{tool_name}-{variant}.exe",
+                unpatched_content="Some executable binary file",
+                patched_content=None,  # it doesn't get patched
+            ),
+        ),
+        should_install=True,
+        date=date,
+    )
+
+
 @pytest.mark.parametrize(
     "cmd, host, target, version, arch, arch_dir, updates_url, archives, expect_out",
     (
+        (
+            "install-tool linux desktop tools_qtcreator qt.tools.qtcreator".split(),
+            "linux",
+            "desktop",
+            "1.2.3-0-197001020304",
+            "",
+            "",
+            "linux_x64/desktop/tools_qtcreator/Updates.xml",
+            [
+                tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator"),
+            ],
+            re.compile(
+                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"Downloading qt.tools.qtcreator...\n"
+                r"Finished installation of tools_qtcreator-linux-qt.tools.qtcreator.7z in .*\n"
+                r"Finished installation\n"
+                r"Time elapsed: .* second"
+            ),
+        ),
+        (
+            "tool linux tools_qtcreator 1.2.3-0-197001020304 qt.tools.qtcreator".split(),
+            "linux",
+            "desktop",
+            "1.2.3",
+            "",
+            "",
+            "linux_x64/desktop/tools_qtcreator/Updates.xml",
+            [
+                tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator", datetime(1970, 1, 2, 3, 4, 5, 6)),
+            ],
+            re.compile(
+                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
+                r"In the future, please use the command 'install-tool' instead.\n"
+                r"Downloading qt.tools.qtcreator...\n"
+                r"Finished installation of tools_qtcreator-linux-qt.tools.qtcreator.7z in .*\n"
+                r"Finished installation\n"
+                r"Time elapsed: .* second"
+            ),
+        ),
         (
             "install 5.14.0 windows desktop win32_mingw73".split(),
             "windows",

@@ -373,11 +373,11 @@ class ToolArchives(QtArchives):
         self.tool_name = tool_name
         self.os_name = os_name
         self.logger = getLogger("aqt.archives")
-        self.is_require_version_match = version_str is not None
+        self.tool_version_str: Optional[str] = version_str
         super(ToolArchives, self).__init__(
             os_name=os_name,
             target=target,
-            version_str=version_str or "0.0.1",  # dummy value
+            version_str="0.0.1",  # dummy value
             arch=arch,
             base=base,
             timeout=timeout,
@@ -424,7 +424,7 @@ class ToolArchives(QtArchives):
 
         name = packageupdate.find("Name").text
         named_version = packageupdate.find("Version").text
-        if self.is_require_version_match and named_version != self.version:
+        if self.tool_version_str and named_version != self.tool_version_str:
             message = f"The package '{self.arch}' has the version '{named_version}', not the requested '{self.version}'."
             raise NoPackageFound(message, suggested_action=self.help_msg())
         package_desc = packageupdate.find("Description").text
