@@ -18,7 +18,7 @@ jobs:
     - name: Install tools
       run: |
         pip install -U pip
-        pip install tox tox-gh-actions coveralls
+        pip install tox tox-gh-actions coveralls coverage[toml]
     - name: Check invocation with Python2
       run: |
         ! python2 -m aqt help
