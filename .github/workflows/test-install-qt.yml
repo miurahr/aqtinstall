@@ -24,9 +24,9 @@ jobs:
             qtver: "6.1.0"
             artifact: standard
           - os: windows-latest
-            py: "3.9"
+            py: "3.8"
             architecture: "x86"
-            qtver: "6.1.0"
+            qtver: "6.2.0"
             artifact: standard
         exclude:
           - os: ubuntu-latest
