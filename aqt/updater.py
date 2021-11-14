@@ -80,7 +80,7 @@ class Updater:
                 continue
             try:
                 result = subprocess.run([str(qmake_path), "-query"], stdout=subprocess.PIPE)
-            except subprocess.SubprocessError:
+            except (subprocess.SubprocessError, IOError, OSError):
                 return False
             if result.returncode == 0:
                 self.qmake_path = qmake_path
