@@ -293,7 +293,7 @@ linux_build_jobs.extend(
 
 qt_creator_bin_path = "./Tools/QtCreator/bin/"
 qt_creator_mac_bin_path = "./Qt Creator.app/Contents/MacOS/"
-qt_ifw_bin_path = "./Tools/QtInstallerFramework/4.1/bin/"
+qt_ifw_bin_path = "./Tools/QtInstallerFramework/*/bin/"
 tool_options = {
     "TOOL1_ARGS": "tools_qtcreator qt.tools.qtcreator",
     "LIST_TOOL1_CMD": f"ls {qt_creator_bin_path}",
