@@ -37,7 +37,7 @@ To use ``aqt`` to install Qt, you will need to tell ``aqt`` four things:
 Keep in mind that Qt for IOS is only available on Mac OS, and Qt for WinRT is
 only available on Windows.
 
-To find out what versions of Qt are available, you can use the :ref:`aqt list-qt command <list qt command>`.
+To find out what versions of Qt are available, you can use the :ref:`aqt list-qt command <list-qt command>`.
 This command will print all versions of Qt available for Windows Desktop:
 
 .. code-block:: console
@@ -56,10 +56,10 @@ This command will print all versions of Qt available for Windows Desktop:
 
 Notice that the version numbers are sorted, grouped by minor version number,
 and separated by a single space-character. The output of all of the 
-:ref:`aqt list-qt <list qt command>` commands is intended to make it easier for you to write programs
-that consume the output of :ref:`aqt list-qt <list qt command>`.
+:ref:`aqt list-qt <list-qt command>` commands is intended to make it easier for you to write programs
+that consume the output of :ref:`aqt list-qt <list-qt command>`.
 
-Because the :ref:`aqt list-qt <list qt command>` command directly queries the Qt downloads repository
+Because the :ref:`aqt list-qt <list-qt command>` command directly queries the Qt downloads repository
 at https://download.qt.io/, the results of this command will always be accurate.
 The `Available Qt versions`_ wiki page was last modified at some point in the past,
 so it may or may not be up to date.
@@ -69,7 +69,7 @@ so it may or may not be up to date.
 Now that we know what versions of Qt are available, let's choose version 6.2.0.
 
 The next thing we need to do is find out what architectures are available for
-Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list qt command>` with the
+Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list-qt command>` with the
 ``--arch`` flag:
 
 .. code-block:: console
@@ -81,7 +81,7 @@ Notice that this is a very small subset of the architectures listed in the
 `Available Qt versions`_ wiki page. If we need to use some architecture that
 is not on this list, we can use the `Available Qt versions`_ wiki page to get
 a rough idea of what versions support the architecture we want, and then use
-:ref:`aqt list-qt <list qt command>` to confirm that the architecture is available.
+:ref:`aqt list-qt <list-qt command>` to confirm that the architecture is available.
 
 Let's say that we want to install Qt 6.2.0 with architecture `win64_mingw81`.
 The installation command we need is:
@@ -150,9 +150,9 @@ Installing Modules
 
 Let's say we need to install some modules for Qt 5.15.2 on Windows Desktop.
 First we need to find out what the modules are called, and we can do that 
-with :ref:`aqt list-qt <list qt command>` with the ``--modules`` flag.
+with :ref:`aqt list-qt <list-qt command>` with the ``--modules`` flag.
 Each version of Qt has a different list of modules for each host OS/ target SDK/ architecture
-combination, so we will need to supply :ref:`aqt list-qt <list qt command>` with that information:
+combination, so we will need to supply :ref:`aqt list-qt <list-qt command>` with that information:
 
 .. code-block:: console
 
@@ -174,9 +174,9 @@ If we wish to install all the modules that are available, we can do that with th
 
     $ aqt install-qt windows desktop 5.15.2 win64_mingw81 -m all
 
-Remember that the :ref:`aqt list-qt <list qt command>` command is meant to be scriptable?
+Remember that the :ref:`aqt list-qt <list-qt command>` command is meant to be scriptable?
 One way to install all modules available for Qt 5.15.2 is to send the output of
-:ref:`aqt list-qt <list qt command>` into :ref:`aqt install-qt <qt installation command>`, like this:
+:ref:`aqt list-qt <list-qt command>` into :ref:`aqt install-qt <qt installation command>`, like this:
 
 .. code-block:: console
 
@@ -190,7 +190,7 @@ If you want to install all available modules, you are probably better off using
 the ``all`` keyword, as discussed above. This scripting example is presented to
 give you a sense of how to accomplish something more complicated.
 Perhaps you want to install all modules except `qtnetworkauth`; you could write a script
-that removes `qtnetworkauth` from the output of :ref:`aqt list-qt <list qt command>`,
+that removes `qtnetworkauth` from the output of :ref:`aqt list-qt <list-qt command>`,
 and pipe that into :ref:`aqt install-qt <qt installation command>`.
 This exercise is left to the reader.
 
@@ -231,16 +231,16 @@ Let's see what happens when we try to list architectures and modules for Qt 6:
     Please add your extension using the `--extension` flag.
 
 The Qt 6 for Android repositories are a little different than the Qt 5 repositories,
-and the :ref:`aqt list-qt <list qt command>` tool doesn't know where to look for modules and architectures
+and the :ref:`aqt list-qt <list-qt command>` tool doesn't know where to look for modules and architectures
 if you don't tell it what architecture you need. I know, it sounds a little
 backwards, but that's how the Qt repo was put together.
 
-There are four architectures available, and the error message from :ref:`aqt list-qt <list qt command>`
+There are four architectures available, and the error message from :ref:`aqt list-qt <list-qt command>`
 just told us what they are: `x86_64`, `x86`, `armv7`, and `arm64_v8a`.
 
 We know we want to use `armv7` for the architecture, but we don't know exactly
 what value for 'architecture' we need to pass to :ref:`aqt install-qt <qt installation command>`
-yet, so we will use :ref:`aqt list-qt <list qt command>` again:
+yet, so we will use :ref:`aqt list-qt <list-qt command>` again:
 
 .. code-block:: console
 
@@ -276,7 +276,7 @@ Finally, let's install Qt 6.2.0 for Android armv7 with the ``qtcharts`` and
 Installing Qt for WASM
 ----------------------
 
-To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt <list qt command>` that we are
+To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt <list-qt command>` that we are
 using the `wasm` architecture. We can do that by using the ``--extension wasm`` flag.
 
 .. code-block:: console
@@ -312,7 +312,7 @@ Installing Tools
 ----------------
 
 Let's find out what tools are available for Windows Desktop by using the
-:ref:`aqt list-tool <list tool command>` command:
+:ref:`aqt list-tool <list-tool command>` command:
 
 .. code-block:: console
 
@@ -367,9 +367,9 @@ Let's see some more details, using the ``-l`` or ``--long`` flag:
     qt.tools.win64_mingw730   7.3.0-1-202004170606   2020-04-17
     qt.tools.win64_mingw810   8.1.0-1-202004170606   2020-04-17
 
-The ``-l`` flag causes :ref:`aqt list-tool <list tool command>` to print a table
+The ``-l`` flag causes :ref:`aqt list-tool <list-tool command>` to print a table
 that shows plenty of data pertinent to each tool variant available in `tools_mingw`.
-:ref:`aqt list-tool <list tool command>` additionally prints the 'Display Name'
+:ref:`aqt list-tool <list-tool command>` additionally prints the 'Display Name'
 and 'Description' for each tool if your terminal is wider than 95 characters;
 terminals that are narrower than this cannot display this table in a readable way.
 
@@ -380,7 +380,7 @@ This command receives four parameters:
 2. The target SDK (desktop, android, ios, or winrt)
 3. The name of the tool (this is `tools_mingw` in our case)
 4. (Optional) The tool variant name. We saw a list of these when we ran
-   :ref:`aqt list-tool <list tool command>` with the `tool name` argument filled in.
+   :ref:`aqt list-tool <list-tool command>` with the `tool name` argument filled in.
 
 To install `mingw`, you could use this command (please don't):
 
@@ -393,7 +393,7 @@ in this case, you would install 10 different versions of the same tool.
 For some tools, like `qtcreator` or `ifw`, this is an appropriate thing to do,
 since each tool variant is a different program.
 However, for tools like `mingw` and `vcredist`, it would make more sense to use
-:ref:`aqt list-tool <list tool command>` to see what tool variants are available,
+:ref:`aqt list-tool <list-tool command>` to see what tool variants are available,
 and then install just the tool variant you are interested in, like this:
 
 .. code-block:: console
