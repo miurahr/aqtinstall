@@ -108,6 +108,13 @@ steps:
         fi
         aqt list-qt $(HOST) $(TARGET) $ext --arch $(QT_VERSION)                 # print architectures for version/host/target
         aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --arch latest
+
+        # list-src/doc/example
+        aqt list-src $(HOST) $(QT_VERSION)                                      # print source archives available for host/desktop/version
+        aqt list-doc $(HOST) $(QT_VERSION)                                      # print docs archives available for host/desktop/version
+        aqt list-doc $(HOST) $(QT_VERSION) --modules                            # print docs modules available for host/desktop/version
+        aqt list-example $(HOST) $(QT_VERSION)                                  # print example archives available for host/desktop/version
+        aqt list-example $(HOST) $(QT_VERSION) --modules                        # print example modules available for host/desktop/version
       fi
       if [[ "$(SUBCOMMAND)" == "install-src" ]]; then
         python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(QT_VERSION) --archives $(SUBARCHIVES)
