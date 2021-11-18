@@ -308,7 +308,9 @@ class Cli:
         self.show_aqt_version()
         if args.is_legacy:
             self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
-        target = args.target
+        elif getattr(args, "target", None) is not None:
+            self._warn_on_deprecated_parameter("target", args.target)
+        target = "desktop"  # The only valid target for src/doc/examples is "desktop"
         os_name = args.host
         if hasattr(args, "qt_version_spec"):
             qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch=""))
@@ -586,6 +588,13 @@ class Cli:
             f"In the future, please use the command '{new_name}' instead."
         )
 
+    def _warn_on_deprecated_parameter(self, parameter_name: str, value: str):
+        self.logger.warning(
+            f"Warning: The parameter '{parameter_name}' with value '{value}' is deprecated and marked for "
+            f"removal in a future version of aqt.\n"
+            f"In the future, please omit this parameter."
+        )
+
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction):
         deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
 
@@ -599,7 +608,7 @@ class Cli:
             description = f"{desc} {deprecated_msg}" if is_legacy else desc
             parser = subparsers.add_parser(cmd, description=description)
             parser.set_defaults(func=action, is_legacy=is_legacy)
-            self._set_common_arguments(parser, is_legacy=is_legacy)
+            self._set_common_arguments(parser, is_legacy=is_legacy, is_target_deprecated=True)
             self._set_common_options(parser)
             self._set_module_options(parser)
             if is_add_kde:
@@ -607,7 +616,12 @@ class Cli:
 
         def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
             parser = subparsers.add_parser(cmd, description=desc)
-            self._set_common_arguments(parser, is_legacy=False)
+            parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+            parser.add_argument(
+                "qt_version_spec",
+                metavar="(VERSION | SPECIFICATION)",
+                help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+            )
             parser.set_defaults(func=lambda args: self.run_list_src_doc_examples(args, cmd_type))
 
             if cmd_type != "src":
@@ -797,15 +811,25 @@ class Cli:
             help="Specify subset packages to install (Default: all standard and extra modules).",
         )
 
-    def _set_common_arguments(self, subparser, *, is_legacy: bool):
+    def _set_common_arguments(self, subparser, *, is_legacy: bool, is_target_deprecated: bool = False):
         """
         Legacy commands require that the version comes before host and target.
         Non-legacy commands require that the host and target are before the version.
+        install-src/doc/example commands do not require a "target" argument anymore, as of 11/22/2021
         """
         if is_legacy:
             subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
         subparser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-        subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
+        if is_target_deprecated:
+            subparser.add_argument(
+                "target",
+                choices=["desktop", "winrt", "android", "ios"],
+                nargs="?",
+                help="Ignored. This parameter is deprecated and marked for removal in a future release. "
+                "It is present here for backwards compatibility.",
+            )
+        else:
+            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
         if not is_legacy:
             subparser.add_argument(
                 "qt_version_spec",

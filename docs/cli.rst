@@ -517,7 +517,7 @@ install-src command
         [-k | --keep]
         [--archives <archive> [<archive>...]]
         [--kde]
-        <host> <target> (<Qt version> | <spec>)
+        <host> [<target>] (<Qt version> | <spec>)
 
 Install Qt source code for the specified version and target.
 
@@ -528,7 +528,8 @@ Install Qt source code for the specified version and target.
 
 .. describe:: target
 
-    desktop, ios or android
+    Deprecated and marked for removal in a future version of aqt.
+    This parameter exists for backwards compatibility reasons, and its value is ignored.
 
 .. describe:: Qt version
 
@@ -542,9 +543,9 @@ Install Qt source code for the specified version and target.
     cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
     and ``aqt`` will select the highest available version within that `SimpleSpec`_.
 
-    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
-    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
-    install the highest version of Qt available.
+    For example, ``aqt install-src mac 5.12`` would install sources for the newest
+    version of Qt 5.12 available, and ``aqt install-src mac "*"`` would
+    install sources for the highest version of Qt available.
 
 .. option:: --kde
 
@@ -575,7 +576,7 @@ install-doc command
         [-k | --keep]
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
-        <host> <target> (<Qt version> | <spec>)
+        <host> [<target>] (<Qt version> | <spec>)
 
 Install Qt documentation for the specified version and target.
 
@@ -585,7 +586,8 @@ Install Qt documentation for the specified version and target.
 
 .. describe:: target
 
-    desktop, ios or android
+    Deprecated and marked for removal in a future version of aqt.
+    This parameter exists for backwards compatibility reasons, and its value is ignored.
 
 .. describe:: Qt version
 
@@ -599,9 +601,9 @@ Install Qt documentation for the specified version and target.
     cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
     and ``aqt`` will select the highest available version within that `SimpleSpec`_.
 
-    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
-    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
-    install the highest version of Qt available.
+    For example, ``aqt install-doc mac 5.12`` would install documentation for the newest
+    version of Qt 5.12 available, and ``aqt install-doc mac "*"`` would
+    install documentation for the highest version of Qt available.
 
 See `common options`_.
 
@@ -625,7 +627,7 @@ install-example command
         [-k | --keep]
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
-        <host> <target> (<Qt version> | <spec>)
+        <host> [<target>] (<Qt version> | <spec>)
 
 Install Qt examples for the specified version and target.
 
@@ -636,7 +638,8 @@ Install Qt examples for the specified version and target.
 
 .. describe:: target
 
-    desktop, ios or android
+    Deprecated and marked for removal in a future version of aqt.
+    This parameter exists for backwards compatibility reasons, and its value is ignored.
 
 .. describe:: Qt version
 
@@ -650,9 +653,9 @@ Install Qt examples for the specified version and target.
     cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
     and ``aqt`` will select the highest available version within that `SimpleSpec`_.
 
-    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
-    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
-    install the highest version of Qt available.
+    For example, ``aqt install-example mac 5.12`` would install examples for the newest
+    version of Qt 5.12 available, and ``aqt install-example mac "*"`` would
+    install examples for the highest version of Qt available.
 
 
 See `common options`_.
@@ -744,9 +747,9 @@ Example: Install examples, doc and source:
 
 .. code-block:: console
 
-    aqt install-example windows desktop 5.15.2 -m qtcharts qtnetworkauth
-    aqt install-doc windows desktop 5.15.2 -m qtcharts qtnetworkauth
-    aqt install-src windows desktop 5.15.2 --archives qtbase --kde
+    aqt install-example windows 5.15.2 -m qtcharts qtnetworkauth
+    aqt install-doc windows 5.15.2 -m qtcharts qtnetworkauth
+    aqt install-src windows 5.15.2 --archives qtbase --kde
 
 Example: Print archives available for installation with ``install-example/doc/src``:
 
