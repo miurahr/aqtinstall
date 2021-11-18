@@ -366,6 +366,7 @@ class MetadataFactory:
         extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         archives_query: Optional[List[str]] = None,
+        src_doc_examples_query: Optional[Tuple[str, Version, bool]] = None,
         tool_name: Optional[str] = None,
         is_long_listing: bool = False,
     ):
@@ -419,6 +420,14 @@ class MetadataFactory:
             self.request_type = "archives for modules" if len(archives_query) > 2 else "archives for qt"
             version, arch, modules = archives_query[0], archives_query[1], archives_query[2:]
             self._action = lambda: self.fetch_archives(self._to_version(version), arch, modules)
+        elif src_doc_examples_query:
+            cmd_type, version, is_modules_query = src_doc_examples_query
+            if is_modules_query:
+                self.request_type = f"modules for {cmd_type}"
+                self._action = lambda: self.fetch_modules_sde(cmd_type, version)
+            else:
+                self.request_type = f"archives for {cmd_type}"
+                self._action = lambda: self.fetch_archives_sde(cmd_type, version)
         else:
             self.request_type = "versions"
             self._action = self.fetch_versions
@@ -663,6 +672,31 @@ class MetadataFactory:
             if _arch == arch:
                 modules.add(module)
         return sorted(modules)
+
+    def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
+        """Returns list of modules for src/doc/examples"""
+        assert (
+            cmd_type in ("doc", "examples") and self.archive_id.target == "desktop"
+        ), "Internal misuse of fetch_modules_sde"
+        self.validate_extension(version)
+        qt_ver_str = self._get_qt_version_str(version)
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
+        # pattern: Match all names "qt.qt5.12345.doc.(\w+)
+        pattern = re.compile(r"^qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\." + cmd_type + r"\.(.+)$")
+
+        modules: List[str] = []
+        for name in modules_meta:
+            _match = pattern.match(name)
+            if _match:
+                modules.append(_match.group(2))
+        return modules
+
+    def fetch_archives_sde(self, cmd_type: str, version: Version) -> List[str]:
+        """Returns list of archives for src/doc/examples"""
+        assert (
+            cmd_type in ("src", "doc", "examples") and self.archive_id.target == "desktop"
+        ), "Internal misuse of fetch_archives_sde"
+        return self.fetch_archives(version, cmd_type, [])
 
     def fetch_archives(self, version: Version, arch: str, modules: List[str]) -> List[str]:
         qt_version_str = self._get_qt_version_str(version)

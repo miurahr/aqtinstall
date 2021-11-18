@@ -501,6 +501,16 @@ class Cli:
         )
         show_list(meta)
 
+    def run_list_src_doc_examples(self, args: argparse.ArgumentParser, cmd_type: str):
+        target = "desktop"  # The only valid target for src/doc/examples is "desktop"
+        version = Cli._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
+        is_fetch_modules: bool = getattr(args, "modules", False)
+        meta = MetadataFactory(
+            archive_id=ArchiveId("qt", args.host, target, "src_doc_examples"),
+            src_doc_examples_query=(cmd_type, version, is_fetch_modules),
+        )
+        show_list(meta)
+
     def show_help(self, args=None):
         """Display help message"""
         self.parser.print_help()
@@ -595,6 +605,14 @@ class Cli:
             if is_add_kde:
                 parser.add_argument("--kde", action="store_true", help="patching with KDE patch kit.")
 
+        def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
+            parser = subparsers.add_parser(cmd, description=desc)
+            self._set_common_arguments(parser, is_legacy=False)
+            parser.set_defaults(func=lambda args: self.run_list_src_doc_examples(args, cmd_type))
+
+            if cmd_type != "src":
+                parser.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
+
         make_parser_it("install-qt", "Install Qt.", False, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("install-tool", "Install tools.", False, self._set_install_tool_parser, None)
         make_parser_sde("install-doc", "Install documentation.", False, self.run_install_doc, False)
@@ -603,6 +621,9 @@ class Cli:
 
         self._make_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
+        make_parser_list_sde("list-doc", "List documentation archives available", "doc")
+        make_parser_list_sde("list-example", "List documentation archives available", "examples")
+        make_parser_list_sde("list-src", "List documentation archives available", "src")
 
         make_parser_it("install", "Install Qt.", True, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("tool", "Install tools.", True, self._set_install_tool_parser, None)
