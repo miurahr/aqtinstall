@@ -358,7 +358,8 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ],
             re.compile(
                 r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Warning: The parameter 'target' with value 'desktop' is deprecated and marked for removal in a future version of aqt.\n"
+                r"Warning: The parameter 'target' with value 'desktop' is deprecated "
+                r"and marked for removal in a future version of aqt\.\n"
                 r"In the future, please omit this parameter\.\n"
                 r"Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-everywhere-src-5\.14\.2\.7z in .*\n"
