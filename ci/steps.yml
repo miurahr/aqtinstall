@@ -118,9 +118,18 @@ steps:
       fi
       if [[ "$(SUBCOMMAND)" == "install-src" ]]; then
         python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(QT_VERSION) --archives $(SUBARCHIVES)
+        ls -lh ./$(QT_VERSION)/Src/*/
       fi
-      if [[ "$(SUBCOMMAND)" == "install-doc" ]]; then
-        python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(QT_VERSION) --archives $(SUBARCHIVES)
+      if [[ "$(SUBCOMMAND)" =~ ^install-(doc|example)$ ]]; then
+        opt=""
+        if [[ "$(MODULE)" != "" ]]; then
+          opt+=" -m $(MODULE)"
+        fi
+        python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(QT_VERSION) --archives $(SUBARCHIVES) $opt
+
+        # Docs install to ./Docs/Qt-6.1.0/qtdoc/
+        # Examples install to ./Examples/Qt-6.1.0/demos
+        ls -lh ./*/Qt-$(QT_VERSION)/*/
       fi
       if [[ "$(SUBCOMMAND)" == "install-tool" ]]; then
         opt=""
