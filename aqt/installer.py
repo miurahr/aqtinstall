@@ -335,7 +335,7 @@ class Cli:
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip(Settings.zipcmd)
-        modules = args.modules
+        modules = getattr(args, "modules", None)  # `--modules` is invalid for `install-src`
         archives = args.archives
         all_extra = True if modules is not None and "all" in modules else False
         if not self._check_qt_arg_versions(qt_version):
@@ -553,6 +553,7 @@ class Cli:
             "\n                                        android_x86, android_armv7",
         )
         self._set_module_options(install_qt_parser)
+        self._set_archive_options(install_qt_parser)
         install_qt_parser.add_argument(
             "--noarchives",
             action="store_true",
@@ -604,13 +605,15 @@ class Cli:
             p = subparsers.add_parser(cmd, description=description, **kwargs)
             set_parser_cmd(p, is_legacy=is_legacy)
 
-        def make_parser_sde(cmd: str, desc: str, is_legacy: bool, action, is_add_kde: bool):
+        def make_parser_sde(cmd: str, desc: str, is_legacy: bool, action, is_add_kde: bool, is_add_modules: bool = True):
             description = f"{desc} {deprecated_msg}" if is_legacy else desc
             parser = subparsers.add_parser(cmd, description=description)
             parser.set_defaults(func=action, is_legacy=is_legacy)
             self._set_common_arguments(parser, is_legacy=is_legacy, is_target_deprecated=True)
             self._set_common_options(parser)
-            self._set_module_options(parser)
+            if is_add_modules:
+                self._set_module_options(parser)
+            self._set_archive_options(parser)
             if is_add_kde:
                 parser.add_argument("--kde", action="store_true", help="patching with KDE patch kit.")
 
@@ -631,7 +634,7 @@ class Cli:
         make_parser_it("install-tool", "Install tools.", False, self._set_install_tool_parser, None)
         make_parser_sde("install-doc", "Install documentation.", False, self.run_install_doc, False)
         make_parser_sde("install-example", "Install examples.", False, self.run_install_example, False)
-        make_parser_sde("install-src", "Install source.", False, self.run_install_src, True)
+        make_parser_sde("install-src", "Install source.", False, self.run_install_src, True, is_add_modules=False)
 
         self._make_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
@@ -805,6 +808,8 @@ class Cli:
 
     def _set_module_options(self, subparser):
         subparser.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
+
+    def _set_archive_options(self, subparser):
         subparser.add_argument(
             "--archives",
             nargs="*",
