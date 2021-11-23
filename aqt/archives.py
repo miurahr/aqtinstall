@@ -351,6 +351,16 @@ class SrcDocExamplesArchives(QtArchives):
         """
         return TargetConfig("src_doc_examples", self.target, self.arch, self.os_name)
 
+    def help_msg(self, missing_modules: Iterable[str]) -> Iterable[str]:
+        cmd_type = "example" if self.flavor == "examples" else self.flavor
+        base_cmd = f"aqt list-{cmd_type} {self.os_name} {self.version}"
+        mods = f"Please use '{base_cmd} --modules' to show modules available."
+        has_non_base_pkg: bool = len(list(missing_modules)) > 1
+        messages = []
+        if has_non_base_pkg:
+            messages.append(mods)
+        return messages
+
 
 class ToolArchives(QtArchives):
     """Hold tool archive package list

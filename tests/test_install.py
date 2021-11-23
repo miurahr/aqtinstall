@@ -665,16 +665,21 @@ def test_install(
             "In the future, please omit this parameter.\n"
             "The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
-            "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n"
-            "* Please use 'aqt list-qt windows desktop --modules 5.15.0 <arch>' to show modules available.\n",
+            "* Please use 'aqt list-doc windows 5.15.0 --modules' to show modules available.\n",
         ),
         (
             "install-doc windows 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
             "The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
-            "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n"
-            "* Please use 'aqt list-qt windows desktop --modules 5.15.0 <arch>' to show modules available.\n",
+            "* Please use 'aqt list-doc windows 5.15.0 --modules' to show modules available.\n",
+        ),
+        (
+            "install-example windows 5.15.0 -m nonexistent foo",
+            "windows-5152-src-doc-example-update.xml",
+            "The packages ['examples', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-example windows 5.15.0 --modules' to show modules available.\n",
         ),
         (
             "install-tool windows desktop tools_vcredist nonexistent",
