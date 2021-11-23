@@ -32,7 +32,7 @@ jobs:
 - job: Mac
   dependsOn: MatricesGenerator
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-10.15'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.mac'] ]
   steps:
