@@ -265,7 +265,12 @@ steps:
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/redditclient
       make
-    condition: and(eq( variables['TARGET'], 'desktop'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['MODULE'], ''))
+    condition: |
+      and(eq( variables['TARGET'], 'desktop'),
+          or(eq(variables['Agent.OS'], 'Linux'),
+          eq(variables['Agent.OS'], 'Darwin')),
+          ne(variables['MODULE'], ''),
+          eq(variables['SUBCOMMAND'], 'install-qt'))
     displayName: Build test with qmake for Linux and macOS with extra module
 
   ##----------------------------------------------------
