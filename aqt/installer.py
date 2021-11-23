@@ -638,9 +638,9 @@ class Cli:
 
         self._make_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
-        make_parser_list_sde("list-doc", "List documentation archives available", "doc")
-        make_parser_list_sde("list-example", "List documentation archives available", "examples")
-        make_parser_list_sde("list-src", "List documentation archives available", "src")
+        make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
+        make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
+        make_parser_list_sde("list-src", "List source archives available (use with install-src)", "src")
 
         make_parser_it("install", "Install Qt.", True, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("tool", "Install tools.", True, self._set_install_tool_parser, None)
