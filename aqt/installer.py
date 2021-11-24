@@ -33,6 +33,8 @@ import sys
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Callable, List, Optional
 
 import aqt
@@ -838,14 +840,16 @@ class Cli:
             return function(fallback_url)
 
 
-def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool):
+def run_installer(
+    archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool, archive_dest: Path = Path(".")
+):
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
     #
     tasks = []
     for arc in archives:
-        tasks.append((arc, base_dir, sevenzip, queue, keep))
+        tasks.append((arc, base_dir, sevenzip, queue, archive_dest, keep))
     ctx = multiprocessing.get_context("spawn")
     pool = ctx.Pool(Settings.concurrency, init_worker_sh)
 
@@ -896,6 +900,7 @@ def installer(
     base_dir: str,
     command: Optional[str],
     queue: multiprocessing.Queue,
+    archive_dest: Path,
     keep: bool = False,
     response_timeout: Optional[int] = None,
 ):
@@ -906,7 +911,7 @@ def installer(
     name = qt_archive.name
     url = qt_archive.archive_url
     hashurl = qt_archive.hashurl
-    archive = qt_archive.archive
+    archive: Path = archive_dest / qt_archive.archive
     start_time = time.perf_counter()
     # set defaults
     Settings.load_settings()
@@ -943,10 +948,10 @@ def installer(
                 "-bd",
                 "-y",
                 "-o{}".format(base_dir),
-                archive,
+                str(archive),
             ]
         else:
-            command_args = [command, "x", "-aoa", "-bd", "-y", archive]
+            command_args = [command, "x", "-aoa", "-bd", "-y", str(archive)]
         try:
             proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
             logger.debug(proc.stdout)
@@ -955,7 +960,7 @@ def installer(
             raise ArchiveExtractionError(msg) from cpe
     if not keep:
         os.unlink(archive)
-    logger.info("Finished installation of {} in {:.8f}".format(archive, time.perf_counter() - start_time))
+    logger.info("Finished installation of {} in {:.8f}".format(archive.name, time.perf_counter() - start_time))
     qh.flush()
     qh.close()
     logger.removeHandler(qh)

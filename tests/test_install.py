@@ -146,11 +146,11 @@ def make_mock_geturl_download_archive(
 
         def locate_archive() -> MockArchive:
             for arc in archives:
-                if out == arc.filename_7z:
+                if Path(out).name == arc.filename_7z:
                     return arc
             assert False, "Requested an archive that was not mocked"
 
-        locate_archive().write_compressed_archive(Path("./"))
+        locate_archive().write_compressed_archive(Path(out).parent)
 
     return mock_getUrl, mock_download_archive
 
@@ -731,6 +731,7 @@ def test_install_installer_archive_extraction_err(monkeypatch):
             base_dir=temp_dir,
             command="some_nonexistent_7z_extractor",
             queue=MockMultiprocessingManager.Queue(),
+            archive_dest=Path(temp_dir),
         )
     assert err.type == ArchiveExtractionError
     err_msg = format(err.value).rstrip()
