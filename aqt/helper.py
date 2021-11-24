@@ -306,6 +306,14 @@ class SettingsClass:
         return result
 
     @property
+    def archive_download_location(self):
+        return self.config.get("aqt", "archive_download_location", fallback=".")
+
+    @property
+    def always_keep_archives(self):
+        return self.config.getboolean("aqt", "always_keep_archives", fallback=False)
+
+    @property
     def concurrency(self):
         """concurrency configuration.
 

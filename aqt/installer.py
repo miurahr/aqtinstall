@@ -228,12 +228,13 @@ class Cli:
 
         There are three potential behaviors here:
         1. By default, return a temp directory that will be removed on program exit.
-        2. If the user has asked to keep archives, but has not specified a destination, we return ".".
+        2. If the user has asked to keep archives, but has not specified a destination,
+            we return Settings.archive_download_location ("." by default).
         3. If the user has asked to keep archives and specified a destination,
             we create the destination dir if it doesn't exist, and return that directory.
         """
         if not archive_dest:
-            return Path("." if keep else temp_dir)
+            return Path(Settings.archive_download_location if keep else temp_dir)
         dest = Path(archive_dest)
         dest.mkdir(parents=True, exist_ok=True)
         return dest
@@ -254,7 +255,7 @@ class Cli:
         else:
             qt_version: str = args.qt_version
             Cli._validate_version_str(qt_version)
-        keep: bool = args.keep
+        keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
         output_dir = args.outputdir
         if output_dir is None:
@@ -342,7 +343,7 @@ class Cli:
             base_dir = os.getcwd()
         else:
             base_dir = output_dir
-        keep: bool = args.keep
+        keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
         if args.base is not None:
             base = args.base
@@ -430,7 +431,7 @@ class Cli:
         version = getattr(args, "version", None)
         if version is not None:
             Cli._validate_version_str(version, allow_minus=True)
-        keep: bool = args.keep
+        keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
         if args.base is not None:
             base = args.base

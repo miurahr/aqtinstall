@@ -20,6 +20,8 @@ A file is like as follows:
     baseurl: https://download.qt.io
     7zcmd: 7z
     print_stacktrace_on_error: False
+    always_keep_archives: False
+    archive_download_location: .
 
     [requests]
     connection_timeout: 3.5
@@ -70,6 +72,18 @@ print_stacktrace_on_error:
     an error occurs that will end the program.
     The ``False`` setting will hide the stack trace, unless an unhandled
     exception occurs.
+
+always_keep_archives:
+    This is either ``True`` or ``False``.
+    The ``True`` setting turns on the ``--keep`` option every time you run aqt,
+    and cannot be overridden by command line options.
+    The ``False`` setting will require you to set ``--keep`` manually every time
+    you run aqt, unless you don't want to keep ``.7z`` archives.
+
+archive_download_location:
+    This is the relative or absolute path to the location in which ``.7z`` archives
+    will be downloaded, when ``--keep`` is turned on.
+    You can override this location with the ``--archives-dest`` option.
 
 
 The ``[requests]`` section controls the way that ``aqt`` makes network requests.
