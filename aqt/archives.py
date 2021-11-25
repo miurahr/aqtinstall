@@ -168,8 +168,23 @@ class QtArchives:
         ext = QtRepoProperty.extension_for_arch(self.arch, self.version >= Version("6.0.0"))
         return ("_" + ext) if ext else ""
 
-    def _base_target_package_name(self) -> str:
+    def _base_module_name(self) -> str:
+        """
+        This is the name for the base Qt module, whose PackageUpdate.Name property would be
+        'qt.123.gcc_64' or 'qt.qt1.123.gcc_64' for Qt 1.2.3, for architecture gcc_64.
+        """
         return "qt_base"
+
+    def _base_package_names(self) -> Iterable[str]:
+        """
+        This is a list of all potential PackageUpdate.Name properties for the base Qt module,
+        which would be 'qt.123.gcc_64' or 'qt.qt1.123.gcc_64' for Qt 1.2.3, for architecture gcc_64,
+        or 'qt.123.src' or 'qt.qt1.123.src' for the source module.
+        """
+        return (
+            f"qt.qt{self.version.major}.{self._version_str()}.{self.arch}",
+            f"qt.{self._version_str()}.{self.arch}",
+        )
 
     def _module_name_suffix(self, module: str) -> str:
         return f"{module}.{self.arch}"
@@ -177,12 +192,7 @@ class QtArchives:
     def _target_packages(self) -> ModuleToPackage:
         if self.all_extra:
             return ModuleToPackage({})
-        base_package = {
-            self._base_target_package_name(): [
-                f"qt.qt{self.version.major}.{self._version_str()}.{self.arch}",
-                f"qt.{self._version_str()}.{self.arch}",
-            ]
-        }
+        base_package = {self._base_module_name(): list(self._base_package_names())}
         target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
         if self.all_extra:
             return target_packages
@@ -276,7 +286,7 @@ class QtArchives:
         base_cmd = f"aqt list-qt {self.os_name} {self.target}"
         arch = f"Please use '{base_cmd} --arch {self.version}' to show architectures available."
         mods = f"Please use '{base_cmd} --modules {self.version} <arch>' to show modules available."
-        has_base_pkg: bool = self._base_target_package_name() in missing_modules
+        has_base_pkg: bool = self._base_module_name() in missing_modules
         has_non_base_pkg: bool = len(list(missing_modules)) > 1 or not has_base_pkg
         messages = []
         if has_base_pkg:
@@ -340,8 +350,12 @@ class SrcDocExamplesArchives(QtArchives):
     def _arch_ext(self) -> str:
         return "_src_doc_examples"
 
-    def _base_target_package_name(self) -> str:
-        return self.flavor
+    def _base_module_name(self) -> str:
+        """
+        This is the name for the base Qt Src/Doc/Example module, whose PackageUpdate.Name
+        property would be 'qt.123.examples' or 'qt.qt1.123.examples' for Qt 1.2.3 examples.
+        """
+        return self.flavor  # src | doc | examples
 
     def _module_name_suffix(self, module: str) -> str:
         return f"{self.flavor}.{module}"
