@@ -143,6 +143,7 @@ class QtArchives:
         self.base: str = posixpath.join(base, "online/qtsdkrepository")
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
+        self.subarchives: Optional[Iterable[str]] = subarchives
         self.mod_list: Iterable[str] = modules or []
         self.is_include_base_package: bool = is_include_base_package
         self.timeout = timeout
@@ -150,14 +151,20 @@ class QtArchives:
             self._get_archives()
         except ArchiveDownloadError as e:
             self.handle_missing_updates_xml(e)
-        should_install_all_archives = subarchives is None
-        if not should_install_all_archives:
-            self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
 
     def handle_missing_updates_xml(self, e: ArchiveDownloadError):
         msg = f"Failed to locate XML data for Qt version '{self.version}'."
         help_msg = f"Please use 'aqt list-qt {self.os_name} {self.target}' to show versions available."
         raise ArchiveListError(msg, suggested_action=[help_msg]) from e
+
+    def should_filter_archives(self, package_name: str) -> bool:
+        """
+        This tells us, based on the PackageUpdate.Name property, whether or not the `self.subarchives`
+        list should be used to filter out archives that we are not interested in.
+
+        If `package_name` is a base module or a debug_info module, the `subarchives` list will apply to it.
+        """
+        return package_name in self._base_package_names() or "debug_info" in package_name
 
     def _version_str(self) -> str:
         return ("{0.major}{0.minor}" if self.version == Version("5.9.0") else "{0.major}{0.minor}{0.patch}").format(
@@ -238,6 +245,9 @@ class QtArchives:
             downloads_text = packageupdate.find("DownloadableArchives").text
             if not downloads_text:
                 continue
+            # If we asked for `--noarchives`, we don't want the base module
+            if not self.is_include_base_package and pkg_name in self._base_package_names():
+                continue
             # Need to filter archives to download when we want all extra modules
             if self.all_extra:
                 # Check platform
@@ -254,9 +264,12 @@ class QtArchives:
                 target_packages.remove_module_for_package(pkg_name)
             full_version = packageupdate.find("Version").text
             package_desc = packageupdate.find("Description").text
+            should_filter_archives: bool = self.subarchives and self.should_filter_archives(pkg_name)
 
             for archive in downloads_text.split(", "):
                 archive_name = archive.split("-", maxsplit=1)[0]
+                if should_filter_archives and archive_name not in self.subarchives:
+                    continue
                 package_url = posixpath.join(
                     # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt5_5150/
                     archive_url,
