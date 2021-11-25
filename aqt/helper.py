@@ -79,7 +79,7 @@ def getUrl(url: str, timeout) -> str:
     return result
 
 
-def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: bytes, timeout):
+def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout):
     logger = getLogger("aqt.helper")
     filename = Path(url).name
     with requests.Session() as session:
@@ -114,7 +114,7 @@ def downloadBinaryFile(url: str, out: str, hash_algo: str, exp: bytes, timeout):
                 raise ArchiveChecksumError(
                     f"Downloaded file {filename} is corrupted! Detect checksum error.\n"
                     f"Expect {exp.hex()}: {url}\n"
-                    f"Actual {hash.digest().hex()}: {out}"
+                    f"Actual {hash.digest().hex()}: {out.name}"
                 )
 
 
@@ -304,6 +304,14 @@ class SettingsClass:
             if record["qt_version"] == version:
                 result = record["modules"]
         return result
+
+    @property
+    def archive_download_location(self):
+        return self.config.get("aqt", "archive_download_location", fallback=".")
+
+    @property
+    def always_keep_archives(self):
+        return self.config.getboolean("aqt", "always_keep_archives", fallback=False)
 
     @property
     def concurrency(self):

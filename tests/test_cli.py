@@ -351,3 +351,26 @@ def test_cli_set_7zip(monkeypatch):
         cli._set_sevenzip("some_nonexistent_binary")
     assert err.type == CliInputError
     assert format(err.value) == "Specified 7zip command executable does not exist: 'some_nonexistent_binary'"
+
+
+@pytest.mark.parametrize(
+    "archive_dest, keep, temp_dir, expect, should_make_dir",
+    (
+        (None, False, "temp", "temp", False),
+        (None, True, "temp", ".", False),
+        ("my_archives", False, "temp", "my_archives", True),
+        ("my_archives", True, "temp", "my_archives", True),
+    ),
+)
+def test_cli_choose_archive_dest(
+    monkeypatch, archive_dest: Optional[str], keep: bool, temp_dir: str, expect: str, should_make_dir: bool
+):
+    enclosed = {"made_dir": False}
+
+    def mock_mkdir(*args, **kwargs):
+        enclosed["made_dir"] = True
+
+    monkeypatch.setattr("aqt.installer.Path.mkdir", mock_mkdir)
+
+    assert Cli.choose_archive_dest(archive_dest, keep, temp_dir) == Path(expect)
+    assert enclosed["made_dir"] == should_make_dir

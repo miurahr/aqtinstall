@@ -33,6 +33,8 @@ import sys
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Callable, List, Optional
 
 import aqt
@@ -219,6 +221,24 @@ class Cli:
             getLogger("aqt.installer").info(f"Resolved spec '{qt_version_or_spec}' to {version}")
             return version
 
+    @staticmethod
+    def choose_archive_dest(archive_dest: Optional[str], keep: bool, temp_dir: str) -> Path:
+        """
+        Choose archive download destination, based on context.
+
+        There are three potential behaviors here:
+        1. By default, return a temp directory that will be removed on program exit.
+        2. If the user has asked to keep archives, but has not specified a destination,
+            we return Settings.archive_download_location ("." by default).
+        3. If the user has asked to keep archives and specified a destination,
+            we create the destination dir if it doesn't exist, and return that directory.
+        """
+        if not archive_dest:
+            return Path(Settings.archive_download_location if keep else temp_dir)
+        dest = Path(archive_dest)
+        dest.mkdir(parents=True, exist_ok=True)
+        return dest
+
     def run_install_qt(self, args):
         """Run install subcommand"""
         start_time = time.perf_counter()
@@ -235,7 +255,8 @@ class Cli:
         else:
             qt_version: str = args.qt_version
             Cli._validate_version_str(qt_version)
-        keep = args.keep
+        keep: bool = args.keep or Settings.always_keep_archives
+        archive_dest: Optional[str] = args.archive_dest
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -295,7 +316,9 @@ class Cli:
             base,
         )
         target_config = qt_archives.get_target_config()
-        run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep)
+        with TemporaryDirectory() as temp_dir:
+            _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
+            run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -322,7 +345,8 @@ class Cli:
             base_dir = os.getcwd()
         else:
             base_dir = output_dir
-        keep = args.keep
+        keep: bool = args.keep or Settings.always_keep_archives
+        archive_dest: Optional[str] = args.archive_dest
         if args.base is not None:
             base = args.base
         else:
@@ -355,7 +379,9 @@ class Cli:
             ),
             base,
         )
-        run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep)
+        with TemporaryDirectory() as temp_dir:
+            _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
+            run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
         self.logger.info("Finished installation")
 
     def run_install_src(self, args):
@@ -407,7 +433,8 @@ class Cli:
         version = getattr(args, "version", None)
         if version is not None:
             Cli._validate_version_str(version, allow_minus=True)
-        keep = args.keep
+        keep: bool = args.keep or Settings.always_keep_archives
+        archive_dest: Optional[str] = args.archive_dest
         if args.base is not None:
             base = args.base
         else:
@@ -444,7 +471,9 @@ class Cli:
                 ),
                 base,
             )
-            run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep)
+            with TemporaryDirectory() as temp_dir:
+                _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
+                run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -805,6 +834,13 @@ class Cli:
             action="store_true",
             help="Keep downloaded archive when specified, otherwise remove after install",
         )
+        subparser.add_argument(
+            "-d",
+            "--archive-dest",
+            type=str,
+            default=None,
+            help="Set the destination path for downloaded archives (temp directory by default).",
+        )
 
     def _set_module_options(self, subparser):
         subparser.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
@@ -888,14 +924,14 @@ class Cli:
             return function(fallback_url)
 
 
-def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool):
+def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool, archive_dest: Path):
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
     #
     tasks = []
     for arc in archives:
-        tasks.append((arc, base_dir, sevenzip, queue, keep))
+        tasks.append((arc, base_dir, sevenzip, queue, archive_dest, keep))
     ctx = multiprocessing.get_context("spawn")
     pool = ctx.Pool(Settings.concurrency, init_worker_sh)
 
@@ -946,6 +982,7 @@ def installer(
     base_dir: str,
     command: Optional[str],
     queue: multiprocessing.Queue,
+    archive_dest: Path,
     keep: bool = False,
     response_timeout: Optional[int] = None,
 ):
@@ -956,7 +993,7 @@ def installer(
     name = qt_archive.name
     url = qt_archive.archive_url
     hashurl = qt_archive.hashurl
-    archive = qt_archive.archive
+    archive: Path = archive_dest / qt_archive.archive
     start_time = time.perf_counter()
     # set defaults
     Settings.load_settings()
@@ -993,10 +1030,10 @@ def installer(
                 "-bd",
                 "-y",
                 "-o{}".format(base_dir),
-                archive,
+                str(archive),
             ]
         else:
-            command_args = [command, "x", "-aoa", "-bd", "-y", archive]
+            command_args = [command, "x", "-aoa", "-bd", "-y", str(archive)]
         try:
             proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
             logger.debug(proc.stdout)
@@ -1005,7 +1042,7 @@ def installer(
             raise ArchiveExtractionError(msg) from cpe
     if not keep:
         os.unlink(archive)
-    logger.info("Finished installation of {} in {:.8f}".format(archive, time.perf_counter() - start_time))
+    logger.info("Finished installation of {} in {:.8f}".format(archive.name, time.perf_counter() - start_time))
     qh.flush()
     qh.close()
     logger.removeHandler(qh)
