@@ -239,7 +239,20 @@ are described here:
 
 .. option:: --keep, -k
 
-    Keep downloaded archive when specified, otherwise remove after install
+    Keep downloaded archive when specified, otherwise remove after install.
+    Use ``--archive-dest <path>`` to choose where aqt will place these files.
+    If you do not specify a download destination, aqt will place these files in
+    the current working directory.
+
+.. option:: --archive-dest <path>
+
+    Set the destination path for downloaded archives (temp directory by default).
+    All downloaded archives will be automatically deleted unless you have
+    specified the ``--keep`` option above, or ``aqt`` crashes.
+
+    Note that this option refers to the intermediate ``.7z`` archives that ``aqt``
+    downloads and then extracts to ``--outputdir``.
+    Most users will not need to keep these files.
 
 .. option:: --modules, -m (<list of modules> | all)
 
@@ -295,6 +308,7 @@ install-qt command
         [-E | --external <7zip command>]
         [--internal]
         [-k | --keep]
+        [-d | --archive-dest] <path>
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
         [--noarchives]
@@ -368,6 +382,7 @@ install-src command
         [-E | --external <7zip command>]
         [--internal]
         [-k | --keep]
+        [-d | --archive-dest] <path>
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
         [--kde]
@@ -425,6 +440,7 @@ install-doc command
         [-E | --external <7zip command>]
         [--internal]
         [-k | --keep]
+        [-d | --archive-dest] <path>
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
         <host> <target> (<Qt version> | <spec>)
@@ -473,6 +489,7 @@ install-example command
         [-E | --external <7zip command>]
         [--internal]
         [-k | --keep]
+        [-d | --archive-dest] <path>
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
         <host> <target> (<Qt version> | <spec>)
@@ -525,6 +542,7 @@ install-tool command
         [-E | --external <7zip command>]
         [--internal]
         [-k | --keep]
+        [-d | --archive-dest] <path>
         <host> <target> <tool name> [<tool variant name>]
 
 Install tools like QtIFW, mingw, Cmake, Conan, and vcredist.
