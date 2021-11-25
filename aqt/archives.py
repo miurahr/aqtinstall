@@ -316,6 +316,7 @@ class SrcDocExamplesArchives(QtArchives):
         subarchives=None,
         modules=None,
         all_extra=False,
+        is_include_base_package: bool = True,
         timeout=(5, 5),
     ):
         self.flavor = flavor
@@ -332,6 +333,7 @@ class SrcDocExamplesArchives(QtArchives):
             subarchives=subarchives,
             modules=modules,
             all_extra=all_extra,
+            is_include_base_package=is_include_base_package,
             timeout=timeout,
         )
 
