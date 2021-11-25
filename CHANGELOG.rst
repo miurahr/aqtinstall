@@ -7,6 +7,24 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.0.3`_ (25, Nov. 2021)
+=========================
+
+Added
+-----
+* Improve --keep and new --archive-dest options(#458)
+
+Fixed
+-----
+* Fix cross-platform installation failure (#450)
+* CI: update OSes, Windows-2019, macOS-10.15(#444,#456)
+* CI: fix failure of uploading coveralls(#446)
+* CI: test for QtIFW(#451)
+
+Changed
+-------
+* combinations matrix json(#452)
+
 `v2.0.2`_ (1, Nov. 2021)
 =========================
 
@@ -310,7 +328,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.3...HEAD
+.. _v2.0.3: https://github.com/miurahr/aqtinstall/compare/v2.0.2...v2.0.3
 .. _v2.0.2: https://github.com/miurahr/aqtinstall/compare/v2.0.1...v2.0.2
 .. _v2.0.1: https://github.com/miurahr/aqtinstall/compare/v2.0.0...v2.0.1
 .. _v2.0.0: https://github.com/miurahr/aqtinstall/compare/v1.2.5...v2.0.0
