@@ -209,7 +209,7 @@ linux_build_jobs.extend(
         ),
         BuildJob(
             "install-example", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64",
-            subarchives="qtdoc qtlottie", module="qtlottie"
+            subarchives="qtdoc qtcharts", module="qtcharts"
         ),
         # test for list commands
         BuildJob('list', '5.15.2', 'linux', 'desktop', 'gcc_64', '', spec="<6", list_options={
