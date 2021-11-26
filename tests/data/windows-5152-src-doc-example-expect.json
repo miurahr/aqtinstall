@@ -152,11 +152,9 @@
     "modules": [
       "qtcharts",
       "qtdatavis3d",
-      "qtlottie",
       "qtnetworkauth",
       "qtpurchasing",
       "qtquick3d",
-      "qtquicktimeline",
       "qtscript",
       "qtvirtualkeyboard",
       "qtwebengine"

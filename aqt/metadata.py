@@ -624,9 +624,13 @@ class MetadataFactory:
 
     @staticmethod
     def _has_nonempty_downloads(element: ElementTree.Element) -> bool:
-        """Returns True if the element has an empty '<DownloadableArchives/>' tag"""
+        """Returns True if the element has a nonempty '<DownloadableArchives/>' tag"""
         downloads = element.find("DownloadableArchives")
-        return downloads is not None and downloads.text
+        update_file = element.find("UpdateFile")
+        if downloads is None or update_file is None:
+            return False
+        uncompressed_size = int(update_file.attrib["UncompressedSize"])
+        return downloads.text and uncompressed_size >= Settings.min_module_size
 
     def _get_qt_version_str(self, version: Version) -> str:
         """Returns a Qt version, without dots, that works in the Qt repo urls and Updates.xml files"""
