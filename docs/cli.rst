@@ -31,7 +31,7 @@ List-* Commands
 
 These commands are used to list the packages available for installation with ``aqt``.
 
-.. _list qt command:
+.. _list-qt command:
 
 list-qt command
 ~~~~~~~~~~~~~~~
@@ -132,7 +132,129 @@ List available versions of Qt, targets, extensions, modules, and architectures.
     May be combined with the ``--extension`` and/or ``--spec`` flags.
 
 
-.. _list tool command:
+.. _list-src command:
+
+list-src command
+~~~~~~~~~~~~~~~~
+
+.. program::  list-src
+
+.. code-block:: bash
+
+    aqt list-src [-h | --help]
+                 <host> (<Qt version> | <spec>)
+
+List source archives available for installation using the `install-src command`_.
+
+.. describe:: host
+
+    linux, windows or mac
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9.7, 5.12.1 etc.
+    Use the :ref:`List-Qt Command` to list available versions.
+
+.. describe:: spec
+
+    This is a `SimpleSpec`_ that specifies a range of versions.
+    If you type something in the ``<Qt version>`` positional argument that
+    cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
+    and ``aqt`` will select the highest available version within that `SimpleSpec`_.
+
+    For example, ``aqt list-src mac 5.12`` would print archives for the
+    latest version of Qt 5.12 available (5.12.11 at the time of this writing).
+
+
+.. _list-doc command:
+
+list-doc command
+~~~~~~~~~~~~~~~~
+
+.. program::  list-doc
+
+.. code-block:: bash
+
+    aqt list-doc [-h | --help]
+                 [-m | --modules]
+                 <host> (<Qt version> | <spec>)
+
+List documentation archives and modules available for installation using the
+`install-doc command`_.
+
+By default, ``list-doc`` will print a list of archives available for
+installation using the `install-doc command`_, with the ``--archives`` option.
+
+.. describe:: host
+
+    linux, windows or mac
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9.7, 5.12.1 etc.
+    Use the :ref:`List-Qt Command` to list available versions.
+
+.. describe:: spec
+
+    This is a `SimpleSpec`_ that specifies a range of versions.
+    If you type something in the ``<Qt version>`` positional argument that
+    cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
+    and ``aqt`` will select the highest available version within that `SimpleSpec`_.
+
+    For example, ``aqt list-doc mac 5.12`` would print archives for the
+    latest version of Qt 5.12 available (5.12.11 at the time of this writing).
+
+.. option:: --modules
+
+    This flag causes ``list-doc`` to print a list of modules available for
+    installation using the `install-doc command`_, with the ``--modules`` option.
+
+
+.. _list-example command:
+
+list-example command
+~~~~~~~~~~~~~~~~~~~~
+
+.. program::  list-example
+
+.. code-block:: bash
+
+    aqt list-example [-h | --help]
+                     [-m | --modules]
+                     <host> (<Qt version> | <spec>)
+
+List example archives and modules available for installation using the
+`install-example command`_.
+
+By default, ``list-example`` will print a list of archives available for
+installation using the `install-example command`_, with the ``--archives`` option.
+
+.. describe:: host
+
+    linux, windows or mac
+
+.. describe:: Qt version
+
+    This is a Qt version such as 5.9.7, 5.12.1 etc.
+    Use the :ref:`List-Qt Command` to list available versions.
+
+.. describe:: spec
+
+    This is a `SimpleSpec`_ that specifies a range of versions.
+    If you type something in the ``<Qt version>`` positional argument that
+    cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
+    and ``aqt`` will select the highest available version within that `SimpleSpec`_.
+
+    For example, ``aqt list-example mac 5.12`` would print archives for the
+    latest version of Qt 5.12 available (5.12.11 at the time of this writing).
+
+.. option:: --modules
+
+    This flag causes ``list-example`` to print a list of modules available for
+    installation using the `install-example command`_, with the ``--modules`` option.
+
+
+.. _list-tool command:
 
 list-tool command
 ~~~~~~~~~~~~~~~~~
@@ -257,9 +379,20 @@ are described here:
 .. option:: --modules, -m (<list of modules> | all)
 
     Specify extra modules to install as a list.
-    Use the :ref:`List Qt Command` to list available modules.
+    Use the appropriate ``aqt list-*`` command to list available modules:
 
-    This option is applicable to all the ``install-*`` commands except for ``install-tool``.
++------------------+-------------------------+--------------------------------------------------------+
+| Install command  | List command            | Usage of list command                                  |
++==================+=========================+========================================================+
+| install-qt       | `list-qt command`_      | ``list-qt <host> <target> --modules <version> <arch>`` |
++------------------+-------------------------+--------------------------------------------------------+
+| install-example  | `list-example command`_ | ``list-example <host> <version> --modules``            |
++------------------+-------------------------+--------------------------------------------------------+
+| install-doc      | `list-doc command`_     | ``list-doc <host> <version> --modules``                |
++------------------+-------------------------+--------------------------------------------------------+
+
+
+    This option only applicable to ``install-qt``, ``install-example``, and ``install-doc``.
 
     You can install multiple modules like this:
 
@@ -288,7 +421,19 @@ are described here:
     This option is applicable to all the ``install-*`` commands except for ``install-tool``.
 
     You can print a list of all acceptable values to use with this command by
-    using ``aqt list-qt`` with the :ref:`archives flag <list archives flag>`.
+    using the appropriate ``aqt list-*`` command:
+
++------------------+-------------------------+--------------------------------------------------+
+| Install command  | List command            | Usage of list command                            |
++==================+=========================+==================================================+
+| install-qt       | `list-qt command`_      | ``list-qt <host> <target> --archives <version>`` |
++------------------+-------------------------+--------------------------------------------------+
+| install-example  | `list-example command`_ | ``list-example <host> <version>``                |
++------------------+-------------------------+--------------------------------------------------+
+| install-src      | `list-src command`_     | ``list-src <host> <version>``                    |
++------------------+-------------------------+--------------------------------------------------+
+| install-doc      | `list-doc command`_     | ``list-doc <host> <version>``                    |
++------------------+-------------------------+--------------------------------------------------+
 
 
 .. _qt installation command:
@@ -328,7 +473,7 @@ There are various combinations to accept according to Qt version.
 .. describe:: Qt version
 
     This is a Qt version such as 5.9.7, 5.12.1 etc.
-    Use the :ref:`List Qt Command` to list available versions.
+    Use the :ref:`List-Qt Command` to list available versions.
 
 .. describe:: spec
 
@@ -356,7 +501,7 @@ There are various combinations to accept according to Qt version.
 
    * android_armv7, android_arm64_v8a, android_x86, android_x86_64 for android
 
-    Use the :ref:`List Qt Command` to list available architectures.
+    Use the :ref:`List-Qt Command` to list available architectures.
 
 .. option:: --noarchives
 
@@ -366,6 +511,8 @@ There are various combinations to accept according to Qt version.
 
 See `common options`_.
 
+
+.. _install-src command:
 
 install-src command
 ~~~~~~~~~~~~~~~~~~~
@@ -383,10 +530,9 @@ install-src command
         [--internal]
         [-k | --keep]
         [-d | --archive-dest] <path>
-        [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
         [--kde]
-        <host> <target> (<Qt version> | <spec>)
+        <host> [<target>] (<Qt version> | <spec>)
 
 Install Qt source code for the specified version and target.
 
@@ -397,12 +543,13 @@ Install Qt source code for the specified version and target.
 
 .. describe:: target
 
-    desktop, ios or android
+    Deprecated and marked for removal in a future version of aqt.
+    This parameter exists for backwards compatibility reasons, and its value is ignored.
 
 .. describe:: Qt version
 
     This is a Qt version such as 5.9.7, 5.12.1 etc.
-    Use the :ref:`List Qt Command` to list available versions.
+    Use the :ref:`List-Qt Command` to list available versions.
 
 .. describe:: spec
 
@@ -411,9 +558,9 @@ Install Qt source code for the specified version and target.
     cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
     and ``aqt`` will select the highest available version within that `SimpleSpec`_.
 
-    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
-    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
-    install the highest version of Qt available.
+    For example, ``aqt install-src mac 5.12`` would install sources for the newest
+    version of Qt 5.12 available, and ``aqt install-src mac "*"`` would
+    install sources for the highest version of Qt available.
 
 .. option:: --kde
 
@@ -424,6 +571,8 @@ Install Qt source code for the specified version and target.
 
 See `common options`_.
 
+
+.. _install-doc command:
 
 install-doc command
 ~~~~~~~~~~~~~~~~~~~
@@ -443,7 +592,7 @@ install-doc command
         [-d | --archive-dest] <path>
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
-        <host> <target> (<Qt version> | <spec>)
+        <host> [<target>] (<Qt version> | <spec>)
 
 Install Qt documentation for the specified version and target.
 
@@ -453,12 +602,13 @@ Install Qt documentation for the specified version and target.
 
 .. describe:: target
 
-    desktop, ios or android
+    Deprecated and marked for removal in a future version of aqt.
+    This parameter exists for backwards compatibility reasons, and its value is ignored.
 
 .. describe:: Qt version
 
     This is a Qt version such as 5.9.7, 5.12.1 etc.
-    Use the :ref:`List Qt Command` to list available versions.
+    Use the :ref:`List-Qt Command` to list available versions.
 
 .. describe:: spec
 
@@ -467,12 +617,14 @@ Install Qt documentation for the specified version and target.
     cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
     and ``aqt`` will select the highest available version within that `SimpleSpec`_.
 
-    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
-    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
-    install the highest version of Qt available.
+    For example, ``aqt install-doc mac 5.12`` would install documentation for the newest
+    version of Qt 5.12 available, and ``aqt install-doc mac "*"`` would
+    install documentation for the highest version of Qt available.
 
 See `common options`_.
 
+
+.. _install-example command:
 
 install-example command
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -492,7 +644,7 @@ install-example command
         [-d | --archive-dest] <path>
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
-        <host> <target> (<Qt version> | <spec>)
+        <host> [<target>] (<Qt version> | <spec>)
 
 Install Qt examples for the specified version and target.
 
@@ -503,12 +655,13 @@ Install Qt examples for the specified version and target.
 
 .. describe:: target
 
-    desktop, ios or android
+    Deprecated and marked for removal in a future version of aqt.
+    This parameter exists for backwards compatibility reasons, and its value is ignored.
 
 .. describe:: Qt version
 
     This is a Qt version such as 5.9.7, 5.12.1 etc.
-    Use the :ref:`List Qt Command` to list available versions.
+    Use the :ref:`List-Qt Command` to list available versions.
 
 .. describe:: spec
 
@@ -517,9 +670,9 @@ Install Qt examples for the specified version and target.
     cannot be interpreted as a version, it will be interpreted as a `SimpleSpec`_,
     and ``aqt`` will select the highest available version within that `SimpleSpec`_.
 
-    For example, ``aqt install-qt mac desktop 5.12`` would install the newest
-    version of Qt 5.12 available, and ``aqt install-qt mac desktop "*"`` would
-    install the highest version of Qt available.
+    For example, ``aqt install-example mac 5.12`` would install examples for the newest
+    version of Qt 5.12 available, and ``aqt install-example mac "*"`` would
+    install examples for the highest version of Qt available.
 
 
 See `common options`_.
@@ -565,7 +718,7 @@ Install tools like QtIFW, mingw, Cmake, Conan, and vcredist.
     Optional field to specify tool variant. It may be required for vcredist and mingw installation.
     tool variant names may be 'qt.tools.win64_mingw810', 'qt.tools.vcredist_msvc2013_x64'.
 
-You should use the :ref:`List Tool command` to display what tools and tool variant names are available.
+You should use the :ref:`List-Tool command` to display what tools and tool variant names are available.
     
 
 See `common options`_.
@@ -612,10 +765,24 @@ Example: Install examples, doc and source:
 
 .. code-block:: console
 
-    aqt install-example windows desktop 5.15.2 -m qtcharts qtnetworkauth
-    aqt install-doc windows desktop 5.15.2 -m qtcharts qtnetworkauth
-    aqt install-src windows desktop 5.15.2 --archives qtbase --kde
+    aqt install-example windows 5.15.2 -m qtcharts qtnetworkauth
+    aqt install-doc windows 5.15.2 -m qtcharts qtnetworkauth
+    aqt install-src windows 5.15.2 --archives qtbase --kde
 
+Example: Print archives available for installation with ``install-example/doc/src``:
+
+.. code-block:: console
+
+    aqt list-example windows 5.15.2
+    aqt list-doc windows 5.15.2
+    aqt list-src windows 5.15.2
+
+Example: Print modules available for installation with ``install-example/doc``:
+
+.. code-block:: console
+
+    aqt list-example windows 5.15.2 --modules
+    aqt list-doc windows 5.15.2 --modules
 
 Example: Install Web Assembly
 

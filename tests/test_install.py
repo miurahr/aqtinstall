@@ -335,6 +335,69 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ),
         ),
         (
+            "install-src windows desktop 5.14.2".split(),
+            "windows",
+            "desktop",
+            "5.14.2",
+            "",
+            "",
+            "windows_x86/desktop/qt5_5142_src_doc_examples/Updates.xml",
+            [
+                MockArchive(
+                    filename_7z="qtbase-everywhere-src-5.14.2.7z",
+                    update_xml_name="qt.qt5.5142.src",
+                    version="5.14.2",
+                    contents=(
+                        PatchedFile(
+                            filename="Src/qtbase/QtBaseSource.cpp",
+                            unpatched_content="int main(){ return 0; }",
+                            patched_content=None,  # not patched
+                        ),
+                    ),
+                ),
+            ],
+            re.compile(
+                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"Warning: The parameter 'target' with value 'desktop' is deprecated "
+                r"and marked for removal in a future version of aqt\.\n"
+                r"In the future, please omit this parameter\.\n"
+                r"Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-everywhere-src-5\.14\.2\.7z in .*\n"
+                r"Finished installation\n"
+                r"Time elapsed: .* second"
+            ),
+        ),
+        (
+            "install-src windows 5.14.2".split(),
+            "windows",
+            "desktop",
+            "5.14.2",
+            "",
+            "",
+            "windows_x86/desktop/qt5_5142_src_doc_examples/Updates.xml",
+            [
+                MockArchive(
+                    filename_7z="qtbase-everywhere-src-5.14.2.7z",
+                    update_xml_name="qt.qt5.5142.src",
+                    version="5.14.2",
+                    contents=(
+                        PatchedFile(
+                            filename="Src/qtbase/QtBaseSource.cpp",
+                            unpatched_content="int main(){ return 0; }",
+                            patched_content=None,  # not patched
+                        ),
+                    ),
+                ),
+            ],
+            re.compile(
+                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-everywhere-src-5\.14\.2\.7z in .*\n"
+                r"Finished installation\n"
+                r"Time elapsed: .* second"
+            ),
+        ),
+        (
             "install 5.9.0 windows desktop win32_mingw53".split(),
             "windows",
             "desktop",
@@ -595,12 +658,28 @@ def test_install(
             "* Please use 'aqt list-qt windows desktop --modules 5.15.0 <arch>' to show modules available.\n",
         ),
         (
-            "install-src windows desktop 5.15.0 -m nonexistent foo",
+            "install-doc windows desktop 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            "The packages ['foo', 'nonexistent', 'src'] were not found while parsing XML of package information!\n"
+            "Warning: The parameter 'target' with value 'desktop' is deprecated and marked for removal in a future "
+            "version of aqt.\n"
+            "In the future, please omit this parameter.\n"
+            "The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
-            "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n"
-            "* Please use 'aqt list-qt windows desktop --modules 5.15.0 <arch>' to show modules available.\n",
+            "* Please use 'aqt list-doc windows 5.15.0 --modules' to show modules available.\n",
+        ),
+        (
+            "install-doc windows 5.15.0 -m nonexistent foo",
+            "windows-5152-src-doc-example-update.xml",
+            "The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-doc windows 5.15.0 --modules' to show modules available.\n",
+        ),
+        (
+            "install-example windows 5.15.0 -m nonexistent foo",
+            "windows-5152-src-doc-example-update.xml",
+            "The packages ['examples', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-example windows 5.15.0 --modules' to show modules available.\n",
         ),
         (
             "install-tool windows desktop tools_vcredist nonexistent",

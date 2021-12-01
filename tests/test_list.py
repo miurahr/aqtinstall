@@ -206,6 +206,83 @@ def test_list_architectures_and_modules(monkeypatch, version: str, extension: st
     assert arches == expect["architectures"]
 
 
+@pytest.fixture
+def win_5152_sde_xml_file() -> str:
+    return (Path(__file__).parent / "data" / "windows-5152-src-doc-example-update.xml").read_text("utf-8")
+
+
+def win_5152_sde_expected(cmd_type: str, query_type: str) -> Set[str]:
+    assert cmd_type in ("src", "doc", "examples")
+    assert query_type in ("archives", "modules")
+    _json = json.loads((Path(__file__).parent / "data/windows-5152-src-doc-example-expect.json").read_text("utf-8"))
+    return set(_json[cmd_type][query_type])
+
+
+@pytest.mark.parametrize(
+    "cmd_type, host, version, expected",
+    [
+        (
+            _cmd_type,
+            "windows",
+            "5.15.2",
+            win_5152_sde_expected(_cmd_type, "archives"),
+        )
+        for _cmd_type in ("src", "doc", "examples")
+    ],
+)
+def test_list_src_doc_examples_archives(
+    monkeypatch, win_5152_sde_xml_file, cmd_type: str, host: str, version: str, expected: Set[str]
+):
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: win_5152_sde_xml_file)
+
+    archive_id = ArchiveId("qt", host, "desktop", "src_doc_examples")
+    archives = set(MetadataFactory(archive_id).fetch_archives_sde(cmd_type, Version(version)))
+    assert archives == expected
+
+
+@pytest.mark.parametrize(
+    "cmd_type, host, version, expected",
+    [
+        (
+            _cmd_type,
+            "windows",
+            "5.15.2",
+            win_5152_sde_expected(_cmd_type, "modules"),
+        )
+        for _cmd_type in ("doc", "examples")
+    ],
+)
+def test_list_src_doc_examples_modules(
+    monkeypatch, win_5152_sde_xml_file, cmd_type: str, host: str, version: str, expected: Set[str]
+):
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: win_5152_sde_xml_file)
+
+    archive_id = ArchiveId("qt", host, "desktop", "src_doc_examples")
+    modules = set(MetadataFactory(archive_id).fetch_modules_sde(cmd_type, Version(version)))
+    assert modules == expected
+
+
+@pytest.mark.parametrize(
+    "command, expected",
+    (
+        ("list-src windows 5.15.2", win_5152_sde_expected("src", "archives")),
+        ("list-doc windows 5.15.2", win_5152_sde_expected("doc", "archives")),
+        ("list-example windows 5.15.2", win_5152_sde_expected("examples", "archives")),
+        ("list-doc windows 5.15.2 --modules", win_5152_sde_expected("doc", "modules")),
+        ("list-example windows 5.15.2 --modules", win_5152_sde_expected("examples", "modules")),
+    ),
+)
+def test_list_src_doc_examples_cli(monkeypatch, capsys, win_5152_sde_xml_file, command: str, expected: Set[str]):
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: win_5152_sde_xml_file)
+
+    cli = Cli()
+    assert 0 == cli.run(command.split())
+    out, err = capsys.readouterr()
+    assert not err
+    out_set = set(out.strip().split())
+    assert out_set == expected
+
+
 @pytest.mark.parametrize(
     "version, arch, modules_to_query, modules_failed_query",
     (
