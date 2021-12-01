@@ -325,6 +325,11 @@
         "target": "desktop"
       },
       {
+        "arch": "win64_mingw",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
         "arch": "win64_mingw73",
         "os_name": "windows",
         "target": "desktop"
@@ -677,6 +682,12 @@
         "tool_name": "tools_mingw"
       },
       {
+        "arch": "qt.tools.win64_mingw900",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw90"
+      },
+      {
         "arch": "qt.tools.ninja",
         "os_name": "windows",
         "target": "desktop",
@@ -858,7 +869,8 @@
       "6.1.2",
       "6.1.3",
       "6.2.0",
-      "6.2.1"
+      "6.2.1",
+      "6.2.2"
     ]
   }
 ]
