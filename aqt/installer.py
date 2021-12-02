@@ -331,7 +331,9 @@ class Cli:
         self.show_aqt_version()
         if args.is_legacy:
             self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
-        target = args.target
+        elif getattr(args, "target", None) is not None:
+            self._warn_on_deprecated_parameter("target", args.target)
+        target = "desktop"  # The only valid target for src/doc/examples is "desktop"
         os_name = args.host
         if hasattr(args, "qt_version_spec"):
             qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch=""))
@@ -357,7 +359,7 @@ class Cli:
         if EXT7Z and sevenzip is None:
             # override when py7zr is not exist
             sevenzip = self._set_sevenzip(Settings.zipcmd)
-        modules = args.modules
+        modules = getattr(args, "modules", None)  # `--modules` is invalid for `install-src`
         archives = args.archives
         all_extra = True if modules is not None and "all" in modules else False
         if not self._check_qt_arg_versions(qt_version):
@@ -530,6 +532,16 @@ class Cli:
         )
         show_list(meta)
 
+    def run_list_src_doc_examples(self, args: argparse.ArgumentParser, cmd_type: str):
+        target = "desktop"  # The only valid target for src/doc/examples is "desktop"
+        version = Cli._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
+        is_fetch_modules: bool = getattr(args, "modules", False)
+        meta = MetadataFactory(
+            archive_id=ArchiveId("qt", args.host, target, "src_doc_examples"),
+            src_doc_examples_query=(cmd_type, version, is_fetch_modules),
+        )
+        show_list(meta)
+
     def show_help(self, args=None):
         """Display help message"""
         self.parser.print_help()
@@ -570,6 +582,7 @@ class Cli:
             "\n                                        android_x86, android_armv7",
         )
         self._set_module_options(install_qt_parser)
+        self._set_archive_options(install_qt_parser)
         install_qt_parser.add_argument(
             "--noarchives",
             action="store_true",
@@ -605,6 +618,13 @@ class Cli:
             f"In the future, please use the command '{new_name}' instead."
         )
 
+    def _warn_on_deprecated_parameter(self, parameter_name: str, value: str):
+        self.logger.warning(
+            f"Warning: The parameter '{parameter_name}' with value '{value}' is deprecated and marked for "
+            f"removal in a future version of aqt.\n"
+            f"In the future, please omit this parameter."
+        )
+
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction):
         deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
 
@@ -614,24 +634,42 @@ class Cli:
             p = subparsers.add_parser(cmd, description=description, **kwargs)
             set_parser_cmd(p, is_legacy=is_legacy)
 
-        def make_parser_sde(cmd: str, desc: str, is_legacy: bool, action, is_add_kde: bool):
+        def make_parser_sde(cmd: str, desc: str, is_legacy: bool, action, is_add_kde: bool, is_add_modules: bool = True):
             description = f"{desc} {deprecated_msg}" if is_legacy else desc
             parser = subparsers.add_parser(cmd, description=description)
             parser.set_defaults(func=action, is_legacy=is_legacy)
-            self._set_common_arguments(parser, is_legacy=is_legacy)
+            self._set_common_arguments(parser, is_legacy=is_legacy, is_target_deprecated=True)
             self._set_common_options(parser)
-            self._set_module_options(parser)
+            if is_add_modules:
+                self._set_module_options(parser)
+            self._set_archive_options(parser)
             if is_add_kde:
                 parser.add_argument("--kde", action="store_true", help="patching with KDE patch kit.")
+
+        def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
+            parser = subparsers.add_parser(cmd, description=desc)
+            parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+            parser.add_argument(
+                "qt_version_spec",
+                metavar="(VERSION | SPECIFICATION)",
+                help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+            )
+            parser.set_defaults(func=lambda args: self.run_list_src_doc_examples(args, cmd_type))
+
+            if cmd_type != "src":
+                parser.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
 
         make_parser_it("install-qt", "Install Qt.", False, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("install-tool", "Install tools.", False, self._set_install_tool_parser, None)
         make_parser_sde("install-doc", "Install documentation.", False, self.run_install_doc, False)
         make_parser_sde("install-example", "Install examples.", False, self.run_install_example, False)
-        make_parser_sde("install-src", "Install source.", False, self.run_install_src, True)
+        make_parser_sde("install-src", "Install source.", False, self.run_install_src, True, is_add_modules=False)
 
         self._make_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
+        make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
+        make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
+        make_parser_list_sde("list-src", "List source archives available (use with install-src)", "src")
 
         make_parser_it("install", "Install Qt.", True, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("tool", "Install tools.", True, self._set_install_tool_parser, None)
@@ -806,21 +844,33 @@ class Cli:
 
     def _set_module_options(self, subparser):
         subparser.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
+
+    def _set_archive_options(self, subparser):
         subparser.add_argument(
             "--archives",
             nargs="*",
             help="Specify subset packages to install (Default: all standard and extra modules).",
         )
 
-    def _set_common_arguments(self, subparser, *, is_legacy: bool):
+    def _set_common_arguments(self, subparser, *, is_legacy: bool, is_target_deprecated: bool = False):
         """
         Legacy commands require that the version comes before host and target.
         Non-legacy commands require that the host and target are before the version.
+        install-src/doc/example commands do not require a "target" argument anymore, as of 11/22/2021
         """
         if is_legacy:
             subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
         subparser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-        subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
+        if is_target_deprecated:
+            subparser.add_argument(
+                "target",
+                choices=["desktop", "winrt", "android", "ios"],
+                nargs="?",
+                help="Ignored. This parameter is deprecated and marked for removal in a future release. "
+                "It is present here for backwards compatibility.",
+            )
+        else:
+            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
         if not is_legacy:
             subparser.add_argument(
                 "qt_version_spec",

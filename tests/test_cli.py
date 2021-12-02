@@ -14,7 +14,7 @@ def expected_help(actual, prefix=None):
     expected = (
         "usage: aqt [-h] [-c CONFIG]\n"
         "           {install-qt,install-tool,install-doc,install-example,install-src,"
-        "list-qt,list-tool,"
+        "list-qt,list-tool,list-doc,list-example,list-src,"
         "install,tool,doc,examples,src,help,version}\n"
         "           ...\n"
         "\n"
@@ -35,7 +35,7 @@ def expected_help(actual, prefix=None):
         "removal\n"
         "\n"
         "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,"
-        "list-tool,"
+        "list-tool,list-doc,list-example,list-src,"
         "install,tool,doc,examples,src,help,version}\n"
         "                        Please refer to each help message by using '--help' "
         "with each subcommand\n",

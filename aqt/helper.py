@@ -376,6 +376,15 @@ class SettingsClass:
     def print_stacktrace_on_error(self):
         return self.config.getboolean("aqt", "print_stacktrace_on_error", fallback=False)
 
+    @property
+    def min_module_size(self):
+        """
+        Some modules in the Qt repository contain only empty directories.
+        We have found that these modules are no more than 40 bytes after decompression.
+        This setting is used to filter out these empty modules in `list-*` output.
+        """
+        return self.config.getint("aqt", "min_module_size", fallback=41)
+
 
 Settings = SettingsClass()
 

@@ -22,6 +22,7 @@ A file is like as follows:
     print_stacktrace_on_error: False
     always_keep_archives: False
     archive_download_location: .
+    min_archive_size: 41
 
     [requests]
     connection_timeout: 3.5
@@ -84,6 +85,19 @@ archive_download_location:
     This is the relative or absolute path to the location in which ``.7z`` archives
     will be downloaded, when ``--keep`` is turned on.
     You can override this location with the ``--archives-dest`` option.
+
+min_module_size:
+    This is the minimum decompressed size, in bytes, of the modules that aqt is permitted to list.
+    The authors of aqt have discovered that the Qt repository contains a few mysteriously
+    "empty" modules, including the examples modules for `qtlottie` and `qtquicktimeline`.
+    These modules consist of a single archive that contains empty directories,
+    and they are exactly 40 bytes when uncompressed.
+    The authors feel that it is not useful for ``aqt list-*`` to list these empty modules.
+    If you want to print these modules with ``aqt list-*``, please feel free to change
+    the `min_module_size` value to something less than 40.
+
+    This setting has no effect on your ability to install these modules.
+    ``aqt install-*`` can will still install them without any warnings.
 
 
 The ``[requests]`` section controls the way that ``aqt`` makes network requests.
