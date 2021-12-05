@@ -33,6 +33,7 @@ class BuildJob:
         spec=None,
         mingw_variant: str = "",
         tool_options: Optional[Dict[str, str]] = None,
+        check_output_cmd: Optional[str] = None,
     ):
         self.command = command
         self.qt_version = qt_version
@@ -49,6 +50,7 @@ class BuildJob:
         # `steps.yml` assumes that qt_version is the highest version that satisfies spec
         self.spec = spec
         self.output_dir = output_dir
+        self.check_output_cmd = check_output_cmd
 
     def qt_bindir(self, *, sep='/') -> str:
         out_dir = f"$(Build.BinariesDirectory){sep}Qt" if not self.output_dir else self.output_dir
@@ -201,15 +203,23 @@ linux_build_jobs.extend(
             subarchives="qtbase qttools qt icu",
         ),
         BuildJob(
-            "install-src", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtlottie"
+            "install-src", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtlottie",
+            # Fail the job if this path does not exist:
+            check_output_cmd="ls -lh ./6.1.0/Src/qtlottie/",
         ),
+        # Should install the `qtlottie` module, even though the archive `qtlottieanimation` is not specified:
         BuildJob(
             "install-doc", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64",
-            subarchives="qtdoc qtlottieanimation", module="qtlottie"
+            subarchives="qtdoc", module="qtlottie",
+            # Fail the job if these paths do not exist:
+            check_output_cmd="ls -lh ./Docs/Qt-6.1.0/qtdoc/ ./Docs/Qt-6.1.0/qtlottieanimation/",
         ),
+        # Should install the `qtcharts` module, even though the archive `qtcharts` is not specified:
         BuildJob(
             "install-example", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64",
-            subarchives="qtdoc qtcharts", module="qtcharts"
+            subarchives="qtdoc", module="qtcharts",
+            # Fail the job if these paths do not exist:
+            check_output_cmd="ls -lh ./Examples/Qt-6.1.0/charts/ ./Examples/Qt-6.1.0/demos/ ./Examples/Qt-6.1.0/tutorials/",
         ),
         # test for list commands
         BuildJob('list', '5.15.2', 'linux', 'desktop', 'gcc_64', '', spec="<6", list_options={
@@ -368,6 +378,7 @@ for platform_build_job in all_platform_build_jobs:
                 ("TOOL2_ARGS", build_job.tool_options.get("TOOL2_ARGS", "")),
                 ("LIST_TOOL2_CMD", build_job.tool_options.get("LIST_TOOL2_CMD", "")),
                 ("TEST_TOOL2_CMD", build_job.tool_options.get("TEST_TOOL2_CMD", "")),
+                ("CHECK_OUTPUT_CMD", build_job.check_output_cmd or "")
             ]
         )
 
