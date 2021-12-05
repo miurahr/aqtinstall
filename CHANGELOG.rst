@@ -15,6 +15,10 @@ Fixed
 * Allow duplicated install on the directory previously installed(#438,#462)
 * Memory error on 32bit python on Windows(#436,#462)
 
+Changed
+=======
+* Change list-src, list-doc and list-example command(#453)
+
 `v2.0.3`_ (25, Nov. 2021)
 =========================
 
