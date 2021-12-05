@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.0.4`_ (5, Dec. 2021)
+=========================
+
+Fixed
+=====
+* Allow duplicated install on the directory previously installed(#438,#462)
+* Memory error on 32bit python on Windows(#436,#462)
+
 `v2.0.3`_ (25, Nov. 2021)
 =========================
 
@@ -328,7 +336,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.4...HEAD
+.. _v2.0.4: https://github.com/miurahr/aqtinstall/compare/v2.0.3...v2.0.4
 .. _v2.0.3: https://github.com/miurahr/aqtinstall/compare/v2.0.2...v2.0.3
 .. _v2.0.2: https://github.com/miurahr/aqtinstall/compare/v2.0.1...v2.0.2
 .. _v2.0.1: https://github.com/miurahr/aqtinstall/compare/v2.0.0...v2.0.1
