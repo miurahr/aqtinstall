@@ -34,7 +34,7 @@ ensure_newline_before_comments = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py{36,37,38,39,310}, py39d
+envlist = check, docs, py{36,37,38,39,310}, py39d, mprof
 
 [testenv]
 passenv =
@@ -72,6 +72,13 @@ deps =
     pytest-remotedata
     pytest-socket
     pytest-cov
+
+[testenv:mprof]
+basepython = python3.8
+commands = mprof run python -m aqt install -O /tmp linux desktop 6.2.1
+deps =
+    memory_profiler
+    matplotlib
 
 [testenv:coveralls]
 deps =
