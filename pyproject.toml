@@ -34,7 +34,7 @@ ensure_newline_before_comments = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py{36,37,38,39,310}
+envlist = check, docs, py{36,37,38,39,310}, py39d
 
 [testenv]
 passenv =
@@ -60,6 +60,18 @@ extras = docs
 commands =
     sphinx-build {posargs:-E} -W -b html docs build/docs
     sphinx-build -W -b linkcheck docs build/docs
+
+[testenv:py39d]
+basepython = python3.9d
+extras = test
+commands =
+    python -m pytest -v --no-cov -R : -k "test_install"
+deps =
+    pytest
+    pytest-leaks
+    pytest-remotedata
+    pytest-socket
+    pytest-cov
 
 [testenv:coveralls]
 deps =
