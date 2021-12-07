@@ -76,7 +76,7 @@ deps =
 [testenv:mprof]
 basepython = python3.8
 commands =
-    mprof run --include-children python -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
+    mprof run --multiprocess python -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
     mprof plot --output memory-profile.png
 deps =
     memory_profiler

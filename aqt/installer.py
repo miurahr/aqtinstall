@@ -933,7 +933,7 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
     for arc in archives:
         tasks.append((arc, base_dir, sevenzip, queue, archive_dest, keep))
     ctx = multiprocessing.get_context("spawn")
-    pool = ctx.Pool(Settings.concurrency, init_worker_sh)
+    pool = ctx.Pool(Settings.concurrency, init_worker_sh, maxtasksperchild=1)
 
     def close_worker_pool_on_exception(exception: BaseException):
         logger = getLogger("aqt.installer")
