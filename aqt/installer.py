@@ -924,6 +924,11 @@ class Cli:
             return function(fallback_url)
 
 
+def is_64bit() -> bool:
+    """check if running platform is 64bit python."""
+    return sys.maxsize > 2 ** 32
+
+
 def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool, archive_dest: Path):
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
@@ -933,7 +938,10 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
     for arc in archives:
         tasks.append((arc, base_dir, sevenzip, queue, archive_dest, keep))
     ctx = multiprocessing.get_context("spawn")
-    pool = ctx.Pool(Settings.concurrency, init_worker_sh, maxtasksperchild=1)
+    if is_64bit():
+        pool = ctx.Pool(Settings.concurrency, init_worker_sh)
+    else:
+        pool = ctx.Pool(Settings.concurrency, init_worker_sh, (), 1)
 
     def close_worker_pool_on_exception(exception: BaseException):
         logger = getLogger("aqt.installer")
