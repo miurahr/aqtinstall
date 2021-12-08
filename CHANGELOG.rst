@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Changed
+-------
+* Reduce memory consumption: garbage collection on install subprocess(#464)
+
 `v2.0.4`_ (5, Dec. 2021)
 =========================
 
