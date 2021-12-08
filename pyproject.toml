@@ -34,7 +34,7 @@ ensure_newline_before_comments = true
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py{36,37,38,39,310}, py39d, mprof
+envlist = check, docs, py{36,37,38,39,310}, py39d, mprof, fil
 
 [testenv]
 passenv =
@@ -65,7 +65,7 @@ commands =
 basepython = python3.9d
 extras = test
 commands =
-    python -m pytest -v --no-cov -R : -k "test_install"
+    python3.9-dbg -m pytest -v --no-cov -R : -k "test_install"
 deps =
     pytest
     pytest-leaks
@@ -81,6 +81,13 @@ commands =
 deps =
     memory_profiler
     matplotlib
+
+[testenv:fil]
+basepython = python3.8
+commands =
+    fil-profile run -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
+deps =
+    filprofiler
 
 [testenv:coveralls]
 deps =
