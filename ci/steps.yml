@@ -177,10 +177,6 @@ steps:
   ##----------------------------------------------------
   # determine Windows build system
   - powershell: |
-      Install-PackageProvider NuGet -Force
-      Import-PackageProvider NuGet -Force
-      Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-      Install-Module Pscx -AllowClobber -AllowPrerelease
       Install-Module VSSetup -Scope CurrentUser
       if ('$(ARCH)' -like '*msvc*') {
         Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MSVC'
