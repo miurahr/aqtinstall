@@ -179,9 +179,6 @@ steps:
   - task: Cache@2
     inputs:
       key: '"pwsh modules" | "$(startYear)" | "$(startMonth)"'
-      restorekeys: |
-        "pwsh modules" | "$(startYear)"
-        "pwsh modules"
       path: $(MODULES_FOLDER)
       cacheHitVar: PSModules_IsCached
     condition: |
