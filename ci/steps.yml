@@ -175,13 +175,32 @@ steps:
     displayName: Build accelbubble example application to test for android
 
   ##----------------------------------------------------
-  # determine Windows build system
+  # Cache Powershell Modules in $MODULES_FOLDER
+  - task: Cache@2
+    inputs:
+      key: '"pwsh modules" | "$(startYear)" | "$(startMonth)"'
+      path: $(MODULES_FOLDER)
+      cacheHitVar: PSModules_IsCached
+    condition: |
+        and(eq(variables['Agent.OS'], 'Windows_NT'), 
+            eq(variables['SUBCOMMAND'], 'install-qt'))
+    displayName: Cache Powershell Modules
+  # On cache miss: Download Powershell Modules to $MODULES_FOLDER
   - powershell: |
       Install-PackageProvider NuGet -Force
       Import-PackageProvider NuGet -Force
       Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-      Install-Module Pscx -AllowClobber -AllowPrerelease
-      Install-Module VSSetup -Scope CurrentUser
+      md -p $(MODULES_FOLDER)   # mkdir
+      Save-Module -Name Pscx -AllowPrerelease -Path $(MODULES_FOLDER)
+    condition: |
+        and(eq(variables['Agent.OS'], 'Windows_NT'), 
+            eq(variables['SUBCOMMAND'], 'install-qt'),
+            ne(variables.PSModules_IsCached, 'true'))
+    displayName: Download Powershell Modules for Windows on cache miss
+
+  ##----------------------------------------------------
+  # determine Windows build system
+  - powershell: |
       if ('$(ARCH)' -like '*msvc*') {
         Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MSVC'
       }
@@ -202,7 +221,9 @@ steps:
       }
       cd $(WIN_QT_BINDIR)
       unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
-    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['SUBCOMMAND'], 'install-qt'))
+    condition: |
+        and(eq(variables['Agent.OS'], 'Windows_NT'), 
+            eq(variables['SUBCOMMAND'], 'install-qt'))
     displayName: Detect toolchain for Windows and update PATH
 
   # When no modules
@@ -217,6 +238,12 @@ steps:
     displayName: Build test with qmake for Linux and macOS w/o extra module
   - powershell: |
       if ( $env:TOOLCHAIN -eq 'MSVC' ) {
+        # Load modules from cache  
+        $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
+        Write-Host $Env:PSModulePath
+        Import-Module "Pscx"
+        Import-Module "VSSetup"
+
         Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
         $env:Path += ";$(WIN_QT_BINDIR)"
         mkdir $(Build.BinariesDirectory)\tests
@@ -244,6 +271,12 @@ steps:
     condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['MODULE'], ''), eq(variables['SUBCOMMAND'], 'install-qt'))
     displayName: build test with qmake w/o extra module
   - powershell: |
+      # Load modules from cache  
+      $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
+      Write-Host $Env:PSModulePath
+      Import-Module "Pscx"
+      Import-Module "VSSetup"
+
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       $env:Path += ";$(WIN_QT_BINDIR)"
       echo Add Qt to PATH: $env:PATH

@@ -46,6 +46,10 @@ jobs:
     vmImage: 'windows-2019'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.windows'] ]
+  variables:
+    MODULES_FOLDER: '$(System.DefaultWorkingDirectory)\CachedPowershellModules'
+    startYear: $[format('{0:yyyy}', pipeline.startTime)]
+    startMonth: $[format('{0:MM}', pipeline.startTime)]
   steps:
     - template: ci/steps.yml
 
