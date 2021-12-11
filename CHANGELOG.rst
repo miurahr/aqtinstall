@@ -7,9 +7,13 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.0.5`_ (11, Dec. 2021)
+=========================
+
 Changed
 -------
 * Reduce memory consumption: garbage collection on install subprocess(#464)
+* Cache PowerShell modules on Azure Pipeline(#465)
 
 `v2.0.4`_ (5, Dec. 2021)
 =========================
@@ -344,7 +348,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.4...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.5...HEAD
+.. _v2.0.5: https://github.com/miurahr/aqtinstall/compare/v2.0.4...v2.0.5
 .. _v2.0.4: https://github.com/miurahr/aqtinstall/compare/v2.0.3...v2.0.4
 .. _v2.0.3: https://github.com/miurahr/aqtinstall/compare/v2.0.2...v2.0.3
 .. _v2.0.2: https://github.com/miurahr/aqtinstall/compare/v2.0.1...v2.0.2
