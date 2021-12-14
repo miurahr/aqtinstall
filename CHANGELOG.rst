@@ -7,6 +7,44 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.0.5`_ (11, Dec. 2021)
+=========================
+
+Changed
+-------
+* Reduce memory consumption: garbage collection on install subprocess(#464)
+* Cache PowerShell modules on Azure Pipeline(#465)
+
+`v2.0.4`_ (5, Dec. 2021)
+=========================
+
+Fixed
+=====
+* Allow duplicated install on the directory previously installed(#438,#462)
+* Memory error on 32bit python on Windows(#436,#462)
+
+Changed
+=======
+* Change list-src, list-doc and list-example command(#453)
+
+`v2.0.3`_ (25, Nov. 2021)
+=========================
+
+Added
+-----
+* Improve --keep and new --archive-dest options(#458)
+
+Fixed
+-----
+* Fix cross-platform installation failure (#450)
+* CI: update OSes, Windows-2019, macOS-10.15(#444,#456)
+* CI: fix failure of uploading coveralls(#446)
+* CI: test for QtIFW(#451)
+
+Changed
+-------
+* combinations matrix json(#452)
+
 `v2.0.2`_ (1, Nov. 2021)
 =========================
 
@@ -310,7 +348,10 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.5...HEAD
+.. _v2.0.5: https://github.com/miurahr/aqtinstall/compare/v2.0.4...v2.0.5
+.. _v2.0.4: https://github.com/miurahr/aqtinstall/compare/v2.0.3...v2.0.4
+.. _v2.0.3: https://github.com/miurahr/aqtinstall/compare/v2.0.2...v2.0.3
 .. _v2.0.2: https://github.com/miurahr/aqtinstall/compare/v2.0.1...v2.0.2
 .. _v2.0.1: https://github.com/miurahr/aqtinstall/compare/v2.0.0...v2.0.1
 .. _v2.0.0: https://github.com/miurahr/aqtinstall/compare/v1.2.5...v2.0.0

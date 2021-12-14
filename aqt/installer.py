@@ -23,6 +23,7 @@
 
 import argparse
 import binascii
+import gc
 import multiprocessing
 import os
 import platform
@@ -925,6 +926,11 @@ class Cli:
             return function(fallback_url)
 
 
+def is_64bit() -> bool:
+    """check if running platform is 64bit python."""
+    return sys.maxsize > 2 ** 32
+
+
 def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool, archive_dest: Path):
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
@@ -934,7 +940,10 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
     for arc in archives:
         tasks.append((arc, base_dir, sevenzip, queue, archive_dest, keep))
     ctx = multiprocessing.get_context("spawn")
-    pool = ctx.Pool(Settings.concurrency, init_worker_sh)
+    if is_64bit():
+        pool = ctx.Pool(Settings.concurrency, init_worker_sh, (), 4)
+    else:
+        pool = ctx.Pool(Settings.concurrency, init_worker_sh, (), 1)
 
     def close_worker_pool_on_exception(exception: BaseException):
         logger = getLogger("aqt.installer")
@@ -1019,6 +1028,7 @@ def installer(
         num_retries=Settings.max_retries_on_checksum_error,
         name=f"Downloading {name}",
     )
+    gc.collect()
     if command is None:
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)
@@ -1044,6 +1054,7 @@ def installer(
     if not keep:
         os.unlink(archive)
     logger.info("Finished installation of {} in {:.8f}".format(archive.name, time.perf_counter() - start_time))
+    gc.collect()
     qh.flush()
     qh.close()
     logger.removeHandler(qh)
