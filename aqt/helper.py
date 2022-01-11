@@ -57,7 +57,7 @@ def getUrl(url: str, timeout) -> str:
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         try:
-            r = requests.get(url, allow_redirects=False, timeout=timeout)
+            r = session.get(url, allow_redirects=False, timeout=timeout)
             num_redirects = 0
             while 300 < r.status_code < 309 and num_redirects < 10:
                 num_redirects += 1
