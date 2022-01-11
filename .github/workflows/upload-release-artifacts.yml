@@ -17,6 +17,7 @@ jobs:
       matrix:
         os: [windows-latest]
         py: [3.9]
+        arch: [x86, x64]
     steps:
       - uses: actions/checkout@v1
         with:
@@ -26,16 +27,27 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.py }}
+          architecture: ${{ matrix.arch }}
 
       - name: Build standalone binary
         run: |
           ci/build_standalone.bat
+          cp .gravitybee\dist\latest\aqt.exe .gravitybee\dist\latest\aqt_${{ matrix.arch }}.exe
 
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
         with: 
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: .gravitybee\dist\latest\aqt.exe
+          tag: ${{ github.ref }}
+          overwrite: true
+        if: matrix.arch=='x64'
+
+      - name: Upload to Release for all architectures
+        uses: svenstaro/upload-release-action@v2
+        with: 
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: .gravitybee\dist\latest\aqt_${{ matrix.arch }}.exe
           tag: ${{ github.ref }}
           overwrite: true
           
@@ -47,3 +59,13 @@ jobs:
           prerelease: true
           tag: Continuous
           file: .gravitybee\dist\latest\aqt.exe
+        if: matrix.arch=='x64'
+          
+      - name: Update continuous build for all architectures
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          overwrite: true
+          prerelease: true
+          tag: Continuous
+          file: .gravitybee\dist\latest\aqt_${{ matrix.arch }}.exe
