@@ -248,6 +248,57 @@ class Updater:
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
+    def notify_sdk(self, base_dir, qt_version, arch, os_name, toolchain, component_name):
+        if os_name == "windows":
+            sdktoolbinary = pathlib.Path(base_dir) / "Tools" / "QtCreator" / "bin" / "sdktool.exe"
+        else:
+            sdktoolbinary = pathlib.Path(base_dir) / "Tools" / "QtCreator" / "libexec" / "qtcreator" / "sdktool"
+        if not sdktoolbinary.exists():
+            return
+        # register Qt
+        if self._detect_qmake():
+            qmake_full_path = pathlib.Path(self.qmake_path).absolute()
+            command_args = [
+                sdktoolbinary,
+                "addQt",
+                "--id",
+                component_name,
+                "--name",
+                "Desktop Qt {} {}".format(qt_version, arch),
+                "--type",
+                "Qt4ProjectManager.QtVersion.Desktop",
+                "--qmake",
+                qmake_full_path,
+            ]
+            try:
+                subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+            except subprocess.CalledProcessError as cpe:
+                msg = "\n".join(filter(None, [f"sdktool error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+                raise UpdaterError(msg) from cpe
+        # register SDK
+        kitname = component_name + "_kit"
+        command_args = [
+            sdktoolbinary,
+            "addKit",
+            "--id",
+            kitname,
+            "--name",
+            "Desktop Qt {} {}".format(qt_version, arch),
+            "--Ctoolchain",
+            toolchain,
+            "--Cxxtoolchain",
+            toolchain,
+            "--qt",
+            component_name,
+            "--devicetype",
+            "Desktop",
+        ]
+        try:
+            subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+        except subprocess.CalledProcessError as cpe:
+            msg = "\n".join(filter(None, [f"sdktool error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+            raise UpdaterError(msg) from cpe
+
     @classmethod
     def update(cls, target: TargetConfig, base_dir: str):
         """
@@ -294,9 +345,25 @@ class Updater:
                 if target.os_name == "linux":
                     updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
                     updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
+                    updater.notify_sdk(
+                        base_dir,
+                        version,
+                        arch,
+                        os_name,
+                        "x86-linux-generic-elf-64bit",
+                        "fix.me.component.name.should.unique",  # FIXME
+                    )
                 elif target.os_name == "mac":
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
+                    updater.notify_sdk(
+                        base_dir,
+                        version,
+                        arch,
+                        os_name,
+                        "x86-macos-generic-mach_o-64bit",
+                        "fix.me.component.name.should.unique",  # FIXME
+                    )
                 elif target.os_name == "windows":
                     updater.make_qtenv2(base_dir, version_dir, arch_dir)
                 if version < Version("5.14.0"):
