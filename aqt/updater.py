@@ -250,6 +250,54 @@ class Updater:
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
+    def notify_sdk(self, qt_version, arch, os_name, toolchain, component_name):
+        if os_name == "windows":
+            sdktoolbinary = self.prefix / "sdktool.exe"
+        else:
+            sdktoolbinary = self.prefix / "sdktool"
+        # register Qt
+        if self._detect_qmake():
+            command_args = [
+                sdktoolbinary,
+                "addQt",
+                "--id",
+                component_name,
+                "--name",
+                "Desktop Qt {} {}".format(qt_version, arch),
+                "--type",
+                "Qt4ProjectManager.QtVersion.Desktop",
+                "--qmake",
+                self.qmake_path,
+            ]
+            try:
+                subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+            except subprocess.CalledProcessError as cpe:
+                msg = "\n".join(filter(None, [f"sdktool error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+                raise UpdaterError(msg) from cpe
+        # register SDK
+        kitname = component_name + "_kit"
+        command_args = [
+            sdktoolbinary,
+            "addKit",
+            "--id",
+            kitname,
+            "--name",
+            "Desktop Qt {} {}".format(qt_version, arch),
+            "--Ctoolchain",
+            toolchain,
+            "--Cxxtoolchain",
+            toolchain,
+            "--qt",
+            component_name,
+            "--devicetype",
+            "Desktop",
+        ]
+        try:
+            subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+        except subprocess.CalledProcessError as cpe:
+            msg = "\n".join(filter(None, [f"sdktool error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+            raise UpdaterError(msg) from cpe
+
     @classmethod
     def update(cls, target: TargetConfig, base_dir: str):
         """
@@ -296,9 +344,15 @@ class Updater:
                 if target.os_name == "linux":
                     updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
                     updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
+                    updater.notify_sdk(
+                        version, arch, os_name, "x86-linux-generic-elf-64bit", "fix.me.component.name.should.unique"
+                    )
                 elif target.os_name == "mac":
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
+                    updater.notify_sdk(
+                        version, arch, os_name, "x86-macos-generic-mach_o-64bit", "fix.me.component.name.should.unique"
+                    )
                 elif target.os_name == "windows":
                     updater.make_qtenv2(base_dir, version_dir, arch_dir)
                 if version < Version("5.14.0"):
