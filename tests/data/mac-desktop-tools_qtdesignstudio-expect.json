@@ -1,0 +1,53 @@
+{
+  "modules": [
+    "qt.tools.qtdesignstudio"
+  ],
+  "long_listing": [
+    [
+      "qt.tools.qtdesignstudio",
+      "2.3.1-0-202112170945",
+      "2021-12-17",
+      "Qt Design Studio 2.3.1-community",
+      "Qt Design Studio is a UI design and development environment for creating animated UIs and previewing them on the desktop or on Android and embedded Linux devices. It provides you with tools for accomplishing your tasks throughout the whole process, from design to production."
+    ]
+  ],
+  "variants_metadata": [
+    {
+      "Name": "qt.tools.qtdesignstudio",
+      "DisplayName": "Qt Design Studio 2.3.1-community",
+      "Description": "Qt Design Studio is a UI design and development environment for creating animated UIs and previewing them on the desktop or on Android and embedded Linux devices. It provides you with tools for accomplishing your tasks throughout the whole process, from design to production.",
+      "Version": "2.3.1-0-202112170945",
+      "ReleaseDate": "2021-12-17",
+      "Script": "installscript.qs",
+      "Dependencies": "",
+      "SortingPriority": "950",
+      "ForcedInstallation": "true",
+      "DownloadableArchives": [
+        "design_studio_extra_qt_docs.7z",
+        "designstudio_base.7z",
+        "plugin-telemetry.7z",
+        "qml2puppet.7z",
+        "qt5_design_studio_reduced_version.7z",
+        "qt6_design_studio_reduced_version.7z",
+        "qtcreator.7z",
+        "qtcreator_sdktool.7z",
+        "qtdesignviewer_arm64-v8a.7z",
+        "qtdesignviewer_armeabi-v7a.7z",
+        "qtdesignviewer_x86.7z",
+        "qtdesignviewer_x86_64.7z",
+        "content.7z"
+      ],
+      "UpdateFile": {
+        "CompressedSize": "765092766",
+        "UncompressedSize": "3018384434",
+        "OS": "Any"
+      },
+      "UserInterfaces": [
+        "associatecommonfiletypesform.ui",
+        "launchqtcreatorcheckboxform.ui",
+        "readmecheckboxform.ui"
+      ],
+      "SHA1": "34419f7163fa49e1b7e253f5259bab418a64da41"
+    }
+  ]
+}

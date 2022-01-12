@@ -1,0 +1,21 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.qtdesignstudio</Name>
+  <DisplayName>Qt Design Studio 2.3.1-community</DisplayName>
+  <Description>Qt Design Studio is a UI design and development environment for creating animated UIs and previewing them on the desktop or on Android and embedded Linux devices. It provides you with tools for accomplishing your tasks throughout the whole process, from design to production.</Description>
+  <Version>2.3.1-0-202112170945</Version>
+  <ReleaseDate>2021-12-17</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Default>true</Default>
+  <SortingPriority>950</SortingPriority>
+  <UpdateFile UncompressedSize="3018384434" CompressedSize="765092766" OS="Any"/>
+  <DownloadableArchives>design_studio_extra_qt_docs.7z,designstudio_base.7z,plugin-telemetry.7z,qml2puppet.7z,qt5_design_studio_reduced_version.7z,qt6_design_studio_reduced_version.7z,qtcreator.7z,qtcreator_sdktool.7z,qtdesignviewer_arm64-v8a.7z,qtdesignviewer_armeabi-v7a.7z,qtdesignviewer_x86.7z,qtdesignviewer_x86_64.7z,content.7z</DownloadableArchives>
+  <UserInterfaces>associatecommonfiletypesform.ui,launchqtdesignstudiocheckboxform.ui,readmecheckboxform.ui</UserInterfaces>
+  <SHA1>34419f7163fa49e1b7e253f5259bab418a64da41</SHA1>
+ </PackageUpdate>
+ <SHA1>34419f7163fa49e1b7e253f5259bab418a64da41</SHA1>
+ <MetadataName>2021-12-17-0947_meta.7z</MetadataName>
+</Updates>

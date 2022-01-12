@@ -186,6 +186,7 @@ def test_qt_archives_modules(monkeypatch, arch, requested_module_names, has_none
         ("tools_qtcreator", "qt.tools.qtcreatordbg", False),
         ("tools_qtcreator", "qt.tools.qtcreatordev", False),
         ("tools_qtcreator", "qt.tools.qtifw", True),
+        ("tools_qtdesignstudio", "qt.tools.qtdesignstudio", False),
     ),
 )
 def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fail: bool):
