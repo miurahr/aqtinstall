@@ -234,26 +234,23 @@ def mocked_request_response_class(num_redirects: int = 0, forbidden_baseurls=Non
     return MockResponse
 
 
-def test_helper_getUrl_ok(monkeypatch):
-    response_class = mocked_request_response_class()
-
-    def _mock_get(url, **kwargs):
-        return response_class(url, {}, "some_html_content")
-
-    monkeypatch.setattr(requests, "get", _mock_get)
-    assert getUrl("some_url", timeout=(5, 5)) == "some_html_content"
-
-
 def mock_get_redirect(num_redirects: int):
     response_class = mocked_request_response_class(num_redirects)
 
-    def _mock(url: str, timeout, allow_redirects):
+    def _mock(url: str, timeout=None, allow_redirects=None):
         return response_class(url, {}, text="some_html_content")
 
-    def _mock_session(self, url: str, timeout, stream):
+    def _mock_session(self, url: str, allow_redirects=None, timeout=None, stream=None):
         return response_class(url, {}, text="some_html_content")
 
     return _mock, _mock_session
+
+
+def test_helper_getUrl_ok(monkeypatch):
+    mocked_get, mocked_session_get = mock_get_redirect(0)
+    monkeypatch.setattr(requests, "get", mocked_get)
+    monkeypatch.setattr(requests.Session, "get", mocked_session_get)
+    assert getUrl("some_url", timeout=(5, 5)) == "some_html_content"
 
 
 def test_helper_getUrl_redirect_5(monkeypatch):
@@ -282,7 +279,11 @@ def test_helper_getUrl_conn_error(monkeypatch):
     def _mock(url: str, *args, **kwargs):
         return response_class(url, {}, text="some_html_content")
 
+    def _mock_session(self, url: str, *args, **kargs):
+        return response_class(url, {}, text="some_html_content")
+
     monkeypatch.setattr(requests, "get", _mock)
+    monkeypatch.setattr(requests.sessions.Session, "get", _mock_session)
     with pytest.raises(ArchiveConnectionError) as e:
         getUrl(url, timeout)
     assert e.type == ArchiveConnectionError

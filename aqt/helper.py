@@ -49,7 +49,7 @@ def _check_content_type(ct: str) -> bool:
 
 def getUrl(url: str, timeout) -> str:
     logger = getLogger("aqt.helper")
-    with requests.Session() as session:
+    with requests.sessions.Session() as session:
         retries = requests.adapters.Retry(
             total=Settings.max_retries_on_connection_error, backoff_factor=Settings.backoff_factor
         )
@@ -57,7 +57,7 @@ def getUrl(url: str, timeout) -> str:
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         try:
-            r = requests.get(url, allow_redirects=False, timeout=timeout)
+            r = session.get(url, allow_redirects=False, timeout=timeout)
             num_redirects = 0
             while 300 < r.status_code < 309 and num_redirects < 10:
                 num_redirects += 1
@@ -82,7 +82,7 @@ def getUrl(url: str, timeout) -> str:
 def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout):
     logger = getLogger("aqt.helper")
     filename = Path(url).name
-    with requests.Session() as session:
+    with requests.sessions.Session() as session:
         retries = requests.adapters.Retry(
             total=Settings.max_retries_on_connection_error, backoff_factor=Settings.backoff_factor
         )
