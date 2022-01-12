@@ -28,8 +28,7 @@ paste program output here
 
 **Desktop (please complete the following information):**
  - OS: [e.g. windows]
- - Python version and build info [paste the output from the command `python -VV`]
- - `aqt` version [paste the output from the command `aqt --version` or `python -m aqt --version`]
+ - `aqt` version [paste the output from the command `aqt version` or `python -m aqt version`]
 
 **Additional context**
 Add any other context about the problem here.
