@@ -192,6 +192,11 @@ class MyQueueListener(QueueListener):
         logger.handle(record)
 
 
+def ssplit(data: str):
+    for element in data.split(","):
+        yield element.strip()
+
+
 def xml_to_modules(
     xml_text: str,
     predicate: Callable[[ElementTree.Element], bool],

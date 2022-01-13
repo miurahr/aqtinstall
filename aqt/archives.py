@@ -27,7 +27,7 @@ from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
 
 from aqt.exceptions import ArchiveDownloadError, ArchiveListError, NoPackageFound
-from aqt.helper import Settings, getUrl
+from aqt.helper import Settings, getUrl, ssplit
 from aqt.metadata import QtRepoProperty, Version
 
 
@@ -245,7 +245,7 @@ class QtArchives:
             full_version = packageupdate.find("Version").text
             package_desc = packageupdate.find("Description").text
 
-            for archive in downloads_text.split(", "):
+            for archive in ssplit(downloads_text):
                 archive_name = archive.split("-", maxsplit=1)[0]
                 package_url = posixpath.join(
                     # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt5_5150/
@@ -442,7 +442,7 @@ class ToolArchives(QtArchives):
         if not downloadable_archives:
             message = f"The package '{self.arch}' contains no downloadable archives!"
             raise NoPackageFound(message)
-        for archive in downloadable_archives.split(", "):
+        for archive in ssplit(downloadable_archives):
             package_url = posixpath.join(
                 # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
                 archive_url,
