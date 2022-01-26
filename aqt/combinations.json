@@ -167,6 +167,38 @@
           "qtwebview"
         ],
         "qt_version": "6.2"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qt3d",
+          "qt5compat",
+          "qtcharts",
+          "qtconnectivity",
+          "qtdatavis3d",
+          "qtimageformats",
+          "qtlanguageserver",
+          "qtlottie",
+          "qtmultimedia",
+          "qtnetworkauth",
+          "qtpdf",
+          "qtpositioning",
+          "qtquick3d",
+          "qtquicktimeline",
+          "qtremoteobjects",
+          "qtscxml",
+          "qtsensors",
+          "qtserialbus",
+          "qtserialport",
+          "qtshadertools",
+          "qtvirtualkeyboard",
+          "qtwaylandcompositor",
+          "qtwebchannel",
+          "qtwebengine",
+          "qtwebsockets",
+          "qtwebview"
+        ],
+        "qt_version": "6.3"
       }
     ],
     "new_archive": [
@@ -870,7 +902,8 @@
       "6.1.3",
       "6.2.0",
       "6.2.1",
-      "6.2.2"
+      "6.2.2",
+      "6.3.0"
     ]
   }
 ]
