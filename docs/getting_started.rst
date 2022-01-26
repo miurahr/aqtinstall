@@ -436,6 +436,7 @@ of archives that it is downloading, extracting, and installing,
 including ``qtbase``, ``qtmultimedia``, ``qt3d``, and ~25 more items.
 We can use the ``--archives`` flag to choose which of these archives we will
 actually install.
+The ``--archives`` flag can only affect two modules: the base Qt installation and the ``debug_info`` module.
 
 .. note::
     In this documentation, **"modules"**, **"archives"**, and **"the base Qt installation"**
@@ -511,72 +512,38 @@ working Qt installation. We can install these archives using this command:
 Installing Modules With Archives Specified
 ``````````````````````````````````````````
 
-Now let's say we need to install the ``qtcharts`` and ``qtlottie`` modules.
-Let's see what archives are part of these modules:
+As of aqt v2.1.0, the ``--archives`` flag will only apply to
+the base Qt installation and to the ``debug_info`` module.
+Previous versions of aqt required that when installing modules with the ``--archives`` flag,
+the user must specify archives for each module, otherwise they would not be installed.
+This behavior has been changed to prevent such mistakes.
+
+Let's say that we need to install the bare minimum Qt 5.15.2, with the modules ``qtcharts`` and ``qtlottie``:
 
 .. code-block:: console
 
-    $ aqt list-qt linux desktop --archives 5.15.2 gcc_64 qtcharts qtlottie
-    qtcharts qtlottie
+    $ aqt install-qt linux desktop 5.15.2 --modules qtcharts qtlottie --archives qtbase
 
-This time, the command only printed two archives.
-The ``qtcharts`` and ``qtlottie`` modules contain one archive per module.
-
-.. note::
-    This command printed all archives associated with the modules we provided it,
-    and it did not print any of the archives associated with the base Qt installation.
-    This happened because we added a list of modules to the ``--archives`` flag.
-
-    .. code-block:: bash
-
-        # Print archives from the base Qt installation
-        aqt list-qt linux desktop --archives 5.15.2 gcc_64
-
-        # Print archives from the specified modules, but not the base Qt installation
-        aqt list-qt linux desktop --archives 5.15.2 gcc_64 qtcharts qtlottie
-
-
-Now let's install Qt with these modules:
-
-.. code-block:: console
-
-    $ aqt install-qt linux desktop 5.15.2 --modules qtcharts qtlottie \
-                                          --archives qtbase qtcharts qtlottie
-
-This command will install the bare minimum Qt, along with the modules ``qtcharts`` and ``qtlottie``.
-
-Remember that when using the ``--archives`` flag, you must specify every archive you
-intend to install.
-
-.. code-block:: bash
-
-    # Ways to misuse the `--archives` flag:
-
-    # This command installs modules without a working Qt installation,
-    # because `--archives` is missing `qtbase`.
-    aqt install-qt linux desktop 5.15.2 --modules qtcharts qtlottie \
-                                        --archives qtcharts qtlottie
-
-    # This command skips installation of the specified modules,
-    # because `--archives` is missing `qtcharts` and `qtlottie`.
-    aqt install-qt linux desktop 5.15.2 --modules qtcharts qtlottie \
-                                        --archives qtbase
-
-    # This command installs qtbase, but neither `qtcharts` nor `qtlottie`,
-    # because `--modules` is missing those names.
-    aqt install-qt linux desktop 5.15.2 --archives qtbase qtcharts qtlottie
+This command will successfully install 3 archives: 1 for ``qtbase``, and one each for the two modules.
+If we had tried to use this command with previous versions of aqt, we would not have
+installed the two modules because we did not specify them in the ``--archives`` list.
 
 .. note::
 
-    If you install modules that depend on archives other than ``qtbase``,
-    and you have not specified those archives after the ``--archives`` flag,
-    those modules will not work when you try to use them.
+    You can still misuse the ``--archives`` flag by omitting the ``qtbase`` archive,
+    or by omitting archives that another archive or module is dependent on.
+    You may not notice that there is a problem until you try to compile a program,
+    and compilation fails.
 
 Installing the ``debug_info`` module
 ````````````````````````````````````
 
-Now let's say we need to install the ``debug_info`` module, which is particularly large.
-We do not want to install all of it, so we can use ``aqt list-qt --archives`` again
+Now let's say we need to install the ``debug_info`` module, which is particularly large: around one gigabyte.
+We do not want to install all of it, so we can use ``aqt install-qt --archives``
+to choose which archives we want to install. Remember that the ``--archives`` flag
+
+
+``aqt list-qt --archives``
 to print which archives are part of the ``debug_info`` module:
 
 .. code-block:: console

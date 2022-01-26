@@ -414,6 +414,7 @@ are described here:
 .. option:: --archives <list of archives>
 
     [Advanced] Specify subset of archives to **limit** installed archives.
+    It will only affect the base Qt installation and the ``debug_info`` module.
     This is advanced option and not recommended to use for general usage.
     Main purpose is speed up CI/CD process by limiting installed modules.
     It can cause broken installation of Qt SDK.

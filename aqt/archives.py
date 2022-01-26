@@ -143,6 +143,7 @@ class QtArchives:
         self.base: str = posixpath.join(base, "online/qtsdkrepository")
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
+        self.subarchives: Optional[Iterable[str]] = subarchives
         self.mod_list: Iterable[str] = modules or []
         self.is_include_base_package: bool = is_include_base_package
         self.timeout = timeout
@@ -150,14 +151,20 @@ class QtArchives:
             self._get_archives()
         except ArchiveDownloadError as e:
             self.handle_missing_updates_xml(e)
-        should_install_all_archives = subarchives is None
-        if not should_install_all_archives:
-            self.archives = list(filter(lambda a: a.name in subarchives, self.archives))
 
     def handle_missing_updates_xml(self, e: ArchiveDownloadError):
         msg = f"Failed to locate XML data for Qt version '{self.version}'."
         help_msg = f"Please use 'aqt list-qt {self.os_name} {self.target}' to show versions available."
         raise ArchiveListError(msg, suggested_action=[help_msg]) from e
+
+    def should_filter_archives(self, package_name: str) -> bool:
+        """
+        This tells us, based on the PackageUpdate.Name property, whether or not the `self.subarchives`
+        list should be used to filter out archives that we are not interested in.
+
+        If `package_name` is a base module or a debug_info module, the `subarchives` list will apply to it.
+        """
+        return package_name in self._base_package_names() or "debug_info" in package_name
 
     def _version_str(self) -> str:
         return ("{0.major}{0.minor}" if self.version == Version("5.9.0") else "{0.major}{0.minor}{0.patch}").format(
@@ -168,8 +175,23 @@ class QtArchives:
         ext = QtRepoProperty.extension_for_arch(self.arch, self.version >= Version("6.0.0"))
         return ("_" + ext) if ext else ""
 
-    def _base_target_package_name(self) -> str:
+    def _base_module_name(self) -> str:
+        """
+        This is the name for the base Qt module, whose PackageUpdate.Name property would be
+        'qt.123.gcc_64' or 'qt.qt1.123.gcc_64' for Qt 1.2.3, for architecture gcc_64.
+        """
         return "qt_base"
+
+    def _base_package_names(self) -> Iterable[str]:
+        """
+        This is a list of all potential PackageUpdate.Name properties for the base Qt module,
+        which would be 'qt.123.gcc_64' or 'qt.qt1.123.gcc_64' for Qt 1.2.3, for architecture gcc_64,
+        or 'qt.123.src' or 'qt.qt1.123.src' for the source module.
+        """
+        return (
+            f"qt.qt{self.version.major}.{self._version_str()}.{self.arch}",
+            f"qt.{self._version_str()}.{self.arch}",
+        )
 
     def _module_name_suffix(self, module: str) -> str:
         return f"{module}.{self.arch}"
@@ -177,12 +199,7 @@ class QtArchives:
     def _target_packages(self) -> ModuleToPackage:
         if self.all_extra:
             return ModuleToPackage({})
-        base_package = {
-            self._base_target_package_name(): [
-                f"qt.qt{self.version.major}.{self._version_str()}.{self.arch}",
-                f"qt.{self._version_str()}.{self.arch}",
-            ]
-        }
+        base_package = {self._base_module_name(): list(self._base_package_names())}
         target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
         if self.all_extra:
             return target_packages
@@ -228,6 +245,9 @@ class QtArchives:
             downloads_text = packageupdate.find("DownloadableArchives").text
             if not downloads_text:
                 continue
+            # If we asked for `--noarchives`, we don't want the base module
+            if not self.is_include_base_package and pkg_name in self._base_package_names():
+                continue
             # Need to filter archives to download when we want all extra modules
             if self.all_extra:
                 # Check platform
@@ -244,9 +264,12 @@ class QtArchives:
                 target_packages.remove_module_for_package(pkg_name)
             full_version = packageupdate.find("Version").text
             package_desc = packageupdate.find("Description").text
+            should_filter_archives: bool = self.subarchives and self.should_filter_archives(pkg_name)
 
             for archive in ssplit(downloads_text):
                 archive_name = archive.split("-", maxsplit=1)[0]
+                if should_filter_archives and archive_name not in self.subarchives:
+                    continue
                 package_url = posixpath.join(
                     # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt5_5150/
                     archive_url,
@@ -276,7 +299,7 @@ class QtArchives:
         base_cmd = f"aqt list-qt {self.os_name} {self.target}"
         arch = f"Please use '{base_cmd} --arch {self.version}' to show architectures available."
         mods = f"Please use '{base_cmd} --modules {self.version} <arch>' to show modules available."
-        has_base_pkg: bool = self._base_target_package_name() in missing_modules
+        has_base_pkg: bool = self._base_module_name() in missing_modules
         has_non_base_pkg: bool = len(list(missing_modules)) > 1 or not has_base_pkg
         messages = []
         if has_base_pkg:
@@ -316,6 +339,7 @@ class SrcDocExamplesArchives(QtArchives):
         subarchives=None,
         modules=None,
         all_extra=False,
+        is_include_base_package: bool = True,
         timeout=(5, 5),
     ):
         self.flavor = flavor
@@ -332,14 +356,19 @@ class SrcDocExamplesArchives(QtArchives):
             subarchives=subarchives,
             modules=modules,
             all_extra=all_extra,
+            is_include_base_package=is_include_base_package,
             timeout=timeout,
         )
 
     def _arch_ext(self) -> str:
         return "_src_doc_examples"
 
-    def _base_target_package_name(self) -> str:
-        return self.flavor
+    def _base_module_name(self) -> str:
+        """
+        This is the name for the base Qt Src/Doc/Example module, whose PackageUpdate.Name
+        property would be 'qt.123.examples' or 'qt.qt1.123.examples' for Qt 1.2.3 examples.
+        """
+        return self.flavor  # src | doc | examples
 
     def _module_name_suffix(self, module: str) -> str:
         return f"{self.flavor}.{module}"

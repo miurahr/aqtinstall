@@ -4,11 +4,11 @@ import posixpath
 import re
 from itertools import groupby
 from pathlib import Path
-from typing import Dict, Iterable
+from typing import Dict, Iterable, List, Set
 
 import pytest
 
-from aqt.archives import ModuleToPackage, QtArchives, QtPackage, ToolArchives
+from aqt.archives import ModuleToPackage, QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings
 from aqt.metadata import Version
@@ -287,3 +287,166 @@ def test_module_to_package():
     for package_name in qtcharts_names:
         assert not mapping.has_package(package_name), "None of the qtcharts packages may remain after removal"
     assert len(mapping) == 0, "There must be no remaining module names"
+
+
+qt_5140_xml_weird_module = """
+<Updates>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtcharts.win32_mingw73</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>blah blah blah</Description>
+  <Version>5.14.0-0-201912110700</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Dependencies>qt.qt5.5140.doc.qtcharts, qt.qt5.5140.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives>weird-qtcharts.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="791213" OS="Any" UncompressedSize="8196243"/>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.win32_mingw73</Name>
+  <DisplayName>Mingw 32-bit</DisplayName>
+  <Description>blah blah blah</Description>
+  <Version>5.14.0-0-201912110700</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt5.5140.doc, qt.qt5.5140.examples</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives>qtbase-mingw.7z, other-mingw.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="81303586" OS="Any" UncompressedSize="540178217"/>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.debug_info.win32_mingw73</Name>
+  <DisplayName>Desktop Mingw 32-bit debug information files</DisplayName>
+  <Description>Qt 5.14.0 debug information files for Desktop Mingw 32-bit</Description>
+  <Version>5.14.0-0-201912110700</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.debug_info, qt.qt5.5140.win32_mingw73</AutoDependOn>
+  <Dependencies>qt.qt5.5140.win32_mingw73</Dependencies>
+  <DownloadableArchives>qtbase-debug_info.7z, weird-debug_info.7z, somethingELSE-debug_info.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="459720623" OS="Any" UncompressedSize="3579147640"/>
+ </PackageUpdate>
+</Updates>
+"""
+qt_doc_5152_xml_weird_module = """
+<Updates>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtcharts</Name>
+  <DisplayName>Documentation for Qt 5.15.2 GPLv3 components (QtCharts)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 GPLv3 components (QtCharts)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <DownloadableArchives>weird-qtcharts-docs.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="16802053" OS="Any" CompressedSize="8714357"/>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc</Name>
+  <DisplayName>Qt 5.15.2 Documentation</DisplayName>
+  <Description>Qt 5.15.2 documentation</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Dependencies>qt.tools</Dependencies>
+  <DownloadableArchives>tqtc-docs.7z, other-docs.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="402906410" OS="Any" CompressedSize="134528625"/>
+ </PackageUpdate>
+</Updates>
+"""
+
+
+def make_qt_archives(subarchives, modules, is_include_base) -> QtArchives:
+    return QtArchives(
+        "mac",
+        "desktop",
+        "5.14.0",
+        "win32_mingw73",
+        "www.example.com",
+        subarchives,
+        modules,
+        "all" in modules,
+        is_include_base,
+    )
+
+
+def make_doc_archives(subarchives, modules, is_include_base) -> SrcDocExamplesArchives:
+    return SrcDocExamplesArchives(
+        flavor="doc",
+        os_name="mac",
+        target="desktop",
+        version="5.15.2",
+        base="www.example.com",
+        subarchives=subarchives,
+        modules=modules,
+        all_extra="all" in modules,
+        is_include_base_package=is_include_base,
+    )
+
+
+@pytest.mark.parametrize(
+    "subarchives, modules, is_include_base, xml, make_archives_fn, expect_archives",
+    (
+        (["qtbase"], [], True, qt_5140_xml_weird_module, make_qt_archives, {"qtbase-mingw.7z"}),
+        # --archives should apply to debug_info and base, but not qtcharts module
+        (
+            ["qtbase"],
+            ["all"],
+            True,
+            qt_5140_xml_weird_module,
+            make_qt_archives,
+            {"qtbase-mingw.7z", "qtbase-debug_info.7z", "weird-qtcharts.7z"},
+        ),
+        # don't allow archives from debug_info
+        (
+            ["qtbase"],
+            ["qtcharts"],
+            True,
+            qt_5140_xml_weird_module,
+            make_qt_archives,
+            {"qtbase-mingw.7z", "weird-qtcharts.7z"},
+        ),
+        # don't include anything from base module
+        (["qtbase"], [], False, qt_5140_xml_weird_module, make_qt_archives, set()),
+        # --archives should apply to debug_info
+        (
+            ["qtbase"],
+            ["all"],
+            False,
+            qt_5140_xml_weird_module,
+            make_qt_archives,
+            {"qtbase-debug_info.7z", "weird-qtcharts.7z"},
+        ),
+        # don't allow archives from debug_info
+        (["qtbase"], ["qtcharts"], False, qt_5140_xml_weird_module, make_qt_archives, {"weird-qtcharts.7z"}),
+        (["tqtc"], [], True, qt_doc_5152_xml_weird_module, make_doc_archives, {"tqtc-docs.7z"}),
+        (
+            ["tqtc"],
+            ["all"],
+            True,
+            qt_doc_5152_xml_weird_module,
+            make_doc_archives,
+            {"tqtc-docs.7z", "weird-qtcharts-docs.7z"},
+        ),
+        (
+            ["tqtc"],
+            ["qtcharts"],
+            True,
+            qt_doc_5152_xml_weird_module,
+            make_doc_archives,
+            {"tqtc-docs.7z", "weird-qtcharts-docs.7z"},
+        ),
+        (["tqtc"], [], False, qt_doc_5152_xml_weird_module, make_doc_archives, set()),
+        (["tqtc"], ["all"], False, qt_doc_5152_xml_weird_module, make_doc_archives, {"weird-qtcharts-docs.7z"}),
+        (["tqtc"], ["qtcharts"], False, qt_doc_5152_xml_weird_module, make_doc_archives, {"weird-qtcharts-docs.7z"}),
+    ),
+)
+def test_archives_weird_module_7z_name(
+    monkeypatch,
+    subarchives: List[str],
+    modules: List[str],
+    is_include_base: bool,
+    xml: str,
+    make_archives_fn,
+    expect_archives: Set[str],
+):
+    monkeypatch.setattr("aqt.archives.getUrl", lambda *args: xml)
+
+    qt_archives = make_archives_fn(subarchives, modules, is_include_base)
+    archives = {pkg.archive for pkg in qt_archives.archives}
+    assert archives == expect_archives

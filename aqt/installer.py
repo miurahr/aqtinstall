@@ -850,7 +850,8 @@ class Cli:
         subparser.add_argument(
             "--archives",
             nargs="*",
-            help="Specify subset packages to install (Default: all standard and extra modules).",
+            help="Specify subset of archives to install. Affects the base module and the debug_info module. "
+            "(Default: all archives).",
         )
 
     def _set_common_arguments(self, subparser, *, is_legacy: bool, is_target_deprecated: bool = False):
