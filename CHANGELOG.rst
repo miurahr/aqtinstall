@@ -7,6 +7,23 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.0.6`_ (7, Feb. 2022)
+========================
+
+Fixed
+-----
+* Fix archives flag(#459)
+* Accept the case Update.xml in Server has delimiter without space(#479)
+* Fix getUrl function to use property http session and retry(#473)
+
+Added
+-----
+* 32bit release binary(#471)
+
+Changed
+-------
+* combinations matrix json(#481,#484)
+
 `v2.0.5`_ (11, Dec. 2021)
 =========================
 
@@ -348,7 +365,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.5...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.6...HEAD
+.. _v2.0.6: https://github.com/miurahr/aqtinstall/compare/v2.0.5...v2.0.6
 .. _v2.0.5: https://github.com/miurahr/aqtinstall/compare/v2.0.4...v2.0.5
 .. _v2.0.4: https://github.com/miurahr/aqtinstall/compare/v2.0.3...v2.0.4
 .. _v2.0.3: https://github.com/miurahr/aqtinstall/compare/v2.0.2...v2.0.3
