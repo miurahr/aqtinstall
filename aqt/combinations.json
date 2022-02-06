@@ -534,6 +534,12 @@
         "tool_name": "tools_qtdesignstudio"
       },
       {
+        "arch": "qt.tools.qtdesignstudio",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio_generation2"
+      },
+      {
         "arch": "qt.tools.qtcreator.telemetry",
         "os_name": "linux",
         "target": "desktop",
@@ -610,6 +616,12 @@
         "os_name": "mac",
         "target": "desktop",
         "tool_name": "tools_qtdesignstudio"
+      },
+      {
+        "arch": "qt.tools.qtdesignstudio",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio_generation2"
       },
       {
         "arch": "qt.tools.qtcreator.telemetry",
@@ -784,6 +796,12 @@
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_qtdesignstudio"
+      },
+      {
+        "arch": "qt.tools.qtdesignstudio",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio_generation2"
       },
       {
         "arch": "qt.tools.qtcreator.telemetry",
