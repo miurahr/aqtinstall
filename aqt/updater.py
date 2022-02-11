@@ -250,11 +250,13 @@ class Updater:
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
-    def notify_sdk(self, qt_version, arch, os_name, toolchain, component_name):
+    def notify_sdk(self, base_dir, qt_version, arch, os_name, toolchain, component_name):
         if os_name == "windows":
-            sdktoolbinary = self.prefix / "sdktool.exe"
+            sdktoolbinary = pathlib.Path(base_dir) / "Tools" / "QtCreator" / "bin" / "sdktool.exe"
         else:
-            sdktoolbinary = self.prefix / "sdktool"
+            sdktoolbinary = pathlib.Path(base_dir) / "Tools" / "QtCreator" / "bin" / "sdktool"
+        if not sdktoolbinary.exists():
+            return
         # register Qt
         if self._detect_qmake():
             command_args = [
@@ -345,13 +347,23 @@ class Updater:
                     updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
                     updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
                     updater.notify_sdk(
-                        version, arch, os_name, "x86-linux-generic-elf-64bit", "fix.me.component.name.should.unique"
+                        base_dir,
+                        version,
+                        arch,
+                        os_name,
+                        "x86-linux-generic-elf-64bit",
+                        "fix.me.component.name.should.unique",
                     )
                 elif target.os_name == "mac":
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
                     updater.notify_sdk(
-                        version, arch, os_name, "x86-macos-generic-mach_o-64bit", "fix.me.component.name.should.unique"
+                        base_dir,
+                        version,
+                        arch,
+                        os_name,
+                        "x86-macos-generic-mach_o-64bit",
+                        "fix.me.component.name.should.unique",
                     )
                 elif target.os_name == "windows":
                     updater.make_qtenv2(base_dir, version_dir, arch_dir)
