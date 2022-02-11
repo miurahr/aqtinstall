@@ -928,7 +928,7 @@ class Cli:
 
 def is_64bit() -> bool:
     """check if running platform is 64bit python."""
-    return sys.maxsize > 2 ** 32
+    return sys.maxsize > 1 << 32
 
 
 def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool, archive_dest: Path):
