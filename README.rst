@@ -95,6 +95,8 @@ You are recommended to update pip before installing aqtinstall.
     some of which are precompiled in several platforms.
     Older pip does not handle it expectedly(see #230).
 
+.. warning::
+    There is an unrelated package `aqt` in pypi. Please don't confuse with it.
 
 It may be difficult to set up some Windows systems with the correct version of Python and all of ``aqt``'s dependencies.
 To get around this problem, ``aqtinstall`` offers ``aqt.exe``, a Windows executable that contains Python and all required dependencies.
