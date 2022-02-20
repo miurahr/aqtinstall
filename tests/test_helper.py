@@ -14,6 +14,13 @@ from aqt.helper import Settings, get_hash, getUrl, retry_on_errors
 from aqt.metadata import Version
 
 
+@pytest.fixture(autouse=True)
+def load_default_settings(use_defaults: bool = True):
+    """For each test, first load the default settings file, unless marked otherwise"""
+    if use_defaults:
+        helper.Settings.load_settings()
+
+
 def test_helper_altlink(monkeypatch):
     class Message:
         headers = {"content-type": "text/plain", "length": 300}
@@ -56,6 +63,7 @@ def test_helper_altlink(monkeypatch):
     assert newurl.startswith("http://ftp.jaist.ac.jp/")
 
 
+@pytest.mark.load_default_settings(False)
 def test_settings(tmp_path):
     helper.Settings.load_settings(os.path.join(os.path.dirname(__file__), "data", "settings.ini"))
     assert helper.Settings.concurrency == 3
