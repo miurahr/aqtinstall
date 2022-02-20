@@ -41,6 +41,7 @@ list-qt command
 .. code-block:: bash
 
     aqt list-qt [-h | --help]
+                [-c | --config]
                 [--extension <extension>]
                 [--spec <specification>]
                 [--modules    (<Qt version> | latest) <architecture> |
@@ -142,6 +143,7 @@ list-src command
 .. code-block:: bash
 
     aqt list-src [-h | --help]
+                 [-c | --config]
                  <host> (<Qt version> | <spec>)
 
 List source archives available for installation using the `install-src command`_.
@@ -176,6 +178,7 @@ list-doc command
 .. code-block:: bash
 
     aqt list-doc [-h | --help]
+                 [-c | --config]
                  [-m | --modules]
                  <host> (<Qt version> | <spec>)
 
@@ -220,6 +223,7 @@ list-example command
 .. code-block:: bash
 
     aqt list-example [-h | --help]
+                     [-c | --config]
                      [-m | --modules]
                      <host> (<Qt version> | <spec>)
 
@@ -263,7 +267,7 @@ list-tool command
 
 .. code-block:: bash
 
-    aqt list-tool [-h | --help] [-l | --long] <host> [<target>] [<tool name>]
+    aqt list-tool [-h | --help] [-c | --config] [-l | --long] <host> [<target>] [<tool name>]
 
 List available tools
 
@@ -336,6 +340,10 @@ are described here:
 
     Specify mirror site base url such as  -b ``https://mirrors.dotsrc.org/qtproject``
     where 'online' folder exist.
+    
+.. option:: --config, -c <settings_file_path>
+
+    Specify the path to your own ``settings.ini`` file. See :ref:`the Configuration section<configuration-ref>`.
 
 .. option:: --timeout <timeout(sec)>
 
@@ -448,6 +456,7 @@ install-qt command
 
     aqt install-qt
         [-h | --help]
+        [-c | --config]
         [-O | --outputdir <directory>]
         [-b | --base <mirror url>]
         [--timeout <timeout(sec)>]
@@ -524,6 +533,7 @@ install-src command
 
     aqt install-src
         [-h | --help]
+        [-c | --config]
         [-O | --outputdir <directory>]
         [-b | --base <mirror url>]
         [--timeout <timeout(sec)>]
@@ -584,6 +594,7 @@ install-doc command
 
     aqt install-doc
         [-h | --help]
+        [-c | --config]
         [-O | --outputdir <directory>]
         [-b | --base <mirror url>]
         [--timeout <timeout(sec)>]
@@ -636,6 +647,7 @@ install-example command
 
     aqt install-example
         [-h | --help]
+        [-c | --config]
         [-O | --outputdir <directory>]
         [-b | --base <mirror url>]
         [--timeout <timeout(sec)>]
@@ -690,6 +702,7 @@ install-tool command
 
     aqt install-tool
         [-h | --help]
+        [-c | --config]
         [-O | --outputdir <directory>]
         [-b | --base <mirror url>]
         [--timeout <timeout(sec)>]
