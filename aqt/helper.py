@@ -362,8 +362,16 @@ class SettingsClass:
         return self.config.getint("requests", "max_retries_on_checksum_error", fallback=int(self.max_retries))
 
     @property
+    def max_retries_to_retrieve_hash(self):
+        return self.config.getint("requests", "max_retries_to_retrieve_hash", fallback=int(self.max_retries))
+
+    @property
     def backoff_factor(self):
         return self.config.getfloat("requests", "retry_backoff", fallback=0.1)
+
+    @property
+    def trusted_mirrors(self):
+        return self.config.getlist("mirrors", "trusted_mirrors", fallback=[self.baseurl])
 
     @property
     def fallbacks(self):

@@ -30,8 +30,11 @@ A file is like as follows:
     max_retries_on_connection_error: 5
     retry_backoff: 0.1
     max_retries_on_checksum_error: 5
+    max_retries_to_retrieve_hash: 5
 
     [mirrors]
+    trusted_mirrors:
+        https://download.qt.io
     blacklist:
         http://mirrors.ustc.edu.cn
         http://mirrors.tuna.tsinghua.edu.cn
@@ -129,6 +132,24 @@ max_retries_on_checksum_error:
 
 
 The ``[mirrors]`` section is a configuration for mirror handling.
+
+trusted_mirrors:
+    ``trusted_mirrors`` is a list of URLs that you trust to provide accurate
+    checksums for all downloaded archives.
+    This is a security feature; please do not change this value unless you know
+    what you're doing!
+
+    ``aqtinstall`` downloads all checksums from mirrors in this list.
+    These checksums are used to verify that every other file that ``aqtinstall``
+    downloads is, in fact, the correct file, and not a corrupt or malicious copy
+    of the file.
+    You may need to modify this list if the default mirrors are unreachable,
+    or if you do not trust that they have not been compromised.
+
+    ``aqtinstall`` can safely download archive files from the fallback mirror
+    list, and ensure that they are not malicious files, by checking them against
+    the checksums downloaded from the ``trusted_mirrors`` list.
+    ``aqtinstall`` uses the SHA-256 algorithm to perform this check.
 
 blacklist:
     It is a list of URL where is a problematic mirror site.
