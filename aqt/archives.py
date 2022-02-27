@@ -48,7 +48,6 @@ class QtPackage:
     archive_url: str
     archive: str
     package_desc: str
-    hashurl: str
     pkg_update_name: str
     version: Optional[Version] = field(default=None)
 
@@ -61,7 +60,7 @@ class QtPackage:
         return (
             f"QtPackage(name={self.name}, url={self.archive_url}, "
             f"archive={self.archive}, desc={self.package_desc}"
-            f"hashurl={self.hashurl}{v_info})"
+            f"{v_info})"
         )
 
 
@@ -278,14 +277,12 @@ class QtArchives:
                     # 5.15.0-0-202005140804qtbase-Linux-RHEL_7_6-GCC-Linux-RHEL_7_6-X86_64.7z
                     full_version + archive,
                 )
-                hashurl = package_url + ".sha1"
                 self.archives.append(
                     QtPackage(
                         name=archive_name,
                         archive_url=package_url,
                         archive=archive,
                         package_desc=package_desc,
-                        hashurl=hashurl,
                         pkg_update_name=pkg_name,  # For testing purposes
                     )
                 )
@@ -480,14 +477,12 @@ class ToolArchives(QtArchives):
                 #  4.1.1-202105261130ifw-linux-x64.7z
                 f"{named_version}{archive}",
             )
-            hashurl = package_url + ".sha1"
             self.archives.append(
                 QtPackage(
                     name=name,
                     archive_url=package_url,
                     archive=archive,
                     package_desc=package_desc,
-                    hashurl=hashurl,
                     pkg_update_name=name,  # Redundant
                 )
             )

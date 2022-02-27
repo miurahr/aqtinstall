@@ -139,7 +139,6 @@ def test_qt_archives_modules(monkeypatch, arch, requested_module_names, has_none
             assert url_match
             mod_name, archive_name = url_match.groups()
             assert pkg.archive == archive_name
-            assert pkg.hashurl == pkg.archive_url + ".sha1"
             assert archive_name in expected_7z_files
             expected_7z_files.remove(archive_name)
         assert len(expected_7z_files) == 0, "Actual number of packages was fewer than expected"
@@ -227,7 +226,6 @@ def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fai
         actual_variant_name, archive_name = url_match.groups()
         assert actual_variant_name == tool_variant_name
         assert pkg.archive == archive_name
-        assert pkg.hashurl == pkg.archive_url + ".sha1"
         assert archive_name in expected_7z_files
         expected_7z_files.remove(archive_name)
     assert len(expected_7z_files) == 0, f"Failed to produce QtPackages for {expected_7z_files}"

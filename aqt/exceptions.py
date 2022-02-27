@@ -47,6 +47,10 @@ class ArchiveChecksumError(ArchiveDownloadError):
     pass
 
 
+class ChecksumDownloadFailure(ArchiveDownloadError):
+    pass
+
+
 class ArchiveConnectionError(AqtException):
     pass
 

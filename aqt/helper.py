@@ -24,18 +24,25 @@ import hashlib
 import json
 import logging.config
 import os
+import posixpath
 import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, Generator, List, Tuple
 from urllib.parse import urlparse
 
 import requests
 import requests.adapters
 
-from aqt.exceptions import ArchiveChecksumError, ArchiveConnectionError, ArchiveDownloadError, ArchiveListError
+from aqt.exceptions import (
+    ArchiveChecksumError,
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    ChecksumDownloadFailure,
+)
 
 
 def _get_meta(url: str):
@@ -132,6 +139,32 @@ def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_ret
             if i < num_retries - 1:
                 continue  # just try again
             raise e from e
+
+
+def iter_list_reps(_list: List, num_reps: int) -> Generator:
+    list_index = 0
+    for i in range(num_reps):
+        yield _list[list_index]
+        list_index += 1
+        if list_index >= len(_list):
+            list_index = 0
+
+
+def get_hash(archive_url: str, algorithm: str, timeout) -> str:
+    path = urlparse(archive_url).path
+    while path.startswith("/"):
+        path = path[1:]
+    for base_url in iter_list_reps(Settings.trusted_mirrors, Settings.max_retries_to_retrieve_hash):
+        url = posixpath.join(base_url, f"{path}.{algorithm}")
+        try:
+            r = getUrl(url, timeout)
+            # sha256 & md5 files are: "some_hash archive_filename"
+            return r.split(" ")[0]
+        except (ArchiveConnectionError, ArchiveDownloadError):
+            pass
+    raise ChecksumDownloadFailure(
+        f"Failed to download checksum for the file '{path.split('/')[-1]}' from mirrors '{Settings.trusted_mirrors}"
+    )
 
 
 def altlink(url: str, alt: str):

@@ -51,7 +51,7 @@ from aqt.exceptions import (
     CliKeyboardInterrupt,
     OutOfMemory,
 )
-from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, getUrl, retry_on_errors, setup_logging
+from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, get_hash, retry_on_errors, setup_logging
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
 from aqt.updater import Updater
 
@@ -1002,7 +1002,6 @@ def installer(
     """
     name = qt_archive.name
     url = qt_archive.archive_url
-    hashurl = qt_archive.hashurl
     archive: Path = archive_dest / qt_archive.archive
     start_time = time.perf_counter()
     # set defaults
@@ -1021,9 +1020,9 @@ def installer(
         timeout = (Settings.connection_timeout, Settings.response_timeout)
     else:
         timeout = (Settings.connection_timeout, response_timeout)
-    hash = binascii.unhexlify(getUrl(hashurl, timeout))
+    hash = binascii.unhexlify(get_hash(url, algorithm="sha256", timeout=timeout))
     retry_on_errors(
-        action=lambda: downloadBinaryFile(url, archive, "sha1", hash, timeout),
+        action=lambda: downloadBinaryFile(url, archive, "sha256", hash, timeout),
         acceptable_errors=(ArchiveChecksumError,),
         num_retries=Settings.max_retries_on_checksum_error,
         name=f"Downloading {name}",
