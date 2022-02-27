@@ -27,7 +27,7 @@ import gc
 import multiprocessing
 import os
 import platform
-import random
+import posixpath
 import signal
 import subprocess
 import sys
@@ -36,14 +36,13 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Callable, List, Optional
+from typing import List, Optional
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
 from aqt.exceptions import (
     AqtException,
     ArchiveChecksumError,
-    ArchiveConnectionError,
     ArchiveDownloadError,
     ArchiveExtractionError,
     ArchiveListError,
@@ -51,7 +50,15 @@ from aqt.exceptions import (
     CliKeyboardInterrupt,
     OutOfMemory,
 )
-from aqt.helper import MyQueueListener, Settings, downloadBinaryFile, get_hash, retry_on_errors, setup_logging
+from aqt.helper import (
+    MyQueueListener,
+    Settings,
+    downloadBinaryFile,
+    get_hash,
+    retry_on_bad_connection,
+    retry_on_errors,
+    setup_logging,
+)
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
 from aqt.updater import Updater
 
@@ -301,7 +308,7 @@ class Cli:
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
 
-        qt_archives = self.retry_on_bad_connection(
+        qt_archives = retry_on_bad_connection(
             lambda base_url: QtArchives(
                 os_name,
                 target,
@@ -366,7 +373,7 @@ class Cli:
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
 
-        srcdocexamples_archives: SrcDocExamplesArchives = self.retry_on_bad_connection(
+        srcdocexamples_archives: SrcDocExamplesArchives = retry_on_bad_connection(
             lambda base_url: SrcDocExamplesArchives(
                 flavor,
                 os_name,
@@ -460,7 +467,7 @@ class Cli:
             if not self._check_tools_arg_combination(os_name, tool_name, arch):
                 self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
 
-            tool_archives: ToolArchives = self.retry_on_bad_connection(
+            tool_archives: ToolArchives = retry_on_bad_connection(
                 lambda base_url: ToolArchives(
                     os_name=os_name,
                     tool_name=tool_name,
@@ -917,14 +924,6 @@ class Cli:
         except ValueError as e:
             raise CliInputError(f"Invalid version: '{version_str}'! Please use the form '5.X.Y'.") from e
 
-    def retry_on_bad_connection(self, function: Callable[[str], Any], base_url: str):
-        fallback_url = random.choice(Settings.fallbacks)
-        try:
-            return function(base_url)
-        except ArchiveConnectionError:
-            self.logger.warning(f"Connection to '{base_url}' failed. Retrying with fallback '{fallback_url}'.")
-            return function(fallback_url)
-
 
 def is_64bit() -> bool:
     """check if running platform is 64bit python."""
@@ -988,7 +987,7 @@ def init_worker_sh():
 
 
 def installer(
-    qt_archive: QtPackage,
+    qt_package: QtPackage,
     base_dir: str,
     command: Optional[str],
     queue: multiprocessing.Queue,
@@ -1000,9 +999,9 @@ def installer(
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
     """
-    name = qt_archive.name
-    url = qt_archive.archive_url
-    archive: Path = archive_dest / qt_archive.archive
+    name = qt_package.name
+    base_url = qt_package.base_url
+    archive: Path = archive_dest / qt_package.archive
     start_time = time.perf_counter()
     # set defaults
     Settings.load_settings()
@@ -1015,14 +1014,19 @@ def installer(
         logger.removeHandler(handler)
     logger.addHandler(qh)
     #
-    logger.debug("Download URL: {}".format(url))
     if response_timeout is None:
         timeout = (Settings.connection_timeout, Settings.response_timeout)
     else:
         timeout = (Settings.connection_timeout, response_timeout)
-    hash = binascii.unhexlify(get_hash(url, algorithm="sha256", timeout=timeout))
+    hash = binascii.unhexlify(get_hash(qt_package.archive_path, algorithm="sha256", timeout=timeout))
+
+    def download_bin(_base_url):
+        url = posixpath.join(_base_url, qt_package.archive_path)
+        logger.debug("Download URL: {}".format(url))
+        return downloadBinaryFile(url, archive, "sha256", hash, timeout)
+
     retry_on_errors(
-        action=lambda: downloadBinaryFile(url, archive, "sha256", hash, timeout),
+        action=lambda: retry_on_bad_connection(download_bin, base_url),
         acceptable_errors=(ArchiveChecksumError,),
         num_retries=Settings.max_retries_on_checksum_error,
         name=f"Downloading {name}",

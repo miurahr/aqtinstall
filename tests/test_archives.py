@@ -1,6 +1,5 @@
 import json
 import os
-import posixpath
 import re
 from itertools import groupby
 from pathlib import Path
@@ -50,8 +49,8 @@ def test_parse_update_xml(monkeypatch, os_name, version, arch, datafile):
     assert qt_archives_all_modules.archives is not None
 
     # Extract all urls
-    url_list = [item.archive_url for item in qt_archives.archives]
-    url_all_modules_list = [item.archive_url for item in qt_archives_all_modules.archives]
+    url_list = [item.archive_path for item in qt_archives.archives]
+    url_all_modules_list = [item.archive_path for item in qt_archives_all_modules.archives]
 
     # Check the difference list contains only extra modules urls for target specified
     list_diff = [item for item in url_all_modules_list if item not in url_list]
@@ -124,7 +123,7 @@ def test_qt_archives_modules(monkeypatch, arch, requested_module_names, has_none
         # https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5140/
         # qt.qt5.5140.qtcharts.win32_mingw73/5.14.0-0-202108190846qtcharts-windows-win32_mingw73.7z
 
-        url_begin = posixpath.join(base, "online/qtsdkrepository/windows_x86/desktop/qt5_5140")
+        url_begin = "online/qtsdkrepository/windows_x86/desktop/qt5_5140"
         expected_archive_url_pattern = re.compile(
             r"^" + re.escape(url_begin) + "/(" + expect["Name"] + ")/" + re.escape(expect["Version"]) + r"(.+\.7z)$"
         )
@@ -135,7 +134,7 @@ def test_qt_archives_modules(monkeypatch, arch, requested_module_names, has_none
                 assert not pkg.package_desc
             else:
                 assert pkg.package_desc == expect["Description"]
-            url_match = expected_archive_url_pattern.match(pkg.archive_url)
+            url_match = expected_archive_url_pattern.match(pkg.archive_path)
             assert url_match
             mod_name, archive_name = url_match.groups()
             assert pkg.archive == archive_name
@@ -211,7 +210,7 @@ def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fai
     expect = next(filter(lambda x: x["Name"] == tool_variant_name, expect_json["variants_metadata"]))
     expected_7z_files = set(expect["DownloadableArchives"])
     qt_pkgs = ToolArchives(host, target, tool_name, base, arch=tool_variant_name).archives
-    url_begin = posixpath.join(base, f"online/qtsdkrepository/mac_x64/{target}/{tool_name}")
+    url_begin = f"online/qtsdkrepository/mac_x64/{target}/{tool_name}"
     expected_archive_url_pattern = re.compile(
         r"^" + re.escape(url_begin) + "/(" + expect["Name"] + ")/" + re.escape(expect["Version"]) + r"(.+\.7z)$"
     )
@@ -221,7 +220,7 @@ def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fai
             assert not pkg.package_desc
         else:
             assert pkg.package_desc == expect["Description"]
-        url_match = expected_archive_url_pattern.match(pkg.archive_url)
+        url_match = expected_archive_url_pattern.match(pkg.archive_path)
         assert url_match
         actual_variant_name, archive_name = url_match.groups()
         assert actual_variant_name == tool_variant_name

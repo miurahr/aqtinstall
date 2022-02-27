@@ -25,6 +25,7 @@ import json
 import logging.config
 import os
 import posixpath
+import random
 import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
@@ -141,6 +142,16 @@ def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_ret
             raise e from e
 
 
+def retry_on_bad_connection(function: Callable[[str], any], base_url: str):
+    logger = getLogger("aqt.helper")
+    fallback_url = random.choice(Settings.fallbacks)
+    try:
+        return function(base_url)
+    except ArchiveConnectionError:
+        logger.warning(f"Connection to '{base_url}' failed. Retrying with fallback '{fallback_url}'.")
+        return function(fallback_url)
+
+
 def iter_list_reps(_list: List, num_reps: int) -> Generator:
     list_index = 0
     for i in range(num_reps):
@@ -150,20 +161,20 @@ def iter_list_reps(_list: List, num_reps: int) -> Generator:
             list_index = 0
 
 
-def get_hash(archive_url: str, algorithm: str, timeout) -> str:
-    path = urlparse(archive_url).path
-    while path.startswith("/"):
-        path = path[1:]
+def get_hash(archive_path: str, algorithm: str, timeout) -> str:
+    logger = getLogger("aqt.helper")
     for base_url in iter_list_reps(Settings.trusted_mirrors, Settings.max_retries_to_retrieve_hash):
-        url = posixpath.join(base_url, f"{path}.{algorithm}")
+        url = posixpath.join(base_url, f"{archive_path}.{algorithm}")
+        logger.debug(f"Attempt to download checksum at {url}")
         try:
             r = getUrl(url, timeout)
             # sha256 & md5 files are: "some_hash archive_filename"
             return r.split(" ")[0]
         except (ArchiveConnectionError, ArchiveDownloadError):
             pass
+    filename = archive_path.split("/")[-1]
     raise ChecksumDownloadFailure(
-        f"Failed to download checksum for the file '{path.split('/')[-1]}' from mirrors '{Settings.trusted_mirrors}"
+        f"Failed to download checksum for the file '{filename}' from mirrors '{Settings.trusted_mirrors}"
     )
 
 

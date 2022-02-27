@@ -799,9 +799,10 @@ def test_install_installer_archive_extraction_err(monkeypatch):
 
     with pytest.raises(ArchiveExtractionError) as err, TemporaryDirectory() as temp_dir:
         installer(
-            qt_archive=QtPackage(
+            qt_package=QtPackage(
                 "name",
-                "archive-url",
+                "base_url",
+                "archive_path",
                 "archive",
                 "package_desc",
                 "pkg_update_name",

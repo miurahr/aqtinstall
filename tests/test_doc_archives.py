@@ -41,8 +41,8 @@ def test_parse_update_xml(monkeypatch, os_name, version, flavor, datafile):
     assert qt_archives_all_modules.archives is not None
 
     # Extract all urls
-    url_list = [item.archive_url for item in qt_archives.archives]
-    url_all_modules_list = [item.archive_url for item in qt_archives_all_modules.archives]
+    url_list = [item.archive_path for item in qt_archives.archives]
+    url_all_modules_list = [item.archive_path for item in qt_archives_all_modules.archives]
 
     # Check the difference list contains only extra modules urls for target specified
     list_diff = [item for item in url_all_modules_list if item not in url_list]
