@@ -25,7 +25,7 @@ import json
 import logging.config
 import os
 import posixpath
-import random
+import secrets
 import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
@@ -144,7 +144,7 @@ def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_ret
 
 def retry_on_bad_connection(function: Callable[[str], any], base_url: str):
     logger = getLogger("aqt.helper")
-    fallback_url = random.choice(Settings.fallbacks)
+    fallback_url = secrets.choice(Settings.fallbacks)
     try:
         return function(base_url)
     except ArchiveConnectionError:
