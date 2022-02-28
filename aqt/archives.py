@@ -19,15 +19,15 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+import binascii
 import posixpath
 import xml.etree.ElementTree as ElementTree
 from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveListError, NoPackageFound
-from aqt.helper import Settings, getUrl, ssplit
+from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
+from aqt.helper import Settings, get_hash, getUrl, ssplit
 from aqt.metadata import QtRepoProperty, Version
 
 
@@ -224,13 +224,17 @@ class QtArchives:
             self.target,
             f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}",
         )
-        update_xml_url = posixpath.join(self.base, os_target_folder, "Updates.xml")
-        self._download_update_xml(update_xml_url)
+        update_xml_path = posixpath.join(os_target_folder, "Updates.xml")
+        self._download_update_xml(update_xml_path)
         self._parse_update_xml(os_target_folder, self._target_packages())
 
-    def _download_update_xml(self, update_xml_url):
+    def _download_update_xml(self, update_xml_path):
         """Hook for unit test."""
-        self.update_xml_text = getUrl(update_xml_url, self.timeout)
+        xml_hash = binascii.unhexlify(get_hash(update_xml_path, "sha256", self.timeout))
+        if xml_hash == "":
+            raise ChecksumDownloadFailure(f"Checksum for '{update_xml_path}' is empty")
+        update_xml_text = getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
+        self.update_xml_text = update_xml_text
 
     def _parse_update_xml(self, os_target_folder, target_packages: Optional[ModuleToPackage]):
         if not target_packages:
@@ -439,7 +443,7 @@ class ToolArchives(QtArchives):
             # tools_ifw/
             self.tool_name,
         )
-        update_xml_url = posixpath.join(self.base, os_target_folder, "Updates.xml")
+        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
         self._download_update_xml(update_xml_url)  # call super method.
         self._parse_update_xml(os_target_folder, None)
 

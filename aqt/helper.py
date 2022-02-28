@@ -31,7 +31,7 @@ import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Callable, Dict, Generator, List, Tuple
+from typing import Callable, Dict, Generator, List, Optional, Tuple
 from urllib.parse import urlparse
 
 import requests
@@ -55,7 +55,13 @@ def _check_content_type(ct: str) -> bool:
     return any(ct.startswith(t) for t in candidate)
 
 
-def getUrl(url: str, timeout) -> str:
+def getUrl(url: str, timeout, expected_hash: Optional[bytes] = None) -> str:
+    """
+    Gets a file from `url` via HTTP GET.
+
+    No caller should call this function without providing an expected_hash, unless
+    the caller is `get_hash`, which cannot know what the expected hash should be.
+    """
     logger = getLogger("aqt.helper")
     with requests.sessions.Session() as session:
         retries = requests.adapters.Retry(
@@ -84,6 +90,14 @@ def getUrl(url: str, timeout) -> str:
                 msg = f"Failed to retrieve file at {url}\nServer response code: {r.status_code}, reason: {r.reason}"
                 raise ArchiveDownloadError(msg)
         result = r.text
+        filename = url.split("/")[-1]
+        actual_hash = hashlib.sha256(bytes(result, "utf-8")).digest()
+        if expected_hash is not None and expected_hash != actual_hash:
+            raise ArchiveChecksumError(
+                f"Downloaded file {filename} is corrupted! Detect checksum error.\n"
+                f"Expect {expected_hash.hex()}: {url}\n"
+                f"Actual {actual_hash.hex()}: {filename}"
+            )
     return result
 
 

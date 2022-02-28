@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -73,7 +74,10 @@ def corrupt_xmlfile():
     ),
 )
 def test_qtarchive_parse_corrupt_xmlfile(monkeypatch, corrupt_xmlfile, archives_class, init_args):
-    monkeypatch.setattr("aqt.archives.getUrl", lambda self, url: corrupt_xmlfile)
+    monkeypatch.setattr("aqt.archives.getUrl", lambda *args, **kwargs: corrupt_xmlfile)
+    monkeypatch.setattr(
+        "aqt.archives.get_hash", lambda *args, **kwargs: hashlib.sha256(bytes(corrupt_xmlfile, "utf-8")).hexdigest()
+    )
 
     with pytest.raises(ArchiveListError) as error:
         archives_class(*init_args)
