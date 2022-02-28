@@ -11,6 +11,9 @@ steps:
   - bash: |
       sudo apt-get update
       sudo apt-get install -y libgl1-mesa-dev libxkbcommon-x11-0
+      if [[ "$(SUBCOMMAND)" == "install-tool" ]]; then
+        sudo apt-get install -y libxcb-{icccm4,image0,keysyms1,randr0,render-util0,shape0,sync1,xfixes0,xinerama0,xkb1}
+      fi
     condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'))
     displayName: install test dependency for Linux
 
