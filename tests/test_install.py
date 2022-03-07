@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 import re
@@ -134,11 +135,14 @@ def make_mock_geturl_download_archive(
     for _arc in archives:
         assert _arc.filename_7z.endswith(".7z")
 
+    xml = "<Updates>\n{}\n</Updates>".format("\n".join([archive.xml_package_update() for archive in archives]))
+
     def mock_getUrl(url: str, *args) -> str:
         if url.endswith(updates_url):
-            return "<Updates>\n{}\n</Updates>".format("\n".join([archive.xml_package_update() for archive in archives]))
+            return xml
         elif url.endswith(".sha256"):
-            return ""  # Skip the checksum
+            filename = url.split("/")[-1][: -len(".sha256")]
+            return f"{hashlib.sha256(bytes(xml, 'utf-8')).hexdigest()} {filename}"
         assert False
 
     def mock_download_archive(url: str, out: str, *args):
@@ -707,13 +711,16 @@ def test_install(
     ),
 )
 def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Optional[str], expected):
+    xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8") if xml_file else ""
+
     def mock_get_url(url, *args, **kwargs):
         if not xml_file:
             raise ArchiveDownloadError(f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found")
-        return (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
+        return xml
 
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
-    monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.archives.get_hash", lambda *args, **kwargs: hashlib.sha256(bytes(xml, "utf-8")).hexdigest())
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(bytes(xml, "utf-8")).hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", mock_get_url)
 
     cli = Cli()

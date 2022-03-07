@@ -331,3 +331,12 @@ def test_helper_getUrl_conn_error(monkeypatch):
         getUrl(url, timeout)
     assert e.type == ArchiveConnectionError
     assert expect_re.match(format(e.value))
+
+
+def test_helper_getUrl_checksum_error(monkeypatch):
+    mocked_get, mocked_session_get = mock_get_redirect(0)
+    monkeypatch.setattr(requests, "get", mocked_get)
+    monkeypatch.setattr(requests.Session, "get", mocked_session_get)
+    with pytest.raises(ArchiveChecksumError) as e:
+        getUrl("some_url", timeout=(5, 5), expected_hash=b"AAAAAAAAAAA")
+    assert e.type == ArchiveChecksumError

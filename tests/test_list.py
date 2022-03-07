@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -953,6 +954,7 @@ def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: s
 
 
 def test_fetch_http_ok(monkeypatch):
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(b"some_html_content").hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", lambda **kwargs: "some_html_content")
     assert MetadataFactory.fetch_http("some_url") == "some_html_content"
 
@@ -966,6 +968,7 @@ def test_fetch_http_failover(monkeypatch):
             raise ArchiveDownloadError()
         return "some_html_content"
 
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(b"some_html_content").hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", _mock)
 
     # Require that the first attempt failed, but the second did not
@@ -973,33 +976,19 @@ def test_fetch_http_failover(monkeypatch):
     assert len(urls_requested) == 2
 
 
-def test_fetch_http_download_error(monkeypatch):
+@pytest.mark.parametrize("exception_on_error", (ArchiveDownloadError, ArchiveConnectionError))
+def test_fetch_http_download_error(monkeypatch, exception_on_error):
     urls_requested = set()
 
     def _mock(url, **kwargs):
         urls_requested.add(url)
-        raise ArchiveDownloadError()
+        raise exception_on_error()
 
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(b"some_html_content").hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", _mock)
-    with pytest.raises(ArchiveDownloadError) as e:
+    with pytest.raises(exception_on_error) as e:
         MetadataFactory.fetch_http("some_url")
-    assert e.type == ArchiveDownloadError
-
-    # Require that a fallback url was tried
-    assert len(urls_requested) == 2
-
-
-def test_fetch_http_conn_error(monkeypatch):
-    urls_requested = set()
-
-    def _mock(url, **kwargs):
-        urls_requested.add(url)
-        raise ArchiveConnectionError()
-
-    monkeypatch.setattr("aqt.metadata.getUrl", _mock)
-    with pytest.raises(ArchiveConnectionError) as e:
-        MetadataFactory.fetch_http("some_url")
-    assert e.type == ArchiveConnectionError
+    assert e.type == exception_on_error
 
     # Require that a fallback url was tried
     assert len(urls_requested) == 2

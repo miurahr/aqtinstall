@@ -447,6 +447,7 @@ def test_archives_weird_module_7z_name(
     expect_archives: Set[str],
 ):
     monkeypatch.setattr("aqt.archives.getUrl", lambda *args: xml)
+    monkeypatch.setattr("aqt.archives.get_hash", lambda *args, **kwargs: hashlib.sha256(bytes(xml, "utf-8")).hexdigest())
 
     qt_archives = make_archives_fn(subarchives, modules, is_include_base)
     archives = {pkg.archive for pkg in qt_archives.archives}
