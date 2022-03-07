@@ -24,18 +24,26 @@ import hashlib
 import json
 import logging.config
 import os
+import posixpath
+import secrets
 import sys
 import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, Generator, List, Optional, Tuple
 from urllib.parse import urlparse
 
 import requests
 import requests.adapters
 
-from aqt.exceptions import ArchiveChecksumError, ArchiveConnectionError, ArchiveDownloadError, ArchiveListError
+from aqt.exceptions import (
+    ArchiveChecksumError,
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    ChecksumDownloadFailure,
+)
 
 
 def _get_meta(url: str):
@@ -47,7 +55,13 @@ def _check_content_type(ct: str) -> bool:
     return any(ct.startswith(t) for t in candidate)
 
 
-def getUrl(url: str, timeout) -> str:
+def getUrl(url: str, timeout, expected_hash: Optional[bytes] = None) -> str:
+    """
+    Gets a file from `url` via HTTP GET.
+
+    No caller should call this function without providing an expected_hash, unless
+    the caller is `get_hash`, which cannot know what the expected hash should be.
+    """
     logger = getLogger("aqt.helper")
     with requests.sessions.Session() as session:
         retries = requests.adapters.Retry(
@@ -76,6 +90,14 @@ def getUrl(url: str, timeout) -> str:
                 msg = f"Failed to retrieve file at {url}\nServer response code: {r.status_code}, reason: {r.reason}"
                 raise ArchiveDownloadError(msg)
         result = r.text
+        filename = url.split("/")[-1]
+        actual_hash = hashlib.sha256(bytes(result, "utf-8")).digest()
+        if expected_hash is not None and expected_hash != actual_hash:
+            raise ArchiveChecksumError(
+                f"Downloaded file {filename} is corrupted! Detect checksum error.\n"
+                f"Expect {expected_hash.hex()}: {url}\n"
+                f"Actual {actual_hash.hex()}: {filename}"
+            )
     return result
 
 
@@ -132,6 +154,42 @@ def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_ret
             if i < num_retries - 1:
                 continue  # just try again
             raise e from e
+
+
+def retry_on_bad_connection(function: Callable[[str], any], base_url: str):
+    logger = getLogger("aqt.helper")
+    fallback_url = secrets.choice(Settings.fallbacks)
+    try:
+        return function(base_url)
+    except ArchiveConnectionError:
+        logger.warning(f"Connection to '{base_url}' failed. Retrying with fallback '{fallback_url}'.")
+        return function(fallback_url)
+
+
+def iter_list_reps(_list: List, num_reps: int) -> Generator:
+    list_index = 0
+    for i in range(num_reps):
+        yield _list[list_index]
+        list_index += 1
+        if list_index >= len(_list):
+            list_index = 0
+
+
+def get_hash(archive_path: str, algorithm: str, timeout) -> str:
+    logger = getLogger("aqt.helper")
+    for base_url in iter_list_reps(Settings.trusted_mirrors, Settings.max_retries_to_retrieve_hash):
+        url = posixpath.join(base_url, f"{archive_path}.{algorithm}")
+        logger.debug(f"Attempt to download checksum at {url}")
+        try:
+            r = getUrl(url, timeout)
+            # sha256 & md5 files are: "some_hash archive_filename"
+            return r.split(" ")[0]
+        except (ArchiveConnectionError, ArchiveDownloadError):
+            pass
+    filename = archive_path.split("/")[-1]
+    raise ChecksumDownloadFailure(
+        f"Failed to download checksum for the file '{filename}' from mirrors '{Settings.trusted_mirrors}"
+    )
 
 
 def altlink(url: str, alt: str):
@@ -225,7 +283,9 @@ def xml_to_modules(
 
 class MyConfigParser(configparser.ConfigParser):
     def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
-        value = self.get(section, option)
+        value = self.get(section, option, fallback=None)
+        if value is None:
+            return fallback
         try:
             result = list(filter(None, (x.strip() for x in value.splitlines())))
         except Exception:
@@ -362,8 +422,16 @@ class SettingsClass:
         return self.config.getint("requests", "max_retries_on_checksum_error", fallback=int(self.max_retries))
 
     @property
+    def max_retries_to_retrieve_hash(self):
+        return self.config.getint("requests", "max_retries_to_retrieve_hash", fallback=int(self.max_retries))
+
+    @property
     def backoff_factor(self):
         return self.config.getfloat("requests", "retry_backoff", fallback=0.1)
+
+    @property
+    def trusted_mirrors(self):
+        return self.config.getlist("mirrors", "trusted_mirrors", fallback=[self.baseurl])
 
     @property
     def fallbacks(self):

@@ -96,7 +96,7 @@ def test_cli_determine_qt_version(
     monkeypatch, host, target, arch, version_or_spec: str, expected_version: Version, is_bad_spec: bool
 ):
     _html = (Path(__file__).parent / "data" / f"{host}-{target}.html").read_text("utf-8")
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args, **kwargs: _html)
     cli = Cli()
     cli._setup_settings()
 

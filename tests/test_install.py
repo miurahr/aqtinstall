@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 import re
@@ -134,11 +135,14 @@ def make_mock_geturl_download_archive(
     for _arc in archives:
         assert _arc.filename_7z.endswith(".7z")
 
+    xml = "<Updates>\n{}\n</Updates>".format("\n".join([archive.xml_package_update() for archive in archives]))
+
     def mock_getUrl(url: str, *args) -> str:
         if url.endswith(updates_url):
-            return "<Updates>\n{}\n</Updates>".format("\n".join([archive.xml_package_update() for archive in archives]))
-        elif url.endswith(".sha1"):
-            return ""  # Skip the checksum
+            return xml
+        elif url.endswith(".sha256"):
+            filename = url.split("/")[-1][: -len(".sha256")]
+            return f"{hashlib.sha256(bytes(xml, 'utf-8')).hexdigest()} {filename}"
         assert False
 
     def mock_download_archive(url: str, out: str, *args):
@@ -598,7 +602,7 @@ def test_install(
 
     mock_get_url, mock_download_archive = make_mock_geturl_download_archive(archives, arch, host, updates_url)
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
-    monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
 
     with TemporaryDirectory() as output_dir:
@@ -707,13 +711,16 @@ def test_install(
     ),
 )
 def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Optional[str], expected):
+    xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8") if xml_file else ""
+
     def mock_get_url(url, *args, **kwargs):
         if not xml_file:
             raise ArchiveDownloadError(f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found")
-        return (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
+        return xml
 
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
-    monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.archives.get_hash", lambda *args, **kwargs: hashlib.sha256(bytes(xml, "utf-8")).hexdigest())
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(bytes(xml, "utf-8")).hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", mock_get_url)
 
     cli = Cli()
@@ -779,7 +786,7 @@ def test_install_pool_exception(monkeypatch, capsys, make_exception, settings_fi
     cmd = ["install-qt", host, target, ver, arch]
     mock_get_url, mock_download_archive = make_mock_geturl_download_archive(archives, arch, host, updates_url)
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
-    monkeypatch.setattr("aqt.installer.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.installer", mock_installer_func)
 
     Settings.load_settings(str(Path(__file__).parent / settings_file))
@@ -793,18 +800,18 @@ def test_install_installer_archive_extraction_err(monkeypatch):
     def mock_extractor_that_fails(*args, **kwargs):
         raise subprocess.CalledProcessError(returncode=1, cmd="some command", output="out", stderr="err")
 
-    monkeypatch.setattr("aqt.installer.getUrl", lambda *args: "")
+    monkeypatch.setattr("aqt.installer.get_hash", lambda *args, **kwargs: "")
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", lambda *args: None)
     monkeypatch.setattr("aqt.installer.subprocess.run", mock_extractor_that_fails)
 
     with pytest.raises(ArchiveExtractionError) as err, TemporaryDirectory() as temp_dir:
         installer(
-            qt_archive=QtPackage(
+            qt_package=QtPackage(
                 "name",
-                "archive-url",
+                "base_url",
+                "archive_path",
                 "archive",
                 "package_desc",
-                "hashurl",
                 "pkg_update_name",
             ),
             base_dir=temp_dir,

@@ -19,15 +19,15 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+import binascii
 import posixpath
 import xml.etree.ElementTree as ElementTree
 from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveListError, NoPackageFound
-from aqt.helper import Settings, getUrl, ssplit
+from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
+from aqt.helper import Settings, get_hash, getUrl, ssplit
 from aqt.metadata import QtRepoProperty, Version
 
 
@@ -45,10 +45,10 @@ class TargetConfig:
 @dataclass
 class QtPackage:
     name: str
-    archive_url: str
+    base_url: str
+    archive_path: str
     archive: str
     package_desc: str
-    hashurl: str
     pkg_update_name: str
     version: Optional[Version] = field(default=None)
 
@@ -59,9 +59,9 @@ class QtPackage:
     def __str__(self):
         v_info = f", version={self.version}" if self.version else ""
         return (
-            f"QtPackage(name={self.name}, url={self.archive_url}, "
+            f"QtPackage(name={self.name}, url={self.archive_path}, "
             f"archive={self.archive}, desc={self.package_desc}"
-            f"hashurl={self.hashurl}{v_info})"
+            f"{v_info})"
         )
 
 
@@ -140,7 +140,7 @@ class QtArchives:
         self.os_name: str = os_name
         self.all_extra: bool = all_extra
         self.arch_list: List[str] = [item.get("arch") for item in Settings.qt_combinations]
-        self.base: str = posixpath.join(base, "online/qtsdkrepository")
+        self.base: str = base
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
         self.subarchives: Optional[Iterable[str]] = subarchives
@@ -217,22 +217,26 @@ class QtArchives:
     def _get_archives(self):
         # Get packages index
 
-        # archive_path: windows_x86/desktop/qt5_59_src_doc_examples
-        archive_path = posixpath.join(
+        # os_target_folder: online/qtsdkrepository/windows_x86/desktop/qt5_59_src_doc_examples
+        os_target_folder = posixpath.join(
+            "online/qtsdkrepository",
             self.os_name + ("_x86" if self.os_name == "windows" else "_x64"),
             self.target,
             f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}",
         )
-        update_xml_url = posixpath.join(self.base, archive_path, "Updates.xml")
-        archive_url = posixpath.join(self.base, archive_path)
-        self._download_update_xml(update_xml_url)
-        self._parse_update_xml(archive_url, self._target_packages())
+        update_xml_path = posixpath.join(os_target_folder, "Updates.xml")
+        self._download_update_xml(update_xml_path)
+        self._parse_update_xml(os_target_folder, self._target_packages())
 
-    def _download_update_xml(self, update_xml_url):
+    def _download_update_xml(self, update_xml_path):
         """Hook for unit test."""
-        self.update_xml_text = getUrl(update_xml_url, self.timeout)
+        xml_hash = binascii.unhexlify(get_hash(update_xml_path, "sha256", self.timeout))
+        if xml_hash == "":
+            raise ChecksumDownloadFailure(f"Checksum for '{update_xml_path}' is empty")
+        update_xml_text = getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
+        self.update_xml_text = update_xml_text
 
-    def _parse_update_xml(self, archive_url, target_packages: Optional[ModuleToPackage]):
+    def _parse_update_xml(self, os_target_folder, target_packages: Optional[ModuleToPackage]):
         if not target_packages:
             target_packages = ModuleToPackage({})
         try:
@@ -270,22 +274,21 @@ class QtArchives:
                 archive_name = archive.split("-", maxsplit=1)[0]
                 if should_filter_archives and archive_name not in self.subarchives:
                     continue
-                package_url = posixpath.join(
-                    # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/qt5_5150/
-                    archive_url,
+                archive_path = posixpath.join(
+                    # online/qtsdkrepository/linux_x64/desktop/qt5_5150/
+                    os_target_folder,
                     # qt.qt5.5150.gcc_64/
                     pkg_name,
                     # 5.15.0-0-202005140804qtbase-Linux-RHEL_7_6-GCC-Linux-RHEL_7_6-X86_64.7z
                     full_version + archive,
                 )
-                hashurl = package_url + ".sha1"
                 self.archives.append(
                     QtPackage(
                         name=archive_name,
-                        archive_url=package_url,
+                        base_url=self.base,
+                        archive_path=archive_path,
                         archive=archive,
                         package_desc=package_desc,
-                        hashurl=hashurl,
                         pkg_update_name=pkg_name,  # For testing purposes
                     )
                 )
@@ -431,25 +434,20 @@ class ToolArchives(QtArchives):
         raise ArchiveListError(msg, suggested_action=[help_msg]) from e
 
     def _get_archives(self):
-        _a = "_x64"
-        if self.os_name == "windows":
-            _a = "_x86"
-
-        archive_url = posixpath.join(
-            # https://download.qt.io/online/qtsdkrepository/
-            self.base,
+        os_target_folder = posixpath.join(
+            "online/qtsdkrepository",
             # linux_x64/
-            self.os_name + _a,
+            self.os_name + ("_x86" if self.os_name == "windows" else "_x64"),
             # desktop/
             self.target,
             # tools_ifw/
             self.tool_name,
         )
-        update_xml_url = posixpath.join(archive_url, "Updates.xml")
+        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
         self._download_update_xml(update_xml_url)  # call super method.
-        self._parse_update_xml(archive_url, None)
+        self._parse_update_xml(os_target_folder, None)
 
-    def _parse_update_xml(self, archive_url, *ignored):
+    def _parse_update_xml(self, os_target_folder, *ignored):
         try:
             self.update_xml = ElementTree.fromstring(self.update_xml_text)
         except ElementTree.ParseError as perror:
@@ -472,22 +470,21 @@ class ToolArchives(QtArchives):
             message = f"The package '{self.arch}' contains no downloadable archives!"
             raise NoPackageFound(message)
         for archive in ssplit(downloadable_archives):
-            package_url = posixpath.join(
-                # https://download.qt.io/online/qtsdkrepository/linux_x64/desktop/tools_ifw/
-                archive_url,
+            archive_path = posixpath.join(
+                # online/qtsdkrepository/linux_x64/desktop/tools_ifw/
+                os_target_folder,
                 # qt.tools.ifw.41/
                 name,
                 #  4.1.1-202105261130ifw-linux-x64.7z
                 f"{named_version}{archive}",
             )
-            hashurl = package_url + ".sha1"
             self.archives.append(
                 QtPackage(
                     name=name,
-                    archive_url=package_url,
+                    base_url=self.base,
+                    archive_path=archive_path,
                     archive=archive,
                     package_desc=package_desc,
-                    hashurl=hashurl,
                     pkg_update_name=name,  # Redundant
                 )
             )

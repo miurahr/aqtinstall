@@ -9,9 +9,16 @@ import requests
 from requests.models import Response
 
 from aqt import helper
-from aqt.exceptions import ArchiveChecksumError, ArchiveConnectionError, ArchiveDownloadError
-from aqt.helper import getUrl, retry_on_errors
+from aqt.exceptions import ArchiveChecksumError, ArchiveConnectionError, ArchiveDownloadError, ChecksumDownloadFailure
+from aqt.helper import Settings, get_hash, getUrl, retry_on_errors
 from aqt.metadata import Version
+
+
+@pytest.fixture(autouse=True)
+def load_default_settings(use_defaults: bool = True):
+    """For each test, first load the default settings file, unless marked otherwise"""
+    if use_defaults:
+        helper.Settings.load_settings()
 
 
 def test_helper_altlink(monkeypatch):
@@ -56,6 +63,7 @@ def test_helper_altlink(monkeypatch):
     assert newurl.startswith("http://ftp.jaist.ac.jp/")
 
 
+@pytest.mark.load_default_settings(False)
 def test_settings(tmp_path):
     helper.Settings.load_settings(os.path.join(os.path.dirname(__file__), "data", "settings.ini"))
     assert helper.Settings.concurrency == 3
@@ -184,6 +192,41 @@ def test_helper_retry_on_error(num_attempts_before_success, num_retries_allowed)
 
 
 @pytest.mark.parametrize(
+    "num_tries_required, num_retries_allowed",
+    (
+        (2, 5),
+        (5, 5),
+        (6, 5),
+    ),
+)
+def test_helper_get_hash_retries(monkeypatch, num_tries_required, num_retries_allowed):
+    num_tries = 0
+
+    def mock_getUrl(url, *args, **kwargs):
+        nonlocal num_tries
+        num_tries += 1
+        if num_tries < num_tries_required:
+            raise ArchiveConnectionError(f"Must retry {num_tries_required - num_tries} more times before success")
+        parsed = urlparse(url)
+        base = f"{parsed.scheme}://{parsed.netloc}"
+        assert base in Settings.trusted_mirrors
+
+        hash_filename = str(parsed.path.split("/")[-1])
+        assert hash_filename == "archive.7z.sha256"
+        return "MOCK_HASH archive.7z"
+
+    monkeypatch.setattr("aqt.helper.getUrl", mock_getUrl)
+
+    if num_tries_required > num_retries_allowed:
+        with pytest.raises(ChecksumDownloadFailure) as e:
+            result = get_hash("http://insecure.mirror.com/some/path/to/archive.7z", "sha256", (5, 5))
+        assert e.type == ChecksumDownloadFailure
+    else:
+        result = get_hash("http://insecure.mirror.com/some/path/to/archive.7z", "sha256", (5, 5))
+        assert result == "MOCK_HASH"
+
+
+@pytest.mark.parametrize(
     "version, expect",
     [
         ("1.33.1", Version(major=1, minor=33, patch=1)),
@@ -288,3 +331,12 @@ def test_helper_getUrl_conn_error(monkeypatch):
         getUrl(url, timeout)
     assert e.type == ArchiveConnectionError
     assert expect_re.match(format(e.value))
+
+
+def test_helper_getUrl_checksum_error(monkeypatch):
+    mocked_get, mocked_session_get = mock_get_redirect(0)
+    monkeypatch.setattr(requests, "get", mocked_get)
+    monkeypatch.setattr(requests.Session, "get", mocked_session_get)
+    with pytest.raises(ArchiveChecksumError) as e:
+        getUrl("some_url", timeout=(5, 5), expected_hash=b"AAAAAAAAAAA")
+    assert e.type == ArchiveChecksumError

@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -131,7 +132,7 @@ def spec_regex():
 )
 def test_list_versions_tools(monkeypatch, spec_regex, os_name, target, in_file, expect_out_file):
     _html = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args, **kwargs: _html)
 
     expected = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
 
@@ -433,7 +434,7 @@ def test_list_qt_cli(
         expect_set = expect
     assert isinstance(expect_set, set)
 
-    def _mock_fetch_http(_, rest_of_url: str) -> str:
+    def _mock_fetch_http(_, rest_of_url, *args, **kwargs: str) -> str:
         htmltext = (Path(__file__).parent / "data" / htmlfile).read_text("utf-8")
         if not rest_of_url.endswith("Updates.xml"):
             return htmltext
@@ -722,7 +723,7 @@ def test_list_describe_filters(meta: MetadataFactory, expect: str):
 )
 def test_list_to_version(monkeypatch, archive_id, spec, version_str, expect):
     _html = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _html)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args, **kwargs: _html)
 
     if isinstance(expect, Exception):
         with pytest.raises(CliInputError) as error:
@@ -846,7 +847,7 @@ def test_show_list_versions(monkeypatch, capsys):
 
 def test_show_list_tools(monkeypatch, capsys):
     page = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: page)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args, **kwargs: page)
 
     expect_file = Path(__file__).parent / "data" / "mac-desktop-expect.json"
     expect = "\n".join(json.loads(expect_file.read_text("utf-8"))["tools"]) + "\n"
@@ -917,7 +918,7 @@ def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: s
     xml_data = json.loads(xmljson)
     expected_tool_modules = set(xml_data["modules"])
 
-    def _mock_fetch_http(_, rest_of_url: str) -> str:
+    def _mock_fetch_http(_, rest_of_url, *args, **kwargs: str) -> str:
         if not rest_of_url.endswith("Updates.xml"):
             return htmltext
         folder = urlparse(rest_of_url).path.split("/")[-2]
@@ -953,6 +954,7 @@ def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: s
 
 
 def test_fetch_http_ok(monkeypatch):
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(b"some_html_content").hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", lambda **kwargs: "some_html_content")
     assert MetadataFactory.fetch_http("some_url") == "some_html_content"
 
@@ -966,6 +968,7 @@ def test_fetch_http_failover(monkeypatch):
             raise ArchiveDownloadError()
         return "some_html_content"
 
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(b"some_html_content").hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", _mock)
 
     # Require that the first attempt failed, but the second did not
@@ -973,33 +976,19 @@ def test_fetch_http_failover(monkeypatch):
     assert len(urls_requested) == 2
 
 
-def test_fetch_http_download_error(monkeypatch):
+@pytest.mark.parametrize("exception_on_error", (ArchiveDownloadError, ArchiveConnectionError))
+def test_fetch_http_download_error(monkeypatch, exception_on_error):
     urls_requested = set()
 
     def _mock(url, **kwargs):
         urls_requested.add(url)
-        raise ArchiveDownloadError()
+        raise exception_on_error()
 
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(b"some_html_content").hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", _mock)
-    with pytest.raises(ArchiveDownloadError) as e:
+    with pytest.raises(exception_on_error) as e:
         MetadataFactory.fetch_http("some_url")
-    assert e.type == ArchiveDownloadError
-
-    # Require that a fallback url was tried
-    assert len(urls_requested) == 2
-
-
-def test_fetch_http_conn_error(monkeypatch):
-    urls_requested = set()
-
-    def _mock(url, **kwargs):
-        urls_requested.add(url)
-        raise ArchiveConnectionError()
-
-    monkeypatch.setattr("aqt.metadata.getUrl", _mock)
-    with pytest.raises(ArchiveConnectionError) as e:
-        MetadataFactory.fetch_http("some_url")
-    assert e.type == ArchiveConnectionError
+    assert e.type == exception_on_error
 
     # Require that a fallback url was tried
     assert len(urls_requested) == 2

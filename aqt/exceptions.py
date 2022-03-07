@@ -20,6 +20,8 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 from typing import Iterable
 
+DOCS_CONFIG = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration"
+
 
 class AqtException(Exception):
     def __init__(self, *args, **kwargs):
@@ -45,6 +47,19 @@ class ArchiveDownloadError(AqtException):
 
 class ArchiveChecksumError(ArchiveDownloadError):
     pass
+
+
+class ChecksumDownloadFailure(ArchiveDownloadError):
+    def __init__(self, *args, **kwargs):
+        kwargs["suggested_action"] = kwargs.pop("suggested_action", []).extend(
+            [
+                "Check your internet connection",
+                "Consider modifying `requests.max_retries_to_retrieve_hash` in settings.ini",
+                f"Consider modifying `mirrors.trusted_mirrors` in settings.ini (see {DOCS_CONFIG})",
+            ]
+        )
+        kwargs["should_show_help"] = True
+        super(ChecksumDownloadFailure, self).__init__(*args, **kwargs)
 
 
 class ArchiveConnectionError(AqtException):

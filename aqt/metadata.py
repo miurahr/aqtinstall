@@ -18,7 +18,7 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+import binascii
 import itertools
 import operator
 import posixpath
@@ -35,7 +35,7 @@ from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
-from aqt.helper import Settings, getUrl, xml_to_modules
+from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
 
 
 class SimpleSpec(SemanticSimpleSpec):
@@ -452,7 +452,7 @@ class MetadataFactory:
 
     def fetch_extensions(self, version: Version) -> List[str]:
         versions_extensions = MetadataFactory.get_versions_extensions(
-            self.fetch_http(self.archive_id.to_url()), self.archive_id.category
+            self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
         )
         filtered = filter(
             lambda ver_ext: ver_ext[0] == version and ver_ext[1],
@@ -469,7 +469,7 @@ class MetadataFactory:
             return ver_ext[0]
 
         versions_extensions = MetadataFactory.get_versions_extensions(
-            self.fetch_http(self.archive_id.to_url()), self.archive_id.category
+            self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
         )
         versions = sorted(filter(None, map(get_version, filter(filter_by, versions_extensions))))
         iterables = itertools.groupby(versions, lambda version: version.minor)
@@ -479,7 +479,7 @@ class MetadataFactory:
         return self.fetch_versions().latest()
 
     def fetch_tools(self) -> List[str]:
-        html_doc = self.fetch_http(self.archive_id.to_url())
+        html_doc = self.fetch_http(self.archive_id.to_url(), False)
         return list(MetadataFactory.iterate_folders(html_doc, "tools"))
 
     def fetch_tool_modules(self, tool_name: str) -> List[str]:
@@ -572,15 +572,14 @@ class MetadataFactory:
         return version
 
     @staticmethod
-    def fetch_http(rest_of_url: str) -> str:
+    def fetch_http(rest_of_url: str, is_check_hash: bool = True) -> str:
+        timeout = (Settings.connection_timeout, Settings.response_timeout)
+        expected_hash = binascii.unhexlify(get_hash(rest_of_url, "sha256", timeout)) if is_check_hash else None
         base_urls = Settings.baseurl, random.choice(Settings.fallbacks)
         for i, base_url in enumerate(base_urls):
             try:
                 url = posixpath.join(base_url, rest_of_url)
-                return getUrl(
-                    url=url,
-                    timeout=(Settings.connection_timeout, Settings.response_timeout),
-                )
+                return getUrl(url=url, timeout=timeout, expected_hash=expected_hash)
 
             except (ArchiveDownloadError, ArchiveConnectionError) as e:
                 if i == len(base_urls) - 1:
