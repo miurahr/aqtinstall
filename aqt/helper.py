@@ -283,7 +283,9 @@ def xml_to_modules(
 
 class MyConfigParser(configparser.ConfigParser):
     def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
-        value = self.get(section, option)
+        value = self.get(section, option, fallback=None)
+        if value is None:
+            return fallback
         try:
             result = list(filter(None, (x.strip() for x in value.splitlines())))
         except Exception:
