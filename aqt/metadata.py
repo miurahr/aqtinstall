@@ -18,7 +18,7 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+import binascii
 import itertools
 import operator
 import posixpath
@@ -35,7 +35,7 @@ from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
-from aqt.helper import Settings, getUrl, xml_to_modules
+from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
 
 
 class SimpleSpec(SemanticSimpleSpec):
@@ -573,14 +573,13 @@ class MetadataFactory:
 
     @staticmethod
     def fetch_http(rest_of_url: str) -> str:
+        timeout = (Settings.connection_timeout, Settings.response_timeout)
+        expected_hash = binascii.unhexlify(get_hash(rest_of_url, "sha256", timeout))
         base_urls = Settings.baseurl, random.choice(Settings.fallbacks)
         for i, base_url in enumerate(base_urls):
             try:
                 url = posixpath.join(base_url, rest_of_url)
-                return getUrl(
-                    url=url,
-                    timeout=(Settings.connection_timeout, Settings.response_timeout),
-                )
+                return getUrl(url=url, timeout=timeout, expected_hash=expected_hash)
 
             except (ArchiveDownloadError, ArchiveConnectionError) as e:
                 if i == len(base_urls) - 1:
