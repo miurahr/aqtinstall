@@ -7,6 +7,23 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Changed
+-------
+* Use SHA256 hash from trusted mirror for integrity check (#493)
+* Check Update.xml file with SHA256 hash (#493)
+* Update combinations.xml (#495)
+  * QtDesignStudio, IFW version change
+* Update fallback mirror list (#485)
+
+Fixed
+-----
+* Test: Conditionally install dependencies on Ubuntu (#494)
+
+Added
+-----
+* doc: warn about unrelated aqt package (#490)
+* doc: add explanation of --config flag in CLI docs (#491)
+
 `v2.0.6`_ (7, Feb. 2022)
 ========================
 
