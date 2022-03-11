@@ -22,8 +22,8 @@ import binascii
 import itertools
 import operator
 import posixpath
-import random
 import re
+import secrets as random
 import shutil
 from logging import getLogger
 from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
