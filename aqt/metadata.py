@@ -27,7 +27,7 @@ import re
 import shutil
 from logging import getLogger
 from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
-from xml.etree import ElementTree as ElementTree
+from xml.etree.ElementTree import Element
 
 import bs4
 from semantic_version import SimpleSpec as SemanticSimpleSpec
@@ -622,7 +622,7 @@ class MetadataFactory:
         )
 
     @staticmethod
-    def _has_nonempty_downloads(element: ElementTree.Element) -> bool:
+    def _has_nonempty_downloads(element: Element) -> bool:
         """Returns True if the element has a nonempty '<DownloadableArchives/>' tag"""
         downloads = element.find("DownloadableArchives")
         update_file = element.find("UpdateFile")
@@ -641,7 +641,7 @@ class MetadataFactory:
         )
         return f"{version.major}{version.minor}{patch}"
 
-    def _fetch_module_metadata(self, folder: str, predicate: Optional[Callable[[ElementTree.Element], bool]] = None):
+    def _fetch_module_metadata(self, folder: str, predicate: Optional[Callable[[Element], bool]] = None):
         rest_of_url = posixpath.join(self.archive_id.to_url(), folder, "Updates.xml")
         xml = self.fetch_http(rest_of_url)
         return xml_to_modules(
@@ -705,15 +705,15 @@ class MetadataFactory:
         qt_version_str = self._get_qt_version_str(version)
         nonempty = MetadataFactory._has_nonempty_downloads
 
-        def all_modules(element: ElementTree.Element) -> bool:
+        def all_modules(element: Element) -> bool:
             _module, _arch = element.find("Name").text.split(".")[-2:]
             return _arch == arch and _module != qt_version_str and nonempty(element)
 
-        def specify_modules(element: ElementTree.Element) -> bool:
+        def specify_modules(element: Element) -> bool:
             _module, _arch = element.find("Name").text.split(".")[-2:]
             return _arch == arch and _module in modules and nonempty(element)
 
-        def no_modules(element: ElementTree.Element) -> bool:
+        def no_modules(element: Element) -> bool:
             name: Optional[str] = element.find("Name").text
             return name and name.endswith(f".{qt_version_str}.{arch}") and nonempty(element)
 
