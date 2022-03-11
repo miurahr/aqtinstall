@@ -733,10 +733,10 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
 
 
 @pytest.mark.parametrize(
-    "make_exception, settings_file, expect_end_msg, expect_return",
+    "exception_class, settings_file, expect_end_msg, expect_return",
     (
         (
-            "RuntimeError()",
+            RuntimeError,
             "../aqt/settings.ini",
             "===========================PLEASE FILE A BUG REPORT===========================\n"
             "You have discovered a bug in aqt.\n"
@@ -745,13 +745,13 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
             Cli.UNHANDLED_EXCEPTION_CODE,
         ),
         (
-            "KeyboardInterrupt()",
+            KeyboardInterrupt,
             "../aqt/settings.ini",
             "Caught KeyboardInterrupt, terminating installer workers\nInstaller halted by keyboard interrupt.",
             1,
         ),
         (
-            "MemoryError()",
+            MemoryError,
             "../aqt/settings.ini",
             "Caught MemoryError, terminating installer workers\n"
             "Out of memory when downloading and extracting archives in parallel.\n"
@@ -763,7 +763,7 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
             1,
         ),
         (
-            "MemoryError()",
+            MemoryError,
             "data/settings_no_concurrency.ini",
             "Caught MemoryError, terminating installer workers\n"
             "Out of memory when downloading and extracting archives.\n"
@@ -775,9 +775,9 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
         ),
     ),
 )
-def test_install_pool_exception(monkeypatch, capsys, make_exception, settings_file, expect_end_msg, expect_return):
+def test_install_pool_exception(monkeypatch, capsys, exception_class, settings_file, expect_end_msg, expect_return):
     def mock_installer_func(*args):
-        raise eval(make_exception)
+        raise exception_class()
 
     host, target, ver, arch = "windows", "desktop", "6.1.0", "win64_mingw81"
     updates_url = "windows_x86/desktop/qt6_610/Updates.xml"
