@@ -27,15 +27,16 @@ import os
 import posixpath
 import secrets
 import sys
-import xml.etree.ElementTree as ElementTree
 from logging import getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
 from typing import Callable, Dict, Generator, List, Optional, Tuple
 from urllib.parse import urlparse
+from xml.etree.ElementTree import Element
 
 import requests
 import requests.adapters
+from defusedxml import ElementTree
 
 from aqt.exceptions import (
     ArchiveChecksumError,
@@ -257,7 +258,7 @@ def ssplit(data: str):
 
 def xml_to_modules(
     xml_text: str,
-    predicate: Callable[[ElementTree.Element], bool],
+    predicate: Callable[[Element], bool],
 ) -> Dict[str, Dict[str, str]]:
     """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
     Only report elements that satisfy `predicate(element)`.

@@ -4,7 +4,7 @@ import argparse
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Generator, Iterator, List, Optional, Tuple, Union
+from typing import Dict, Generator, Iterable, List, Optional, Tuple, Union
 
 from jsoncomparison import NO_DIFF, Compare
 
@@ -26,8 +26,8 @@ def is_blacklisted_tool(tool_name: str) -> bool:
 def iter_archive_ids(
     *,
     category: str,
-    hosts: Iterator[str] = ArchiveId.HOSTS,
-    targets: Optional[Iterator[str]] = None,
+    hosts: Iterable[str] = ArchiveId.HOSTS,
+    targets: Optional[Iterable[str]] = None,
     add_extensions: bool = False,
 ) -> Generator[ArchiveId, None, None]:
     def iter_extensions() -> Generator[str, None, None]:
@@ -76,7 +76,7 @@ def iter_arches() -> Generator[dict, None, None]:
 def iter_tool_variants() -> Generator[dict, None, None]:
     for archive_id in iter_archive_ids(category="tools"):
         logger.info("Fetching tool variants for {}".format(archive_id))
-        for tool_name in tqdm(sorted(MetadataFactory(archive_id).getList())):
+        for tool_name in tqdm(sorted(MetadataFactory(archive_id).fetch_tools())):
             if is_blacklisted_tool(tool_name):
                 continue
             for tool_variant in MetadataFactory(
@@ -93,7 +93,7 @@ def iter_tool_variants() -> Generator[dict, None, None]:
 def iter_qt_minor_groups(
     host: str = "linux", target: str = "desktop"
 ) -> Generator[Tuple[int, int], None, None]:
-    versions: Versions = MetadataFactory(ArchiveId("qt", host, target)).getList()
+    versions: Versions = MetadataFactory(ArchiveId("qt", host, target)).fetch_versions()
     for minor_group in versions:
         v = minor_group[0]
         yield v.major, v.minor

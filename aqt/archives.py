@@ -21,10 +21,11 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import binascii
 import posixpath
-import xml.etree.ElementTree as ElementTree
 from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
+
+from defusedxml import ElementTree
 
 from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit

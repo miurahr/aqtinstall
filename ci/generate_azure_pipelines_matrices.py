@@ -3,7 +3,7 @@ This sets variables for a matrix of QT versions to test downloading against with
 """
 import collections
 import json
-import random
+import secrets as random
 import re
 from itertools import product
 from typing import Dict, Optional
