@@ -23,6 +23,13 @@ Added
 -----
 * doc: warn about unrelated aqt package (#490)
 * doc: add explanation of --config flag in CLI docs (#491)
+* doc: note about MSYS2/Mingw64 environment
+
+Security
+--------
+* Use secrets for secure random numbers(#498)
+* Use defusedxml to parse Updates.xml file to avoid attack(#498)
+
 
 `v2.0.6`_ (7, Feb. 2022)
 ========================
