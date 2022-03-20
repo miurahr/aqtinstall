@@ -18,7 +18,7 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+import binascii
 import configparser
 import hashlib
 import json
@@ -176,16 +176,28 @@ def iter_list_reps(_list: List, num_reps: int) -> Generator:
             list_index = 0
 
 
-def get_hash(archive_path: str, algorithm: str, timeout) -> str:
+def get_hash(archive_path: str, algorithm: str, timeout) -> bytes:
+    """
+    Downloads a checksum and unhexlifies it to a `bytes` object, guaranteed to be the right length.
+    Raises ChecksumDownloadFailure if the download failed, or if the checksum was un unexpected length.
+
+    :param archive_path: The path to the file that we want to check, not the path to the checksum.
+    :param algorithm:    sha256 is the only safe value to use here.
+    :param timeout:      The timeout used by getUrl.
+    :return:             A checksum in `bytes`
+    """
     logger = getLogger("aqt.helper")
+    hash_lengths = {"sha256": 64, "sha1": 40, "md5": 32}
     for base_url in iter_list_reps(Settings.trusted_mirrors, Settings.max_retries_to_retrieve_hash):
         url = posixpath.join(base_url, f"{archive_path}.{algorithm}")
         logger.debug(f"Attempt to download checksum at {url}")
         try:
             r = getUrl(url, timeout)
             # sha256 & md5 files are: "some_hash archive_filename"
-            return r.split(" ")[0]
-        except (ArchiveConnectionError, ArchiveDownloadError):
+            _hash = r.split(" ")[0]
+            if len(_hash) == hash_lengths[algorithm]:
+                return binascii.unhexlify(_hash)
+        except (ArchiveConnectionError, ArchiveDownloadError, binascii.Incomplete, binascii.Error):
             pass
     filename = archive_path.split("/")[-1]
     raise ChecksumDownloadFailure(
