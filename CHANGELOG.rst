@@ -11,8 +11,10 @@ Changed
 -------
 * Use SHA256 hash from trusted mirror for integrity check (#493)
 * Check Update.xml file with SHA256 hash (#493)
-* Update combinations.xml (#495)
-  * QtDesignStudio, IFW version change
+* Update combinations.xml
+  * QtDesignStudio generation2 (#486)
+  * IFW version (from 42 to 43) change (#495)
+  * Support Qt 6.2.4 (#502)
 * Update fallback mirror list (#485)
 
 Fixed
@@ -29,6 +31,7 @@ Security
 --------
 * Use secrets for secure random numbers(#498)
 * Use defusedxml to parse Updates.xml file to avoid attack(#498)
+* Improve get_hash function(#504)
 
 
 `v2.0.6`_ (7, Feb. 2022)
@@ -46,7 +49,8 @@ Added
 
 Changed
 -------
-* combinations matrix json(#481,#484)
+* Update combinations.xml
+  * Qt 6.2.2, 6.2.3, 6.3.0(#481,#484)
 
 `v2.0.5`_ (11, Dec. 2021)
 =========================
