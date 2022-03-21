@@ -19,7 +19,6 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import binascii
 import posixpath
 from dataclasses import dataclass, field
 from logging import getLogger
@@ -27,7 +26,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 from defusedxml import ElementTree
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
+from aqt.exceptions import ArchiveDownloadError, ArchiveListError, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit
 from aqt.metadata import QtRepoProperty, Version
 
@@ -231,9 +230,7 @@ class QtArchives:
 
     def _download_update_xml(self, update_xml_path):
         """Hook for unit test."""
-        xml_hash = binascii.unhexlify(get_hash(update_xml_path, "sha256", self.timeout))
-        if xml_hash == "":
-            raise ChecksumDownloadFailure(f"Checksum for '{update_xml_path}' is empty")
+        xml_hash = get_hash(update_xml_path, "sha256", self.timeout)
         update_xml_text = getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
         self.update_xml_text = update_xml_text
 

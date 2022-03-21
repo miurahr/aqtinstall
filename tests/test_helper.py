@@ -201,6 +201,8 @@ def test_helper_retry_on_error(num_attempts_before_success, num_retries_allowed)
 )
 def test_helper_get_hash_retries(monkeypatch, num_tries_required, num_retries_allowed):
     num_tries = 0
+    expected_hash = "a" * 64
+    rest_of_url = "online/qtsdkrepository/some/path/to/archive.7z"
 
     def mock_getUrl(url, *args, **kwargs):
         nonlocal num_tries
@@ -210,20 +212,44 @@ def test_helper_get_hash_retries(monkeypatch, num_tries_required, num_retries_al
         parsed = urlparse(url)
         base = f"{parsed.scheme}://{parsed.netloc}"
         assert base in Settings.trusted_mirrors
+        # Check that the url was composed properly
+        assert url[len(base) :] == f"/{rest_of_url}.sha256"
 
         hash_filename = str(parsed.path.split("/")[-1])
         assert hash_filename == "archive.7z.sha256"
-        return "MOCK_HASH archive.7z"
+        return f"{expected_hash} archive.7z"
 
     monkeypatch.setattr("aqt.helper.getUrl", mock_getUrl)
 
     if num_tries_required > num_retries_allowed:
         with pytest.raises(ChecksumDownloadFailure) as e:
-            result = get_hash("http://insecure.mirror.com/some/path/to/archive.7z", "sha256", (5, 5))
+            get_hash(rest_of_url, "sha256", (5, 5))
         assert e.type == ChecksumDownloadFailure
     else:
-        result = get_hash("http://insecure.mirror.com/some/path/to/archive.7z", "sha256", (5, 5))
-        assert result == "MOCK_HASH"
+        result = get_hash(rest_of_url, "sha256", (5, 5))
+        assert result == binascii.unhexlify(expected_hash)
+
+
+@pytest.mark.parametrize(
+    "received_hash",
+    (
+        "",  # Empty
+        "a" * 40,  # Hash length for sha1 checksums
+        "q" * 64,  # Not a hex digit; you can't unhexlify this
+    ),
+)
+def test_helper_get_hash_bad_hash(monkeypatch, received_hash):
+    def mock_getUrl(url, *args, **kwargs):
+        hash_filename = str(urlparse(url).path.split("/")[-1])
+        assert hash_filename.endswith(".sha256")
+        filename = hash_filename[: -len(".sha256")]
+        return f"{received_hash} {filename}"
+
+    monkeypatch.setattr("aqt.helper.getUrl", mock_getUrl)
+
+    with pytest.raises(ChecksumDownloadFailure) as e:
+        get_hash("online/qtsdkrepository/some/path/to/archive.7z", "sha256", (5, 5))
+    assert e.type == ChecksumDownloadFailure
 
 
 @pytest.mark.parametrize(

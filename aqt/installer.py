@@ -22,7 +22,6 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
-import binascii
 import gc
 import multiprocessing
 import os
@@ -1018,7 +1017,7 @@ def installer(
         timeout = (Settings.connection_timeout, Settings.response_timeout)
     else:
         timeout = (Settings.connection_timeout, response_timeout)
-    hash = binascii.unhexlify(get_hash(qt_package.archive_path, algorithm="sha256", timeout=timeout))
+    hash = get_hash(qt_package.archive_path, algorithm="sha256", timeout=timeout)
 
     def download_bin(_base_url):
         url = posixpath.join(_base_url, qt_package.archive_path)
