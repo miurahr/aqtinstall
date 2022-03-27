@@ -1,9 +1,14 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.3.3"]
+requires = ["setuptools>=61", "wheel", "setuptools_scm[toml]>=6.4"]
 build-backend = "setuptools.build_meta"
 
-[tools.setuptools_scm]
+[tool.setuptools_scm]
 local_scheme = "no-local-version"
+write_to = "aqt/version.py"
+write_to_template = """
+__version__ = \"{version}\"
+"""
+tag_regex = "^(?P<prefix>v)?(?P<version>[^\\+]+)(?P<suffix>.*)?$"
 
 [tool.check-manifest]
 ignore = ["aqt/version.py","azure-pipelines.yml", ".readthedocs.yml", "ci/*"]
