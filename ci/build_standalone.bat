@@ -1,3 +1,4 @@
+pip install -U pip
 pip install virtualenv
 virtualenv build_venv
 call build_venv\Scripts\activate.bat
