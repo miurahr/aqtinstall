@@ -24,6 +24,7 @@ import pathlib
 import re
 import subprocess
 from logging import getLogger
+from typing import Union
 
 import patch
 
@@ -31,6 +32,26 @@ from aqt.archives import TargetConfig
 from aqt.exceptions import UpdaterError
 from aqt.helper import Settings
 from aqt.metadata import SimpleSpec, Version
+
+
+def default_desktop_arch_dir(host: str, version: Union[Version, str]) -> str:
+    version: Version = version if isinstance(version, Version) else Version(version)
+    if host == "linux":
+        return "gcc_64"
+    elif host == "mac":
+        return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
+    else:  # Windows
+        # This is a temporary solution. This arch directory cannot exist for many versions of Qt.
+        # TODO: determine this dynamically
+        return "mingw81_64"
+
+
+def dir_for_version(ver: Version) -> str:
+    return "5.9" if ver == Version("5.9.0") else f"{ver.major}.{ver.minor}.{ver.patch}"
+
+
+def unpatched_path(os_name: str, final_component: str) -> str:
+    return ("/home/qt/work/install" if os_name == "linux" else "/Users/qt/work/install") + "/" + final_component
 
 
 class Updater:
@@ -160,30 +181,14 @@ class Updater:
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
 
-    def patch_qmake_script(self, base_dir, qt_version, os_name):
-        if os_name == "linux":
-            self.logger.info("Patching {}/bin/qmake".format(self.prefix))
-            self._patch_textfile(
-                self.prefix / "bin" / "qmake",
-                "/home/qt/work/install/bin",
-                "{}/{}/{}/bin".format(base_dir, qt_version, "gcc_64"),
-            )
-        elif os_name == "mac":
-            self.logger.info("Patching {}/bin/qmake".format(self.prefix))
-            self._patch_textfile(
-                self.prefix / "bin" / "qmake",
-                "/Users/qt/work/install/bin",
-                "{}/{}/{}/bin".format(base_dir, qt_version, "clang_64"),
-            )
-        elif os_name == "windows":
-            self.logger.info("Patching {}/bin/qmake.bat".format(self.prefix))
-            self._patch_textfile(
-                self.prefix / "bin" / "qmake.bat",
-                "/Users/qt/work/install/bin",
-                "{}\\{}\\{}\\bin".format(base_dir, qt_version, "mingw81_64"),
-            )
-        else:
-            pass
+    def patch_qmake_script(self, base_dir, qt_version: str, os_name):
+        arch_dir = default_desktop_arch_dir(os_name, qt_version)
+        sep = "\\" if os_name == "windows" else "/"
+        patched = sep.join([base_dir, qt_version, arch_dir, "bin"])
+        unpatched = unpatched_path(os_name, "bin")
+        qmake_path = self.prefix / "bin" / ("qmake.bat" if os_name == "windows" else "qmake")
+        self.logger.info(f"Patching {qmake_path}")
+        self._patch_textfile(qmake_path, unpatched, patched)
 
     def patch_qtcore(self, target):
         """patch to QtCore"""
@@ -235,15 +240,8 @@ class Updater:
 
     def patch_target_qt_conf(self, base_dir, qt_version, arch_dir, os_name):
         target_qt_conf = self.prefix / "bin" / "target_qt.conf"
-        if os_name == "linux":
-            old_targetprefix = "Prefix=/home/qt/work/install/target"
-            new_hostprefix = "HostPrefix=../../gcc_64"
-        elif os_name == "mac":
-            old_targetprefix = "Prefix=/Users/qt/work/install/target"
-            new_hostprefix = "HostPrefix=../../clang_64"
-        else:
-            old_targetprefix = "Prefix=/Users/qt/work/install/target"
-            new_hostprefix = "HostPrefix=../../mingw81_64"
+        old_targetprefix = f'Prefix={unpatched_path(os_name, "target")}'
+        new_hostprefix = f"HostPrefix=../../{default_desktop_arch_dir(os_name, qt_version)}"
         new_targetprefix = "Prefix={}".format(str(pathlib.Path(base_dir).joinpath(qt_version, arch_dir, "target")))
         new_hostdata = "HostData=../{}".format(arch_dir)
         self._patch_textfile(target_qt_conf, old_targetprefix, new_targetprefix)
@@ -260,7 +258,7 @@ class Updater:
         arch = target.arch
         version = Version(target.version)
         os_name = target.os_name
-        version_dir = "5.9" if version == Version("5.9.0") else target.version
+        version_dir = dir_for_version(version)
         if arch is None:
             arch_dir = ""
         elif arch.startswith("win64_mingw"):
@@ -274,8 +272,8 @@ class Updater:
                 arch_dir = b + "_" + a
             else:
                 arch_dir = arch[6:]
-        elif version in SimpleSpec(">=6.1.2") and os_name == "mac" and arch == "clang_64":
-            arch_dir = "macos"
+        elif os_name == "mac" and target.target == "desktop":
+            arch_dir = default_desktop_arch_dir(os_name, version)
         else:
             arch_dir = arch
         try:
