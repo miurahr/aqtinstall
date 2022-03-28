@@ -579,6 +579,61 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"Time elapsed: .* second"
             ),
         ),
+        (
+            "install-qt mac ios 6.1.2".split(),
+            "mac",
+            "ios",
+            "6.1.2",
+            "ios",
+            "ios",
+            "mac_x64/ios/qt6_612/Updates.xml",
+            [
+                MockArchive(
+                    filename_7z="qtbase-mac-ios.7z",
+                    update_xml_name="qt.qt6.612.ios",
+                    contents=(
+                        # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                        PatchedFile(
+                            filename="mkspecs/qconfig.pri",
+                            unpatched_content="... blah blah blah ...\n"
+                            "QT_EDITION = Not OpenSource\n"
+                            "QT_LICHECK = Not Empty\n"
+                            "... blah blah blah ...\n",
+                            patched_content="... blah blah blah ...\n"
+                            "QT_EDITION = OpenSource\n"
+                            "QT_LICHECK =\n"
+                            "... blah blah blah ...\n",
+                        ),
+                        PatchedFile(
+                            filename="bin/target_qt.conf",
+                            unpatched_content="Prefix=/Users/qt/work/install/target\n"
+                            "HostPrefix=../../\n"
+                            "HostData=target\n",
+                            patched_content="Prefix={base_dir}{sep}6.1.2{sep}ios{sep}target\n"
+                            "HostPrefix=../../macos\n"
+                            "HostData=../ios\n",
+                        ),
+                        PatchedFile(
+                            filename="bin/qmake",
+                            unpatched_content="... blah blah blah ...\n"
+                            "/Users/qt/work/install/bin\n"
+                            "... blah blah blah ...\n",
+                            patched_content="... blah blah blah ...\n"
+                            "{base_dir}/6.1.2/macos/bin\n"
+                            "... blah blah blah ...\n",
+                        ),
+                    ),
+                ),
+            ],
+            re.compile(
+                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"Downloading qtbase...\n"
+                r"Finished installation of qtbase-mac-ios.7z in .*\n"
+                r"Patching .*6.1.2/ios/bin/qmake\n"
+                r"Finished installation\n"
+                r"Time elapsed: .* second"
+            ),
+        ),
     ),
 )
 def test_install(
