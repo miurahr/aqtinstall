@@ -175,6 +175,21 @@ steps:
     displayName: Build accelbubble example application to test for android
 
   ##----------------------------------------------------
+  # for iOS target
+  - bash: |
+      set -ex
+      mkdir $(Build.BinariesDirectory)/tests
+      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
+      export PATH=$(QT_BINDIR):$PATH
+      qmake $(Build.BinariesDirectory)/tests/accelbubble
+      make
+    condition: |
+        and(eq(variables['TARGET'], 'ios'), 
+            ne(variables['SUBCOMMAND'], 'list'), 
+            ne(variables['SUBCOMMAND'], 'install-tool'))
+    displayName: Build accelbubble example application to test for ios
+
+  ##----------------------------------------------------
   # Cache Powershell Modules in $MODULES_FOLDER
   - task: Cache@2
     inputs:
