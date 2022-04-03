@@ -574,7 +574,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-android_armv7.7z in .*\n"
-                r"Patching .*6\.1\.0/android_armv7/bin/qmake.bat\n"
+                r"Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]qmake.bat\n"
                 r"Finished installation\n"
                 r"Time elapsed: .* second"
             ),
@@ -629,7 +629,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"Downloading qtbase...\n"
                 r"Finished installation of qtbase-linux-android_arm64_v8a.7z in .*\n"
-                r"Patching .*6\.3\.0/android_arm64_v8a/bin/qmake\n"
+                r"Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
                 r"Finished installation\n"
                 r"Time elapsed: .* second"
             ),
@@ -684,7 +684,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"Downloading qtbase...\n"
                 r"Finished installation of qtbase-mac-ios.7z in .*\n"
-                r"Patching .*6\.1\.2/ios/bin/qmake\n"
+                r"Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
                 r"Finished installation\n"
                 r"Time elapsed: .* second"
             ),
