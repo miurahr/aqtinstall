@@ -272,7 +272,7 @@ class Updater:
                 arch_dir = b + "_" + a
             else:
                 arch_dir = arch[6:]
-        elif os_name == "mac" and target.target == "desktop":
+        elif os_name == "mac" and arch == "clang_64":
             arch_dir = default_desktop_arch_dir(os_name, version)
         else:
             arch_dir = arch
