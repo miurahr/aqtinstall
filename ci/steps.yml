@@ -54,7 +54,8 @@ steps:
           if [[ "$(HOST)" == "windows" ]]; then
             python -m aqt install-qt $(HOST) desktop $(QT_VERSION) mingw81_64 --archives qtbase
           else
-            python -m aqt install-qt $(HOST) desktop $(QT_VERSION) --archives qtbase
+            # qtdeclarative contains `qmlimportscanner`: necessary for ios builds, Qt6+
+            python -m aqt install-qt $(HOST) desktop $(QT_VERSION) --archives qtbase qtdeclarative
           fi
         fi
         if [[ "$(OUTPUT_DIR)" != "" ]]; then
@@ -173,6 +174,21 @@ steps:
       make
     condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['SUBCOMMAND'], 'list'), ne(variables['SUBCOMMAND'], 'install-tool'))
     displayName: Build accelbubble example application to test for android
+
+  ##----------------------------------------------------
+  # for iOS target
+  - bash: |
+      set -ex
+      mkdir $(Build.BinariesDirectory)/tests
+      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
+      export PATH=$(QT_BINDIR):$PATH
+      qmake $(Build.BinariesDirectory)/tests/accelbubble
+      make
+    condition: |
+        and(eq(variables['TARGET'], 'ios'), 
+            ne(variables['SUBCOMMAND'], 'list'), 
+            ne(variables['SUBCOMMAND'], 'install-tool'))
+    displayName: Build accelbubble example application to test for ios
 
   ##----------------------------------------------------
   # Cache Powershell Modules in $MODULES_FOLDER
