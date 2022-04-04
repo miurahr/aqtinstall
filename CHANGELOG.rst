@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 
 Changed
 -------
+* Change security policy:
+  Supported 2.0.x
+  Unsupported 1.2.x and before
+* Bump py7zr@0.18.3(#509)
+* setuptools_scm configuraiton on pyproject.toml(#508)
 * Use SHA256 hash from trusted mirror for integrity check (#493)
 * Check Update.xml file with SHA256 hash (#493)
 * Update combinations.xml
@@ -19,6 +24,7 @@ Changed
 
 Fixed
 -----
+* Fix patching of Qt6.2.2-ios(#510, #503)
 * Test: Conditionally install dependencies on Ubuntu (#494)
 
 Added
