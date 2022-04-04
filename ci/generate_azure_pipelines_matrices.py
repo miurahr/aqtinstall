@@ -269,7 +269,7 @@ mac_build_jobs.append(
 mac_build_jobs.extend(
     [
         BuildJob("install-qt", "5.15.2", "mac", "ios", "ios", "ios"),
-        BuildJob("install-qt", "6.2.2", "mac", "ios", "ios", "ios"),
+        BuildJob("install-qt", "6.2.2", "mac", "ios", "ios", "ios", module="qtsensors"),
         BuildJob(
             "install-qt", "6.1.0", "mac", "android", "android_armv7", "android_armv7"
         ),
