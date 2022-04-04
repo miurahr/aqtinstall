@@ -54,7 +54,8 @@ steps:
           if [[ "$(HOST)" == "windows" ]]; then
             python -m aqt install-qt $(HOST) desktop $(QT_VERSION) mingw81_64 --archives qtbase
           else
-            python -m aqt install-qt $(HOST) desktop $(QT_VERSION) --archives qtbase
+            # qtdeclarative contains `qmlimportscanner`: necessary for ios builds, Qt6+
+            python -m aqt install-qt $(HOST) desktop $(QT_VERSION) --archives qtbase qtdeclarative
           fi
         fi
         if [[ "$(OUTPUT_DIR)" != "" ]]; then
