@@ -9,19 +9,22 @@ Aqtinstall is written and maintained by Hiroshi Miura <miurahr@linux.com>
 
 Original qli-installer is written by Linus Jahn
 
-Significant contributions for improvements of version 2.0 by David Dalcino
+Significant contributions for improvements of version 2.0 and 2.1 by David Dalcino
 
 All contributors, listed alphabetically, are:
 
 * Andrei Yankovich (tools ifw installation)
 * Aurélien Gâteau (patching to qmake)
 * Benjamin O (Github Actions and more)
+* Christian Hoffmann (Update mirror list)
 * David Dalcino (CI automations, List commands, improve tests, documents and fix patching to qmake)
+* Fabrice Le Bars (32bit binary)
 * Felix Barz (Android, Explicit extra module installation)
 * Gamso (improve parsing of update.xml)
 * Julien Marrec (mypy, type hints)
 * Kyle Altendorf (7z binary path search)
 * lightmare (Documents)
+* Mike Tzou (Update fallback url)
 * Martin Delille (Documents)
 * Mizux Seihax (Qt versions)
 * Mozi (CI/workflow improvement)

@@ -7,15 +7,19 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.1.0`_ (14, Apr. 2022)
+=========================
+
 Changed
 -------
-* Change security policy:
+* Change security policy(#506):
   Supported 2.0.x
   Unsupported 1.2.x and before
 * Bump py7zr@0.18.3(#509)
-* setuptools_scm configuraiton on pyproject.toml(#508)
+* pyproject.toml configuration
+  * project section(#507)
+  * setuptools_scm settings(#508)
 * Use SHA256 hash from trusted mirror for integrity check (#493)
-* Check Update.xml file with SHA256 hash (#493)
 * Update combinations.xml
   * QtDesignStudio generation2 (#486)
   * IFW version (from 42 to 43) change (#495)
@@ -38,6 +42,7 @@ Security
 * Use secrets for secure random numbers(#498)
 * Use defusedxml to parse Updates.xml file to avoid attack(#498)
 * Improve get_hash function(#504)
+* Check Update.xml file with SHA256 hash (#493)
 
 
 `v2.0.6`_ (7, Feb. 2022)
@@ -399,7 +404,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.0.6...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.1.0...HEAD
+.. _v2.1.0: https://github.com/miurahr/aqtinstall/compare/v2.0.6...v2.1.0
 .. _v2.0.6: https://github.com/miurahr/aqtinstall/compare/v2.0.5...v2.0.6
 .. _v2.0.5: https://github.com/miurahr/aqtinstall/compare/v2.0.4...v2.0.5
 .. _v2.0.4: https://github.com/miurahr/aqtinstall/compare/v2.0.3...v2.0.4
