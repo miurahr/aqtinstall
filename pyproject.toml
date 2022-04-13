@@ -1,3 +1,81 @@
+[project]
+name = "aqtinstall"
+description = "Another unofficial Qt installer"
+readme = "README.rst"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Hiroshi Miura", email = "miurahr@linux.com"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Programming Language :: C++",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+]
+requires-python = ">=3.6"
+dependencies = [
+    "requests",
+    "semantic_version",
+    "patch>=1.16",
+    "py7zr>=0.18.3",
+    "texttable",
+    "bs4",
+    "dataclasses;python_version<'3.7'",
+    "defusedxml",
+]
+dynamic = ["version"]
+
+[project.scripts]
+aqt = "aqt.__main__:main"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=6.0",
+    "pytest-pep8",
+    "pytest-remotedata",
+    "pytest-cov",
+    "pytest-socket",
+    "pytest-leaks",
+    "pympler",
+]
+check = [
+    "flake8",
+    "flake8-black",
+    "flake8-colors",
+    "flake8-isort",
+    "flake8-pyi",
+    "flake8-typing-imports",
+    "docutils",
+    "check-manifest",
+    "readme-renderer",
+    "pygments",
+    "packaging",
+]
+docs = [
+    "sphinx>=2.3",
+    "sphinx_rtd_theme",
+    "sphinx-py3doc-enhanced-theme",
+]
+
+[project.urls]
+Documentation = "https://aqtinstall.readthedocs.io/"
+Bug_Tracker = "https://github.com/miurahr/aqtinstall/issues"
+Wiki = "https://github.com/miurahr/aqtinstall/wiki"
+Source = "https://github.com/miurahr/aqtinstall"
+Changelog = "https://github.com/miurahr/aqtinstall/blob/master/CHANGELOG.rst"
+
+[tool.poetry]
+include = ["*.yml", "*.json", "*.ini"]
+
 [build-system]
 requires = ["setuptools>=61", "wheel", "setuptools_scm[toml]>=6.4"]
 build-backend = "setuptools.build_meta"

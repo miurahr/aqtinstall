@@ -60,7 +60,8 @@ Requirements
     py7zr
     texttable
     bs4
-    dataclasses
+    dataclasses; python_version < "3.7"
+    defusedxml
 
 - Operating Systems:
     Linux, macOS, MS Windows
