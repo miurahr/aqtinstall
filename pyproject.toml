@@ -2,7 +2,7 @@
 name = "aqtinstall"
 description = "Another unofficial Qt installer"
 readme = "README.rst"
-license = {file = "LICENSE"}
+license = { text = "MIT License"}
 authors = [
     {name = "Hiroshi Miura", email = "miurahr@linux.com"},
 ]
