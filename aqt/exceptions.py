@@ -40,6 +40,12 @@ class AqtException(Exception):
             ["* " + suggestion for suggestion in self.suggested_action]
         )
 
+    def append_suggested_follow_up(self, suggestions: Iterable[str]):
+        if self.suggested_action:
+            self.suggested_action = [*self.suggested_action, *suggestions]
+        else:
+            self.suggested_action = suggestions
+
 
 class ArchiveDownloadError(AqtException):
     pass

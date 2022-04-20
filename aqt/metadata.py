@@ -450,7 +450,7 @@ class MetadataFactory:
         return arches
 
     def fetch_extensions(self, version: Version) -> List[str]:
-        versions_extensions = MetadataFactory.get_versions_extensions(
+        versions_extensions = self.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
         )
         filtered = filter(
@@ -467,7 +467,7 @@ class MetadataFactory:
         def get_version(ver_ext: Tuple[Version, str]):
             return ver_ext[0]
 
-        versions_extensions = MetadataFactory.get_versions_extensions(
+        versions_extensions = self.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
         )
         versions = sorted(filter(None, map(get_version, filter(filter_by, versions_extensions))))
@@ -479,7 +479,7 @@ class MetadataFactory:
 
     def fetch_tools(self) -> List[str]:
         html_doc = self.fetch_http(self.archive_id.to_url(), False)
-        return list(MetadataFactory.iterate_folders(html_doc, "tools"))
+        return list(self.iterate_folders(html_doc, "tools"))
 
     def fetch_tool_modules(self, tool_name: str) -> List[str]:
         tool_data = self._fetch_module_metadata(tool_name)
@@ -588,24 +588,32 @@ class MetadataFactory:
                         f"Connection to '{base_url}' failed. Retrying with fallback '{base_urls[i + 1]}'."
                     )
 
-    @staticmethod
-    def iterate_folders(html_doc: str, filter_category: str = "") -> Generator[str, None, None]:
+    def iterate_folders(self, html_doc: str, filter_category: str = "") -> Generator[str, None, None]:
         def table_row_to_folder(tr: bs4.element.Tag) -> str:
             try:
                 return tr.find_all("td")[1].a.contents[0].rstrip("/")
             except (AttributeError, IndexError):
                 return ""
 
-        soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html_doc, "html.parser")
-        for row in soup.body.table.find_all("tr"):
-            content: str = table_row_to_folder(row)
-            if not content or content == "Parent Directory":
-                continue
-            if content.startswith(filter_category):
-                yield content
+        try:
+            soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html_doc, "html.parser")
+            for row in soup.body.table.find_all("tr"):
+                content: str = table_row_to_folder(row)
+                if not content or content == "Parent Directory":
+                    continue
+                if content.startswith(filter_category):
+                    yield content
+        except Exception as e:
+            url = posixpath.join(Settings.baseurl, self.archive_id.to_url())
+            raise ArchiveConnectionError(
+                f"Failed to retrieve the expected HTML page at {url}",
+                suggested_action=[
+                    "Check your network connection.",
+                    f"Make sure that you can access {url} in your web browser.",
+                ],
+            ) from e
 
-    @staticmethod
-    def get_versions_extensions(html_doc: str, category: str) -> Iterator[Tuple[Optional[Version], str]]:
+    def get_versions_extensions(self, html_doc: str, category: str) -> Iterator[Tuple[Optional[Version], str]]:
         def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
             components = folder.split("_", maxsplit=2)
             ext = "" if len(components) < 3 else components[2]
@@ -617,7 +625,7 @@ class MetadataFactory:
 
         return map(
             folder_to_version_extension,
-            MetadataFactory.iterate_folders(html_doc, category),
+            self.iterate_folders(html_doc, category),
         )
 
     @staticmethod
@@ -792,5 +800,5 @@ def show_list(meta: MetadataFactory):
         else:
             print(*output, sep=" ")
     except (ArchiveDownloadError, ArchiveConnectionError) as e:
-        e.suggested_action = suggested_follow_up(meta)
+        e.append_suggested_follow_up(suggested_follow_up(meta))
         raise e from e
