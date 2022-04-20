@@ -18,14 +18,14 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-from typing import Iterable
+from typing import List
 
 DOCS_CONFIG = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration"
 
 
 class AqtException(Exception):
     def __init__(self, *args, **kwargs):
-        self.suggested_action: Iterable[str] = kwargs.pop("suggested_action", [])
+        self.suggested_action: List[str] = kwargs.pop("suggested_action", [])
         self.should_show_help: bool = kwargs.pop("should_show_help", False)
         super(AqtException, self).__init__(*args, **kwargs)
 
@@ -40,11 +40,8 @@ class AqtException(Exception):
             ["* " + suggestion for suggestion in self.suggested_action]
         )
 
-    def append_suggested_follow_up(self, suggestions: Iterable[str]):
-        if self.suggested_action:
-            self.suggested_action = [*self.suggested_action, *suggestions]
-        else:
-            self.suggested_action = suggestions
+    def append_suggested_follow_up(self, suggestions: List[str]):
+        self.suggested_action.extend(suggestions)
 
 
 class ArchiveDownloadError(AqtException):
