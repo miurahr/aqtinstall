@@ -26,6 +26,7 @@ import secrets as random
 import shutil
 from logging import getLogger
 from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
+from urllib.parse import ParseResult, urlparse
 from xml.etree.ElementTree import Element
 
 import bs4
@@ -589,20 +590,24 @@ class MetadataFactory:
                     )
 
     def iterate_folders(self, html_doc: str, filter_category: str = "") -> Generator[str, None, None]:
-        def table_row_to_folder(tr: bs4.element.Tag) -> str:
-            try:
-                return tr.find_all("td")[1].a.contents[0].rstrip("/")
-            except (AttributeError, IndexError):
+        def link_to_folder(link: bs4.element.Tag) -> str:
+            raw_url: str = link.get("href", default="")
+            url: ParseResult = urlparse(raw_url)
+            if url.scheme or url.netloc:
                 return ""
+            url_path: str = posixpath.normpath(url.path)
+            if "/" in url_path or url_path == "." or url_path == "..":
+                return ""
+            return url_path
 
         try:
             soup: bs4.BeautifulSoup = bs4.BeautifulSoup(html_doc, "html.parser")
-            for row in soup.body.table.find_all("tr"):
-                content: str = table_row_to_folder(row)
-                if not content or content == "Parent Directory":
+            for link in soup.find_all("a"):
+                folder: str = link_to_folder(link)
+                if not folder:
                     continue
-                if content.startswith(filter_category):
-                    yield content
+                if folder.startswith(filter_category):
+                    yield folder
         except Exception as e:
             url = posixpath.join(Settings.baseurl, self.archive_id.to_url())
             raise ArchiveConnectionError(
