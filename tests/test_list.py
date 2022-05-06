@@ -129,6 +129,10 @@ def spec_regex():
         ("mac", "android", "mac-android.html", "mac-android-expect.json"),
         ("mac", "desktop", "mac-desktop.html", "mac-desktop-expect.json"),
         ("mac", "ios", "mac-ios.html", "mac-ios-expect.json"),
+        ("windows", "android", "mirror-pre-a.html", "mirror-expect.json"),
+        ("windows", "android", "mirror-table-before-pre-a.html", "mirror-expect.json"),
+        ("windows", "android", "mirror-first-td.html", "mirror-expect.json"),
+        ("windows", "android", "mirror-tag-in-a.html", "mirror-expect.json"),
     ],
 )
 def test_list_versions_tools(monkeypatch, spec_regex, os_name, target, in_file, expect_out_file):
