@@ -11,7 +11,8 @@ Contents:
    cli
    configuration
    changes
-   devguide
+   CONTRIBUTE
+   SECURITY
    authors
 
 Indices and tables
