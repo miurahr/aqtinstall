@@ -72,7 +72,7 @@ version = '.'.join(release.split('.')[:2])
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -293,7 +293,7 @@ texinfo_documents = [
 
 #-- Options for extlink extension
 extlinks = {'issue': ('https://github.com/miurahr/aqtinstall/issues/%s',
-                      'issue ')}
+                      'issue %s')}
 
 #-- Options for linkcheck
 linkcheck_ignore = [r'https://github.com/miurahr/aqtinstall/compare/.+',
