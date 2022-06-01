@@ -789,7 +789,7 @@
         "arch": "qt.tools.windows_kits_debuggers",
         "os_name": "windows",
         "target": "desktop",
-        "tool_name": "tools_qtcreator"
+        "tool_name": "tools_qtcreator_kits_and_debuggers"
       },
       {
         "arch": "qt.tools.qtdesignstudio",
