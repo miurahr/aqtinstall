@@ -61,7 +61,7 @@ check = [
     "packaging",
 ]
 docs = [
-    "sphinx>=2.3",
+    "sphinx>=5.0",
     "sphinx_rtd_theme",
     "sphinx-py3doc-enhanced-theme",
 ]

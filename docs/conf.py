@@ -293,7 +293,7 @@ texinfo_documents = [
 
 #-- Options for extlink extension
 extlinks = {'issue': ('https://github.com/miurahr/aqtinstall/issues/%s',
-                      'issue ')}
+                      'issue %s')}
 
 #-- Options for linkcheck
 linkcheck_ignore = [r'https://github.com/miurahr/aqtinstall/compare/.+',
