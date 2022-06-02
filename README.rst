@@ -130,7 +130,7 @@ Then you may get candidates: ``win64_mingw81 win64_msvc2019_64 win64_msvc2019_ar
 
 .. code-block:: console
 
-    aqt list-qt windows desktop --modules 6.2.0
+    aqt list-qt windows desktop --modules 6.2.0 win64_mingw81
 
 
 When you decide to install Qt SDK version 6.2.0 for mingw v8.1:
