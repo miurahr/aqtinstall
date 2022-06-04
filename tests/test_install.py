@@ -289,11 +289,11 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator"),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qt.tools.qtcreator...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qt.tools.qtcreator...\n"
                 r"Finished installation of tools_qtcreator-linux-qt.tools.qtcreator.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -308,13 +308,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator", datetime(1970, 1, 2, 3, 4, 5, 6)),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING: Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
                 r"In the future, please use the command 'install-tool' instead.\n"
-                r"Downloading qt.tools.qtcreator...\n"
+                r"INFO: Downloading qt.tools.qtcreator...\n"
                 r"Finished installation of tools_qtcreator-linux-qt.tools.qtcreator.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -329,13 +329,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73"),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Warning: The command 'install' is deprecated and marked for removal in a future version of aqt.\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING: Warning: The command 'install' is deprecated and marked for removal in a future version of aqt.\n"
                 r"In the future, please use the command 'install-qt' instead.\n"
-                r"Downloading qtbase...\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win32_mingw73.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -361,14 +361,14 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 ),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Warning: The parameter 'target' with value 'desktop' is deprecated "
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING: Warning: The parameter 'target' with value 'desktop' is deprecated "
                 r"and marked for removal in a future version of aqt\.\n"
                 r"In the future, please omit this parameter\.\n"
-                r"Downloading qtbase\.\.\.\n"
+                r"INFO: Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-everywhere-src-5\.14\.2\.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -394,11 +394,11 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 ),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtbase\.\.\.\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-everywhere-src-5\.14\.2\.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -413,13 +413,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 plain_qtbase_archive("qt.59.win32_mingw53", "win32_mingw53"),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Warning: The command 'install' is deprecated and marked for removal in a future version of aqt.\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING: Warning: The command 'install' is deprecated and marked for removal in a future version of aqt.\n"
                 r"In the future, please use the command 'install-qt' instead.\n"
-                r"Downloading qtbase...\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win32_mingw53.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -434,11 +434,11 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 plain_qtbase_archive("qt.59.win32_mingw53", "win32_mingw53"),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtbase...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win32_mingw53.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -453,11 +453,11 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73"),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtbase...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win32_mingw73.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -473,13 +473,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 qtcharts_module("5.14.0", "win64_mingw73"),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtbase...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win64_mingw73.7z in .*\n"
-                r"Downloading qtcharts...\n"
+                r"INFO: Downloading qtcharts...\n"
                 r"Finished installation of qtcharts-windows-win64_mingw73.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -495,11 +495,11 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 qtpositioning_module("6.2.0", "win64_mingw73"),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtlocation...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtlocation...\n"
                 r"Finished installation of qtlocation-windows-win64_mingw73.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -515,13 +515,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 qtcharts_module("6.1.0", "win64_mingw81"),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtbase...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win64_mingw81.7z in .*\n"
-                r"Downloading qtcharts...\n"
+                r"INFO: Downloading qtcharts...\n"
                 r"Finished installation of qtcharts-windows-win64_mingw81.7z in .*\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -571,12 +571,12 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 ),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtbase...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-android_armv7.7z in .*\n"
-                r"Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]qmake.bat\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]qmake.bat\n"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -626,12 +626,12 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 ),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtbase...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-linux-android_arm64_v8a.7z in .*\n"
-                r"Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
         (
@@ -681,12 +681,12 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 ),
             ],
             re.compile(
-                r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"Downloading qtbase...\n"
+                r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-mac-ios.7z in .*\n"
-                r"Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
-                r"Finished installation\n"
-                r"Time elapsed: .* second"
+                r"INFO: Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
+                r"INFO: Finished installation\n"
+                r"INFO: Time elapsed: .* second"
             ),
         ),
     ),
@@ -749,24 +749,24 @@ def test_install(
         (
             "install-qt windows desktop 5.16.0 win32_mingw73",
             None,
-            "Specified Qt version is unknown: 5.16.0.\n"
-            "Failed to locate XML data for Qt version '5.16.0'.\n"
+            "WARNING: Specified Qt version is unknown: 5.16.0.\n"
+            "ERROR: Failed to locate XML data for Qt version '5.16.0'.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-qt windows desktop' to show versions available.\n",
         ),
         (
             "install-qt windows desktop 5.15.0 bad_arch",
             "windows-5150-update.xml",
-            "Specified target combination is not valid or unknown: windows desktop bad_arch\n"
-            "The packages ['qt_base'] were not found while parsing XML of package information!\n"
+            "WARNING: Specified target combination is not valid or unknown: windows desktop bad_arch\n"
+            "ERROR: The packages ['qt_base'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n",
         ),
         (
             "install-qt windows desktop 5.15.0 win32_mingw73 -m nonexistent foo",
             "windows-5150-update.xml",
-            "Some of specified modules are unknown.\n"
-            "The packages ['foo', 'nonexistent', 'qt_base'] were not found while parsing XML of package information!\n"
+            "WARNING: Some of specified modules are unknown.\n"
+            "ERROR: The packages ['foo', 'nonexistent', 'qt_base'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n"
             "* Please use 'aqt list-qt windows desktop --modules 5.15.0 <arch>' to show modules available.\n",
@@ -774,47 +774,47 @@ def test_install(
         (
             "install-doc windows desktop 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            "Warning: The parameter 'target' with value 'desktop' is deprecated and marked for removal in a future "
+            "WARNING: Warning: The parameter 'target' with value 'desktop' is deprecated and marked for removal in a future "
             "version of aqt.\n"
             "In the future, please omit this parameter.\n"
-            "The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "ERROR: The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-doc windows 5.15.0 --modules' to show modules available.\n",
         ),
         (
             "install-doc windows 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            "The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "ERROR: The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-doc windows 5.15.0 --modules' to show modules available.\n",
         ),
         (
             "install-example windows 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            "The packages ['examples', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "ERROR: The packages ['examples', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-example windows 5.15.0 --modules' to show modules available.\n",
         ),
         (
             "install-tool windows desktop tools_vcredist nonexistent",
             "windows-desktop-tools_vcredist-update.xml",
-            "Specified target combination is not valid: windows tools_vcredist nonexistent\n"
-            "The package 'nonexistent' was not found while parsing XML of package information!\n"
+            "WARNING: Specified target combination is not valid: windows tools_vcredist nonexistent\n"
+            "ERROR: The package 'nonexistent' was not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-tool windows desktop tools_vcredist' to show tool variants available.\n",
         ),
         (
             "install-tool windows desktop tools_nonexistent nonexistent",
             None,
-            "Specified target combination is not valid: windows tools_nonexistent nonexistent\n"
-            "Failed to locate XML data for the tool 'tools_nonexistent'.\n"
+            "WARNING: Specified target combination is not valid: windows tools_nonexistent nonexistent\n"
+            "ERROR: Failed to locate XML data for the tool 'tools_nonexistent'.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-tool windows desktop' to show tools available.\n",
         ),
         (
             "install-tool windows desktop tools_nonexistent",
             None,
-            "Failed to locate XML data for the tool 'tools_nonexistent'.\n"
+            "ERROR: Failed to locate XML data for the tool 'tools_nonexistent'.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-tool windows desktop' to check what tools are available.\n",
         ),
@@ -857,14 +857,14 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
         (
             KeyboardInterrupt,
             "../aqt/settings.ini",
-            "Caught KeyboardInterrupt, terminating installer workers\nInstaller halted by keyboard interrupt.",
+            "WARNING: Caught KeyboardInterrupt, terminating installer workers\nERROR: Installer halted by keyboard interrupt.",
             1,
         ),
         (
             MemoryError,
             "../aqt/settings.ini",
-            "Caught MemoryError, terminating installer workers\n"
-            "Out of memory when downloading and extracting archives in parallel.\n"
+            "WARNING: Caught MemoryError, terminating installer workers\n"
+            "ERROR: Out of memory when downloading and extracting archives in parallel.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please reduce your 'concurrency' setting (see "
             "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration)\n"
@@ -875,8 +875,8 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
         (
             MemoryError,
             "data/settings_no_concurrency.ini",
-            "Caught MemoryError, terminating installer workers\n"
-            "Out of memory when downloading and extracting archives.\n"
+            "WARNING: Caught MemoryError, terminating installer workers\n"
+            "ERROR: Out of memory when downloading and extracting archives.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please free up more memory.\n"
             "* Please try using the '--external' flag to specify an alternate 7z extraction tool "
