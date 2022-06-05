@@ -1,11 +1,20 @@
 name: Check package
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - releases/*
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   check_document:
     name: Check packaging 📦
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@master
       with:
