@@ -330,7 +330,8 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ],
             re.compile(
                 r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING: Warning: The command 'install' is deprecated and marked for removal in a future version of aqt.\n"
+                r"WARNING: Warning: The command 'install' is deprecated"
+                r" and marked for removal in a future version of aqt.\n"
                 r"In the future, please use the command 'install-qt' instead.\n"
                 r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win32_mingw73.7z in .*\n"
@@ -414,7 +415,8 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ],
             re.compile(
                 r"^INFO: aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING: Warning: The command 'install' is deprecated and marked for removal in a future version of aqt.\n"
+                r"WARNING: Warning: The command 'install' is deprecated"
+                r" and marked for removal in a future version of aqt.\n"
                 r"In the future, please use the command 'install-qt' instead.\n"
                 r"INFO: Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win32_mingw53.7z in .*\n"
@@ -766,7 +768,8 @@ def test_install(
             "install-qt windows desktop 5.15.0 win32_mingw73 -m nonexistent foo",
             "windows-5150-update.xml",
             "WARNING: Some of specified modules are unknown.\n"
-            "ERROR: The packages ['foo', 'nonexistent', 'qt_base'] were not found while parsing XML of package information!\n"
+            "ERROR: The packages ['foo', 'nonexistent', 'qt_base'] were not found"
+            " while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n"
             "* Please use 'aqt list-qt windows desktop --modules 5.15.0 <arch>' to show modules available.\n",
@@ -774,24 +777,28 @@ def test_install(
         (
             "install-doc windows desktop 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            "WARNING: Warning: The parameter 'target' with value 'desktop' is deprecated and marked for removal in a future "
+            "WARNING: Warning: The parameter 'target' with value 'desktop' is deprecated"
+            " and marked for removal in a future "
             "version of aqt.\n"
             "In the future, please omit this parameter.\n"
-            "ERROR: The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "ERROR: The packages ['doc', 'foo', 'nonexistent'] were not found"
+            " while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-doc windows 5.15.0 --modules' to show modules available.\n",
         ),
         (
             "install-doc windows 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            "ERROR: The packages ['doc', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "ERROR: The packages ['doc', 'foo', 'nonexistent'] were not found"
+            " while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-doc windows 5.15.0 --modules' to show modules available.\n",
         ),
         (
             "install-example windows 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            "ERROR: The packages ['examples', 'foo', 'nonexistent'] were not found while parsing XML of package information!\n"
+            "ERROR: The packages ['examples', 'foo', 'nonexistent'] were not found"
+            " while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-example windows 5.15.0 --modules' to show modules available.\n",
         ),
@@ -857,7 +864,8 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
         (
             KeyboardInterrupt,
             "../aqt/settings.ini",
-            "WARNING: Caught KeyboardInterrupt, terminating installer workers\nERROR: Installer halted by keyboard interrupt.",
+            "WARNING: Caught KeyboardInterrupt, terminating installer workers\n"
+            "ERROR: Installer halted by keyboard interrupt.",
             1,
         ),
         (
