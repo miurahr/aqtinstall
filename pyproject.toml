@@ -136,6 +136,7 @@ markers = [
 legacy_tox_ini = """
 [tox]
 envlist = check, docs, py{36,37,38,39,310}, py39d, mprof, fil
+isolated_build = True
 
 [testenv]
 passenv =
@@ -153,7 +154,7 @@ basepython = python3.8
 extras = check
 commands =
     check-manifest {toxinidir}
-    flake8 aqt tests setup.py
+    flake8 aqt tests
 
 [testenv:docs]
 basepython = python3.8

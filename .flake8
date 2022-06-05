@@ -1,0 +1,4 @@
+[flake8]
+max-line-length = 125
+exclude = .git,__pycache__,docs/conf.py,build,dist,tmp,venv
+extend-ignore = E203, W50

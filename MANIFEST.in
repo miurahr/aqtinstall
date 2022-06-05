@@ -3,6 +3,7 @@ include *.txt
 include *.cfg
 include LICENSE
 include pyproject.toml
+include .flake8
 recursive-include aqt *.ini
 recursive-include aqt *.json
 recursive-include docs *.bat
