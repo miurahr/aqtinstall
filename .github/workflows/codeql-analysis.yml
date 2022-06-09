@@ -11,7 +11,7 @@ on:
       - synchronize
       - reopened
 
-j
+
 jobs:
   analyze:
     name: Analyze
