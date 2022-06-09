@@ -1,0 +1,145 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.mingw47</Name>
+  <DisplayName>MinGW 4.7 32-bit</DisplayName>
+  <Description>MinGW-builds 4.7.2 32-bit toolchain.</Description>
+  <Version>4.7.2-1-1</Version>
+  <ReleaseDate>2013-07-01</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>472</SortingPriority>
+  <DownloadableArchives>x32-4.7.2-release-posix-sjlj-rev8.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="46087680" OS="Any" UncompressedSize="375492053"/>
+  <SHA1>35551be9daa226d6e440bb3404d8a7b84dab9447</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win32_mingw48</Name>
+  <DisplayName>MinGW 4.8 32-bit</DisplayName>
+  <Description>MinGW-builds 4.8.0 32-bit toolchain.</Description>
+  <Version>4.8.0-1-1</Version>
+  <ReleaseDate>2013-07-01</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>480</SortingPriority>
+  <DownloadableArchives>x32-4.8.0-release-posix-dwarf-rev2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="40118669" OS="Any" UncompressedSize="277848804"/>
+  <SHA1>6e51046425e89ee00d18ed6fc9bfcb429f3c9806</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win32_mingw482</Name>
+  <DisplayName>MinGW 4.8.2 32-bit</DisplayName>
+  <Description>MinGW-builds 4.8.2 rev3 32-bit toolchain.</Description>
+  <Version>4.8.2</Version>
+  <ReleaseDate>2014-05-08</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>482</SortingPriority>
+  <DownloadableArchives>i686-4.8.2-release-posix-dwarf-rt_v3-rev3.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="59488669" OS="Any" UncompressedSize="434107538"/>
+  <SHA1>1bed2c8bfce60958f30c8a16407d585bd8ea9ce1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win32_mingw491</Name>
+  <DisplayName>MinGW 4.9.1 32-bit</DisplayName>
+  <Description>MinGW-builds 4.9.1 32-bit toolchain.</Description>
+  <Version>4.9.1-3</Version>
+  <ReleaseDate>2016-05-31</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>491</SortingPriority>
+  <DownloadableArchives>i686-4.9.1-release-posix-dwarf-rt_v3-rev2.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="71162187" OS="Any" UncompressedSize="467998718"/>
+  <SHA1>f74b6c79360f33d1d6eea4098117da3d4565fd38</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win32_mingw492</Name>
+  <DisplayName>MinGW 4.9.2 32-bit</DisplayName>
+  <Description>MinGW-builds 4.9.2 32-bit toolchain.</Description>
+  <Version>4.9.2-1</Version>
+  <ReleaseDate>2016-05-31</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>492</SortingPriority>
+  <DownloadableArchives>i686-4.9.2-release-posix-dwarf-rt_v3-rev1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="71397942" OS="Any" UncompressedSize="468388919"/>
+  <SHA1>93e0b609e760ba3d01ba227d264e59fe3db5fdc2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win32_mingw530</Name>
+  <DisplayName>MinGW 5.3.0 32-bit</DisplayName>
+  <Description>MinGW-builds 5.3.0 32-bit toolchain.</Description>
+  <Version>5.3.0-2</Version>
+  <ReleaseDate>2017-04-27</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>530</SortingPriority>
+  <DownloadableArchives>i686-5.3.0-release-posix-dwarf-rt_v4-rev0.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="59516049" OS="Any" UncompressedSize="400664148"/>
+  <SHA1>4d77bf0da2051b2e69cbcf5763dec99518743469</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win32_mingw730</Name>
+  <DisplayName>MinGW 7.3.0 32-bit</DisplayName>
+  <Description>MinGW-builds 7.3.0 32-bit toolchain.</Description>
+  <Version>7.3.0-1-202004170606</Version>
+  <ReleaseDate>2020-04-17</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>730</SortingPriority>
+  <DownloadableArchives>i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="66719936" OS="Any" UncompressedSize="443373513"/>
+  <SHA1>11f21cf2086decebf4ce53aa585d101234a5a941</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win32_mingw810</Name>
+  <DisplayName>MinGW 8.1.0 32-bit</DisplayName>
+  <Description>MinGW-builds 8.1.0 32-bit toolchain.</Description>
+  <Version>8.1.0-1-202004170606</Version>
+  <ReleaseDate>2020-04-17</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>810</SortingPriority>
+  <DownloadableArchives>i686-8.1.0-release-posix-dwarf-rt_v6-rev0.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="69090583" OS="Any" UncompressedSize="429560326"/>
+  <SHA1>7a9a48058b5ee71fde511638327f74caa0b90aec</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win64_mingw730</Name>
+  <DisplayName>MinGW 7.3.0 64-bit</DisplayName>
+  <Description>MinGW-builds 7.3.0 64-bit toolchain.</Description>
+  <Version>7.3.0-1-202004170606</Version>
+  <ReleaseDate>2020-04-17</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>730</SortingPriority>
+  <DownloadableArchives>x86_64-7.3.0-release-posix-seh-rt_v5-rev0.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="70370688" OS="Any" UncompressedSize="472170606"/>
+  <SHA1>50b1ced1e1f86d8470b178672da0973dc9b0a2d8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.win64_mingw810</Name>
+  <DisplayName>MinGW 8.1.0 64-bit</DisplayName>
+  <Description>MinGW-builds 8.1.0 64-bit toolchain.</Description>
+  <Version>8.1.0-1-202004170606</Version>
+  <ReleaseDate>2020-04-17</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator</Dependencies>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>810</SortingPriority>
+  <DownloadableArchives>x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="71560572" OS="Any" UncompressedSize="457580500"/>
+  <SHA1>54ada35db54725586bc33cab5f04577a37a90077</SHA1>
+ </PackageUpdate>
+ <MetadataName>2020-08-21-1951_meta.7z</MetadataName>
+ <SHA1>ca18024129a66d26be2359ef598a11476c6f1075</SHA1>
+</Updates>

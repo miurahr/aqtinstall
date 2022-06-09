@@ -1,0 +1,58 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.qtcreator</Name>
+  <DisplayName>Qt Creator 7.0.2</DisplayName>
+  <Description>IDE for Qt application development</Description>
+  <Version>7.0.2-0-202205230351</Version>
+  <ReleaseDate>2022-05-23</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Dependencies/>
+  <SortingPriority>1000</SortingPriority>
+  <ForcedInstallation>true</ForcedInstallation>
+  <DownloadableArchives>qtcreator.7z, wininterrupt32.7z, wininterrupt64.7z, qtcreator_sdktool.7z, jom.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="715894544" CompressedSize="175213170" OS="Any"/>
+  <UserInterfaces>associatecommonfiletypesform.ui,launchqtcreatorcheckboxform.ui</UserInterfaces>
+  <Translations>fr.qm,es.qm,ja.qm,pt.qm,ru.qm,ar.qm,de.qm</Translations>
+  <SHA1>a3fc075e1c5f1839db14acd6bdbcec25cc9f05d3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.qtcreatorcdbext</Name>
+  <DisplayName>Qt Creator 7.0.2 CDB Debugger Support</DisplayName>
+  <Description>CDB Debugger support for Qt Creator</Description>
+  <Version>7.0.2-0-202205230351</Version>
+  <ReleaseDate>2022-05-23</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator,qt.license.python</Dependencies>
+  <SortingPriority>999</SortingPriority>
+  <Default>true</Default>
+  <DownloadableArchives>qtcreatorcdbext32.7z, qtcreatorcdbext64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="13148876" CompressedSize="4886053" OS="Any"/>
+  <SHA1>c6fd6fba900923a806f6a9cbadaccf4f0d16f555</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.qtcreatordbg</Name>
+  <DisplayName>Qt Creator 7.0.2 Debug Symbols</DisplayName>
+  <Description>Additional symbol files required to debug Qt Creator</Description>
+  <Version>7.0.2-0-202205230351</Version>
+  <ReleaseDate>2022-05-23</ReleaseDate>
+  <SortingPriority>994</SortingPriority>
+  <DownloadableArchives>qtcreator-debug.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="1682272296" CompressedSize="246461731" OS="Any"/>
+  <SHA1>44cd4751fc9ea64a44547bfa1e0bf7da33ecdabd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.tools.qtcreatordev</Name>
+  <DisplayName>Qt Creator 7.0.2 Plugin Development</DisplayName>
+  <Description>Headers and libs required to develop additional plugins</Description>
+  <Version>7.0.2-0-202205230351</Version>
+  <ReleaseDate>2022-05-23</ReleaseDate>
+  <SortingPriority>990</SortingPriority>
+  <DownloadableArchives>qtcreator_dev.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="122459312" CompressedSize="10277961" OS="Any"/>
+  <SHA1>8bc060e6b0e925901eccb62e354c1e38952892df</SHA1>
+ </PackageUpdate>
+ <SHA1>6a135848ba16020da7f6b05aa3946b611212e03c</SHA1>
+ <MetadataName>2022-05-23-0407_meta.7z</MetadataName>
+</Updates>
