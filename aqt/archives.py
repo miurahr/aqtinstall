@@ -38,9 +38,6 @@ class TargetConfig:
     arch: str
     os_name: str
 
-    def __post_init__(self):
-        self.version = str(self.version)
-
 
 @dataclass
 class QtPackage:
@@ -225,20 +222,19 @@ class QtArchives:
             f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}",
         )
         update_xml_path = posixpath.join(os_target_folder, "Updates.xml")
-        self._download_update_xml(update_xml_path)
-        self._parse_update_xml(os_target_folder, self._target_packages())
+        update_xml_text = self._download_update_xml(update_xml_path)
+        self._parse_update_xml(os_target_folder, update_xml_text, self._target_packages())
 
     def _download_update_xml(self, update_xml_path):
         """Hook for unit test."""
         xml_hash = get_hash(update_xml_path, "sha256", self.timeout)
-        update_xml_text = getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
-        self.update_xml_text = update_xml_text
+        return getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
 
-    def _parse_update_xml(self, os_target_folder, target_packages: Optional[ModuleToPackage]):
+    def _parse_update_xml(self, os_target_folder, update_xml_text, target_packages: Optional[ModuleToPackage]):
         if not target_packages:
             target_packages = ModuleToPackage({})
         try:
-            self.update_xml = ElementTree.fromstring(self.update_xml_text)
+            self.update_xml = ElementTree.fromstring(update_xml_text)
         except ElementTree.ParseError as perror:
             raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
 
@@ -324,7 +320,7 @@ class QtArchives:
         :return: configured target and its version with arch
         :rtype: TargetConfig object
         """
-        return TargetConfig(self.version, self.target, self.arch, self.os_name)
+        return TargetConfig(str(self.version), self.target, self.arch, self.os_name)
 
 
 class SrcDocExamplesArchives(QtArchives):
@@ -442,12 +438,12 @@ class ToolArchives(QtArchives):
             self.tool_name,
         )
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
-        self._download_update_xml(update_xml_url)  # call super method.
-        self._parse_update_xml(os_target_folder, None)
+        update_xml_text = self._download_update_xml(update_xml_url)  # call super method.
+        self._parse_update_xml(os_target_folder, update_xml_text, None)
 
-    def _parse_update_xml(self, os_target_folder, *ignored):
+    def _parse_update_xml(self, os_target_folder, update_xml_text, *ignored):
         try:
-            self.update_xml = ElementTree.fromstring(self.update_xml_text)
+            self.update_xml = ElementTree.fromstring(update_xml_text)
         except ElementTree.ParseError as perror:
             raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
 
