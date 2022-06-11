@@ -29,8 +29,7 @@ def setup():
 )
 def test_parse_update_xml(monkeypatch, os_name, version, arch, datafile):
     def _mock(self, url):
-        with open(os.path.join(os.path.dirname(__file__), "data", datafile), "r") as f:
-            self.update_xml_text = f.read()
+        return (Path(__file__).parent / "data" / datafile).read_text("utf-8")
 
     monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
 
@@ -101,10 +100,8 @@ def test_qtarchive_parse_corrupt_xmlfile(monkeypatch, corrupt_xmlfile, archives_
     ),
 )
 def test_qt_archives_modules(monkeypatch, arch, requested_module_names, has_nonexistent_modules: bool):
-    update_xml = (Path(__file__).parent / "data" / "windows-5140-update.xml").read_text("utf-8")
-
     def _mock(self, *args):
-        self.update_xml_text = update_xml
+        return (Path(__file__).parent / "data" / "windows-5140-update.xml").read_text("utf-8")
 
     monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
 
@@ -194,10 +191,9 @@ def test_qt_archives_modules(monkeypatch, arch, requested_module_names, has_none
 def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fail: bool):
     host, target, base = "mac", "desktop", "https://example.com"
     datafile = f"{host}-{target}-{tool_name}"
-    update_xml = (Path(__file__).parent / "data" / f"{datafile}-update.xml").read_text("utf-8")
 
     def _mock(self, *args):
-        self.update_xml_text = update_xml
+        return (Path(__file__).parent / "data" / f"{datafile}-update.xml").read_text("utf-8")
 
     monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
 
@@ -256,7 +252,7 @@ def to_xml(package_updates: Iterable[Dict]) -> str:
 )
 def test_tool_archive_wrong_version(monkeypatch, tool_name, variant_name, version, actual_version):
     def _mock(self, *args):
-        self.update_xml_text = to_xml([dict(Name=variant_name, Version=actual_version)])
+        return to_xml([dict(Name=variant_name, Version=actual_version)])
 
     monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
 
