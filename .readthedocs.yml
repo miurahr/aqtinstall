@@ -24,4 +24,4 @@ build:
       - git fetch --unshallow
     pre_install:
       - git update-index --assume-unchanged docs/conf.py
-      - pip install -U setuptools setuptools_scm[toml]
+      - pip install setuptools==62.4.0 setuptools_scm[toml]==6.4.2
