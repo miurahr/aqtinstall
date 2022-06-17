@@ -10,10 +10,11 @@ Contents:
    getting_started
    cli
    configuration
-   changes
    CONTRIBUTE
+   CODE_OF_CONDUCT
    SECURITY
    authors
+   changes
 
 Indices and tables
 ==================
