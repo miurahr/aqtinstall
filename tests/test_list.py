@@ -1117,3 +1117,31 @@ def test_fetch_http_download_error(monkeypatch, exception_on_error):
 
     # Require that a fallback url was tried
     assert len(urls_requested) == 2
+
+
+@pytest.mark.parametrize(
+    "host, expected, all_arches",
+    (
+        ("windows", "win32_mingw", ["win64_msvc2013_64", "win32_mingw", "win16_mingw"]),
+        ("windows", "win32_mingw", ["win64_msvc2013_64", "win32_mingw"]),
+        ("windows", "win1_mingw0", ["win64_msvc2013_64", "win_mingw900", "win1_mingw0"]),
+        ("windows", "win32_mingw1", ["win64_msvc2013_64", "win32_mingw", "win32_mingw1"]),
+        ("windows", "win64_mingw", ["win64_msvc2013_64", "win32_mingw900", "win64_mingw"]),
+        ("windows", "win64_mingw81", ["win64_msvc2013_64", "win64_mingw81", "win64_mingw"]),
+        ("windows", "win64_mingw73", ["win64_msvc2013_64", "win64_mingw53", "win64_mingw73"]),
+        ("windows", "win64_mingw", ["win64_msvc2013_64", "win64_mingw", "win64_mingw"]),
+        ("windows", EmptyMetadata(), []),
+        ("linux", "gcc_64", ["should not fetch arches"]),
+        ("mac", "clang_64", ["should not fetch arches"]),
+    ),
+)
+def test_select_default_mingw(monkeypatch, host: str, expected: Union[str, Exception], all_arches: List[str]):
+    monkeypatch.setattr("aqt.metadata.MetadataFactory.fetch_arches", lambda *args, **kwargs: all_arches)
+
+    if isinstance(expected, Exception):
+        with pytest.raises(type(expected)) as e:
+            MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(Version("1.2.3"))
+        assert e.type == type(expected)
+    else:
+        actual_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(Version("1.2.3"))
+        assert actual_arch == expected

@@ -25,6 +25,7 @@ import re
 import secrets as random
 import shutil
 from abc import ABC, abstractmethod
+from functools import reduce
 from logging import getLogger
 from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 from urllib.parse import ParseResult, urlparse
@@ -398,6 +399,8 @@ class QtRepoProperty:
 
 class MetadataFactory:
     """Retrieve metadata of Qt variations, versions, and descriptions from Qt site."""
+
+    MINGW_ARCH_PATTERN = re.compile(r"^win(\d+)_mingw(\d+)?$")
 
     def __init__(
         self,
@@ -824,6 +827,50 @@ class MetadataFactory:
         if self.spec is None:
             return str(self.archive_id)
         return "{} with spec {}".format(self.archive_id, self.spec)
+
+    def fetch_default_desktop_arch(self, version: Version) -> str:
+        assert self.archive_id.target == "desktop", "This function is meant to fetch desktop architectures"
+        if self.archive_id.host == "linux":
+            return "gcc_64"
+        elif self.archive_id.host == "mac":
+            return "clang_64"
+        arches = list(filter(lambda arch: MetadataFactory.MINGW_ARCH_PATTERN.match(arch), self.fetch_arches(version)))
+        if len(arches) == 1:
+            return arches[0]
+        elif len(arches) < 1:
+            raise EmptyMetadata("No default desktop architecture available")
+        return MetadataFactory.select_default_architecture(arches)
+
+    @staticmethod
+    def select_default_architecture(mingw_arches: List[str]) -> str:
+        """
+        Selects a default architecture from a non-empty list of mingw architectures, matching the pattern
+        MetadataFactory.MINGW_ARCH_PATTERN. Meant to be called on a list of installed mingw architectures,
+        or a list of architectures available for installation.
+        """
+        assert len(mingw_arches) > 0, "mingw_arches should not be empty"
+        ArchBitsVer = Tuple[str, int, Optional[int]]
+
+        def mingw_arch_with_bits_and_version(arch: str) -> ArchBitsVer:
+            match = MetadataFactory.MINGW_ARCH_PATTERN.match(arch)
+            assert match, "This function should not be called on non-matching architectures"
+            bits = int(match[1])
+            ver = None if not match[2] else int(match[2])
+            return arch, bits, ver
+
+        def select_superior_arch(lhs: ArchBitsVer, rhs: ArchBitsVer) -> ArchBitsVer:
+            _, l_bits, l_ver = lhs
+            _, r_bits, r_ver = rhs
+            if l_bits != r_bits:
+                return lhs if l_bits > r_bits else rhs
+            elif r_ver is None:
+                return lhs
+            elif l_ver is None:
+                return rhs
+            return lhs if l_ver > r_ver else rhs
+
+        default_arch, _, _ = reduce(select_superior_arch, map(mingw_arch_with_bits_and_version, mingw_arches))
+        return default_arch
 
 
 def suggested_follow_up(meta: MetadataFactory) -> List[str]:
