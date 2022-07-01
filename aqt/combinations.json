@@ -199,6 +199,41 @@
           "qtwebview"
         ],
         "qt_version": "6.3"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qt3d",
+          "qt5compat",
+          "qtcharts",
+          "qtconnectivity",
+          "qtdatavis3d",
+          "qthttpserver",
+          "qtimageformats",
+          "qtlanguageserver",
+          "qtlottie",
+          "qtmultimedia",
+          "qtnetworkauth",
+          "qtpdf",
+          "qtpositioning",
+          "qtquick3d",
+          "qtquick3dphysics",
+          "qtquicktimeline",
+          "qtremoteobjects",
+          "qtscxml",
+          "qtsensors",
+          "qtserialbus",
+          "qtserialport",
+          "qtshadertools",
+          "qtspeech",
+          "qtvirtualkeyboard",
+          "qtwaylandcompositor",
+          "qtwebchannel",
+          "qtwebengine",
+          "qtwebsockets",
+          "qtwebview"
+        ],
+        "qt_version": "6.4"
       }
     ],
     "new_archive": [
@@ -468,7 +503,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.43",
+        "arch": "qt.tools.ifw.44",
         "os_name": "linux",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -570,7 +605,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.43",
+        "arch": "qt.tools.ifw.44",
         "os_name": "mac",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -630,7 +665,7 @@
         "tool_name": "tools_telemetry"
       },
       {
-        "arch": "qt.tools.cmake.win64",
+        "arch": "qt.tools.cmake",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_cmake"
@@ -654,7 +689,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.43",
+        "arch": "qt.tools.ifw.44",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -816,7 +851,7 @@
         "tool_name": "tools_vcredist"
       },
       {
-        "arch": "qt.tools.vcredist_msvc2015_x86",
+        "arch": "qt.tools.vcredist_64",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_vcredist"
@@ -828,13 +863,19 @@
         "tool_name": "tools_vcredist"
       },
       {
+        "arch": "qt.tools.vcredist_msvc2013_x86",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_vcredist"
+      },
+      {
         "arch": "qt.tools.vcredist_msvc2015_x64",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_vcredist"
       },
       {
-        "arch": "qt.tools.vcredist_msvc2013_x86",
+        "arch": "qt.tools.vcredist_msvc2015_x86",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_vcredist"
@@ -847,12 +888,6 @@
       },
       {
         "arch": "qt.tools.vcredist_msvc2017_x86",
-        "os_name": "windows",
-        "target": "desktop",
-        "tool_name": "tools_vcredist"
-      },
-      {
-        "arch": "qt.tools.vcredist_64",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_vcredist"
@@ -923,7 +958,9 @@
       "6.2.2",
       "6.2.3",
       "6.2.4",
-      "6.3.0"
+      "6.3.0",
+      "6.3.1",
+      "6.4.0"
     ]
   }
 ]
