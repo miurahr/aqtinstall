@@ -8,7 +8,7 @@ from typing import Dict, Iterable, List, Set
 
 import pytest
 
-from aqt.archives import ModuleToPackage, QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
+from aqt.archives import ModuleToPackage, QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives, Updates
 from aqt.exceptions import ArchiveListError, NoPackageFound
 from aqt.helper import Settings
 from aqt.metadata import Version
@@ -346,6 +346,35 @@ qt_doc_5152_xml_weird_module = """
  </PackageUpdate>
 </Updates>
 """
+qt_example_5152_xml_module = """
+<Updates>
+<PackageUpdate>
+<Name>qt.qt5.5152.examples</Name>
+<DisplayName>Qt 5.15.2 Examples</DisplayName>
+<Description>Qt 5.15.2 Examples</Description>
+<Version>5.15.2-0-202011130614</Version>
+<ReleaseDate>2020-11-13</ReleaseDate>
+<Dependencies>qt.tools</Dependencies>
+<Virtual>true</Virtual>
+<SortingPriority>1</SortingPriority>
+<DownloadableArchives>tqtc-qt5-examples.7z, qtbase-examples.7z, qtdoc-examples.7z</DownloadableArchives>
+<UpdateFile OS="Any" UncompressedSize="150199927" CompressedSize="112808235"/>
+<SHA1>8bb69229612cc0ff129e854a9fa9834731fd584d</SHA1>
+</PackageUpdate>
+<PackageUpdate>
+<Name>qt.qt5.5152.examples.qtcharts</Name>
+<DisplayName>Examples for Qt 5.15.2 GPLv3 components (QtCharts)</DisplayName>
+<Description>Examples for Qt 5.15.2 GPLv3 components (QtCharts)</Description>
+<Version>5.15.2-0-202011130614</Version>
+<ReleaseDate>2020-11-13</ReleaseDate>
+<Virtual>true</Virtual>
+<SortingPriority>1</SortingPriority>
+<DownloadableArchives>qtcharts-examples.7z</DownloadableArchives>
+<UpdateFile OS="Any" UncompressedSize="529204" CompressedSize="52228"/>
+<SHA1>b40e53660ad4762c4867a4ebf9945029e988c01b</SHA1>
+</PackageUpdate>
+</Updates>
+"""
 
 
 def make_qt_archives(subarchives, modules, is_include_base) -> QtArchives:
@@ -366,6 +395,20 @@ def make_doc_archives(subarchives, modules, is_include_base) -> SrcDocExamplesAr
     return SrcDocExamplesArchives(
         flavor="doc",
         os_name="mac",
+        target="desktop",
+        version="5.15.2",
+        base="www.example.com",
+        subarchives=subarchives,
+        modules=modules,
+        all_extra="all" in modules,
+        is_include_base_package=is_include_base,
+    )
+
+
+def make_example_archives(subarchives, modules, is_include_base) -> SrcDocExamplesArchives:
+    return SrcDocExamplesArchives(
+        flavor="examples",
+        os_name="linux",
         target="desktop",
         version="5.15.2",
         base="www.example.com",
@@ -431,6 +474,7 @@ def make_doc_archives(subarchives, modules, is_include_base) -> SrcDocExamplesAr
         (["tqtc"], [], False, qt_doc_5152_xml_weird_module, make_doc_archives, set()),
         (["tqtc"], ["all"], False, qt_doc_5152_xml_weird_module, make_doc_archives, {"weird-qtcharts-docs.7z"}),
         (["tqtc"], ["qtcharts"], False, qt_doc_5152_xml_weird_module, make_doc_archives, {"weird-qtcharts-docs.7z"}),
+        (["qtdoc"], ["qtcharts"], False, qt_example_5152_xml_module, make_example_archives, {"qtcharts-examples.7z"}),
     ),
 )
 def test_archives_weird_module_7z_name(
@@ -448,3 +492,80 @@ def test_archives_weird_module_7z_name(
     qt_archives = make_archives_fn(subarchives, modules, is_include_base)
     archives = {pkg.archive for pkg in qt_archives.archives}
     assert archives == expect_archives
+
+
+@pytest.mark.parametrize(
+    "in_file,expect_out_file",
+    [
+        ("windows-5140-update.xml", "windows-5140-expect.json"),
+    ],
+)
+def test_parse_updates(in_file: str, expect_out_file: str):
+    xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+    expect_all = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
+    base = ""
+    architectures = expect_all["architectures"]
+    update_xml = Updates.fromstring(base, xml)
+    expect_metadata = expect_all["modules_metadata_by_arch"]
+    for arch in architectures:
+        expect_update = expect_metadata[arch]
+        updates = update_xml.get_from(arch, True)
+        for entry in updates:
+            for expect in expect_update:
+                if expect["Name"] == entry.name:
+                    assert entry.full_version == expect["Version"]
+                    assert entry.release_date == expect["ReleaseDate"]
+                    assert entry.description == expect["Description"]
+                    count = 0
+                    for item in entry.downloadable_archives:
+                        count += 1
+                        assert item in expect["DownloadableArchives"]
+                    assert count == len(expect["DownloadableArchives"])
+                    count = 0
+                    for item in entry.auto_dependon:
+                        count += 1
+                        assert item in expect["AutoDependOn"]
+                    assert count == len(expect["AutoDependOn"])
+                    for item in entry.dependencies:
+                        assert item in [expect["Dependencies"]]
+
+
+@pytest.mark.parametrize(
+    "target,base,in_file,tool_file,expect",
+    [
+        (
+            "qt.qt6.620.qt5compat.android_armv7",
+            "https://download.qt.io/online/qtsdkrepository/windows_x86/android/",
+            "windows-620-android-armv7-update.xml",
+            "windows-desktop-tools-qtcreator-updates.xml",
+            "qt.tools.qtcreator",
+        ),
+    ],
+)
+def test_parse_and_get_packages(target: str, base, in_file: str, tool_file: str, expect: str):
+    xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+    tool = (Path(__file__).parent / "data" / tool_file).read_text("utf-8")
+    update_xml = Updates.fromstring(base, xml)
+    tool_xml = Updates.fromstring(base, tool)
+    update_xml.merge(tool_xml)
+    packages = update_xml.get_depends(target)
+    assert expect in packages
+    assert len(packages) == 5
+
+
+@pytest.mark.parametrize(
+    "target,in_file,expect_depend",
+    [
+        ("qt.qt5.5140.qtcharts.win32_mingw73", "windows-5140-update.xml", "qt.tools.win32_mingw730"),
+    ],
+)
+def test_get_module_to_package(target: str, in_file: str, expect_depend: str):
+    xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+    base = ""
+    update_xml = Updates.fromstring(base, xml)
+    module = target.split(".")[-2]
+    #
+    packages = update_xml.get_depends(target)
+    module_to_package = ModuleToPackage({module: packages})
+    assert module_to_package.has_package(target)
+    assert module_to_package.has_package(expect_depend)

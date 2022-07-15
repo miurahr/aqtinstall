@@ -1,0 +1,682 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qt3d</Name>
+  <DisplayName>Qt 3D</DisplayName>
+  <Description>Qt 3D Prebuilt Components for Qt 6.2.0. Qt 3D provides functionality for near-realtime simulation systems with support for 2D and 3D rendering in both Qt C++ and Qt Quick applications.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qt3d, qt.qt6.620.examples.qt3d</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>24d9d9023ec770d0a9b7975c89a2b60bc52b7429</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qt3d.android_armv7</Name>
+  <DisplayName>Qt 3D for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qt3d, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt3d-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1856413" OS="Any" UncompressedSize="11961143"/>
+  <SHA1>9b94de52bec3443a74d2291464d5796986002702</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtcharts, qt.qt6.620.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>78f143c904807ebc270bf958f02638e6953a5e96</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtcharts.android_armv7</Name>
+  <DisplayName>Qt Charts for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtcharts, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="527532" OS="Any" UncompressedSize="3595616"/>
+  <SHA1>89c4d30fbe08a5fba40e735e429b7471160af2f2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtconnectivity</Name>
+  <DisplayName>Qt Connectivity</DisplayName>
+  <Description>This component includes two Qt modules. The two modules provide access to Bluetooth and NFC hardware.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtbluetooth, qt.qt6.620.doc.qtnfc, qt.qt6.620.examples.qtconnectivity</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>219000422fa00283dc1eed70c3d5f9934f64207d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtconnectivity.android_armv7</Name>
+  <DisplayName>Qt Connectivity for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtconnectivity, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtconnectivity-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="242524" OS="Any" UncompressedSize="1200522"/>
+  <SHA1>c775cbb4284db249da6671346cab862947b31711</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtdatavis3d, qt.qt6.620.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ed0a8d323450de05cc46f7ab7b9f8c53c2ea938d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtdatavis3d.android_armv7</Name>
+  <DisplayName>Qt Data Visualization for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtdatavis3d, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="422662" OS="Any" UncompressedSize="2321778"/>
+  <SHA1>dd3d366122457c02338cc986fe423182809b9e0d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtimageformats</Name>
+  <DisplayName>Qt Image Formats</DisplayName>
+  <Description>The Qt Image Formats  provides optional support for other image file formats. The core Qt Gui library by default supports reading and writing image files of the most common file formats: PNG, JPEG, BMP, GIF and a few more.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtimageformats, qt.qt6.620.examples.qtimageformats</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>407e9d02cb4f057c5f20c884c541aad294e5bd8d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtimageformats.android_armv7</Name>
+  <DisplayName>Qt Image Formats for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtimageformats, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="244532" OS="Any" UncompressedSize="653201"/>
+  <SHA1>81b832c32de6c230b6f06b9e7954cf99ffff730d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtlottie, qt.qt6.620.examples.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>303e59b5ddf9582cd993a0186c3d598e3b774e08</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtlottie.android_armv7</Name>
+  <DisplayName>Qt Lottie Animation for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtlottie, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="87196" OS="Any" UncompressedSize="353104"/>
+  <SHA1>01521a13562e077ab94ef75f5e6b746524c89f68</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtmultimedia</Name>
+  <DisplayName>Qt Multimedia</DisplayName>
+  <Description>Qt Multimedia provides a rich set of QML types and C++ classes to handle multimedia content.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtmultimedia, qt.qt6.620.examples.qtmultimedia</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>bd25e82d51ff56000924e1b31dbccde6cbfd2473</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtmultimedia.android_armv7</Name>
+  <DisplayName>Qt Multimedia for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtmultimedia, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="372963" OS="Any" UncompressedSize="2233753"/>
+  <SHA1>bed56dd5472634564a55aa682f7e0240b790f2dd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtnetworkauth</Name>
+  <DisplayName>Qt Network Authorization</DisplayName>
+  <Description>Qt Network Authorization provides a set of APIs that enable Qt applications to obtain limited access to online accounts and HTTP services without exposing users' passwords.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtnetworkauth, qt.qt6.620.examples.qtnetworkauth</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8862cb872938cc8317af07059c9eb2e5e13a2524</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtnetworkauth.android_armv7</Name>
+  <DisplayName>Qt Network Authorization for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtnetworkauth, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="55777" OS="Any" UncompressedSize="253083"/>
+  <SHA1>93d644ffa23ed10b710cf10d6a988a7ec6f2f491</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtpositioning</Name>
+  <DisplayName>Qt Positioning</DisplayName>
+  <Description>The Qt Positioning API provides positioning information via QML and C++ interfaces.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtpositioning, qt.qt6.620.examples.qtpositioning</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>e74cf611cd992ae6d3cd921fa7a283091c0f3751</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtpositioning.android_armv7</Name>
+  <DisplayName>Qt Positioning for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtpositioning, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlocation-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="247882" OS="Any" UncompressedSize="1243729"/>
+  <SHA1>242824b3ea124913eb8fdff1800121771f188601</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtremoteobjects</Name>
+  <DisplayName>Qt Remote Objects</DisplayName>
+  <Description>Qt Remote Objects is an add-on library that provides an easy way to share Qt APIs between processes/devices.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtremoteobjects, qt.qt6.620.examples.qtremoteobjects</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>fb8da532b17ef805537ef9c07205facd2613305e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtremoteobjects.android_armv7</Name>
+  <DisplayName>Qt Remote Objects ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtremoteobjects, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtremoteobjects-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="210059" OS="Any" UncompressedSize="1028312"/>
+  <SHA1>ac9098f995ce79f066575a2e236c90ddb0ddc880</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtscxml</Name>
+  <DisplayName>Qt State Machines</DisplayName>
+  <Description>The Qt State Machines package provides API's and execution models that can be used to effectively embed the elements and semantics of statecharts in Qt applications. For advanced use cases the state machines can even be created from State Chart XML (SCXML) files.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtscxml, qt.qt6.620.examples.qtscxml</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>3332fa6c9dec243f55f77037f5ac7e552b98538a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtscxml.android_armv7</Name>
+  <DisplayName>Qt State Machine for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtscxml, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="237593" OS="Any" UncompressedSize="1308204"/>
+  <SHA1>9a3b224e913d2f697cc7ea450edf0d1b74770837</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtsensors</Name>
+  <DisplayName>Qt Sensors</DisplayName>
+  <Description>Qt Sensors provides classes for reading sensor data.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtsensors, qt.qt6.620.examples.qtsensors</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>57cc88ab6050083e7f356d26459a45e0f666ef6d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtsensors.android_armv7</Name>
+  <DisplayName>Qt Sensors ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtsensors, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtsensors-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="133521" OS="Any" UncompressedSize="989760"/>
+  <SHA1>15f3165faef4d53281b4d5a6434250cc4c1fc06c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialbus</Name>
+  <DisplayName>Qt Serial Bus</DisplayName>
+  <Description>The Qt Serial Bus API provides classes and functions to access the various industrial serial buses and protocols, such as CAN, ModBus, and others.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtserialbus, qt.qt6.620.examples.qtserialbus</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>c03484e5562f17f29b7d0eab04c5c663cfdae02c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialbus.android_armv7</Name>
+  <DisplayName>Qt SerialBus ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtserialbus, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialbus-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="118161" OS="Any" UncompressedSize="553256"/>
+  <SHA1>6835b3db8e1dcbd15e1d893979c1722416fcb6f4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialport</Name>
+  <DisplayName>Qt Serial Port</DisplayName>
+  <Description>Qt Serial Port provides the basic functionality, which includes configuring, I/O operations, getting and setting the control signals of the RS-232 pinouts.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtserialport, qt.qt6.620.examples.qtserialport</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>9339712d26cf2455e99bfb2bb7081664dc4724e6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtserialport.android_armv7</Name>
+  <DisplayName>Qt SerialPort ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtserialport, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialport-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="38595" OS="Any" UncompressedSize="154475"/>
+  <SHA1>5227861940fa56356d52c6f6b3b590c2318be660</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your ownlayouts and styles.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtvirtualkeyboard, qt.qt6.620.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f54bbbf14da76ba8d58e56f55ce44986c3e1ff97</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtvirtualkeyboard.android_armv7</Name>
+  <DisplayName>Qt Virtual Keyboard for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtvirtualkeyboard, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2001544" OS="Any" UncompressedSize="4491867"/>
+  <SHA1>9055acbc65c6dacd3b9f22ec754365baa2eafc95</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebchannel</Name>
+  <DisplayName>Qt WebChannel</DisplayName>
+  <Description>Qt WebChannel enables peer-to-peer communication between a server (QML/C++ application) and a client (HTML/JavaScript or QML application). It is supported out of the box by Qt WebEngine. In addition it can work on all browsers that support WebSockets, enabling Qt WebChannel clients to run in any JavaScript environment (including QML). This requires the implementation of a custom transport based on Qt WebSockets.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtwebchannel, qt.qt6.620.examples.qtwebchannel</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>9b19486db6276081fc6e068e7259c8d19c066ef2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebchannel.android_armv7</Name>
+  <DisplayName>Qt WebChannel for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebchannel, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="69249" OS="Any" UncompressedSize="269827"/>
+  <SHA1>525fda02673646aeff2d795412a8a965b12f952b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebsockets</Name>
+  <DisplayName>Qt WebSockets</DisplayName>
+  <Description>WebSocket is a web-based protocol designed to enable two-way communication between a client application and a remote host. It enables the two entities to send data back and forth if the initial handshake succeeds. WebSocket is the solution for applications that struggle to get real-time data feeds with less network latency and minimum data exchange.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtwebsockets, qt.qt6.620.examples.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>efd3baf28e0bf65fa373a72aaf40686658dffcf6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebsockets.android_armv7</Name>
+  <DisplayName>Qt WebSockets for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebsockets, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="68585" OS="Any" UncompressedSize="314348"/>
+  <SHA1>4ca4155694e4f61a4d820e990dc9eaaca6801346</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebview</Name>
+  <DisplayName>Qt WebView</DisplayName>
+  <Description>Qt WebView provides a way to display web content in a QML application without necessarily including a full web browser stack by using native APIs where it makes sense. This is useful on mobile platforms such as Android, iOS, and UWP (Universal Windows Platform); especially on iOS, where policy dictates that all web content is displayed using the operating system's web view. On Windows, Linux, and macOS, Qt WebView depends on the Qt WebEngine module to render content.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtwebview, qt.qt6.620.examples.qtwebview</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>2fbc5f725f03244090c4aaf01d4fcffd391ab7a9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.addons.qtwebview.android_armv7</Name>
+  <DisplayName>Qt WebView for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.addons.qtwebview, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebview-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="64683" OS="Any" UncompressedSize="287687"/>
+  <SHA1>b87b63ca4b1c0d039c9fdccbc7d9c31466cce8aa</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.android_armv7</Name>
+  <DisplayName>Android ARMv7</DisplayName>
+  <Description>Qt 6.2.0 Prebuilt Components for Android ARMv7</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt6.620.doc, qt.qt6.620.examples</Dependencies>
+  <AutoDependOn/>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority>250</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z, qtsvg-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z, qtdeclarative-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z, qttools-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z, qttranslations-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z, x86_64-8.1.0-release-posix-seh-rt_v6-rev0-runtime.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="40812178" OS="Any" UncompressedSize="320312244"/>
+  <SHA1>9a336d012d8579d8b202e20ce61a0d0b3cdffe3e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qt5compat</Name>
+  <DisplayName>Qt 5 Compatibility Module</DisplayName>
+  <Description>Qt 5 Compatibility Module Prebuilt Components for Qt 6.2.0. Qt 5 Compatibility Module allows to continue using some dedicated functionality which has been removed in Qt 6.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qt5compat, qt.qt6.620.examples.qt5compat</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>aef50f57c43f6957cd77dff9ae9b9cd74383ead1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qt5compat.android_armv7</Name>
+  <DisplayName>Qt 5 Compatibility Module for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qt5compat, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="494273" OS="Any" UncompressedSize="1499925"/>
+  <SHA1>820e285d800592b5716de2fae9e6e06fa044e893</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquick3d</Name>
+  <DisplayName>Qt Quick 3D</DisplayName>
+  <Description>Qt Quick 3D provides high-level 3D API for Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>89</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtquick3d, qt.qt6.620.examples.qtquick3d, qt.qt6.620.qtshadertools, qt.qt6.620.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7c725e1b4c6753e7830de67f02c5b3a2f6930e38</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquick3d.android_armv7</Name>
+  <DisplayName>Qt Quick 3D for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtquick3d, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1100385" OS="Any" UncompressedSize="5407601"/>
+  <SHA1>0fb0448629e34445d1315d56a156715048df83b6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline</DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>0</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtquicktimeline, qt.qt6.620.examples.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7e9cc3491d60249f414f90ec95a868f41200da26</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtquicktimeline.android_armv7</Name>
+  <DisplayName>Qt Quick Timeline for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtquicktimeline, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="34013" OS="Any" UncompressedSize="158729"/>
+  <SHA1>a4e14084809defc2277928989c378e9fdd508468</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtshadertools</Name>
+  <DisplayName>Qt Shader Tools</DisplayName>
+  <Description>Qt Shader conditioning tool Prebuilt Components for Qt 6.2.0.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.620.doc.qtshadertools, qt.qt6.620.examples.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>0199297b4ebfd40e83a66773d58e64a8b169c7f4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.620.qtshadertools.android_armv7</Name>
+  <DisplayName>Qt Shader Tools for Android ARMv7</DisplayName>
+  <Description/>
+  <Version>6.2.0-0-202109261630</Version>
+  <ReleaseDate>2021-09-26</ReleaseDate>
+  <AutoDependOn>qt.qt6.620.qtshadertools, qt.qt6.620.android_armv7</AutoDependOn>
+  <Dependencies>qt.qt6.620.android_armv7</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-Windows-Windows_10-Clang-Android-Android_ANY-ARMv7.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="756822" OS="Any" UncompressedSize="2391868"/>
+  <SHA1>31d87b11ccc81aeeff68292dd09f942e296a3bb7</SHA1>
+ </PackageUpdate>
+ <SHA1>0e91c773aa4056097d68662866e237e14260ddd3</SHA1>
+ <MetadataName>2021-09-26-1631_meta.7z</MetadataName>
+</Updates>
