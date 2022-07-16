@@ -621,13 +621,13 @@ class Cli:
 
     def _warn_on_deprecated_command(self, old_name: str, new_name: str):
         self.logger.warning(
-            f"Warning: The command '{old_name}' is deprecated and marked for removal in a future version of aqt.\n"
+            f"The command '{old_name}' is deprecated and marked for removal in a future version of aqt.\n"
             f"In the future, please use the command '{new_name}' instead."
         )
 
     def _warn_on_deprecated_parameter(self, parameter_name: str, value: str):
         self.logger.warning(
-            f"Warning: The parameter '{parameter_name}' with value '{value}' is deprecated and marked for "
+            f"The parameter '{parameter_name}' with value '{value}' is deprecated and marked for "
             f"removal in a future version of aqt.\n"
             f"In the future, please omit this parameter."
         )

@@ -290,7 +290,7 @@ def test_cli_legacy_tool_new_syntax(monkeypatch, capsys, cmd):
     command = cmd.split()
 
     expected = (
-        "WARNING : Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
+        "WARNING : The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
         "In the future, please use the command 'install-tool' instead.\n"
         "ERROR   : Invalid version: 'tools_ifw'! Please use the form '5.X.Y'.\n"
     )

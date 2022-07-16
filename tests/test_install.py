@@ -309,7 +309,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ],
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING : Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
+                r"WARNING : The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
                 r"In the future, please use the command 'install-tool' instead.\n"
                 r"INFO    : Downloading qt.tools.qtcreator...\n"
                 r"Finished installation of tools_qtcreator-linux-qt.tools.qtcreator.7z in .*\n"
@@ -330,7 +330,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ],
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING : Warning: The command 'install' is deprecated"
+                r"WARNING : The command 'install' is deprecated"
                 r" and marked for removal in a future version of aqt.\n"
                 r"In the future, please use the command 'install-qt' instead.\n"
                 r"INFO    : Downloading qtbase...\n"
@@ -363,7 +363,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ],
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING : Warning: The parameter 'target' with value 'desktop' is deprecated "
+                r"WARNING : The parameter 'target' with value 'desktop' is deprecated "
                 r"and marked for removal in a future version of aqt\.\n"
                 r"In the future, please omit this parameter\.\n"
                 r"INFO    : Downloading qtbase\.\.\.\n"
@@ -415,7 +415,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ],
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING : Warning: The command 'install' is deprecated"
+                r"WARNING : The command 'install' is deprecated"
                 r" and marked for removal in a future version of aqt.\n"
                 r"In the future, please use the command 'install-qt' instead.\n"
                 r"INFO    : Downloading qtbase...\n"
@@ -777,7 +777,7 @@ def test_install(
         (
             "install-doc windows desktop 5.15.0 -m nonexistent foo",
             "windows-5152-src-doc-example-update.xml",
-            "WARNING : Warning: The parameter 'target' with value 'desktop' is deprecated"
+            "WARNING : The parameter 'target' with value 'desktop' is deprecated"
             " and marked for removal in a future "
             "version of aqt.\n"
             "In the future, please omit this parameter.\n"
