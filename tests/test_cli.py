@@ -132,9 +132,9 @@ def test_cli_invalid_version(capsys, invalid_version):
     cli._setup_settings()
 
     matcher = re.compile(
-        r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+        r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
         r"(.*\n)*"
-        r".*Invalid version: '" + invalid_version + r"'! Please use the form '5\.X\.Y'\.\n.*"
+        r"ERROR   :.*Invalid version: '" + invalid_version + r"'! Please use the form '5\.X\.Y'\.\n.*"
     )
 
     for cmd in (
@@ -290,9 +290,9 @@ def test_cli_legacy_tool_new_syntax(monkeypatch, capsys, cmd):
     command = cmd.split()
 
     expected = (
-        "Warning: The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
+        "WARNING : The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
         "In the future, please use the command 'install-tool' instead.\n"
-        "Invalid version: 'tools_ifw'! Please use the form '5.X.Y'.\n"
+        "ERROR   : Invalid version: 'tools_ifw'! Please use the form '5.X.Y'.\n"
     )
 
     cli = Cli()
@@ -335,7 +335,7 @@ def test_cli_unexpected_error(monkeypatch, capsys):
     cli._setup_settings()
     assert Cli.UNHANDLED_EXCEPTION_CODE == cli.run(["install-qt", "mac", "ios", "6.2.0"])
     out, err = capsys.readouterr()
-    assert err.startswith("Some unexpected error")
+    assert err.startswith("ERROR   : Some unexpected error")
     assert err.rstrip().endswith(
         "===========================PLEASE FILE A BUG REPORT===========================\n"
         "You have discovered a bug in aqt.\n"

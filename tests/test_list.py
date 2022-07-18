@@ -368,7 +368,7 @@ def test_list_archives_insufficient_args(capsys):
     cli = Cli()
     assert 1 == cli.run("list-qt mac desktop --archives 5.14.0".split())
     out, err = capsys.readouterr()
-    assert err.strip() == "The '--archives' flag requires a 'QT_VERSION' and an 'ARCHITECTURE' parameter."
+    assert err.strip() == "ERROR   : The '--archives' flag requires a 'QT_VERSION' and an 'ARCHITECTURE' parameter."
 
 
 def test_list_archives_bad_xml(monkeypatch):
@@ -516,7 +516,7 @@ def test_list_targets(capsys, cmd: str, host: str, expect: Set[str]):
     ),
 )
 def test_list_wrong_target(capsys, cmd: str, host: str, target: str):
-    expect = f"'{target}' is not a valid target for host '{host}'"
+    expect = f"ERROR   : '{target}' is not a valid target for host '{host}'"
 
     cli = Cli()
     return_code = cli.run([cmd, host, target])
@@ -535,7 +535,7 @@ def test_list_wrong_target(capsys, cmd: str, host: str, target: str):
     ),
 )
 def test_invalid_spec(capsys, cmd: str, spec: str):
-    expect_prefix = f"Invalid version specification: '{spec}'"
+    expect_prefix = f"ERROR   : Invalid version specification: '{spec}'"
     host, target = "linux", "desktop"
     cli = Cli()
     return_code = cli.run([cmd, host, target, "--spec", spec])
