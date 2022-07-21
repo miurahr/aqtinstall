@@ -1,7 +1,6 @@
 import hashlib
 import json
 import os
-import posixpath
 import re
 import shutil
 import sys
@@ -181,31 +180,6 @@ def test_list_versions_tools(monkeypatch, spec_regex, os_name, target, in_file, 
                 spec=spec,
             ).getList()
             assert f"{all_ver_for_spec}" == row
-
-
-@pytest.mark.parametrize(
-    "html_doc",
-    (
-        "<html><body>Login to my public WIFI network:<form>...</form></body></html>",
-        "<html>malformed-html/",
-    ),
-)
-def test_list_bad_html(monkeypatch, html_doc: str):
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args, **kwargs: html_doc)
-    archive_id = ArchiveId("qt", "linux", "desktop")
-    expected_url = posixpath.join(Settings.baseurl, archive_id.to_url())
-    expected_exception = ArchiveConnectionError(
-        f"Failed to retrieve the expected HTML page at {expected_url}",
-        suggested_action=[
-            "Check your network connection.",
-            f"Make sure that you can access {expected_url} in your web browser.",
-        ],
-    )
-
-    with pytest.raises(ArchiveConnectionError) as e:
-        MetadataFactory(archive_id).fetch_versions()
-    assert e.type == ArchiveConnectionError
-    assert format(e.value) == format(expected_exception)
 
 
 @pytest.mark.parametrize(
