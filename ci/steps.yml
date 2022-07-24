@@ -45,18 +45,20 @@ steps:
         if [[ "$(SUBARCHIVES)" != "" ]]; then
           opt+=" --archives $(SUBARCHIVES)"
         fi
-        if [[ "$(SPEC)" == "" ]]; then
-          python -m aqt install-qt $(HOST) $(TARGET) $(QT_VERSION) $(ARCH) $opt
-        else
-          python -m aqt install-qt $(HOST) $(TARGET) "$(SPEC)" $(ARCH) $opt
-        fi
-        if [[ "$(TARGET)" == "android" || "$(TARGET)" == "ios" ]]; then
+        if [[ "$(IS_AUTODESKTOP)" == "True" ]]; then
+          opt+=" --autodesktop"
+        elif [[ "$(TARGET)" == "android" || "$(TARGET)" == "ios" ]]; then
           if [[ "$(HOST)" == "windows" ]]; then
             python -m aqt install-qt $(HOST) desktop $(QT_VERSION) mingw81_64 --archives qtbase
           else
             # qtdeclarative contains `qmlimportscanner`: necessary for ios builds, Qt6+
             python -m aqt install-qt $(HOST) desktop $(QT_VERSION) --archives qtbase qtdeclarative
           fi
+        fi
+        if [[ "$(SPEC)" == "" ]]; then
+          python -m aqt install-qt $(HOST) $(TARGET) $(QT_VERSION) $(ARCH) $opt
+        else
+          python -m aqt install-qt $(HOST) $(TARGET) "$(SPEC)" $(ARCH) $opt
         fi
         if [[ "$(OUTPUT_DIR)" != "" ]]; then
           # Use 'strings' to read binary

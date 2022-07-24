@@ -32,6 +32,7 @@ class BuildJob:
         list_options=None,
         spec=None,
         mingw_variant: str = "",
+        is_autodesktop: bool = False,
         tool_options: Optional[Dict[str, str]] = None,
         check_output_cmd: Optional[str] = None,
     ):
@@ -45,6 +46,7 @@ class BuildJob:
         self.mirror = mirror
         self.subarchives = subarchives
         self.mingw_variant: str = mingw_variant
+        self.is_autodesktop: bool = is_autodesktop
         self.list_options = list_options if list_options else {}
         self.tool_options: Dict[str, str] = tool_options if tool_options else {}
         # `steps.yml` assumes that qt_version is the highest version that satisfies spec
@@ -268,15 +270,13 @@ mac_build_jobs.append(
 # mobile SDK
 mac_build_jobs.extend(
     [
-        BuildJob("install-qt", "5.15.2", "mac", "ios", "ios", "ios"),
-        BuildJob("install-qt", "6.2.2", "mac", "ios", "ios", "ios", module="qtsensors"),
-        BuildJob(
-            "install-qt", "6.1.0", "mac", "android", "android_armv7", "android_armv7"
-        ),
+        BuildJob("install-qt", "5.15.2", "mac", "ios", "ios", "ios", is_autodesktop=True),
+        BuildJob("install-qt", "6.2.2", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=False),
+        BuildJob("install-qt", "6.1.0", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
     ]
 )
 linux_build_jobs.extend(
-    [BuildJob("install-qt", "6.1.0", "linux", "android", "android_armv7", "android_armv7")]
+    [BuildJob("install-qt", "6.1.0", "linux", "android", "android_armv7", "android_armv7", is_autodesktop=True)]
 )
 
 # Test binary patch of qmake
@@ -368,6 +368,7 @@ for platform_build_job in all_platform_build_jobs:
                 ("SPEC", build_job.spec if build_job.spec else ""),
                 ("MINGW_VARIANT", build_job.mingw_variant),
                 ("MINGW_FOLDER", build_job.mingw_folder()),
+                ("IS_AUTODESKTOP", str(build_job.is_autodesktop)),
                 ("HAS_EXTENSIONS", build_job.list_options.get("HAS_EXTENSIONS", "False")),
                 ("USE_EXTENSION", build_job.list_options.get("USE_EXTENSION", "None")),
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
