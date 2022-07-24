@@ -299,6 +299,7 @@ class Cli:
             if modules is not None and archives is not None:
                 archives.append(modules)
         nopatch = args.noarchives or (archives is not None and "qtbase" not in archives)  # type: bool
+        warn_on_missing_desktop_qt: bool = not args.autodesktop
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
@@ -328,6 +329,7 @@ class Cli:
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
             run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+        self._handle_missing_desktop_qt(os_name, target, Version(qt_version), Path(base_dir), warn_on_missing_desktop_qt)
         if not nopatch:
             Updater.update(target_config, base_dir)
         self.logger.info("Finished installation")
@@ -603,6 +605,12 @@ class Cli:
             action="store_true",
             help="No base packages; allow mod amendment with --modules option.",
         )
+        install_qt_parser.add_argument(
+            "--autodesktop",
+            action="store_true",
+            help="For android/ios installations, a desktop Qt installation is required. "
+            "When enabled, this option installs the required desktop version automatically.",
+        )
 
     def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
         install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
@@ -639,6 +647,43 @@ class Cli:
             f"removal in a future version of aqt.\n"
             f"In the future, please omit this parameter."
         )
+
+    @staticmethod
+    def _get_missing_desktop_arch(host: str, target: str, version: Version, base_dir: Path) -> Optional[str]:
+        """
+        For mobile Qt installations, the desktop version of Qt is a dependency.
+        If the desktop version is not installed, this function returns the architecture that should be installed.
+        If no desktop Qt is required, or it is already installed, this function returns None.
+        """
+        if target not in ["ios", "android"]:
+            return None
+        if host != "windows":
+            arch = aqt.updater.default_desktop_arch_dir(host, version)
+            expected_qmake = base_dir / format(version) / arch / "bin/qmake"
+            return arch if not expected_qmake.is_file() else None
+        else:
+            existing_desktop_qt = QtRepoProperty.find_installed_qt_mingw_dir(base_dir / format(version))
+            if existing_desktop_qt:
+                return None
+            return MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version)
+
+    def _handle_missing_desktop_qt(self, host: str, target: str, version: Version, base_dir: Path, should_warn: bool):
+        missing_desktop_arch = Cli._get_missing_desktop_arch(host, target, version, base_dir)
+        if not missing_desktop_arch:
+            return
+
+        msg_prefix = (
+            f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
+            f"is also installed."
+        )
+        if should_warn:
+            self.logger.warning(
+                f"{msg_prefix} You can install it with the following command:\n"
+                f"          `aqt install-qt {host} desktop {version} {missing_desktop_arch}`"
+            )
+        else:
+            self.logger.info(f"{msg_prefix} Now installing Qt: desktop {version} {missing_desktop_arch}")
+            self.run(["install-qt", host, "desktop", format(version), missing_desktop_arch])
 
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction):
         deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."

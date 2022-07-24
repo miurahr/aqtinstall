@@ -576,6 +576,9 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-android_armv7.7z in .*\n"
+                r"WARNING : You are installing the android version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt windows desktop 6.1.0 MINGW_MOCK_DEFAULT`\n"
                 r"INFO    : Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]qmake.bat\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -631,6 +634,9 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-linux-android_arm64_v8a.7z in .*\n"
+                r"WARNING : You are installing the android version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt linux desktop 6\.3\.0 gcc_64`\n"
                 r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -686,6 +692,9 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-mac-ios.7z in .*\n"
+                r"WARNING : You are installing the ios version of Qt, which requires that the desktop version of Qt is "
+                r"also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt mac desktop 6\.1\.2 macos`\n"
                 r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -716,6 +725,7 @@ def test_install(
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
+    monkeypatch.setattr("aqt.metadata.MetadataFactory.fetch_default_desktop_arch", lambda *args: "MINGW_MOCK_DEFAULT")
 
     with TemporaryDirectory() as output_dir:
         cli = Cli()
