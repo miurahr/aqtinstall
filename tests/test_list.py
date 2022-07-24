@@ -1153,6 +1153,7 @@ def test_select_default_mingw(monkeypatch, host: str, expected: Union[str, Excep
     (
         ("mingw73_32", ["mingw73_32/bin/qmake.exe", "msvc2017/bin/qmake.exe"]),
         (None, ["msvc2017/bin/qmake.exe"]),
+        (None, ["mingw73_win/bin/qmake.exe"]),  # Bad directory: mingw73_win does not fit the mingw naming convention
         (None, ["mingw73_32/bin/qmake", "msvc2017/bin/qmake.exe"]),
         ("mingw81_32", ["mingw73_32/bin/qmake.exe", "mingw81_32/bin/qmake.exe"]),
         ("mingw73_64", ["mingw73_64/bin/qmake.exe", "mingw73_32/bin/qmake.exe"]),

@@ -1,7 +1,8 @@
 import re
 import sys
 from pathlib import Path
-from typing import Optional
+from tempfile import TemporaryDirectory
+from typing import List, Optional
 
 import pytest
 
@@ -374,3 +375,57 @@ def test_cli_choose_archive_dest(
 
     assert Cli.choose_archive_dest(archive_dest, keep, temp_dir) == Path(expect)
     assert enclosed["made_dir"] == should_make_dir
+
+
+@pytest.mark.parametrize(
+    "host, is_auto, mocked_mingw, existing_arch_dirs, expect_arch",
+    (
+        ("windows", False, "win64_mingw99", ["not_mingw"], "win64_mingw99"),  # not installed
+        ("windows", False, "win64_mingw99", ["mingw128_32"], "mingw128_32"),  # Alt Desktop Qt already installed
+        ("linux", False, None, ["gcc_32"], "gcc_64"),  # not installed
+        ("linux", False, None, ["gcc_64"], "gcc_64"),  # Desktop Qt already installed
+        ("windows", True, "win64_mingw99", ["not_mingw"], "win64_mingw99"),  # not installed
+        ("windows", True, "win64_mingw99", ["mingw128_32"], "mingw128_32"),  # Alt Desktop Qt already installed
+        ("linux", True, None, ["gcc_32"], "gcc_64"),  # not installed
+        ("linux", True, None, ["gcc_64"], "gcc_64"),  # Desktop Qt already installed
+    ),
+)
+def test_cli_handle_missing_desktop_qt(
+    monkeypatch, mocker, capsys, host, is_auto, mocked_mingw, existing_arch_dirs: List[str], expect_arch: str
+):
+    monkeypatch.setattr(MetadataFactory, "fetch_arches", lambda *args: [mocked_mingw])
+    monkeypatch.setattr(Cli, "run", lambda *args: 0)
+
+    target = "android"
+    version = "6.2.3"
+    spy = mocker.spy(Cli, "run")
+    cli = Cli()
+    cli._setup_settings()
+
+    expect_msg_prefix = (
+        f"You are installing the {target} version of Qt, "
+        f"which requires that the desktop version of Qt is also installed."
+    )
+
+    with TemporaryDirectory() as temp_dir:
+        base_dir = Path(temp_dir)
+        for arch_dir in existing_arch_dirs:
+            qmake = base_dir / version / arch_dir / f"bin/qmake{'.exe' if host == 'windows' else ''}"
+            qmake.parent.mkdir(parents=True)
+            qmake.write_text("exe file")
+        cli._handle_missing_desktop_qt(host, target, Version(version), base_dir, should_warn=not is_auto)
+        out, err = capsys.readouterr()
+        if is_auto:
+            if expect_arch not in existing_arch_dirs:
+                assert err.strip() == f"INFO    : {expect_msg_prefix} Now installing Qt: desktop {version} {expect_arch}"
+                spy.assert_called_once_with(cli, ["install-qt", host, "desktop", version, expect_arch])
+
+        else:
+            expect_msg = (
+                ""
+                if expect_arch in existing_arch_dirs
+                else f"WARNING : {expect_msg_prefix} You can install it with the following command:\n"
+                f"          `aqt install-qt {host} desktop {version} {expect_arch}`"
+            )
+            assert err.strip() == expect_msg
+            assert spy.call_count == 0
