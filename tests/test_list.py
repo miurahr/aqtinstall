@@ -5,6 +5,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Dict, List, Set, Union
 from urllib.parse import urlparse
 
@@ -1145,3 +1146,28 @@ def test_select_default_mingw(monkeypatch, host: str, expected: Union[str, Excep
     else:
         actual_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(Version("1.2.3"))
         assert actual_arch == expected
+
+
+@pytest.mark.parametrize(
+    "expected_result, installed_files",
+    (
+        ("mingw73_32", ["mingw73_32/bin/qmake.exe", "msvc2017/bin/qmake.exe"]),
+        (None, ["msvc2017/bin/qmake.exe"]),
+        (None, ["mingw73_32/bin/qmake", "msvc2017/bin/qmake.exe"]),
+        ("mingw81_32", ["mingw73_32/bin/qmake.exe", "mingw81_32/bin/qmake.exe"]),
+        ("mingw73_64", ["mingw73_64/bin/qmake.exe", "mingw73_32/bin/qmake.exe"]),
+    ),
+)
+def test_find_installed_qt_mingw_dir(expected_result: str, installed_files: List[str]):
+    qt_ver = "6.3.0"
+
+    # Setup a mock install directory that includes some installed files
+    with TemporaryDirectory() as base_dir:
+        base_path = Path(base_dir)
+        for file in installed_files:
+            path = base_path / qt_ver / file
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("Mock installed file")
+
+        actual_result = QtRepoProperty.find_installed_qt_mingw_dir(base_path / qt_ver)
+        assert (actual_result.name if actual_result else None) == expected_result
