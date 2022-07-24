@@ -510,6 +510,7 @@ install-qt command
         [-d | --archive-dest] <path>
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
+        [--autodesktop]
         [--noarchives]
         <host> <target> (<Qt version> | <spec>) [<arch>]
 
@@ -556,6 +557,11 @@ There are various combinations to accept according to Qt version.
    * android_armv7, android_arm64_v8a, android_x86, android_x86_64 for android
 
     Use the :ref:`List-Qt Command` to list available architectures.
+
+.. option:: --autodesktop
+
+    If you are installing an ios or android version of Qt, the corresponding desktop version
+    of Qt must be installed alongside of it. Turn this option on to install it automatically.
 
 .. option:: --noarchives
 
@@ -816,7 +822,7 @@ Example: Installing Android (armv7) Qt 5.10.2:
 
 .. code-block:: console
 
-    aqt install-qt linux android 5.10.2 android_armv7
+    aqt install-qt linux android 5.10.2 android_armv7 --autodesktop
 
 
 Example: Install examples, doc and source:
