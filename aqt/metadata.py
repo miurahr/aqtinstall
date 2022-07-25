@@ -377,6 +377,41 @@ class QtRepoProperty:
     """
 
     @staticmethod
+    def dir_for_version(ver: Version) -> str:
+        return "5.9" if ver == Version("5.9.0") else f"{ver.major}.{ver.minor}.{ver.patch}"
+
+    @staticmethod
+    def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
+        if arch is None:
+            return ""
+        elif arch.startswith("win64_mingw"):
+            return arch[6:] + "_64"
+        elif arch.startswith("win32_mingw"):
+            return arch[6:] + "_32"
+        elif arch.startswith("win"):
+            m = re.match(r"win\d{2}_(?P<msvc>msvc\d{4})_(?P<winrt>winrt_x\d{2})", arch)
+            if m:
+                return f"{m.group('winrt')}_{m.group('msvc')}"
+            else:
+                return arch[6:]
+        elif host == "mac" and arch == "clang_64":
+            return QtRepoProperty.default_desktop_arch_dir(host, version)
+        else:
+            return arch
+
+    @staticmethod
+    def default_desktop_arch_dir(host: str, version: Union[Version, str]) -> str:
+        version: Version = version if isinstance(version, Version) else Version(version)
+        if host == "linux":
+            return "gcc_64"
+        elif host == "mac":
+            return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
+        else:  # Windows
+            # This is a temporary solution. This arch directory cannot exist for many versions of Qt.
+            # TODO: determine this dynamically
+            return "mingw81_64"
+
+    @staticmethod
     def extension_for_arch(architecture: str, is_version_ge_6: bool) -> str:
         if architecture == "wasm_32":
             return "wasm"

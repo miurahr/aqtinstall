@@ -21,33 +21,19 @@
 import logging
 import os
 import pathlib
-import re
 import subprocess
 from logging import getLogger
-from typing import Union
+from typing import Optional
 
 import patch
 
 from aqt.archives import TargetConfig
 from aqt.exceptions import UpdaterError
 from aqt.helper import Settings
-from aqt.metadata import SimpleSpec, Version
+from aqt.metadata import QtRepoProperty, SimpleSpec, Version
 
-
-def default_desktop_arch_dir(host: str, version: Union[Version, str]) -> str:
-    version: Version = version if isinstance(version, Version) else Version(version)
-    if host == "linux":
-        return "gcc_64"
-    elif host == "mac":
-        return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
-    else:  # Windows
-        # This is a temporary solution. This arch directory cannot exist for many versions of Qt.
-        # TODO: determine this dynamically
-        return "mingw81_64"
-
-
-def dir_for_version(ver: Version) -> str:
-    return "5.9" if ver == Version("5.9.0") else f"{ver.major}.{ver.minor}.{ver.patch}"
+default_desktop_arch_dir = QtRepoProperty.default_desktop_arch_dir
+dir_for_version = QtRepoProperty.dir_for_version
 
 
 def unpatched_path(os_name: str, final_component: str) -> str:
@@ -259,23 +245,7 @@ class Updater:
         version = Version(target.version)
         os_name = target.os_name
         version_dir = dir_for_version(version)
-        if arch is None:
-            arch_dir = ""
-        elif arch.startswith("win64_mingw"):
-            arch_dir = arch[6:] + "_64"
-        elif arch.startswith("win32_mingw"):
-            arch_dir = arch[6:] + "_32"
-        elif arch.startswith("win"):
-            m = re.match(r"win\d{2}_(msvc\d{4})_(winrt_x\d{2})", arch)
-            if m:
-                a, b = m.groups()
-                arch_dir = b + "_" + a
-            else:
-                arch_dir = arch[6:]
-        elif os_name == "mac" and arch == "clang_64":
-            arch_dir = default_desktop_arch_dir(os_name, version)
-        else:
-            arch_dir = arch
+        arch_dir = QtRepoProperty.get_arch_dir_name(os_name, arch, version)
         try:
             prefix = pathlib.Path(base_dir) / version_dir / arch_dir
             updater = Updater(prefix, logger)
