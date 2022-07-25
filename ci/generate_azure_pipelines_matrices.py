@@ -279,6 +279,12 @@ linux_build_jobs.extend(
     [BuildJob("install-qt", "6.1.0", "linux", "android", "android_armv7", "android_armv7", is_autodesktop=True)]
 )
 
+# Qt 6.3.0 for Windows-Android has win64_mingw available, but not win64_mingw81.
+# This will test that the path to mingw is not hardcoded.
+windows_build_jobs.extend(
+    [BuildJob("install-qt", "6.3.0", "windows", "android", "android_armv7", "android_armv7", is_autodesktop=True)]
+)
+
 # Test binary patch of qmake
 linux_build_jobs.extend(
     [
