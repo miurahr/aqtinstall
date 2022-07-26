@@ -59,7 +59,7 @@ from aqt.helper import (
     setup_logging,
 )
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
-from aqt.updater import Updater
+from aqt.updater import Updater, dir_for_version
 
 try:
     import py7zr
@@ -659,10 +659,10 @@ class Cli:
             return None
         if host != "windows":
             arch = aqt.updater.default_desktop_arch_dir(host, version)
-            expected_qmake = base_dir / format(version) / arch / "bin/qmake"
+            expected_qmake = base_dir / dir_for_version(version) / arch / "bin/qmake"
             return arch if not expected_qmake.is_file() else None
         else:
-            existing_desktop_qt = QtRepoProperty.find_installed_qt_mingw_dir(base_dir / format(version))
+            existing_desktop_qt = QtRepoProperty.find_installed_qt_mingw_dir(base_dir / dir_for_version(version))
             if existing_desktop_qt:
                 return None
             return MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version)
