@@ -1161,6 +1161,7 @@ def test_select_default_mingw(monkeypatch, host: str, expected: Union[str, Excep
 )
 def test_find_installed_qt_mingw_dir(expected_result: str, installed_files: List[str]):
     qt_ver = "6.3.0"
+    host = "windows"
 
     # Setup a mock install directory that includes some installed files
     with TemporaryDirectory() as base_dir:
@@ -1170,5 +1171,5 @@ def test_find_installed_qt_mingw_dir(expected_result: str, installed_files: List
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("Mock installed file")
 
-        actual_result = QtRepoProperty.find_installed_qt_mingw_dir(base_path / qt_ver)
+        actual_result = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, Version(qt_ver))
         assert (actual_result.name if actual_result else None) == expected_result

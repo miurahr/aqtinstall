@@ -35,10 +35,10 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import aqt
-from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
+from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, TargetConfig, ToolArchives
 from aqt.exceptions import (
     AqtException,
     ArchiveChecksumError,
@@ -299,7 +299,23 @@ class Cli:
             if modules is not None and archives is not None:
                 archives.append(modules)
         nopatch = args.noarchives or (archives is not None and "qtbase" not in archives)  # type: bool
-        warn_on_missing_desktop_qt: bool = not args.autodesktop
+        should_autoinstall: bool = args.autodesktop
+        _version = Version(qt_version)
+        base_path = Path(base_dir)
+
+        expect_desktop_archdir, autodesk_arch = self._get_autodesktop_dir_and_arch(
+            should_autoinstall, os_name, target, base_path, _version
+        )
+
+        auto_desktop_archives: List[QtPackage] = (
+            retry_on_bad_connection(
+                lambda base_url: QtArchives(os_name, "desktop", qt_version, autodesk_arch, base=base_url, timeout=timeout),
+                base,
+            ).archives
+            if autodesk_arch is not None
+            else []
+        )
+
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
@@ -310,7 +326,7 @@ class Cli:
         if not all_extra and not self._check_modules_arg(qt_version, modules):
             self.logger.warning("Some of specified modules are unknown.")
 
-        qt_archives = retry_on_bad_connection(
+        qt_archives: QtArchives = retry_on_bad_connection(
             lambda base_url: QtArchives(
                 os_name,
                 target,
@@ -325,13 +341,17 @@ class Cli:
             ),
             base,
         )
+        qt_archives.archives.extend(auto_desktop_archives)
         target_config = qt_archives.get_target_config()
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
             run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
-        self._handle_missing_desktop_qt(os_name, target, Version(qt_version), Path(base_dir), warn_on_missing_desktop_qt)
+
         if not nopatch:
-            Updater.update(target_config, base_dir)
+            Updater.update(target_config, base_path, expect_desktop_archdir)
+            if autodesk_arch is not None:
+                d_target_config = TargetConfig(str(_version), "desktop", autodesk_arch, os_name)
+                Updater.update(d_target_config, base_path, expect_desktop_archdir)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -648,43 +668,6 @@ class Cli:
             f"In the future, please omit this parameter."
         )
 
-    @staticmethod
-    def _get_missing_desktop_arch(host: str, target: str, version: Version, base_dir: Path) -> Optional[str]:
-        """
-        For mobile Qt installations, the desktop version of Qt is a dependency.
-        If the desktop version is not installed, this function returns the architecture that should be installed.
-        If no desktop Qt is required, or it is already installed, this function returns None.
-        """
-        if target not in ["ios", "android"]:
-            return None
-        if host != "windows":
-            arch = aqt.updater.default_desktop_arch_dir(host, version)
-            expected_qmake = base_dir / dir_for_version(version) / arch / "bin/qmake"
-            return arch if not expected_qmake.is_file() else None
-        else:
-            existing_desktop_qt = QtRepoProperty.find_installed_qt_mingw_dir(base_dir / dir_for_version(version))
-            if existing_desktop_qt:
-                return None
-            return MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version)
-
-    def _handle_missing_desktop_qt(self, host: str, target: str, version: Version, base_dir: Path, should_warn: bool):
-        missing_desktop_arch = Cli._get_missing_desktop_arch(host, target, version, base_dir)
-        if not missing_desktop_arch:
-            return
-
-        msg_prefix = (
-            f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
-            f"is also installed."
-        )
-        if should_warn:
-            self.logger.warning(
-                f"{msg_prefix} You can install it with the following command:\n"
-                f"          `aqt install-qt {host} desktop {version} {missing_desktop_arch}`"
-            )
-        else:
-            self.logger.info(f"{msg_prefix} Now installing Qt: desktop {version} {missing_desktop_arch}")
-            self.run(["install-qt", host, "desktop", format(version), missing_desktop_arch])
-
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction):
         deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
 
@@ -985,6 +968,38 @@ class Cli:
             Version(version_str)
         except ValueError as e:
             raise CliInputError(f"Invalid version: '{version_str}'! Please use the form '5.X.Y'.") from e
+
+    def _get_autodesktop_dir_and_arch(
+        self, should_autoinstall: bool, host: str, target: str, base_path: Path, version: Version
+    ) -> Tuple[Optional[str], Optional[str]]:
+        """Returns expected_desktop_arch_dir, desktop_arch_to_install"""
+        if target in ["ios", "android"]:
+            installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version)
+            if installed_desktop_arch_dir:
+                # An acceptable desktop Qt is already installed, so don't do anything.
+                self.logger.info(f"Found installed {host}-desktop Qt at {installed_desktop_arch_dir}")
+                return installed_desktop_arch_dir.name, None
+
+            default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version)
+            desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
+            expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
+            if should_autoinstall:
+                # No desktop Qt is installed, but the user has requested installation. Find out what to install.
+                self.logger.info(
+                    f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
+                    f"is also installed. Now installing Qt: desktop {version} {default_desktop_arch}"
+                )
+                return expected_desktop_arch_path.name, default_desktop_arch
+            else:
+                self.logger.warning(
+                    f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
+                    f"is also installed. You can install it with the following command:\n"
+                    f"          `aqt install-qt {host} desktop {version} {default_desktop_arch}`"
+                )
+                return expected_desktop_arch_path.name, None
+        else:
+            # We do not need to worry about the desktop directory if target is not mobile.
+            return None, None
 
 
 def is_64bit() -> bool:

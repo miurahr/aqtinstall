@@ -407,9 +407,7 @@ class QtRepoProperty:
         elif host == "mac":
             return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
         else:  # Windows
-            # This is a temporary solution. This arch directory cannot exist for many versions of Qt.
-            # TODO: determine this dynamically
-            return "mingw81_64"
+            raise NotImplementedError("This function should not be called in this way!")
 
     @staticmethod
     def extension_for_arch(architecture: str, is_version_ge_6: bool) -> str:
@@ -474,22 +472,23 @@ class QtRepoProperty:
         return default_arch
 
     @staticmethod
-    def find_installed_qt_mingw_dir(installed_qt_version_dir: Path) -> Optional[Path]:
+    def find_installed_desktop_qt_dir(host: str, base_path: Path, version: Version) -> Optional[Path]:
         """
-        Locates the default installed qt mingw directory.
-
-        :param installed_qt_version_dir: A directory that may contain a qt-mingw installation.
-                                         It should look something like `.../Qt/6.3.0/`, and contain qt installations.
+        Locates the default installed desktop qt directory, somewhere in base_path.
         """
+        installed_qt_version_dir = base_path / QtRepoProperty.dir_for_version(version)
+        if host != "windows":
+            arch_path = installed_qt_version_dir / QtRepoProperty.default_desktop_arch_dir(host, version)
+            return arch_path if (arch_path / "bin/qmake").is_file() else None
 
         def contains_qmake_exe(arch_path: Path) -> bool:
             return (arch_path / "bin/qmake.exe").is_file()
 
         paths = [d for d in installed_qt_version_dir.glob("mingw*")]
         directories = list(filter(contains_qmake_exe, paths))
-        arches = [d.name for d in directories]
-        selected = QtRepoProperty.select_default_mingw(arches, is_dir=True)
-        return installed_qt_version_dir / selected if selected else None
+        arch_dirs = [d.name for d in directories]
+        selected_dir = QtRepoProperty.select_default_mingw(arch_dirs, is_dir=True)
+        return installed_qt_version_dir / selected_dir if selected_dir else None
 
 
 class MetadataFactory:
@@ -928,11 +927,10 @@ class MetadataFactory:
         elif self.archive_id.host == "mac":
             return "clang_64"
         arches = list(filter(lambda arch: QtRepoProperty.MINGW_ARCH_PATTERN.match(arch), self.fetch_arches(version)))
-        if len(arches) == 1:
-            return arches[0]
-        elif len(arches) < 1:
+        selected_arch = QtRepoProperty.select_default_mingw(arches, is_dir=False)
+        if not selected_arch:
             raise EmptyMetadata("No default desktop architecture available")
-        return QtRepoProperty.select_default_mingw(arches, is_dir=False)
+        return selected_arch
 
 
 def suggested_follow_up(meta: MetadataFactory) -> List[str]:
