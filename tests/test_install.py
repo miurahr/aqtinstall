@@ -557,7 +557,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                             "HostPrefix=../../\n"
                             "HostData=target\n",
                             patched_content="Prefix={base_dir}{sep}6.1.0{sep}android_armv7{sep}target\n"
-                            "HostPrefix=../../mingw81_64\n"
+                            "HostPrefix=../../mingw1234_64\n"
                             "HostData=../android_armv7\n",
                         ),
                         PatchedFile(
@@ -566,7 +566,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                             "/Users/qt/work/install/bin\n"
                             "... blah blah blah ...\n",
                             patched_content="... blah blah blah ...\n"
-                            "{base_dir}\\6.1.0\\mingw81_64\\bin\n"
+                            "{base_dir}\\6.1.0\\mingw1234_64\\bin\n"
                             "... blah blah blah ...\n",
                         ),
                     ),
@@ -578,7 +578,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"Finished installation of qtbase-windows-android_armv7.7z in .*\n"
                 r"WARNING : You are installing the android version of Qt, which requires that the desktop version of "
                 r"Qt is also installed. You can install it with the following command:\n"
-                r"          `aqt install-qt windows desktop 6.1.0 MINGW_MOCK_DEFAULT`\n"
+                r"          `aqt install-qt windows desktop 6.1.0 win64_mingw1234`\n"
                 r"INFO    : Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]qmake.bat\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -694,7 +694,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"Finished installation of qtbase-mac-ios.7z in .*\n"
                 r"WARNING : You are installing the ios version of Qt, which requires that the desktop version of Qt is "
                 r"also installed. You can install it with the following command:\n"
-                r"          `aqt install-qt mac desktop 6\.1\.2 macos`\n"
+                r"          `aqt install-qt mac desktop 6\.1\.2 clang_64`\n"
                 r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -725,7 +725,10 @@ def test_install(
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
-    monkeypatch.setattr("aqt.metadata.MetadataFactory.fetch_default_desktop_arch", lambda *args: "MINGW_MOCK_DEFAULT")
+    monkeypatch.setattr(
+        "aqt.metadata.MetadataFactory.fetch_default_desktop_arch",
+        lambda *args: {"windows": "win64_mingw1234", "linux": "gcc_64", "mac": "clang_64"}[host],
+    )
 
     with TemporaryDirectory() as output_dir:
         cli = Cli()
