@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import pytest
@@ -58,7 +59,7 @@ def test_updater_update_license_io_error(monkeypatch, target_config: TargetConfi
     with pytest.raises(UpdaterError) as err:
         with TemporaryDirectory() as empty_dir:
             # Try to update a Qt installation that does not exist
-            Updater.update(target_config, base_dir=empty_dir)
+            Updater.update(target_config, base_path=Path(empty_dir), installed_desktop_arch_dir=None)
     assert err.type == UpdaterError
     err_msg = format(err.value)
     assert expected_err_pattern.match(err_msg)
