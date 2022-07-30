@@ -2,7 +2,7 @@ import re
 import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import pytest
 
@@ -378,28 +378,73 @@ def test_cli_choose_archive_dest(
 
 
 @pytest.mark.parametrize(
-    "host, is_auto, mocked_mingw, existing_arch_dirs, expect_arch",
+    "host, is_auto, mocked_mingw, existing_arch_dirs, expect",
     (
-        ("windows", False, "win64_mingw99", ["not_mingw"], "win64_mingw99"),  # not installed
-        ("windows", False, "win64_mingw99", ["mingw128_32"], "mingw128_32"),  # Alt Desktop Qt already installed
-        ("linux", False, None, ["gcc_32"], "gcc_64"),  # not installed
-        ("linux", False, None, ["gcc_64"], "gcc_64"),  # Desktop Qt already installed
-        ("windows", True, "win64_mingw99", ["not_mingw"], "win64_mingw99"),  # not installed
-        ("windows", True, "win64_mingw99", ["mingw128_32"], "mingw128_32"),  # Alt Desktop Qt already installed
-        ("linux", True, None, ["gcc_32"], "gcc_64"),  # not installed
-        ("linux", True, None, ["gcc_64"], "gcc_64"),  # Desktop Qt already installed
+        (  # not installed
+            "windows",
+            False,
+            "win64_mingw99",
+            ["not_mingw"],
+            {"install": None, "instruct": "win64_mingw99", "use_dir": "mingw99_64"},
+        ),
+        (  # Alt Desktop Qt already installed
+            "windows",
+            False,
+            "win64_mingw99",
+            ["mingw128_32"],
+            {"install": None, "instruct": None, "use_dir": "mingw128_32"},
+        ),
+        # not installed
+        ("linux", False, None, ["gcc_32"], {"install": None, "instruct": "gcc_64", "use_dir": "gcc_64"}),
+        (  # Desktop Qt already installed
+            "linux",
+            False,
+            None,
+            ["gcc_64"],
+            {"install": None, "instruct": None, "use_dir": "gcc_64"},
+        ),
+        (  # not installed
+            "windows",
+            True,
+            "win64_mingw99",
+            ["not_mingw"],
+            {"install": "win64_mingw99", "instruct": None, "use_dir": "mingw99_64"},
+        ),
+        (  # Alt Desktop Qt already installed
+            "windows",
+            True,
+            "win64_mingw99",
+            ["mingw128_32"],
+            {"install": None, "instruct": None, "use_dir": "mingw128_32"},
+        ),
+        # not installed
+        ("linux", True, None, ["gcc_32"], {"install": "gcc_64", "instruct": None, "use_dir": "gcc_64"}),
+        (  # Desktop Qt already installed
+            "linux",
+            True,
+            None,
+            ["gcc_64"],
+            {"install": None, "instruct": None, "use_dir": "gcc_64"},
+        ),
     ),
 )
-@pytest.mark.skip
-def test_cli_handle_missing_desktop_qt(
-    monkeypatch, mocker, capsys, host, is_auto, mocked_mingw, existing_arch_dirs: List[str], expect_arch: str
+def test_get_autodesktop_dir_and_arch(
+    monkeypatch, capsys, host: str, is_auto: bool, mocked_mingw: str, existing_arch_dirs: List[str], expect: Dict[str, str]
 ):
+    """
+    :is_auto:               Simulates passing `--autodesktop` to aqt
+    :mocked_mingw:          When we ask MetadataFactory for a list of available architectures, we return this value
+    :existing_arch_dirs:    Directories that contain an existing file at `arch_dir/bin/qmake`
+    :expect[install]:       The archdir we expect aqt to install
+    :expect[instruct]:      The architecture we expect aqt to ask the user to install
+    :expect[use_dir]:       The directory that includes `bin/qmake`; we will patch files in the mobile installation
+                            with this value
+    """
     monkeypatch.setattr(MetadataFactory, "fetch_arches", lambda *args: [mocked_mingw])
     monkeypatch.setattr(Cli, "run", lambda *args: 0)
 
     target = "android"
     version = "6.2.3"
-    spy = mocker.spy(Cli, "run")
     cli = Cli()
     cli._setup_settings()
 
@@ -414,19 +459,19 @@ def test_cli_handle_missing_desktop_qt(
             qmake = base_dir / version / arch_dir / f"bin/qmake{'.exe' if host == 'windows' else ''}"
             qmake.parent.mkdir(parents=True)
             qmake.write_text("exe file")
-        cli._install_desktop_qt(host, target, Version(version), base_dir, should_warn=not is_auto)
-        out, err = capsys.readouterr()
-        if is_auto:
-            if expect_arch not in existing_arch_dirs:
-                assert err.strip() == f"INFO    : {expect_msg_prefix} Now installing Qt: desktop {version} {expect_arch}"
-                spy.assert_called_once_with(cli, ["install-qt", host, "desktop", version, expect_arch])
+        autodesktop_arch_dir, autodesktop_arch_to_install = cli._get_autodesktop_dir_and_arch(
+            is_auto, host, target, base_dir, Version(version)
+        )
+        # It should choose the correct desktop arch directory for updates
+        assert autodesktop_arch_dir == expect["use_dir"]
 
-        else:
-            expect_msg = (
-                ""
-                if expect_arch in existing_arch_dirs
-                else f"WARNING : {expect_msg_prefix} You can install it with the following command:\n"
-                f"          `aqt install-qt {host} desktop {version} {expect_arch}`"
+        out, err = capsys.readouterr()
+        if expect["install"]:
+            assert err.strip() == f"INFO    : {expect_msg_prefix} Now installing Qt: desktop {version} {expect['install']}"
+        elif expect["instruct"]:
+            assert (
+                err.strip() == f"WARNING : {expect_msg_prefix} You can install it with the following command:\n"
+                f"          `aqt install-qt {host} desktop {version} {expect['instruct']}`"
             )
-            assert err.strip() == expect_msg
-            assert spy.call_count == 0
+        else:
+            assert err.strip() == f"INFO    : Found installed {host}-desktop Qt at {temp_dir}/{version}/{expect['use_dir']}"
