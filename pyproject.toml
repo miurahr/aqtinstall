@@ -32,7 +32,7 @@ dependencies = [
     "dataclasses;python_version<'3.7'",
     "defusedxml",
 ]
-dynamic = ["version"]
+dynamic = ["version", "entry-points"]
 
 [project.scripts]
 aqt = "aqt.__main__:main"
