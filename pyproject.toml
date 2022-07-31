@@ -45,6 +45,7 @@ test = [
     "pytest-cov",
     "pytest-socket",
     "pytest-leaks",
+    "pytest-timeout",
     "pympler",
 ]
 check = [
