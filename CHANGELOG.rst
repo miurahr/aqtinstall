@@ -7,6 +7,30 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Added
+-----
+* Add code of conduct (#535)
+
+Changed
+-------
+* test: prevent use of flake8@5.0 (#544)
+* Improve tox and pytest config(#544)
+* Properly retrieve folder names from html pages of all mirrors(#520)
+* Log: left align the level name (#539)
+* Update combinations (#537)
+* Introduce Updates.xml data class and parser (#533)
+* archives: do not keep update.xml text in field (#534)
+* docs: Bump sphinx@5.0 (#524)
+
+Fixed
+-----
+* Update readthedocs config (#535)
+* Fix readme description of list-qt (#527)
+
+Deprecated
+----------
+* Deprecate setup.py file (#531)
+
 `v2.1.0`_ (14, Apr. 2022)
 =========================
 
