@@ -32,7 +32,7 @@ dependencies = [
     "dataclasses;python_version<'3.7'",
     "defusedxml",
 ]
-dynamic = ["version"]
+dynamic = ["version", "entry-points"]
 
 [project.scripts]
 aqt = "aqt.__main__:main"
@@ -45,10 +45,11 @@ test = [
     "pytest-cov",
     "pytest-socket",
     "pytest-leaks",
+    "pytest-timeout",
     "pympler",
 ]
 check = [
-    "flake8",
+    "flake8<5",
     "flake8-black",
     "flake8-colors",
     "flake8-isort",
