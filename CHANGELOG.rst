@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.2.0`_ (2, Aug. 2022)
+------------------------
+
 Added
 -----
 * Add code of conduct (#535)
@@ -234,7 +237,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.1.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.2.0...HEAD
+.. _v2.2.0: https://github.com/miurahr/aqtinstall/compare/v2.1.0...v2.2.0
 .. _v2.1.0: https://github.com/miurahr/aqtinstall/compare/v2.0.6...v2.1.0
 .. _v2.0.6: https://github.com/miurahr/aqtinstall/compare/v2.0.5...v2.0.6
 .. _v2.0.5: https://github.com/miurahr/aqtinstall/compare/v2.0.4...v2.0.5
