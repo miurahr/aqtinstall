@@ -197,7 +197,9 @@ class Cli:
         return all([m in available for m in modules])
 
     @staticmethod
-    def _determine_qt_version(qt_version_or_spec: str, host: str, target: str, arch: str) -> Version:
+    def _determine_qt_version(
+        qt_version_or_spec: str, host: str, target: str, arch: str, base_url: str = Settings.baseurl
+    ) -> Version:
         def choose_highest(x: Optional[Version], y: Optional[Version]) -> Optional[Version]:
             if x and y:
                 return max(x, y)
@@ -205,7 +207,7 @@ class Cli:
 
         def opt_version_for_spec(ext: str, _spec: SimpleSpec) -> Optional[Version]:
             try:
-                return MetadataFactory(ArchiveId("qt", host, target, ext), spec=_spec).getList().latest()
+                return MetadataFactory(ArchiveId("qt", host, target, ext), spec=_spec, base_url=base_url).getList().latest()
             except AqtException:
                 return None
 
@@ -257,11 +259,6 @@ class Cli:
         arch: str = self._set_arch(
             args.arch, os_name, target, getattr(args, "qt_version", getattr(args, "qt_version_spec", None))
         )
-        if hasattr(args, "qt_version_spec"):
-            qt_version: str = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch))
-        else:
-            qt_version: str = args.qt_version
-            Cli._validate_version_str(qt_version)
         keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
         output_dir = args.outputdir
@@ -287,6 +284,11 @@ class Cli:
             base = args.base
         else:
             base = Settings.baseurl
+        if hasattr(args, "qt_version_spec"):
+            qt_version: str = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch, base_url=base))
+        else:
+            qt_version: str = args.qt_version
+            Cli._validate_version_str(qt_version)
         archives = args.archives
         if args.noarchives:
             if modules is None:
@@ -342,11 +344,6 @@ class Cli:
             self._warn_on_deprecated_parameter("target", args.target)
         target = "desktop"  # The only valid target for src/doc/examples is "desktop"
         os_name = args.host
-        if hasattr(args, "qt_version_spec"):
-            qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch=""))
-        else:
-            qt_version = args.qt_version
-            Cli._validate_version_str(qt_version)
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -358,6 +355,11 @@ class Cli:
             base = args.base
         else:
             base = Settings.baseurl
+        if hasattr(args, "qt_version_spec"):
+            qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch="", base_url=base))
+        else:
+            qt_version = args.qt_version
+            Cli._validate_version_str(qt_version)
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:
@@ -394,7 +396,10 @@ class Cli:
     def run_install_src(self, args):
         """Run src subcommand"""
         if not hasattr(args, "qt_version"):
-            args.qt_version = str(Cli._determine_qt_version(args.qt_version_spec, args.host, args.target, arch=""))
+            base = args.base if hasattr(args, "base") else Settings.baseurl
+            args.qt_version = str(
+                Cli._determine_qt_version(args.qt_version_spec, args.host, args.target, arch="", base_url=base)
+            )
         if args.kde and args.qt_version != "5.15.2":
             raise CliInputError("KDE patch: unsupported version!!")
         start_time = time.perf_counter()
@@ -452,7 +457,7 @@ class Cli:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
         if args.tool_variant is None:
             archive_id = ArchiveId("tools", os_name, target, "")
-            meta = MetadataFactory(archive_id, is_latest_version=True, tool_name=tool_name)
+            meta = MetadataFactory(archive_id, base_url=base, is_latest_version=True, tool_name=tool_name)
             try:
                 archs = meta.getList()
             except ArchiveDownloadError as e:
