@@ -385,7 +385,7 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
     assert modules == expect["modules"]
 
     table = MetadataFactory(archive_id, tool_name=tool_name, is_long_listing=True).getList()
-    assert table._rows() == expect["long_listing"]
+    assert table._rows(table.long_heading_keys) == expect["long_listing"]
 
 
 @pytest.fixture
