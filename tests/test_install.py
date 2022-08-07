@@ -137,7 +137,7 @@ def make_mock_geturl_download_archive(
 
     xml = "<Updates>\n{}\n</Updates>".format("\n".join([archive.xml_package_update() for archive in archives]))
 
-    def mock_getUrl(url: str, *args) -> str:
+    def mock_getUrl(url: str, *args, **kwargs) -> str:
         if url.endswith(updates_url):
             return xml
         elif url.endswith(".sha256"):
@@ -940,3 +940,97 @@ def test_install_installer_archive_extraction_err(monkeypatch):
     assert err.type == ArchiveExtractionError
     err_msg = format(err.value).rstrip()
     assert err_msg == "Extraction error: 1\nout\nerr"
+
+
+@pytest.mark.parametrize(
+    "cmd, host, target, version, arch, arch_dir, base_url, updates_url, archives, expect_out",
+    (
+        (
+            "install-tool linux desktop tools_qtcreator qt.tools.qtcreator".split(),
+            "linux",
+            "desktop",
+            "1.2.3-0-197001020304",
+            "",
+            "",
+            "https://www.alt.qt.mirror.com",
+            "linux_x64/desktop/tools_qtcreator/Updates.xml",
+            [tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator")],
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Downloading qt.tools.qtcreator...\n"
+                r"Finished installation of tools_qtcreator-linux-qt.tools.qtcreator.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (
+            "install-qt windows desktop 5.12 win32_mingw73".split(),
+            "windows",
+            "desktop",
+            "5.12.10",
+            "win32_mingw73",
+            "mingw73_32",
+            "https://www.alt.qt.mirror.com",
+            "windows_x86/desktop/qt5_51210/Updates.xml",
+            [plain_qtbase_archive("qt.qt5.51210.win32_mingw73", "win32_mingw73")],
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Resolved spec '5\.12' to 5\.12\.10\n"
+                r"INFO    : Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-windows-win32_mingw73\.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+    ),
+)
+def test_installer_passes_base_to_metadatafactory(
+    monkeypatch,
+    capsys,
+    cmd: List[str],
+    host: str,
+    target: str,
+    version: str,
+    arch: str,
+    arch_dir: str,
+    base_url: str,
+    updates_url: str,
+    archives: List[MockArchive],
+    expect_out,  # type: re.Pattern
+):
+    # For convenience, fill in version and arch dir: prevents repetitive data declarations
+    for i in range(len(archives)):
+        archives[i].version = version
+        archives[i].arch_dir = arch_dir
+
+    basic_mock_get_url, mock_download_archive = make_mock_geturl_download_archive(archives, arch, host, updates_url)
+
+    def mock_get_url(url: str, *args, **kwargs) -> str:
+        # If we are fetching an index.html file, get it from tests/data/
+        if url == f"{base_url}/online/qtsdkrepository/{host}_x{'86' if host == 'windows' else '64'}/{target}/":
+            return (Path(__file__).parent / "data" / f"{host}-{target}.html").read_text("utf-8")
+
+        # Intercept and check the base url, but only if it's not a hash.
+        # Hashes must come from trusted mirrors only.
+        if not url.endswith(".sha256"):
+            assert url.startswith(base_url)
+
+        return basic_mock_get_url(url, *args, **kwargs)
+
+    monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
+
+    monkeypatch.setattr("aqt.metadata.getUrl", mock_get_url)
+
+    with TemporaryDirectory() as output_dir:
+        cli = Cli()
+        cli._setup_settings()
+
+        assert 0 == cli.run(cmd + ["--base", base_url, "--outputdir", output_dir])
+
+        out, err = capsys.readouterr()
+        sys.stdout.write(out)
+        sys.stderr.write(err)
+
+        assert expect_out.match(err)
