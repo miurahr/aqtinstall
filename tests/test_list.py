@@ -958,9 +958,16 @@ def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: s
 
 
 def test_fetch_http_ok(monkeypatch):
-    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(b"some_html_content").hexdigest())
-    monkeypatch.setattr("aqt.metadata.getUrl", lambda **kwargs: "some_html_content")
-    assert MetadataFactory.fetch_http("some_url") == "some_html_content"
+    html_content = b"some_html_content"
+    base_url = "https://alt.baseurl.com"
+
+    def mock_getUrl(url: str, *args, **kwargs) -> str:
+        assert url.startswith(base_url)
+        return str(html_content)
+
+    monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(html_content).hexdigest())
+    monkeypatch.setattr("aqt.metadata.getUrl", mock_getUrl)
+    assert MetadataFactory(mac_qt, base_url=base_url).fetch_http("some_url") == str(html_content)
 
 
 def test_fetch_http_failover(monkeypatch):
@@ -976,7 +983,7 @@ def test_fetch_http_failover(monkeypatch):
     monkeypatch.setattr("aqt.metadata.getUrl", _mock)
 
     # Require that the first attempt failed, but the second did not
-    assert MetadataFactory.fetch_http("some_url") == "some_html_content"
+    assert MetadataFactory(mac_qt).fetch_http("some_url") == "some_html_content"
     assert len(urls_requested) == 2
 
 
@@ -991,7 +998,7 @@ def test_fetch_http_download_error(monkeypatch, exception_on_error):
     monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(b"some_html_content").hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", _mock)
     with pytest.raises(exception_on_error) as e:
-        MetadataFactory.fetch_http("some_url")
+        MetadataFactory(mac_qt).fetch_http("some_url")
     assert e.type == exception_on_error
 
     # Require that a fallback url was tried

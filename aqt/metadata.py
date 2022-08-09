@@ -360,6 +360,7 @@ class MetadataFactory:
         self,
         archive_id: ArchiveId,
         *,
+        base_url: str = Settings.baseurl,
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
         modules_query: Optional[Tuple[str, str]] = None,
@@ -387,6 +388,7 @@ class MetadataFactory:
         self.logger = getLogger("aqt.metadata")
         self.archive_id = archive_id
         self.spec = spec
+        self.base_url = base_url
 
         if archive_id.is_tools():
             if tool_name:
@@ -480,7 +482,7 @@ class MetadataFactory:
 
     def fetch_tools(self) -> List[str]:
         html_doc = self.fetch_http(self.archive_id.to_url(), False)
-        return list(self.iterate_folders(html_doc, "tools"))
+        return list(self.iterate_folders(html_doc, self.base_url, filter_category="tools"))
 
     def fetch_tool_modules(self, tool_name: str) -> List[str]:
         tool_data = self._fetch_module_metadata(tool_name)
@@ -571,11 +573,10 @@ class MetadataFactory:
             raise CliInputError(e) from e
         return version
 
-    @staticmethod
-    def fetch_http(rest_of_url: str, is_check_hash: bool = True) -> str:
+    def fetch_http(self, rest_of_url: str, is_check_hash: bool = True) -> str:
         timeout = (Settings.connection_timeout, Settings.response_timeout)
         expected_hash = get_hash(rest_of_url, "sha256", timeout) if is_check_hash else None
-        base_urls = Settings.baseurl, random.choice(Settings.fallbacks)
+        base_urls = self.base_url, random.choice(Settings.fallbacks)
         for i, base_url in enumerate(base_urls):
             try:
                 url = posixpath.join(base_url, rest_of_url)
@@ -589,7 +590,7 @@ class MetadataFactory:
                         f"Connection to '{base_url}' failed. Retrying with fallback '{base_urls[i + 1]}'."
                     )
 
-    def iterate_folders(self, html_doc: str, filter_category: str = "") -> Generator[str, None, None]:
+    def iterate_folders(self, html_doc: str, html_url: str, *, filter_category: str = "") -> Generator[str, None, None]:
         def link_to_folder(link: bs4.element.Tag) -> str:
             raw_url: str = link.get("href", default="")
             url: ParseResult = urlparse(raw_url)
@@ -609,12 +610,11 @@ class MetadataFactory:
                 if folder.startswith(filter_category):
                     yield folder
         except Exception as e:
-            url = posixpath.join(Settings.baseurl, self.archive_id.to_url())
             raise ArchiveConnectionError(
-                f"Failed to retrieve the expected HTML page at {url}",
+                f"Failed to retrieve the expected HTML page at {html_url}",
                 suggested_action=[
                     "Check your network connection.",
-                    f"Make sure that you can access {url} in your web browser.",
+                    f"Make sure that you can access {html_url} in your web browser.",
                 ],
             ) from e
 
@@ -630,7 +630,7 @@ class MetadataFactory:
 
         return map(
             folder_to_version_extension,
-            self.iterate_folders(html_doc, category),
+            self.iterate_folders(html_doc, self.base_url, filter_category=category),
         )
 
     @staticmethod
