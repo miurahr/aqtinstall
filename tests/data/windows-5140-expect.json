@@ -73,6 +73,403 @@
       "qtwebglplugin"
     ]
   },
+  "modules_long_by_arch": {
+    "win32_mingw73": [
+      [
+        "qtcharts",
+        "Qt Charts for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "772.7K",
+        "7.8M"
+      ],
+      [
+        "qtdatavis3d",
+        "Qt Data Visualization for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "620.2K",
+        "5.0M"
+      ],
+      [
+        "qtlottie",
+        "Qt Lottie Animation for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "153.5K",
+        "968.4K"
+      ],
+      [
+        "qtnetworkauth",
+        "Qt Network Authorization for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "98.7K",
+        "638.6K"
+      ],
+      [
+        "qtpurchasing",
+        "Qt Purchasing for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "50.9K",
+        "306.8K"
+      ],
+      [
+        "qtquick3d",
+        "Qt Quick 3D for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "9.8M",
+        "21.2M"
+      ],
+      [
+        "qtquicktimeline",
+        "Qt Quick Timeline for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "35.3K",
+        "154.1K"
+      ],
+      [
+        "qtscript",
+        "Qt Script for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "1.0M",
+        "5.5M"
+      ],
+      [
+        "qtvirtualkeyboard",
+        "Qt Virtual Keyboard for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "2.1M",
+        "6.8M"
+      ],
+      [
+        "qtwebglplugin",
+        "Qt WebGL Streaming Plugin for MinGW 7.3.0 32-bit",
+        "2019-12-11",
+        "201.7K",
+        "1.0M"
+      ]
+    ],
+    "win32_msvc2017": [
+      [
+        "debug_info",
+        "Desktop MSVC 2017 Debug Information Files",
+        "2019-12-11",
+        "511.2M",
+        "4.1G"
+      ],
+      [
+        "qtcharts",
+        "Qt Charts for MSVC 2017 32-bit",
+        "2019-12-11",
+        "924.7K",
+        "8.7M"
+      ],
+      [
+        "qtdatavis3d",
+        "Qt Data Visualization for MSVC 2017 32-bit",
+        "2019-12-11",
+        "764.6K",
+        "6.1M"
+      ],
+      [
+        "qtlottie",
+        "Qt Lottie Animation for MSVC 2017 32-bit",
+        "2019-12-11",
+        "173.3K",
+        "1.1M"
+      ],
+      [
+        "qtnetworkauth",
+        "Qt Network Authorization for MSVC 2017 32-bit",
+        "2019-12-11",
+        "109.5K",
+        "692.1K"
+      ],
+      [
+        "qtpurchasing",
+        "Qt Purchasing for MSVC 2017 32-bit",
+        "2019-12-11",
+        "62.6K",
+        "381.8K"
+      ],
+      [
+        "qtquick3d",
+        "Qt Quick 3D for MSVC 2017 32-bit",
+        "2019-12-11",
+        "10.4M",
+        "26.2M"
+      ],
+      [
+        "qtquicktimeline",
+        "Qt Quick Timeline for MSVC 2017 32-bit",
+        "2019-12-11",
+        "43.6K",
+        "282.9K"
+      ],
+      [
+        "qtscript",
+        "Qt Script for MSVC 2017 32-bit",
+        "2019-12-11",
+        "1.2M",
+        "10.1M"
+      ],
+      [
+        "qtvirtualkeyboard",
+        "Qt Virtual Keyboard for MSVC 2017 32-bit",
+        "2019-12-11",
+        "2.2M",
+        "12.4M"
+      ],
+      [
+        "qtwebengine",
+        "Qt WebEngine for msvc2017 32-bit",
+        "2019-12-11",
+        "68.6M",
+        "253.1M"
+      ],
+      [
+        "qtwebglplugin",
+        "Qt WebGL Streaming Plugin for MSVC 2017 32-bit",
+        "2019-12-11",
+        "311.5K",
+        "1.6M"
+      ]
+    ],
+    "win64_mingw73": [
+      [
+        "qtcharts",
+        "Qt Charts for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "752.2K",
+        "7.7M"
+      ],
+      [
+        "qtdatavis3d",
+        "Qt Data Visualization for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "623.2K",
+        "5.0M"
+      ],
+      [
+        "qtlottie",
+        "Qt Lottie Animation for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "161.7K",
+        "988.6K"
+      ],
+      [
+        "qtnetworkauth",
+        "Qt Network Authorization for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "96.9K",
+        "624.4K"
+      ],
+      [
+        "qtpurchasing",
+        "Qt Purchasing for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "51.0K",
+        "315.1K"
+      ],
+      [
+        "qtquick3d",
+        "Qt Quick 3D for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "9.8M",
+        "21.1M"
+      ],
+      [
+        "qtquicktimeline",
+        "Qt Quick Timeline for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "35.4K",
+        "160.3K"
+      ],
+      [
+        "qtscript",
+        "Qt Script for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "899.3K",
+        "5.0M"
+      ],
+      [
+        "qtvirtualkeyboard",
+        "Qt Virtual Keyboard for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "2.1M",
+        "6.8M"
+      ],
+      [
+        "qtwebglplugin",
+        "Qt WebGL Streaming Plugin for MinGW 7.3.0 64-bit",
+        "2019-12-11",
+        "192.9K",
+        "1002.4K"
+      ]
+    ],
+    "win64_msvc2015_64": [
+      [
+        "debug_info",
+        "Desktop MSVC 2015 64-bit debug information files",
+        "2019-12-11",
+        "438.4M",
+        "3.3G"
+      ],
+      [
+        "qtcharts",
+        "Qt Charts for MSVC 2015 64-bit",
+        "2019-12-11",
+        "1.0M",
+        "9.7M"
+      ],
+      [
+        "qtdatavis3d",
+        "Qt Data Visualization for MSVC 2015 64-bit",
+        "2019-12-11",
+        "822.6K",
+        "6.6M"
+      ],
+      [
+        "qtlottie",
+        "Qt Lottie Animation for MSVC 2015 64-bit",
+        "2019-12-11",
+        "193.7K",
+        "1.2M"
+      ],
+      [
+        "qtnetworkauth",
+        "Qt Network Authorization for MSVC 2015 64-bit",
+        "2019-12-11",
+        "117.9K",
+        "778.6K"
+      ],
+      [
+        "qtpurchasing",
+        "Qt Purchasing for MSVC 2015 64-bit",
+        "2019-12-11",
+        "66.6K",
+        "436.4K"
+      ],
+      [
+        "qtquick3d",
+        "Qt Quick 3D for MSVC 2015 64-bit",
+        "2019-12-11",
+        "10.9M",
+        "30.6M"
+      ],
+      [
+        "qtquicktimeline",
+        "Qt Quick Timeline for MSVC 2015 64-bit",
+        "2019-12-11",
+        "48.4K",
+        "333.4K"
+      ],
+      [
+        "qtscript",
+        "Qt Script for MSVC 2015 64-bit",
+        "2019-12-11",
+        "1.2M",
+        "9.5M"
+      ],
+      [
+        "qtvirtualkeyboard",
+        "Qt Virtual Keyboard for MSVC 2015 64-bit",
+        "2019-12-11",
+        "2.2M",
+        "12.9M"
+      ],
+      [
+        "qtwebglplugin",
+        "Qt WebGL Streaming Plugin for MSVC 2015 64-bit",
+        "2019-12-11",
+        "301.4K",
+        "1.7M"
+      ]
+    ],
+    "win64_msvc2017_64": [
+      [
+        "debug_info",
+        "Desktop MSVC 2017 64-bit debug information files",
+        "2019-12-11",
+        "834.2M",
+        "6.7G"
+      ],
+      [
+        "qtcharts",
+        "Qt Charts for MSVC 2017 64-bit",
+        "2019-12-11",
+        "1.0M",
+        "9.8M"
+      ],
+      [
+        "qtdatavis3d",
+        "Qt Data Visualization for MSVC 2017 64-bit",
+        "2019-12-11",
+        "857.9K",
+        "6.8M"
+      ],
+      [
+        "qtlottie",
+        "Qt Lottie Animation for MSVC 2017 64-bit",
+        "2019-12-11",
+        "198.4K",
+        "1.2M"
+      ],
+      [
+        "qtnetworkauth",
+        "Qt Network Authentication for MSVC 2017_64-bit",
+        "2019-12-11",
+        "125.1K",
+        "809.2K"
+      ],
+      [
+        "qtpurchasing",
+        "Qt Purchasing for MSVC 2017 64-bit",
+        "2019-12-11",
+        "68.1K",
+        "448.1K"
+      ],
+      [
+        "qtquick3d",
+        "Qt Quick 3D for MSVC 2017 64-bit",
+        "2019-12-11",
+        "10.8M",
+        "30.1M"
+      ],
+      [
+        "qtquicktimeline",
+        "Qt Quick Timeline for MSVC 2017 64-bit",
+        "2019-12-11",
+        "48.9K",
+        "340.9K"
+      ],
+      [
+        "qtscript",
+        "Qt Script for MSVC 2017 64-bit",
+        "2019-12-11",
+        "1.2M",
+        "10.6M"
+      ],
+      [
+        "qtvirtualkeyboard",
+        "Qt Virtual Keyboard for MSVC 2017 64-bit",
+        "2019-12-11",
+        "2.3M",
+        "13.0M"
+      ],
+      [
+        "qtwebengine",
+        "Qt WebEngine for MSVC 2017 64-bit",
+        "2019-12-11",
+        "80.8M",
+        "328.9M"
+      ],
+      [
+        "qtwebglplugin",
+        "Qt WebGL Streaming Plugin for msvc2017_64-bit",
+        "2019-12-11",
+        "355.2K",
+        "1.9M"
+      ]
+    ]
+  },
   "modules_metadata_by_arch": {
     "win32_mingw73": [
       {
