@@ -448,9 +448,14 @@ class MetadataFactory:
             self.request_type = "latest version"
             self._action = lambda: Versions(self.fetch_latest_version())
         elif modules_query:
-            self.request_type = "modules"
-            version, arch = modules_query
-            self._action = lambda: self.fetch_modules(self._to_version(version), arch)
+            if is_long_listing:
+                self.request_type = "long modules"
+                version, arch = modules_query
+                self._action = lambda: self.fetch_long_modules(self._to_version(version), arch)
+            else:
+                self.request_type = "modules"
+                version, arch = modules_query
+                self._action = lambda: self.fetch_modules(self._to_version(version), arch)
         elif extensions_ver:
             self.request_type = "extensions"
             self._action = lambda: self.fetch_extensions(self._to_version(extensions_ver))
@@ -730,6 +735,30 @@ class MetadataFactory:
             if _arch == arch:
                 modules.add(module)
         return sorted(modules)
+
+    def fetch_long_modules(self, version: Version, arch: str) -> ModuleData:
+        """Returns long listing of modules"""
+        self.validate_extension(version)
+        qt_ver_str = self._get_qt_version_str(version)
+        # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590(\.addons)?\.(?P<module>[^.]+)\.gcc_64$")
+        pattern = re.compile(
+            r"^(preview\.)?qt\.(qt"
+            + str(version.major)
+            + r"\.)?"
+            + qt_ver_str
+            + r"(\.addons)?\.(?P<module>[^.]+)\."
+            + arch
+            + r"$"
+        )
+
+        def matches_arch(element: Element) -> bool:
+            name_node = element.find("Name")
+            return bool(name_node is not None) and bool(pattern.match(str(name_node.text)))
+
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str), matches_arch)
+        m = {pattern.match(key).group("module"): value for key, value in modules_meta.items()}
+
+        return ModuleData(m)
 
     def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
         """Returns list of modules for src/doc/examples"""

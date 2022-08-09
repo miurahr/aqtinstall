@@ -493,9 +493,11 @@ class Cli:
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
             raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
         if args.modules:
-            modules_ver, modules_query = args.modules[0], tuple(args.modules)
+            modules_ver, modules_query, is_long = args.modules[0], tuple(args.modules), False
+        elif args.long_modules:
+            modules_ver, modules_query, is_long = args.long_modules[0], tuple(args.long_modules), True
         else:
-            modules_ver, modules_query = None, None
+            modules_ver, modules_query, is_long = None, None, False
 
         for version_str in (modules_ver, args.extensions, args.arch, args.archives[0] if args.archives else None):
             Cli._validate_version_str(version_str, allow_latest=True, allow_empty=True)
@@ -517,6 +519,7 @@ class Cli:
             spec=spec,
             is_latest_version=args.latest_version,
             modules_query=modules_query,
+            is_long_listing=is_long,
             extensions_ver=args.extensions,
             architectures_ver=args.arch,
             archives_query=args.archives,
@@ -735,6 +738,16 @@ class Cli:
             help='First arg: Qt version in the format of "5.X.Y", or the keyword "latest". '
             'Second arg: an architecture, which may be printed with the "--arch" flag. '
             "When set, this prints all the modules available for either Qt 5.X.Y or the latest version of Qt.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--long-modules",
+            type=str,
+            nargs=2,
+            metavar=("(VERSION | latest)", "ARCHITECTURE"),
+            help='First arg: Qt version in the format of "5.X.Y", or the keyword "latest". '
+            'Second arg: an architecture, which may be printed with the "--arch" flag. '
+            "When set, this prints a table that describes all the modules available "
+            "for either Qt 5.X.Y or the latest version of Qt.",
         )
         output_modifier_exclusive_group.add_argument(
             "--extensions",

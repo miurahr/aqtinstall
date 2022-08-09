@@ -34,6 +34,7 @@ from typing import Callable, Dict, Generator, List, Optional, Tuple
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
 
+import humanize
 import requests
 import requests.adapters
 from defusedxml import ElementTree
@@ -290,7 +291,13 @@ def xml_to_modules(
         name = packageupdate.find("Name").text
         packages[name] = {}
         for child in packageupdate:
-            packages[name][child.tag] = child.text
+            if child.tag == "UpdateFile":
+                for attr in "CompressedSize", "UncompressedSize":
+                    if attr not in child.attrib:
+                        continue
+                    packages[name][attr] = humanize.naturalsize(child.attrib[attr], gnu=True)
+            else:
+                packages[name][child.tag] = child.text
     return packages
 
 
