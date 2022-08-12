@@ -23,14 +23,15 @@ classifiers = [
 ]
 requires-python = ">=3.6"
 dependencies = [
-    "requests",
-    "semantic_version",
-    "patch>=1.16",
-    "py7zr>=0.18.3",
-    "texttable",
     "bs4",
     "dataclasses;python_version<'3.7'",
     "defusedxml",
+    "humanize",
+    "patch>=1.16",
+    "py7zr>=0.18.3",
+    "requests",
+    "semantic_version",
+    "texttable",
 ]
 dynamic = ["version", "entry-points"]
 

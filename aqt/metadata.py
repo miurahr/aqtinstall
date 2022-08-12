@@ -24,6 +24,7 @@ import posixpath
 import re
 import secrets as random
 import shutil
+from abc import ABC, abstractmethod
 from logging import getLogger
 from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 from urllib.parse import ParseResult, urlparse
@@ -265,27 +266,43 @@ class ArchiveId:
         )
 
 
-class ToolData:
-    """A data class hold tool details."""
+class TableMetadata(ABC):
+    """A data class that holds tool or module details. Can be pretty-printed as a table."""
 
-    head = [
-        "Tool Variant Name",
-        "Version",
-        "Release Date",
-        "Display Name",
-        "Description",
-    ]
+    def __init__(self, table_data: Dict[str, Dict[str, str]]):
+        self.table_data: Dict[str, Dict[str, str]] = table_data
+        self.format_field_for_tty("Description")
 
-    short_head = [
-        "Tool Variant Name",
-        "Version",
-        "Release Date",
-    ]
+    def format_field_for_tty(self, field: str):
+        for key in self.table_data.keys():
+            if field in self.table_data[key] and self.table_data[key][field]:
+                self.table_data[key][field] = self.table_data[key][field].replace("<br>", "\n")
 
-    def __init__(self, tool_data: Dict[str, Dict[str, str]]):
-        self.tool_data: Dict[str, Dict[str, str]] = tool_data
-        for key in tool_data.keys():
-            self.tool_data[key]["Description"] = tool_data[key]["Description"].replace("<br>", "\n")
+    std_keys_to_headings = {
+        "ReleaseDate": "Release Date",
+        "DisplayName": "Display Name",
+        "CompressedSize": "Download Size",
+        "UncompressedSize": "Installed Size",
+    }
+
+    @classmethod
+    def map_key_to_heading(cls, key: str) -> str:
+        return TableMetadata.std_keys_to_headings.get(key, key)
+
+    @property
+    @abstractmethod
+    def short_heading_keys(self) -> Iterable[str]:
+        ...
+
+    @property
+    @abstractmethod
+    def long_heading_keys(self) -> Iterable[str]:
+        ...
+
+    @property
+    @abstractmethod
+    def name_heading(self) -> str:
+        ...
 
     def __format__(self, format_spec: str) -> str:
         short = False
@@ -305,24 +322,50 @@ class ToolData:
                 raise ValueError("Wrong format {}".format(format_spec))
         table = Texttable(max_width=max_width)
         table.set_deco(Texttable.HEADER)
-        if short:
-            table.header(self.short_head)
-            table.add_rows(self._short_rows(), header=False)
-        else:
-            table.header(self.head)
-            table.add_rows(self._rows(), header=False)
+
+        heading_keys = self.short_heading_keys if short else self.long_heading_keys
+        heading = [self.name_heading, *[self.map_key_to_heading(key) for key in heading_keys]]
+        table.header(heading)
+        table.add_rows(self._rows(heading_keys), header=False)
         return table.draw()
 
     def __bool__(self):
-        return bool(self.tool_data)
+        return bool(self.table_data)
 
-    def _rows(self):
-        keys = ("Version", "ReleaseDate", "DisplayName", "Description")
-        return [[name, *[content[key] for key in keys]] for name, content in self.tool_data.items()]
+    def _rows(self, keys: Iterable[str]) -> List[List[str]]:
+        return [[name, *[content[key] for key in keys]] for name, content in sorted(self.table_data.items())]
 
-    def _short_rows(self):
-        keys = ("Version", "ReleaseDate")
-        return [[name, *[content[key] for key in keys]] for name, content in self.tool_data.items()]
+
+class ToolData(TableMetadata):
+    """A data class hold tool details."""
+
+    @property
+    def short_heading_keys(self) -> Iterable[str]:
+        return "Version", "ReleaseDate"
+
+    @property
+    def long_heading_keys(self) -> Iterable[str]:
+        return "Version", "ReleaseDate", "DisplayName", "Description"
+
+    @property
+    def name_heading(self) -> str:
+        return "Tool Variant Name"
+
+
+class ModuleData(TableMetadata):
+    """A data class hold module details."""
+
+    @property
+    def short_heading_keys(self) -> Iterable[str]:
+        return ("DisplayName",)
+
+    @property
+    def long_heading_keys(self) -> Iterable[str]:
+        return "DisplayName", "ReleaseDate", "CompressedSize", "UncompressedSize"
+
+    @property
+    def name_heading(self) -> str:
+        return "Module Name"
 
 
 class QtRepoProperty:
@@ -407,9 +450,14 @@ class MetadataFactory:
             self.request_type = "latest version"
             self._action = lambda: Versions(self.fetch_latest_version())
         elif modules_query:
-            self.request_type = "modules"
-            version, arch = modules_query
-            self._action = lambda: self.fetch_modules(self._to_version(version), arch)
+            if is_long_listing:
+                self.request_type = "long modules"
+                version, arch = modules_query
+                self._action = lambda: self.fetch_long_modules(self._to_version(version), arch)
+            else:
+                self.request_type = "modules"
+                version, arch = modules_query
+                self._action = lambda: self.fetch_modules(self._to_version(version), arch)
         elif extensions_ver:
             self.request_type = "extensions"
             self._action = lambda: self.fetch_extensions(self._to_version(extensions_ver))
@@ -688,6 +736,30 @@ class MetadataFactory:
                 modules.add(module)
         return sorted(modules)
 
+    def fetch_long_modules(self, version: Version, arch: str) -> ModuleData:
+        """Returns long listing of modules"""
+        self.validate_extension(version)
+        qt_ver_str = self._get_qt_version_str(version)
+        # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590(\.addons)?\.(?P<module>[^.]+)\.gcc_64$")
+        pattern = re.compile(
+            r"^(preview\.)?qt\.(qt"
+            + str(version.major)
+            + r"\.)?"
+            + qt_ver_str
+            + r"(\.addons)?\.(?P<module>[^.]+)\."
+            + arch
+            + r"$"
+        )
+
+        def matches_arch(element: Element) -> bool:
+            name_node = element.find("Name")
+            return bool(name_node is not None) and bool(pattern.match(str(name_node.text)))
+
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str), matches_arch)
+        m = {pattern.match(key).group("module"): value for key, value in modules_meta.items()}
+
+        return ModuleData(m)
+
     def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
         """Returns list of modules for src/doc/examples"""
         assert (
@@ -792,7 +864,7 @@ def show_list(meta: MetadataFactory):
             )
         if isinstance(output, Versions):
             print(format(output))
-        elif isinstance(output, ToolData):
+        elif isinstance(output, TableMetadata):
             width: int = shutil.get_terminal_size((0, 40)).columns
             if width == 0:  # notty ?
                 print(format(output, "{:0t}"))
