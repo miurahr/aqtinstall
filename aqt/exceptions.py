@@ -18,15 +18,15 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-from typing import List
+from typing import List, Optional
 
 DOCS_CONFIG = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration"
 
 
 class AqtException(Exception):
-    def __init__(self, *args, **kwargs):
-        self.suggested_action: List[str] = kwargs.pop("suggested_action", [])
-        self.should_show_help: bool = kwargs.pop("should_show_help", False)
+    def __init__(self, *args, suggested_action: Optional[List[str]] = None, should_show_help: bool = False, **kwargs):
+        self.suggested_action: List[str] = suggested_action or []
+        self.should_show_help: bool = should_show_help or False
         super(AqtException, self).__init__(*args, **kwargs)
 
     def __format__(self, format_spec) -> str:
@@ -53,16 +53,19 @@ class ArchiveChecksumError(ArchiveDownloadError):
 
 
 class ChecksumDownloadFailure(ArchiveDownloadError):
-    def __init__(self, *args, **kwargs):
-        kwargs["suggested_action"] = kwargs.pop("suggested_action", []).extend(
+    def __init__(self, *args, suggested_action: Optional[List[str]] = None, **kwargs):
+        if suggested_action is None:
+            suggested_action = []
+        suggested_action.extend(
             [
                 "Check your internet connection",
                 "Consider modifying `requests.max_retries_to_retrieve_hash` in settings.ini",
                 f"Consider modifying `mirrors.trusted_mirrors` in settings.ini (see {DOCS_CONFIG})",
             ]
         )
-        kwargs["should_show_help"] = True
-        super(ChecksumDownloadFailure, self).__init__(*args, **kwargs)
+        super(ChecksumDownloadFailure, self).__init__(
+            *args, suggested_action=suggested_action, should_show_help=True, **kwargs
+        )
 
 
 class ArchiveConnectionError(AqtException):
