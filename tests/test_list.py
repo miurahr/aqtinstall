@@ -873,26 +873,55 @@ def test_show_list_empty(monkeypatch, capsys):
     assert format(error.value) == "No tools available for this request."
 
 
-def test_show_list_bad_connection(monkeypatch, capsys):
-    for exception_class, error_msg in (
-        (ArchiveConnectionError, "Failure to connect to some url"),
-        (ArchiveDownloadError, "Failure to download some xml file"),
-    ):
+@pytest.mark.parametrize(
+    "exception_class, error_msg, source",
+    (
+        (ArchiveConnectionError, "Failure to connect to some url", "aqt.metadata.getUrl"),
+        (ArchiveDownloadError, "Failure to download some xml file", "aqt.metadata.getUrl"),
+    ),
+)
+def test_show_list_bad_connection(monkeypatch, capsys, exception_class, error_msg, source):
+    def mock(*args, **kwargs):
+        raise exception_class(error_msg)
 
-        def mock(self):
-            raise exception_class(error_msg)
+    monkeypatch.setattr(source, mock)
+    meta = MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9"))
+    with pytest.raises(exception_class) as error:
+        show_list(meta)
+    assert error.type == exception_class
+    assert format(error.value) == (
+        f"{error_msg}\n"
+        "==============================Suggested follow-up:==============================\n"
+        "* Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
+        "* Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'."
+    )
 
-        monkeypatch.setattr(MetadataFactory, "getList", mock)
-        meta = MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9"))
-        with pytest.raises(exception_class) as error:
-            show_list(meta)
-        assert error.type == exception_class
-        assert format(error.value) == (
-            f"{error_msg}\n"
-            "==============================Suggested follow-up:==============================\n"
-            "* Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
-            "* Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'."
-        )
+
+@pytest.mark.parametrize(
+    "exception_class, error_msg, source", ((ArchiveConnectionError, "Failure to connect", "aqt.helper.getUrl"),)
+)
+def test_show_list_bad_connection(monkeypatch, capsys, exception_class, error_msg, source):
+    def mock(*args, **kwargs):
+        raise exception_class(error_msg)
+
+    monkeypatch.setattr(source, mock)
+
+    cli = Cli()
+    cli.run("list-qt linux desktop --arch 6.4.0".split())
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+
+    assert (
+        err == "ERROR   : Failed to download checksum for the file 'Updates.xml' from mirrors "
+        "'['https://download.qt.io']\n"
+        "==============================Suggested follow-up:==============================\n"
+        "* Check your internet connection\n"
+        "* Consider modifying `requests.max_retries_to_retrieve_hash` in settings.ini\n"
+        "* Consider modifying `mirrors.trusted_mirrors` in settings.ini "
+        "(see https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration)\n"
+        "* Please use 'aqt list-qt linux desktop' to show versions of Qt available.\n"
+    )
 
 
 def fetch_expected_tooldata(json_filename: str) -> ToolData:
