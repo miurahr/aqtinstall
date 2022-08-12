@@ -900,7 +900,7 @@ def test_show_list_bad_connection(monkeypatch, capsys, exception_class, error_ms
 @pytest.mark.parametrize(
     "exception_class, error_msg, source", ((ArchiveConnectionError, "Failure to connect", "aqt.helper.getUrl"),)
 )
-def test_show_list_bad_connection(monkeypatch, capsys, exception_class, error_msg, source):
+def test_show_list_bad_connection_for_checksum(monkeypatch, capsys, exception_class, error_msg, source):
     def mock(*args, **kwargs):
         raise exception_class(error_msg)
 
