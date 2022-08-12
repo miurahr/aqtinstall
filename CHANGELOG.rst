@@ -7,6 +7,18 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.2.2`_ (11, Aug. 2022)
+-------------------------
+
+Added
+-----
+* Add ``aqt list-qt --long-modules`` (#543,#547)
+
+Fixed
+-----
+* Fix kwargs passed up AqtException inheritance tree (#550)
+
+
 `v2.2.1`_ (9, Aug. 2022)
 ------------------------
 
@@ -246,7 +258,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.2.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.2.2...HEAD
+.. _v2.2.2: https://github.com/miurahr/aqtinstall/compare/v2.2.1...v2.2.2
 .. _v2.2.1: https://github.com/miurahr/aqtinstall/compare/v2.2.0...v2.2.1
 .. _v2.2.0: https://github.com/miurahr/aqtinstall/compare/v2.1.0...v2.2.0
 .. _v2.1.0: https://github.com/miurahr/aqtinstall/compare/v2.0.6...v2.1.0
