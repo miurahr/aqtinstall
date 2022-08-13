@@ -160,6 +160,30 @@ combination, so we will need to supply :ref:`aqt list-qt <list-qt command>` with
     qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquick3d
     qtquicktimeline qtscript qtvirtualkeyboard qtwebengine qtwebglplugin
 
+Let's say that we want to know more about these modules before we install them.
+We can use the ``--long-modules`` flag for that:
+
+.. code-block:: console
+
+    $ aqt list-qt windows desktop --long-modules 5.15.2 win64_mingw81
+       Module Name                         Display Name
+    ======================================================================
+    debug_info          Desktop MinGW 8.1.0 64-bit Debug Information Files
+    qtcharts            Qt Charts for MinGW 8.1.0 64-bit
+    qtdatavis3d         Qt Data Visualization for MinGW 8.1.0 64-bit
+    qtlottie            Qt Lottie Animation for MinGW 8.1.0 64-bit
+    qtnetworkauth       Qt Network Authorization for MinGW 8.1.0 64-bit
+    qtpurchasing        Qt Purchasing for MinGW 8.1.0 64-bit
+    qtquick3d           Qt Quick 3D for MinGW 8.1.0 64-bit
+    qtquicktimeline     Qt Quick Timeline for MinGW 8.1.0 64-bit
+    qtscript            Qt Script for MinGW 8.1.0 64-bit
+    qtvirtualkeyboard   Qt Virtual Keyboard for MinGW 8.1.0 64-bit
+    qtwebglplugin       Qt WebGL Streaming Plugin for MinGW 8.1.0 64-bit
+
+Note that if your terminal is wider than 95 characters, this command will show
+release dates and sizes in extra columns to the right.
+If you try this, you will notice that `debug_info` is 5.9 gigabytes installed.
+
 Let's say that we want to install `qtcharts` and `qtnetworkauth`. 
 We can do that by using the `-m` flag with the :ref:`aqt install-qt <qt installation command>` command.
 This flag receives the name of at least one module as an argument:
