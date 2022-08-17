@@ -77,8 +77,9 @@ def unpatched_path(os_name: str, final_component: str) -> str:
 
 class QtConfig:
     """
-   detect Qt configurations from qmake.
+    detect Qt configurations from qmake.
     """
+
     def __init__(self, prefix: pathlib.Path):
         self.qmake_path = None
         self.qconfigs = {}
