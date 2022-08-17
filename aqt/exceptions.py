@@ -102,3 +102,7 @@ class UpdaterError(AqtException):
 
 class OutOfMemory(AqtException):
     pass
+
+
+class QmakeNotFound(AqtException):
+    pass

@@ -59,7 +59,7 @@ from aqt.helper import (
     setup_logging,
 )
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
-from aqt.updater import Updater
+from aqt.updater import Notifier, Updater
 
 try:
     import py7zr
@@ -330,6 +330,7 @@ class Cli:
             run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
         if not nopatch:
             Updater.update(target_config, base_dir)
+            Notifier.notify_sdk(target_config, base_dir)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
