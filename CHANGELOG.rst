@@ -7,6 +7,18 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.2.3`_ (17, Aug. 2022)
+-------------------------
+
+Fixed
+-----
+* Building standalone executable: aqt.exe (#556,#557)
+
+Added
+-----
+* Docs: add explanation of ``list-qt --long-modules`` (#555)
+
+
 `v2.2.2`_ (11, Aug. 2022)
 -------------------------
 
@@ -258,7 +270,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.2.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.2.3...HEAD
+.. _v2.2.3: https://github.com/miurahr/aqtinstall/compare/v2.2.2...v2.2.3
 .. _v2.2.2: https://github.com/miurahr/aqtinstall/compare/v2.2.1...v2.2.2
 .. _v2.2.1: https://github.com/miurahr/aqtinstall/compare/v2.2.0...v2.2.1
 .. _v2.2.0: https://github.com/miurahr/aqtinstall/compare/v2.1.0...v2.2.0
