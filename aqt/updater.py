@@ -29,7 +29,7 @@ from typing import Union
 import patch
 
 from aqt.archives import TargetConfig
-from aqt.exceptions import UpdaterError, QmakeNotFound
+from aqt.exceptions import QmakeNotFound, UpdaterError
 from aqt.helper import Settings
 from aqt.metadata import SimpleSpec, Version
 
