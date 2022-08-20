@@ -474,4 +474,4 @@ def test_get_autodesktop_dir_and_arch(
                 f"          `aqt install-qt {host} desktop {version} {expect['instruct']}`"
             )
         else:
-            assert err.strip() == f"INFO    : Found installed {host}-desktop Qt at {temp_dir}/{version}/{expect['use_dir']}"
+            assert err.strip() == f"INFO    : Found installed {host}-desktop Qt at {base_dir / version / expect['use_dir']}"
