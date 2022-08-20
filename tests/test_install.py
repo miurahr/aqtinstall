@@ -810,8 +810,8 @@ def test_install(
     mock_get_url, mock_download_archive = make_mock_geturl_download_archive(
         standard_archives=std_archives,
         desktop_archives=desktop_archives,
-        standard_updates_url=updates_url.get("std", None),
-        desktop_updates_url=updates_url.get("desk", None),
+        standard_updates_url=updates_url.get("std", ""),
+        desktop_updates_url=updates_url.get("desk", ""),
     )
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
