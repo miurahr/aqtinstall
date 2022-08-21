@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import os
+import posixpath
 import re
 import subprocess
 import sys
@@ -124,34 +125,49 @@ class MockArchive:
 
 
 def make_mock_geturl_download_archive(
-    archives: Iterable[MockArchive],
-    arch: str,
-    os_name: str,
-    updates_url: str,
+    *,
+    standard_archives: List[MockArchive],
+    desktop_archives: Optional[List[MockArchive]] = None,
+    standard_updates_url: str,
+    desktop_updates_url: str = "",
 ) -> Tuple[GET_URL_TYPE, DOWNLOAD_ARCHIVE_TYPE]:
     """
     Returns a mock 'getUrl' and a mock 'downloadArchive' function.
     """
-    for _arc in archives:
-        assert _arc.filename_7z.endswith(".7z")
+    if desktop_archives is None:
+        desktop_archives = []
+    for _archive in [*standard_archives, *desktop_archives]:
+        assert _archive.filename_7z.endswith(".7z")
 
-    xml = "<Updates>\n{}\n</Updates>".format("\n".join([archive.xml_package_update() for archive in archives]))
+    standard_xml = "<Updates>\n{}\n</Updates>".format(
+        "\n".join([archive.xml_package_update() for archive in standard_archives])
+    )
+    desktop_xml = "<Updates>\n{}\n</Updates>".format(
+        "\n".join([archive.xml_package_update() for archive in desktop_archives])
+    )
 
     def mock_getUrl(url: str, *args, **kwargs) -> str:
-        if url.endswith(updates_url):
-            return xml
-        elif url.endswith(".sha256"):
-            filename = url.split("/")[-1][: -len(".sha256")]
-            return f"{hashlib.sha256(bytes(xml, 'utf-8')).hexdigest()} {filename}"
-        assert False
+        for xml, updates_url in (
+            (standard_xml, standard_updates_url),
+            (desktop_xml, desktop_updates_url),
+        ):
+            basename = posixpath.dirname(updates_url)
+            if not updates_url:
+                continue
+            elif url.endswith(updates_url):
+                return xml
+            elif basename in url and url.endswith(".sha256"):
+                filename = url.split("/")[-1][: -len(".sha256")]
+                return f"{hashlib.sha256(bytes(xml, 'utf-8')).hexdigest()} {filename}"
+        assert False, f"No mocked url available for '{url}'"
 
     def mock_download_archive(url: str, out: str, *args):
         """Make a mocked 7z archive at out_filename"""
 
         def locate_archive() -> MockArchive:
-            for arc in archives:
-                if Path(out).name == arc.filename_7z:
-                    return arc
+            for archive in [*standard_archives, *desktop_archives]:
+                if Path(out).name == archive.filename_7z:
+                    return archive
             assert False, "Requested an archive that was not mocked"
 
         locate_archive().write_compressed_archive(Path(out).parent)
@@ -237,9 +253,9 @@ def qtpositioning_module(ver: str, arch: str) -> MockArchive:
     )
 
 
-def plain_qtbase_archive(update_xml_name: str, arch: str, should_install: bool = True) -> MockArchive:
+def plain_qtbase_archive(update_xml_name: str, arch: str, host: str = "windows", should_install: bool = True) -> MockArchive:
     return MockArchive(
-        filename_7z=f"qtbase-windows-{arch}.7z",
+        filename_7z=f"qtbase-{host}-{arch}.7z",
         update_xml_name=update_xml_name,
         contents=(
             PatchedFile(
@@ -282,12 +298,10 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "linux",
             "desktop",
             "1.2.3-0-197001020304",
-            "",
-            "",
-            "linux_x64/desktop/tools_qtcreator/Updates.xml",
-            [
-                tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator"),
-            ],
+            {"std": ""},
+            {"std": ""},
+            {"std": "linux_x64/desktop/tools_qtcreator/Updates.xml"},
+            {"std": [tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator")]},
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qt.tools.qtcreator...\n"
@@ -301,12 +315,10 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "linux",
             "desktop",
             "1.2.3",
-            "",
-            "",
-            "linux_x64/desktop/tools_qtcreator/Updates.xml",
-            [
-                tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator", datetime(1970, 1, 2, 3, 4, 5, 6)),
-            ],
+            {"std": ""},
+            {"std": ""},
+            {"std": "linux_x64/desktop/tools_qtcreator/Updates.xml"},
+            {"std": [tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator", datetime(1970, 1, 2, 3, 4, 5, 6))]},
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"WARNING : The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
@@ -322,12 +334,10 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "5.14.0",
-            "win32_mingw73",
-            "mingw73_32",
-            "windows_x86/desktop/qt5_5140/Updates.xml",
-            [
-                plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73"),
-            ],
+            {"std": "win32_mingw73"},
+            {"std": "mingw73_32"},
+            {"std": "windows_x86/desktop/qt5_5140/Updates.xml"},
+            {"std": [plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73")]},
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"WARNING : The command 'install' is deprecated"
@@ -344,23 +354,25 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "5.14.2",
-            "",
-            "",
-            "windows_x86/desktop/qt5_5142_src_doc_examples/Updates.xml",
-            [
-                MockArchive(
-                    filename_7z="qtbase-everywhere-src-5.14.2.7z",
-                    update_xml_name="qt.qt5.5142.src",
-                    version="5.14.2",
-                    contents=(
-                        PatchedFile(
-                            filename="Src/qtbase/QtBaseSource.cpp",
-                            unpatched_content="int main(){ return 0; }",
-                            patched_content=None,  # not patched
+            {"std": ""},
+            {"std": ""},
+            {"std": "windows_x86/desktop/qt5_5142_src_doc_examples/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-everywhere-src-5.14.2.7z",
+                        update_xml_name="qt.qt5.5142.src",
+                        version="5.14.2",
+                        contents=(
+                            PatchedFile(
+                                filename="Src/qtbase/QtBaseSource.cpp",
+                                unpatched_content="int main(){ return 0; }",
+                                patched_content=None,  # not patched
+                            ),
                         ),
                     ),
-                ),
-            ],
+                ]
+            },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"WARNING : The parameter 'target' with value 'desktop' is deprecated "
@@ -377,23 +389,25 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "5.14.2",
-            "",
-            "",
-            "windows_x86/desktop/qt5_5142_src_doc_examples/Updates.xml",
-            [
-                MockArchive(
-                    filename_7z="qtbase-everywhere-src-5.14.2.7z",
-                    update_xml_name="qt.qt5.5142.src",
-                    version="5.14.2",
-                    contents=(
-                        PatchedFile(
-                            filename="Src/qtbase/QtBaseSource.cpp",
-                            unpatched_content="int main(){ return 0; }",
-                            patched_content=None,  # not patched
+            {"std": ""},
+            {"std": ""},
+            {"std": "windows_x86/desktop/qt5_5142_src_doc_examples/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-everywhere-src-5.14.2.7z",
+                        update_xml_name="qt.qt5.5142.src",
+                        version="5.14.2",
+                        contents=(
+                            PatchedFile(
+                                filename="Src/qtbase/QtBaseSource.cpp",
+                                unpatched_content="int main(){ return 0; }",
+                                patched_content=None,  # not patched
+                            ),
                         ),
-                    ),
-                ),
-            ],
+                    )
+                ]
+            },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase\.\.\.\n"
@@ -407,12 +421,10 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "5.9.0",
-            "win32_mingw53",
-            "mingw53_32",
-            "windows_x86/desktop/qt5_59/Updates.xml",
-            [
-                plain_qtbase_archive("qt.59.win32_mingw53", "win32_mingw53"),
-            ],
+            {"std": "win32_mingw53"},
+            {"std": "mingw53_32"},
+            {"std": "windows_x86/desktop/qt5_59/Updates.xml"},
+            {"std": [plain_qtbase_archive("qt.59.win32_mingw53", "win32_mingw53")]},
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"WARNING : The command 'install' is deprecated"
@@ -429,12 +441,10 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "5.9.0",
-            "win32_mingw53",
-            "mingw53_32",
-            "windows_x86/desktop/qt5_59/Updates.xml",
-            [
-                plain_qtbase_archive("qt.59.win32_mingw53", "win32_mingw53"),
-            ],
+            {"std": "win32_mingw53"},
+            {"std": "mingw53_32"},
+            {"std": "windows_x86/desktop/qt5_59/Updates.xml"},
+            {"std": [plain_qtbase_archive("qt.59.win32_mingw53", "win32_mingw53")]},
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
@@ -448,12 +458,10 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "5.14.0",
-            "win32_mingw73",
-            "mingw73_32",
-            "windows_x86/desktop/qt5_5140/Updates.xml",
-            [
-                plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73"),
-            ],
+            {"std": "win32_mingw73"},
+            {"std": "mingw73_32"},
+            {"std": "windows_x86/desktop/qt5_5140/Updates.xml"},
+            {"std": [plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73")]},
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
@@ -467,13 +475,15 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "5.14.0",
-            "win64_mingw73",
-            "mingw73_64",
-            "windows_x86/desktop/qt5_5140/Updates.xml",
-            [
-                plain_qtbase_archive("qt.qt5.5140.win64_mingw73", "win64_mingw73"),
-                qtcharts_module("5.14.0", "win64_mingw73"),
-            ],
+            {"std": "win64_mingw73"},
+            {"std": "mingw73_64"},
+            {"std": "windows_x86/desktop/qt5_5140/Updates.xml"},
+            {
+                "std": [
+                    plain_qtbase_archive("qt.qt5.5140.win64_mingw73", "win64_mingw73"),
+                    qtcharts_module("5.14.0", "win64_mingw73"),
+                ]
+            },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
@@ -489,13 +499,15 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "6.2.0",
-            "win64_mingw73",
-            "mingw73_64",
-            "windows_x86/desktop/qt6_620/Updates.xml",
-            [
-                plain_qtbase_archive("qt.qt6.620.win64_mingw73", "win64_mingw73", should_install=False),
-                qtpositioning_module("6.2.0", "win64_mingw73"),
-            ],
+            {"std": "win64_mingw73"},
+            {"std": "mingw73_64"},
+            {"std": "windows_x86/desktop/qt6_620/Updates.xml"},
+            {
+                "std": [
+                    plain_qtbase_archive("qt.qt6.620.win64_mingw73", "win64_mingw73", should_install=False),
+                    qtpositioning_module("6.2.0", "win64_mingw73"),
+                ]
+            },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtlocation...\n"
@@ -509,13 +521,15 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "6.1.0",
-            "win64_mingw81",
-            "mingw81_64",
-            "windows_x86/desktop/qt6_610/Updates.xml",
-            [
-                plain_qtbase_archive("qt.qt6.610.win64_mingw81", "win64_mingw81"),
-                qtcharts_module("6.1.0", "win64_mingw81"),
-            ],
+            {"std": "win64_mingw81"},
+            {"std": "mingw81_64"},
+            {"std": "windows_x86/desktop/qt6_610/Updates.xml"},
+            {
+                "std": [
+                    plain_qtbase_archive("qt.qt6.610.win64_mingw81", "win64_mingw81"),
+                    qtcharts_module("6.1.0", "win64_mingw81"),
+                ]
+            },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
@@ -531,49 +545,54 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "android",
             "6.1.0",
-            "android_armv7",
-            "android_armv7",
-            "windows_x86/android/qt6_610_armv7/Updates.xml",
-            [
-                MockArchive(
-                    filename_7z="qtbase-windows-android_armv7.7z",
-                    update_xml_name="qt.qt6.610.android_armv7",
-                    contents=(
-                        # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                        PatchedFile(
-                            filename="mkspecs/qconfig.pri",
-                            unpatched_content="... blah blah blah ...\n"
-                            "QT_EDITION = Not OpenSource\n"
-                            "QT_LICHECK = Not Empty\n"
-                            "... blah blah blah ...\n",
-                            patched_content="... blah blah blah ...\n"
-                            "QT_EDITION = OpenSource\n"
-                            "QT_LICHECK =\n"
-                            "... blah blah blah ...\n",
-                        ),
-                        PatchedFile(
-                            filename="bin/target_qt.conf",
-                            unpatched_content="Prefix=/Users/qt/work/install/target\n"
-                            "HostPrefix=../../\n"
-                            "HostData=target\n",
-                            patched_content="Prefix={base_dir}{sep}6.1.0{sep}android_armv7{sep}target\n"
-                            "HostPrefix=../../mingw81_64\n"
-                            "HostData=../android_armv7\n",
-                        ),
-                        PatchedFile(
-                            filename="bin/qmake.bat",
-                            unpatched_content="... blah blah blah ...\n"
-                            "/Users/qt/work/install/bin\n"
-                            "... blah blah blah ...\n",
-                            patched_content="... blah blah blah ...\n"
-                            "{base_dir}\\6.1.0\\mingw81_64\\bin\n"
-                            "... blah blah blah ...\n",
+            {"std": "android_armv7"},
+            {"std": "android_armv7"},
+            {"std": "windows_x86/android/qt6_610_armv7/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-windows-android_armv7.7z",
+                        update_xml_name="qt.qt6.610.android_armv7",
+                        contents=(
+                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/Users/qt/work/install/target\n"
+                                "HostPrefix=../../\n"
+                                "HostData=target\n",
+                                patched_content="Prefix={base_dir}{sep}6.1.0{sep}android_armv7{sep}target\n"
+                                "HostPrefix=../../mingw1234_64\n"
+                                "HostData=../android_armv7\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.1.0\\mingw1234_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
-                ),
-            ],
+                ]
+            },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING : You are installing the android version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt windows desktop 6.1.0 win64_mingw1234`\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-android_armv7.7z in .*\n"
                 r"INFO    : Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]qmake.bat\n"
@@ -586,49 +605,54 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "linux",
             "android",
             "6.3.0",
-            "android_arm64_v8a",
-            "android_arm64_v8a",
-            "linux_x64/android/qt6_630_arm64_v8a/Updates.xml",
-            [
-                MockArchive(
-                    filename_7z="qtbase-linux-android_arm64_v8a.7z",
-                    update_xml_name="qt.qt6.630.android_arm64_v8a",
-                    contents=(
-                        # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                        PatchedFile(
-                            filename="mkspecs/qconfig.pri",
-                            unpatched_content="... blah blah blah ...\n"
-                            "QT_EDITION = Not OpenSource\n"
-                            "QT_LICHECK = Not Empty\n"
-                            "... blah blah blah ...\n",
-                            patched_content="... blah blah blah ...\n"
-                            "QT_EDITION = OpenSource\n"
-                            "QT_LICHECK =\n"
-                            "... blah blah blah ...\n",
-                        ),
-                        PatchedFile(
-                            filename="bin/target_qt.conf",
-                            unpatched_content="Prefix=/home/qt/work/install/target\n"
-                            "HostPrefix=../../\n"
-                            "HostData=target\n",
-                            patched_content="Prefix={base_dir}{sep}6.3.0{sep}android_arm64_v8a{sep}target\n"
-                            "HostPrefix=../../gcc_64\n"
-                            "HostData=../android_arm64_v8a\n",
-                        ),
-                        PatchedFile(
-                            filename="bin/qmake",
-                            unpatched_content="... blah blah blah ...\n"
-                            "/home/qt/work/install/bin\n"
-                            "... blah blah blah ...\n",
-                            patched_content="... blah blah blah ...\n"
-                            "{base_dir}/6.3.0/gcc_64/bin\n"
-                            "... blah blah blah ...\n",
+            {"std": "android_arm64_v8a"},
+            {"std": "android_arm64_v8a"},
+            {"std": "linux_x64/android/qt6_630_arm64_v8a/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-linux-android_arm64_v8a.7z",
+                        update_xml_name="qt.qt6.630.android_arm64_v8a",
+                        contents=(
+                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/home/qt/work/install/target\n"
+                                "HostPrefix=../../\n"
+                                "HostData=target\n",
+                                patched_content="Prefix={base_dir}{sep}6.3.0{sep}android_arm64_v8a{sep}target\n"
+                                "HostPrefix=../../gcc_64\n"
+                                "HostData=../android_arm64_v8a\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/home/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.3.0/gcc_64/bin\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
-                ),
-            ],
+                ]
+            },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING : You are installing the android version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt linux desktop 6\.3\.0 gcc_64`\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-linux-android_arm64_v8a.7z in .*\n"
                 r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
@@ -641,51 +665,118 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "mac",
             "ios",
             "6.1.2",
-            "ios",
-            "ios",
-            "mac_x64/ios/qt6_612/Updates.xml",
-            [
-                MockArchive(
-                    filename_7z="qtbase-mac-ios.7z",
-                    update_xml_name="qt.qt6.612.ios",
-                    contents=(
-                        # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                        PatchedFile(
-                            filename="mkspecs/qconfig.pri",
-                            unpatched_content="... blah blah blah ...\n"
-                            "QT_EDITION = Not OpenSource\n"
-                            "QT_LICHECK = Not Empty\n"
-                            "... blah blah blah ...\n",
-                            patched_content="... blah blah blah ...\n"
-                            "QT_EDITION = OpenSource\n"
-                            "QT_LICHECK =\n"
-                            "... blah blah blah ...\n",
-                        ),
-                        PatchedFile(
-                            filename="bin/target_qt.conf",
-                            unpatched_content="Prefix=/Users/qt/work/install/target\n"
-                            "HostPrefix=../../\n"
-                            "HostData=target\n",
-                            patched_content="Prefix={base_dir}{sep}6.1.2{sep}ios{sep}target\n"
-                            "HostPrefix=../../macos\n"
-                            "HostData=../ios\n",
-                        ),
-                        PatchedFile(
-                            filename="bin/qmake",
-                            unpatched_content="... blah blah blah ...\n"
-                            "/Users/qt/work/install/bin\n"
-                            "... blah blah blah ...\n",
-                            patched_content="... blah blah blah ...\n"
-                            "{base_dir}/6.1.2/macos/bin\n"
-                            "... blah blah blah ...\n",
+            {"std": "ios"},
+            {"std": "ios"},
+            {"std": "mac_x64/ios/qt6_612/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-mac-ios.7z",
+                        update_xml_name="qt.qt6.612.ios",
+                        contents=(
+                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/Users/qt/work/install/target\n"
+                                "HostPrefix=../../\n"
+                                "HostData=target\n",
+                                patched_content="Prefix={base_dir}{sep}6.1.2{sep}ios{sep}target\n"
+                                "HostPrefix=../../macos\n"
+                                "HostData=../ios\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.1.2/macos/bin\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
-                ),
-            ],
+                ]
+            },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING : You are installing the ios version of Qt, which requires that the desktop version of Qt is "
+                r"also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt mac desktop 6\.1\.2 clang_64`\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-mac-ios.7z in .*\n"
+                r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (
+            "install-qt mac ios 6.1.2 --autodesktop".split(),
+            "mac",
+            "ios",
+            "6.1.2",
+            {"std": "ios", "desk": "clang_64"},
+            {"std": "ios", "desk": "macos"},
+            {"std": "mac_x64/ios/qt6_612/Updates.xml", "desk": "mac_x64/desktop/qt6_612/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-mac-ios.7z",
+                        update_xml_name="qt.qt6.612.ios",
+                        contents=(
+                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/Users/qt/work/install/target\n"
+                                "HostPrefix=../../\n"
+                                "HostData=target\n",
+                                patched_content="Prefix={base_dir}{sep}6.1.2{sep}ios{sep}target\n"
+                                "HostPrefix=../../macos\n"
+                                "HostData=../ios\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.1.2/macos/bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                        ),
+                    ),
+                ],
+                "desk": [plain_qtbase_archive("qt.qt6.612.clang_64", "clang_64", host="mac")],
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : You are installing the ios version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. Now installing Qt: desktop 6\.1\.2 clang_64\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-mac-ios.7z in .*\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-mac-clang_64.7z in .*\n"
                 r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -700,22 +791,35 @@ def test_install(
     host: str,
     target: str,
     version: str,
-    arch: str,
-    arch_dir: str,
-    updates_url: str,
-    archives: List[MockArchive],
+    arch: Dict[str, str],
+    arch_dir: Dict[str, str],
+    updates_url: Dict[str, str],
+    archives: Dict[str, List[MockArchive]],
     expect_out,  # type: re.Pattern
 ):
-
     # For convenience, fill in version and arch dir: prevents repetitive data declarations
-    for i in range(len(archives)):
-        archives[i].version = version
-        archives[i].arch_dir = arch_dir
+    std_archives = archives["std"]
+    for i in range(len(std_archives)):
+        std_archives[i].version = version
+        std_archives[i].arch_dir = arch_dir["std"]
+    desktop_archives = archives.get("desk", [])
+    for i in range(len(desktop_archives)):
+        desktop_archives[i].version = version
+        desktop_archives[i].arch_dir = arch_dir["desk"]
 
-    mock_get_url, mock_download_archive = make_mock_geturl_download_archive(archives, arch, host, updates_url)
+    mock_get_url, mock_download_archive = make_mock_geturl_download_archive(
+        standard_archives=std_archives,
+        desktop_archives=desktop_archives,
+        standard_updates_url=updates_url.get("std", ""),
+        desktop_updates_url=updates_url.get("desk", ""),
+    )
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
+    monkeypatch.setattr(
+        "aqt.metadata.MetadataFactory.fetch_default_desktop_arch",
+        lambda *args: {"windows": "win64_mingw1234", "linux": "gcc_64", "mac": "clang_64"}[host],
+    )
 
     with TemporaryDirectory() as output_dir:
         cli = Cli()
@@ -729,20 +833,21 @@ def test_install(
 
         assert expect_out.match(err)
 
-        installed_path = Path(output_dir) / version / arch_dir
-        if version == "5.9.0":
-            installed_path = Path(output_dir) / "5.9" / arch_dir
-        assert installed_path.is_dir()
-        for archive in archives:
-            if not archive.should_install:
-                continue
-            for patched_file in archive.contents:
-                file_path = installed_path / patched_file.filename
-                assert file_path.is_file()
+        for key in arch_dir.keys():
+            installed_path = Path(output_dir) / version / arch_dir[key]
+            if version == "5.9.0":
+                installed_path = Path(output_dir) / "5.9" / arch_dir[key]
+            assert installed_path.is_dir()
+            for archive in archives[key]:
+                if not archive.should_install:
+                    continue
+                for patched_file in archive.contents:
+                    file_path = installed_path / patched_file.filename
+                    assert file_path.is_file()
 
-                expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
-                actual_content = file_path.read_text(encoding="utf_8")
-                assert actual_content == expect_content
+                    expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
+                    actual_content = file_path.read_text(encoding="utf_8")
+                    assert actual_content == expect_content
 
 
 @pytest.mark.parametrize(
@@ -902,7 +1007,9 @@ def test_install_pool_exception(monkeypatch, capsys, exception_class, settings_f
     archives = [plain_qtbase_archive("qt.qt6.610.win64_mingw81", "win64_mingw81")]
 
     cmd = ["install-qt", host, target, ver, arch]
-    mock_get_url, mock_download_archive = make_mock_geturl_download_archive(archives, arch, host, updates_url)
+    mock_get_url, mock_download_archive = make_mock_geturl_download_archive(
+        standard_archives=archives, standard_updates_url=updates_url
+    )
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.installer", mock_installer_func)
@@ -1003,7 +1110,9 @@ def test_installer_passes_base_to_metadatafactory(
         archives[i].version = version
         archives[i].arch_dir = arch_dir
 
-    basic_mock_get_url, mock_download_archive = make_mock_geturl_download_archive(archives, arch, host, updates_url)
+    basic_mock_get_url, mock_download_archive = make_mock_geturl_download_archive(
+        standard_archives=archives, standard_updates_url=updates_url
+    )
 
     def mock_get_url(url: str, *args, **kwargs) -> str:
         # If we are fetching an index.html file, get it from tests/data/

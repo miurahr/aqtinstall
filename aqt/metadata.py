@@ -25,7 +25,9 @@ import re
 import secrets as random
 import shutil
 from abc import ABC, abstractmethod
+from functools import reduce
 from logging import getLogger
+from pathlib import Path
 from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple, Union
 from urllib.parse import ParseResult, urlparse
 from xml.etree.ElementTree import Element
@@ -375,6 +377,39 @@ class QtRepoProperty:
     """
 
     @staticmethod
+    def dir_for_version(ver: Version) -> str:
+        return "5.9" if ver == Version("5.9.0") else f"{ver.major}.{ver.minor}.{ver.patch}"
+
+    @staticmethod
+    def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
+        if arch is None:
+            return ""
+        elif arch.startswith("win64_mingw"):
+            return arch[6:] + "_64"
+        elif arch.startswith("win32_mingw"):
+            return arch[6:] + "_32"
+        elif arch.startswith("win"):
+            m = re.match(r"win\d{2}_(?P<msvc>msvc\d{4})_(?P<winrt>winrt_x\d{2})", arch)
+            if m:
+                return f"{m.group('winrt')}_{m.group('msvc')}"
+            else:
+                return arch[6:]
+        elif host == "mac" and arch == "clang_64":
+            return QtRepoProperty.default_desktop_arch_dir(host, version)
+        else:
+            return arch
+
+    @staticmethod
+    def default_desktop_arch_dir(host: str, version: Union[Version, str]) -> str:
+        version: Version = version if isinstance(version, Version) else Version(version)
+        if host == "linux":
+            return "gcc_64"
+        elif host == "mac":
+            return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
+        else:  # Windows
+            raise NotImplementedError("This function should not be called in this way!")
+
+    @staticmethod
     def extension_for_arch(architecture: str, is_version_ge_6: bool) -> str:
         if architecture == "wasm_32":
             return "wasm"
@@ -394,6 +429,66 @@ class QtRepoProperty:
         if ext_lt_6 == ext_ge_6:
             return [ext_lt_6]
         return [ext_lt_6, ext_ge_6]
+
+    # Architecture, as reported in Updates.xml
+    MINGW_ARCH_PATTERN = re.compile(r"^win(?P<bits>\d+)_mingw(?P<version>\d+)?$")
+    # Directory that corresponds to an architecture
+    MINGW_DIR_PATTERN = re.compile(r"^mingw(?P<version>\d+)?_(?P<bits>\d+)$")
+
+    @staticmethod
+    def select_default_mingw(mingw_arches: List[str], is_dir: bool) -> Optional[str]:
+        """
+        Selects a default architecture from a non-empty list of mingw architectures, matching the pattern
+        MetadataFactory.MINGW_ARCH_PATTERN. Meant to be called on a list of installed mingw architectures,
+        or a list of architectures available for installation.
+        """
+
+        ArchBitsVer = Tuple[str, int, Optional[int]]
+        pattern = QtRepoProperty.MINGW_DIR_PATTERN if is_dir else QtRepoProperty.MINGW_ARCH_PATTERN
+
+        def mingw_arch_with_bits_and_version(arch: str) -> Optional[ArchBitsVer]:
+            match = pattern.match(arch)
+            if not match:
+                return None
+            bits = int(match.group("bits"))
+            ver = None if not match.group("version") else int(match.group("version"))
+            return arch, bits, ver
+
+        def select_superior_arch(lhs: ArchBitsVer, rhs: ArchBitsVer) -> ArchBitsVer:
+            _, l_bits, l_ver = lhs
+            _, r_bits, r_ver = rhs
+            if l_bits != r_bits:
+                return lhs if l_bits > r_bits else rhs
+            elif r_ver is None:
+                return lhs
+            elif l_ver is None:
+                return rhs
+            return lhs if l_ver > r_ver else rhs
+
+        candidates: List[ArchBitsVer] = list(filter(None, map(mingw_arch_with_bits_and_version, mingw_arches)))
+        if len(candidates) == 0:
+            return None
+        default_arch, _, _ = reduce(select_superior_arch, candidates)
+        return default_arch
+
+    @staticmethod
+    def find_installed_desktop_qt_dir(host: str, base_path: Path, version: Version) -> Optional[Path]:
+        """
+        Locates the default installed desktop qt directory, somewhere in base_path.
+        """
+        installed_qt_version_dir = base_path / QtRepoProperty.dir_for_version(version)
+        if host != "windows":
+            arch_path = installed_qt_version_dir / QtRepoProperty.default_desktop_arch_dir(host, version)
+            return arch_path if (arch_path / "bin/qmake").is_file() else None
+
+        def contains_qmake_exe(arch_path: Path) -> bool:
+            return (arch_path / "bin/qmake.exe").is_file()
+
+        paths = [d for d in installed_qt_version_dir.glob("mingw*")]
+        directories = list(filter(contains_qmake_exe, paths))
+        arch_dirs = [d.name for d in directories]
+        selected_dir = QtRepoProperty.select_default_mingw(arch_dirs, is_dir=True)
+        return installed_qt_version_dir / selected_dir if selected_dir else None
 
 
 class MetadataFactory:
@@ -824,6 +919,18 @@ class MetadataFactory:
         if self.spec is None:
             return str(self.archive_id)
         return "{} with spec {}".format(self.archive_id, self.spec)
+
+    def fetch_default_desktop_arch(self, version: Version) -> str:
+        assert self.archive_id.target == "desktop", "This function is meant to fetch desktop architectures"
+        if self.archive_id.host == "linux":
+            return "gcc_64"
+        elif self.archive_id.host == "mac":
+            return "clang_64"
+        arches = list(filter(lambda arch: QtRepoProperty.MINGW_ARCH_PATTERN.match(arch), self.fetch_arches(version)))
+        selected_arch = QtRepoProperty.select_default_mingw(arches, is_dir=False)
+        if not selected_arch:
+            raise EmptyMetadata("No default desktop architecture available")
+        return selected_arch
 
 
 def suggested_follow_up(meta: MetadataFactory) -> List[str]:

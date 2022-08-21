@@ -5,6 +5,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Dict, List, Set, Union
 from urllib.parse import urlparse
 
@@ -1117,3 +1118,58 @@ def test_fetch_http_download_error(monkeypatch, exception_on_error):
 
     # Require that a fallback url was tried
     assert len(urls_requested) == 2
+
+
+@pytest.mark.parametrize(
+    "host, expected, all_arches",
+    (
+        ("windows", "win32_mingw", ["win64_msvc2013_64", "win32_mingw", "win16_mingw"]),
+        ("windows", "win32_mingw", ["win64_msvc2013_64", "win32_mingw"]),
+        ("windows", "win1_mingw0", ["win64_msvc2013_64", "win_mingw900", "win1_mingw0"]),
+        ("windows", "win32_mingw1", ["win64_msvc2013_64", "win32_mingw", "win32_mingw1"]),
+        ("windows", "win64_mingw", ["win64_msvc2013_64", "win32_mingw900", "win64_mingw"]),
+        ("windows", "win64_mingw81", ["win64_msvc2013_64", "win64_mingw81", "win64_mingw"]),
+        ("windows", "win64_mingw73", ["win64_msvc2013_64", "win64_mingw53", "win64_mingw73"]),
+        ("windows", "win64_mingw", ["win64_msvc2013_64", "win64_mingw", "win64_mingw"]),
+        ("windows", EmptyMetadata(), []),
+        ("linux", "gcc_64", ["should not fetch arches"]),
+        ("mac", "clang_64", ["should not fetch arches"]),
+    ),
+)
+def test_select_default_mingw(monkeypatch, host: str, expected: Union[str, Exception], all_arches: List[str]):
+    monkeypatch.setattr("aqt.metadata.MetadataFactory.fetch_arches", lambda *args, **kwargs: all_arches)
+
+    if isinstance(expected, Exception):
+        with pytest.raises(type(expected)) as e:
+            MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(Version("1.2.3"))
+        assert e.type == type(expected)
+    else:
+        actual_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(Version("1.2.3"))
+        assert actual_arch == expected
+
+
+@pytest.mark.parametrize(
+    "expected_result, installed_files",
+    (
+        ("mingw73_32", ["mingw73_32/bin/qmake.exe", "msvc2017/bin/qmake.exe"]),
+        (None, ["msvc2017/bin/qmake.exe"]),
+        (None, ["mingw73_win/bin/qmake.exe"]),  # Bad directory: mingw73_win does not fit the mingw naming convention
+        (None, ["mingw73_32/bin/qmake", "msvc2017/bin/qmake.exe"]),
+        ("mingw81_32", ["mingw73_32/bin/qmake.exe", "mingw81_32/bin/qmake.exe"]),
+        ("mingw73_64", ["mingw73_64/bin/qmake.exe", "mingw73_32/bin/qmake.exe"]),
+    ),
+)
+def test_find_installed_qt_mingw_dir(expected_result: str, installed_files: List[str]):
+    qt_ver = "6.3.0"
+    host = "windows"
+
+    # Setup a mock install directory that includes some installed files
+    with TemporaryDirectory() as base_dir:
+        base_path = Path(base_dir)
+        for file in installed_files:
+            path = base_path / qt_ver / file
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("Mock installed file")
+
+        actual_result = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, Version(qt_ver))
+        assert (actual_result.name if actual_result else None) == expected_result

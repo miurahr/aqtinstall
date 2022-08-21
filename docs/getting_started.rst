@@ -296,6 +296,13 @@ Finally, let's install Qt 6.2.0 for Android armv7 with the ``qtcharts`` and
 
     $ aqt install-qt linux android 6.2.0 android_armv7 -m qtcharts qtnetworkauth
 
+Please note that when you install Qt for android or ios, the installation will not
+be functional unless you install the corresponding desktop version of Qt alongside it.
+You can do this automatically with the ``--autodesktop`` flag:
+
+.. code-block:: console
+
+    $ aqt install-qt linux android 6.2.0 android_armv7 -m qtcharts qtnetworkauth --autodesktop
 
 Installing Qt for WASM
 ----------------------
