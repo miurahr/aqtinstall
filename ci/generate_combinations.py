@@ -46,7 +46,7 @@ def iter_archive_ids(
             use_targets = ArchiveId.TARGETS_FOR_HOST[host]
         for target in use_targets:
             for ext in iter_extensions():
-                yield ArchiveId(category, host, target, ext)
+                yield ArchiveId(category, host, target, {ext})
 
 
 def iter_arches() -> Generator[dict, None, None]:

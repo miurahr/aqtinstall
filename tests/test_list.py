@@ -145,42 +145,33 @@ def test_list_versions_tools(monkeypatch, spec_regex, os_name, target, in_file, 
     tools = MetadataFactory(ArchiveId("tools", os_name, target)).getList()
     assert tools == expected["tools"]
 
-    for ext, expected_output in expected["qt"].items():
-        # Test 'aqt list-qt'
-        archive_id = ArchiveId("qt", os_name, target, ext if ext != "qt" else "")
-        all_versions = MetadataFactory(archive_id).getList()
+    # Test 'aqt list-qt'
+    expected_output = expected["qt"]["qt"]
+    archive_id = ArchiveId("qt", os_name, target)
+    all_versions = MetadataFactory(archive_id).getList()
+    assert f"{all_versions}" == "\n".join(expected_output)
 
-        if len(expected_output) == 0:
-            assert not all_versions
-        else:
-            assert f"{all_versions}" == "\n".join(expected_output)
+    # Filter for the latest version only
+    latest_ver = MetadataFactory(archive_id, is_latest_version=True).getList()
+    assert f"{latest_ver}" == expected_output[-1].split(" ")[-1]
 
-        # Filter for the latest version only
-        latest_ver = MetadataFactory(archive_id, is_latest_version=True).getList()
+    for row in expected_output:
+        spec = SimpleSpec(spec_regex.search(row).group(1))
 
-        if len(expected_output) == 0:
-            assert not latest_ver
-        else:
-            assert f"{latest_ver}" == expected_output[-1].split(" ")[-1]
+        # Find the latest version for a particular spec
+        latest_ver_for_spec = MetadataFactory(
+            archive_id,
+            spec=spec,
+            is_latest_version=True,
+        ).getList()
+        assert f"{latest_ver_for_spec}" == row.split(" ")[-1]
 
-        for row in expected_output:
-            spec_str = spec_regex.search(row).group(1)
-            spec = SimpleSpec(spec_str) if not ext.endswith("preview") else SimpleSpec(spec_str + ".0-preview")
-
-            # Find the latest version for a particular spec
-            latest_ver_for_spec = MetadataFactory(
-                archive_id,
-                spec=spec,
-                is_latest_version=True,
-            ).getList()
-            assert f"{latest_ver_for_spec}" == row.split(" ")[-1]
-
-            # Find all versions for a particular spec
-            all_ver_for_spec = MetadataFactory(
-                archive_id,
-                spec=spec,
-            ).getList()
-            assert f"{all_ver_for_spec}" == row
+        # Find all versions for a particular spec
+        all_ver_for_spec = MetadataFactory(
+            archive_id,
+            spec=spec,
+        ).getList()
+        assert f"{all_ver_for_spec}" == row
 
 
 @pytest.mark.parametrize(
@@ -198,7 +189,7 @@ def test_list_versions_tools(monkeypatch, spec_regex, os_name, target, in_file, 
     ],
 )
 def test_list_architectures_and_modules(monkeypatch, version: str, extension: str, in_file: str, expect_out_file: str):
-    archive_id = ArchiveId("qt", "windows", "desktop", extension)
+    archive_id = ArchiveId("qt", "windows", "desktop", {extension})
     _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
     expect = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
 
@@ -241,7 +232,7 @@ def test_list_src_doc_examples_archives(
 ):
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: win_5152_sde_xml_file)
 
-    archive_id = ArchiveId("qt", host, "desktop", "src_doc_examples")
+    archive_id = ArchiveId("qt", host, "desktop", {"src_doc_examples"})
     archives = set(MetadataFactory(archive_id).fetch_archives_sde(cmd_type, Version(version)))
     assert archives == expected
 
@@ -263,7 +254,7 @@ def test_list_src_doc_examples_modules(
 ):
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: win_5152_sde_xml_file)
 
-    archive_id = ArchiveId("qt", host, "desktop", "src_doc_examples")
+    archive_id = ArchiveId("qt", host, "desktop", {"src_doc_examples"})
     modules = set(MetadataFactory(archive_id).fetch_modules_sde(cmd_type, Version(version)))
     assert modules == expected
 
@@ -410,17 +401,18 @@ def test_long_qt_modules(monkeypatch, host: str, target: str, version: str, arch
 
 
 @pytest.fixture
-def expected_windows_desktop_5140() -> Dict:
-    xmlexpect = "windows-5140-expect.json"
-    return json.loads((Path(__file__).parent / "data" / xmlexpect).read_text("utf-8"))
+def expected_windows_desktop_plus_wasm_5140() -> Dict:
+    input_filenames = "windows-5140-expect.json", "windows-5140-wasm-expect.json"
+    to_join = [json.loads((Path(__file__).parent / "data" / f).read_text("utf-8")) for f in input_filenames]
+    return {
+        "architectures": [arch for _dict in to_join for arch in _dict["architectures"]],
+        "modules_by_arch": {**to_join[0]["modules_by_arch"], **to_join[1]["modules_by_arch"]},
+    }
 
 
 @pytest.mark.parametrize(
     "args, expect",
     (
-        ("--extensions latest", {"src_doc_examples"}),
-        ("--spec 5.14 --extensions latest", {"wasm", "src_doc_examples"}),
-        ("--extensions 5.14.0", {"wasm", "src_doc_examples"}),
         ("--modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
         ("--spec 5.14 --modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
         ("--modules 5.14.0 win32_mingw73", ["modules_by_arch", "win32_mingw73"]),
@@ -428,29 +420,23 @@ def expected_windows_desktop_5140() -> Dict:
         ("--modules 5.14.0 win64_mingw73", ["modules_by_arch", "win64_mingw73"]),
         ("--modules 5.14.0 win64_msvc2015_64", ["modules_by_arch", "win64_msvc2015_64"]),
         ("--modules 5.14.0 win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
-        ("--extension wasm --modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
-        ("--extension wasm --spec 5.14 --modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
-        ("--extension wasm --modules 5.14.0 win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
         ("--arch latest", ["architectures"]),
         ("--spec 5.14 --arch latest", ["architectures"]),
         ("--arch 5.14.0", ["architectures"]),
-        ("--extension wasm --arch latest", ["architectures"]),
-        ("--extension wasm --spec 5.14 --arch latest", ["architectures"]),
-        ("--extension wasm --arch 5.14.0", ["architectures"]),
     ),
 )
 def test_list_qt_cli(
     monkeypatch,
     capsys,
-    expected_windows_desktop_5140: Dict[str, Set[str]],
+    expected_windows_desktop_plus_wasm_5140: Dict[str, Set[str]],
     args: str,
     expect: Union[Set[str], List[str]],
 ):
-    htmlfile, xmlfile = "windows-desktop.html", "windows-5140-update.xml"
+    htmlfile, xmlfile, wasm_xmlfile = "windows-desktop.html", "windows-5140-update.xml", "windows-5140-wasm-update.xml"
     version_string_to_replace = "qt5.5140"
     if isinstance(expect, list):
         # In this case, 'expect' is a list of keys to follow to the expected values.
-        expected_dict = expected_windows_desktop_5140
+        expected_dict = expected_windows_desktop_plus_wasm_5140
         for key in expect:  # Follow the chain of keys to the list of values.
             expected_dict = expected_dict[key]
         assert isinstance(expected_dict, list)
@@ -464,7 +450,9 @@ def test_list_qt_cli(
         if not rest_of_url.endswith("Updates.xml"):
             return htmltext
 
-        xmltext = (Path(__file__).parent / "data" / xmlfile).read_text("utf-8")
+        norm_xmltext = (Path(__file__).parent / "data" / xmlfile).read_text("utf-8")
+        wasm_xmltext = (Path(__file__).parent / "data" / wasm_xmlfile).read_text("utf-8")
+        xmltext = wasm_xmltext if rest_of_url.endswith("_wasm/Updates.xml") else norm_xmltext
         # If we are serving an Updates.xml, `aqt list` will look for a Qt version number.
         # We will replace the version numbers in the file with the requested version.
         match = re.search(r"qt(\d)_(\d+)", rest_of_url)
@@ -480,6 +468,72 @@ def test_list_qt_cli(
     out, err = capsys.readouterr()
     output_set = set(out.strip().split())
     assert output_set == expect_set
+
+
+@pytest.mark.parametrize(
+    "qt_ver_str, expect_set", (("6.2.0", {"android_x86", "android_x86_64", "android_armv7", "android_arm64_v8a"}),)
+)
+def test_list_android_arches(monkeypatch, capsys, qt_ver_str: str, expect_set: Set[str]):
+    host, target = "windows", "android"
+
+    def _mock_fetch_http(_, rest_of_url, *args, **kwargs: str) -> str:
+        htmltext = (Path(__file__).parent / "data" / "windows-android.html").read_text("utf-8")
+        if not rest_of_url.endswith("Updates.xml"):
+            return htmltext
+
+        xmltext = (Path(__file__).parent / "data" / "windows-620-android-armv7-update.xml").read_text("utf-8")
+        # If we are serving an Updates.xml, `aqt list` will look for a Qt version number.
+        # We will replace the version numbers in the file with the requested version.
+        match = re.search(r"qt\d_\d+_(?P<arch>\w+)/Updates\.xml$", rest_of_url)
+        assert match
+        return xmltext.replace("armv7", match.group("arch"))
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
+
+    # Unit test:
+    archive_id = ArchiveId("qt", host, target, {"x86", "x86_64", "armv7", "arm64_v8a"})
+    actual_arches = MetadataFactory(archive_id, architectures_ver=qt_ver_str).getList()
+    assert set(actual_arches) == expect_set
+
+    # Integration test:
+    cli = Cli()
+    cli.run(["list-qt", host, target, "--arch", qt_ver_str])
+    out, err = capsys.readouterr()
+    output_set = set(out.strip().split())
+    assert output_set == expect_set
+
+
+@pytest.mark.parametrize(
+    "host, has_wasm",
+    (("linux", True), ("windows", False), ("mac", False)),
+)
+def test_list_desktop_arches_qt5130(monkeypatch, capsys, host: str, has_wasm: bool):
+    """Tests the edge case of desktop Qt 5.13.0, in which "wasm_32" is a valid arch for Linux but not win/mac."""
+
+    # Generate some mock Updates.xml files. The host mismatch is not important; we just want to check for arch==wasm
+    updates_xmltext, wasm_updates_xmltext = [
+        (Path(__file__).parent / "data" / filename).read_text("utf-8").replace("qt5.5140", "qt5.5130")
+        for filename in ("windows-5140-update.xml", "windows-5140-wasm-update.xml")
+    ]
+
+    def _mock_fetch_http(_, rest_of_url, *args, **kwargs: str) -> str:
+        if rest_of_url == "online/qtsdkrepository/linux_x64/desktop/qt5_5130_wasm/Updates.xml":
+            return wasm_updates_xmltext
+        elif rest_of_url.endswith("/desktop/qt5_5130/Updates.xml"):
+            return updates_xmltext
+        else:
+            assert False, f"Fetched an unexpected file at '{rest_of_url}'"
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
+
+    cli = Cli()
+    cli.run(["list-qt", host, "desktop", "--arch", "5.13.0"])
+    out, err = capsys.readouterr()
+    output_set = set(out.strip().split())
+    if has_wasm:
+        assert "wasm_32" in output_set
+    else:
+        assert "wasm_32" not in output_set
 
 
 @pytest.mark.parametrize(
@@ -569,45 +623,10 @@ def test_list_choose_tool_by_version(simple_spec, expected_name):
         assert expected_name is None
 
 
-qt6_android_requires_ext_msg = (
-    "Qt 6 for Android requires one of the following extensions: "
-    f"{ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6}. "
-    "Please add your extension using the `--extension` flag."
-)
-no_arm64_v8_msg = "The extension 'arm64_v8a' is only valid for Qt 6 for Android"
-no_wasm_msg = "The extension 'wasm' is only available in Qt 5.13-5.15 and 6.2+ on desktop."
-
-
-@pytest.mark.parametrize(
-    "target, ext, version, expected_msg",
-    (
-        ("android", "", "6.2.0", qt6_android_requires_ext_msg),
-        ("android", "arm64_v8a", "5.13.0", no_arm64_v8_msg),
-        ("desktop", "arm64_v8a", "5.13.0", no_arm64_v8_msg),
-        ("desktop", "arm64_v8a", "6.2.0", no_arm64_v8_msg),
-        ("desktop", "wasm", "5.12.11", no_wasm_msg),  # out of range
-        ("desktop", "wasm", "6.1.9", no_wasm_msg),  # out of range
-        ("android", "wasm", "5.12.11", no_wasm_msg),  # in range, wrong target
-        ("android", "wasm", "5.14.0", no_wasm_msg),  # in range, wrong target
-        ("android", "wasm", "6.1.9", qt6_android_requires_ext_msg),
-    ),
-)
-def test_list_invalid_extensions(capsys, monkeypatch, target, ext, version, expected_msg):
-    host = "windows"
-    extension_params = ["--extension", ext] if ext else []
-    cli = Cli()
-    cli.run(["list-qt", host, target, *extension_params, "--arch", version])
-    out, err = capsys.readouterr()
-    sys.stdout.write(out)
-    sys.stderr.write(err)
-    assert expected_msg in err
-
-
 mac_qt = ArchiveId("qt", "mac", "desktop")
-mac_wasm = ArchiveId("qt", "mac", "desktop", "wasm")
+mac_wasm = ArchiveId("qt", "mac", "desktop", {"wasm"})
 wrong_tool_name_msg = "Please use 'aqt list-tool mac desktop' to check what tools are available."
 wrong_qt_version_msg = "Please use 'aqt list-qt mac desktop' to show versions of Qt available."
-wrong_ext_msg = "Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions."
 wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to list valid architectures."
 
 
@@ -632,10 +651,6 @@ wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to li
             [wrong_qt_version_msg, wrong_arch_msg],
         ),
         (
-            MetadataFactory(mac_qt, extensions_ver="1.2.3"),
-            [wrong_qt_version_msg],
-        ),
-        (
             MetadataFactory(mac_qt, archives_query=["1.2.3", "clang_64", "a module", "another module"]),
             [
                 "Please use 'aqt list-qt mac desktop' to show versions of Qt available.",
@@ -651,34 +666,20 @@ wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to li
             ],
         ),
         (
-            MetadataFactory(mac_wasm),
-            [wrong_ext_msg],
-        ),
-        (
             MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9")),
-            [
-                wrong_ext_msg,
-                "Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'.",
-            ],
+            ["Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'."],
         ),
         (
-            MetadataFactory(ArchiveId("tools", "mac", "desktop", "wasm"), tool_name="ifw"),
-            [
-                "Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.",
-                wrong_tool_name_msg,
-            ],
+            MetadataFactory(ArchiveId("tools", "mac", "desktop", {"wasm"}), tool_name="ifw"),
+            [wrong_tool_name_msg],
         ),
         (
             MetadataFactory(mac_wasm, architectures_ver="1.2.3"),
-            [wrong_ext_msg, wrong_qt_version_msg],
+            [wrong_qt_version_msg],
         ),
         (
             MetadataFactory(mac_wasm, modules_query=("1.2.3", "clang_64")),
-            [wrong_ext_msg, wrong_qt_version_msg, wrong_arch_msg],
-        ),
-        (
-            MetadataFactory(mac_wasm, extensions_ver="1.2.3"),
-            [wrong_ext_msg, wrong_qt_version_msg],
+            [wrong_qt_version_msg, wrong_arch_msg],
         ),
     ),
 )
@@ -688,12 +689,12 @@ def test_suggested_follow_up(meta: MetadataFactory, expected_message: str):
 
 def test_format_suggested_follow_up():
     suggestions = [
-        "Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.",
+        "Please use 'aqt list-tool mac desktop --modules <QT_VERSION>' to list valid modules.",
         "Please use 'aqt list-tool mac desktop' to check what tools are available.",
     ]
     expected = (
         "==============================Suggested follow-up:==============================\n"
-        "* Please use 'aqt list-tool mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
+        "* Please use 'aqt list-tool mac desktop --modules <QT_VERSION>' to list valid modules.\n"
         "* Please use 'aqt list-tool mac desktop' to check what tools are available."
     )
     ex = AqtException("msg", suggested_action=suggestions)
@@ -713,13 +714,13 @@ def test_format_suggested_follow_up_empty():
             "qt/mac/desktop with spec 5.42",
         ),
         (
-            MetadataFactory(ArchiveId("qt", "mac", "desktop", "wasm"), spec=SimpleSpec("5.42")),
-            "qt/mac/desktop/wasm with spec 5.42",
+            MetadataFactory(ArchiveId("qt", "mac", "desktop", {"wasm"}), spec=SimpleSpec("5.42")),
+            "qt/mac/desktop/{'wasm'} with spec 5.42",
         ),
         (MetadataFactory(ArchiveId("qt", "mac", "desktop")), "qt/mac/desktop"),
         (
-            MetadataFactory(ArchiveId("qt", "mac", "desktop", "wasm")),
-            "qt/mac/desktop/wasm",
+            MetadataFactory(ArchiveId("qt", "mac", "desktop", {"wasm"})),
+            "qt/mac/desktop/{'wasm'}",
         ),
     ),
 )
@@ -978,7 +979,6 @@ def test_show_list_bad_connection(monkeypatch, capsys, exception_class, error_ms
     assert format(error.value) == (
         f"{error_msg}\n"
         "==============================Suggested follow-up:==============================\n"
-        "* Please use 'aqt list-qt mac desktop --extensions <QT_VERSION>' to list valid extensions.\n"
         "* Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'."
     )
 

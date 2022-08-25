@@ -1,0 +1,18 @@
+{
+  "architectures": [
+    "wasm_32"
+  ],
+  "modules_by_arch": {
+    "wasm_32": [
+      "qtcharts",
+      "qtdatavis3d",
+      "qtlottie",
+      "qtnetworkauth",
+      "qtpurchasing",
+      "qtquicktimeline",
+      "qtscript",
+      "qtvirtualkeyboard",
+      "qtwebplugin"
+    ]
+  }
+}
