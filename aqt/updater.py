@@ -97,7 +97,7 @@ class Updater:
                 return True
         return False
 
-    def patch_pkgconfig(self, oldvalue, os_name):
+    def patch_pkgconfig(self, oldvalue: str, os_name: str):
         for pcfile in self.prefix.joinpath("lib", "pkgconfig").glob("*.pc"):
             self.logger.info("Patching {}".format(pcfile))
             self._patch_textfile(
@@ -112,7 +112,7 @@ class Updater:
                     "-F{}".format(os.path.join(str(self.prefix), "lib")),
                 )
 
-    def patch_libtool(self, oldvalue, os_name):
+    def patch_libtool(self, oldvalue: str, os_name: str):
         for lafile in self.prefix.joinpath("lib").glob("*.la"):
             self.logger.info("Patching {}".format(lafile))
             self._patch_textfile(
@@ -256,6 +256,15 @@ class Updater:
             prefix = base_path / version_dir / arch_dir
             updater = Updater(prefix, logger)
             updater.set_license(base_dir, version_dir, arch_dir)
+
+            # Patch all pkgconfig and libtool files, if they exist
+            if target.os_name == "linux":
+                updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
+                updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
+            elif target.os_name == "mac":
+                updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
+                updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
+
             if target.arch not in [
                 "ios",
                 "android",
@@ -267,13 +276,7 @@ class Updater:
             ]:  # desktop version
                 updater.make_qtconf(base_dir, version_dir, arch_dir)
                 updater.patch_qmake()
-                if target.os_name == "linux":
-                    updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
-                    updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
-                elif target.os_name == "mac":
-                    updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
-                    updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
-                elif target.os_name == "windows":
+                if target.os_name == "windows":
                     updater.make_qtenv2(base_dir, version_dir, arch_dir)
                 if version < Version("5.14.0"):
                     updater.patch_qtcore(target)

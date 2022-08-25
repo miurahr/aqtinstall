@@ -614,7 +614,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-linux-android_arm64_v8a.7z",
                         update_xml_name="qt.qt6.630.android_arm64_v8a",
                         contents=(
-                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                            # Qt 6 non-desktop should patch qconfig.pri, qmake script, target_qt.conf, and pkgconfig/*.pc
                             PatchedFile(
                                 filename="mkspecs/qconfig.pri",
                                 unpatched_content="... blah blah blah ...\n"
@@ -644,6 +644,16 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "{base_dir}/6.3.0/gcc_64/bin\n"
                                 "... blah blah blah ...\n",
                             ),
+                            PatchedFile(
+                                filename="lib/pkgconfig/Qt5Core_armeabi-v7a.pc",
+                                unpatched_content="prefix=/home/qt/work/install\n... blah blah blah ...\n",
+                                patched_content="prefix={base_dir}/6.3.0/android_arm64_v8a\n... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="lib/libQt5Core_armeabi-v7a.la",
+                                unpatched_content="libdir='=/home/qt/work/install/lib'\n... blah blah blah ...\n",
+                                patched_content="libdir='={base_dir}/6.3.0/android_arm64_v8a/lib'\n... blah blah blah ...\n",
+                            ),
                         ),
                     ),
                 ]
@@ -655,6 +665,8 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"          `aqt install-qt linux desktop 6\.3\.0 gcc_64`\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-linux-android_arm64_v8a.7z in .*\n"
+                r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]lib[/\\]pkgconfig[/\\]Qt5Core_armeabi-v7a\.pc\n"
+                r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]lib[/\\]libQt5Core_armeabi-v7a\.la\n"
                 r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
