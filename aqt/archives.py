@@ -124,12 +124,20 @@ class PackageUpdate:
     description: str
     release_date: str
     full_version: str
-    dependencies: List[str]
-    auto_dependon: Optional[List[str]]
-    downloadable_archives: Optional[List[str]]
+    dependencies: Iterable[str]
+    auto_dependon: Iterable[str]
+    downloadable_archives: Iterable[str]
     default: bool
     virtual: bool
     base: str
+
+    def __post_init__(self):
+        for iter_of_str in self.dependencies, self.auto_dependon, self.downloadable_archives:
+            assert isinstance(iter_of_str, Iterable) and not isinstance(iter_of_str, str)
+        for _str in self.name, self.display_name, self.description, self.release_date, self.full_version, self.base:
+            assert isinstance(_str, str)
+        for boolean in self.default, self.virtual:
+            assert isinstance(boolean, bool)
 
     @property
     def version(self):
@@ -219,7 +227,7 @@ class Updates:
     def merge(self, other):
         self.package_updates.extend(other.package_updates)
 
-    def get_depends(self, target: str):
+    def get_depends(self, target: str) -> Iterable[str]:
         # initialize
         filo = [target]
         packages = []
@@ -237,19 +245,19 @@ class Updates:
                                 filo.append(depend)
         return packages
 
-    def _get_text(self, item):
+    def _get_text(self, item) -> str:
         if item is not None and item.text is not None:
             return item.text
         else:
             return ""
 
-    def _get_list(self, item):
+    def _get_list(self, item) -> Iterable[str]:
         if item is not None and item.text is not None:
             return ssplit(item.text)
         else:
-            return None
+            return []
 
-    def _get_boolean(self, item):
+    def _get_boolean(self, item) -> bool:
         if "true" == item:
             return True
         else:
