@@ -40,12 +40,16 @@ jobs:
       - name: Build and install
         if: matrix.artifact == 'standard'
         run: |
-          python setup.py --version
           python -m pip install ./ --user
       - name: Build Standalone binary
         if: matrix.artifact == 'binary'
         run: |
-          ci/build_standalone.bat
+          python -m venv venv
+          source venv/Scripts/activate
+          python -m pip install -U pip wheel setuptools setuptools_scm gravitybee
+          python -m pip install -e .
+          python ci/build_standalone.py
+        shell: bash
       - name: Run aqt
         run: |
           import os
