@@ -36,7 +36,7 @@ dependencies = [
 dynamic = ["version", "entry-points"]
 
 [project.scripts]
-aqt = "aqt.__main__:main"
+aqt = "aqt:main"
 
 [project.optional-dependencies]
 test = [
