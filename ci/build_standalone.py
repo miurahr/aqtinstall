@@ -3,6 +3,8 @@ import argparse
 import gravitybee
 
 
+VENV_BIN_PATH="venv/Scripts/"
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("arch", nargs="?")
@@ -10,7 +12,7 @@ if __name__ == "__main__":
 
     # generate pseudo script
     # pip does not generate console_script any more but gravitybee expect it.
-    with open("build_venv/Scripts/aqtinstall.py", "w") as f:
+    with open(VENV_BIN_PATH + "aqtinstall.py", "w") as f:
         f.write("import aqt\nif __name__ == \"__main__\":\n    aqt.main()\n")
 
     # generate setup.py
@@ -22,7 +24,7 @@ if __name__ == "__main__":
     gbargs = gravitybee.Arguments(
         app_name="aqtinstall",
         pkg_name="aqt",
-        script_path="build_venv/Scripts/aqtinstall.py",
+        script_path="venv/Scripts/aqtinstall.py",
         src_dir=".",
         pkg_dir=".",
         clean=False,

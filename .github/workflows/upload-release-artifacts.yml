@@ -31,11 +31,10 @@ jobs:
 
       - name: Build standalone binary
         run: |
-          python -m venv build_venv
-          source build_venv/Scripts/activate
+          python -m venv venv
+          source venv/Scripts/activate
           python -m pip install -U pip wheel setuptools setuptools_scm gravitybee
           python -m pip install -e .
-          ls build_venv/Scripts
           python ci/build_standalone.py ${{ matrix.arch }}
         shell: bash
 
