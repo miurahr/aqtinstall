@@ -524,6 +524,8 @@ There are various combinations to accept according to Qt version.
 .. describe:: target
 
     desktop, ios, winrt, or android. The type of device for which you are developing Qt programs.
+    If your target is ios, please be aware that versions of Qt older than 6.2.4 are expected to be
+    non-functional with current versions of XCode (applies to any XCode greater than or equal to 13).
 
 .. describe:: Qt version
 

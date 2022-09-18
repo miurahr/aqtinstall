@@ -270,8 +270,8 @@ mac_build_jobs.append(
 # mobile SDK
 mac_build_jobs.extend(
     [
-        BuildJob("install-qt", "5.15.2", "mac", "ios", "ios", "ios", is_autodesktop=True),
-        BuildJob("install-qt", "6.2.2", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=False),
+        BuildJob("install-qt", "6.4.0", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=True),
+        BuildJob("install-qt", "6.2.4", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=False),
         BuildJob("install-qt", "6.1.0", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
     ]
 )
