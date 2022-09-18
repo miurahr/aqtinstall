@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Added
+-----
+* Automatically install desktop qt when required for android/ios qt installations(#540)
+
+Changed
+-------
+* Update Security policy
+* Update build script of standalone executable(#567)
+* Update combinations.json(#566)
+
 `v2.2.3`_ (17, Aug. 2022)
 -------------------------
 
