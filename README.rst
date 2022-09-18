@@ -157,10 +157,10 @@ to make it working well with installed directory.
 
 .. warning::
    If you are using aqtinstall to install the ios version of Qt, please be aware that
-   there are compatibility issues between XCode 13+ and versions of Qt less than 6.2.0.
+   there are compatibility issues between XCode 13+ and versions of Qt less than 6.2.4.
    You may use aqtinstall to install older versions of Qt for ios, but the developers of
    aqtinstall cannot guarantee that older versions will work on the most recent versions of MacOS.
-   Aqtinstall is tested for ios on MacOS 12 with Qt 6.2.0 and greater.
+   Aqtinstall is tested for ios on MacOS 12 with Qt 6.2.4 and greater.
    All earlier versions of Qt are expected not to function.
 
 Testimonies
