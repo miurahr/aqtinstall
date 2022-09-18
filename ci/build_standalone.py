@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # pyppyn build wheel with deprecated setup.py bdist_wheel
     # so fake it with dummy setup.py
     with open("setup.py", "w") as f:
-        f.write("import setuptools\nsetuptools.setup(name='aqtinstall', packages='aqt', package_data={'aqt': ['*.ini', '*.json']})\n")
+        f.write("import setuptools\nsetuptools.setup(name='aqtinstall', packages='aqt', entry_points={'console_script': 'aqt=aqt:main'}, package_data={'aqt': ['*.ini', '*.json']})\n")
 
     gbargs = gravitybee.Arguments(
         app_name="aqtinstall",
