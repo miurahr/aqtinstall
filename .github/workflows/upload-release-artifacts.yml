@@ -31,8 +31,12 @@ jobs:
 
       - name: Build standalone binary
         run: |
-          ci/build_standalone.bat
-          cp .gravitybee\dist\latest\aqt.exe .gravitybee\dist\latest\aqt_${{ matrix.arch }}.exe
+          python -m venv venv
+          source venv/Scripts/activate
+          python -m pip install -U pip wheel setuptools setuptools_scm gravitybee
+          python -m pip install -e .
+          python ci/build_standalone.py ${{ matrix.arch }}
+        shell: bash
 
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
