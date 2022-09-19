@@ -14,7 +14,7 @@ Added
 Changed
 -------
 * Update Security policy
-* Update build script of standalone executable(#567)
+* Update build script of standalone executable(#565)
 * Update combinations.json(#566)
 
 `v2.2.3`_ (17, Aug. 2022)
