@@ -33,7 +33,6 @@ jobs:
 
     - name: Build and install
       run: |
-        python setup.py --version
         python -m pip install ./ --user
 
     - name: Install generate_combinations dependencies
