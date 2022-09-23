@@ -124,12 +124,20 @@ class PackageUpdate:
     description: str
     release_date: str
     full_version: str
-    dependencies: List[str]
-    auto_dependon: Optional[List[str]]
-    downloadable_archives: Optional[List[str]]
+    dependencies: Iterable[str]
+    auto_dependon: Iterable[str]
+    downloadable_archives: Iterable[str]
     default: bool
     virtual: bool
     base: str
+
+    def __post_init__(self):
+        for iter_of_str in self.dependencies, self.auto_dependon, self.downloadable_archives:
+            assert isinstance(iter_of_str, Iterable) and not isinstance(iter_of_str, str)
+        for _str in self.name, self.display_name, self.description, self.release_date, self.full_version, self.base:
+            assert isinstance(_str, str)
+        for boolean in self.default, self.virtual:
+            assert isinstance(boolean, bool)
 
     @property
     def version(self):
@@ -219,7 +227,7 @@ class Updates:
     def merge(self, other):
         self.package_updates.extend(other.package_updates)
 
-    def get_depends(self, target: str):
+    def get_depends(self, target: str) -> Iterable[str]:
         # initialize
         filo = [target]
         packages = []
@@ -237,19 +245,19 @@ class Updates:
                                 filo.append(depend)
         return packages
 
-    def _get_text(self, item):
+    def _get_text(self, item) -> str:
         if item is not None and item.text is not None:
             return item.text
         else:
             return ""
 
-    def _get_list(self, item):
+    def _get_list(self, item) -> Iterable[str]:
         if item is not None and item.text is not None:
             return ssplit(item.text)
         else:
-            return None
+            return []
 
-    def _get_boolean(self, item):
+    def _get_boolean(self, item) -> bool:
         if "true" == item:
             return True
         else:
@@ -426,7 +434,7 @@ class QtArchives:
         # if we have located every requested package, then target_packages will be empty
         if not self.all_extra and len(target_packages) > 0:
             message = f"The packages {target_packages} were not found while parsing XML of package information!"
-            raise NoPackageFound(message, suggested_action=self.help_msg(target_packages.get_modules()))
+            raise NoPackageFound(message, suggested_action=self.help_msg(list(target_packages.get_modules())))
 
     def _append_tool_update(self, os_target_folder, update_xml, target, tool_version_str):
         packageupdate = update_xml.get(target)
@@ -463,12 +471,13 @@ class QtArchives:
                 )
             )
 
-    def help_msg(self, missing_modules: Iterable[str]) -> Iterable[str]:
+    def help_msg(self, missing_modules: Optional[List[str]] = None) -> List[str]:
+        _missing_modules: List[str] = missing_modules or []
         base_cmd = f"aqt list-qt {self.os_name} {self.target}"
         arch = f"Please use '{base_cmd} --arch {self.version}' to show architectures available."
         mods = f"Please use '{base_cmd} --modules {self.version} <arch>' to show modules available."
-        has_base_pkg: bool = self._base_module_name() in missing_modules
-        has_non_base_pkg: bool = len(list(missing_modules)) > 1 or not has_base_pkg
+        has_base_pkg: bool = self._base_module_name() in _missing_modules
+        has_non_base_pkg: bool = len(list(_missing_modules)) > 1 or not has_base_pkg
         messages = []
         if has_base_pkg:
             messages.append(arch)
@@ -548,11 +557,12 @@ class SrcDocExamplesArchives(QtArchives):
         """
         return TargetConfig("src_doc_examples", self.target, self.arch, self.os_name)
 
-    def help_msg(self, missing_modules: Iterable[str]) -> Iterable[str]:
+    def help_msg(self, missing_modules: Optional[List[str]] = None) -> List[str]:
+        _missing_modules: List[str] = missing_modules or []
         cmd_type = "example" if self.flavor == "examples" else self.flavor
         base_cmd = f"aqt list-{cmd_type} {self.os_name} {self.version}"
         mods = f"Please use '{base_cmd} --modules' to show modules available."
-        has_non_base_pkg: bool = len(list(missing_modules)) > 1
+        has_non_base_pkg: bool = len(list(_missing_modules)) > 1
         messages = []
         if has_non_base_pkg:
             messages.append(mods)
@@ -605,7 +615,7 @@ class ToolArchives(QtArchives):
         update_xml = Updates.fromstring(self.base, update_xml_text)
         self._append_tool_update(os_target_folder, update_xml, self.arch, self.tool_version_str)
 
-    def help_msg(self, *args) -> Iterable[str]:
+    def help_msg(self, *args) -> List[str]:
         return [f"Please use 'aqt list-tool {self.os_name} {self.target} {self.tool_name}' to show tool variants available."]
 
     def get_target_config(self) -> TargetConfig:
