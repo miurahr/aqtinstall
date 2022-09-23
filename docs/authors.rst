@@ -18,7 +18,7 @@ All contributors, listed alphabetically, are:
 * Aurélien Gâteau (patching to qmake)
 * Benjamin O (Github Actions and more)
 * Christian Hoffmann (Update mirror list)
-* David Dalcino (Many improvements on CI automations, List commands, tests, documents and so on)
+* David Dalcino (Many improvements on CI automations, commands, tests, documents and so on)
 * Doronin Stanislav (document)
 * Fabrice Le Bars (32bit binary)
 * Felix Barz (Android, Explicit extra module installation)

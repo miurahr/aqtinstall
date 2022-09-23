@@ -804,12 +804,12 @@ Command examples
 
 .. program:: None
 
-Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
+Example: Installing Qt SDK 5.12.12 for Linux with QtCharts and QtNetworkAuth:
 
 .. code-block:: console
 
     pip install aqtinstall
-    sudo aqt install-qt --outputdir /opt linux desktop 5.12.0 -m qtcharts qtnetworkauth
+    sudo aqt install-qt --outputdir /opt linux desktop 5.12.12 -m qtcharts qtnetworkauth
 
 
 Example: Installing the newest LTS version of Qt 5.12:
@@ -820,11 +820,11 @@ Example: Installing the newest LTS version of Qt 5.12:
     sudo aqt install-qt linux desktop 5.12 win64_mingw73
 
 
-Example: Installing Android (armv7) Qt 5.10.2:
+Example: Installing Android (armv7) Qt 5.13.2:
 
 .. code-block:: console
 
-    aqt install-qt linux android 5.10.2 android_armv7 --autodesktop
+    aqt install-qt linux android 5.13.2 android_armv7 --autodesktop
 
 
 Example: Install examples, doc and source:

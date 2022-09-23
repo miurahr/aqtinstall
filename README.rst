@@ -147,6 +147,12 @@ To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use 
 
     aqt install-qt windows desktop 6.2.0 win64_mingw81 -m qtcharts qtnetworking
 
+When you want to install Qt for android with required desktop toolsets
+
+.. code-block:: console
+
+    aqt install-qt linux android 5.13.2 android_armv7 --autodesktop
+
 
 When aqtinstall downloads and installs packages, it updates package configurations
 such as prefix directory in ``bin/qt.conf``, and ``bin/qconfig.pri``
