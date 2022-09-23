@@ -137,7 +137,7 @@ markers = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py{36,37,38,39,310}, py39d, mprof, fil
+envlist = check, docs, py{36,37,38,39,310,311}, py39d, mprof, fil
 isolated_build = True
 
 [testenv]
@@ -152,14 +152,14 @@ commands =
     python -m pytest -vv
 
 [testenv:check]
-basepython = python3.8
+basepython = python3.9
 extras = check
 commands =
     check-manifest {toxinidir}
     flake8 aqt tests
 
 [testenv:docs]
-basepython = python3.8
+basepython = python3.9
 extras = docs
 commands =
     sphinx-build {posargs:-E} -W -b html docs build/docs
@@ -178,7 +178,7 @@ deps =
     pytest-cov
 
 [testenv:mprof]
-basepython = python3.8
+basepython = python3.9
 commands =
     mprof run --multiprocess python -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
     mprof plot --output memory-profile.png
@@ -187,7 +187,7 @@ deps =
     matplotlib
 
 [testenv:fil]
-basepython = python3.8
+basepython = python3.9
 commands =
     fil-profile run -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
 deps =
@@ -206,4 +206,5 @@ python =
     3.8: py38, docs, check
     3.9: py39
     3.10: py310
+    3.11: py311
 """
