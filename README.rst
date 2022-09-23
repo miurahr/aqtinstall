@@ -74,10 +74,9 @@ There is precise documentation with many examples.
 You are recommended to read the *Getting started* section.
 
 - Getting started: https://aqtinstall.readthedocs.io/en/latest/getting_started.html
-- Stable (v2.1.x): https://aqtinstall.readthedocs.io/en/stable
+- Stable (v3.0.x): https://aqtinstall.readthedocs.io/en/stable
 - Latest: https://aqtinstall.readthedocs.io/en/latest
-- Old (v2.0.6) : https://aqtinstall.readthedocs.io/en/v2.0.6/
-- Obsolete (v1.2.5) : https://aqtinstall.readthedocs.io/en/v1.2.5/index.html
+- Old (v2.2.3) : https://aqtinstall.readthedocs.io/en/v2.2.3/
 
 Install
 -------
