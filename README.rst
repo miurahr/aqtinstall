@@ -54,7 +54,7 @@ Requirements
 ------------
 
 - Minimum Python version:
-    3.6
+    3.7
 
 - Recommended Python version:
     3.9 (frequently tested on)
@@ -66,7 +66,6 @@ Requirements
     py7zr
     texttable
     bs4
-    dataclasses; python_version < "3.7"
     defusedxml
 
 - Operating Systems:
