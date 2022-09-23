@@ -11,10 +11,14 @@ Added
 -----
 * Automatically install desktop qt when required for android/ios qt installations(#540)
 
+Fixed
+-----
+* Tolerate empty DownloadArchive tags while parsing XML(#563)
+* Fix standalone executable build for windows (#565,#567)
+
 Changed
 -------
 * Update Security policy
-* Update build script of standalone executable(#565)
 * Update combinations.json(#566)
 
 `v2.2.3`_ (17, Aug. 2022)
