@@ -76,7 +76,7 @@ class PlatformBuildJobs:
 
 
 python_versions = [
-    "3.8",
+    "3.9",
 ]
 
 qt_versions = ["5.13.2", "5.15.2"]
