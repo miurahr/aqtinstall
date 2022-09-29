@@ -7,9 +7,11 @@ Supported Versions
 +---------+---------------------+
 | Version | Status              |
 +=========+=====================+
-| 3.0.0b# | Development version |
+| 3.1.x   | Stable version      |
 +---------+---------------------+
-| 2.2.x   | Stable version      |
+| 3.0.x   | Security fix only   |
++---------+---------------------+
+| 2.2.x   | Security fix only   |
 +---------+---------------------+
 | < 2.2   | not supported       |
 +---------+---------------------+
