@@ -74,10 +74,9 @@ There is precise documentation with many examples.
 You are recommended to read the *Getting started* section.
 
 - Getting started: https://aqtinstall.readthedocs.io/en/latest/getting_started.html
-- Stable (v2.1.x): https://aqtinstall.readthedocs.io/en/stable
+- Stable (v3.0.x): https://aqtinstall.readthedocs.io/en/stable
 - Latest: https://aqtinstall.readthedocs.io/en/latest
-- Old (v2.0.6) : https://aqtinstall.readthedocs.io/en/v2.0.6/
-- Obsolete (v1.2.5) : https://aqtinstall.readthedocs.io/en/v1.2.5/index.html
+- Old (v2.2.3) : https://aqtinstall.readthedocs.io/en/v2.2.3/
 
 Install
 -------
@@ -146,6 +145,12 @@ To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use 
 .. code-block:: console
 
     aqt install-qt windows desktop 6.2.0 win64_mingw81 -m qtcharts qtnetworking
+
+When you want to install Qt for android with required desktop toolsets
+
+.. code-block:: console
+
+    aqt install-qt linux android 5.13.2 android_armv7 --autodesktop
 
 
 When aqtinstall downloads and installs packages, it updates package configurations

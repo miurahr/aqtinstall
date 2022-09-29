@@ -20,6 +20,7 @@ Changed
 -------
 * Update Security policy
 * Update combinations.json(#566)
+* CI: now test on MacOS 12(#541)
 
 `v2.2.3`_ (17, Aug. 2022)
 -------------------------
