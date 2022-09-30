@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.0.1`_ (30, Sep. 2022)
+-------------------------
+
+* Actions: Fix standalone executable upload (#581)
+* Actions: Bump versions (#579)
+  - pypa/gh-action-pypi-publish@v1
+  - actions/setup-python@v4
+
 `v3.0.0`_ (29, Sep. 2022)
 -------------------------
 
@@ -288,7 +296,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.1...HEAD
+.. _v3.0.1: https://github.com/miurahr/aqtinstall/compare/v3.0.0...v3.0.1
 .. _v3.0.0: https://github.com/miurahr/aqtinstall/compare/v2.2.3...v3.0.0
 .. _v2.2.3: https://github.com/miurahr/aqtinstall/compare/v2.2.2...v2.2.3
 .. _v2.2.2: https://github.com/miurahr/aqtinstall/compare/v2.2.1...v2.2.2
