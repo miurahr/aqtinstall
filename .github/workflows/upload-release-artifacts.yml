@@ -1,10 +1,10 @@
-# This will only run automatically when releases have been created, 
+# This will only run automatically when releases have been created,
 # and will only upload binaries to previously-created releases.
 # When run manually, it will overwrite the previous reelease binary
 
 name: Upload release artifacts
 
-on: 
+on:
   release:
     types:
       - created
@@ -24,11 +24,11 @@ jobs:
           fetch-depth: 20
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.py }}
           architecture: ${{ matrix.arch }}
-
+          cache: 'pip'
       - name: Build standalone binary
         run: |
           python -m venv venv
@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
-        with: 
+        with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: .gravitybee\dist\latest\aqt.exe
           tag: ${{ github.ref }}
@@ -49,12 +49,11 @@ jobs:
 
       - name: Upload to Release for all architectures
         uses: svenstaro/upload-release-action@v2
-        with: 
+        with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: .gravitybee\dist\latest\aqt_${{ matrix.arch }}.exe
           tag: ${{ github.ref }}
           overwrite: true
-          
       - name: Update continuous build
         uses: svenstaro/upload-release-action@v2
         with:
@@ -64,7 +63,6 @@ jobs:
           tag: Continuous
           file: .gravitybee\dist\latest\aqt.exe
         if: matrix.arch=='x64'
-          
       - name: Update continuous build for all architectures
         uses: svenstaro/upload-release-action@v2
         with:
