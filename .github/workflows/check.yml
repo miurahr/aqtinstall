@@ -21,9 +21,9 @@ jobs:
         fetch-depth: 20
     - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: '3.9'
     - name: Install tools
       run: |
         pip install -U pip

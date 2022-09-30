@@ -29,7 +29,7 @@ if __name__ == "__main__":
         pkg_dir=".",
         clean=False,
         with_latest=True,
-        name_format="aqt" if args.arch is None else "aqt-" + args.arch,
+        name_format="aqt" if args.arch is None else "aqt_" + args.arch,
     )
 
     pg = gravitybee.PackageGenerator(gbargs)

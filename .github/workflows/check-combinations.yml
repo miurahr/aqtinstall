@@ -26,10 +26,10 @@ jobs:
         branchtomerge: "origin/master"
         branch: "update-combinations"
 
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: '3.9'
 
     - name: Build and install
       run: |
