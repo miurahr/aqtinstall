@@ -28,7 +28,6 @@ jobs:
         with:
           python-version: ${{ matrix.py }}
           architecture: ${{ matrix.arch }}
-          cache: 'pip'
       - name: Build standalone binary
         run: |
           python -m venv venv
