@@ -75,7 +75,7 @@ Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list-qt 
 .. code-block:: console
 
     $ aqt list-qt windows desktop --arch 6.2.0
-    win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64
+    win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64 wasm_32
 
 Notice that this is a very small subset of the architectures listed in the 
 `Available Qt versions`_ wiki page. If we need to use some architecture that
@@ -222,79 +222,28 @@ This exercise is left to the reader.
 Installing Qt for Android
 -------------------------
 
-Let's install Qt for Android. Installing Qt 5 will be similar to installing Qt
-for Desktop on Windows, but there will be differences when we get to Qt 6.
+Let's install Qt for Android. This will be similar to installing Qt for Desktop on Windows.
+
+.. note::
+
+    Versions of aqtinstall older than 3.1.0 required the use of the ``--extensions`` and
+    ``--extension`` flag to list any architectures, modules, or archives for Qt 6 and above.
+    These flags are no longer necessary, so please do not use them.
 
 .. code-block:: console
 
     $ aqt list-qt windows android                           # Print Qt versions available
     5.9.0 5.9.1 ...
     ...
-    6.2.0
+    6.4.0
 
-    $ aqt list-qt windows android --arch 5.15.2             # Print architectures available
-    android
+    $ aqt list-qt windows android --arch 6.2.4              # Print architectures available
+    android_x86_64 android_armv7 android_x86 android_arm64_v8a
 
-    $ aqt list-qt windows android --modules 5.15.2 android  # Print modules available
-    qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquick3d qtquicktimeline qtscript
+    $ aqt list-qt windows android --modules 6.2.4 android_armv7   # Print modules available
+    qt3d qt5compat qtcharts qtconnectivity qtdatavis3d ...
 
-    $ aqt install-qt windows android 5.15.2 android -m qtcharts qtnetworkauth   # Install
-
-Let's see what happens when we try to list architectures and modules for Qt 6:
-
-.. code-block:: console
-
-    $ aqt list-qt windows android --arch 6.2.0                  # Print architectures available
-    Command line input error: Qt 6 for Android requires one of the following extensions:
-    ('x86_64', 'x86', 'armv7', 'arm64_v8a').
-    Please add your extension using the `--extension` flag.
-
-    $ aqt list-qt windows android --modules 6.2.0 android_armv7     # Print modules available
-    Command line input error: Qt 6 for Android requires one of the following extensions:
-    ('x86_64', 'x86', 'armv7', 'arm64_v8a').
-    Please add your extension using the `--extension` flag.
-
-The Qt 6 for Android repositories are a little different than the Qt 5 repositories,
-and the :ref:`aqt list-qt <list-qt command>` tool doesn't know where to look for modules and architectures
-if you don't tell it what architecture you need. I know, it sounds a little
-backwards, but that's how the Qt repo was put together.
-
-There are four architectures available, and the error message from :ref:`aqt list-qt <list-qt command>`
-just told us what they are: `x86_64`, `x86`, `armv7`, and `arm64_v8a`.
-
-We know we want to use `armv7` for the architecture, but we don't know exactly
-what value for 'architecture' we need to pass to :ref:`aqt install-qt <qt installation command>`
-yet, so we will use :ref:`aqt list-qt <list-qt command>` again:
-
-.. code-block:: console
-
-    $ aqt list-qt windows android --extension armv7 --arch 6.2.0
-    android_armv7
-
-You should be thinking, "Well, that was silly. All it did was add `android_` to
-the beginning of the architecture I gave it. Why do I need to use
-``aqt list-qt --arch`` for that?" The answer is, ``aqt list-qt --arch`` is
-checking to see what actually exists in the Qt repository. If it prints an error
-message, instead of the obvious `android_armv7`, we would know that Qt 6.2.0
-for that architecture doesn't exist for some reason, and any attempt to install
-it with :ref:`aqt install-qt <qt installation command>` will fail.
-
-If we want to install Qt 6.2.0 for armv7, we use this command to print available modules:
-
-.. code-block:: console
-
-    $ aqt list-qt windows android --extension armv7 --modules 6.2.0 android_armv7
-    qt3d qt5compat qtcharts qtconnectivity qtdatavis3d qtimageformats qtlottie
-    qtmultimedia qtnetworkauth qtpositioning qtquick3d qtquicktimeline
-    qtremoteobjects qtscxml qtsensors qtserialbus qtserialport qtshadertools
-    qtvirtualkeyboard qtwebchannel qtwebsockets qtwebview
-
-Finally, let's install Qt 6.2.0 for Android armv7 with the ``qtcharts`` and
-``qtnetworkauth`` modules:
-
-.. code-block:: console
-
-    $ aqt install-qt linux android 6.2.0 android_armv7 -m qtcharts qtnetworkauth
+    $ aqt install-qt windows android 6.2.4 android_armv7 -m qtcharts qtnetworkauth   # Install
 
 Please note that when you install Qt for android or ios, the installation will not
 be functional unless you install the corresponding desktop version of Qt alongside it.
@@ -302,33 +251,29 @@ You can do this automatically with the ``--autodesktop`` flag:
 
 .. code-block:: console
 
-    $ aqt install-qt linux android 6.2.0 android_armv7 -m qtcharts qtnetworkauth --autodesktop
+    $ aqt install-qt linux android 6.2.4 android_armv7 -m qtcharts qtnetworkauth --autodesktop
 
 Installing Qt for WASM
 ----------------------
 
-To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt <list-qt command>` that we are
-using the `wasm` architecture. We can do that by using the ``--extension wasm`` flag.
+To find out how to install Qt for WASM, we will need to use the ``wasm_32`` architecture.
+We can find out whether or not that architecture is available for our version of Qt with the
+``--arch`` flag.
 
 .. code-block:: console
 
-    $ aqt list-qt windows desktop --extension wasm
-    5.13.1 5.13.2
-    5.14.0 5.14.1 5.14.2
-    5.15.0 5.15.1 5.15.2
+    $ python -m aqt list-qt windows desktop --arch 6.1.3
+    win64_mingw81 win64_msvc2019_64
+    $ python -m aqt list-qt windows desktop --arch 6.2.0
+    win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64 wasm_32
 
-There are only a few versions of Qt that support WASM, and they are only available
-for desktop targets. If we tried this command with `android`, `winrt`, or `ios`
-targets, we would have seen an error message.
+Not every version of Qt supports WASM. This command shows us that we cannot use WASM with Qt 6.1.3.
 
-We can check the architecture and modules available as before:
+We can check the modules available as before:
 
 .. code-block:: console
 
-    $ aqt list-qt windows desktop --extension wasm --arch 5.15.2        # available architectures
-    wasm_32
-
-    $ aqt list-qt windows desktop --extension wasm --modules 5.15.2 wasm_32   # available modules
+    $ aqt list-qt windows desktop --modules 5.15.2 wasm_32   # available modules
     qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquicktimeline qtscript
     qtvirtualkeyboard qtwebglplugin
 

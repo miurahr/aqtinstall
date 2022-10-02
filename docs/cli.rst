@@ -42,17 +42,15 @@ list-qt command
 
     aqt list-qt [-h | --help]
                 [-c | --config]
-                [--extension <extension>]
                 [--spec <specification>]
                 [--modules      (<Qt version> | latest) <architecture> |
                  --long-modules (<Qt version> | latest) <architecture> |
-                 --extensions   (<Qt version> | latest) |
                  --arch         (<Qt version> | latest) |
                  --archives     (<Qt version> | latest) architecture [modules...]
                  --latest-version]
                 <host> [<target>]
 
-List available versions of Qt, targets, extensions, modules, and architectures.
+List available versions of Qt, targets, modules, and architectures.
 
 .. describe:: host
 
@@ -67,21 +65,6 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 .. option:: --help, -h
 
     Display help text
-
-.. option:: --extension <Extension>
-
-    Extension of packages to list
-    {wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}
-
-    Use the ``--extensions`` flag to list all relevant options for a host/target.
-    Incompatible with the ``--extensions`` flag, but may be combined with any other flag.
-
-.. option:: --extensions (<Qt version> | latest)
-
-    Qt version in the format of "5.X.Y", or the keyword ``latest``.
-    When set, this prints all valid arguments for the ``--extension`` flag for
-    Qt 5.X.Y, or the latest version of Qt if ``latest`` is specified.
-    Incompatible with the ``--extension`` flag.
 
 .. option:: --spec <Specification>
 
@@ -98,7 +81,7 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 
 .. option:: --modules (<Qt version> | latest) <architecture>
 
-    This flag lists all the modules available for Qt 5.X.Y with a host/target/extension/architecture
+    This flag lists all the modules available for Qt 5.X.Y with a host/target/architecture
     combination, or the latest version of Qt if ``latest`` is specified.
     You can list available architectures by using ``aqt list-qt`` with the
     ``--arch`` flag described below.
@@ -149,7 +132,7 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 .. option:: --arch (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this prints all architectures
-    available for Qt 5.X.Y with a host/target/extension, or the latest version
+    available for Qt 5.X.Y with a host/target, or the latest version
     of Qt if ``latest`` is specified.
 
 .. _`list archives flag`:
@@ -174,7 +157,7 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 .. option:: --latest-version
 
     Print only the newest version available
-    May be combined with the ``--extension`` and/or ``--spec`` flags.
+    May be combined with the ``--spec`` flag.
 
 
 .. _list-src command:
