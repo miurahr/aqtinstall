@@ -6,7 +6,7 @@ import shutil
 import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Dict, List, Set, Union
+from typing import Dict, List, Optional, Set, Union
 from urllib.parse import urlparse
 
 import pytest
@@ -188,8 +188,8 @@ def test_list_versions_tools(monkeypatch, spec_regex, os_name, target, in_file, 
         ("6.2.0", "", "windows-620-update.xml", "windows-620-expect.json"),
     ],
 )
-def test_list_architectures_and_modules(monkeypatch, version: str, extension: str, in_file: str, expect_out_file: str):
-    archive_id = ArchiveId("qt", "windows", "desktop", {extension})
+def test_list_qt_modules(monkeypatch, version: str, extension: str, in_file: str, expect_out_file: str):
+    archive_id = ArchiveId("qt", "windows", "desktop")
     _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
     expect = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
 
@@ -198,9 +198,6 @@ def test_list_architectures_and_modules(monkeypatch, version: str, extension: st
     for arch in expect["architectures"]:
         modules = MetadataFactory(archive_id).fetch_modules(Version(version), arch)
         assert modules == sorted(expect["modules_by_arch"][arch])
-
-    arches = MetadataFactory(archive_id).fetch_arches(Version(version))
-    assert arches == expect["architectures"]
 
 
 @pytest.fixture
@@ -232,7 +229,7 @@ def test_list_src_doc_examples_archives(
 ):
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: win_5152_sde_xml_file)
 
-    archive_id = ArchiveId("qt", host, "desktop", {"src_doc_examples"})
+    archive_id = ArchiveId("qt", host, "desktop")
     archives = set(MetadataFactory(archive_id).fetch_archives_sde(cmd_type, Version(version)))
     assert archives == expected
 
@@ -254,7 +251,7 @@ def test_list_src_doc_examples_modules(
 ):
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: win_5152_sde_xml_file)
 
-    archive_id = ArchiveId("qt", host, "desktop", {"src_doc_examples"})
+    archive_id = ArchiveId("qt", host, "desktop")
     modules = set(MetadataFactory(archive_id).fetch_modules_sde(cmd_type, Version(version)))
     assert modules == expected
 
@@ -270,7 +267,11 @@ def test_list_src_doc_examples_modules(
     ),
 )
 def test_list_src_doc_examples_cli(monkeypatch, capsys, win_5152_sde_xml_file, command: str, expected: Set[str]):
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: win_5152_sde_xml_file)
+    def mock_fetch(self, rest_of_url):
+        assert rest_of_url == "online/qtsdkrepository/windows_x86/desktop/qt5_5152_src_doc_examples/Updates.xml"
+        return win_5152_sde_xml_file
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", mock_fetch)
 
     cli = Cli()
     assert 0 == cli.run(command.split())
@@ -491,8 +492,8 @@ def test_list_android_arches(monkeypatch, capsys, qt_ver_str: str, expect_set: S
     monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
 
     # Unit test:
-    archive_id = ArchiveId("qt", host, target, {"x86", "x86_64", "armv7", "arm64_v8a"})
-    actual_arches = MetadataFactory(archive_id, architectures_ver=qt_ver_str).getList()
+    archive_id = ArchiveId("qt", host, target)
+    actual_arches = MetadataFactory(archive_id).fetch_arches(Version(qt_ver_str))
     assert set(actual_arches) == expect_set
 
     # Integration test:
@@ -624,7 +625,6 @@ def test_list_choose_tool_by_version(simple_spec, expected_name):
 
 
 mac_qt = ArchiveId("qt", "mac", "desktop")
-mac_wasm = ArchiveId("qt", "mac", "desktop", {"wasm"})
 wrong_tool_name_msg = "Please use 'aqt list-tool mac desktop' to check what tools are available."
 wrong_qt_version_msg = "Please use 'aqt list-qt mac desktop' to show versions of Qt available."
 wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to list valid architectures."
@@ -666,19 +666,19 @@ wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to li
             ],
         ),
         (
-            MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9")),
+            MetadataFactory(mac_qt, spec=SimpleSpec("<5.9")),
             ["Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'."],
         ),
         (
-            MetadataFactory(ArchiveId("tools", "mac", "desktop", {"wasm"}), tool_name="ifw"),
+            MetadataFactory(ArchiveId("tools", "mac", "desktop"), tool_name="ifw"),
             [wrong_tool_name_msg],
         ),
         (
-            MetadataFactory(mac_wasm, architectures_ver="1.2.3"),
+            MetadataFactory(mac_qt, architectures_ver="1.2.3"),
             [wrong_qt_version_msg],
         ),
         (
-            MetadataFactory(mac_wasm, modules_query=("1.2.3", "clang_64")),
+            MetadataFactory(mac_qt, modules_query=("1.2.3", "clang_64")),
             [wrong_qt_version_msg, wrong_arch_msg],
         ),
     ),
@@ -714,13 +714,13 @@ def test_format_suggested_follow_up_empty():
             "qt/mac/desktop with spec 5.42",
         ),
         (
-            MetadataFactory(ArchiveId("qt", "mac", "desktop", {"wasm"}), spec=SimpleSpec("5.42")),
-            "qt/mac/desktop/{'wasm'} with spec 5.42",
+            MetadataFactory(ArchiveId("qt", "mac", "desktop"), spec=SimpleSpec("5.42")),
+            "qt/mac/desktop with spec 5.42",
         ),
         (MetadataFactory(ArchiveId("qt", "mac", "desktop")), "qt/mac/desktop"),
         (
-            MetadataFactory(ArchiveId("qt", "mac", "desktop", {"wasm"})),
-            "qt/mac/desktop/{'wasm'}",
+            MetadataFactory(ArchiveId("qt", "mac", "desktop")),
+            "qt/mac/desktop",
         ),
     ),
 )
@@ -729,35 +729,38 @@ def test_list_describe_filters(meta: MetadataFactory, expect: str):
 
 
 @pytest.mark.parametrize(
-    "archive_id, spec, version_str, expect",
+    "archive_id, spec, version_str, arch, expect",
     (
-        (mac_qt, None, "5.12.42", Version("5.12.42")),
+        (mac_qt, None, "5.12.42", None, Version("5.12.42")),
         (
             mac_qt,
             None,
             "not a version",
+            None,
             CliInputError("Invalid version string: 'not a version'"),
         ),
-        (mac_qt, SimpleSpec("5"), "latest", Version("5.15.2")),
+        (mac_qt, SimpleSpec("5"), "latest", None, Version("5.15.2")),
         (
             mac_qt,
             SimpleSpec("5.0"),
             "latest",
+            None,
             CliInputError("There is no latest version of Qt with the criteria 'qt/mac/desktop with spec 5.0'"),
         ),
+        (mac_qt, SimpleSpec("<6.2.0"), "latest", "wasm_32", Version("5.15.2")),
     ),
 )
-def test_list_to_version(monkeypatch, archive_id, spec, version_str, expect):
+def test_list_to_version(monkeypatch, archive_id, spec, version_str, arch: Optional[str], expect):
     _html = (Path(__file__).parent / "data" / "mac-desktop.html").read_text("utf-8")
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda *args, **kwargs: _html)
 
     if isinstance(expect, Exception):
         with pytest.raises(CliInputError) as error:
-            MetadataFactory(archive_id, spec=spec)._to_version(version_str)
+            MetadataFactory(archive_id, spec=spec)._to_version(version_str, arch)
         assert error.type == CliInputError
         assert str(expect) == str(error.value)
     else:
-        assert MetadataFactory(archive_id, spec=spec)._to_version(version_str) == expect
+        assert MetadataFactory(archive_id, spec=spec)._to_version(version_str, arch) == expect
 
 
 def test_list_fetch_tool_by_simple_spec(monkeypatch):
@@ -972,7 +975,7 @@ def test_show_list_bad_connection(monkeypatch, capsys, exception_class, error_ms
         raise exception_class(error_msg)
 
     monkeypatch.setattr(source, mock)
-    meta = MetadataFactory(mac_wasm, spec=SimpleSpec("<5.9"))
+    meta = MetadataFactory(mac_qt, spec=SimpleSpec("<5.9"))
     with pytest.raises(exception_class) as error:
         show_list(meta)
     assert error.type == exception_class

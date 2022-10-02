@@ -207,9 +207,8 @@ class Cli:
 
         def opt_version_for_spec(ext: str, _spec: SimpleSpec) -> Optional[Version]:
             try:
-                return (
-                    MetadataFactory(ArchiveId("qt", host, target, {ext}), spec=_spec, base_url=base_url).getList().latest()
-                )
+                meta = MetadataFactory(ArchiveId("qt", host, target), spec=_spec, base_url=base_url)
+                return meta.fetch_latest_version(ext)
             except AqtException:
                 return None
 
@@ -480,7 +479,7 @@ class Cli:
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
         if args.tool_variant is None:
-            archive_id = ArchiveId("tools", os_name, target, {""})
+            archive_id = ArchiveId("tools", os_name, target)
             meta = MetadataFactory(archive_id, base_url=base, is_latest_version=True, tool_name=tool_name)
             try:
                 archs = meta.getList()
@@ -543,33 +542,6 @@ class Cli:
         for version_str in (modules_ver, args.arch, args.archives[0] if args.archives else None):
             Cli._validate_version_str(version_str, allow_latest=True, allow_empty=True)
 
-        # Select extensions:
-        def extensions_for_version_arch(version: str, arch: str) -> Set[str]:
-            is_qt_version_6 = version == "latest" or Version(version) >= Version("6.0.0")
-            if arch.startswith("wasm"):
-                return {"wasm"}
-            elif arch.startswith("android_") and is_qt_version_6:
-                return {arch[len("android_") :]}
-            else:
-                return {""}
-
-        if modules_query:
-            extensions = extensions_for_version_arch(modules_ver, modules_query[1])
-        elif args.archives and len(args.archives) >= 2:
-            ver, arch, *_ = args.archives
-            extensions = extensions_for_version_arch(ver, arch)
-        elif args.arch:
-            is_qt_version_6 = args.arch == "latest" or Version(args.arch) >= Version("6.0.0")
-            is_in_wasm_range = args.arch == "latest" or QtRepoProperty.is_in_wasm_range(args.host, Version(args.arch))
-            if args.target == "android" and is_qt_version_6:
-                extensions = ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6
-            elif args.target == "desktop" and is_in_wasm_range:
-                extensions = {"", "wasm"}
-            else:
-                extensions = {""}
-        else:
-            extensions = {""}
-
         spec = None
         try:
             if args.spec is not None:
@@ -578,12 +550,7 @@ class Cli:
             raise CliInputError(f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage()) from e
 
         meta = MetadataFactory(
-            archive_id=ArchiveId(
-                "qt",
-                args.host,
-                args.target,
-                extensions,
-            ),
+            archive_id=ArchiveId("qt", args.host, args.target),
             spec=spec,
             is_latest_version=args.latest_version,
             modules_query=modules_query,
@@ -614,7 +581,7 @@ class Cli:
         version = Cli._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
         is_fetch_modules: bool = getattr(args, "modules", False)
         meta = MetadataFactory(
-            archive_id=ArchiveId("qt", args.host, target, {"src_doc_examples"}),
+            archive_id=ArchiveId("qt", args.host, target),
             src_doc_examples_query=(cmd_type, version, is_fetch_modules),
         )
         show_list(meta)
