@@ -236,13 +236,9 @@ linux_build_jobs.extend(
             check_output_cmd="ls -lh ./Examples/Qt-6.1.0/charts/ ./Examples/Qt-6.1.0/demos/ ./Examples/Qt-6.1.0/tutorials/",
         ),
         # test for list commands
-        BuildJob('list', '5.15.2', 'linux', 'desktop', 'gcc_64', '', spec="<6", list_options={
-            'HAS_EXTENSIONS': "True",
-        }),
-        BuildJob('list', '6.1.0', 'linux', 'android', 'android_armv7', '', spec=">6.0,<6.1.1", list_options={
-            'HAS_EXTENSIONS': "True",
-            'USE_EXTENSION': "armv7",
-        }),
+        BuildJob('list', '5.15.2', 'linux', 'desktop', 'gcc_64', '', spec="<6", list_options={'HAS_WASM': "True"}),
+        BuildJob('list', '6.1.0', 'linux', 'desktop', 'gcc_64', '', spec=">6.0,<6.1.1", list_options={'HAS_WASM': "False"}),
+        BuildJob('list', '6.1.0', 'linux', 'android', 'android_armv7', '', spec=">6.0,<6.1.1", list_options={}),
         # tests run on linux but query data about other platforms
         BuildJob('list', '5.14.1', 'mac', 'ios', 'ios', '', spec="<=5.14.1", list_options={}),
         BuildJob('list', '5.13.1', 'windows', 'winrt', 'win64_msvc2015_winrt_x64', '', spec=">5.13.0,<5.13.2", list_options={}),
@@ -403,8 +399,7 @@ for platform_build_job in all_platform_build_jobs:
                 ("MINGW_VARIANT", build_job.mingw_variant),
                 ("MINGW_FOLDER", build_job.mingw_folder()),
                 ("IS_AUTODESKTOP", str(build_job.is_autodesktop)),
-                ("HAS_EXTENSIONS", build_job.list_options.get("HAS_EXTENSIONS", "False")),
-                ("USE_EXTENSION", build_job.list_options.get("USE_EXTENSION", "None")),
+                ("HAS_WASM", build_job.list_options.get("HAS_WASM", "True")),
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
                 ("QT_BINDIR", build_job.qt_bindir()),
                 ("WIN_QT_BINDIR", build_job.win_qt_bindir()),
