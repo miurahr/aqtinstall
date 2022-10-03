@@ -478,9 +478,7 @@ def test_list_android_arches(monkeypatch, capsys, qt_ver_str: str, expect_set: S
     host, target = "windows", "android"
 
     def _mock_fetch_http(_, rest_of_url, *args, **kwargs: str) -> str:
-        htmltext = (Path(__file__).parent / "data" / "windows-android.html").read_text("utf-8")
-        if not rest_of_url.endswith("Updates.xml"):
-            return htmltext
+        assert rest_of_url.endswith("Updates.xml"), f"Fetched unexpected file at {rest_of_url}"
 
         xmltext = (Path(__file__).parent / "data" / "windows-620-android-armv7-update.xml").read_text("utf-8")
         # If we are serving an Updates.xml, `aqt list` will look for a Qt version number.
