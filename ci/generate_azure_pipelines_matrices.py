@@ -266,6 +266,12 @@ linux_build_jobs.append(
 mac_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "mac", "desktop", "wasm_32", "wasm_32")
 )
+windows_build_jobs.append(
+    BuildJob("install-qt", "5.14.2", "windows", "desktop", "wasm_32", "wasm_32")
+)
+windows_build_jobs.append(
+    BuildJob("install-qt", "6.4.0", "windows", "desktop", "wasm_32", "wasm_32")
+)
 
 # mobile SDK
 mac_build_jobs.extend(
