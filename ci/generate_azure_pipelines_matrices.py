@@ -35,6 +35,8 @@ class BuildJob:
         is_autodesktop: bool = False,
         tool_options: Optional[Dict[str, str]] = None,
         check_output_cmd: Optional[str] = None,
+        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit",
+        autodesk_arch_folder: Optional[str] = None,
     ):
         self.command = command
         self.qt_version = qt_version
@@ -53,6 +55,8 @@ class BuildJob:
         self.spec = spec
         self.output_dir = output_dir
         self.check_output_cmd = check_output_cmd
+        self.emsdk_version = emsdk_version
+        self.autodesk_arch_folder = autodesk_arch_folder
 
     def qt_bindir(self, *, sep='/') -> str:
         out_dir = f"$(Build.BinariesDirectory){sep}Qt" if not self.output_dir else self.output_dir
@@ -61,6 +65,14 @@ class BuildJob:
 
     def win_qt_bindir(self) -> str:
         return self.qt_bindir(sep='\\')
+
+    def autodesk_qt_bindir(self, *, sep='/') -> str:
+        out_dir = f"$(Build.BinariesDirectory){sep}Qt" if not self.output_dir else self.output_dir
+        version_dir = "5.9" if self.qt_version == "5.9.0" else self.qt_version
+        return f"{out_dir}{sep}{version_dir}{sep}{self.autodesk_arch_folder or self.archdir}{sep}bin"
+
+    def win_autodesk_qt_bindir(self) -> str:
+        return self.autodesk_qt_bindir(sep='\\')
 
     def mingw_folder(self) -> str:
         if not self.mingw_variant:
@@ -271,7 +283,8 @@ windows_build_jobs.append(
 )
 windows_build_jobs.append(
     BuildJob("install-qt", "6.4.0", "windows", "desktop", "wasm_32", "wasm_32",
-             is_autodesktop=True, mingw_variant="win64_mingw900")
+             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="mingw_64",
+             mingw_variant="win64_mingw900")
 )
 
 # mobile SDK
@@ -387,6 +400,8 @@ for platform_build_job in all_platform_build_jobs:
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
                 ("QT_BINDIR", build_job.qt_bindir()),
                 ("WIN_QT_BINDIR", build_job.win_qt_bindir()),
+                ("EMSDK_VERSION", build_job.emsdk_version),
+                ("WIN_AUTODESK_QT_BINDIR", build_job.win_autodesk_qt_bindir()),
                 ("TOOL1_ARGS", build_job.tool_options.get("TOOL1_ARGS", "")),
                 ("LIST_TOOL1_CMD", build_job.tool_options.get("LIST_TOOL1_CMD", "")),
                 ("TEST_TOOL1_CMD", build_job.tool_options.get("TEST_TOOL1_CMD", "")),
