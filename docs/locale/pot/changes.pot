@@ -1,0 +1,1748 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../../CHANGELOG.rst:3
+msgid "aqtinstall changeLog"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:5
+msgid "All notable changes to this project will be documented in this file."
+msgstr ""
+
+#: ../../../CHANGELOG.rst:8
+msgid "`Unreleased`_"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:11
+msgid "`v3.0.1`_ (30, Sep. 2022)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:13
+msgid "Actions: Fix standalone executable upload (#581)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:14
+msgid "Actions: Bump versions (#579) - pypa/gh-action-pypi-publish@v1 - actions/setup-python@v4"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:19
+msgid "`v3.0.0`_ (29, Sep. 2022)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:22
+#: ../../../CHANGELOG.rst:44
+#: ../../../CHANGELOG.rst:52
+#: ../../../CHANGELOG.rst:73
+#: ../../../CHANGELOG.rst:121
+#: ../../../CHANGELOG.rst:144
+#: ../../../CHANGELOG.rst:176
+#: ../../../CHANGELOG.rst:194
+#: ../../../CHANGELOG.rst:210
+#: ../../../CHANGELOG.rst:236
+#: ../../changes.rst:42
+#: ../../changes.rst:62
+#: ../../changes.rst:102
+#: ../../changes.rst:181
+#: ../../changes.rst:208
+#: ../../changes.rst:217
+#: ../../changes.rst:226
+#: ../../changes.rst:243
+#: ../../changes.rst:266
+#: ../../changes.rst:274
+#: ../../changes.rst:326
+#: ../../changes.rst:353
+#: ../../changes.rst:387
+#: ../../changes.rst:397
+#: ../../changes.rst:429
+#: ../../changes.rst:490
+#: ../../changes.rst:558
+#: ../../changes.rst:571
+#: ../../changes.rst:604
+#: ../../changes.rst:629
+#: ../../changes.rst:673
+#: ../../changes.rst:714
+#: ../../changes.rst:734
+#: ../../changes.rst:762
+#: ../../changes.rst:788
+#: ../../changes.rst:811
+#: ../../changes.rst:839
+msgid "Added"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:23
+msgid "Automatically install desktop qt when required for android/ios qt installations(#540)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:26
+#: ../../../CHANGELOG.rst:40
+#: ../../../CHANGELOG.rst:56
+#: ../../../CHANGELOG.rst:88
+#: ../../../CHANGELOG.rst:116
+#: ../../../CHANGELOG.rst:138
+#: ../../../CHANGELOG.rst:164
+#: ../../../CHANGELOG.rst:180
+#: ../../../CHANGELOG.rst:198
+#: ../../../CHANGELOG.rst:217
+#: ../../../CHANGELOG.rst:281
+#: ../../changes.rst:14
+#: ../../changes.rst:22
+#: ../../changes.rst:33
+#: ../../changes.rst:46
+#: ../../changes.rst:55
+#: ../../changes.rst:80
+#: ../../changes.rst:94
+#: ../../changes.rst:111
+#: ../../changes.rst:124
+#: ../../changes.rst:132
+#: ../../changes.rst:140
+#: ../../changes.rst:150
+#: ../../changes.rst:171
+#: ../../changes.rst:198
+#: ../../changes.rst:257
+#: ../../changes.rst:280
+#: ../../changes.rst:298
+#: ../../changes.rst:307
+#: ../../changes.rst:316
+#: ../../changes.rst:332
+#: ../../changes.rst:365
+#: ../../changes.rst:411
+#: ../../changes.rst:420
+#: ../../changes.rst:434
+#: ../../changes.rst:442
+#: ../../changes.rst:456
+#: ../../changes.rst:471
+#: ../../changes.rst:502
+#: ../../changes.rst:519
+#: ../../changes.rst:529
+#: ../../changes.rst:563
+#: ../../changes.rst:585
+#: ../../changes.rst:615
+#: ../../changes.rst:641
+#: ../../changes.rst:655
+#: ../../changes.rst:691
+#: ../../changes.rst:725
+#: ../../changes.rst:753
+#: ../../changes.rst:767
+#: ../../changes.rst:799
+#: ../../changes.rst:822
+#: ../../changes.rst:852
+msgid "Fixed"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:27
+msgid "Tolerate empty DownloadArchive tags while parsing XML(#563)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:28
+msgid "Fix standalone executable build for windows (#565,#567)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:31
+#: ../../../CHANGELOG.rst:64
+#: ../../../CHANGELOG.rst:77
+#: ../../../CHANGELOG.rst:100
+#: ../../../CHANGELOG.rst:148
+#: ../../../CHANGELOG.rst:156
+#: ../../../CHANGELOG.rst:169
+#: ../../../CHANGELOG.rst:187
+#: ../../../CHANGELOG.rst:202
+#: ../../../CHANGELOG.rst:224
+#: ../../../CHANGELOG.rst:253
+#: ../../changes.rst:29
+#: ../../changes.rst:70
+#: ../../changes.rst:106
+#: ../../changes.rst:119
+#: ../../changes.rst:165
+#: ../../changes.rst:190
+#: ../../changes.rst:231
+#: ../../changes.rst:249
+#: ../../changes.rst:289
+#: ../../changes.rst:343
+#: ../../changes.rst:359
+#: ../../changes.rst:373
+#: ../../changes.rst:403
+#: ../../changes.rst:451
+#: ../../changes.rst:465
+#: ../../changes.rst:481
+#: ../../changes.rst:495
+#: ../../changes.rst:512
+#: ../../changes.rst:538
+#: ../../changes.rst:547
+#: ../../changes.rst:578
+#: ../../changes.rst:593
+#: ../../changes.rst:610
+#: ../../changes.rst:636
+#: ../../changes.rst:649
+#: ../../changes.rst:664
+#: ../../changes.rst:679
+#: ../../changes.rst:700
+#: ../../changes.rst:719
+#: ../../changes.rst:742
+#: ../../changes.rst:772
+#: ../../changes.rst:793
+#: ../../changes.rst:816
+#: ../../changes.rst:831
+#: ../../changes.rst:844
+msgid "Changed"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:32
+msgid "Update Security policy"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:33
+msgid "Update combinations.json(#566)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:34
+msgid "CI: now test on MacOS 12(#541)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:37
+msgid "`v2.2.3`_ (17, Aug. 2022)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:41
+msgid "Building standalone executable: aqt.exe (#556,#557)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:45
+msgid "Docs: add explanation of ``list-qt --long-modules`` (#555)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:49
+msgid "`v2.2.2`_ (11, Aug. 2022)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:53
+msgid "Add ``aqt list-qt --long-modules`` (#543,#547)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:57
+msgid "Fix kwargs passed up AqtException inheritance tree (#550)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:61
+msgid "`v2.2.1`_ (9, Aug. 2022)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:65
+msgid "``install-qt`` command respect ``--base`` argument option when retrieve metadata XML files by making ``MetadataFactory`` respect ``baseurl`` set. (#545)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:70
+msgid "`v2.2.0`_ (2, Aug. 2022)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:74
+msgid "Add code of conduct (#535)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:78
+msgid "test: prevent use of flake8@5.0 (#544)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:79
+msgid "Improve tox and pytest config(#544)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:80
+msgid "Properly retrieve folder names from html pages of all mirrors(#520)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:81
+msgid "Log: left align the level name (#539)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:82
+msgid "Update combinations (#537)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:83
+msgid "Introduce Updates.xml data class and parser (#533)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:84
+msgid "archives: do not keep update.xml text in field (#534)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:85
+msgid "docs: Bump sphinx@5.0 (#524)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:89
+msgid "Update readthedocs config (#535)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:90
+msgid "Fix readme description of list-qt (#527)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:93
+msgid "Deprecated"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:94
+msgid "Deprecate setup.py file (#531)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:97
+msgid "`v2.1.0`_ (14, Apr. 2022)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:101
+msgid "Change security policy(#506): Supported 2.0.x Unsupported 1.2.x and before"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:104
+msgid "Bump py7zr@0.18.3(#509)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:105
+msgid "pyproject.toml configuration * project section(#507) * setuptools_scm settings(#508)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:108
+msgid "Use SHA256 hash from trusted mirror for integrity check (#493)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:109
+msgid "Update combinations.xml * QtDesignStudio generation2 (#486) * IFW version (from 42 to 43) change (#495) * Support Qt 6.2.4 (#502)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:113
+msgid "Update fallback mirror list (#485)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:117
+msgid "Fix patching of Qt6.2.2-ios(#510, #503)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:118
+msgid "Test: Conditionally install dependencies on Ubuntu (#494)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:122
+msgid "doc: warn about unrelated aqt package (#490)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:123
+msgid "doc: add explanation of --config flag in CLI docs (#491)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:124
+msgid "doc: note about MSYS2/Mingw64 environment"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:127
+#: ../../../CHANGELOG.rst:228
+msgid "Security"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:128
+msgid "Use secrets for secure random numbers(#498)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:129
+msgid "Use defusedxml to parse Updates.xml file to avoid attack(#498)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:130
+msgid "Improve get_hash function(#504)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:131
+msgid "Check Update.xml file with SHA256 hash (#493)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:135
+msgid "`v2.0.6`_ (7, Feb. 2022)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:139
+msgid "Fix archives flag(#459)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:140
+msgid "Accept the case Update.xml in Server has delimiter without space(#479)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:141
+msgid "Fix getUrl function to use property http session and retry(#473)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:145
+msgid "32bit release binary(#471)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:149
+msgid "Update combinations.xml * Qt 6.2.2, 6.2.3, 6.3.0(#481,#484)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:153
+msgid "`v2.0.5`_ (11, Dec. 2021)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:157
+msgid "Reduce memory consumption: garbage collection on install subprocess(#464)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:158
+msgid "Cache PowerShell modules on Azure Pipeline(#465)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:161
+msgid "`v2.0.4`_ (5, Dec. 2021)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:165
+msgid "Allow duplicated install on the directory previously installed(#438,#462)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:166
+msgid "Memory error on 32bit python on Windows(#436,#462)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:170
+msgid "Change list-src, list-doc and list-example command(#453)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:173
+msgid "`v2.0.3`_ (25, Nov. 2021)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:177
+msgid "Improve --keep and new --archive-dest options(#458)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:181
+msgid "Fix cross-platform installation failure (#450)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:182
+msgid "CI: update OSes, Windows-2019, macOS-10.15(#444,#456)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:183
+msgid "CI: fix failure of uploading coveralls(#446)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:184
+msgid "CI: test for QtIFW(#451)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:188
+msgid "combinations matrix json(#452)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:191
+msgid "`v2.0.2`_ (1, Nov. 2021)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:195
+msgid "Support Qt 6.2.1 (#441)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:199
+msgid "Degraded install-tool (#442,#443)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:203
+msgid "Add suggestion to use ``--external`` for MemoryError (#439)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:207
+msgid "`v2.0.1`_ (29, Oct. 2021)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:211
+msgid "Allow retries on checksum error(#420)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:212
+msgid "Run on Python 3.10(#424)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:213
+msgid "Add more mirrors for fallback(#432)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:214
+msgid "Add fallback URL message(#434)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:218
+msgid "``--noarchives`` inconsistency(#429)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:219
+msgid "Allow multiprocessing error propagation(#419)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:220
+msgid "Legacy command behavior, reproduce also old bugs (#414)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:221
+msgid "Fix crash on ``crash install-qt <host> <tgt> <spec>`` with no specified arch(#435)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:225
+msgid "Print working directory and version in error message(#418)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:229
+msgid "Use HTTPS for mirror site(#430)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:233
+msgid "`v2.0.0`_ (29, Sep. 2021)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:237
+msgid "Add error messages when user inputs an invalid semantic version(#291)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:238
+msgid "Security Policy document(#341)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:239
+msgid "CodeQL static code analysis(#341)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:240
+msgid "CI: generate combination json in actions (#318,#343)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:241
+msgid "Test: add and improve unit tests(#327,#359)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:242
+msgid "Docs: getting started section(#351)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:243
+msgid "Docs: recommend python3 for old systems(#349)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:244
+msgid "Automatically update combinations.json (#343,#344,#345,#386,#390,#395)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:245
+msgid "CI: test with Qt6.2 with modules(#346)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:246
+msgid "README: link documentation for stable(#329)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:247
+msgid "Support WASM on Qt 6.2.0(#384)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:248
+msgid "Add Binary distribution for Windows(#393,#397)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:249
+msgid "Add list-qt --archives feature(#400)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:250
+msgid "Require architecture when listing modules(#401)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:254
+msgid "list subcommand now support tool information(#235)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:255
+msgid "list subcommand can show versions, architectures and modules.(#235)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:256
+msgid "C: bundle jom.zip in source(#295)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:257
+msgid "Add max_retries configuration for connection(#296)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:258
+msgid "Change settings.ini to introduce [requests] section(#297)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:259
+msgid "Change log format for logging file."
+msgstr ""
+
+#: ../../../CHANGELOG.rst:260
+msgid "Extension validation for tool subcommand(#314)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:261
+msgid "list subcommand has --tool-long option(#304, #319)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:262
+msgid "tool subcommand now install without version spec(#299)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:263
+msgid "README example command is now easy to copy-and-paste(#322)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:264
+msgid "list subcommand update(#331)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:265
+msgid "Improve handle of Ctrl-C keyboard interruption(#337)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:266
+msgid "Update combinations.json(#344,#386)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:267
+msgid "Turn warnings into errors when building docs(#360)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:268
+msgid "Update documentations(#358,#357)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:269
+msgid "Test: consolidate lint configuration to pyproject.toml(#356)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:270
+msgid "Test: black configuration to max_line_length=125 (#356)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:271
+msgid "New subcommand syntax (#354,#355)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:272
+msgid "Failed on missing modules(#374)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:273
+msgid "Failed on missing tools(#375)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:274
+msgid "Remove 'addons' prefix for some modules for Qt6+ (#368)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:275
+msgid "Fix inappropriate warnings(#370)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:276
+msgid "Update README to fix version 2 (#377)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:277
+msgid "list-qt: Specify version by SimpleSpec(#392)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:278
+msgid "Add helpful error messages when modules/tools/Qt version does not exist(#402)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:282
+msgid "Fix helper.getUrl() to handle several response statuses(#292)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:283
+msgid "Fix Qt 6.2.0 target path for macOS.(#289)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:284
+msgid "Fix WinRT installation patching(#311)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:285
+msgid "Fix Qt 5.9.0 installation (#312)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:286
+msgid "Link documentations for stable/latest on README"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:287
+msgid "Check python version when starting command (#352)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:288
+msgid "README: remove '$' from example command line(#321)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:289
+msgid "README: fix command line example lexer(#322)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:290
+msgid "CI: fix release script launch conditions(#298)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:291
+msgid "Handle special case for Qt 5.9.0(#364)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:292
+msgid "Running python2 -m aqt does not trigger Python version check (#372,#373)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:293
+msgid "docs(cli): correct the parameter of \"list-tool\" in an example(#399)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:294
+msgid "Doc: Fix broken mirror link in cli.rst (#403)"
+msgstr ""
+
+#: ../../../CHANGELOG.rst:295
+msgid "CI: fix release action fails with no files found(#405)"
+msgstr ""
+
+#: ../../changes.rst:11
+msgid "`v1.2.5`_ (14, Aug. 2021)"
+msgstr ""
+
+#: ../../changes.rst:15
+msgid "Handle Qt 5.9 installation special case(#363,#365)"
+msgstr ""
+
+#: ../../changes.rst:19
+msgid "`v1.2.4`_ (17, Jul. 2021)"
+msgstr ""
+
+#: ../../changes.rst:23
+msgid "Fix crash when installing Qt6.1.2 on mac(#288,#320)"
+msgstr ""
+
+#: ../../changes.rst:26
+msgid "`v1.2.3`_ (14, Jul. 2021)"
+msgstr ""
+
+#: ../../changes.rst:30
+msgid "helper: set max_retries (#296)"
+msgstr ""
+
+#: ../../changes.rst:34
+msgid "Patching for winrt packages(#311)"
+msgstr ""
+
+#: ../../changes.rst:35
+msgid "CI: Fix release note script"
+msgstr ""
+
+#: ../../changes.rst:36
+msgid "CI: bundle jom.zip for test"
+msgstr ""
+
+#: ../../changes.rst:39
+msgid "`v1.2.2`_ (1, Jul. 2021)"
+msgstr ""
+
+#: ../../changes.rst:43
+msgid "Create qtenv2.bat file on windows(#279)"
+msgstr ""
+
+#: ../../changes.rst:47
+msgid "Fix list subcommand to retrieve information from web(#280)"
+msgstr ""
+
+#: ../../changes.rst:48
+msgid "Fix crash when installing Qt6.2.0 on mac(#288,#289)"
+msgstr ""
+
+#: ../../changes.rst:52
+msgid "`v1.2.1`_ (22, Jun. 2021)"
+msgstr ""
+
+#: ../../changes.rst:56
+msgid "Fix crash when tool subcommand used.(#275,#276)"
+msgstr ""
+
+#: ../../changes.rst:59
+msgid "`v1.2.0`_ (21, Jun. 2021)"
+msgstr ""
+
+#: ../../changes.rst:63
+msgid "Add -c/--config option to specify custom settings.ini(#246)"
+msgstr ""
+
+#: ../../changes.rst:64
+msgid "Document for settings.ini configuration parameters(#246)"
+msgstr ""
+
+#: ../../changes.rst:65
+msgid "Patching libtool file(.la) on mac(#267)"
+msgstr ""
+
+#: ../../changes.rst:66
+msgid "CI: Add more blacklist mirrors"
+msgstr ""
+
+#: ../../changes.rst:67
+msgid "Add --kde option for src subcommand(#274)"
+msgstr ""
+
+#: ../../changes.rst:71
+msgid "Use spawn multiprocessing on Linux platform.(#273)"
+msgstr ""
+
+#: ../../changes.rst:72
+msgid "Check MD5 checksum when download(#238)"
+msgstr ""
+
+#: ../../changes.rst:73
+msgid "Config settings.ini parser and URL list format(#246)"
+msgstr ""
+
+#: ../../changes.rst:74
+msgid "Refactoring network connection code, consolidated to helper.py(#244)"
+msgstr ""
+
+#: ../../changes.rst:75
+msgid "Refactoring exceptions, introduce exceptions.py(#244)"
+msgstr ""
+
+#: ../../changes.rst:76
+msgid "Update known Qt versions combinations.(#243)"
+msgstr ""
+
+#: ../../changes.rst:77
+msgid "CI: changes azure pipelines test scripts(#250)"
+msgstr ""
+
+#: ../../changes.rst:81
+msgid "Fix logging during subprocess installation on macOS, and Windows(#273)"
+msgstr ""
+
+#: ../../changes.rst:82
+msgid "Fix patching qmake(#259)"
+msgstr ""
+
+#: ../../changes.rst:83
+msgid "Prettify help message format(#237)"
+msgstr ""
+
+#: ../../changes.rst:84
+msgid "Update patching pkgconfig/lib on mac(#267)"
+msgstr ""
+
+#: ../../changes.rst:85
+msgid "CI: fix check workflow(#248)"
+msgstr ""
+
+#: ../../changes.rst:86
+msgid "CI: fix error on Azure/Windows(connection error)(#246)"
+msgstr ""
+
+#: ../../changes.rst:87
+msgid "Fix typo in README(#326)"
+msgstr ""
+
+#: ../../changes.rst:91
+msgid "`v1.1.6`_ (2, May. 2021)"
+msgstr ""
+
+#: ../../changes.rst:95
+msgid "doc subcommand failed in argument parse(#234)"
+msgstr ""
+
+#: ../../changes.rst:99
+msgid "`v1.1.5`_ (8, Apr. 2021)"
+msgstr ""
+
+#: ../../changes.rst:103
+msgid "README: describe advanced installation method."
+msgstr ""
+
+#: ../../changes.rst:107
+msgid "Change tox.ini: docs test output folder"
+msgstr ""
+
+#: ../../changes.rst:108
+msgid "Remove changelog from pypi page"
+msgstr ""
+
+#: ../../changes.rst:112
+msgid "Drop dependency for wheel"
+msgstr ""
+
+#: ../../changes.rst:116
+msgid "`v1.1.4`_ (2, Apr. 2021)"
+msgstr ""
+
+#: ../../changes.rst:120
+msgid "Code reformatting by black and check by black."
+msgstr ""
+
+#: ../../changes.rst:121
+msgid "Check linting by github actions."
+msgstr ""
+
+#: ../../changes.rst:125
+msgid "Fix document error on README(#228, #226)."
+msgstr ""
+
+#: ../../changes.rst:129
+msgid "`v1.1.3`_ (26, Feb. 2021)"
+msgstr ""
+
+#: ../../changes.rst:134
+msgid "Key error on 3.6.13, 3.7.10, 3.8.8, and 3.9.2(#221)"
+msgstr ""
+
+#: ../../changes.rst:137
+msgid "`v1.1.2`_ (20, Feb. 2021)"
+msgstr ""
+
+#: ../../changes.rst:142
+msgid "Fix leaked multiprocessing resource(#220)"
+msgstr ""
+
+#: ../../changes.rst:143
+msgid "Catch both read timeout and connection timeout."
+msgstr ""
+
+#: ../../changes.rst:147
+msgid "`v1.1.1`_ (13, Feb. 2021)"
+msgstr ""
+
+#: ../../changes.rst:152
+msgid "Catch timeout error and fallback to mirror (#215,#217)"
+msgstr ""
+
+#: ../../changes.rst:156
+msgid "`v1.1.0`_ (12, Feb. 2021)"
+msgstr ""
+
+#: ../../changes.rst:158
+msgid "Added -----.. _v2.0.1: https://github.com/miurahr/aqtinstall/compare/v2.0.0...v2.0.1"
+msgstr ""
+
+#: ../../changes.rst:161
+msgid "Patching android installation for Qt6 - patch target_qt.conf"
+msgstr ""
+
+#: ../../changes.rst:167
+msgid "CI test with Qt6"
+msgstr ""
+
+#: ../../changes.rst:168
+msgid "Docs: update avaiable conbinations"
+msgstr ""
+
+#: ../../changes.rst:173
+msgid "Skip QtCore patching for 5.14.0 and later(Fix regression)(#211)"
+msgstr ""
+
+#: ../../changes.rst:178
+msgid "`v1.0.0`_ (4, Feb. 2021)"
+msgstr ""
+
+#: ../../changes.rst:183
+msgid "Add --noarchives option to allow user to add modules to existed installation(#174,#204)"
+msgstr ""
+
+#: ../../changes.rst:184
+msgid "No patching when it does not install qtbase package by --noarchives and --archives option.(#204)"
+msgstr ""
+
+#: ../../changes.rst:185
+msgid "Azure: test with jom build on windows."
+msgstr ""
+
+#: ../../changes.rst:186
+msgid "Patch pkgconfig configurations(#199)"
+msgstr ""
+
+#: ../../changes.rst:187
+msgid "Patch libQt5Core and libQt6Core for linux(#201)"
+msgstr ""
+
+#: ../../changes.rst:192
+msgid "Update document to show available Qt versions"
+msgstr ""
+
+#: ../../changes.rst:193
+msgid "Update README to add more references."
+msgstr ""
+
+#: ../../changes.rst:194
+msgid "Suppress debug log and exist silently when specified package not found."
+msgstr ""
+
+#: ../../changes.rst:200
+msgid "Catch exception on qmake -query execution(#201)"
+msgstr ""
+
+#: ../../changes.rst:201
+msgid "Fix Qt6/Android installation handling.(#193, #200)"
+msgstr ""
+
+#: ../../changes.rst:205
+msgid "`v0.11.1`_ (21, Jan. 2021)"
+msgstr ""
+
+#: ../../changes.rst:210
+msgid "Add --timeout option to specify connection timeout (default 5.0 sec) (#197)"
+msgstr ""
+
+#: ../../changes.rst:214
+msgid "`v0.11.0`_ (21, Jan. 2021)"
+msgstr ""
+
+#: ../../changes.rst:219
+msgid "Automatically fallback to mirror site when main https://download.qt.io down.(#194, #196)"
+msgstr ""
+
+#: ../../changes.rst:223
+msgid "`v0.10.1`_ (11, Dec. 2020)"
+msgstr ""
+
+#: ../../changes.rst:228
+msgid "Add LTS versions as known one.(#188)"
+msgstr ""
+
+#: ../../changes.rst:233
+msgid "Tool: Version comparison by startswith. When specified 4.0 but download server hold 4.0.1, it catch 4.0.1.(related #187)"
+msgstr ""
+
+#: ../../changes.rst:235
+msgid "README: explicitly show python version requirements."
+msgstr ""
+
+#: ../../changes.rst:240
+msgid "`v0.10.0`_ (25, Nov. 2020)"
+msgstr ""
+
+#: ../../changes.rst:245
+msgid "Add v5.12.2, v6.0.0 as known versions.(#176, #177)"
+msgstr ""
+
+#: ../../changes.rst:246
+msgid "Support --archives option on src installation."
+msgstr ""
+
+#: ../../changes.rst:251
+msgid "Use multiprocessing.Pool instead of concurrent.futures(#178)"
+msgstr ""
+
+#: ../../changes.rst:252
+msgid "Refactoring whole modules. (#179)"
+msgstr ""
+
+#: ../../changes.rst:253
+msgid "Split old changelogs to CHNAGELOG_prerelease.rst"
+msgstr ""
+
+#: ../../changes.rst:254
+msgid "Drop an upper limitation (<0.11) for py7zr.(#183)"
+msgstr ""
+
+#: ../../changes.rst:259
+msgid "When we used \"-m all\" to download doc or examples, Qt sources are also downloaded(@Gamso)(#182)"
+msgstr ""
+
+#: ../../changes.rst:263
+msgid "`v0.9.8`_ (4, Nov. 2020)"
+msgstr ""
+
+#: ../../changes.rst:268
+msgid "Added new combinations for tools_ifw"
+msgstr ""
+
+#: ../../changes.rst:271
+msgid "`v0.9.7`_ (4, Oct. 2020)"
+msgstr ""
+
+#: ../../changes.rst:276
+msgid "Support Qt 5.15.1"
+msgstr ""
+
+#: ../../changes.rst:277
+msgid "Add list command. (#161)"
+msgstr ""
+
+#: ../../changes.rst:282
+msgid "When we start an installation, all packages are downloaded whatever the specified platform.(#159)"
+msgstr ""
+
+#: ../../changes.rst:286
+msgid "`v0.9.6`_ (7, Sep. 2020)"
+msgstr ""
+
+#: ../../changes.rst:291
+msgid "setup: set minimum required python version as >=3.6."
+msgstr ""
+
+#: ../../changes.rst:295
+msgid "`v0.9.5`_ (18, Aug. 2020)"
+msgstr ""
+
+#: ../../changes.rst:300
+msgid "Fix error when install tools_openssl_src (#153)"
+msgstr ""
+
+#: ../../changes.rst:304
+msgid "`v0.9.4`_ (2, Aug. 2020)"
+msgstr ""
+
+#: ../../changes.rst:309
+msgid "Fixed CRC32 error when installing Qt5.7.(#149)"
+msgstr ""
+
+#: ../../changes.rst:313
+msgid "`v0.9.3`_ (1, Aug. 2020)"
+msgstr ""
+
+#: ../../changes.rst:320
+msgid "Fixed failure when installing Qt5.7 which archives use 7zip(LZMA1+BCJ), that is supported"
+msgstr ""
+
+#: ../../changes.rst:319
+msgid "by py7zr v0.9 and later.(#149,#150)"
+msgstr ""
+
+#: ../../changes.rst:323
+msgid "`v0.9.2`_ (19, June. 2020)"
+msgstr ""
+
+#: ../../changes.rst:328
+msgid "Add Qt6 as a known version. (#144)"
+msgstr ""
+
+#: ../../changes.rst:334
+msgid "Support package directory 'qt6_*' as well as 'qt5_*' (#145)"
+msgstr ""
+
+#: ../../changes.rst:339
+msgid "`v0.9.1`_ (13, June. 2020)"
+msgstr ""
+
+#: ../../changes.rst:345
+msgid "Do not raise exception when specified combination is not found on downloaded meta data."
+msgstr ""
+
+#: ../../changes.rst:346
+msgid "Update document for developers."
+msgstr ""
+
+#: ../../changes.rst:350
+msgid "`v0.9.0`_ (31, May. 2020)"
+msgstr ""
+
+#: ../../changes.rst:355
+msgid "New subcommand doc/src/example to install each components.(#137, 138)"
+msgstr ""
+
+#: ../../changes.rst:356
+msgid "Doc: Add CLI example for tools, doc, examples and src."
+msgstr ""
+
+#: ../../changes.rst:361
+msgid "Refactoring to reduce code duplication in archives.py"
+msgstr ""
+
+#: ../../changes.rst:362
+msgid "Explicitly call QtInstall.finalize() only when Qt library installation."
+msgstr ""
+
+#: ../../changes.rst:367
+msgid "Show help when launched without any argument (#136)"
+msgstr ""
+
+#: ../../changes.rst:370
+msgid "`v0.9.0b3`_ (21, May. 2020)"
+msgstr ""
+
+#: ../../changes.rst:375
+msgid "Patch qmake when finishing installation.(#100) qmake has a hard-coded prefix path, and aqt modify binary in finish phase. it is not necessary for Qt 5.14.2, 5.15.0 and later. This behavior try to be as same as a Qt installer framework doing."
+msgstr ""
+
+#: ../../changes.rst:379
+msgid "Patch Framework.QtCore when finishing installation.(#100) As same as qmake, framework also has a hard-coded prefix path. (Suggestions from @agateau)"
+msgstr ""
+
+#: ../../changes.rst:384
+msgid "`v0.9.0b2`_ (21, May. 2020)"
+msgstr ""
+
+#: ../../changes.rst:389
+msgid "CLI: '--archives' option: it takes multiple module names such as qtbase, qtsvg etc. This is an advanced option to specify subset of target installation. There is no guarantee it works. It is not recommended if you are unknown what is doing."
+msgstr ""
+
+#: ../../changes.rst:394
+msgid "`v0.9.0b1`_ (10, May. 2020)"
+msgstr ""
+
+#: ../../changes.rst:399
+msgid "Support installation of Qt version for msvc2019"
+msgstr ""
+
+#: ../../changes.rst:400
+msgid "Add knowlege of components combination on 5.14 and 5.15"
+msgstr ""
+
+#: ../../changes.rst:405
+msgid "Show detailed diagnose message when error happend."
+msgstr ""
+
+#: ../../changes.rst:406
+msgid "CI test with Qt 5.14.2 and 5.15.0"
+msgstr ""
+
+#: ../../changes.rst:407
+msgid "CI test with installed mingw tools compiler."
+msgstr ""
+
+#: ../../changes.rst:408
+msgid "Depends on py7zr v0.7.0b2 and later."
+msgstr ""
+
+#: ../../changes.rst:413
+msgid "Tools: Fix mingw installation failure."
+msgstr ""
+
+#: ../../changes.rst:414
+msgid "Fix --outputdir behavior about path separator on windows"
+msgstr ""
+
+#: ../../changes.rst:417
+msgid "`v0.8`_ (26, Mar. 2020)"
+msgstr ""
+
+#: ../../changes.rst:422
+msgid "docs: fix broken link for qli-installer"
+msgstr ""
+
+#: ../../changes.rst:426
+msgid "`v0.8b1`_ (12, Mar. 2020)"
+msgstr ""
+
+#: ../../changes.rst:431
+msgid "Support specifing config with environment variable AQT_CONFIG"
+msgstr ""
+
+#: ../../changes.rst:436
+msgid "Fix to use concurrency settings"
+msgstr ""
+
+#: ../../changes.rst:439
+msgid "`v0.8a4`_ (6, Mar., 2020)"
+msgstr ""
+
+#: ../../changes.rst:444
+msgid "Import-metadata package is required in python version < 3.8 not 3.7."
+msgstr ""
+
+#: ../../changes.rst:445
+msgid "Refactoring redirect helper function to improve connection error checks and error message.(#109)"
+msgstr ""
+
+#: ../../changes.rst:448
+msgid "`v0.8a3`_ (5, Mar., 2020)"
+msgstr ""
+
+#: ../../changes.rst:453
+msgid "Improve error messages when command argument is wrong."
+msgstr ""
+
+#: ../../changes.rst:458
+msgid "Work around for http://download.qt.io/ returns wrong metalink xml data.(#105, #106)"
+msgstr ""
+
+#: ../../changes.rst:462
+msgid "`v0.8a1`_ (28, Feb., 2020)"
+msgstr ""
+
+#: ../../changes.rst:467
+msgid "Allow path search for 7z (#96)"
+msgstr ""
+
+#: ../../changes.rst:468
+msgid "Simplify multithreading using concurrent.futures.ThreadPoolExecutor()."
+msgstr ""
+
+#: ../../changes.rst:473
+msgid "Detect exception on each download and extraction threads."
+msgstr ""
+
+#: ../../changes.rst:474
+msgid "Race condition error happend on py7zr. require py7zr>=0.5.3.(#97)"
+msgstr ""
+
+#: ../../changes.rst:478
+msgid "`v0.7.4`_ (15, Feb., 2020)"
+msgstr ""
+
+#: ../../changes.rst:483
+msgid "requirement of py7zr version become >0.6b2 which fixed a multiprocessing problem."
+msgstr ""
+
+#: ../../changes.rst:487
+msgid "`v0.7.3`_ (14, Feb., 2020)"
+msgstr ""
+
+#: ../../changes.rst:492
+msgid "Github Actions workflows for publishing."
+msgstr ""
+
+#: ../../changes.rst:497
+msgid "Remove run script from source. Now it is automatically generated when build.(#85)"
+msgstr ""
+
+#: ../../changes.rst:499
+msgid "Update requirement py7zr >=0.5"
+msgstr ""
+
+#: ../../changes.rst:504
+msgid "README: fix reStructured text syntax."
+msgstr ""
+
+#: ../../changes.rst:508
+msgid "`v0.7.2`_ (11, Feb., 2020)"
+msgstr ""
+
+#: ../../changes.rst:516
+msgid "Replace 'multiprocessing.dummy' with 'concurrent.futures'."
+msgstr ""
+
+#: ../../changes.rst:515
+msgid "download with multi-threading(I/O bound)"
+msgstr ""
+
+#: ../../changes.rst:516
+msgid "extract with multi-processing(CPU bound)"
+msgstr ""
+
+#: ../../changes.rst:521
+msgid "'-E | --external' option handling which cause path is not str error."
+msgstr ""
+
+#: ../../changes.rst:526
+msgid "`v0.7.1`_ (13, Jan., 2020)"
+msgstr ""
+
+#: ../../changes.rst:531
+msgid "Fix installation of extra modules for Qt5.9."
+msgstr ""
+
+#: ../../changes.rst:535
+msgid "`v0.7`_ (13, Jan., 2020)"
+msgstr ""
+
+#: ../../changes.rst:540
+msgid "Move project metadata to setup.cfg from setup.py."
+msgstr ""
+
+#: ../../changes.rst:544
+msgid "`v0.7b1`_ (10, Jan., 2020)"
+msgstr ""
+
+#: ../../changes.rst:549
+msgid "Bamp up dependency py7zr >=v0.5b5."
+msgstr ""
+
+#: ../../changes.rst:550
+msgid "Use py7zr in default to extract packages."
+msgstr ""
+
+#: ../../changes.rst:551
+msgid "Drop --internal command line option."
+msgstr ""
+
+#: ../../changes.rst:555
+msgid "`v0.7a2`_ (7, Jan., 2020)"
+msgstr ""
+
+#: ../../changes.rst:560
+msgid "Add special module name 'all' for extra module option."
+msgstr ""
+
+#: ../../changes.rst:565
+msgid "CI conditions, update target version."
+msgstr ""
+
+#: ../../changes.rst:568
+msgid "`v0.7a1`_ (29, Nov., 2019)"
+msgstr ""
+
+#: ../../changes.rst:573
+msgid "Introduce helper module."
+msgstr ""
+
+#: ../../changes.rst:574
+msgid "Introduce 'settings.ini' file which has a configuration for aqt module."
+msgstr ""
+
+#: ../../changes.rst:580
+msgid "Version numbering with setuptools_scm."
+msgstr ""
+
+#: ../../changes.rst:581
+msgid "Now don't install extra modules when installing 'wasm_32' arch. You should explicitly specify it with '-m' option."
+msgstr ""
+
+#: ../../changes.rst:587
+msgid "Error when mirror site is not http, but https and ftp."
+msgstr ""
+
+#: ../../changes.rst:590
+msgid "`v0.6b1`_ (23, Nov., 2019)"
+msgstr ""
+
+#: ../../changes.rst:595
+msgid "Just warn when argument combination check is failed."
+msgstr ""
+
+#: ../../changes.rst:596
+msgid "CI: Compress sample project for build test with 7zip."
+msgstr ""
+
+#: ../../changes.rst:597
+msgid "CI: Place sample script in ci directory."
+msgstr ""
+
+#: ../../changes.rst:601
+msgid "`v0.6a2`_ (19, Nov., 2019)"
+msgstr ""
+
+#: ../../changes.rst:606
+msgid "Test: Unit test against command line."
+msgstr ""
+
+#: ../../changes.rst:607
+msgid "Android target variants."
+msgstr ""
+
+#: ../../changes.rst:612
+msgid "Use logging configuration with logging.ini"
+msgstr ""
+
+#: ../../changes.rst:617
+msgid "qconfig.pri: fix QT_LICHECK line."
+msgstr ""
+
+#: ../../changes.rst:620
+#: ../../changes.rst:779
+msgid "Removed"
+msgstr ""
+
+#: ../../changes.rst:622
+msgid "Logging configuration file logging.yml"
+msgstr ""
+
+#: ../../changes.rst:623
+msgid "Drop dependency for pyyaml."
+msgstr ""
+
+#: ../../changes.rst:626
+msgid "`v0.6a1`_ (17, Nov., 2019)"
+msgstr ""
+
+#: ../../changes.rst:631
+msgid "More build test with sample project which uses an extra module.(#56)"
+msgstr ""
+
+#: ../../changes.rst:632
+msgid "Add support for installation of WebAssembly component by specifying 'wasm_32' as an arch argument.(#53, #55)"
+msgstr ""
+
+#: ../../changes.rst:638
+msgid "Optional modules are installed explicitly. Users need to specify extra modules with -m option.(#52, #56)"
+msgstr ""
+
+#: ../../changes.rst:643
+msgid "Dependency for py7zr only for python > 3.5. Now it works with python2.7."
+msgstr ""
+
+#: ../../changes.rst:646
+msgid "`v0.5`_ (10, Nov., 2019)"
+msgstr ""
+
+#: ../../changes.rst:651
+msgid "Introduce combination DB in json form. User and developer now easily add new component for installation checking."
+msgstr ""
+
+#: ../../changes.rst:657
+msgid "requires `py7zr`_ >= 0.4.1 because v0.4 can fails to extract file."
+msgstr ""
+
+#: ../../changes.rst:661
+msgid "`v0.5b2`_ (8, Oct., 2019)"
+msgstr ""
+
+#: ../../changes.rst:666
+msgid "Change install path from <target>/Qt/Qt<version>/<version> to <target>/<version> (#48). - Also update CI test to specify --outputdir <target> that is $(BinariesDirectory)/Qt"
+msgstr ""
+
+#: ../../changes.rst:670
+msgid "`v0.5b1`_ (8, Oct., 2019)"
+msgstr ""
+
+#: ../../changes.rst:675
+msgid "Add feature to support installation of Qt Tools"
+msgstr ""
+
+#: ../../changes.rst:676
+msgid "Add CI test for tool installation"
+msgstr ""
+
+#: ../../changes.rst:681
+msgid "CI test target - add 5.14.0 - remove 5.11.3 - change patch_levels to up-to-date"
+msgstr ""
+
+#: ../../changes.rst:688
+msgid "`v0.4.3`_ (25, Sep, 2019)"
+msgstr ""
+
+#: ../../changes.rst:693
+msgid "Allow multiple redirection to mirror site.(#41)"
+msgstr ""
+
+#: ../../changes.rst:697
+msgid "`v0.4.2`_ (28, Jul, 2019)"
+msgstr ""
+
+#: ../../changes.rst:702
+msgid "README: update badge layout."
+msgstr ""
+
+#: ../../changes.rst:703
+msgid "CI: Improve azure-pipelines configurations by Nelson (#20)"
+msgstr ""
+
+#: ../../changes.rst:704
+msgid "Check parameter combination allowance and add winrt variant."
+msgstr ""
+
+#: ../../changes.rst:705
+msgid "Support installation of mingw runtime package."
+msgstr ""
+
+#: ../../changes.rst:706
+msgid "Add '--internal' option to use `py7zr`_ instead of external `7zip`_ command for extracting package archives.(WIP)"
+msgstr ""
+
+#: ../../changes.rst:711
+msgid "`v0.4.1`_ (01, Jun, 2019)"
+msgstr ""
+
+#: ../../changes.rst:716
+msgid "Option -b | --base to specify mirror site.(#24)"
+msgstr ""
+
+#: ../../changes.rst:721
+msgid "CI: add script to generate auzre-pipelines.yml (#27, #28, #29)"
+msgstr ""
+
+#: ../../changes.rst:722
+msgid "CI: use powershell script for linux, mac and windows. (#26)"
+msgstr ""
+
+#: ../../changes.rst:727
+msgid "Avoid blacklisted mirror site that cause CI fails.(#25)"
+msgstr ""
+
+#: ../../changes.rst:731
+msgid "`v0.4.0`_ (29, May, 2019)"
+msgstr ""
+
+#: ../../changes.rst:736
+msgid "cli: output directory option."
+msgstr ""
+
+#: ../../changes.rst:737
+msgid "sphinx document."
+msgstr ""
+
+#: ../../changes.rst:738
+msgid "test packaging on CI."
+msgstr ""
+
+#: ../../changes.rst:739
+msgid "Handler for metalink information and intelligent mirror selection."
+msgstr ""
+
+#: ../../changes.rst:744
+msgid "Change project directory structure."
+msgstr ""
+
+#: ../../changes.rst:745
+msgid "cli command name changed from 'aqtinst' to 'aqt' and now you can run 'aqt install'"
+msgstr ""
+
+#: ../../changes.rst:746
+msgid "Introduce Cli class"
+msgstr ""
+
+#: ../../changes.rst:747
+msgid "Massive regression test on azure pipelines(#20)"
+msgstr ""
+
+#: ../../changes.rst:748
+msgid "blacklist against http://mirrors.tuna.tsinghua.edu.cn and http://mirrors.geekpie.club/ from mirror site."
+msgstr ""
+
+#: ../../changes.rst:750
+msgid "Run 7zip command with '-o{directory}' option."
+msgstr ""
+
+#: ../../changes.rst:755
+msgid "Fix File Not Found Error when making qt.conf against win64_mingw73 and win32_mingw73"
+msgstr ""
+
+#: ../../changes.rst:759
+msgid "`v0.3.1`_ (15, March, 2019)"
+msgstr ""
+
+#: ../../changes.rst:764
+msgid "Qmake build test code in CI environment.(#14)"
+msgstr ""
+
+#: ../../changes.rst:769
+msgid "Connect to Qt download server through proxy with authentication.(#17)"
+msgstr ""
+
+#: ../../changes.rst:774
+msgid "Change QtInstaller.install() function signature not to take any parameter."
+msgstr ""
+
+#: ../../changes.rst:775
+msgid "Replace standard urllib to requests library.(#18)"
+msgstr ""
+
+#: ../../changes.rst:776
+msgid "Use 7zr external command instead of 7z in Linux and mac OSX envitonment."
+msgstr ""
+
+#: ../../changes.rst:781
+msgid "requirements.txt file."
+msgstr ""
+
+#: ../../changes.rst:785
+msgid "`v0.3.0`_ (8, March, 2019)"
+msgstr ""
+
+#: ../../changes.rst:790
+msgid "Allow execute both 'aqtinst'  and 'python -m aqt' form."
+msgstr ""
+
+#: ../../changes.rst:795
+msgid "Project URL is changed."
+msgstr ""
+
+#: ../../changes.rst:796
+msgid "Generate universal wheel support both python2.7 and python 3.x."
+msgstr ""
+
+#: ../../changes.rst:801
+msgid "Update README wordings."
+msgstr ""
+
+#: ../../changes.rst:802
+msgid "Remove dependency for python3 with 'aqtinst' command utility."
+msgstr ""
+
+#: ../../changes.rst:803
+msgid "Fix command name in help message."
+msgstr ""
+
+#: ../../changes.rst:808
+msgid "`v0.2.0`_ (7, March, 2019)"
+msgstr ""
+
+#: ../../changes.rst:813
+msgid "Released on pypi.org"
+msgstr ""
+
+#: ../../changes.rst:818
+msgid "Install not only basic packages also optional packages."
+msgstr ""
+
+#: ../../changes.rst:819
+msgid "Rename project/command to aqt - Another QT installer"
+msgstr ""
+
+#: ../../changes.rst:824
+msgid "Update mkspecs/qconfig.pri to indicate QT_EDITION is OpenSource"
+msgstr ""
+
+#: ../../changes.rst:825
+msgid "Support Python2"
+msgstr ""
+
+#: ../../changes.rst:828
+msgid "`v0.1.0`_ (5, March, 2019)"
+msgstr ""
+
+#: ../../changes.rst:833
+msgid "Support  multiprocess concurrent download and installation."
+msgstr ""
+
+#: ../../changes.rst:836
+msgid "`v0.0.2`_ (4, March, 2019)"
+msgstr ""
+
+#: ../../changes.rst:841
+msgid "CI test on Azure-pipelines"
+msgstr ""
+
+#: ../../changes.rst:846
+msgid "Refactoring code"
+msgstr ""
+
+#: ../../changes.rst:847
+msgid "Install QtSDK into (cwd)/Qt<version>/<version>/gcc_64/"
+msgstr ""
+
+#: ../../changes.rst:848
+msgid "Drop dependency for `requests`_ library"
+msgstr ""
+
+#: ../../changes.rst:849
+msgid "Use standard `argparse`_ for command line argument."
+msgstr ""
+
+#: ../../changes.rst:854
+msgid "Support windows."
+msgstr ""
+
+#: ../../changes.rst:855
+msgid "looking for 7zip in standard directory."
+msgstr ""
+
+#: ../../changes.rst:858
+msgid "`v0.0.1`_ (2, March, 2019)"
+msgstr ""
+
+#: ../../changes.rst:860
+msgid "Fork from qli-installer"
+msgstr ""
