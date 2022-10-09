@@ -3,10 +3,8 @@
 # This file is distributed under the same license as the aqtinstall package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
-#, fuzzy
 msgid ""
-msgstr ""
-"Project-Id-Version: aqtinstall 3.0\n"
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-09 22:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -19,76 +17,76 @@ msgstr ""
 
 #: ../../cli.rst:4
 msgid "Command Line Options"
-msgstr ""
+msgstr "コマンドラインオプション"
 
 #: ../../cli.rst:6
 msgid ""
 "The CLI uses argparse to parse the command line options so the short or "
 "long versions may be used and the long options may be truncated to the "
 "shortest unambiguous abbreviation."
-msgstr ""
+msgstr "コマンドラインのインタフェースは、argparseライブラリを使用してコマンドラインのオプションを解析します。そのため、オプションに、短いバージョンや長いバージョンが使用できるます。長いオプションは最も短い明確な省略形も提供ます。"
 
 #: ../../cli.rst:10
 msgid "Generic commands"
-msgstr ""
+msgstr "一般的なコマンド"
 
 #: ../../cli.rst:18
 msgid "show generic help"
-msgstr ""
+msgstr "汎用ヘルプの表示"
 
 #: ../../cli.rst:26
 msgid "display version"
-msgstr ""
+msgstr "バージョンの表示"
 
 #: ../../cli.rst:30
 msgid "List-* Commands"
-msgstr ""
+msgstr "List-*コマンド"
 
 #: ../../cli.rst:32
 msgid ""
 "These commands are used to list the packages available for installation "
 "with ``aqt``."
-msgstr ""
+msgstr "このコマンドは、``aqt`でインストールできるパッケージを一覧表示するために使用します。"
 
 #: ../../cli.rst:37
 msgid "list-qt command"
-msgstr ""
+msgstr "list-qtコマンド"
 
 #: ../../cli.rst:55
 msgid ""
 "List available versions of Qt, targets, extensions, modules, and "
 "architectures."
-msgstr ""
+msgstr "Qtの利用可能なバージョン、ターゲット、拡張、モジュール、アーキテクチャを表示します。"
 
 #: ../../cli.rst:59 ../../cli.rst:197 ../../cli.rst:237 ../../cli.rst:282
 #: ../../cli.rst:320 ../../cli.rst:605 ../../cli.rst:665 ../../cli.rst:719
 #: ../../cli.rst:771
 msgid "linux, windows or mac"
-msgstr ""
+msgstr "linux、windows、またはmac"
 
 #: ../../cli.rst:63 ../../cli.rst:324
 msgid ""
 "desktop, winrt, ios or android. When omitted, the command prints all the "
 "targets available for a host OS. Note that winrt is only available on "
 "Windows, and ios is only available on Mac OS."
-msgstr ""
+msgstr "desktop、winrt、iosまたはandroid。省略すると、ホストOSで使用可能なすべてのターゲットが出力されます。winrtはWindowsでしか使用できず、iosはMac OSでしか使用できません。"
 
 #: ../../cli.rst:69 ../../cli.rst:338 ../../cli.rst:376
 msgid "Display help text"
-msgstr ""
+msgstr "ヘルプテキストを表示する"
 
 #: ../../cli.rst:73
 msgid ""
 "Extension of packages to list "
 "{wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}"
-msgstr ""
+msgstr "リスト表示するパッケージ拡張{wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}"
 
 #: ../../cli.rst:76
 msgid ""
 "Use the ``--extensions`` flag to list all relevant options for a "
 "host/target. Incompatible with the ``--extensions`` flag, but may be "
 "combined with any other flag."
-msgstr ""
+msgstr "ホスト/ターゲットに関連するすべてのオプションをリストするには、`--extensions``フラグを使用してください。`--extensions``フラグとは互換性がありませんが、他のフラグと組み合わせることができます。"
 
 #: ../../cli.rst:81
 msgid ""
@@ -96,7 +94,7 @@ msgid ""
 "set, this prints all valid arguments for the ``--extension`` flag for Qt "
 "5.X.Y, or the latest version of Qt if ``latest`` is specified. "
 "Incompatible with the ``--extension`` flag."
-msgstr ""
+msgstr "\"5.X.Y\"形式のQtバージョン、またはキーワード``latest``。これを設定すると、Qt 5.X.Yの`--extension`フラグの有効な引数をすべて出力します。または、``latest``が指定されている場合はQtの最新バージョンを出力します。`--extension`フラグとは互換性がありません。"
 
 #: ../../cli.rst:88
 msgid ""
@@ -107,7 +105,7 @@ msgid ""
 "windows desktop --spec \"5.12\"`` would print all versions of Qt for "
 "Windows Desktop beginning with 5.12. May be combined with any other flag "
 "to filter the output of that flag."
-msgstr ""
+msgstr "バージョンの範囲を指定する `SimpleSpec`_ 内のQtのバージョンを表示します。部分的なバージョンや不等式などを指定できます。``\"*\"``  はQtのすべてのバージョンにマッチし、``\">6.0.2,<6.2.0\"``  は6.0.2から6.2.0までのQtのすべてのバージョンにマッチします。例えば、``aqt list-qt windows desktop --spec \"5.12\"`` と入力すると、5.12から始まるWindows デスクトップ用のQtのすべてのバージョンが出力されます。他のフラグと組み合わせて、そのフラグの出力をフィルタリングすることができます。"
 
 #: ../../cli.rst:101
 msgid ""
@@ -115,7 +113,7 @@ msgid ""
 "host/target/extension/architecture combination, or the latest version of "
 "Qt if ``latest`` is specified. You can list available architectures by "
 "using ``aqt list-qt`` with the ``--arch`` flag described below."
-msgstr ""
+msgstr "このフラグは、Qt 5.X.Yで利用可能なすべてのモジュールをホスト/ターゲット/拡張/アーキテクチャの組み合わせで一覧表示します。``latest``  が指定されている場合はQtの最新バージョンを表示します。利用可能なアーキテクチャを一覧表示するには、以下で説明する ``--arch`` フラグを付けて ``aqt list-qt`` を使用します。"
 
 #: ../../cli.rst:108
 msgid ""
@@ -125,14 +123,14 @@ msgid ""
 "is wider than 95 characters, ``aqt list-qt`` will also display release "
 "dates and sizes for each module. An example of this output is displayed "
 "below."
-msgstr ""
+msgstr "モジュールの長い表示: ``--modules`` と似ていますが、各モジュールに関連付けられた追加のメタデータを表示します。このメタデータは、各モジュールの長い表示名を含むテーブルに表示されます。端末の表示幅が95文字を超える場合、``aqt list-qt`` には各モジュールのリリース日とサイズも表示されます。この出力例を以下に示します。"
 
 #: ../../cli.rst:151
 msgid ""
 "Qt version in the format of \"5.X.Y\". When set, this prints all "
 "architectures available for Qt 5.X.Y with a host/target/extension, or the"
 " latest version of Qt if ``latest`` is specified."
-msgstr ""
+msgstr "Qt version in the format of \"5.X.Y\". When set, this prints all architectures available for Qt 5.X.Y with a host/target/extension, or the latest version of Qt if ``latest`` is specified."
 
 #: ../../cli.rst:158
 msgid ""

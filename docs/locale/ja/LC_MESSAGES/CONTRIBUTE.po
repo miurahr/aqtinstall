@@ -3,10 +3,8 @@
 # This file is distributed under the same license as the aqtinstall package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
-#, fuzzy
 msgid ""
-msgstr ""
-"Project-Id-Version: aqtinstall 3.0\n"
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-09 22:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -19,74 +17,74 @@ msgstr ""
 
 #: ../../CONTRIBUTE.rst:3
 msgid "Contribution guide"
-msgstr ""
+msgstr "コントリビューションガイド"
 
 #: ../../CONTRIBUTE.rst:5
 msgid ""
 "This is contribution guide for aqtinstall project. You are welcome to "
 "send a Pull-Request, reporting bugs and ask questions."
-msgstr ""
+msgstr "aqtinstallプロジェクトへの貢献ガイドです。Pull-Requestを送信してバグを報告し、質問をすることを歓迎します。"
 
 #: ../../CONTRIBUTE.rst:9
 msgid "Resources"
-msgstr ""
+msgstr "リソース"
 
 #: ../../CONTRIBUTE.rst:11
 msgid "Project owner: Hiroshi Miura"
-msgstr ""
+msgstr "プロジェクトオーナー:三浦広志"
 
 #: ../../CONTRIBUTE.rst:12
 msgid "Bug Tracker:  Github issue `Tracker`_"
-msgstr ""
+msgstr "バグトラッカー:  Github issue `Tracker`_"
 
 #: ../../CONTRIBUTE.rst:13
 msgid "Status: Beta"
-msgstr ""
+msgstr "ステータス:ベータ"
 
 #: ../../CONTRIBUTE.rst:14
 msgid "Activity: moderate"
-msgstr ""
+msgstr "活動度:中等度"
 
 #: ../../CONTRIBUTE.rst:19
 msgid "Bug triage"
-msgstr ""
+msgstr "バグ・トリアージ"
 
 #: ../../CONTRIBUTE.rst:21
 msgid ""
 "Every report to github issue tracker should be in triage. whether it is "
 "bug, question or invalid."
-msgstr ""
+msgstr "github issue trackerへのすべてのレポートは、バグであれ、質問であれ、無効であれ、トリアージする必要があります。"
 
 #: ../../CONTRIBUTE.rst:26
 msgid "Send patch"
-msgstr ""
+msgstr "パッチを送信"
 
 #: ../../CONTRIBUTE.rst:28
 msgid "Here is small amount rule when you want to send patch the project;"
-msgstr ""
+msgstr "プロジェクトにパッチを送りたい場合の少量のルールを以下に示します。"
 
 #: ../../CONTRIBUTE.rst:30
 msgid "every proposal for modification should send as 'Pull Request'"
-msgstr ""
+msgstr "修正案はすべて「プルリクエスト」として送信する必要があります。"
 
 #: ../../CONTRIBUTE.rst:32
 msgid "each pull request can consist of multiple commits."
-msgstr ""
+msgstr "各プルリクエストは複数のコミットで構成されます。"
 
 #: ../../CONTRIBUTE.rst:34
 msgid ""
 "you are encourage to split modifications to individual commits that are "
 "logical subpart."
-msgstr ""
+msgstr "変更を論理的なサブパートである個々のコミットに分割することをお勧めします。"
 
 #: ../../CONTRIBUTE.rst:37
 msgid "CI tests"
-msgstr ""
+msgstr "CIテスト"
 
 #: ../../CONTRIBUTE.rst:39
 msgid ""
 "The project configured to use Azure Pipelines, Github actions and "
 "Coveralls for regression test. You can see test results on badge and see "
 "details in a web page linked from badge."
-msgstr ""
+msgstr "プロジェクトは、Azure Pipelines、Githubアクション、Coverallsを使用してリグレッションテストを行うように設定されています。テスト結果はバッジで確認でき、詳細はバッジからリンクされたWebページで確認できます。"
 
