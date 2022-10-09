@@ -1,0 +1,65 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../SECURITY.rst:2
+msgid "Security Policy"
+msgstr ""
+
+#: ../../SECURITY.rst:5
+msgid "Supported Versions"
+msgstr ""
+
+#: ../../SECURITY.rst:8
+msgid "Version"
+msgstr ""
+
+#: ../../SECURITY.rst:8
+msgid "Status"
+msgstr ""
+
+#: ../../SECURITY.rst:10
+msgid "3.0.x"
+msgstr ""
+
+#: ../../SECURITY.rst:10
+msgid "Stable version"
+msgstr ""
+
+#: ../../SECURITY.rst:12
+msgid "2.2.x"
+msgstr ""
+
+#: ../../SECURITY.rst:12
+msgid "Security fixes only"
+msgstr ""
+
+#: ../../SECURITY.rst:14
+msgid "< 2.2"
+msgstr ""
+
+#: ../../SECURITY.rst:14
+msgid "not supported"
+msgstr ""
+
+#: ../../SECURITY.rst:18
+msgid "Reporting a Vulnerability"
+msgstr ""
+
+#: ../../SECURITY.rst:20
+msgid "Please disclose security vulnerabilities privately at miurahr@linux.com"
+msgstr ""

@@ -1,0 +1,411 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../getting_started.rst:4
+msgid "Getting Started"
+msgstr ""
+
+#: ../../getting_started.rst:6
+msgid "``aqt`` is a tool that can be used to install Qt, modules, tools related to Qt, source, docs, and examples, available at https://download.qt.io/. Before running ``aqt``, you will need to tell ``aqt`` exactly what you want it to install. This section of the documentation is meant to walk you through the process of finding out what packages are available to ``aqt``, so you can tell ``aqt`` what you want to install."
+msgstr ""
+
+#: ../../getting_started.rst:13
+msgid "Please note that every ``aqt`` subcommand has a ``--help`` option; please use it if you are having trouble!"
+msgstr ""
+
+#: ../../getting_started.rst:18
+msgid "Installing Qt"
+msgstr ""
+
+#: ../../getting_started.rst:20
+msgid "General usage of ``aqt`` looks like this:"
+msgstr ""
+
+#: ../../getting_started.rst:26
+msgid "If you have installed ``aqt`` with pip, you can run it with the command script ``aqt``, but in some cases you may need to run it as ``python -m aqt``. Some older operating systems may require you to specify Python version 3, like this: ``python3 -m aqt``."
+msgstr ""
+
+#: ../../getting_started.rst:30
+msgid "To use ``aqt`` to install Qt, you will need to tell ``aqt`` four things:"
+msgstr ""
+
+#: ../../getting_started.rst:32
+#: ../../getting_started.rst:410
+msgid "The host operating system (windows, mac, or linux)"
+msgstr ""
+
+#: ../../getting_started.rst:33
+#: ../../getting_started.rst:411
+msgid "The target SDK (desktop, android, ios, or winrt)"
+msgstr ""
+
+#: ../../getting_started.rst:34
+msgid "The version of Qt you would like to install"
+msgstr ""
+
+#: ../../getting_started.rst:35
+msgid "The target architecture"
+msgstr ""
+
+#: ../../getting_started.rst:37
+msgid "Keep in mind that Qt for IOS is only available on Mac OS, and Qt for WinRT is only available on Windows."
+msgstr ""
+
+#: ../../getting_started.rst:40
+msgid "To find out what versions of Qt are available, you can use the :ref:`aqt list-qt command <list-qt command>`. This command will print all versions of Qt available for Windows Desktop:"
+msgstr ""
+
+#: ../../getting_started.rst:57
+msgid "Notice that the version numbers are sorted, grouped by minor version number, and separated by a single space-character. The output of all of the :ref:`aqt list-qt <list-qt command>` commands is intended to make it easier for you to write programs that consume the output of :ref:`aqt list-qt <list-qt command>`."
+msgstr ""
+
+#: ../../getting_started.rst:62
+msgid "Because the :ref:`aqt list-qt <list-qt command>` command directly queries the Qt downloads repository at https://download.qt.io/, the results of this command will always be accurate. The `Available Qt versions`_ wiki page was last modified at some point in the past, so it may or may not be up to date."
+msgstr ""
+
+#: ../../getting_started.rst:69
+msgid "Now that we know what versions of Qt are available, let's choose version 6.2.0."
+msgstr ""
+
+#: ../../getting_started.rst:71
+msgid "The next thing we need to do is find out what architectures are available for Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list-qt command>` with the ``--arch`` flag:"
+msgstr ""
+
+#: ../../getting_started.rst:80
+msgid "Notice that this is a very small subset of the architectures listed in the `Available Qt versions`_ wiki page. If we need to use some architecture that is not on this list, we can use the `Available Qt versions`_ wiki page to get a rough idea of what versions support the architecture we want, and then use :ref:`aqt list-qt <list-qt command>` to confirm that the architecture is available."
+msgstr ""
+
+#: ../../getting_started.rst:86
+msgid "Let's say that we want to install Qt 6.2.0 with architecture `win64_mingw81`. The installation command we need is:"
+msgstr ""
+
+#: ../../getting_started.rst:93
+msgid "Let's say that we want to install the next version of Qt 6.2 as soon as it is available. We can do this by using a `SimpleSpec <https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec>`_ instead of an explicit version:"
+msgstr ""
+
+#: ../../getting_started.rst:104
+msgid "External 7-zip extractor"
+msgstr ""
+
+#: ../../getting_started.rst:106
+msgid "By default, ``aqt`` extracts the 7zip archives stored in the Qt repository using py7zr_, which is installed alongside ``aqt``. You can specify an alternate 7zip command path instead by using the ``-E`` or ``--external`` flag. For example, you could use 7-zip_ on a Windows desktop, using this command:"
+msgstr ""
+
+#: ../../getting_started.rst:115
+msgid "On Linux, you can specify p7zip_, a Linux port of 7-zip_, which is often installed by default, using this command:"
+msgstr ""
+
+#: ../../getting_started.rst:127
+msgid "Changing the output directory"
+msgstr ""
+
+#: ../../getting_started.rst:129
+msgid "By default, ``aqt`` will install all of the Qt packages into the current working directory, in the subdirectory ``./<Qt version>/<arch>/``. For example, if we install Qt 6.2.0 for Windows desktop with arch `win64_mingw81`, it would end up in ``./6.2.0/win64_mingw81``."
+msgstr ""
+
+#: ../../getting_started.rst:134
+msgid "If you would prefer to install it to another location, you will need to use the ``-O`` or ``--outputdir`` flag. This option also works for all of the other subcommands that begin with ``aqt install-``."
+msgstr ""
+
+#: ../../getting_started.rst:139
+msgid "To install to ``C:\\Qt``, the default directory used by the standard gui installer, you may use this command:"
+msgstr ""
+
+#: ../../getting_started.rst:149
+msgid "Installing Modules"
+msgstr ""
+
+#: ../../getting_started.rst:151
+msgid "Let's say we need to install some modules for Qt 5.15.2 on Windows Desktop. First we need to find out what the modules are called, and we can do that with :ref:`aqt list-qt <list-qt command>` with the ``--modules`` flag. Each version of Qt has a different list of modules for each host OS/ target SDK/ architecture combination, so we will need to supply :ref:`aqt list-qt <list-qt command>` with that information:"
+msgstr ""
+
+#: ../../getting_started.rst:163
+msgid "Let's say that we want to know more about these modules before we install them. We can use the ``--long-modules`` flag for that:"
+msgstr ""
+
+#: ../../getting_started.rst:183
+msgid "Note that if your terminal is wider than 95 characters, this command will show release dates and sizes in extra columns to the right. If you try this, you will notice that `debug_info` is 5.9 gigabytes installed."
+msgstr ""
+
+#: ../../getting_started.rst:187
+msgid "Let's say that we want to install `qtcharts` and `qtnetworkauth`. We can do that by using the `-m` flag with the :ref:`aqt install-qt <qt installation command>` command. This flag receives the name of at least one module as an argument:"
+msgstr ""
+
+#: ../../getting_started.rst:195
+msgid "If we wish to install all the modules that are available, we can do that with the ``all`` keyword:"
+msgstr ""
+
+#: ../../getting_started.rst:201
+msgid "Remember that the :ref:`aqt list-qt <list-qt command>` command is meant to be scriptable? One way to install all modules available for Qt 5.15.2 is to send the output of :ref:`aqt list-qt <list-qt command>` into :ref:`aqt install-qt <qt installation command>`, like this:"
+msgstr ""
+
+#: ../../getting_started.rst:210
+msgid "You will need a Unix-style shell to run this command, or at least git-bash on Windows. The ``xargs`` equivalent to this command is an exercise left to the reader."
+msgstr ""
+
+#: ../../getting_started.rst:213
+msgid "If you want to install all available modules, you are probably better off using the ``all`` keyword, as discussed above. This scripting example is presented to give you a sense of how to accomplish something more complicated. Perhaps you want to install all modules except `qtnetworkauth`; you could write a script that removes `qtnetworkauth` from the output of :ref:`aqt list-qt <list-qt command>`, and pipe that into :ref:`aqt install-qt <qt installation command>`. This exercise is left to the reader."
+msgstr ""
+
+#: ../../getting_started.rst:223
+msgid "Installing Qt for Android"
+msgstr ""
+
+#: ../../getting_started.rst:225
+msgid "Let's install Qt for Android. Installing Qt 5 will be similar to installing Qt for Desktop on Windows, but there will be differences when we get to Qt 6."
+msgstr ""
+
+#: ../../getting_started.rst:243
+msgid "Let's see what happens when we try to list architectures and modules for Qt 6:"
+msgstr ""
+
+#: ../../getting_started.rst:257
+msgid "The Qt 6 for Android repositories are a little different than the Qt 5 repositories, and the :ref:`aqt list-qt <list-qt command>` tool doesn't know where to look for modules and architectures if you don't tell it what architecture you need. I know, it sounds a little backwards, but that's how the Qt repo was put together."
+msgstr ""
+
+#: ../../getting_started.rst:262
+msgid "There are four architectures available, and the error message from :ref:`aqt list-qt <list-qt command>` just told us what they are: `x86_64`, `x86`, `armv7`, and `arm64_v8a`."
+msgstr ""
+
+#: ../../getting_started.rst:265
+msgid "We know we want to use `armv7` for the architecture, but we don't know exactly what value for 'architecture' we need to pass to :ref:`aqt install-qt <qt installation command>` yet, so we will use :ref:`aqt list-qt <list-qt command>` again:"
+msgstr ""
+
+#: ../../getting_started.rst:274
+msgid "You should be thinking, \"Well, that was silly. All it did was add `android_` to the beginning of the architecture I gave it. Why do I need to use ``aqt list-qt --arch`` for that?\" The answer is, ``aqt list-qt --arch`` is checking to see what actually exists in the Qt repository. If it prints an error message, instead of the obvious `android_armv7`, we would know that Qt 6.2.0 for that architecture doesn't exist for some reason, and any attempt to install it with :ref:`aqt install-qt <qt installation command>` will fail."
+msgstr ""
+
+#: ../../getting_started.rst:282
+msgid "If we want to install Qt 6.2.0 for armv7, we use this command to print available modules:"
+msgstr ""
+
+#: ../../getting_started.rst:292
+msgid "Finally, let's install Qt 6.2.0 for Android armv7 with the ``qtcharts`` and ``qtnetworkauth`` modules:"
+msgstr ""
+
+#: ../../getting_started.rst:299
+msgid "Please note that when you install Qt for android or ios, the installation will not be functional unless you install the corresponding desktop version of Qt alongside it. You can do this automatically with the ``--autodesktop`` flag:"
+msgstr ""
+
+#: ../../getting_started.rst:308
+msgid "Installing Qt for WASM"
+msgstr ""
+
+#: ../../getting_started.rst:310
+msgid "To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt <list-qt command>` that we are using the `wasm` architecture. We can do that by using the ``--extension wasm`` flag."
+msgstr ""
+
+#: ../../getting_started.rst:320
+msgid "There are only a few versions of Qt that support WASM, and they are only available for desktop targets. If we tried this command with `android`, `winrt`, or `ios` targets, we would have seen an error message."
+msgstr ""
+
+#: ../../getting_started.rst:324
+msgid "We can check the architecture and modules available as before:"
+msgstr ""
+
+#: ../../getting_started.rst:335
+msgid "We can install Qt for WASM as before:"
+msgstr ""
+
+#: ../../getting_started.rst:343
+msgid "Installing Tools"
+msgstr ""
+
+#: ../../getting_started.rst:345
+msgid "Let's find out what tools are available for Windows Desktop by using the :ref:`aqt list-tool <list-tool command>` command:"
+msgstr ""
+
+#: ../../getting_started.rst:364
+msgid "Let's see what tool variants are available in `tools_mingw`:"
+msgstr ""
+
+#: ../../getting_started.rst:380
+msgid "This gives us a list of things that we could install using :ref:`aqt install-tool <tools installation command>`. Let's see some more details, using the ``-l`` or ``--long`` flag:"
+msgstr ""
+
+#: ../../getting_started.rst:401
+msgid "The ``-l`` flag causes :ref:`aqt list-tool <list-tool command>` to print a table that shows plenty of data pertinent to each tool variant available in `tools_mingw`. :ref:`aqt list-tool <list-tool command>` additionally prints the 'Display Name' and 'Description' for each tool if your terminal is wider than 95 characters; terminals that are narrower than this cannot display this table in a readable way."
+msgstr ""
+
+#: ../../getting_started.rst:407
+msgid "Now let's install `mingw`, using the :ref:`aqt install-tool <tools installation command>` command. This command receives four parameters:"
+msgstr ""
+
+#: ../../getting_started.rst:412
+msgid "The name of the tool (this is `tools_mingw` in our case)"
+msgstr ""
+
+#: ../../getting_started.rst:413
+msgid "(Optional) The tool variant name. We saw a list of these when we ran :ref:`aqt list-tool <list-tool command>` with the `tool name` argument filled in."
+msgstr ""
+
+#: ../../getting_started.rst:416
+msgid "To install `mingw`, you could use this command (please don't):"
+msgstr ""
+
+#: ../../getting_started.rst:422
+msgid "Using this command will install every tool variant available in `tools_mingw`; in this case, you would install 10 different versions of the same tool. For some tools, like `qtcreator` or `ifw`, this is an appropriate thing to do, since each tool variant is a different program. However, for tools like `mingw` and `vcredist`, it would make more sense to use :ref:`aqt list-tool <list-tool command>` to see what tool variants are available, and then install just the tool variant you are interested in, like this:"
+msgstr ""
+
+#: ../../getting_started.rst:435
+msgid "Please note that ``aqt install-tool`` does not recognize the ``installscript.qs`` related to each tool. When you install these tools with the standard gui installer, the installer may use the ``installscript.qs`` script to make additional changes to your system. If you need those changes to occur, it will be your responsibility to make those changes happen, because ``aqt`` is not capable of running this script."
+msgstr ""
+
+#: ../../getting_started.rst:443
+msgid "Installing a subset of Qt archives [Advanced]"
+msgstr ""
+
+#: ../../getting_started.rst:446
+msgid "Introduction"
+msgstr ""
+
+#: ../../getting_started.rst:448
+msgid "You may have noticed that by default, ``aqt install-qt`` installs a lot of archives that you may or may not need, and a typical installation can take up more disk space than necessary. If you installed the module ``debug_info``, it may have installed more than 1 gigabyte of data. This section will help you to reduce the footprint of your Qt installation."
+msgstr ""
+
+#: ../../getting_started.rst:456
+msgid "Be careful about using the ``--archives`` flag; it is marked `Advanced` for a reason! It is very easy to misuse this command and end up with a Qt installation that is missing the components that you need. Don't use it unless you know what you are doing!"
+msgstr ""
+
+#: ../../getting_started.rst:463
+msgid "Minimum Qt Installation"
+msgstr ""
+
+#: ../../getting_started.rst:465
+msgid "Normally, when you run ``aqt install-qt``, the program will print a long list of archives that it is downloading, extracting, and installing, including ``qtbase``, ``qtmultimedia``, ``qt3d``, and ~25 more items. We can use the ``--archives`` flag to choose which of these archives we will actually install. The ``--archives`` flag can only affect two modules: the base Qt installation and the ``debug_info`` module."
+msgstr ""
+
+#: ../../getting_started.rst:473
+msgid "In this documentation, **\"modules\"**, **\"archives\"**, and **\"the base Qt installation\"** refer to different things, and are defined here:"
+msgstr ""
+
+#: ../../getting_started.rst:476
+msgid "**Archives**: In this context, an **archive** is a bundle of files compressed with the 7zip algorithm. It exists on a disk drive as a file with the extension ``.7z``."
+msgstr ""
+
+#: ../../getting_started.rst:480
+msgid "**Modules**: The Qt repository organizes groups of archives into modules. A **module** contains one or more **archives**."
+msgstr ""
+
+#: ../../getting_started.rst:483
+msgid "**the base Qt installation**: By definition, this is just another **module** that contains 20-30 **archives**. This documentation refers to it as **the base Qt installation** instead of a **module** for several reasons:"
+msgstr ""
+
+#: ../../getting_started.rst:488
+msgid "The ``aqt install-qt`` installs this module by default."
+msgstr ""
+
+#: ../../getting_started.rst:489
+msgid "You cannot specify this module with ``aqt install-qt --modules``."
+msgstr ""
+
+#: ../../getting_started.rst:490
+msgid "The ``aqt list-qt --modules`` command is incapable of printing this module."
+msgstr ""
+
+#: ../../getting_started.rst:491
+msgid "``aqt`` transforms the names of modules as they exist in the Qt repository so that they are easier to read and write. If the name of **the base Qt installation** were transformed using the same rules, the name would be empty."
+msgstr ""
+
+#: ../../getting_started.rst:496
+msgid "The fully-qualified name of the **base Qt installation** module is usually something like ``qt.qt6.620.gcc_64``. The fully-qualified name of the ``qtcharts`` module could be something like ``qt.qt6.620.qtcharts.gcc_64``. It would be difficult to read and write a list of 20 modules with the prefix ``qt.qt6.620.`` and the suffix ``.gcc_64``, because these parts are repetitive and not meaningful. Only the ``qtcharts`` part is useful."
+msgstr ""
+
+#: ../../getting_started.rst:504
+msgid "Let's say that we want to install Qt 5.15.2 for Linux desktop, using the gcc_64 architecture. The ``qtbase`` archive includes the bare minimum for a working Qt installation, and we can install it alone with the ``--archives`` flag:"
+msgstr ""
+
+#: ../../getting_started.rst:512
+msgid "This time, ``aqt install-qt`` will only install one archive, ``qtbase``, instead of the ~27 archives it installs by default."
+msgstr ""
+
+#: ../../getting_started.rst:516
+msgid "Installing More Than The Bare Minimum"
+msgstr ""
+
+#: ../../getting_started.rst:518
+msgid "Let's say that the ``qtbase`` archive is missing some features that you need. Using the ``--archives qtbase`` flag causes ``aqt install-qt`` to omit roughly 27 archives. We can print a list of these archives with the ``aqt list-qt --archives`` command:"
+msgstr ""
+
+#: ../../getting_started.rst:530
+msgid "Here, we have used the ``--archives`` flag with two arguments: the version of Qt we are interested in, and the architecture we are using. As a result, the command printed a list of archives that are part of the base (non-minimal) Qt installation."
+msgstr ""
+
+#: ../../getting_started.rst:535
+msgid "Let's say we need to use ``qtmultimedia``, ``qtdeclarative``, ``qtsvg``, and nothing else. Remember that the ``qtbase`` archive is required for a minimal working Qt installation. We can install these archives using this command:"
+msgstr ""
+
+#: ../../getting_started.rst:544
+msgid "Installing Modules With Archives Specified"
+msgstr ""
+
+#: ../../getting_started.rst:546
+msgid "As of aqt v2.1.0, the ``--archives`` flag will only apply to the base Qt installation and to the ``debug_info`` module. Previous versions of aqt required that when installing modules with the ``--archives`` flag, the user must specify archives for each module, otherwise they would not be installed. This behavior has been changed to prevent such mistakes."
+msgstr ""
+
+#: ../../getting_started.rst:552
+msgid "Let's say that we need to install the bare minimum Qt 5.15.2, with the modules ``qtcharts`` and ``qtlottie``:"
+msgstr ""
+
+#: ../../getting_started.rst:558
+msgid "This command will successfully install 3 archives: 1 for ``qtbase``, and one each for the two modules. If we had tried to use this command with previous versions of aqt, we would not have installed the two modules because we did not specify them in the ``--archives`` list."
+msgstr ""
+
+#: ../../getting_started.rst:564
+msgid "You can still misuse the ``--archives`` flag by omitting the ``qtbase`` archive, or by omitting archives that another archive or module is dependent on. You may not notice that there is a problem until you try to compile a program, and compilation fails."
+msgstr ""
+
+#: ../../getting_started.rst:570
+msgid "Installing the ``debug_info`` module"
+msgstr ""
+
+#: ../../getting_started.rst:572
+msgid "Now let's say we need to install the ``debug_info`` module, which is particularly large: around one gigabyte. We do not want to install all of it, so we can use ``aqt install-qt --archives`` to choose which archives we want to install. Remember that the ``--archives`` flag"
+msgstr ""
+
+#: ../../getting_started.rst:577
+msgid "``aqt list-qt --archives`` to print which archives are part of the ``debug_info`` module:"
+msgstr ""
+
+#: ../../getting_started.rst:589
+msgid "This is a lot of archives. Note that there's a name collision between the ``debug_info`` archives and the archives in every other module/Qt base install: this is because there's a ``debug_info`` archive that corresponds to almost every other archive available."
+msgstr ""
+
+#: ../../getting_started.rst:595
+msgid "Let's install Qt with ``qtcharts`` and ``debug_info`` with some archives specified:"
+msgstr ""
+
+#: ../../getting_started.rst:602
+msgid "Notice what we did here: We specified the ``qtcharts`` and ``debug_info`` modules, and we specified the ``qtbase``, ``qtcharts``, and ``qtdeclarative`` archives. This will install a total of 6 archives:"
+msgstr ""
+
+#: ../../getting_started.rst:606
+msgid "the 3 archives named ``qtbase``, ``qtcharts``, and ``qtdeclarative`` from the ``debug_info`` module,"
+msgstr ""
+
+#: ../../getting_started.rst:607
+msgid "the 1 archive ``qtcharts`` from the ``qtcharts`` module, and"
+msgstr ""
+
+#: ../../getting_started.rst:608
+msgid "the 2 archives ``qtbase`` and ``qtdeclarative`` from the base Qt installation."
+msgstr ""
+
+#: ../../getting_started.rst:611
+msgid "At present, ``aqt install-qt`` is incapable of installing any archive from the ``debug_info`` module without also installing the corresponding module from the base Qt installation. For instance, you cannot install the ``debug_info`` archive for ``qtbase`` without also installing the usual ``qtbase`` archive."
+msgstr ""

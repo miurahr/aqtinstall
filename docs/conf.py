@@ -299,3 +299,5 @@ extlinks = {'issue': ('https://github.com/miurahr/aqtinstall/issues/%s',
 linkcheck_ignore = [r'https://github.com/miurahr/aqtinstall/compare/.+',
                     'http://mirrors.tuna.tsinghua.edu.cn',
                     'http://mirrors.geekpie.club/']
+
+locale_dirs=['locale/']
