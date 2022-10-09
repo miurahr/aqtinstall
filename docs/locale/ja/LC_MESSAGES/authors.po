@@ -3,10 +3,8 @@
 # This file is distributed under the same license as the aqtinstall package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
-#, fuzzy
 msgid ""
-msgstr ""
-"Project-Id-Version: aqtinstall 3.0\n"
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-09 22:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -19,7 +17,7 @@ msgstr ""
 
 #: ../../authors.rst:6
 msgid "Authors"
-msgstr ""
+msgstr "作者"
 
 #: ../../authors.rst:8
 msgid "Aqtinstall is written and maintained by Hiroshi Miura <miurahr@linux.com>"
@@ -150,5 +148,5 @@ msgstr ""
 msgid ""
 "and many other participants and contributors. If you find a missing name "
 "to record, please feel free to tell me."
-msgstr ""
+msgstr "他にも多くの参加者や貢献者がいます。記録に名前がない方は、遠慮なく言ってください。"
 
