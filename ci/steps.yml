@@ -364,7 +364,10 @@ steps:
       echo "$env:Path"
       if('$(QT_VERSION)' -like '6*') {
         echo "Qt6: run qmake.bat"
-        qmake.bat $(Build.BinariesDirectory)\tests\openglwindow
+        #qmake.bat $(Build.BinariesDirectory)\tests\openglwindow
+        # nope, just inline the bat file:
+        echo "Inlined command is: qmake -qtconf $(WIN_QT_BINDIR)\target_qt.conf $(Build.BinariesDirectory)\tests\openglwindow"
+        "$(WIN_QT_BINDIR)\..\..\mingw_64\bin\qmake.exe" -qtconf "$(WIN_QT_BINDIR)\target_qt.conf" $(Build.BinariesDirectory)\tests\openglwindow
       } else {
         echo "Qt5: run qmake.exe"
         qmake $(Build.BinariesDirectory)\tests\openglwindow

@@ -270,7 +270,8 @@ windows_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "windows", "desktop", "wasm_32", "wasm_32")
 )
 windows_build_jobs.append(
-    BuildJob("install-qt", "6.4.0", "windows", "desktop", "wasm_32", "wasm_32")
+    BuildJob("install-qt", "6.4.0", "windows", "desktop", "wasm_32", "wasm_32",
+             is_autodesktop=True, mingw_variant="win64_mingw900")
 )
 
 # mobile SDK

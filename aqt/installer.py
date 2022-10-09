@@ -304,7 +304,7 @@ class Cli:
         base_path = Path(base_dir)
 
         expect_desktop_archdir, autodesk_arch = self._get_autodesktop_dir_and_arch(
-            should_autoinstall, os_name, target, base_path, _version
+            should_autoinstall, os_name, target, base_path, _version, is_wasm=(arch.startswith("wasm"))
         )
 
         auto_desktop_archives: List[QtPackage] = (
@@ -628,7 +628,7 @@ class Cli:
         install_qt_parser.add_argument(
             "--autodesktop",
             action="store_true",
-            help="For android/ios installations, a desktop Qt installation is required. "
+            help="For android, ios, and Qt6/wasm installations, a standard desktop Qt installation is required. "
             "When enabled, this option installs the required desktop version automatically.",
         )
 
@@ -970,36 +970,37 @@ class Cli:
             raise CliInputError(f"Invalid version: '{version_str}'! Please use the form '5.X.Y'.") from e
 
     def _get_autodesktop_dir_and_arch(
-        self, should_autoinstall: bool, host: str, target: str, base_path: Path, version: Version
+        self, should_autoinstall: bool, host: str, target: str, base_path: Path, version: Version, is_wasm: bool = False
     ) -> Tuple[Optional[str], Optional[str]]:
         """Returns expected_desktop_arch_dir, desktop_arch_to_install"""
-        if target in ["ios", "android"]:
-            installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version)
-            if installed_desktop_arch_dir:
-                # An acceptable desktop Qt is already installed, so don't do anything.
-                self.logger.info(f"Found installed {host}-desktop Qt at {installed_desktop_arch_dir}")
-                return installed_desktop_arch_dir.name, None
-
-            default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version)
-            desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
-            expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
-            if should_autoinstall:
-                # No desktop Qt is installed, but the user has requested installation. Find out what to install.
-                self.logger.info(
-                    f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
-                    f"is also installed. Now installing Qt: desktop {version} {default_desktop_arch}"
-                )
-                return expected_desktop_arch_path.name, default_desktop_arch
-            else:
-                self.logger.warning(
-                    f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
-                    f"is also installed. You can install it with the following command:\n"
-                    f"          `aqt install-qt {host} desktop {version} {default_desktop_arch}`"
-                )
-                return expected_desktop_arch_path.name, None
-        else:
-            # We do not need to worry about the desktop directory if target is not mobile.
+        is_wasm_qt6 = target == "desktop" and is_wasm and version >= Version("6.0.0")
+        if target not in ["ios", "android"] and not is_wasm_qt6:
+            # We do not need to worry about the desktop directory if target is not mobile, or it's not Qt6 wasm.
             return None, None
+
+        installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version)
+        if installed_desktop_arch_dir:
+            # An acceptable desktop Qt is already installed, so don't do anything.
+            self.logger.info(f"Found installed {host}-desktop Qt at {installed_desktop_arch_dir}")
+            return installed_desktop_arch_dir.name, None
+
+        default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version)
+        desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
+        expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
+        if should_autoinstall:
+            # No desktop Qt is installed, but the user has requested installation. Find out what to install.
+            self.logger.info(
+                f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
+                f"is also installed. Now installing Qt: desktop {version} {default_desktop_arch}"
+            )
+            return expected_desktop_arch_path.name, default_desktop_arch
+        else:
+            self.logger.warning(
+                f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
+                f"is also installed. You can install it with the following command:\n"
+                f"          `aqt install-qt {host} desktop {version} {default_desktop_arch}`"
+            )
+            return expected_desktop_arch_path.name, None
 
 
 def is_64bit() -> bool:
