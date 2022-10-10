@@ -3,10 +3,8 @@
 # This file is distributed under the same license as the aqtinstall package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
-#, fuzzy
 msgid ""
-msgstr ""
-"Project-Id-Version: aqtinstall 3.0\n"
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-09 22:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -19,11 +17,11 @@ msgstr ""
 
 #: ../../../CHANGELOG.rst:3
 msgid "aqtinstall changeLog"
-msgstr ""
+msgstr "aqtinstall変更履歴"
 
 #: ../../../CHANGELOG.rst:5
 msgid "All notable changes to this project will be documented in this file."
-msgstr ""
+msgstr "このプロジェクトに対するすべての注目すべき変更は、このファイルに文書化されます。"
 
 #: ../../../CHANGELOG.rst:8
 msgid "`Unreleased`_"

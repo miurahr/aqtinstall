@@ -3,10 +3,8 @@
 # This file is distributed under the same license as the aqtinstall package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
-#, fuzzy
 msgid ""
-msgstr ""
-"Project-Id-Version: aqtinstall 3.0\n"
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-09 22:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -19,56 +17,56 @@ msgstr ""
 
 #: ../../configuration.rst:4
 msgid "Configuration"
-msgstr ""
+msgstr "構成"
 
 #: ../../configuration.rst:6
 msgid ""
 "``aqtinstall`` can be configured through a configuration file. A default "
 "configuration is stored in ``aqt/settings.ini`` file."
-msgstr ""
+msgstr "``aqtinstall``は設定ファイルで設定できます。デフォルトの設定は ``aqt/settings.ini`` ファイルに保存されています。"
 
 #: ../../configuration.rst:9
 msgid ""
 "You can specify custom configuration file through ``AQT_CONFIG`` "
 "environment variable or \"-c\" or \"--config\" command line option."
-msgstr ""
+msgstr "環境変数 ``AQT_CONFIG`` やコマンドラインオプション``-c``や``--config`` でカスタム設定ファイルを指定することができます。"
 
 #: ../../configuration.rst:12
 msgid "A file is like as follows:"
-msgstr ""
+msgstr "設定ファイルは次のようになります。"
 
 #: ../../configuration.rst:54
 msgid "Settings"
-msgstr ""
+msgstr "設定"
 
 #: ../../configuration.rst:56
 msgid "The ``[aqt]`` section configures basic behavior."
-msgstr ""
+msgstr "``[aqt]`` セクションは基本的な動作を設定します。"
 
 #: ../../configuration.rst:60
 msgid "concurrency:"
-msgstr ""
+msgstr "concurrency:"
 
 #: ../../configuration.rst:59
 msgid ""
 "``concurrency`` is a setting how many download concurrently starts. It "
 "should be a integer value."
-msgstr ""
+msgstr "``concurrency`` は、同時に開始するダウンロードの数を設定します。これは整数値でなくてはなりません。"
 
 #: ../../configuration.rst:65
 msgid "baseurl:"
-msgstr ""
+msgstr "baseurl:"
 
 #: ../../configuration.rst:63
 msgid ""
 "``baseurl`` is a URL of Qt download site. When you have your own Qt "
 "download site repository, you can set it here. It is as same as "
 "``--base`` option."
-msgstr ""
+msgstr "``baseurl`` はQtダウンロードサイトのURLです。独自のQtダウンロードサイトリポジトリがある場合は、ここで設定できます。これは``--base``オプションと同じです。"
 
 #: ../../configuration.rst:71
 msgid "7zcmd:"
-msgstr ""
+msgstr "7zcmd:"
 
 #: ../../configuration.rst:68
 msgid ""
@@ -76,11 +74,11 @@ msgid ""
 "**without** recommended library ``py7zr``, it is used to extract archive "
 "instead of ``py7zr`` library. When ``--external`` option specified, a "
 "value is override with option's one."
-msgstr ""
+msgstr "圧縮解凍ツールの7-zipのコマンド名です。 ``aqtinstall`` が **推奨ライブラリ``py7zr``なしで** インストールされている場合、``py7zr`` ライブラリの代わりにアーカイブを抽出するために使用されます。``--external`` オプションが指定されている場合、オプションの指定値で上書きされます。"
 
 #: ../../configuration.rst:78
 msgid "print_stacktrace_on_error:"
-msgstr ""
+msgstr "print_stacktrace_on_error:"
 
 #: ../../configuration.rst:74
 msgid ""
@@ -88,7 +86,7 @@ msgid ""
 "``True`` setting causes a stack trace to be printed to stderr any time an"
 " error occurs that will end the program. The ``False`` setting will hide "
 "the stack trace, unless an unhandled exception occurs."
-msgstr ""
+msgstr "``print_stacktrace_on_error`` is either ``True`` or ``False``. The ``True`` setting causes a stack trace to be printed to stderr any time an error occurs that will end the program. The ``False`` setting will hide the stack trace, unless an unhandled exception occurs."
 
 #: ../../configuration.rst:85
 msgid "always_keep_archives:"
@@ -112,7 +110,7 @@ msgid ""
 "This is the relative or absolute path to the location in which ``.7z`` "
 "archives will be downloaded, when ``--keep`` is turned on. You can "
 "override this location with the ``--archives-dest`` option."
-msgstr ""
+msgstr "これは、``--keep`` がオンになっている場合に、``.7z`` アーカイブがダウンロードされる場所への相対パスまたは絶対パスです。この場所は、``--archives-dest`` オプションで上書きできます。"
 
 #: ../../configuration.rst:104
 msgid "min_module_size:"
@@ -129,19 +127,19 @@ msgid ""
 "useful for ``aqt list-*`` to list these empty modules. If you want to "
 "print these modules with ``aqt list-*``, please feel free to change the "
 "`min_module_size` value to something less than 40."
-msgstr ""
+msgstr "これは、aqtがリスト可能なモジュールの解凍後の最小サイズ(バイト単位)です。aqtの作者は、Qtリポジトリにいくつかの不可解な\"空の\"モジュールが含まれていることを発見しました。その中には``qtlottie`` や``qtquicktimeline``のモジュール例も含まれています。これらのモジュールは空のディレクトリを含む単一のアーカイブから構成されており、解凍すると正確に40バイトになります。著者は、``aqt list-*`` がこれらの空のモジュールをリストすることは有用ではないと感じています。これらのモジュールを ``aqt list-*`` で印刷したい場合は、``min_module_size`` の値を40未満に変更してください。"
 
 #: ../../configuration.rst:102
 msgid ""
 "This setting has no effect on your ability to install these modules. "
 "``aqt install-*`` can will still install them without any warnings."
-msgstr ""
+msgstr "この設定はこれらのモジュールをインストールする能力に影響を与えません。``aqt install-*`` は警告なしでそれらをインストールします。"
 
 #: ../../configuration.rst:106
 msgid ""
 "The ``[requests]`` section controls the way that ``aqt`` makes network "
 "requests."
-msgstr ""
+msgstr "``[requests]`` セクションは、``aqt`` がネットワークリクエストを行う方法を制御します。"
 
 #: ../../configuration.rst:110
 msgid "connection_timeout:"
@@ -151,7 +149,7 @@ msgstr ""
 msgid ""
 "``connection_timeout`` is a timeout in second for connection. It is "
 "passed to ``requests`` library."
-msgstr ""
+msgstr "``connection_timeout`` は接続の秒単位のタイムアウトです。これは ``requests`` ライブラリに渡されます。"
 
 #: ../../configuration.rst:114
 msgid "response_timeout:"
@@ -161,26 +159,26 @@ msgstr ""
 msgid ""
 "``response_timeout`` is a timeout in second how much time waiting for "
 "response. It is passed to ``requests`` library."
-msgstr ""
+msgstr "``response_timeout``は応答待ち時間の秒単位のタイムアウトです。これは``requests``ライブラリに渡されます。"
 
 #: ../../configuration.rst:117
 msgid "max_retries:"
-msgstr ""
+msgstr "max_retries:"
 
 #: ../../configuration.rst:117
 msgid "Deprecated; please do not use this setting. It has been replaced by the"
-msgstr ""
+msgstr "廃止されました。この設定は使用しないでください。"
 
 #: ../../configuration.rst:121
 msgid "max_retries_on_connection_error:"
-msgstr ""
+msgstr "max_retries_on_connection_error:"
 
 #: ../../configuration.rst:120
 msgid ""
 "``max_retries_on_connection_error`` is an integer that controls how many "
 "times ``aqt`` will try to reconnect to the server in the case of a "
 "connection error."
-msgstr ""
+msgstr "``max_retries_on_connection_error`` は、接続エラーが発生した場合に ``aqt`` がサーバに再接続しようとする回数を制御する整数です。"
 
 #: ../../configuration.rst:127
 msgid "retry_backoff:"
@@ -192,7 +190,7 @@ msgid ""
 "``aqt`` will sleep between failed connection attempts. Setting this value"
 " too low will hammer the server, and may result in no successful "
 "connections at all."
-msgstr ""
+msgstr "``retry_backoff`` は浮動小数点数で、``aqt`` が失敗した接続試行間にスリープする時間を制御します。この値をあまりに低く設定するとサーバに衝撃を与え、接続が全く成功しなくなる可能性があります。"
 
 #: ../../configuration.rst:132
 msgid "max_retries_on_checksum_error:"
@@ -202,11 +200,11 @@ msgstr ""
 msgid ""
 "This setting controls how many times ``aqt`` will attempt to download a "
 "file, in the case of a checksum error."
-msgstr ""
+msgstr "この設定は、チェックサムエラーが発生した場合に ``aqt`` がファイルをダウンロードしようとする回数を制御します。"
 
 #: ../../configuration.rst:134
 msgid "The ``[mirrors]`` section is a configuration for mirror handling."
-msgstr ""
+msgstr "``[mirrors]`` セクションはミラー処理のための設定です。"
 
 #: ../../configuration.rst:152
 msgid "trusted_mirrors:"
@@ -217,7 +215,7 @@ msgid ""
 "``trusted_mirrors`` is a list of URLs that you trust to provide accurate "
 "checksums for all downloaded archives. This is a security feature; please"
 " do not change this value unless you know what you're doing!"
-msgstr ""
+msgstr "``trusted_mirrors`` は、ダウンロードされたすべてのアーカイブに対して正確なチェックサムを提供するために信頼しているURLのリストです。これはセキュリティ機能です。何をしているのかわからない限り、この値を変更しないでください!"
 
 #: ../../configuration.rst:142
 msgid ""
@@ -227,7 +225,7 @@ msgid ""
 "copy of the file. You may need to modify this list if the default mirrors"
 " are unreachable, or if you do not trust that they have not been "
 "compromised."
-msgstr ""
+msgstr "``aqtinstall`` は、このリスト内のミラーからすべてのチェックサムをダウンロードします。これらのチェックサムは、``aqtinstall`` がダウンロードする他のすべてのファイルが、実際には正しいファイルであり、そのファイルの不正コピーや悪意のあるコピーではないことを確認するために使用されます。デフォルトのミラーにアクセスできない場合や、ミラーが侵害されていないと信頼できない場合は、このリストを変更する必要があります。"
 
 #: ../../configuration.rst:149
 msgid ""
@@ -235,7 +233,7 @@ msgid ""
 " list, and ensure that they are not malicious files, by checking them "
 "against the checksums downloaded from the ``trusted_mirrors`` list. "
 "``aqtinstall`` uses the SHA-256 algorithm to perform this check."
-msgstr ""
+msgstr "``aqtinstall`` は、フォールバックミラーリストからアーカイブファイルを安全にダウンロードし、``trusted_mirrors`` リストからダウンロードしたチェックサムに照らして、それらが悪意のあるファイルでないことを確認することができます。``aqtinstall`` は、SHA-256アルゴリズムを使ってこのチェックを行います。"
 
 #: ../../configuration.rst:160
 msgid "blacklist:"
@@ -248,7 +246,7 @@ msgid ""
 "will cause connection error or connection timeout. There are some known "
 "mirror sites in default. When you are happy with the default sites, you "
 "can override with your custom settings."
-msgstr ""
+msgstr "問題のあるミラーサイトがあるURLのリストです。一部のミラーサイトでは、優先されたIPアドレスからの接続以外が無視されます。接続エラーまたは接続タイムアウトが発生します。既定のミラーサイトには既知のものがあります。既定のサイトに問題がなければ、カスタム設定で上書きできます。"
 
 #: ../../configuration.rst:164
 msgid "fallbacks:"
@@ -259,5 +257,5 @@ msgid ""
 "It is a list of URL where is a good for access. When mirror site cause an"
 " error, aqt use fallbacks when possible. You can find a list of mirrors "
 "at: https://download.qt.io/static/mirrorlist/"
-msgstr ""
+msgstr "アクセスに適したURLの一覧です。ミラーサイトでエラーが発生した場合は、可能な場合はフォールバックを使用してください。ミラーの一覧は次の場所で確認できます: https://download.qt.io/static/mirrorlist/"
 

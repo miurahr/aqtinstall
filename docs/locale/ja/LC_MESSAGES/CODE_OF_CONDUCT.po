@@ -3,10 +3,8 @@
 # This file is distributed under the same license as the aqtinstall package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
-#, fuzzy
 msgid ""
-msgstr ""
-"Project-Id-Version: aqtinstall 3.0\n"
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-09 22:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -19,7 +17,7 @@ msgstr ""
 
 #: ../../CODE_OF_CONDUCT.rst:3
 msgid "Contributor Covenant Code of Conduct"
-msgstr ""
+msgstr "Contributor Covenant Code of Conduct"
 
 #: ../../CODE_OF_CONDUCT.rst:6
 msgid "Our Pledge"

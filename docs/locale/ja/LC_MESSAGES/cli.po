@@ -396,7 +396,7 @@ msgstr ""
 
 #: ../../cli.rst:439 ../../cli.rst:482
 msgid "install-qt"
-msgstr ""
+msgstr "install-qt"
 
 #: ../../cli.rst:439 ../../cli.rst:482
 msgid "`list-qt command`_"

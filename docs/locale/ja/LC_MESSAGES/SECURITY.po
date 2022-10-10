@@ -3,10 +3,8 @@
 # This file is distributed under the same license as the aqtinstall package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
 #
-#, fuzzy
 msgid ""
-msgstr ""
-"Project-Id-Version: aqtinstall 3.0\n"
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-09 22:56+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -19,49 +17,49 @@ msgstr ""
 
 #: ../../SECURITY.rst:2
 msgid "Security Policy"
-msgstr ""
+msgstr "セキュリティポリシー"
 
 #: ../../SECURITY.rst:5
 msgid "Supported Versions"
-msgstr ""
+msgstr "サポートされているバージョン"
 
 #: ../../SECURITY.rst:8
 msgid "Version"
-msgstr ""
+msgstr "バージョン"
 
 #: ../../SECURITY.rst:8
 msgid "Status"
-msgstr ""
+msgstr "ステータス"
 
 #: ../../SECURITY.rst:10
 msgid "3.0.x"
-msgstr ""
+msgstr "3.0.x"
 
 #: ../../SECURITY.rst:10
 msgid "Stable version"
-msgstr ""
+msgstr "安定バージョン"
 
 #: ../../SECURITY.rst:12
 msgid "2.2.x"
-msgstr ""
+msgstr "2.2.x"
 
 #: ../../SECURITY.rst:12
 msgid "Security fixes only"
-msgstr ""
+msgstr "セキュリティ修正のみ"
 
 #: ../../SECURITY.rst:14
 msgid "< 2.2"
-msgstr ""
+msgstr "< 2.2"
 
 #: ../../SECURITY.rst:14
 msgid "not supported"
-msgstr ""
+msgstr "サポートされない"
 
 #: ../../SECURITY.rst:18
 msgid "Reporting a Vulnerability"
-msgstr ""
+msgstr "脆弱性の報告"
 
 #: ../../SECURITY.rst:20
 msgid "Please disclose security vulnerabilities privately at miurahr@linux.com"
-msgstr ""
+msgstr "セキュリティの脆弱性については、miurahr@linux.com に提示してください。"
 

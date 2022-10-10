@@ -21,22 +21,22 @@ msgstr "作者"
 
 #: ../../authors.rst:8
 msgid "Aqtinstall is written and maintained by Hiroshi Miura <miurahr@linux.com>"
-msgstr ""
+msgstr "Aqtinstallは、三浦広志 <miurahr@linux.com> 氏により作成され、管理されています。"
 
 #: ../../authors.rst:10
 msgid "Original qli-installer is written by Linus Jahn"
-msgstr ""
+msgstr "オリジナルのqli-installerはLinus Jahn氏によって書かれました。"
 
 #: ../../authors.rst:12
 msgid ""
 "Significant contributions for improvements of version 2.0 and 2.1 by "
 "David Dalcino David also leads many developments and reviews effort after"
 " 2.0."
-msgstr ""
+msgstr "David Dalcinoによるバージョン2.0と2.1の改善への重要な貢献がありました。バージョン2.0以降の多くの開発とレビューの取り組みも主導しています。"
 
 #: ../../authors.rst:15
 msgid "All contributors, listed alphabetically, are:"
-msgstr ""
+msgstr "すべてのコントリビュータ(アルファベット順)は次のとおりです。"
 
 #: ../../authors.rst:17
 msgid "Andrei Yankovich (tools ifw installation)"
