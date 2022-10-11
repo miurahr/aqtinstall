@@ -275,8 +275,16 @@ mac_build_jobs.extend(
 linux_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "linux", "desktop", "wasm_32", "wasm_32")
 )
+linux_build_jobs.append(
+    BuildJob("install-qt", "6.4.0", "linux", "desktop", "wasm_32", "wasm_32",
+             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="gcc_64")
+)
 mac_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "mac", "desktop", "wasm_32", "wasm_32")
+)
+mac_build_jobs.append(
+    BuildJob("install-qt", "6.4.0", "mac", "desktop", "wasm_32", "wasm_32",
+             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="clang_64")
 )
 windows_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "windows", "desktop", "wasm_32", "wasm_32")

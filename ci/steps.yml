@@ -334,7 +334,12 @@ steps:
       ./emsdk activate --embedded $(EMSDK_VERSION)
       source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
       mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/openglwindow.7z)
+      if [[ $(QT_VERSION) = 6* ]]; then
+        OPENGLWINDOW_7Z="openglwindow_qt6.7z"
+      else
+        OPENGLWINDOW_7Z="openglwindow.7z"
+      fi
+      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/$OPENGLWINDOW_7Z)
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/openglwindow
       make
@@ -358,16 +363,15 @@ steps:
       .\emsdk_env.bat
       mkdir $(Build.BinariesDirectory)\tests
       cd $(Build.BinariesDirectory)\tests
-      7z x $(Build.SourcesDirectory)\ci\openglwindow.7z
       $env:Path += ";$(WIN_QT_BINDIR)"
       echo "Add Qt/qmake to PATH at $(WIN_QT_BINDIR):" 
       echo "$env:Path"
-      if('$(QT_VERSION)' -like '6*') {
-        #qmake.bat $(Build.BinariesDirectory)\tests\openglwindow
-        # inline qmake.bat file:
+      if ('$(QT_VERSION)' -like '6*') {
+        7z x $(Build.SourcesDirectory)\ci\openglwindow_qt6.7z
         echo "Inlined qmake.bat command is: $(WIN_AUTODESK_QT_BINDIR)\qmake -qtconf $(WIN_QT_BINDIR)\target_qt.conf $(Build.BinariesDirectory)\tests\openglwindow"
         $(WIN_AUTODESK_QT_BINDIR)\qmake.exe -qtconf "$(WIN_QT_BINDIR)\target_qt.conf" $(Build.BinariesDirectory)\tests\openglwindow
       } else {
+        7z x $(Build.SourcesDirectory)\ci\openglwindow.7z
         echo "Qt5: run qmake.exe"
         qmake $(Build.BinariesDirectory)\tests\openglwindow
       }
