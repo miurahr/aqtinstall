@@ -987,16 +987,18 @@ class Cli:
         default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version)
         desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
         expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
+
+        qt_type = "Qt6-WASM" if is_wasm_qt6 else target
         if should_autoinstall:
             # No desktop Qt is installed, but the user has requested installation. Find out what to install.
             self.logger.info(
-                f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
+                f"You are installing the {qt_type} version of Qt, which requires that the desktop version of Qt "
                 f"is also installed. Now installing Qt: desktop {version} {default_desktop_arch}"
             )
             return expected_desktop_arch_path.name, default_desktop_arch
         else:
             self.logger.warning(
-                f"You are installing the {target} version of Qt, which requires that the desktop version of Qt "
+                f"You are installing the {qt_type} version of Qt, which requires that the desktop version of Qt "
                 f"is also installed. You can install it with the following command:\n"
                 f"          `aqt install-qt {host} desktop {version} {default_desktop_arch}`"
             )
