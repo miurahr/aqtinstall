@@ -285,7 +285,6 @@ class Updater:
                     # Use MetadataFactory to check what the default architecture should be
                     meta = MetadataFactory(ArchiveId("qt", os_name, "desktop"))
                     desktop_arch_dir = meta.fetch_default_desktop_arch(version)
-                    # NOTE: desktop_arch_dir may need to be wasm_32 in the wasm case
 
                 updater.patch_qmake_script(base_dir, version_dir, target.os_name, desktop_arch_dir)
                 updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name, desktop_arch_dir)
