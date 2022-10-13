@@ -782,6 +782,66 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
+        (
+            "install-qt windows desktop 6.2.4 wasm_32".split(),
+            "windows",
+            "desktop",
+            "6.2.4",
+            {"std": "wasm_32"},
+            {"std": "wasm_32"},
+            {"std": "windows_x86/desktop/qt6_624_wasm/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-windows-wasm_32.7z",
+                        update_xml_name="qt.qt6.624.wasm_32",
+                        contents=(
+                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/Users/qt/work/install/target\n"
+                                "HostPrefix=../../\n"
+                                "HostData=target\n",
+                                patched_content="Prefix={base_dir}{sep}6.2.4{sep}wasm_32{sep}target\n"
+                                "HostPrefix=../../mingw1234_64\n"
+                                "HostData=../wasm_32\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.2.4\\mingw1234_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                        ),
+                    ),
+                ],
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING : You are installing the Qt6-WASM version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt windows desktop 6\.2\.4 win64_mingw1234`\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-wasm_32\.7z in .*\n"
+                r"INFO    : Patching .*6\.2\.4[/\\]wasm_32[/\\]bin[/\\]qmake.bat\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
     ),
 )
 def test_install(
