@@ -75,7 +75,7 @@ msgstr ""
 
 #: ../../CODE_OF_CONDUCT.rst:32
 msgid "Examples of unacceptable behavior include:"
-msgstr ""
+msgstr "Examples of unacceptable behavior include:"
 
 #: ../../CODE_OF_CONDUCT.rst:34
 msgid ""
