@@ -74,7 +74,7 @@ msgid ""
 "**without** recommended library ``py7zr``, it is used to extract archive "
 "instead of ``py7zr`` library. When ``--external`` option specified, a "
 "value is override with option's one."
-msgstr "圧縮解凍ツールの7-zipのコマンド名です。 ``aqtinstall`` が **推奨ライブラリ``py7zr``なしで** インストールされている場合、``py7zr`` ライブラリの代わりにアーカイブを抽出するために使用されます。``--external`` オプションが指定されている場合、オプションの指定値で上書きされます。"
+msgstr "圧縮解凍ツールの7-zipのコマンド名です。``aqtinstall`` が **推奨ライブラリ``py7zr``なしで** インストールされている場合、``py7zr`` ライブラリの代わりにアーカイブを抽出するために使用されます。``--external`` オプションが指定されている場合、オプションの指定値で上書きされます。"
 
 #: ../../configuration.rst:78
 msgid "print_stacktrace_on_error:"
@@ -86,11 +86,11 @@ msgid ""
 "``True`` setting causes a stack trace to be printed to stderr any time an"
 " error occurs that will end the program. The ``False`` setting will hide "
 "the stack trace, unless an unhandled exception occurs."
-msgstr "``print_stacktrace_on_error`` is either ``True`` or ``False``. The ``True`` setting causes a stack trace to be printed to stderr any time an error occurs that will end the program. The ``False`` setting will hide the stack trace, unless an unhandled exception occurs."
+msgstr "``print_stacktrace_on_error`` は、 ``True`` か``False``を値にとります。``True`` に設定すると、プログラムを終了させるエラーが発生するたびにスタックトレースがstderrに出力されます。``False``に設定すると、未処理の例外が発生しない限り、スタックトレースは表示されません。"
 
 #: ../../configuration.rst:85
 msgid "always_keep_archives:"
-msgstr ""
+msgstr "always_keep_archives:"
 
 #: ../../configuration.rst:81
 msgid ""
@@ -99,11 +99,11 @@ msgid ""
 "command line options. The ``False`` setting will require you to set "
 "``--keep`` manually every time you run aqt, unless you don't want to keep"
 " ``.7z`` archives."
-msgstr ""
+msgstr "これは、 ``True``か ``False`` を値にとります。``True`` が設定さえると、 ``--keep`` オプションが、aqt実行時に毎回指定されたことになります。コマンドラインオプションで上書きできません。 ``False`` が設定されると、 aqt実行するときに``.7z``アーカイブを削除したくないときは、``--keep`` を手動で設定する必要があります。"
 
 #: ../../configuration.rst:90
 msgid "archive_download_location:"
-msgstr ""
+msgstr "archive_download_location:"
 
 #: ../../configuration.rst:88
 msgid ""
@@ -114,7 +114,7 @@ msgstr "これは、``--keep`` がオンになっている場合に、``.7z`` �
 
 #: ../../configuration.rst:104
 msgid "min_module_size:"
-msgstr ""
+msgstr "min_module_size:"
 
 #: ../../configuration.rst:93
 msgid ""
@@ -127,7 +127,7 @@ msgid ""
 "useful for ``aqt list-*`` to list these empty modules. If you want to "
 "print these modules with ``aqt list-*``, please feel free to change the "
 "`min_module_size` value to something less than 40."
-msgstr "これは、aqtがリスト可能なモジュールの解凍後の最小サイズ(バイト単位)です。aqtの作者は、Qtリポジトリにいくつかの不可解な\"空の\"モジュールが含まれていることを発見しました。その中には``qtlottie`` や``qtquicktimeline``のモジュール例も含まれています。これらのモジュールは空のディレクトリを含む単一のアーカイブから構成されており、解凍すると正確に40バイトになります。著者は、``aqt list-*`` がこれらの空のモジュールをリストすることは有用ではないと感じています。これらのモジュールを ``aqt list-*`` で印刷したい場合は、``min_module_size`` の値を40未満に変更してください。"
+msgstr "これは、aqtがリストすることを許可されているモジュールの最小解凍サイズ(バイト単位)です。aqtの作成者は、Qtリポジトリに、`qtlottie`と`qtquicktimeline`のサンプルモジュールになど、いくつかの不可解な「空の」モジュールが含まれていることを発見しました。これらのモジュールは、空のディレクトリを含む1つのアーカイブで構成され、圧縮されていない場合は正確に40バイトです。著者らは、これらの空のモジュールを列挙することは ``aqt list-*`` にとって有用ではないと感じています。これらのモジュールを ``aqt list-*`` で表示したい場合は、`min_module_size` の値を40以下に変更してください。"
 
 #: ../../configuration.rst:102
 msgid ""
@@ -143,13 +143,13 @@ msgstr "``[requests]`` セクションは、``aqt`` がネットワークリク�
 
 #: ../../configuration.rst:110
 msgid "connection_timeout:"
-msgstr ""
+msgstr "connection_timeout:"
 
 #: ../../configuration.rst:109
 msgid ""
 "``connection_timeout`` is a timeout in second for connection. It is "
 "passed to ``requests`` library."
-msgstr "``connection_timeout`` は接続の秒単位のタイムアウトです。これは ``requests`` ライブラリに渡されます。"
+msgstr "``connection_timeout`` は接続の秒単位のタイムアウトです。これは``requests``ライブラリに渡されます。"
 
 #: ../../configuration.rst:114
 msgid "response_timeout:"
@@ -182,7 +182,7 @@ msgstr "``max_retries_on_connection_error`` は、接続エラーが発生した
 
 #: ../../configuration.rst:127
 msgid "retry_backoff:"
-msgstr ""
+msgstr "retry_backoff:"
 
 #: ../../configuration.rst:124
 msgid ""
@@ -194,7 +194,7 @@ msgstr "``retry_backoff`` は浮動小数点数で、``aqt`` が失敗した接�
 
 #: ../../configuration.rst:132
 msgid "max_retries_on_checksum_error:"
-msgstr ""
+msgstr "max_retries_on_checksum_error:"
 
 #: ../../configuration.rst:130
 msgid ""
@@ -208,7 +208,7 @@ msgstr "``[mirrors]`` セクションはミラー処理のための設定です�
 
 #: ../../configuration.rst:152
 msgid "trusted_mirrors:"
-msgstr ""
+msgstr "trusted_mirrors:"
 
 #: ../../configuration.rst:137
 msgid ""
@@ -237,7 +237,7 @@ msgstr "``aqtinstall`` は、フォールバックミラーリストからアー
 
 #: ../../configuration.rst:160
 msgid "blacklist:"
-msgstr ""
+msgstr "blacklist:"
 
 #: ../../configuration.rst:155
 msgid ""
@@ -250,7 +250,7 @@ msgstr "問題のあるミラーサイトがあるURLのリストです。一部
 
 #: ../../configuration.rst:164
 msgid "fallbacks:"
-msgstr ""
+msgstr "fallbacks:"
 
 #: ../../configuration.rst:163
 msgid ""

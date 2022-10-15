@@ -53,7 +53,7 @@ msgstr "バグ・トリアージ"
 msgid ""
 "Every report to github issue tracker should be in triage. whether it is "
 "bug, question or invalid."
-msgstr "github issue trackerへのすべてのレポートは、バグであれ、質問であれ、無効であれ、トリアージする必要があります。"
+msgstr ""
 
 #: ../../CONTRIBUTE.rst:26
 msgid "Send patch"

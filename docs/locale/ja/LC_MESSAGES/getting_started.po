@@ -195,7 +195,7 @@ msgid ""
 "``--modules`` flag. Each version of Qt has a different list of modules "
 "for each host OS/ target SDK/ architecture combination, so we will need "
 "to supply :ref:`aqt list-qt <list-qt command>` with that information:"
-msgstr "Qt 5.15.2用のモジュールをWindows Desktopにインストールする必要があるとします。まず、モジュールが何と呼ばれているかを調べる必要があります。そのためには :ref:`aqt list-qt <list-qt command>` と ``--modules`` フラグを使用します。Qtの各バージョンには、ホストOS/ターゲットSDK/アーキテクチャの組み合わせごとに異なるモジュールリストがあるので、その情報を :ref:`aqt list-qt <list-qt command>` に提供する必要があります:"
+msgstr "Qt 5.15.2用のモジュールをWindows デスクトップにインストールする必要があるとします。まず、モジュールが何と呼ばれているかを調べる必要があります。そのためには :ref:`aqt list-qt <list-qt command>` と ``--modules`` フラグを使用します。Qtの各バージョンには、ホストOS/ターゲットSDK/アーキテクチャの組み合わせごとに異なるモジュールリストがあるので、その情報を :ref:`aqt list-qt <list-qt command>` に提供する必要があります:"
 
 #: ../../getting_started.rst:163
 msgid ""
@@ -230,7 +230,7 @@ msgid ""
 "to be scriptable? One way to install all modules available for Qt 5.15.2 "
 "is to send the output of :ref:`aqt list-qt <list-qt command>` into "
 ":ref:`aqt install-qt <qt installation command>`, like this:"
-msgstr ":ref:`aqt list-qt <list-qt command>` コマンドは、スクリプト化できるように意図して作られていることを覚えていますか? Qt 5.15.2で利用可能なすべてのモジュールをインストールする1つの方法は :ref:`aqt list-qt <list-qt command>` の出力を :ref:`aqt install-qt <qt installation command>` に以下のように送ることです:"
+msgstr ":ref:`aqt list-qt <list-qt command>` コマンドは、スクリプト化できるように意図して作られていることを覚えていますか?Qt 5.15.2で利用可能なすべてのモジュールをインストールする1つの方法は :ref:`aqt list-qt <list-qt command>` の出力を :ref:`aqt install-qt <qt installation command>` に以下のように送ることです:"
 
 #: ../../getting_started.rst:210
 msgid ""
@@ -249,7 +249,7 @@ msgid ""
 "from the output of :ref:`aqt list-qt <list-qt command>`, and pipe that "
 "into :ref:`aqt install-qt <qt installation command>`. This exercise is "
 "left to the reader."
-msgstr "利用可能なすべてのモジュールをインストールしたい場合は、上記のように ``all`` キーワードを使った方が良いでしょう。このスクリプトの例は、もっと複雑な何かを実現する方法を理解するために提示されています。おそらくあなたは ``qtnetworkauth`` 以外のすべてのモジュールをインストールしたいと思うでしょう。 :ref:`aqt list-qt <list-qt command>` の出力から ``qtnetworkauth`` を削除し、それを :ref:`aqt install -qt<qt installation command>` にパイプするスクリプトを書くことができます。この練習は読者にお任せします。"
+msgstr "利用可能なモジュールをすべてインストールしたい場合は、上で説明したように、「all」キーワードを使った方が良いでしょう。このスクリプト例は、より複雑なことを実現する方法を理解するためのものです。:ref:`aqt list-qt <list-qt command>` の出力から `qtnetworkauth` を削除するスクリプトを書いて、それを :ref:`aqt install-qt <qt installation command>` にパイプで渡すことができます。これは読者の練習課題です。"
 
 #: ../../getting_started.rst:223
 msgid "Installing Qt for Android"
@@ -275,7 +275,7 @@ msgid ""
 "know where to look for modules and architectures if you don't tell it "
 "what architecture you need. I know, it sounds a little backwards, but "
 "that's how the Qt repo was put together."
-msgstr "Qt 6 for AndroidリポジトリはQt 5リポジトリとは少し異なり、 :ref:`aqt list-qt <list-qt command>` ツールは、必要なアーキテクチャを教えなければ、モジュールやアーキテクチャを探す場所を知りません。 少し機能後退したように聞こえますが、それがQtリポジトリが組み立てられた方法です。"
+msgstr "Qt 6 for AndroidリポジトリはQt 5リポジトリとは少し異なり、 :ref:`aqt list-qt <list-qt command>` ツールは、必要なアーキテクチャを教えなければ、モジュールやアーキテクチャを探す場所を知りません。少し機能後退したように聞こえますが、それがQtリポジトリが組み立てられた方法です。"
 
 #: ../../getting_started.rst:262
 msgid ""
@@ -302,7 +302,7 @@ msgid ""
 "would know that Qt 6.2.0 for that architecture doesn't exist for some "
 "reason, and any attempt to install it with :ref:`aqt install-qt <qt "
 "installation command>` will fail."
-msgstr "「それはばかげている。アーキテクチャの先頭に `android_` を追加しただけだ。 なぜそのために`aqt list-qt--arch`を使う必要があるのか?」おそらく、そう考えるでしょう。 その答えは、``aqt list-qt-arch`` はQtリポジトリに実際に何が存在するかをチェックしているということです。期待した ``android_armv7`` の出力ではなくエラーメッセージが出力された場合、Qt 6.2.0のそのアーキテクチャ用のパッケージが何らかの理由で存在しないことがわかります。そのため、:ref:`aqt install-qt <qt installation command>`でインストールしようとすると失敗します。"
+msgstr "「ばかげている」そう思われるかもしれません。「私が引数に付与したアーキテクチャの最初に `android_` を 追加しただけだ。なぜそのために`aqt list-qt--arch`を使う必要があるのか?」おそらく、そう考えるでしょう。 その答えは、``aqt list-qt-arch`` はQtリポジトリに実際に何が存在するかをチェックしているということです。期待した ``android_armv7`` の出力ではなくエラーメッセージが出力された場合、Qt 6.2.0のそのアーキテクチャ用のパッケージが何らかの理由で存在しないことがわかります。そのため、:ref:`aqt install-qt <qt installation command>`でインストールしようとすると失敗します。"
 
 #: ../../getting_started.rst:282
 msgid ""
@@ -322,7 +322,7 @@ msgid ""
 " will not be functional unless you install the corresponding desktop "
 "version of Qt alongside it. You can do this automatically with the "
 "``--autodesktop`` flag:"
-msgstr "Qt for androidまたはiosをインストールする場合、対応するデスクトップバージョンのQtを一緒にインストールしない限り、正しく機能しないことに注意してください。 ``--autodesktop`` フラグをつけることで、自動的にデスクトップバージョンのインストールを実行できます:"
+msgstr "Qt for androidまたはiosをインストールする場合、対応するデスクトップバージョンのQtを一緒にインストールしない限り、正しく機能しないことに注意してください。``--autodesktop`` フラグをつけることで、自動的にデスクトップバージョンのインストールを実行できます:"
 
 #: ../../getting_started.rst:308
 msgid "Installing Qt for WASM"
@@ -369,7 +369,7 @@ msgid ""
 "This gives us a list of things that we could install using :ref:`aqt "
 "install-tool <tools installation command>`. Let's see some more details, "
 "using the ``-l`` or ``--long`` flag:"
-msgstr ""
+msgstr "このコマンドの出力は、以下の :ref:`aqt install-tool <Tools installation command>` で使える値のリストになります。以下のように、``--l`` または ``--long`` フラグを使用して詳細を調べてみましょう。"
 
 #: ../../getting_started.rst:401
 msgid ""
@@ -396,7 +396,7 @@ msgid ""
 "(Optional) The tool variant name. We saw a list of these when we ran "
 ":ref:`aqt list-tool <list-tool command>` with the `tool name` argument "
 "filled in."
-msgstr "(オプション)ツールのバリアント名。 :ref:`aqt list-tool <list-tool command>` を`tool name` 引数つきで実行したときに、リストに表示されます。"
+msgstr "(オプション)ツールのバリアント名。:ref:`aqt list-tool <list-tool command>` を`tool name` 引数つきで実行したときに、リストに表示されます。"
 
 #: ../../getting_started.rst:416
 msgid "To install `mingw`, you could use this command (please don't):"
@@ -412,7 +412,7 @@ msgid ""
 "to use :ref:`aqt list-tool <list-tool command>` to see what tool variants"
 " are available, and then install just the tool variant you are interested"
 " in, like this:"
-msgstr "このコマンドを使用すると、`tools_mingw`  で利用可能なすべてのツールバリエーションがインストールされます。この場合、同じツールの10種類の異なるバージョンをインストールすることになります。``qtcreator`` や ``ifw`` のようないくつかのツールでは、それぞれのツールバリエーションが異なるプログラムなので、これは適切なことです。しかし、``mingw``や``vcredist``のようなツールでは、:ref:`aqt list-tool <list-tool command>` を使ってどんなバリエーションが利用可能か調べてから、必要なツールのバリエーションだけをインストールする方が理にかなっています:"
+msgstr "このコマンドを使用すると、`tools_mingw`  で利用可能なすべてのツールバリエーションがインストールされます。この場合、同じツールの10種類の異なるバージョンをインストールすることになります。``qtcreator`` や ``ifw`` のようないくつかのツールでは、それぞれのツールバリエーションが異なるプログラムなので、これは適切なことです。。しかし、``mingw``や``vcredist``のようなツールでは、:ref:`aqt list-tool <list-tool command>` を使ってどんなバリエーションが利用可能か調べてから、必要なツールのバリエーションだけをインストールする方が理にかなっています:"
 
 #: ../../getting_started.rst:435
 msgid ""
@@ -481,7 +481,7 @@ msgstr "**Archives**: このコンテキストでは、**Archive** は 7-zipで�
 msgid ""
 "**Modules**: The Qt repository organizes groups of archives into modules."
 " A **module** contains one or more **archives**."
-msgstr "**Modules**:  Qtリポジトリが一連のアーカイブをモジュールとして編成しています。 **module** には、ひとつか複数の **archives** が含まれます。"
+msgstr "**Modules**:  Qtリポジトリが一連のアーカイブをモジュールとして編成しています。**module** には、ひとつか複数の **archives** が含まれます。"
 
 #: ../../getting_started.rst:483
 msgid ""
@@ -522,7 +522,7 @@ msgid ""
 " list of 20 modules with the prefix ``qt.qt6.620.`` and the suffix "
 "``.gcc_64``, because these parts are repetitive and not meaningful. Only "
 "the ``qtcharts`` part is useful."
-msgstr "**base Qt installation** モジュールの完全修飾名は通常、``qt.qt6.620.gcc_64`` のようなものです。``qtcharts`` モジュールの完全修飾名は通常、``qt.qt6.620.qtcharts.gcc_64`` のようなものです。プレフィックス ``qt.qt6.620.``とサフィックス``.gcc_64``を持つ20個のモジュールのリストを読み書きするのは難しいでしょう。なぜならこれらの部分は反復的で意味がないからです。ただ``qtcharts`` の部分だけが役に立つからです。"
+msgstr "**base Qt installation**  モジュールの完全修飾名は通常、``qt.qt6.620.gcc_64`` のようなものです。``qtcharts`` モジュールの完全修飾名は通常、``qt.qt6.620.qtcharts.gcc_64`` のようなものです。プレフィックス ``qt.qt6.620.``とサフィックス``.gcc_64``を持つ20個のモジュールのリストを読み書きするのは難しいでしょう。なぜならこれらの部分は反復的で意味がないからです。ただ``qtcharts`` の部分だけが役に立つからです。"
 
 #: ../../getting_started.rst:504
 msgid ""
