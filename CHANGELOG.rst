@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+* Fix installation of Qt6/WASM arch on windows (#583,#584)
+
 `v3.0.1`_ (30, Sep. 2022)
 -------------------------
 
