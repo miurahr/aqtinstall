@@ -7,7 +7,13 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+
+`v3.0.2`_ (26, Oct. 2022)
+-------------------------
+
 * Fix installation of Qt6/WASM arch on windows (#583,#584)
+* Docs: allow localization (#588)
+* Docs: Add Japanese translation (#595)
 
 `v3.0.1`_ (30, Sep. 2022)
 -------------------------
@@ -298,7 +304,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.2...HEAD
+.. _v3.0.2: https://github.com/miurahr/aqtinstall/compare/v3.0.1...v3.0.2
 .. _v3.0.1: https://github.com/miurahr/aqtinstall/compare/v3.0.0...v3.0.1
 .. _v3.0.0: https://github.com/miurahr/aqtinstall/compare/v2.2.3...v3.0.0
 .. _v2.2.3: https://github.com/miurahr/aqtinstall/compare/v2.2.2...v2.2.3
