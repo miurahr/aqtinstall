@@ -562,8 +562,9 @@ There are various combinations to accept according to Qt version.
 
 .. option:: --autodesktop
 
-    If you are installing an ios or android version of Qt, the corresponding desktop version
-    of Qt must be installed alongside of it. Turn this option on to install it automatically.
+    If you are installing an ios or android version of Qt, or the WASM version of Qt6,
+    the corresponding desktop version of Qt must be installed alongside of it.
+    Turn this option on to install it automatically.
 
 .. option:: --noarchives
 
@@ -855,6 +856,13 @@ Example: Install Web Assembly
 .. code-block:: console
 
     aqt install-qt linux desktop 5.15.0 wasm_32
+
+
+Example: Install Qt6 for Web Assembly
+
+.. code-block:: console
+
+    aqt install-qt linux desktop 6.2.4 wasm_32 --autodesktop
 
 
 Example: List available versions of Qt on Linux

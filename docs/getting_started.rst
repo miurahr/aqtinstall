@@ -338,6 +338,14 @@ We can install Qt for WASM as before:
 
     $ aqt install-qt windows desktop 5.15.2 wasm_32 -m qtcharts qtnetworkauth
 
+Please note that when you install Qt for WASM version 6 and above, the installation will not
+be functional unless you install a non-WASM desktop version of Qt alongside it.
+You can do this automatically with the ``--autodesktop`` flag:
+
+.. code-block:: console
+
+    $ aqt install-qt linux desktop 6.2.0 wasm_32 -m qtcharts qtnetworkauth --autodesktop
+
 
 Installing Tools
 ----------------

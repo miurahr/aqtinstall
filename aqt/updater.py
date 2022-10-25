@@ -30,9 +30,8 @@ import patch
 from aqt.archives import TargetConfig
 from aqt.exceptions import UpdaterError
 from aqt.helper import Settings
-from aqt.metadata import QtRepoProperty, SimpleSpec, Version
+from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version
 
-default_desktop_arch_dir = QtRepoProperty.default_desktop_arch_dir
 dir_for_version = QtRepoProperty.dir_for_version
 
 
@@ -279,12 +278,13 @@ class Updater:
                     updater.patch_qtcore(target)
             elif version in SimpleSpec(">=5.0,<6.0"):
                 updater.patch_qmake()
-            else:  # qt6 non-desktop
-                desktop_arch_dir = (
-                    installed_desktop_arch_dir
-                    if installed_desktop_arch_dir is not None
-                    else default_desktop_arch_dir(os_name, version)
-                )
+            else:  # qt6 mobile or wasm
+                if installed_desktop_arch_dir is not None:
+                    desktop_arch_dir = installed_desktop_arch_dir
+                else:
+                    # Use MetadataFactory to check what the default architecture should be
+                    meta = MetadataFactory(ArchiveId("qt", os_name, "desktop"))
+                    desktop_arch_dir = meta.fetch_default_desktop_arch(version)
 
                 updater.patch_qmake_script(base_dir, version_dir, target.os_name, desktop_arch_dir)
                 updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name, desktop_arch_dir)

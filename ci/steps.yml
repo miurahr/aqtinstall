@@ -330,14 +330,66 @@ steps:
       set -ex
       git clone https://github.com/emscripten-core/emsdk.git
       cd emsdk
-      ./emsdk install sdk-fastcomp-1.38.27-64bit
-      ./emsdk activate --embedded  sdk-fastcomp-1.38.27-64bit
+      ./emsdk install $(EMSDK_VERSION)
+      ./emsdk activate --embedded $(EMSDK_VERSION)
       source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
       mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/openglwindow.7z)
+      if [[ $(QT_VERSION) = 6* ]]; then
+        OPENGLWINDOW_7Z="openglwindow_qt6.7z"
+      else
+        OPENGLWINDOW_7Z="openglwindow.7z"
+      fi
+      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/$OPENGLWINDOW_7Z)
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/openglwindow
       make
     workingDirectory: $(Build.BinariesDirectory)
-    condition: and(eq( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
-    displayName: 'Build WebAssembler sample project'
+    condition: |
+      and(
+        eq( variables['ARCH'], 'wasm_32' ),
+        or(
+          eq(variables['Agent.OS'], 'Linux'),
+          eq(variables['Agent.OS'], 'Darwin')
+        )
+      )
+    displayName: 'Build WebAssembler sample project on mac/linux'
+
+  # wasm_32 on Windows cmd.exe
+  - powershell: |
+      git clone https://github.com/emscripten-core/emsdk.git
+      cd emsdk
+      .\emsdk install $(EMSDK_VERSION)
+      .\emsdk activate --embedded $(EMSDK_VERSION)
+      .\emsdk_env.bat
+      mkdir $(Build.BinariesDirectory)\tests
+      cd $(Build.BinariesDirectory)\tests
+      $env:Path += ";$(WIN_QT_BINDIR)"
+      echo "Add Qt/qmake to PATH at $(WIN_QT_BINDIR):" 
+      echo "$env:Path"
+      if ('$(QT_VERSION)' -like '6*') {
+        7z x $(Build.SourcesDirectory)\ci\openglwindow_qt6.7z
+        echo "Inlined qmake.bat command is: $(WIN_AUTODESK_QT_BINDIR)\qmake -qtconf $(WIN_QT_BINDIR)\target_qt.conf $(Build.BinariesDirectory)\tests\openglwindow"
+        $(WIN_AUTODESK_QT_BINDIR)\qmake.exe -qtconf "$(WIN_QT_BINDIR)\target_qt.conf" $(Build.BinariesDirectory)\tests\openglwindow
+      } else {
+        7z x $(Build.SourcesDirectory)\ci\openglwindow.7z
+        echo "Qt5: run qmake.exe"
+        qmake $(Build.BinariesDirectory)\tests\openglwindow
+      }
+      if ($false -eq $?) {
+        Write-Error "qmake failed."
+        Write-Host "##vso[task.logissue type=error]qmake failed."
+        exit(1)
+      }
+      make
+      if ($false -eq $?) {
+        Write-Error "make failed."
+        Write-Host "##vso[task.logissue type=error]nmake failed."
+        exit(1)
+      }
+    workingDirectory: $(Build.BinariesDirectory)
+    condition: |
+      and(
+        eq( variables['ARCH'], 'wasm_32' ),
+        eq( variables['Agent.OS'], 'Windows_NT' )
+      )
+    displayName: 'Build WebAssembler sample project on windows'

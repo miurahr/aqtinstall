@@ -395,19 +395,17 @@ class QtRepoProperty:
             else:
                 return arch[6:]
         elif host == "mac" and arch == "clang_64":
-            return QtRepoProperty.default_desktop_arch_dir(host, version)
+            return QtRepoProperty.default_mac_desktop_arch_dir(version)
         else:
             return arch
 
     @staticmethod
-    def default_desktop_arch_dir(host: str, version: Union[Version, str]) -> str:
-        version: Version = version if isinstance(version, Version) else Version(version)
-        if host == "linux":
-            return "gcc_64"
-        elif host == "mac":
-            return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
-        else:  # Windows
-            raise NotImplementedError("This function should not be called in this way!")
+    def default_linux_desktop_arch_dir() -> str:
+        return "gcc_64"
+
+    @staticmethod
+    def default_mac_desktop_arch_dir(version: Version) -> str:
+        return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
 
     @staticmethod
     def extension_for_arch(architecture: str, is_version_ge_6: bool) -> str:
@@ -477,8 +475,11 @@ class QtRepoProperty:
         Locates the default installed desktop qt directory, somewhere in base_path.
         """
         installed_qt_version_dir = base_path / QtRepoProperty.dir_for_version(version)
-        if host != "windows":
-            arch_path = installed_qt_version_dir / QtRepoProperty.default_desktop_arch_dir(host, version)
+        if host == "mac":
+            arch_path = installed_qt_version_dir / QtRepoProperty.default_mac_desktop_arch_dir(version)
+            return arch_path if (arch_path / "bin/qmake").is_file() else None
+        elif host == "linux":
+            arch_path = installed_qt_version_dir / QtRepoProperty.default_linux_desktop_arch_dir()
             return arch_path if (arch_path / "bin/qmake").is_file() else None
 
         def contains_qmake_exe(arch_path: Path) -> bool:
