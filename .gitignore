@@ -9,11 +9,12 @@ __pycache__
 .idea
 .tox
 .venv
-_build
 ci/*.matrix.gen.yml
-docs/_build
+docs/_build/
+*.mo
 aqtinstall.log
 Qt/
 .gravitybee
 .eggs
 qtaccount.ini
+.pytest_cache

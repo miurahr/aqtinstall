@@ -9,6 +9,8 @@ recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs Makefile
+recursive-include docs *.po
+recursive-include docs *.pot
 recursive-include tests *.html
 recursive-include tests *.ini
 recursive-include tests *.json
@@ -18,4 +20,3 @@ prune .github
 exclude .gitignore
 exclude .readthedocs.yml
 exclude azure-pipelines.yml
-
