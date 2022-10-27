@@ -41,15 +41,28 @@ jobs:
         if: matrix.artifact == 'standard'
         run: |
           python -m pip install ./ --user
-      - name: Build Standalone binary
-        if: matrix.artifact == 'binary'
+      - name: Build Standalone binary(linux,mac)
+        if: matrix.artifact == 'binary' && matrix.os != 'windows-latest'
         run: |
           python -m venv venv
-          source venv/Scripts/activate
-          python -m pip install -U pip wheel setuptools setuptools_scm gravitybee
-          python -m pip install -e .
-          python ci/build_standalone.py
+          source venv/bin/activate
+          python -m pip install -U pip wheel setuptools setuptools_scm pyinstaller
+          python -m pip install .
+          python tools/build_standalone.py
+          deactivate
+          rm -rf venv
         shell: bash
+      - name: Build Standalone binary(windows)
+        if: matrix.artifact == 'binary' && matrix.os == 'windows-latest'
+        run: |
+          python -m venv venv
+          venv/Scripts/activate.ps1
+          python -m pip install -U pip wheel setuptools setuptools_scm pyinstaller
+          python -m pip install .
+          python tools/build_standalone.py
+          deactivate
+          Remove-Item venv -Recurse -Force
+        shell: pwsh
       - name: Run aqt
         run: |
           import os
@@ -61,11 +74,14 @@ jobs:
           artifact = "${{ matrix.artifact }}"
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
+          env = os.environ.copy()
+          github_workspace = pathlib.Path(env["GITHUB_WORKSPACE"])
           if artifact == "binary":
             if platform.startswith("windows"):
-              prefix = ["../.gravitybee/dist/latest/aqt.exe", "install"]
+              bin_path = str(github_workspace / "dist" / "aqt.exe")
             else:
-              prefix = ["../.gravitybee/dist/latest/aqt", "install"]
+              bin_path = (github_workspace / "dist" / "aqt").as_posix()
+            prefix = [bin_path, "install"]
           else:
             prefix = ["python", "-m", "aqt", "install"]
           command_line = []
@@ -85,8 +101,6 @@ jobs:
             args = [qtver, "linux", "desktop", "gcc_64"]
           command_line.extend(args)
           command_line.extend(["--archives", "qtbase", "icu", "qt"])
-          env = os.environ.copy()
-          github_workspace = pathlib.Path(env["GITHUB_WORKSPACE"])
           env["AQT_CONFIG"] = (github_workspace / "ci" / "settings.ini").as_posix()
           env["LOG_CFG"] = (github_workspace / "ci" / "logging.ini").as_posix()
           print("Execute: {}".format(command_line))
@@ -168,4 +182,4 @@ jobs:
         if: matrix.artifact == 'binary'
         with:
           name: aqt-${{ matrix.os }}-standalone
-          path: .gravitybee\dist\latest\aqt*
+          path: dist\aqt*
