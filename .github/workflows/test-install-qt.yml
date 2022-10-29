@@ -63,26 +63,26 @@ jobs:
           qtver = "${{ matrix.qtver }}"
           if artifact == "binary":
             if platform.startswith("windows"):
-              prefix = ["../.gravitybee/dist/latest/aqt.exe", "install"]
+              prefix = ["../.gravitybee/dist/latest/aqt.exe", "install-qt"]
             else:
-              prefix = ["../.gravitybee/dist/latest/aqt", "install"]
+              prefix = ["../.gravitybee/dist/latest/aqt", "install-qt"]
           else:
-            prefix = ["python", "-m", "aqt", "install"]
+            prefix = ["python", "-m", "aqt", "install-qt"]
           command_line = []
           command_line.extend(prefix)
           if platform == "windows-latest":
             if qtver.startswith('5.15'):
-              args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
+              args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
             elif qtver.startswith('5.14'):
-              args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
+              args = ["windows", "desktop", qtver, "win64_msvc2017_64"]
             elif qtver.startswith('6'):
-              args = [qtver, "windows", "desktop", "win64_mingw81"]
+              args = ["windows", "desktop", qtver, "win64_mingw81"]
             else:
-              args = [qtver, "windows", "desktop", "win64_msvc2015_64"]
+              args = ["windows", "desktop", qtver, "win64_msvc2015_64"]
           elif platform == "macOS-latest":
-            args = [qtver, "mac", "desktop", "clang_64"]
+            args = ["mac", "desktop", qtver, "clang_64"]
           else:
-            args = [qtver, "linux", "desktop", "gcc_64"]
+            args = ["linux", "desktop", qtver, "gcc_64"]
           command_line.extend(args)
           command_line.extend(["--archives", "qtbase", "icu", "qt"])
           env = os.environ.copy()
@@ -99,13 +99,13 @@ jobs:
             command_line6 = []
             command_line6.extend(prefix)
             if platform == 'ubuntu-20.04':
-              command_line6.extend([qtver, "linux", "android", "android_armv7"])
+              command_line6.extend(["linux", "android", qtver, "android_armv7"])
               timeout = 360
             elif platform == "macOS-latest":
-              command_line6.extend([qtver, "mac", "ios", "ios"])
+              command_line6.extend(["mac", "ios", qtver, "ios"])
               timeout = 360
             else:
-              command_line6.extend([qtver, "windows", "android", "android_armv7"])
+              command_line6.extend(["windows", "android", qtver, "android_armv7"])
               timeout = 360
             try:
               res = subprocess.run(command_line6, timeout=timeout, check=True)
