@@ -28,8 +28,8 @@ dependencies = [
     "defusedxml",
     "humanize",
     "patch>=1.16",
-    "py7zr>=0.18.3",
-    "requests",
+    "py7zr>=0.20.2",
+    "requests>2.20.0",
     "semantic_version",
     "texttable",
 ]
