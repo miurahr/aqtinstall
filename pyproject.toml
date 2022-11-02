@@ -50,7 +50,7 @@ test = [
     "pympler",
 ]
 check = [
-    "flake8<5",
+    "flake8<6",
     "flake8-black",
     "flake8-colors",
     "flake8-isort>=4.2.0",
