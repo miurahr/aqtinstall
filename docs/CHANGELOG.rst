@@ -19,7 +19,7 @@ Changed
 * Standalone binary build with PyInstaller directly(#598)
 * Bump dependencies versions
    - py7zr>=0.20.2
-   - flake8>5
+   - flake8<6
    - flake8-isort>=4.2.0
 * metadata: change link to changelog
 * docs: move CHANGELOG.rst into docs/
