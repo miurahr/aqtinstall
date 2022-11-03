@@ -13,6 +13,16 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Changed
+-------
+* Update pyproject.toml and drop setup.cfg
+* Standalone binary build with PyInstaller directly(#598)
+* Bump dependencies versions
+   - py7zr>=0.20.2
+   - flake8>5
+   - flake8-isort>=4.2.0
+* metadata: change link to changelog
+* docs: move CHANGELOG.rst into docs/
 
 `v3.0.2`_ (26, Oct. 2022)
 =========================
