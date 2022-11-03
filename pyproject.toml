@@ -73,7 +73,7 @@ Documentation = "https://aqtinstall.readthedocs.io/"
 "Bug Tracker" = "https://github.com/miurahr/aqtinstall/issues"
 Wiki = "https://github.com/miurahr/aqtinstall/wiki"
 Source = "https://github.com/miurahr/aqtinstall"
-Changelog = "https://github.com/miurahr/aqtinstall/blob/master/CHANGELOG.rst"
+Changelog = "https://aqtinstall.readthedocs.io/en/latest/CHANGELOG.html"
 
 [build-system]
 requires = ["setuptools>=61", "wheel", "setuptools_scm[toml]>=6.4"]
