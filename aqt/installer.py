@@ -121,7 +121,7 @@ class Cli:
                 f"Arguments: `{sys.argv}` Host: `{platform.uname()}`\n"
                 "===========================PLEASE FILE A BUG REPORT===========================\n"
                 "You have discovered a bug in aqt.\n"
-                "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
+                "Please file a bug report at https://github.com/miurahr/aqtinstall/issues\n"
                 "Please remember to include a copy of this program's output in your report."
             )
             return Cli.UNHANDLED_EXCEPTION_CODE
