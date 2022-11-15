@@ -1022,7 +1022,7 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
             "../aqt/settings.ini",
             "===========================PLEASE FILE A BUG REPORT===========================\n"
             "You have discovered a bug in aqt.\n"
-            "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
+            "Please file a bug report at https://github.com/miurahr/aqtinstall/issues\n"
             "Please remember to include a copy of this program's output in your report.",
             Cli.UNHANDLED_EXCEPTION_CODE,
         ),

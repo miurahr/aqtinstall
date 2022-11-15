@@ -340,7 +340,7 @@ def test_cli_unexpected_error(monkeypatch, capsys):
     assert err.rstrip().endswith(
         "===========================PLEASE FILE A BUG REPORT===========================\n"
         "You have discovered a bug in aqt.\n"
-        "Please file a bug report at https://github.com/miurahr/aqtinstall/issues.\n"
+        "Please file a bug report at https://github.com/miurahr/aqtinstall/issues\n"
         "Please remember to include a copy of this program's output in your report."
     )
 
