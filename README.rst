@@ -4,6 +4,7 @@ Another Qt installer(aqt)
 - Release: |pypi|
 - Documentation: |docs|
 - Test status: |gha| and Coverage: |coveralls|
+- Project maturity |Package health| 
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
@@ -13,6 +14,11 @@ Another Qt installer(aqt)
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
 .. |coveralls| image:: https://coveralls.io/repos/github/miurahr/aqtinstall/badge.svg?branch=master
    :target: https://coveralls.io/github/miurahr/aqtinstall?branch=master
+.. |Package health| image:: https://snyk.io/advisor/python/aqtinstall/badge.svg
+  :target: https://snyk.io/advisor/python/aqtinstall
+  :alt: aqtinstall
+
+
 
 This is a utility alternative to the official graphical Qt installer, for using in CI environment
 where an interactive UI is not usable, or just on command line.
