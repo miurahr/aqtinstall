@@ -1,4 +1,4 @@
-name: Check package
+name: Check tox tests, lint and types
 
 on:
   push:
