@@ -28,44 +28,21 @@ def iter_archive_ids(
     category: str,
     hosts: Iterable[str] = ArchiveId.HOSTS,
     targets: Optional[Iterable[str]] = None,
-    add_extensions: bool = False,
 ) -> Generator[ArchiveId, None, None]:
-    def iter_extensions() -> Generator[str, None, None]:
-        if add_extensions and category == "qt":
-            if target == "android":
-                yield from ("", "x86_64", "x86", "armv7", "arm64_v8a")
-                return
-            elif target == "desktop":
-                yield from ("wasm", "")
-                return
-        yield ""
-
     for host in sorted(hosts):
         use_targets = targets
         if use_targets is None:
             use_targets = ArchiveId.TARGETS_FOR_HOST[host]
         for target in use_targets:
-            for ext in iter_extensions():
-                yield ArchiveId(category, host, target, ext)
+            yield ArchiveId(category, host, target)
 
 
 def iter_arches() -> Generator[dict, None, None]:
     logger.info("Fetching arches")
-    archive_ids = list(iter_archive_ids(category="qt", add_extensions=True))
+    archive_ids = list(iter_archive_ids(category="qt"))
     for archive_id in tqdm(archive_ids):
         for version in ("latest", "5.15.2", "5.13.2", "5.9.9"):
-            if archive_id.extension == "wasm" and (
-                version == "5.9.9" or version == "latest"
-            ):
-                continue
-            if archive_id.target == "android":
-                if version == "latest" and archive_id.extension == "":
-                    continue
-                if version != "latest" and archive_id.extension != "":
-                    continue
-            for arch_name in MetadataFactory(
-                archive_id, architectures_ver=version
-            ).getList():
+            for arch_name in MetadataFactory(archive_id, architectures_ver=version).getList():
                 yield {
                     "os_name": archive_id.host,
                     "target": archive_id.target,

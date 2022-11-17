@@ -1,0 +1,291 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>89</SortingPriority>
+  <Dependencies>qt.qt5.5140.doc.qtcharts, qt.qt5.5140.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6c5eeb7879b8d08041fc9d1b3ec2c4a83b956f75</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtcharts.wasm_32</Name>
+  <DisplayName>Qt Charts for WebAssembly</DisplayName>
+  <Description/>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtcharts, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2491642" OS="Any" UncompressedSize="9011562"/>
+  <SHA1>826c45ce5c2ead4fb2b98fcaf037f41f30e603bc</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>88</SortingPriority>
+  <Dependencies>qt.qt5.5140.doc.qtdatavis3d, qt.qt5.5140.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>00897be97807dba6650c13994b6d1288a7f3c7de</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtdatavis3d.wasm_32</Name>
+  <DisplayName>Qt Data Visualization for WebAssembly</DisplayName>
+  <Description/>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtdatavis3d, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2050196" OS="Any" UncompressedSize="7106514"/>
+  <SHA1>496e2fda0f3408271f6ebe6c880f163ead6be7fa</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation (Technology Preview)</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>88</SortingPriority>
+  <Dependencies>qt.qt5.5140.doc.qtlottie, qt.qt5.5140.examples.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>12e0a4e0427833e88ef6af4c2b416146764ced84</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtlottie.wasm_32</Name>
+  <DisplayName>Qt Lottie Animation for WebAssembly</DisplayName>
+  <Description/>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtlottie, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="596645" OS="Any" UncompressedSize="1757999"/>
+  <SHA1>3d3b8b1ed28bbbbafa20bd7c19b8d23bd5a12b5c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtnetworkauth</Name>
+  <DisplayName>Qt Network Authorization</DisplayName>
+  <Description>Qt Network Authorization is an add-on library that enables Qt applications to use different web authentication systems.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>10</SortingPriority>
+  <Dependencies>qt.qt5.5140.doc.qtnetworkauth, qt.qt5.5140.examples.qtnetworkauth</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7642c9f02e7bee9e300b56876bf205be22591a54</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtnetworkauth.wasm_32</Name>
+  <DisplayName>Qt Network Authorization for WebAssembly</DisplayName>
+  <Description/>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtnetworkauth, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="158593" OS="Any" UncompressedSize="448180"/>
+  <SHA1>69f8e088ec3397f59d9c6f86beed710feadf70ce</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtpurchasing</Name>
+  <DisplayName>Qt Purchasing</DisplayName>
+  <Description>Qt Purchasing. Cross-platform APIs for handling in-app purchases on Android, iOS and macOS.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>87</SortingPriority>
+  <Dependencies>qt.qt5.5140.doc.qtpurchasing, qt.qt5.5140.examples.qtpurchasing</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>04aac5a70b3864f5ea89dc0aedcd9a6d6489cc90</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtpurchasing.wasm_32</Name>
+  <DisplayName>Qt Purchasing for WebAssembly</DisplayName>
+  <Description/>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtpurchasing, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpurchasing-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="94847" OS="Any" UncompressedSize="331745"/>
+  <SHA1>594234def34d8b9e66152d024c194827314b7427</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline </DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>0</SortingPriority>
+  <Dependencies>qt.qt5.5140.doc.qtquicktimeline, qt.qt5.5140.examples.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>0ed2a09e664371f045ffba1ea62230de6a5a09bd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtquicktimeline.wasm_32</Name>
+  <DisplayName>Qt Quick Timeline for WebAssembly</DisplayName>
+  <Description/>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtquicktimeline, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="91340" OS="Any" UncompressedSize="238917"/>
+  <SHA1>fa03bab96695ee6657d7c761af33bc68dbbf9fc5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtscript</Name>
+  <DisplayName>Qt Script (Deprecated)</DisplayName>
+  <Description>Qt Script (Deprecated) Prebuilt Components for Qt 5.14.0.&lt;br>&lt;br>This component contains Third-Party Content licensed under LGPLv2.0. Please note the additional requirements of the license.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt5.5140.doc.qtscript, qt.qt5.5140.examples.qtscript</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>55c913d943ac8c893b0c8cf2295ccabff5ae9a41</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtscript.wasm_32</Name>
+  <DisplayName>Qt Script for WebAssembly</DisplayName>
+  <Description/>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtscript, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscript-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4177683" OS="Any" UncompressedSize="12729104"/>
+  <SHA1>6951cdbfa4474875de4f6de446a1e2b6f78dd40b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your own layouts and styles.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>85</SortingPriority>
+  <Dependencies>qt.qt5.5140.doc.qtvirtualkeyboard, qt.qt5.5140.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f20beb1a53b150ed1ff6c9b04fb4717f955cff20</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtvirtualkeyboard.wasm_32</Name>
+  <DisplayName>Qt Virtual Keyboard for WebAssembly</DisplayName>
+  <Description/>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtvirtualkeyboard, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3162708" OS="Any" UncompressedSize="8341816"/>
+  <SHA1>b68ed8d9aabf3465e1ab1e4d90b00540d88c0f0b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtwebglplugin</Name>
+  <DisplayName>Qt WebGL Streaming Plugin</DisplayName>
+  <Description>The Qt WebGL Streaming Plugin is a Qt Platform Abstraction plugin which provides streaming of Qt Quick &amp; Qt OpenGL applications over the network to a WebGL capable browser.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>10</SortingPriority>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>d6731dfbdd646821d6862d010e1fcaf3177dcaac</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.qtwebglplugin.wasm_32</Name>
+  <DisplayName>Qt WebGL Streaming Plugin for WebAssembly</DisplayName>
+  <Description>Qt WebGL Streaming Plugin</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <AutoDependOn>qt.qt5.5140.qtwebglplugin, qt.qt5.5140.wasm_32</AutoDependOn>
+  <Dependencies>qt.qt5.5140.wasm_32</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebglplugin-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="750212" OS="Any" UncompressedSize="2088810"/>
+  <SHA1>7ffe111181b4a1dd3826c3696b16ee94dc267086</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5140.wasm_32</Name>
+  <DisplayName>WebAssembly</DisplayName>
+  <Description>Qt 5.14.0 Prebuilt Components for WebAssembly (Desktop)</Description>
+  <Version>5.14.0-0-201912110813</Version>
+  <ReleaseDate>2019-12-11</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt5.5140.doc, qt.qt5.5140.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>700</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtwebchannel-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtmultimedia-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qttranslations-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtgraphicaleffects-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtsvg-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtdeclarative-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtwebsockets-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtimageformats-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qttools-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtxmlpatterns-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtsensors-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtquickcontrols-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtquickcontrols2-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtwebview-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtscxml-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtgamepad-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtspeech-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, qtremoteobjects-Windows-Windows_10-Mingw73-Windows-WebAssembly-X86_64.7z, x86_64-7.3.0-release-posix-seh-rt_v5-rev0-runtime.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="78067039" OS="Any" UncompressedSize="280467092"/>
+  <SHA1>3650fe70aa645834b180b63e27689c55cce884b4</SHA1>
+ </PackageUpdate>
+ <MetadataName>2020-08-21-1954_meta.7z</MetadataName>
+ <SHA1>69ef012916d9974bface5a15406e8acdf9158fa5</SHA1>
+</Updates>

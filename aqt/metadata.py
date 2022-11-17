@@ -205,44 +205,28 @@ class ArchiveId:
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
     }
-    ALL_EXTENSIONS = (
-        "wasm",
-        "src_doc_examples",
-        "preview",
-        "wasm_preview",
-        "x86_64",
-        "x86",
-        "armv7",
-        "arm64_v8a",
-    )
-    EXTENSIONS_REQUIRED_ANDROID_QT6 = "x86_64", "x86", "armv7", "arm64_v8a"
+    EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
+    ALL_EXTENSIONS = {"", "wasm", "src_doc_examples", *EXTENSIONS_REQUIRED_ANDROID_QT6}
 
-    def __init__(self, category: str, host: str, target: str, extension: str = ""):
+    def __init__(self, category: str, host: str, target: str):
         if category not in ArchiveId.CATEGORIES:
             raise ValueError("Category '{}' is invalid".format(category))
         if host not in ArchiveId.HOSTS:
             raise ValueError("Host '{}' is invalid".format(host))
         if target not in ArchiveId.TARGETS_FOR_HOST[host]:
             raise ValueError("Target '{}' is invalid".format(target))
-        if extension and extension not in ArchiveId.ALL_EXTENSIONS:
-            raise ValueError("Extension '{}' is invalid".format(extension))
         self.category: str = category
         self.host: str = host
         self.target: str = target
-        self.extension: str = extension
 
     def is_preview(self) -> bool:
-        return "preview" in self.extension if self.extension else False
+        return False
 
     def is_qt(self) -> bool:
         return self.category == "qt"
 
     def is_tools(self) -> bool:
         return self.category == "tools"
-
-    def is_no_arch(self) -> bool:
-        """Returns True if there should be no arch attached to the module names"""
-        return self.extension in ("src_doc_examples",)
 
     def to_url(self) -> str:
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
@@ -251,20 +235,27 @@ class ArchiveId:
             target=self.target,
         )
 
-    def to_folder(self, qt_version_no_dots: str) -> str:
+    def to_folder(self, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
         return "{category}{major}_{ver}{ext}".format(
             category=self.category,
             major=qt_version_no_dots[0],
             ver=qt_version_no_dots,
-            ext="_" + self.extension if self.extension else "",
+            ext="_" + extension if extension else "",
         )
 
+    def all_extensions(self, version: Version) -> List[str]:
+        if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
+            return ["", "wasm"]
+        elif self.target == "android" and version >= Version("6.0.0"):
+            return list(ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6)
+        else:
+            return [""]
+
     def __str__(self) -> str:
-        return "{cat}/{host}/{target}{ext}".format(
+        return "{cat}/{host}/{target}".format(
             cat=self.category,
             host=self.host,
             target=self.target,
-            ext="" if not self.extension else "/" + self.extension,
         )
 
 
@@ -491,6 +482,14 @@ class QtRepoProperty:
         selected_dir = QtRepoProperty.select_default_mingw(arch_dirs, is_dir=True)
         return installed_qt_version_dir / selected_dir if selected_dir else None
 
+    @staticmethod
+    def is_in_wasm_range(host: str, version: Version) -> bool:
+        return (
+            version in SimpleSpec(">=6.2.0")
+            or (host == "linux" and version in SimpleSpec(">=5.13,<6"))
+            or version in SimpleSpec(">=5.13.1,<6")
+        )
+
 
 class MetadataFactory:
     """Retrieve metadata of Qt variations, versions, and descriptions from Qt site."""
@@ -503,7 +502,6 @@ class MetadataFactory:
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
         modules_query: Optional[Tuple[str, str]] = None,
-        extensions_ver: Optional[str] = None,
         architectures_ver: Optional[str] = None,
         archives_query: Optional[List[str]] = None,
         src_doc_examples_query: Optional[Tuple[str, Version, bool]] = None,
@@ -518,7 +516,6 @@ class MetadataFactory:
         :param is_latest_version:   When True, the MetadataFactory will find all versions of Qt
                                     matching filters, and only print the most recent version
         :param modules_query:       [Version of Qt, architecture] for which to list modules
-        :param extensions_ver:      Version of Qt for which to list extensions
         :param architectures_ver:   Version of Qt for which to list architectures
         :param archives_query:      [Qt_Version, architecture, *module_names]: used to print list of archives
         :param tool_name:           Name of a tool, without architecture, ie "tools_qtcreator" or "tools_ifw"
@@ -544,28 +541,25 @@ class MetadataFactory:
                 self._action = self.fetch_tools
         elif is_latest_version:
             self.request_type = "latest version"
-            self._action = lambda: Versions(self.fetch_latest_version())
+            self._action = lambda: Versions(self.fetch_latest_version(ext=""))
         elif modules_query:
             if is_long_listing:
                 self.request_type = "long modules"
                 version, arch = modules_query
-                self._action = lambda: self.fetch_long_modules(self._to_version(version), arch)
+                self._action = lambda: self.fetch_long_modules(self._to_version(version, arch), arch)
             else:
                 self.request_type = "modules"
                 version, arch = modules_query
-                self._action = lambda: self.fetch_modules(self._to_version(version), arch)
-        elif extensions_ver:
-            self.request_type = "extensions"
-            self._action = lambda: self.fetch_extensions(self._to_version(extensions_ver))
+                self._action = lambda: self.fetch_modules(self._to_version(version, arch), arch)
         elif architectures_ver:
             self.request_type = "architectures"
-            self._action = lambda: self.fetch_arches(self._to_version(architectures_ver))
+            self._action = lambda: self.fetch_arches(self._to_version(architectures_ver, None))
         elif archives_query:
             if len(archives_query) < 2:
                 raise CliInputError("The '--archives' flag requires a 'QT_VERSION' and an 'ARCHITECTURE' parameter.")
             self.request_type = "archives for modules" if len(archives_query) > 2 else "archives for qt"
             version, arch, modules = archives_query[0], archives_query[1], archives_query[2:]
-            self._action = lambda: self.fetch_archives(self._to_version(version), arch, modules)
+            self._action = lambda: self.fetch_archives(self._to_version(version, arch), arch, modules)
         elif src_doc_examples_query:
             cmd_type, version, is_modules_query = src_doc_examples_query
             if is_modules_query:
@@ -582,34 +576,22 @@ class MetadataFactory:
         return self._action()
 
     def fetch_arches(self, version: Version) -> List[str]:
-        self.validate_extension(version)
-        if self.archive_id.extension == "src_doc_examples":
-            return []
-        qt_ver_str = self._get_qt_version_str(version)
-        modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
-
         arches = []
-        for name in modules.keys():
-            ver, arch = name.split(".")[-2:]
-            if ver == qt_ver_str:
-                arches.append(arch)
+        for extension in self.archive_id.all_extensions(version):
+            qt_ver_str = self._get_qt_version_str(version)
+            modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension))
+
+            for name in modules.keys():
+                ver, arch = name.split(".")[-2:]
+                if ver == qt_ver_str:
+                    arches.append(arch)
 
         return arches
 
-    def fetch_extensions(self, version: Version) -> List[str]:
-        versions_extensions = self.get_versions_extensions(
-            self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
-        )
-        filtered = filter(
-            lambda ver_ext: ver_ext[0] == version and ver_ext[1],
-            versions_extensions,
-        )
-        return list(map(lambda ver_ext: ver_ext[1], filtered))
-
-    def fetch_versions(self) -> Versions:
+    def fetch_versions(self, extension: str = "") -> Versions:
         def filter_by(ver_ext: Tuple[Optional[Version], str]) -> bool:
-            version, extension = ver_ext
-            return version and (self.spec is None or version in self.spec) and (self.archive_id.extension == extension)
+            version, ext = ver_ext
+            return version and (self.spec is None or version in self.spec) and (ext == extension)
 
         def get_version(ver_ext: Tuple[Version, str]):
             return ver_ext[0]
@@ -621,8 +603,8 @@ class MetadataFactory:
         iterables = itertools.groupby(versions, lambda version: version.minor)
         return Versions(iterables)
 
-    def fetch_latest_version(self) -> Optional[Version]:
-        return self.fetch_versions().latest()
+    def fetch_latest_version(self, ext: str) -> Optional[Version]:
+        return self.fetch_versions(ext).latest()
 
     def fetch_tools(self) -> List[str]:
         html_doc = self.fetch_http(self.archive_id.to_url(), False)
@@ -639,36 +621,6 @@ class MetadataFactory:
 
     def fetch_tool_long_listing(self, tool_name: str) -> ToolData:
         return ToolData(self._fetch_module_metadata(tool_name))
-
-    def validate_extension(self, qt_ver: Version) -> None:
-        """
-        Checks extension, and raises CliInputError if invalid.
-
-        Rules:
-        1. On Qt6 for Android, an extension for processor architecture is required.
-        2. On any platform other than Android, or on Qt5, an extension for
-        processor architecture is forbidden.
-        3. The "wasm" extension only works on desktop targets for Qt 5.13-5.15, or for 6.2+
-        """
-        if (
-            self.archive_id.target == "android"
-            and qt_ver.major == 6
-            and self.archive_id.extension not in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6
-        ):
-            raise CliInputError(
-                "Qt 6 for Android requires one of the following extensions: "
-                f"{ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6}. "
-                "Please add your extension using the `--extension` flag."
-            )
-        if self.archive_id.extension in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6 and (
-            self.archive_id.target != "android" or qt_ver.major != 6
-        ):
-            raise CliInputError(f"The extension '{self.archive_id.extension}' is only valid for Qt 6 for Android")
-        is_in_wasm_range = qt_ver in SimpleSpec(">=5.13,<6") or qt_ver in SimpleSpec(">=6.2.0")
-        if "wasm" in self.archive_id.extension and (self.archive_id.target != "desktop" or not is_in_wasm_range):
-            raise CliInputError(
-                f"The extension '{self.archive_id.extension}' is only available in Qt 5.13-5.15 and 6.2+ on desktop."
-            )
 
     @staticmethod
     def choose_highest_version_in_spec(
@@ -693,7 +645,7 @@ class MetadataFactory:
             # There were no tools that fit the simple_spec
             return None
 
-    def _to_version(self, qt_ver: str) -> Version:
+    def _to_version(self, qt_ver: str, arch: Optional[str]) -> Version:
         """
         Turns a string in the form of `5.X.Y | latest` into a semantic version.
         If the string does not fit either of these forms, CliInputError will be raised.
@@ -706,7 +658,8 @@ class MetadataFactory:
         """
         assert qt_ver
         if qt_ver == "latest":
-            latest_version = self.fetch_latest_version()
+            ext = QtRepoProperty.extension_for_arch(arch, True) if arch else ""
+            latest_version = self.fetch_latest_version(ext)
             if not latest_version:
                 msg = "There is no latest version of Qt with the criteria '{}'".format(self.describe_filters())
                 raise CliInputError(msg)
@@ -807,18 +760,18 @@ class MetadataFactory:
 
     def fetch_modules(self, version: Version, arch: str) -> List[str]:
         """Returns list of modules"""
-        self.validate_extension(version)
+        extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension))
 
         def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
             _match = pattern.match(name)
             if not _match:
                 return None, None
             module_with_arch = _match.group(3)
-            if self.archive_id.is_no_arch() or "." not in module_with_arch:
+            if "." not in module_with_arch:
                 return module_with_arch, None
             module, arch = module_with_arch.rsplit(".", 1)
             if module.startswith("addons."):
@@ -834,7 +787,7 @@ class MetadataFactory:
 
     def fetch_long_modules(self, version: Version, arch: str) -> ModuleData:
         """Returns long listing of modules"""
-        self.validate_extension(version)
+        extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590(\.addons)?\.(?P<module>[^.]+)\.gcc_64$")
         pattern = re.compile(
@@ -851,7 +804,7 @@ class MetadataFactory:
             name_node = element.find("Name")
             return bool(name_node is not None) and bool(pattern.match(str(name_node.text)))
 
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str), matches_arch)
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension), matches_arch)
         m = {pattern.match(key).group("module"): value for key, value in modules_meta.items()}
 
         return ModuleData(m)
@@ -861,9 +814,8 @@ class MetadataFactory:
         assert (
             cmd_type in ("doc", "examples") and self.archive_id.target == "desktop"
         ), "Internal misuse of fetch_modules_sde"
-        self.validate_extension(version)
         qt_ver_str = self._get_qt_version_str(version)
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str))
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, "src_doc_examples"))
         # pattern: Match all names "qt.qt5.12345.doc.(\w+)
         pattern = re.compile(r"^qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\." + cmd_type + r"\.(.+)$")
 
@@ -879,9 +831,10 @@ class MetadataFactory:
         assert (
             cmd_type in ("src", "doc", "examples") and self.archive_id.target == "desktop"
         ), "Internal misuse of fetch_archives_sde"
-        return self.fetch_archives(version, cmd_type, [])
+        return self.fetch_archives(version, cmd_type, [], is_sde=True)
 
-    def fetch_archives(self, version: Version, arch: str, modules: List[str]) -> List[str]:
+    def fetch_archives(self, version: Version, arch: str, modules: List[str], is_sde: bool = False) -> List[str]:
+        extension = "src_doc_examples" if is_sde else QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
         qt_version_str = self._get_qt_version_str(version)
         nonempty = MetadataFactory._has_nonempty_downloads
 
@@ -899,7 +852,9 @@ class MetadataFactory:
 
         predicate = no_modules if not modules else all_modules if "all" in modules else specify_modules
         try:
-            mod_metadata = self._fetch_module_metadata(self.archive_id.to_folder(qt_version_str), predicate=predicate)
+            mod_metadata = self._fetch_module_metadata(
+                self.archive_id.to_folder(qt_version_str, extension), predicate=predicate
+            )
         except (AttributeError,) as e:
             raise ArchiveListError(f"Downloaded metadata is corrupted. {e}") from e
 
@@ -941,8 +896,6 @@ def suggested_follow_up(meta: MetadataFactory) -> List[str]:
     base_cmd = "aqt {0} {1.host} {1.target}".format(list_cmd, meta.archive_id)
     versions_msg = f"Please use '{base_cmd}' to show versions of Qt available."
     arches_msg = f"Please use '{base_cmd} --arch <QT_VERSION>' to show architectures available."
-    if meta.archive_id.extension:
-        msg.append(f"Please use '{base_cmd} --extensions <QT_VERSION>' to list valid extensions.")
 
     if meta.archive_id.is_tools() and meta.request_type == "tool variant names":
         msg.append(f"Please use '{base_cmd}' to check what tools are available.")

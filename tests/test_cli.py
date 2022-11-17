@@ -89,8 +89,8 @@ def test_cli_check_version():
         ("windows", "winrt", "mingw32", "6", None, False),
         ("windows", "winrt", "mingw32", "bad spec", None, True),
         ("windows", "android", "android_x86", "6", Version("6.1.0"), False),
-        ("windows", "desktop", "android_x86", "6", Version("6.1.0"), False),  # does not validate arch
-        ("windows", "desktop", "android_fake", "6", Version("6.1.0"), False),  # does not validate arch
+        ("windows", "desktop", "android_x86", "6", Version("6.2.0"), False),  # does not validate arch
+        ("windows", "desktop", "android_fake", "6", Version("6.2.0"), False),  # does not validate arch
     ),
 )
 def test_cli_determine_qt_version(
@@ -302,6 +302,34 @@ def test_cli_legacy_tool_new_syntax(monkeypatch, capsys, cmd):
     out, err = capsys.readouterr()
     actual = err[err.index("\n") + 1 :]
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "cmd, expect_err",
+    (
+        (
+            "list-qt mac --extension wasm",
+            "WARNING : The parameter 'extension' with value 'wasm' is deprecated "
+            "and marked for removal in a future version of aqt.\n"
+            "In the future, please omit this parameter.\n"
+            "WARNING : The '--extension' flag will be ignored.\n",
+        ),
+        (
+            "list-qt mac desktop --extensions 6.2.0",
+            "WARNING : The parameter 'extensions' with value '6.2.0' is deprecated "
+            "and marked for removal in a future version of aqt.\n"
+            "In the future, please omit this parameter.\n"
+            "WARNING : The '--extensions' flag will always return an empty list, "
+            "because there are no useful arguments for the '--extension' flag.\n",
+        ),
+    ),
+)
+def test_cli_list_qt_deprecated_flags(capsys, cmd: str, expect_err: str):
+    cli = Cli()
+    cli._setup_settings()
+    assert 0 == cli.run(cmd.split())
+    out, err = capsys.readouterr()
+    assert err == expect_err
 
 
 # These commands come directly from examples in the legacy documentation

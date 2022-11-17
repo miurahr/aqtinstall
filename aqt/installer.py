@@ -35,7 +35,7 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, TargetConfig, ToolArchives
@@ -207,7 +207,8 @@ class Cli:
 
         def opt_version_for_spec(ext: str, _spec: SimpleSpec) -> Optional[Version]:
             try:
-                return MetadataFactory(ArchiveId("qt", host, target, ext), spec=_spec, base_url=base_url).getList().latest()
+                meta = MetadataFactory(ArchiveId("qt", host, target), spec=_spec, base_url=base_url)
+                return meta.fetch_latest_version(ext)
             except AqtException:
                 return None
 
@@ -478,7 +479,7 @@ class Cli:
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
         if args.tool_variant is None:
-            archive_id = ArchiveId("tools", os_name, target, "")
+            archive_id = ArchiveId("tools", os_name, target)
             meta = MetadataFactory(archive_id, base_url=base, is_latest_version=True, tool_name=tool_name)
             try:
                 archs = meta.getList()
@@ -514,6 +515,18 @@ class Cli:
     def run_list_qt(self, args: argparse.ArgumentParser):
         """Print versions of Qt, extensions, modules, architectures"""
 
+        if args.extensions:
+            self._warn_on_deprecated_parameter("extensions", args.extensions)
+            self.logger.warning(
+                "The '--extensions' flag will always return an empty list, "
+                "because there are no useful arguments for the '--extension' flag."
+            )
+            print("")
+            return
+        if args.extension:
+            self._warn_on_deprecated_parameter("extension", args.extension)
+            self.logger.warning("The '--extension' flag will be ignored.")
+
         if not args.target:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
             return
@@ -526,7 +539,7 @@ class Cli:
         else:
             modules_ver, modules_query, is_long = None, None, False
 
-        for version_str in (modules_ver, args.extensions, args.arch, args.archives[0] if args.archives else None):
+        for version_str in (modules_ver, args.arch, args.archives[0] if args.archives else None):
             Cli._validate_version_str(version_str, allow_latest=True, allow_empty=True)
 
         spec = None
@@ -537,17 +550,11 @@ class Cli:
             raise CliInputError(f"Invalid version specification: '{args.spec}'.\n" + SimpleSpec.usage()) from e
 
         meta = MetadataFactory(
-            archive_id=ArchiveId(
-                "qt",
-                args.host,
-                args.target,
-                args.extension if args.extension else "",
-            ),
+            archive_id=ArchiveId("qt", args.host, args.target),
             spec=spec,
             is_latest_version=args.latest_version,
             modules_query=modules_query,
             is_long_listing=is_long,
-            extensions_ver=args.extensions,
             architectures_ver=args.arch,
             archives_query=args.archives,
         )
@@ -574,7 +581,7 @@ class Cli:
         version = Cli._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
         is_fetch_modules: bool = getattr(args, "modules", False)
         meta = MetadataFactory(
-            archive_id=ArchiveId("qt", args.host, target, "src_doc_examples"),
+            archive_id=ArchiveId("qt", args.host, target),
             src_doc_examples_query=(cmd_type, version, is_fetch_modules),
         )
         show_list(meta)
@@ -730,12 +737,10 @@ class Cli:
             epilog="Examples:\n"
             "$ aqt list-qt mac                                                # print all targets for Mac OS\n"
             "$ aqt list-qt mac desktop                                        # print all versions of Qt 5\n"
-            "$ aqt list-qt mac desktop --extension wasm                       # print all wasm versions of Qt 5\n"
             '$ aqt list-qt mac desktop --spec "5.9"                           # print all versions of Qt 5.9\n'
             '$ aqt list-qt mac desktop --spec "5.9" --latest-version          # print latest Qt 5.9\n'
             "$ aqt list-qt mac desktop --modules 5.12.0 clang_64              # print modules for 5.12.0\n"
             "$ aqt list-qt mac desktop --spec 5.9 --modules latest clang_64   # print modules for latest 5.9\n"
-            "$ aqt list-qt mac desktop --extensions 5.9.0                     # print choices for --extension flag\n"
             "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for 5.9.9/mac/desktop\n"
             "$ aqt list-qt mac desktop --arch latest                          # print architectures for the latest Qt 5\n"
             "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
@@ -752,8 +757,7 @@ class Cli:
         list_parser.add_argument(
             "--extension",
             choices=ArchiveId.ALL_EXTENSIONS,
-            help="Extension of packages to list. "
-            "Use the `--extensions` flag to list all relevant options for a host/target.",
+            help="Deprecated since aqt v3.1.0. Use of this flag will emit a warning, but will otherwise be ignored.",
         )
         list_parser.add_argument(
             "--spec",
@@ -786,9 +790,8 @@ class Cli:
             "--extensions",
             type=str,
             metavar="(VERSION | latest)",
-            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
-            "When set, this prints all valid arguments for the `--extension` flag "
-            "for either Qt 5.X.Y or the latest version of Qt.",
+            help="Deprecated since v3.1.0. Prints a list of valid arguments for the '--extension' flag. "
+            "Since the '--extension' flag is now deprecated, this will always print an empty list.",
         )
         output_modifier_exclusive_group.add_argument(
             "--arch",

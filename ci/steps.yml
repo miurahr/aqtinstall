@@ -82,10 +82,6 @@ steps:
         fi
       fi
       if [[ "$(SUBCOMMAND)" == "list" ]]; then
-        if [[ $(USE_EXTENSION) != "None" ]]; then
-          # In this case, if you don't specify an extension, Updates.xml just shows dependencies
-          ext="--extension $(USE_EXTENSION)"
-        fi
         aqt list-qt $(HOST)                                                     # print all targets for host
         aqt list-tool $(HOST) $(TARGET)                                         # print all tools for host/target
         aqt list-tool $(HOST) $(TARGET) qt3dstudio_runtime_240                  # print all tool variant names for qt3dstudio
@@ -95,25 +91,20 @@ steps:
           aqt list-tool $(HOST) $(TARGET) tools_qtcreator -l                    # print tool variant names, versions, release dates
         fi
         aqt list-qt $(HOST) $(TARGET)                                           # print all versions of Qt
-        if [[ $(HOST) == "desktop" ]]; then
-          aqt list-qt $(HOST) $(TARGET) --extension wasm                        # print all wasm versions of Qt
-        else
-          ! aqt list-qt $(HOST) $(TARGET) --extension wasm                      # there are no wasm versions of Qt
-        fi
-        aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)"                     # print all versions of Qt in SimpleSpec
-        ver=$(aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --latest-version)  # latest Qt in SimpleSpec
+        aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)"                          # print all versions of Qt in SimpleSpec
+        ver=$(aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --latest-version)  # latest Qt in SimpleSpec
         [ $ver == $(QT_VERSION) ]                                               # latest version in SPEC must be QT_VERSION
-        aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --modules latest $(ARCH)    # print modules for latest in SimpleSpec
-        aqt list-qt $(HOST) $(TARGET) $ext --modules $(QT_VERSION) $(ARCH)      # print modules for version/host/target/arch
-        if [[ $(HAS_EXTENSIONS) == "True" ]]; then
-          aqt list-qt $(HOST) $(TARGET) --extensions $(QT_VERSION)              # print choices for --extension flag
-          aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --extensions latest
-        else
-          ! aqt list-qt $(HOST) $(TARGET) --extensions $(QT_VERSION)
-          ! aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --extensions latest
+        aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --modules latest $(ARCH) # print modules for latest in SimpleSpec
+        aqt list-qt $(HOST) $(TARGET) --modules $(QT_VERSION) $(ARCH)           # print modules for version/host/target/arch
+        aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION)                      # print architectures for version/host/target
+        if [[ "$(TARGET)" == "desktop" ]]; then
+          if [[ "$(HAS_WASM)" == "True" ]]; then                                # fail if 'wasm_32' is not in the list
+            aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION) | grep -w -q "wasm_32"
+          else                                                                  # fail if 'wasm_32' is in the list
+            ! aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION) | grep -w -q "wasm_32"
+          fi
         fi
-        aqt list-qt $(HOST) $(TARGET) $ext --arch $(QT_VERSION)                 # print architectures for version/host/target
-        aqt list-qt $(HOST) $(TARGET) $ext --spec "$(SPEC)" --arch latest
+        aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --arch latest
 
         # list-src/doc/example
         aqt list-src $(HOST) $(QT_VERSION)                                      # print source archives available for host/desktop/version
