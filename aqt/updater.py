@@ -23,9 +23,9 @@ import os
 import subprocess
 from logging import getLogger
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict
 
-import patch
+import patch  # type: ignore
 
 from aqt.archives import TargetConfig
 from aqt.exceptions import UpdaterError
@@ -43,8 +43,8 @@ class Updater:
     def __init__(self, prefix: Path, logger):
         self.logger = logger
         self.prefix = prefix
-        self.qmake_path = None
-        self.qconfigs = {}
+        self.qmake_path: Optional[Path] = None
+        self.qconfigs: Dict[str, str] = {}
 
     def _patch_binfile(self, file: Path, key: bytes, newpath: bytes):
         """Patch binary file with key/value"""
@@ -149,6 +149,8 @@ class Updater:
     def patch_qmake(self):
         """Patch to qmake binary"""
         if self._detect_qmake():
+            if self.qmake_path is None:
+                return
             self.logger.info("Patching {}".format(str(self.qmake_path)))
             self._patch_binfile(
                 self.qmake_path,

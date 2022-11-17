@@ -27,17 +27,17 @@ import os
 import posixpath
 import secrets
 import sys
-from logging import getLogger
+from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Callable, Dict, Generator, List, Optional, Tuple
+from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
 
 import humanize
 import requests
 import requests.adapters
-from defusedxml import ElementTree
+from defusedxml import ElementTree  # type: ignore
 
 from aqt.exceptions import (
     ArchiveChecksumError,
@@ -142,7 +142,7 @@ def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout)
                 )
 
 
-def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_retries: int, name: str):
+def retry_on_errors(action: Callable[[], Any], acceptable_errors: Tuple, num_retries: int, name: str):
     logger = getLogger("aqt.helper")
     for i in range(num_retries):
         try:
@@ -158,7 +158,7 @@ def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_ret
             raise e from e
 
 
-def retry_on_bad_connection(function: Callable[[str], any], base_url: str):
+def retry_on_bad_connection(function: Callable[[str], Any], base_url: str):
     logger = getLogger("aqt.helper")
     fallback_url = secrets.choice(Settings.fallbacks)
     try:
@@ -250,7 +250,7 @@ def altlink(url: str, alt: str):
 
 class MyQueueListener(QueueListener):
     def __init__(self, queue):
-        handlers = []
+        handlers: List[Handler] = []
         super().__init__(queue, *handlers)
 
     def handle(self, record):
@@ -284,9 +284,9 @@ def xml_to_modules(
         parsed_xml = ElementTree.fromstring(xml_text)
     except ElementTree.ParseError as perror:
         raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
-    packages = {}
+    packages: Dict[str, Dict[str, str]] = {}
     for packageupdate in parsed_xml.iter("PackageUpdate"):
-        if predicate and not predicate(packageupdate):
+        if not predicate(packageupdate):
             continue
         name = packageupdate.find("Name").text
         packages[name] = {}
