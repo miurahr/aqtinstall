@@ -407,12 +407,13 @@ class QtArchives:
         for packageupdate in package_updates:
             if not self.all_extra:
                 target_packages.remove_module_for_package(packageupdate.name)
-            should_filter_archives: bool = self.subarchives and self.should_filter_archives(packageupdate.name)
+            should_filter_archives: bool = (self.subarchives is not None) and self.should_filter_archives(packageupdate.name)
 
             for archive in packageupdate.downloadable_archives:
                 archive_name = archive.split("-", maxsplit=1)[0]
-                if should_filter_archives and archive_name not in self.subarchives:
-                    continue
+                if self.subarchives is not None:
+                    if should_filter_archives and archive_name not in self.subarchives:
+                        continue
                 archive_path = posixpath.join(
                     # online/qtsdkrepository/linux_x64/desktop/qt5_5150/
                     os_target_folder,
@@ -584,7 +585,7 @@ class ToolArchives(QtArchives):
         tool_name: str,
         base: str,
         version_str: Optional[str] = None,
-        arch: Optional[str] = None,
+        arch: str = "",
         timeout: Tuple[int, int] = (5, 5),
     ):
         self.tool_name = tool_name
