@@ -34,7 +34,7 @@ from xml.etree.ElementTree import Element
 
 import bs4
 from semantic_version import SimpleSpec as SemanticSimpleSpec  # type: ignore
-from semantic_version import Version as SemanticVersion  # type: ignore
+from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
