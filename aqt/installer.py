@@ -257,9 +257,8 @@ class Cli:
             self._warn_on_deprecated_command("install", "install-qt")
         target: str = args.target
         os_name: str = args.host
-        arch: str = self._set_arch(
-            args.arch, os_name, target, getattr(args, "qt_version", getattr(args, "qt_version_spec", None))
-        )
+        qt_version_or_spec: str = getattr(args, "qt_version", getattr(args, "qt_version_spec", ""))
+        arch: str = self._set_arch(args.arch, os_name, target, qt_version_or_spec)
         keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
         output_dir = args.outputdir
@@ -288,7 +287,7 @@ class Cli:
         if hasattr(args, "qt_version_spec"):
             qt_version: str = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch, base_url=base))
         else:
-            qt_version: str = args.qt_version
+            qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
         archives = args.archives
         if args.noarchives:
