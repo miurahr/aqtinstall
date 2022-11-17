@@ -57,6 +57,8 @@ test = [
     "pympler",
 ]
 check = [
+    "mypy>=0.940",
+    "mypy_extensions>=0.4.1",
     "flake8<6",
     "flake8-black",
     "flake8-colors",
@@ -141,7 +143,7 @@ markers = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py{37,38,39,310,311}, py39d, mprof, fil
+envlist = check, docs, py{37,38,39,310,311}, py39d, mprof, fil, mypy
 isolated_build = True
 
 [testenv]
@@ -161,6 +163,15 @@ extras = check
 commands =
     check-manifest {toxinidir}
     flake8 aqt tests
+
+[testenv:mypy]
+basepython = python3.9
+extras = check
+commands = mypy --check-untyped-defs aqt
+deps =
+    types-requests
+    types-beautifulsoup4
+    types-psutil
 
 [testenv:docs]
 basepython = python3.9
@@ -207,7 +218,7 @@ commands =
 [gh-actions]
 python =
     3.8: py38, docs, check
-    3.9: py39
+    3.9: py39, mypy
     3.10: py310
     3.11: py311
 """
