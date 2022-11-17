@@ -20,10 +20,9 @@ classifiers = [
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries",
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.7"
 dependencies = [
     "bs4",
-    "dataclasses;python_version<'3.7'",
     "defusedxml",
     "humanize",
     "patch>=1.16",
@@ -109,7 +108,7 @@ exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", 
 
 [tool.black]
 line-length = 125
-target-version = ['py38']
+target-version = ['py39']
 
 [tool.isort]
 line_length = 125
@@ -142,7 +141,7 @@ markers = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py{36,37,38,39,310,311}, py39d, mprof, fil
+envlist = check, docs, py{37,38,39,310,311}, py39d, mprof, fil
 isolated_build = True
 
 [testenv]
@@ -207,7 +206,6 @@ commands =
 
 [gh-actions]
 python =
-    3.6: py36
     3.8: py38, docs, check
     3.9: py39
     3.10: py310
