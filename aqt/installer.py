@@ -35,7 +35,7 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Set, Tuple
+from typing import List, Optional, Tuple
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, TargetConfig, ToolArchives
