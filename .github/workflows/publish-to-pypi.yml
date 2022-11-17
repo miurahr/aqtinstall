@@ -20,10 +20,10 @@ jobs:
           fetch-depth: 50
       - name: Fetch release tag
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-      - name: Set up Python 3.9🐍
+      - name: Set up Python 3.10🐍
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install build and twine
         run: python -m pip install build twine --user
       - name: Build release assets
