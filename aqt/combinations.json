@@ -503,7 +503,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.44",
+        "arch": "qt.tools.ifw.45",
         "os_name": "linux",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -605,7 +605,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.44",
+        "arch": "qt.tools.ifw.45",
         "os_name": "mac",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -689,7 +689,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.44",
+        "arch": "qt.tools.ifw.45",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -961,7 +961,8 @@
       "6.3.0",
       "6.3.1",
       "6.3.2",
-      "6.4.0"
+      "6.4.0",
+      "6.4.1"
     ]
   }
 ]
