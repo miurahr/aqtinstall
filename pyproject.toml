@@ -240,8 +240,8 @@ commands =
 
 [gh-actions]
 python =
-    3.8: py38, docs, check
-    3.9: py39, mypy
+    3.8: py38
+    3.9: py39, docs, check, mypy
     3.10: py310
     3.11: py311
 """
