@@ -1099,7 +1099,7 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
     #
     tasks = []
     for arc in archives:
-        tasks.append((arc, base_dir, sevenzip, queue, archive_dest, keep))
+        tasks.append((arc, base_dir, sevenzip, queue, archive_dest, Settings.configfile, keep))
     ctx = multiprocessing.get_context("spawn")
     if is_64bit():
         pool = ctx.Pool(Settings.concurrency, init_worker_sh, (), 4)
@@ -1154,8 +1154,8 @@ def installer(
     command: Optional[str],
     queue: multiprocessing.Queue,
     archive_dest: Path,
-    keep: bool = False,
-    response_timeout: Optional[int] = None,
+    settings_ini: str,
+    keep: bool,
 ):
     """
     Installer function to download archive files and extract it.
@@ -1165,10 +1165,9 @@ def installer(
     base_url = qt_package.base_url
     archive: Path = archive_dest / qt_package.archive
     start_time = time.perf_counter()
-    # set defaults
-    Settings.load_settings()
-    # set logging
-    setup_logging()  # XXX: why need to load again?
+    Settings.load_settings(file=settings_ini)
+    # setup queue logger
+    setup_logging()
     qh = QueueHandler(queue)
     logger = getLogger()
     for handler in logger.handlers:
@@ -1176,10 +1175,7 @@ def installer(
         logger.removeHandler(handler)
     logger.addHandler(qh)
     #
-    if response_timeout is None:
-        timeout = (Settings.connection_timeout, Settings.response_timeout)
-    else:
-        timeout = (Settings.connection_timeout, response_timeout)
+    timeout = (Settings.connection_timeout, Settings.response_timeout)
     hash = get_hash(qt_package.archive_path, algorithm="sha256", timeout=timeout)
 
     def download_bin(_base_url):

@@ -1215,6 +1215,8 @@ def test_install_installer_archive_extraction_err(monkeypatch):
             command="some_nonexistent_7z_extractor",
             queue=MockMultiprocessingManager.Queue(),
             archive_dest=Path(temp_dir),
+            settings_ini=Settings.configfile,
+            keep=False,
         )
     assert err.type == ArchiveExtractionError
     err_msg = format(err.value).rstrip()

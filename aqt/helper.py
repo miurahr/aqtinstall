@@ -496,6 +496,5 @@ Settings = SettingsClass()
 def setup_logging(env_key="LOG_CFG"):
     config = os.getenv(env_key, None)
     if config is not None and os.path.exists(config):
-        logging.config.fileConfig(config)
-    else:
-        logging.config.fileConfig(Settings.loggingconf)
+        Settings.loggingconf = config
+    logging.config.fileConfig(Settings.loggingconf)
