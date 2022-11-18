@@ -151,6 +151,12 @@ warn_return_any = true
 warn_unreachable = true
 warn_unused_ignores = true
 
+# TODO: Remove this `ignore_missing_imports` and add type stubs.
+# See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
+[[tool.mypy.overrides]]
+module = "texttable"
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
