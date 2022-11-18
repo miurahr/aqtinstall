@@ -23,7 +23,7 @@ import os
 import subprocess
 from logging import getLogger
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 import patch  # type: ignore
 

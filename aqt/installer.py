@@ -581,7 +581,7 @@ class Cli:
         is_fetch_modules: bool = getattr(args, "modules", False)
         meta = MetadataFactory(
             archive_id=ArchiveId("qt", args.host, target),
-            src_doc_examples_query=(cmd_type, version, is_fetch_modules),
+            src_doc_examples_query=MetadataFactory.SrcDocExamplesQuery(cmd_type, version, is_fetch_modules),
         )
         show_list(meta)
 
