@@ -69,6 +69,25 @@ except ImportError:
     EXT7Z = True
 
 
+class AqtArgumentParser(argparse.ArgumentParser):
+
+    arch: str
+    archives: List[str]
+    extension: str
+    extensions: List[str]
+    host: str
+    last_version: str
+    latest_version: str
+    long: str
+    long_modules: List[str]
+    modules: List[str]
+    qt_version_spec: str
+    spec: str
+    target: str
+    tool_name: str
+    tool_version: str
+
+
 class Cli:
     """CLI main class to parse command line argument and launch proper functions."""
 
@@ -77,7 +96,7 @@ class Cli:
     UNHANDLED_EXCEPTION_CODE = 254
 
     def __init__(self):
-        parser = argparse.ArgumentParser(
+        parser = AqtArgumentParser(
             prog="aqt",
             description="Another unofficial Qt Installer.\naqt helps you install Qt SDK, tools, examples and others\n",
             formatter_class=argparse.RawTextHelpFormatter,
@@ -511,7 +530,7 @@ class Cli:
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
-    def run_list_qt(self, args: argparse.ArgumentParser):
+    def run_list_qt(self, args: AqtArgumentParser):
         """Print versions of Qt, extensions, modules, architectures"""
 
         if args.extensions:
@@ -559,7 +578,7 @@ class Cli:
         )
         show_list(meta)
 
-    def run_list_tool(self, args: argparse.ArgumentParser):
+    def run_list_tool(self, args: AqtArgumentParser):
         """Print tools"""
 
         if not args.target:
@@ -575,7 +594,7 @@ class Cli:
         )
         show_list(meta)
 
-    def run_list_src_doc_examples(self, args: argparse.ArgumentParser, cmd_type: str):
+    def run_list_src_doc_examples(self, args: AqtArgumentParser, cmd_type: str):
         target = "desktop"  # The only valid target for src/doc/examples is "desktop"
         version = Cli._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
         is_fetch_modules: bool = getattr(args, "modules", False)
@@ -730,7 +749,7 @@ class Cli:
 
     def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
-        list_parser: argparse.ArgumentParser = subparsers.add_parser(
+        list_parser: AqtArgumentParser = subparsers.add_parser(
             "list-qt",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
@@ -819,7 +838,7 @@ class Cli:
 
     def _make_list_tool_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
-        list_parser: argparse.ArgumentParser = subparsers.add_parser(
+        list_parser: AqtArgumentParser = subparsers.add_parser(
             "list-tool",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
