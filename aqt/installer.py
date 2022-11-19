@@ -1142,18 +1142,15 @@ def installer(
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)
     else:
-        if base_dir is not None:
-            command_args = [
-                command,
-                "x",
-                "-aoa",
-                "-bd",
-                "-y",
-                "-o{}".format(base_dir),
-                str(archive),
-            ]
-        else:
-            command_args = [command, "x", "-aoa", "-bd", "-y", str(archive)]
+        command_args = [
+            command,
+            "x",
+            "-aoa",
+            "-bd",
+            "-y",
+            "-o{}".format(base_dir),
+            str(archive),
+        ]
         try:
             proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
             logger.debug(proc.stdout)
