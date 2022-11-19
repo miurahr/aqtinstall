@@ -30,7 +30,7 @@ import sys
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Union, TextIO
+from typing import Any, Callable, Dict, Generator, List, Optional, TextIO, Tuple, Union
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
 
@@ -332,7 +332,7 @@ class SettingsClass:
         self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
         self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
 
-    def load_settings(self, file=None):
+    def load_settings(self, file: Optional[Union[str, TextIO]] =None) -> None:
         with open(
             os.path.join(os.path.dirname(__file__), "combinations.json"),
             "r",
@@ -347,15 +347,11 @@ class SettingsClass:
             else:
                 # passed through command line argparse.FileType("r")
                 self.config.read_file(file)
-                self.configfile = file
+                self.configfile = file.name
                 file.close()
         else:
-            if isinstance(self.configfile, str):
-                with open(self.configfile, "r") as f:
-                    self.config.read_file(f)
-            else:
-                self.configfile.seek(0)
-                self.config.read_file(self.configfile)
+            with open(self.configfile, "r") as f:
+                self.config.read_file(f)
 
     @property
     def qt_combinations(self):
