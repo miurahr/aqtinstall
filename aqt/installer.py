@@ -356,12 +356,12 @@ class Cli:
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
-        if not cmd_name:
-            cmd_name = flavor
-
         self.show_aqt_version()
         if args.is_legacy:
-            self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
+            if cmd_name is None:
+                self._warn_on_deprecated_command(old_name=flavor, new_name=f"install-{flavor}")
+            else:
+                self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
         elif getattr(args, "target", None) is not None:
             self._warn_on_deprecated_parameter("target", args.target)
         target = "desktop"  # The only valid target for src/doc/examples is "desktop"
@@ -551,7 +551,7 @@ class Cli:
         meta = MetadataFactory(
             archive_id=ArchiveId("qt", args.host, args.target),
             spec=spec,
-            is_latest_version=args.latest_version,
+            is_latest_version=bool(args.latest_version),
             modules_query=modules_query,
             is_long_listing=is_long,
             architectures_ver=args.arch,
@@ -571,7 +571,7 @@ class Cli:
         meta = MetadataFactory(
             archive_id=ArchiveId("tools", args.host, args.target),
             tool_name=args.tool_name,
-            is_long_listing=args.long,
+            is_long_listing=bool(args.long),
         )
         show_list(meta)
 
@@ -962,8 +962,13 @@ class Cli:
         :param allow_minus: If true, everything after the first '-' in the version will be ignored.
                             This allows acceptance of versions like "1.2.3-0-202101020304"
         """
-        if (allow_latest and version_str == "latest") or (allow_empty and not version_str):
+        if allow_latest and version_str == "latest":
             return
+        if not version_str:
+            if allow_empty:
+                return
+            else:
+                raise CliInputError("Invalid empty version! Please use the form '5.X.Y'.")
         try:
             if "-" in version_str and allow_minus:
                 version_str = version_str[: version_str.find("-")]
