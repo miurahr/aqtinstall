@@ -264,7 +264,7 @@ class MyQueueListener(QueueListener):
         logger.handle(record)
 
 
-def ssplit(data: str) -> Generator:
+def ssplit(data: str) -> Generator[str, None, None]:
     for element in data.split(","):
         yield element.strip()
 
