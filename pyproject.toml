@@ -30,6 +30,7 @@ dependencies = [
     "requests>2.20.0",
     "semantic_version",
     "texttable",
+    "typed-argparse"
 ]
 dynamic = ["version", "readme"]
 

@@ -35,7 +35,9 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Literal
+
+from tap import Tap
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, TargetConfig, ToolArchives
@@ -69,27 +71,19 @@ except ImportError:
     EXT7Z = True
 
 
-class Cli:
-    """CLI main class to parse command line argument and launch proper functions."""
+class AqtParser(Tap):
 
-    __slot__ = ["parser", "combinations", "logger"]
-
-    UNHANDLED_EXCEPTION_CODE = 254
-
-    def __init__(self):
-        parser = argparse.ArgumentParser(
-            prog="aqt",
-            description="Another unofficial Qt Installer.\naqt helps you install Qt SDK, tools, examples and others\n",
-            formatter_class=argparse.RawTextHelpFormatter,
-            add_help=True,
-        )
-        parser.add_argument(
+    def configure(self) -> None:
+        self.description = "Another unofficial Qt Installer.\naqt helps you install Qt SDK, tools, examples and others\n"
+        self.formatter_class = argparse.RawTextHelpFormatter
+        self.add_help = True
+        self.add_argument(
             "-c",
             "--config",
             type=argparse.FileType("r"),
             help="Configuration ini file.",
         )
-        subparsers = parser.add_subparsers(
+        self.add_subparsers(
             title="subcommands",
             description="aqt accepts several subcommands:\n"
             "install-* subcommands are commands that install components\n"
@@ -97,68 +91,507 @@ class Cli:
             "commands {install|tool|src|examples|doc} are deprecated and marked for removal\n",
             help="Please refer to each help message by using '--help' with each subcommand",
         )
-        self._make_all_parsers(subparsers)
-        parser.set_defaults(func=self.show_help)
-        self.parser = parser
+        self.set_defaults(func=self.show_help)
 
-    def run(self, arg=None) -> int:
-        args = self.parser.parse_args(arg)
-        self._setup_settings(args)
-        try:
-            args.func(args)
-            return 0
-        except AqtException as e:
-            self.logger.error(format(e), exc_info=Settings.print_stacktrace_on_error)
-            if e.should_show_help:
-                self.show_help()
-            return 1
-        except Exception as e:
-            # If we didn't account for it, and wrap it in an AqtException, it's a bug.
-            self.logger.exception(e)  # Print stack trace
-            self.logger.error(
-                f"{self._format_aqt_version()}\n"
-                f"Working dir: `{os.getcwd()}`\n"
-                f"Arguments: `{sys.argv}` Host: `{platform.uname()}`\n"
-                "===========================PLEASE FILE A BUG REPORT===========================\n"
-                "You have discovered a bug in aqt.\n"
-                "Please file a bug report at https://github.com/miurahr/aqtinstall/issues\n"
-                "Please remember to include a copy of this program's output in your report."
-            )
-            return Cli.UNHANDLED_EXCEPTION_CODE
+    def show_help(self, args):
+        """Display help message"""
+        self.print_help()
 
-    def _check_tools_arg_combination(self, os_name, tool_name, arch):
-        for c in Settings.tools_combinations:
-            if c["os_name"] == os_name and c["tool_name"] == tool_name and c["arch"] == arch:
-                return True
-        return False
 
-    def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
-        for c in Settings.qt_combinations:
-            if c["os_name"] == os_name and c["target"] == target and c["arch"] == arch:
-                return True
-        return False
+class BaseTap(Tap):
 
-    def _check_qt_arg_versions(self, version):
-        return version in Settings.available_versions
+    def show_help(self):
+        """Display help message"""
+        self.print_help()
 
-    def _check_qt_arg_version_offline(self, version):
-        return version in Settings.available_offline_installer_version
+    def _set_common_options(self):
+        self.add_argument(
+            "-O",
+            "--outputdir",
+            nargs="?",
+            help="Target output directory(default current directory)",
+        )
+        self.add_argument(
+            "-b",
+            "--base",
+            nargs="?",
+            help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, " "where 'online' folder exist.",
+        )
+        self.add_argument(
+            "--timeout",
+            nargs="?",
+            type=float,
+            help="Specify connection timeout for download site.(default: 5 sec)",
+        )
+        self.add_argument("-E", "--external", nargs="?", help="Specify external 7zip command path.")
+        self.add_argument("--internal", action="store_true", help="Use internal extractor.")
+        self.add_argument(
+            "-k",
+            "--keep",
+            action="store_true",
+            help="Keep downloaded archive when specified, otherwise remove after install",
+        )
+        self.add_argument(
+            "-d",
+            "--archive-dest",
+            type=str,
+            default=None,
+            help="Set the destination path for downloaded archives (temp directory by default).",
+        )
 
-    def _set_sevenzip(self, external):
-        sevenzip = external
-        if sevenzip is None:
-            return None
+    def _set_module_options(self):
+        self.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
 
-        try:
-            subprocess.run(
-                [sevenzip, "--help"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-        except FileNotFoundError as e:
-            raise CliInputError("Specified 7zip command executable does not exist: {!r}".format(sevenzip)) from e
+    def _set_archive_options(self):
+        self.add_argument(
+            "--archives",
+            nargs="*",
+            help="Specify subset of archives to install. Affects the base module and the debug_info module. "
+            "(Default: all archives).",
+        )
 
-        return sevenzip
+    def _set_common_arguments(self):
+        self.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        self.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
+        self.add_argument(
+            "qt_version_spec",
+            metavar="(VERSION | SPECIFICATION)",
+            help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+        )
+
+
+class AqtInstallQtParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+    qt_version_spec: str
+
+    outputdir: Optional[str] = None
+    base: Optional[str] = None
+    timeout: Optional[int] = 5
+    external: Optional[str]
+    internal: bool
+    keep: bool
+    archive_dest: Optional[str]
+
+    arch: Optional[str]
+    modules: Optional[List[str]]
+    archives: Optional[List[str]]
+    noarchives: bool
+    autodesktop: bool
+
+    def configure(self) -> None:
+        self._set_common_arguments()
+        self._set_common_options()
+        self.add_argument(
+            "arch",
+            nargs="?",
+            help="\ntarget linux/desktop: gcc_64, wasm_32"
+            "\ntarget mac/desktop:   clang_64, wasm_32"
+            "\ntarget mac/ios:       ios"
+            "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
+            "\n                      win64_msvc2017_64, win32_msvc2017"
+            "\n                      win64_msvc2015_64, win32_msvc2015"
+            "\n                      win64_mingw81, win32_mingw81"
+            "\n                      win64_mingw73, win32_mingw73"
+            "\n                      win32_mingw53"
+            "\n                      wasm_32"
+            "\nwindows/winrt:        win64_msvc2019_winrt_x64, win64_msvc2019_winrt_x86"
+            "\n                      win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
+            "\n                      win64_msvc2019_winrt_armv7"
+            "\n                      win64_msvc2017_winrt_armv7"
+            "\nandroid:              Qt 5.14:          android (optional)"
+            "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
+            "\n                                        android_x86, android_armv7",
+        )
+        self._set_module_options()
+        self._set_archive_options()
+        self.add_argument(
+            "--noarchives",
+            action="store_true",
+            help="No base packages; allow mod amendment with --modules option.",
+        )
+        self.add_argument(
+            "--autodesktop",
+            action="store_true",
+            help="For android, ios, and Qt6/wasm installations, a standard desktop Qt installation is required. "
+            "When enabled, this option installs the required desktop version automatically.",
+        )
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.install_qt(args)
+
+
+class AqtInstallToolParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+    tool_name: str
+    tool_variant: Optional[str]
+
+    outputdir: Optional[str] = None
+    base: Optional[str] = None
+    timeout: Optional[int] = 5
+    external: Optional[str]
+    internal: bool
+    keep: bool
+    archive_dest: Optional[str]
+
+    arch: Optional[str]
+    modules: Optional[List[str]]
+    archives: Optional[List[str]]
+    noarchives: bool
+    autodesktop: bool
+
+    def configure(self) -> None:
+        self._set_common_arguments()
+        self._set_common_options()
+        self.add_argument(
+            "target",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK.",
+        )
+        self.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
+        self.add_argument(
+            "tool_variant",
+            nargs="?",
+            default=None,
+            help="Name of tool variant, such as qt.tools.ifw.41. "
+            "Please use 'aqt list-tool' to list acceptable values for this parameter.",
+        )
+        self._set_common_options()
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.install_tool(args)
+
+
+class AqtInstallSrcParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+    qt_version_spec: str
+
+    outputdir: Optional[str] = None
+    base: Optional[str] = None
+    timeout: Optional[int] = 5
+    external: Optional[str]
+    internal: bool
+    keep: bool
+    archive_dest: Optional[str]
+
+    archives: Optional[List[str]]
+    kde: bool
+
+    def configure(self) -> None:
+        self._set_common_arguments()
+        self._set_common_options()
+        # no module options for src
+        self._set_archive_options()
+        self.add_argument("--kde", action="store_true", help="patching with KDE patch kit.")
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.install_src(args)
+
+class AqtInstallDocParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+    qt_version_spec: str
+
+    outputdir: Optional[str] = None
+    base: Optional[str] = None
+    timeout: Optional[int] = 5
+    external: Optional[str]
+    internal: bool
+    keep: bool
+    archive_dest: Optional[str]
+
+    modules: Optional[List[str]]
+    archives: Optional[List[str]]
+
+    def configure(self) -> None:
+        self._set_common_arguments()
+        self._set_common_options()
+        self._set_module_options()
+        self._set_archive_options()
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.install_doc(args)
+
+
+class AqtInstallExampleParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+    qt_version_spec: str
+
+    outputdir: Optional[str] = None
+    base: Optional[str] = None
+    timeout: Optional[int] = 5
+    external: Optional[str]
+    internal: bool
+    keep: bool
+    archive_dest: Optional[str]
+
+    modules: Optional[List[str]]
+    archives: Optional[List[str]]
+
+    def configure(self) -> None:
+        self._set_common_arguments()
+        self._set_common_options()
+        self._set_module_options()
+        self._set_archive_options()
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.install_example(args)
+
+class AqtListQtParser(BaseTap):
+    """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
+    config: Optional[str]
+
+    host: str
+    target: str
+
+    spec: str
+    modules: List[str]
+    long_modules: Tuple[str]
+    arch: str
+
+    latest_version: str
+    archives: List[str]
+
+    def configure(self) -> None:
+        self.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        self.add_argument(
+            "target",
+            nargs="?",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK. When omitted, this prints all the targets available for a host OS.",
+        )
+        self.add_argument(
+            "--spec",
+            type=str,
+            metavar="SPECIFICATION",
+            help="Filter output so that only versions that match the specification are printed. "
+            'IE: `aqt list-qt windows desktop --spec "5.12"` prints all versions beginning with 5.12',
+        )
+        output_modifier_exclusive_group = self.add_mutually_exclusive_group()
+        output_modifier_exclusive_group.add_argument(
+            "--modules",
+            type=str,
+            nargs=2,
+            metavar=("(VERSION | latest)", "ARCHITECTURE"),
+            help='First arg: Qt version in the format of "5.X.Y", or the keyword "latest". '
+            'Second arg: an architecture, which may be printed with the "--arch" flag. '
+            "When set, this prints all the modules available for either Qt 5.X.Y or the latest version of Qt.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--long-modules",
+            type=str,
+            nargs=2,
+            metavar=("(VERSION | latest)", "ARCHITECTURE"),
+            help='First arg: Qt version in the format of "5.X.Y", or the keyword "latest". '
+            'Second arg: an architecture, which may be printed with the "--arch" flag. '
+            "When set, this prints a table that describes all the modules available "
+            "for either Qt 5.X.Y or the latest version of Qt.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--arch",
+            type=str,
+            metavar="(VERSION | latest)",
+            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
+            "When set, this prints all architectures available for either Qt 5.X.Y or the latest version of Qt.",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--latest-version",
+            action="store_true",
+            help="print only the newest version available",
+        )
+        output_modifier_exclusive_group.add_argument(
+            "--archives",
+            type=str,
+            nargs="+",
+            help="print the archives available for Qt base or modules. "
+            "If two arguments are provided, the first two arguments must be 'VERSION | latest' and "
+            "'ARCHITECTURE', and this command will print all archives associated with the base Qt package. "
+            "If more than two arguments are provided, the remaining arguments will be interpreted as modules, "
+            "and this command will print all archives associated with those modules. "
+            "At least two arguments are required.",
+        )
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.list_qt(args)
+
+
+class AqtListToolParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+
+    def configure(self) -> None:
+        self.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        self.add_argument(
+            "target",
+            nargs="?",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK. When omitted, this prints all the targets available for a host OS.",
+        )
+        self.add_argument(
+            "tool_name",
+            nargs="?",
+            default=None,
+            help='Name of a tool, ie "tools_mingw" or "tools_ifw". '
+            "When omitted, this prints all the tool names available for a host OS/target SDK combination. "
+            "When present, this prints all the tool variant names available for this tool. ",
+        )
+        self.add_argument(
+            "-l",
+            "--long",
+            action="store_true",
+            help="Long display: shows a table of metadata associated with each tool variant. "
+            "On narrow terminals, it displays tool variant names, versions, and release dates. "
+            "On terminals wider than 95 characters, it also displays descriptions of each tool.",
+        )
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.list_tool(args)
+
+
+class AqtListDocParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+
+    def configure(self) -> None:
+        self.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        self.add_argument(
+            "qt_version_spec",
+            metavar="(VERSION | SPECIFICATION)",
+            help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+        )
+        self.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.list_doc(args)
+
+
+class AqtListExampleParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+
+    def configure(self) -> None:
+        self.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        self.add_argument(
+            "qt_version_spec",
+            metavar="(VERSION | SPECIFICATION)",
+            help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+        )
+        self.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.list_example(args)
+
+
+
+class AqtListSrcParser(BaseTap):
+    config: Optional[str]
+
+    host: str
+    target: str
+
+    def configure(self) -> None:
+        self.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        self.add_argument(
+            "qt_version_spec",
+            metavar="(VERSION | SPECIFICATION)",
+            help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+        )
+
+        self.set_defaults(func=self.run)
+
+    def run(self, args):
+        self.show_help()
+        Runner.list_src(args)
+
+
+class Runner:
+    @classmethod
+    def install_qt(cls, args: AqtInstallQtParser):
+        """Run install-qt subcommand"""
+        Runner().run_install_qt(args)
+
+    @classmethod
+    def install_tool(cls, args: AqtInstallToolParser):
+        """Run install-tool subcommand"""
+        Runner().run_install_tool(args)
+
+    @classmethod
+    def install_src(cls, args: AqtInstallSrcParser):
+        """Run install-src subcommand"""
+        Runner().run_install_src(args)
+
+    @classmethod
+    def install_doc(cls, args: AqtInstallDocParser):
+        """Run install-doc subcommand"""
+        Runner().run_install_doc(args)
+
+    @classmethod
+    def install_example(cls, args: AqtInstallExampleParser):
+        """Run install-example subcommand"""
+        Runner().run_install_example(args)
+
+    @classmethod
+    def list_qt(cls, args: AqtListQtParser):
+        """Run list-qt subcommand"""
+        Runner().run_list_qt(args)
+
+    @classmethod
+    def list_tool(cls, args: AqtListToolParser):
+        """Run list-tool subcommand"""
+        Runner().run_list_tool(args)
+
+    @classmethod
+    def list_doc(cls, args: AqtListDocParser):
+        """Run list-doc subcommand"""
+        Runner().run_list_src_doc_examples(args, "doc")
+
+    @classmethod
+    def list_src(cls, args: AqtListToolParser):
+        Runner().run_list_src_doc_examples(args, "src")
+
+    @classmethod
+    def list_example(cls, args: AqtListExampleParser):
+        Runner().run_list_src_doc_examples(args, "example")
 
     @staticmethod
     def _set_arch(arch: Optional[str], os_name: str, target: str, qt_version_or_spec: str) -> str:
@@ -179,82 +612,10 @@ class Cli:
                 pass
         raise CliInputError("Please supply a target architecture.", should_show_help=True)
 
-    def _check_mirror(self, mirror):
-        if mirror is None:
-            pass
-        elif mirror.startswith("http://") or mirror.startswith("https://") or mirror.startswith("ftp://"):
-            pass
-        else:
-            return False
-        return True
-
-    def _check_modules_arg(self, qt_version, modules):
-        if modules is None:
-            return True
-        available = Settings.available_modules(qt_version)
-        if available is None:
-            return False
-        return all([m in available for m in modules])
-
-    @staticmethod
-    def _determine_qt_version(
-        qt_version_or_spec: str, host: str, target: str, arch: str, base_url: str = Settings.baseurl
-    ) -> Version:
-        def choose_highest(x: Optional[Version], y: Optional[Version]) -> Optional[Version]:
-            if x and y:
-                return max(x, y)
-            return x or y
-
-        def opt_version_for_spec(ext: str, _spec: SimpleSpec) -> Optional[Version]:
-            try:
-                meta = MetadataFactory(ArchiveId("qt", host, target), spec=_spec, base_url=base_url)
-                return meta.fetch_latest_version(ext)
-            except AqtException:
-                return None
-
-        try:
-            return Version(qt_version_or_spec)
-        except ValueError:
-            pass
-        try:
-            spec = SimpleSpec(qt_version_or_spec)
-        except ValueError as e:
-            raise CliInputError(f"Invalid version or SimpleSpec: '{qt_version_or_spec}'\n" + SimpleSpec.usage()) from e
-        else:
-            version: Optional[Version] = None
-            for ext in QtRepoProperty.possible_extensions_for_arch(arch):
-                version = choose_highest(version, opt_version_for_spec(ext, spec))
-            if not version:
-                raise CliInputError(
-                    f"No versions of Qt exist for spec={spec} with host={host}, target={target}, arch={arch}"
-                )
-            getLogger("aqt.installer").info(f"Resolved spec '{qt_version_or_spec}' to {version}")
-            return version
-
-    @staticmethod
-    def choose_archive_dest(archive_dest: Optional[str], keep: bool, temp_dir: str) -> Path:
-        """
-        Choose archive download destination, based on context.
-
-        There are three potential behaviors here:
-        1. By default, return a temp directory that will be removed on program exit.
-        2. If the user has asked to keep archives, but has not specified a destination,
-            we return Settings.archive_download_location ("." by default).
-        3. If the user has asked to keep archives and specified a destination,
-            we create the destination dir if it doesn't exist, and return that directory.
-        """
-        if not archive_dest:
-            return Path(Settings.archive_download_location if keep else temp_dir)
-        dest = Path(archive_dest)
-        dest.mkdir(parents=True, exist_ok=True)
-        return dest
-
-    def run_install_qt(self, args):
-        """Run install subcommand"""
+    def run_install_qt(self, args: AqtInstallQtParser):
         start_time = time.perf_counter()
+        self._setup_settings(args)
         self.show_aqt_version()
-        if args.is_legacy:
-            self._warn_on_deprecated_command("install", "install-qt")
         target: str = args.target
         os_name: str = args.host
         qt_version_or_spec: str = getattr(args, "qt_version", getattr(args, "qt_version_spec", ""))
@@ -285,7 +646,7 @@ class Cli:
         else:
             base = Settings.baseurl
         if hasattr(args, "qt_version_spec"):
-            qt_version: str = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch, base_url=base))
+            qt_version: str = str(Runner._determine_qt_version(args.qt_version_spec, os_name, target, arch, base_url=base))
         else:
             qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
@@ -344,7 +705,7 @@ class Cli:
         qt_archives.archives.extend(auto_desktop_archives)
         target_config = qt_archives.get_target_config()
         with TemporaryDirectory() as temp_dir:
-            _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
+            _archive_dest = Runner.choose_archive_dest(archive_dest, keep, temp_dir)
             run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
 
         if not nopatch:
@@ -355,106 +716,13 @@ class Cli:
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
-    def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
-        self.show_aqt_version()
-        if args.is_legacy:
-            if cmd_name is None:
-                self._warn_on_deprecated_command(old_name=flavor, new_name=f"install-{flavor}")
-            else:
-                self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
-        elif getattr(args, "target", None) is not None:
-            self._warn_on_deprecated_parameter("target", args.target)
-        target = "desktop"  # The only valid target for src/doc/examples is "desktop"
-        os_name = args.host
-        output_dir = args.outputdir
-        if output_dir is None:
-            base_dir = os.getcwd()
-        else:
-            base_dir = output_dir
-        keep: bool = args.keep or Settings.always_keep_archives
-        archive_dest: Optional[str] = args.archive_dest
-        if args.base is not None:
-            base = args.base
-        else:
-            base = Settings.baseurl
-        if hasattr(args, "qt_version_spec"):
-            qt_version = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch="", base_url=base))
-        else:
-            qt_version = args.qt_version
-            Cli._validate_version_str(qt_version)
-        if args.timeout is not None:
-            timeout = (args.timeout, args.timeout)
-        else:
-            timeout = (Settings.connection_timeout, Settings.response_timeout)
-        sevenzip = self._set_sevenzip(args.external)
-        if EXT7Z and sevenzip is None:
-            # override when py7zr is not exist
-            sevenzip = self._set_sevenzip(Settings.zipcmd)
-        modules = getattr(args, "modules", None)  # `--modules` is invalid for `install-src`
-        archives = args.archives
-        all_extra = True if modules is not None and "all" in modules else False
-        if not self._check_qt_arg_versions(qt_version):
-            self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
-
-        srcdocexamples_archives: SrcDocExamplesArchives = retry_on_bad_connection(
-            lambda base_url: SrcDocExamplesArchives(
-                flavor,
-                os_name,
-                target,
-                qt_version,
-                base=base_url,
-                subarchives=archives,
-                modules=modules,
-                all_extra=all_extra,
-                timeout=timeout,
-            ),
-            base,
-        )
-        with TemporaryDirectory() as temp_dir:
-            _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-            run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
-        self.logger.info("Finished installation")
-
-    def run_install_src(self, args):
-        """Run src subcommand"""
-        if not hasattr(args, "qt_version"):
-            base = args.base if hasattr(args, "base") else Settings.baseurl
-            args.qt_version = str(
-                Cli._determine_qt_version(args.qt_version_spec, args.host, args.target, arch="", base_url=base)
-            )
-        if args.kde and args.qt_version != "5.15.2":
-            raise CliInputError("KDE patch: unsupported version!!")
-        start_time = time.perf_counter()
-        self._run_src_doc_examples("src", args)
-        if args.kde:
-            if args.outputdir is None:
-                target_dir = os.path.join(os.getcwd(), args.qt_version, "Src")
-            else:
-                target_dir = os.path.join(args.outputdir, args.qt_version, "Src")
-            Updater.patch_kde(target_dir)
-        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
-
-    def run_install_example(self, args):
-        """Run example subcommand"""
-        start_time = time.perf_counter()
-        self._run_src_doc_examples("examples", args, cmd_name="example")
-        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
-
-    def run_install_doc(self, args):
-        """Run doc subcommand"""
-        start_time = time.perf_counter()
-        self._run_src_doc_examples("doc", args)
-        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
-
-    def run_install_tool(self, args):
+    def run_install_tool(self, args: AqtInstallToolParser):
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
-        if args.is_legacy:
-            self._warn_on_deprecated_command("tool", "install-tool")
         tool_name = args.tool_name  # such as tools_openssl_x64
         os_name = args.host  # windows, linux and mac
-        target = "desktop" if args.is_legacy else args.target  # desktop, android and ios
+        target = args.target  # desktop, android and ios
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -506,26 +774,97 @@ class Cli:
                 base,
             )
             with TemporaryDirectory() as temp_dir:
-                _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
+                _archive_dest = Runner.choose_archive_dest(archive_dest, keep, temp_dir)
                 run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
-    def run_list_qt(self, args: argparse.ArgumentParser):
-        """Print versions of Qt, extensions, modules, architectures"""
+    def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
+        self.show_aqt_version()
+        target = "desktop"  # The only valid target for src/doc/examples is "desktop"
+        os_name = args.host
+        output_dir = args.outputdir
+        if output_dir is None:
+            base_dir = os.getcwd()
+        else:
+            base_dir = output_dir
+        keep: bool = args.keep or Settings.always_keep_archives
+        archive_dest: Optional[str] = args.archive_dest
+        if args.base is not None:
+            base = args.base
+        else:
+            base = Settings.baseurl
+        if hasattr(args, "qt_version_spec"):
+            qt_version = str(Runner._determine_qt_version(args.qt_version_spec, os_name, target, arch="", base_url=base))
+        else:
+            qt_version = args.qt_version
+            Cli._validate_version_str(qt_version)
+        if args.timeout is not None:
+            timeout = (args.timeout, args.timeout)
+        else:
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
+        sevenzip = self._set_sevenzip(args.external)
+        if EXT7Z and sevenzip is None:
+            # override when py7zr is not exist
+            sevenzip = self._set_sevenzip(Settings.zipcmd)
+        modules = getattr(args, "modules", None)  # `--modules` is invalid for `install-src`
+        archives = args.archives
+        all_extra = True if modules is not None and "all" in modules else False
+        if not self._check_qt_arg_versions(qt_version):
+            self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
 
-        if args.extensions:
-            self._warn_on_deprecated_parameter("extensions", args.extensions)
-            self.logger.warning(
-                "The '--extensions' flag will always return an empty list, "
-                "because there are no useful arguments for the '--extension' flag."
+        srcdocexamples_archives: SrcDocExamplesArchives = retry_on_bad_connection(
+            lambda base_url: SrcDocExamplesArchives(
+                flavor,
+                os_name,
+                target,
+                qt_version,
+                base=base_url,
+                subarchives=archives,
+                modules=modules,
+                all_extra=all_extra,
+                timeout=timeout,
+            ),
+            base,
+        )
+        with TemporaryDirectory() as temp_dir:
+            _archive_dest = Runner.choose_archive_dest(archive_dest, keep, temp_dir)
+            run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+        self.logger.info("Finished installation")
+
+    def run_install_src(self, args):
+        """Run src subcommand"""
+        if not hasattr(args, "qt_version"):
+            base = args.base if hasattr(args, "base") else Settings.baseurl
+            args.qt_version = str(
+                Runner._determine_qt_version(args.qt_version_spec, args.host, args.target, arch="", base_url=base)
             )
-            print("")
-            return
-        if args.extension:
-            self._warn_on_deprecated_parameter("extension", args.extension)
-            self.logger.warning("The '--extension' flag will be ignored.")
+        if args.kde and args.qt_version != "5.15.2":
+            raise CliInputError("KDE patch: unsupported version!!")
+        start_time = time.perf_counter()
+        self._run_src_doc_examples("src", args)
+        if args.kde:
+            if args.outputdir is None:
+                target_dir = os.path.join(os.getcwd(), args.qt_version, "Src")
+            else:
+                target_dir = os.path.join(args.outputdir, args.qt_version, "Src")
+            Updater.patch_kde(target_dir)
+        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
+    def run_install_example(self, args):
+        """Run example subcommand"""
+        start_time = time.perf_counter()
+        self._run_src_doc_examples("examples", args, cmd_name="example")
+        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+
+    def run_install_doc(self, args):
+        """Run doc subcommand"""
+        start_time = time.perf_counter()
+        self._run_src_doc_examples("doc", args)
+        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+
+    def run_list_qt(self, args: AqtListQtParser):
+        """Print versions of Qt, extensions, modules, architectures"""
         if not args.target:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
             return
@@ -559,9 +898,8 @@ class Cli:
         )
         show_list(meta)
 
-    def run_list_tool(self, args: argparse.ArgumentParser):
+    def run_list_tool(self, args: AqtListToolParser):
         """Print tools"""
-
         if not args.target:
             print(" ".join(ArchiveId.TARGETS_FOR_HOST[args.host]))
             return
@@ -577,7 +915,7 @@ class Cli:
 
     def run_list_src_doc_examples(self, args: argparse.ArgumentParser, cmd_type: str):
         target = "desktop"  # The only valid target for src/doc/examples is "desktop"
-        version = Cli._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
+        version = Runner._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
         is_fetch_modules: bool = getattr(args, "modules", False)
         meta = MetadataFactory(
             archive_id=ArchiveId("qt", args.host, target),
@@ -585,9 +923,60 @@ class Cli:
         )
         show_list(meta)
 
-    def show_help(self, args=None):
-        """Display help message"""
-        self.parser.print_help()
+    def _check_tools_arg_combination(self, os_name, tool_name, arch):
+        for c in Settings.tools_combinations:
+            if c["os_name"] == os_name and c["tool_name"] == tool_name and c["arch"] == arch:
+                return True
+        return False
+
+    def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
+        for c in Settings.qt_combinations:
+            if c["os_name"] == os_name and c["target"] == target and c["arch"] == arch:
+                return True
+        return False
+
+    def _check_qt_arg_versions(self, version):
+        return version in Settings.available_versions
+
+    def _check_qt_arg_version_offline(self, version):
+        return version in Settings.available_offline_installer_version
+
+    def _set_sevenzip(self, external):
+        sevenzip = external
+        if sevenzip is None:
+            return None
+
+        try:
+            subprocess.run(
+                [sevenzip, "--help"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except FileNotFoundError as e:
+            raise CliInputError("Specified 7zip command executable does not exist: {!r}".format(sevenzip)) from e
+
+        return sevenzip
+
+    def _check_mirror(self, mirror):
+        if mirror is None:
+            pass
+        elif mirror.startswith("http://") or mirror.startswith("https://") or mirror.startswith("ftp://"):
+            pass
+        else:
+            return False
+        return True
+
+    def _check_modules_arg(self, qt_version, modules):
+        if modules is None:
+            return True
+        available = Settings.available_modules(qt_version)
+        if available is None:
+            return False
+        return all([m in available for m in modules])
+
+    def show_aqt_version(self, args=None):
+        """Display version information"""
+        self.logger.info(self._format_aqt_version())
 
     def _format_aqt_version(self) -> str:
         py_version = platform.python_version()
@@ -595,138 +984,111 @@ class Cli:
         py_build = platform.python_compiler()
         return f"aqtinstall(aqt) v{aqt.__version__} on Python {py_version} [{py_impl} {py_build}]"
 
-    def show_aqt_version(self, args=None):
-        """Display version information"""
-        self.logger.info(self._format_aqt_version())
+    def _setup_settings(self, args: Optional[Tap] = None):
+        # setup logging
+        setup_logging()
+        self.logger = getLogger("aqt.main")
+        # setup settings
+        if args is not None and args.config is not None:
+            Settings.load_settings(args.config)
+        else:
+            config = os.getenv("AQT_CONFIG", None)
+            if config is not None and os.path.exists(config):
+                Settings.load_settings(config)
+                self.logger.debug("Load configuration from {}".format(config))
+            else:
+                Settings.load_settings()
 
-    def _set_install_qt_parser(self, install_qt_parser, *, is_legacy: bool):
-        install_qt_parser.set_defaults(func=self.run_install_qt, is_legacy=is_legacy)
-        self._set_common_arguments(install_qt_parser, is_legacy=is_legacy)
-        self._set_common_options(install_qt_parser)
-        install_qt_parser.add_argument(
-            "arch",
-            nargs="?",
-            help="\ntarget linux/desktop: gcc_64, wasm_32"
-            "\ntarget mac/desktop:   clang_64, wasm_32"
-            "\ntarget mac/ios:       ios"
-            "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
-            "\n                      win64_msvc2017_64, win32_msvc2017"
-            "\n                      win64_msvc2015_64, win32_msvc2015"
-            "\n                      win64_mingw81, win32_mingw81"
-            "\n                      win64_mingw73, win32_mingw73"
-            "\n                      win32_mingw53"
-            "\n                      wasm_32"
-            "\nwindows/winrt:        win64_msvc2019_winrt_x64, win64_msvc2019_winrt_x86"
-            "\n                      win64_msvc2017_winrt_x64, win64_msvc2017_winrt_x86"
-            "\n                      win64_msvc2019_winrt_armv7"
-            "\n                      win64_msvc2017_winrt_armv7"
-            "\nandroid:              Qt 5.14:          android (optional)"
-            "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
-            "\n                                        android_x86, android_armv7",
-        )
-        self._set_module_options(install_qt_parser)
-        self._set_archive_options(install_qt_parser)
-        install_qt_parser.add_argument(
-            "--noarchives",
-            action="store_true",
-            help="No base packages; allow mod amendment with --modules option.",
-        )
-        install_qt_parser.add_argument(
-            "--autodesktop",
-            action="store_true",
-            help="For android, ios, and Qt6/wasm installations, a standard desktop Qt installation is required. "
-            "When enabled, this option installs the required desktop version automatically.",
-        )
+    @staticmethod
+    def choose_archive_dest(archive_dest: Optional[str], keep: bool, temp_dir: str) -> Path:
+        """
+        Choose archive download destination, based on context.
 
-    def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
-        install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
-        install_tool_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-        if not is_legacy:
-            install_tool_parser.add_argument(
-                "target",
-                default=None,
-                choices=["desktop", "winrt", "android", "ios"],
-                help="Target SDK.",
+        There are three potential behaviors here:
+        1. By default, return a temp directory that will be removed on program exit.
+        2. If the user has asked to keep archives, but has not specified a destination,
+            we return Settings.archive_download_location ("." by default).
+        3. If the user has asked to keep archives and specified a destination,
+            we create the destination dir if it doesn't exist, and return that directory.
+        """
+        if not archive_dest:
+            return Path(Settings.archive_download_location if keep else temp_dir)
+        dest = Path(archive_dest)
+        dest.mkdir(parents=True, exist_ok=True)
+        return dest
+
+    @staticmethod
+    def _determine_qt_version(
+        qt_version_or_spec: str, host: str, target: str, arch: str, base_url: str = Settings.baseurl
+    ) -> Version:
+        def choose_highest(x: Optional[Version], y: Optional[Version]) -> Optional[Version]:
+            if x and y:
+                return max(x, y)
+            return x or y
+
+        def opt_version_for_spec(ext: str, _spec: SimpleSpec) -> Optional[Version]:
+            try:
+                meta = MetadataFactory(ArchiveId("qt", host, target), spec=_spec, base_url=base_url)
+                return meta.fetch_latest_version(ext)
+            except AqtException:
+                return None
+
+        try:
+            return Version(qt_version_or_spec)
+        except ValueError:
+            pass
+        try:
+            spec = SimpleSpec(qt_version_or_spec)
+        except ValueError as e:
+            raise CliInputError(f"Invalid version or SimpleSpec: '{qt_version_or_spec}'\n" + SimpleSpec.usage()) from e
+        else:
+            version: Optional[Version] = None
+            for ext in QtRepoProperty.possible_extensions_for_arch(arch):
+                version = choose_highest(version, opt_version_for_spec(ext, spec))
+            if not version:
+                raise CliInputError(
+                    f"No versions of Qt exist for spec={spec} with host={host}, target={target}, arch={arch}"
+                )
+            getLogger("aqt.installer").info(f"Resolved spec '{qt_version_or_spec}' to {version}")
+            return version
+
+
+
+class Cli:
+    """CLI main class to parse command line argument and launch proper functions."""
+
+    __slot__ = ["parser", "combinations", "logger"]
+
+    UNHANDLED_EXCEPTION_CODE = 254
+
+    def __init__(self):
+        pass
+
+    def run(self, arg=None) -> int:
+        args = self.parser.parse_args(arg)
+        self._setup_settings(args)
+        try:
+            args.func(args)
+            return 0
+        except AqtException as e:
+            self.logger.error(format(e), exc_info=Settings.print_stacktrace_on_error)
+            if e.should_show_help:
+                self.show_help()
+            return 1
+        except Exception as e:
+            # If we didn't account for it, and wrap it in an AqtException, it's a bug.
+            self.logger.exception(e)  # Print stack trace
+            self.logger.error(
+                f"{self._format_aqt_version()}\n"
+                f"Working dir: `{os.getcwd()}`\n"
+                f"Arguments: `{sys.argv}` Host: `{platform.uname()}`\n"
+                "===========================PLEASE FILE A BUG REPORT===========================\n"
+                "You have discovered a bug in aqt.\n"
+                "Please file a bug report at https://github.com/miurahr/aqtinstall/issues\n"
+                "Please remember to include a copy of this program's output in your report."
             )
-        install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
-        if is_legacy:
-            install_tool_parser.add_argument("version", help="Version of tool variant")
+            return Cli.UNHANDLED_EXCEPTION_CODE
 
-        tool_variant_opts = {} if is_legacy else {"nargs": "?", "default": None}
-        install_tool_parser.add_argument(
-            "tool_variant",
-            **tool_variant_opts,
-            help="Name of tool variant, such as qt.tools.ifw.41. "
-            "Please use 'aqt list-tool' to list acceptable values for this parameter.",
-        )
-        self._set_common_options(install_tool_parser)
-
-    def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
-        self.logger.warning(
-            f"The command '{old_name}' is deprecated and marked for removal in a future version of aqt.\n"
-            f"In the future, please use the command '{new_name}' instead."
-        )
-
-    def _warn_on_deprecated_parameter(self, parameter_name: str, value: Union[str, List[str]]) -> None:
-        self.logger.warning(
-            f"The parameter '{parameter_name}' with value '{value}' is deprecated and marked for "
-            f"removal in a future version of aqt.\n"
-            f"In the future, please omit this parameter."
-        )
-
-    def _make_all_parsers(self, subparsers: argparse._SubParsersAction) -> None:
-        deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
-
-        def make_parser_it(cmd: str, desc: str, is_legacy: bool, set_parser_cmd, formatter_class):
-            description = f"{desc} {deprecated_msg}" if is_legacy else desc
-            kwargs = {"formatter_class": formatter_class} if formatter_class else {}
-            p = subparsers.add_parser(cmd, description=description, **kwargs)
-            set_parser_cmd(p, is_legacy=is_legacy)
-
-        def make_parser_sde(cmd: str, desc: str, is_legacy: bool, action, is_add_kde: bool, is_add_modules: bool = True):
-            description = f"{desc} {deprecated_msg}" if is_legacy else desc
-            parser = subparsers.add_parser(cmd, description=description)
-            parser.set_defaults(func=action, is_legacy=is_legacy)
-            self._set_common_arguments(parser, is_legacy=is_legacy, is_target_deprecated=True)
-            self._set_common_options(parser)
-            if is_add_modules:
-                self._set_module_options(parser)
-            self._set_archive_options(parser)
-            if is_add_kde:
-                parser.add_argument("--kde", action="store_true", help="patching with KDE patch kit.")
-
-        def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
-            parser = subparsers.add_parser(cmd, description=desc)
-            parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-            parser.add_argument(
-                "qt_version_spec",
-                metavar="(VERSION | SPECIFICATION)",
-                help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
-            )
-            parser.set_defaults(func=lambda args: self.run_list_src_doc_examples(args, cmd_type))
-
-            if cmd_type != "src":
-                parser.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
-
-        make_parser_it("install-qt", "Install Qt.", False, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
-        make_parser_it("install-tool", "Install tools.", False, self._set_install_tool_parser, None)
-        make_parser_sde("install-doc", "Install documentation.", False, self.run_install_doc, False)
-        make_parser_sde("install-example", "Install examples.", False, self.run_install_example, False)
-        make_parser_sde("install-src", "Install source.", False, self.run_install_src, True, is_add_modules=False)
-
-        self._make_list_qt_parser(subparsers)
-        self._make_list_tool_parser(subparsers)
-        make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
-        make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
-        make_parser_list_sde("list-src", "List source archives available (use with install-src)", "src")
-
-        make_parser_it("install", "Install Qt.", True, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
-        make_parser_it("tool", "Install tools.", True, self._set_install_tool_parser, None)
-        make_parser_sde("doc", "Install documentation.", True, self.run_install_doc, False)
-        make_parser_sde("examples", "Install examples.", True, self.run_install_example, False)
-        make_parser_sde("src", "Install source.", True, self.run_install_src, True)
-
-        self._make_common_parsers(subparsers)
 
     def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
@@ -745,77 +1107,6 @@ class Cli:
             "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
             "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n",
         )
-        list_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-        list_parser.add_argument(
-            "target",
-            nargs="?",
-            default=None,
-            choices=["desktop", "winrt", "android", "ios"],
-            help="Target SDK. When omitted, this prints all the targets available for a host OS.",
-        )
-        list_parser.add_argument(
-            "--extension",
-            choices=ArchiveId.ALL_EXTENSIONS,
-            help="Deprecated since aqt v3.1.0. Use of this flag will emit a warning, but will otherwise be ignored.",
-        )
-        list_parser.add_argument(
-            "--spec",
-            type=str,
-            metavar="SPECIFICATION",
-            help="Filter output so that only versions that match the specification are printed. "
-            'IE: `aqt list-qt windows desktop --spec "5.12"` prints all versions beginning with 5.12',
-        )
-        output_modifier_exclusive_group = list_parser.add_mutually_exclusive_group()
-        output_modifier_exclusive_group.add_argument(
-            "--modules",
-            type=str,
-            nargs=2,
-            metavar=("(VERSION | latest)", "ARCHITECTURE"),
-            help='First arg: Qt version in the format of "5.X.Y", or the keyword "latest". '
-            'Second arg: an architecture, which may be printed with the "--arch" flag. '
-            "When set, this prints all the modules available for either Qt 5.X.Y or the latest version of Qt.",
-        )
-        output_modifier_exclusive_group.add_argument(
-            "--long-modules",
-            type=str,
-            nargs=2,
-            metavar=("(VERSION | latest)", "ARCHITECTURE"),
-            help='First arg: Qt version in the format of "5.X.Y", or the keyword "latest". '
-            'Second arg: an architecture, which may be printed with the "--arch" flag. '
-            "When set, this prints a table that describes all the modules available "
-            "for either Qt 5.X.Y or the latest version of Qt.",
-        )
-        output_modifier_exclusive_group.add_argument(
-            "--extensions",
-            type=str,
-            metavar="(VERSION | latest)",
-            help="Deprecated since v3.1.0. Prints a list of valid arguments for the '--extension' flag. "
-            "Since the '--extension' flag is now deprecated, this will always print an empty list.",
-        )
-        output_modifier_exclusive_group.add_argument(
-            "--arch",
-            type=str,
-            metavar="(VERSION | latest)",
-            help='Qt version in the format of "5.X.Y", or the keyword "latest". '
-            "When set, this prints all architectures available for either Qt 5.X.Y or the latest version of Qt.",
-        )
-        output_modifier_exclusive_group.add_argument(
-            "--latest-version",
-            action="store_true",
-            help="print only the newest version available",
-        )
-        output_modifier_exclusive_group.add_argument(
-            "--archives",
-            type=str,
-            nargs="+",
-            help="print the archives available for Qt base or modules. "
-            "If two arguments are provided, the first two arguments must be 'VERSION | latest' and "
-            "'ARCHITECTURE', and this command will print all archives associated with the base Qt package. "
-            "If more than two arguments are provided, the remaining arguments will be interpreted as modules, "
-            "and this command will print all archives associated with those modules. "
-            "At least two arguments are required.",
-        )
-        list_parser.set_defaults(func=self.run_list_qt)
 
     def _make_list_tool_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
@@ -829,125 +1120,6 @@ class Cli:
             "$ aqt list-tool mac desktop -l tools_ifw    # print tool variant names with metadata for QtIFW\n"
             "$ aqt list-tool mac desktop -l ifw          # print tool variant names with metadata for QtIFW\n",
         )
-        list_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-        list_parser.add_argument(
-            "target",
-            nargs="?",
-            default=None,
-            choices=["desktop", "winrt", "android", "ios"],
-            help="Target SDK. When omitted, this prints all the targets available for a host OS.",
-        )
-        list_parser.add_argument(
-            "tool_name",
-            nargs="?",
-            default=None,
-            help='Name of a tool, ie "tools_mingw" or "tools_ifw". '
-            "When omitted, this prints all the tool names available for a host OS/target SDK combination. "
-            "When present, this prints all the tool variant names available for this tool. ",
-        )
-        list_parser.add_argument(
-            "-l",
-            "--long",
-            action="store_true",
-            help="Long display: shows a table of metadata associated with each tool variant. "
-            "On narrow terminals, it displays tool variant names, versions, and release dates. "
-            "On terminals wider than 95 characters, it also displays descriptions of each tool.",
-        )
-        list_parser.set_defaults(func=self.run_list_tool)
-
-    def _make_common_parsers(self, subparsers: argparse._SubParsersAction):
-        help_parser = subparsers.add_parser("help")
-        help_parser.set_defaults(func=self.show_help)
-        #
-        version_parser = subparsers.add_parser("version")
-        version_parser.set_defaults(func=self.show_aqt_version)
-
-    def _set_common_options(self, subparser):
-        subparser.add_argument(
-            "-O",
-            "--outputdir",
-            nargs="?",
-            help="Target output directory(default current directory)",
-        )
-        subparser.add_argument(
-            "-b",
-            "--base",
-            nargs="?",
-            help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, " "where 'online' folder exist.",
-        )
-        subparser.add_argument(
-            "--timeout",
-            nargs="?",
-            type=float,
-            help="Specify connection timeout for download site.(default: 5 sec)",
-        )
-        subparser.add_argument("-E", "--external", nargs="?", help="Specify external 7zip command path.")
-        subparser.add_argument("--internal", action="store_true", help="Use internal extractor.")
-        subparser.add_argument(
-            "-k",
-            "--keep",
-            action="store_true",
-            help="Keep downloaded archive when specified, otherwise remove after install",
-        )
-        subparser.add_argument(
-            "-d",
-            "--archive-dest",
-            type=str,
-            default=None,
-            help="Set the destination path for downloaded archives (temp directory by default).",
-        )
-
-    def _set_module_options(self, subparser):
-        subparser.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
-
-    def _set_archive_options(self, subparser):
-        subparser.add_argument(
-            "--archives",
-            nargs="*",
-            help="Specify subset of archives to install. Affects the base module and the debug_info module. "
-            "(Default: all archives).",
-        )
-
-    def _set_common_arguments(self, subparser, *, is_legacy: bool, is_target_deprecated: bool = False):
-        """
-        Legacy commands require that the version comes before host and target.
-        Non-legacy commands require that the host and target are before the version.
-        install-src/doc/example commands do not require a "target" argument anymore, as of 11/22/2021
-        """
-        if is_legacy:
-            subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
-        subparser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
-        if is_target_deprecated:
-            subparser.add_argument(
-                "target",
-                choices=["desktop", "winrt", "android", "ios"],
-                nargs="?",
-                help="Ignored. This parameter is deprecated and marked for removal in a future release. "
-                "It is present here for backwards compatibility.",
-            )
-        else:
-            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
-        if not is_legacy:
-            subparser.add_argument(
-                "qt_version_spec",
-                metavar="(VERSION | SPECIFICATION)",
-                help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
-            )
-
-    def _setup_settings(self, args=None):
-        # setup logging
-        setup_logging()
-        self.logger = getLogger("aqt.main")
-        # setup settings
-        if args is not None and args.config is not None:
-            Settings.load_settings(args.config)
-        else:
-            config = os.getenv("AQT_CONFIG", None)
-            if config is not None and os.path.exists(config):
-                Settings.load_settings(config)
-                self.logger.debug("Load configuration from {}".format(config))
-            else:
-                Settings.load_settings()
 
     @staticmethod
     def _validate_version_str(
