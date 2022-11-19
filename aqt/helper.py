@@ -57,7 +57,7 @@ def _check_content_type(ct: str) -> bool:
     return any(ct.startswith(t) for t in candidate)
 
 
-def getUrl(url: str, timeout: Tuple[int, int], expected_hash: Optional[bytes] = None) -> str:
+def getUrl(url: str, timeout: Tuple[float, float], expected_hash: Optional[bytes] = None) -> str:
     """
     Gets a file from `url` via HTTP GET.
 
@@ -103,7 +103,7 @@ def getUrl(url: str, timeout: Tuple[int, int], expected_hash: Optional[bytes] = 
     return result
 
 
-def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout: Tuple[int, int]) -> None:
+def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout: Tuple[float, float]) -> None:
     logger = getLogger("aqt.helper")
     filename = Path(url).name
     with requests.sessions.Session() as session:
@@ -177,7 +177,7 @@ def iter_list_reps(_list: List, num_reps: int) -> Generator:
             list_index = 0
 
 
-def get_hash(archive_path: str, algorithm: str, timeout: Tuple[int, int]) -> bytes:
+def get_hash(archive_path: str, algorithm: str, timeout: Tuple[float, float]) -> bytes:
     """
     Downloads a checksum and unhexlifies it to a `bytes` object, guaranteed to be the right length.
     Raises ChecksumDownloadFailure if the download failed, or if the checksum was un unexpected length.
