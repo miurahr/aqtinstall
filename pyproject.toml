@@ -57,12 +57,11 @@ test = [
     "pympler",
 ]
 check = [
-    "mypy>=0.940",
-    "mypy_extensions>=0.4.1",
+    "mypy>=0.990",
     "flake8<6",
     "flake8-black",
     "flake8-colors",
-    "flake8-isort>=4.2.0",
+    "flake8-isort>=4.2.0,<5.0.0",
     "flake8-pyi",
     "flake8-typing-imports",
     "docutils",
