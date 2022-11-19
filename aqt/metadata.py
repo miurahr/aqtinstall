@@ -497,6 +497,7 @@ class MetadataFactory:
     SrcDocExamplesQuery = NamedTuple(
         "SrcDocExamplesQuery", [("cmd_type", str), ("version", Version), ("is_modules_query", bool)]
     )
+    ModulesQuery = NamedTuple("ModulesQuery", [("version_str", str), ("arch", str)])
 
     def __init__(
         self,
@@ -505,7 +506,7 @@ class MetadataFactory:
         base_url: str = Settings.baseurl,
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
-        modules_query: Optional[Tuple[str, ...]] = None,
+        modules_query: Optional[ModulesQuery] = None,
         architectures_ver: Optional[str] = None,
         archives_query: Optional[List[str]] = None,
         src_doc_examples_query: Optional[SrcDocExamplesQuery] = None,
@@ -545,14 +546,13 @@ class MetadataFactory:
         elif is_latest_version:
             self.request_type = "latest version"
             self._action = lambda: Versions(self.fetch_latest_version(ext=""))
-        elif modules_query:
+        elif modules_query is not None:
+            version, arch = modules_query.version_str, modules_query.arch
             if is_long_listing:
                 self.request_type = "long modules"
-                version, arch = modules_query
                 self._action = lambda: self.fetch_long_modules(self._to_version(version, arch), arch)
             else:
                 self.request_type = "modules"
-                version, arch = modules_query
                 self._action = lambda: self.fetch_modules(self._to_version(version, arch), arch)
         elif architectures_ver is not None:
             ver_str: str = architectures_ver

@@ -33,6 +33,8 @@ from aqt.metadata import (
     suggested_follow_up,
 )
 
+ModulesQuery = MetadataFactory.ModulesQuery
+
 Settings.load_settings()
 
 
@@ -400,7 +402,7 @@ def test_long_qt_modules(monkeypatch, host: str, target: str, version: str, arch
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
 
-    table = MetadataFactory(archive_id, modules_query=(version, arch), is_long_listing=True).getList()
+    table = MetadataFactory(archive_id, modules_query=ModulesQuery(version, arch), is_long_listing=True).getList()
     assert table._rows(table.long_heading_keys) == expect["modules_long_by_arch"][arch]
 
 
@@ -648,7 +650,7 @@ wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to li
             [wrong_qt_version_msg],
         ),
         (
-            MetadataFactory(mac_qt, modules_query=("1.2.3", "clang_64")),
+            MetadataFactory(mac_qt, modules_query=ModulesQuery("1.2.3", "clang_64")),
             [wrong_qt_version_msg, wrong_arch_msg],
         ),
         (
@@ -679,7 +681,7 @@ wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to li
             [wrong_qt_version_msg],
         ),
         (
-            MetadataFactory(mac_qt, modules_query=("1.2.3", "clang_64")),
+            MetadataFactory(mac_qt, modules_query=ModulesQuery("1.2.3", "clang_64")),
             [wrong_qt_version_msg, wrong_arch_msg],
         ),
     ),
@@ -918,7 +920,7 @@ def test_show_list_long_qt_modules(capsys, monkeypatch, columns, expect):
 
     meta = MetadataFactory(
         ArchiveId("qt", "windows", "desktop"),
-        modules_query=("5.14.0", "win32_mingw73"),
+        modules_query=ModulesQuery("5.14.0", "win32_mingw73"),
         is_long_listing=True,
     )
     show_list(meta)

@@ -585,11 +585,11 @@ class Cli:
             raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
         if args.modules:
             assert len(args.modules) == 2, "broken argument parser for list-qt"
-            modules_query: Optional[Tuple[str, str]] = (args.modules[0], args.modules[1])
+            modules_query = MetadataFactory.ModulesQuery(args.modules[0], args.modules[1])
             modules_ver, is_long = args.modules[0], False
         elif args.long_modules:
             assert len(args.modules) == 2, "broken argument parser for list-qt"
-            modules_query = (args.modules[0], args.modules[1])
+            modules_query = MetadataFactory.ModulesQuery(args.modules[0], args.modules[1])
             modules_ver, is_long = args.long_modules[0], True
         else:
             modules_ver, modules_query, is_long = None, None, False
