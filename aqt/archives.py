@@ -584,7 +584,7 @@ class ToolArchives(QtArchives):
         base: str,
         version_str: Optional[str] = None,
         arch: str = "",
-        timeout: Tuple[int, int] = (5, 5),
+        timeout: Tuple[float, float] = (5, 5),
     ):
         self.tool_name = tool_name
         self.os_name = os_name
