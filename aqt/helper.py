@@ -30,7 +30,7 @@ import sys
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Union, TextIO
+from typing import Any, Callable, Dict, Generator, List, Optional, TextIO, Tuple, Union
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
 
@@ -57,7 +57,7 @@ def _check_content_type(ct: str) -> bool:
     return any(ct.startswith(t) for t in candidate)
 
 
-def getUrl(url: str, timeout: Tuple[int, int], expected_hash: Optional[bytes] = None) -> str:
+def getUrl(url: str, timeout: Tuple[float, float], expected_hash: Optional[bytes] = None) -> str:
     """
     Gets a file from `url` via HTTP GET.
 
@@ -103,7 +103,7 @@ def getUrl(url: str, timeout: Tuple[int, int], expected_hash: Optional[bytes] = 
     return result
 
 
-def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout: Tuple[int, int]) -> None:
+def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout: Tuple[float, float]) -> None:
     logger = getLogger("aqt.helper")
     filename = Path(url).name
     with requests.sessions.Session() as session:
@@ -177,7 +177,7 @@ def iter_list_reps(_list: List, num_reps: int) -> Generator:
             list_index = 0
 
 
-def get_hash(archive_path: str, algorithm: str, timeout: Tuple[int, int]) -> bytes:
+def get_hash(archive_path: str, algorithm: str, timeout: Tuple[float, float]) -> bytes:
     """
     Downloads a checksum and unhexlifies it to a `bytes` object, guaranteed to be the right length.
     Raises ChecksumDownloadFailure if the download failed, or if the checksum was un unexpected length.
@@ -227,7 +227,7 @@ def altlink(url: str, alt: str) -> str:
             return alt
         try:
             mirror_xml = ElementTree.fromstring(m.text)
-            meta_urls = {}
+            meta_urls: Dict[str, str] = {}
             for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
                 for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
                     meta_urls[u.attrib["priority"]] = u.text
@@ -332,7 +332,7 @@ class SettingsClass:
         self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
         self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
 
-    def load_settings(self, file=None):
+    def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
         with open(
             os.path.join(os.path.dirname(__file__), "combinations.json"),
             "r",
@@ -347,15 +347,11 @@ class SettingsClass:
             else:
                 # passed through command line argparse.FileType("r")
                 self.config.read_file(file)
-                self.configfile = file
+                self.configfile = file.name
                 file.close()
         else:
-            if isinstance(self.configfile, str):
-                with open(self.configfile, "r") as f:
-                    self.config.read_file(f)
-            else:
-                self.configfile.seek(0)
-                self.config.read_file(self.configfile)
+            with open(self.configfile, "r") as f:
+                self.config.read_file(f)
 
     @property
     def qt_combinations(self):

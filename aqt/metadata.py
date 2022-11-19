@@ -320,7 +320,7 @@ class TableMetadata(ABC):
         heading = [self.name_heading, *[self.map_key_to_heading(key) for key in heading_keys]]
         table.header(heading)
         table.add_rows(self._rows(heading_keys), header=False)
-        return table.draw()
+        return cast(str, table.draw())
 
     def __bool__(self):
         return bool(self.table_data)
@@ -373,9 +373,7 @@ class QtRepoProperty:
 
     @staticmethod
     def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
-        if arch is None:
-            return ""
-        elif arch.startswith("win64_mingw"):
+        if arch.startswith("win64_mingw"):
             return arch[6:] + "_64"
         elif arch.startswith("win32_mingw"):
             return arch[6:] + "_32"
@@ -499,6 +497,7 @@ class MetadataFactory:
     SrcDocExamplesQuery = NamedTuple(
         "SrcDocExamplesQuery", [("cmd_type", str), ("version", Version), ("is_modules_query", bool)]
     )
+    ModulesQuery = NamedTuple("ModulesQuery", [("version_str", str), ("arch", str)])
 
     def __init__(
         self,
@@ -507,7 +506,7 @@ class MetadataFactory:
         base_url: str = Settings.baseurl,
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
-        modules_query: Optional[Tuple[str, str]] = None,
+        modules_query: Optional[ModulesQuery] = None,
         architectures_ver: Optional[str] = None,
         archives_query: Optional[List[str]] = None,
         src_doc_examples_query: Optional[SrcDocExamplesQuery] = None,
@@ -547,14 +546,13 @@ class MetadataFactory:
         elif is_latest_version:
             self.request_type = "latest version"
             self._action = lambda: Versions(self.fetch_latest_version(ext=""))
-        elif modules_query:
+        elif modules_query is not None:
+            version, arch = modules_query.version_str, modules_query.arch
             if is_long_listing:
                 self.request_type = "long modules"
-                version, arch = modules_query
                 self._action = lambda: self.fetch_long_modules(self._to_version(version, arch), arch)
             else:
                 self.request_type = "modules"
-                version, arch = modules_query
                 self._action = lambda: self.fetch_modules(self._to_version(version, arch), arch)
         elif architectures_ver is not None:
             ver_str: str = architectures_ver
@@ -604,7 +602,7 @@ class MetadataFactory:
         )
         opt_versions = map(lambda _tuple: _tuple[0], filter(filter_by, versions_extensions))
         versions: List[Version] = sorted(filter(None, opt_versions))
-        iterables = itertools.groupby(versions, lambda version: version.minor)
+        iterables = cast(Iterable[Tuple[int, Iterable[Version]]], itertools.groupby(versions, lambda version: version.minor))
         return Versions(iterables)
 
     def fetch_latest_version(self, ext: str) -> Optional[Version]:

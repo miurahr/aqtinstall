@@ -35,7 +35,7 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, cast
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, TargetConfig, ToolArchives
@@ -67,6 +67,75 @@ try:
     EXT7Z = False
 except ImportError:
     EXT7Z = True
+
+
+class BaseArgumentParser(argparse.ArgumentParser):
+    """Global options and subcommand trick"""
+
+    config: Optional[str]
+    func: object
+
+
+class ListArgumentParser(BaseArgumentParser):
+    """List-* command parser arguments and options"""
+
+    arch: Optional[str]
+    archives: List[str]
+    extension: str
+    extensions: str
+    host: str
+    last_version: str
+    latest_version: bool
+    long: bool
+    long_modules: List[str]
+    modules: List[str]
+    qt_version_spec: str
+    spec: str
+    target: str
+
+
+class ListToolArgumentParser(ListArgumentParser):
+    """List-tool command options"""
+
+    tool_name: str
+    tool_version: str
+
+
+class CommonInstallArgParser(BaseArgumentParser):
+    """Install-*/install common arguments"""
+
+    is_legacy: bool
+    target: str
+    host: str
+
+    outputdir: Optional[str]
+    base: Optional[str]
+    timeout: Optional[float]
+    external: Optional[str]
+    internal: bool
+    keep: bool
+    archive_dest: Optional[str]
+
+
+class InstallArgParser(CommonInstallArgParser):
+    """Install-qt arguments and options"""
+
+    arch: Optional[str]
+    qt_version: str
+    qt_version_spec: str
+
+    modules: Optional[List[str]]
+    archives: Optional[List[str]]
+    noarchives: bool
+    autodesktop: bool
+
+
+class InstallToolArgParser(CommonInstallArgParser):
+    """Install-tool arguments and options"""
+
+    tool_name: str
+    version: Optional[str]
+    tool_variant: Optional[str]
 
 
 class Cli:
@@ -249,7 +318,7 @@ class Cli:
         dest.mkdir(parents=True, exist_ok=True)
         return dest
 
-    def run_install_qt(self, args):
+    def run_install_qt(self, args: InstallArgParser):
         """Run install subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
@@ -297,7 +366,7 @@ class Cli:
                 raise CliInputError("Options `--archives` and `--noarchives` are mutually exclusive.")
         else:
             if modules is not None and archives is not None:
-                archives.append(modules)
+                archives.extend(modules)
         nopatch = args.noarchives or (archives is not None and "qtbase" not in archives)  # type: bool
         should_autoinstall: bool = args.autodesktop
         _version = Version(qt_version)
@@ -307,14 +376,16 @@ class Cli:
             should_autoinstall, os_name, target, base_path, _version, is_wasm=(arch.startswith("wasm"))
         )
 
-        auto_desktop_archives: List[QtPackage] = (
-            retry_on_bad_connection(
-                lambda base_url: QtArchives(os_name, "desktop", qt_version, autodesk_arch, base=base_url, timeout=timeout),
-                base,
-            ).archives
-            if autodesk_arch is not None
-            else []
-        )
+        def get_auto_desktop_archives() -> List[QtPackage]:
+            def to_archives(baseurl: str) -> QtArchives:
+                return QtArchives(os_name, "desktop", qt_version, cast(str, autodesk_arch), base=baseurl, timeout=timeout)
+
+            if autodesk_arch is not None:
+                return cast(QtArchives, retry_on_bad_connection(to_archives, base)).archives
+            else:
+                return []
+
+        auto_desktop_archives: List[QtPackage] = get_auto_desktop_archives()
 
         if not self._check_qt_arg_versions(qt_version):
             self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
@@ -446,7 +517,7 @@ class Cli:
         self._run_src_doc_examples("doc", args)
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
-    def run_install_tool(self, args):
+    def run_install_tool(self, args: InstallToolArgParser):
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
@@ -481,7 +552,7 @@ class Cli:
             archive_id = ArchiveId("tools", os_name, target)
             meta = MetadataFactory(archive_id, base_url=base, is_latest_version=True, tool_name=tool_name)
             try:
-                archs = meta.getList()
+                archs: List[str] = cast(list, meta.getList())
             except ArchiveDownloadError as e:
                 msg = f"Failed to locate XML data for the tool '{tool_name}'."
                 raise ArchiveListError(msg, suggested_action=suggested_follow_up(meta)) from e
@@ -511,7 +582,7 @@ class Cli:
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
-    def run_list_qt(self, args: argparse.ArgumentParser):
+    def run_list_qt(self, args: ListArgumentParser):
         """Print versions of Qt, extensions, modules, architectures"""
 
         if args.extensions:
@@ -532,9 +603,13 @@ class Cli:
         if args.target not in ArchiveId.TARGETS_FOR_HOST[args.host]:
             raise CliInputError("'{0.target}' is not a valid target for host '{0.host}'".format(args))
         if args.modules:
-            modules_ver, modules_query, is_long = args.modules[0], tuple(args.modules), False
+            assert len(args.modules) == 2, "broken argument parser for list-qt"
+            modules_query = MetadataFactory.ModulesQuery(args.modules[0], args.modules[1])
+            modules_ver, is_long = args.modules[0], False
         elif args.long_modules:
-            modules_ver, modules_query, is_long = args.long_modules[0], tuple(args.long_modules), True
+            assert args.long_modules and len(args.long_modules) == 2, "broken argument parser for list-qt"
+            modules_query = MetadataFactory.ModulesQuery(args.long_modules[0], args.long_modules[1])
+            modules_ver, is_long = args.long_modules[0], True
         else:
             modules_ver, modules_query, is_long = None, None, False
 
@@ -551,7 +626,7 @@ class Cli:
         meta = MetadataFactory(
             archive_id=ArchiveId("qt", args.host, args.target),
             spec=spec,
-            is_latest_version=bool(args.latest_version),
+            is_latest_version=args.latest_version,
             modules_query=modules_query,
             is_long_listing=is_long,
             architectures_ver=args.arch,
@@ -559,7 +634,7 @@ class Cli:
         )
         show_list(meta)
 
-    def run_list_tool(self, args: argparse.ArgumentParser):
+    def run_list_tool(self, args: ListToolArgumentParser):
         """Print tools"""
 
         if not args.target:
@@ -571,11 +646,11 @@ class Cli:
         meta = MetadataFactory(
             archive_id=ArchiveId("tools", args.host, args.target),
             tool_name=args.tool_name,
-            is_long_listing=bool(args.long),
+            is_long_listing=args.long,
         )
         show_list(meta)
 
-    def run_list_src_doc_examples(self, args: argparse.ArgumentParser, cmd_type: str):
+    def run_list_src_doc_examples(self, args: ListArgumentParser, cmd_type: str):
         target = "desktop"  # The only valid target for src/doc/examples is "desktop"
         version = Cli._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
         is_fetch_modules: bool = getattr(args, "modules", False)
@@ -667,7 +742,7 @@ class Cli:
             f"In the future, please use the command '{new_name}' instead."
         )
 
-    def _warn_on_deprecated_parameter(self, parameter_name: str, value: Union[str, List[str]]) -> None:
+    def _warn_on_deprecated_parameter(self, parameter_name: str, value: str):
         self.logger.warning(
             f"The parameter '{parameter_name}' with value '{value}' is deprecated and marked for "
             f"removal in a future version of aqt.\n"
@@ -730,7 +805,7 @@ class Cli:
 
     def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
-        list_parser: argparse.ArgumentParser = subparsers.add_parser(
+        list_parser: ListArgumentParser = subparsers.add_parser(
             "list-qt",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
@@ -819,7 +894,7 @@ class Cli:
 
     def _make_list_tool_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
-        list_parser: argparse.ArgumentParser = subparsers.add_parser(
+        list_parser: ListArgumentParser = subparsers.add_parser(
             "list-tool",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
@@ -1123,15 +1198,7 @@ def installer(
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)
     else:
-        command_args = [
-            command,
-            "x",
-            "-aoa",
-            "-bd",
-            "-y",
-            "-o{}".format(base_dir),
-            str(archive),
-        ]
+        command_args = [command, "x", "-aoa", "-bd", "-y", "-o{}".format(base_dir), str(archive)]
         try:
             proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
             logger.debug(proc.stdout)
