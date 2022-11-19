@@ -29,7 +29,7 @@ class AqtException(Exception):
         self.should_show_help: bool = should_show_help or False
         super(AqtException, self).__init__(*args, **kwargs)
 
-    def __format__(self, format_spec) -> str:
+    def __format__(self, format_spec: str) -> str:
         base_msg = "{}".format(super(AqtException, self).__format__(format_spec))
         if not self.suggested_action:
             return base_msg
@@ -40,7 +40,7 @@ class AqtException(Exception):
             ["* " + suggestion for suggestion in self.suggested_action]
         )
 
-    def append_suggested_follow_up(self, suggestions: List[str]):
+    def append_suggested_follow_up(self, suggestions: List[str]) -> None:
         self.suggested_action.extend(suggestions)
 
 
