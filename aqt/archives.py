@@ -248,8 +248,7 @@ class Updates:
     def _get_text(self, item) -> str:
         if item is not None and item.text is not None:
             return item.text
-        else:
-            return ""
+        return ""
 
     def _get_list(self, item) -> Iterable[str]:
         if item is not None and item.text is not None:
@@ -509,7 +508,7 @@ class SrcDocExamplesArchives(QtArchives):
 
     def __init__(
         self,
-        flavor,
+        flavor: str,
         os_name,
         target,
         version,
@@ -520,7 +519,7 @@ class SrcDocExamplesArchives(QtArchives):
         is_include_base_package: bool = True,
         timeout=(5, 5),
     ):
-        self.flavor = flavor
+        self.flavor: str = flavor
         self.target = target
         self.os_name = os_name
         self.base = base
