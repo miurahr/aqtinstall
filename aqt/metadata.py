@@ -33,9 +33,9 @@ from urllib.parse import ParseResult, urlparse
 from xml.etree.ElementTree import Element
 
 import bs4
-from semantic_version import SimpleSpec as SemanticSimpleSpec  # type: ignore
+from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
-from texttable import Texttable  # type: ignore
+from texttable import Texttable
 
 from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
 from aqt.helper import Settings, get_hash, getUrl, xml_to_modules

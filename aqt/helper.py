@@ -37,7 +37,7 @@ from xml.etree.ElementTree import Element
 import humanize
 import requests
 import requests.adapters
-from defusedxml import ElementTree  # type: ignore
+from defusedxml import ElementTree
 
 from aqt.exceptions import (
     ArchiveChecksumError,

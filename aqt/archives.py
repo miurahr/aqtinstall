@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from defusedxml import ElementTree  # type: ignore
+from defusedxml import ElementTree
 
 from aqt.exceptions import ArchiveDownloadError, ArchiveListError, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit

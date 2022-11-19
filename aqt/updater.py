@@ -25,7 +25,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import Dict, Optional
 
-import patch  # type: ignore
+import patch
 
 from aqt.archives import TargetConfig
 from aqt.exceptions import UpdaterError
