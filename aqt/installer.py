@@ -987,7 +987,7 @@ class Cli:
             if allow_empty:
                 return
             else:
-                raise CliInputError(f"Invalid empty version! Please use the form '5.X.Y'.")
+                raise CliInputError("Invalid empty version! Please use the form '5.X.Y'.")
         try:
             if "-" in version_str and allow_minus:
                 version_str = version_str[: version_str.find("-")]

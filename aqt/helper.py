@@ -302,7 +302,7 @@ def xml_to_modules(
 
 
 class MyConfigParser(configparser.ConfigParser):
-    def getlist(self, section: str, option: str, fallback: List[str] =[]) -> List[str]:
+    def getlist(self, section: str, option: str, fallback: List[str] = []) -> List[str]:
         value = self.get(section, option, fallback=None)
         if value is None:
             return fallback
@@ -312,7 +312,7 @@ class MyConfigParser(configparser.ConfigParser):
             result = fallback
         return result
 
-    def getlistint(self, section: str, option: str, fallback: List[int] =[]) -> List[int]:
+    def getlistint(self, section: str, option: str, fallback: List[int] = []) -> List[int]:
         try:
             result = [int(x) for x in self.getlist(section, option)]
         except Exception:
@@ -332,7 +332,7 @@ class SettingsClass:
         self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
         self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
 
-    def load_settings(self, file: Optional[Union[str, TextIO]] =None) -> None:
+    def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
         with open(
             os.path.join(os.path.dirname(__file__), "combinations.json"),
             "r",
