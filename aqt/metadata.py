@@ -507,7 +507,7 @@ class MetadataFactory:
         base_url: str = Settings.baseurl,
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
-        modules_query: Optional[Tuple[str, str]] = None,
+        modules_query: Optional[Tuple[str, ...]] = None,
         architectures_ver: Optional[str] = None,
         archives_query: Optional[List[str]] = None,
         src_doc_examples_query: Optional[SrcDocExamplesQuery] = None,
