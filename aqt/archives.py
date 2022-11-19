@@ -23,6 +23,7 @@ import posixpath
 from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
+from xml.etree.ElementTree import Element
 
 from defusedxml import ElementTree
 
@@ -245,12 +246,12 @@ class Updates:
                                 filo.append(depend)
         return packages
 
-    def _get_text(self, item) -> str:
+    def _get_text(self, item: Optional[Element]) -> str:
         if item is not None and item.text is not None:
             return item.text
         return ""
 
-    def _get_list(self, item) -> Iterable[str]:
+    def _get_list(self, item: Optional[Element]) -> Iterable[str]:
         if item is not None and item.text is not None:
             return ssplit(item.text)
         else:
@@ -349,8 +350,6 @@ class QtArchives:
             return ModuleToPackage({})
         base_package = {self._base_module_name(): list(self._base_package_names())}
         target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
-        if self.all_extra:
-            return target_packages
         for module in self.mod_list:
             suffix = self._module_name_suffix(module)
             package_names = [
@@ -410,7 +409,7 @@ class QtArchives:
 
             for archive in packageupdate.downloadable_archives:
                 archive_name = archive.split("-", maxsplit=1)[0]
-                if should_filter_archives and bool(self.subarchives) and archive_name not in self.subarchives:
+                if should_filter_archives and self.subarchives is not None and archive_name not in self.subarchives:
                     continue
                 archive_path = posixpath.join(
                     # online/qtsdkrepository/linux_x64/desktop/qt5_5150/

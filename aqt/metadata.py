@@ -320,7 +320,7 @@ class TableMetadata(ABC):
         heading = [self.name_heading, *[self.map_key_to_heading(key) for key in heading_keys]]
         table.header(heading)
         table.add_rows(self._rows(heading_keys), header=False)
-        return table.draw()
+        return cast(str, table.draw())
 
     def __bool__(self):
         return bool(self.table_data)
@@ -373,9 +373,7 @@ class QtRepoProperty:
 
     @staticmethod
     def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
-        if arch is None:
-            return ""
-        elif arch.startswith("win64_mingw"):
+        if arch.startswith("win64_mingw"):
             return arch[6:] + "_64"
         elif arch.startswith("win32_mingw"):
             return arch[6:] + "_32"
@@ -604,7 +602,7 @@ class MetadataFactory:
         )
         opt_versions = map(lambda _tuple: _tuple[0], filter(filter_by, versions_extensions))
         versions: List[Version] = sorted(filter(None, opt_versions))
-        iterables = itertools.groupby(versions, lambda version: version.minor)
+        iterables = cast(Iterable[Tuple[int, Iterable[Version]]], itertools.groupby(versions, lambda version: version.minor))
         return Versions(iterables)
 
     def fetch_latest_version(self, ext: str) -> Optional[Version]:

@@ -358,13 +358,11 @@ class Cli:
         )
 
         def get_auto_desktop_archives() -> List[QtPackage]:
+            def to_archives(baseurl: str) -> QtArchives:
+                return QtArchives(os_name, "desktop", qt_version, cast(str, autodesk_arch), base=baseurl, timeout=timeout)
+
             if autodesk_arch is not None:
-                return retry_on_bad_connection(
-                    lambda base_url: QtArchives(
-                        os_name, "desktop", qt_version, cast(str, autodesk_arch), base=base_url, timeout=timeout
-                    ),
-                    base,
-                ).archives
+                return cast(QtArchives, retry_on_bad_connection(to_archives, base)).archives
             else:
                 return []
 
@@ -1181,15 +1179,7 @@ def installer(
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)
     else:
-        command_args = [
-            command,
-            "x",
-            "-aoa",
-            "-bd",
-            "-y",
-            "-o{}".format(base_dir),
-            str(archive),
-        ]
+        command_args = [command, "x", "-aoa", "-bd", "-y", "-o{}".format(base_dir), str(archive)]
         try:
             proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
             logger.debug(proc.stdout)
