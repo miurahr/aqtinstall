@@ -30,7 +30,7 @@ import sys
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Generator, List, Optional, Tuple, Union, TextIO
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
 
@@ -48,7 +48,7 @@ from aqt.exceptions import (
 )
 
 
-def _get_meta(url: str):
+def _get_meta(url: str) -> requests.Response:
     return requests.get(url + ".meta4")
 
 
@@ -57,7 +57,7 @@ def _check_content_type(ct: str) -> bool:
     return any(ct.startswith(t) for t in candidate)
 
 
-def getUrl(url: str, timeout, expected_hash: Optional[bytes] = None) -> str:
+def getUrl(url: str, timeout: Tuple[int, int], expected_hash: Optional[bytes] = None) -> str:
     """
     Gets a file from `url` via HTTP GET.
 
@@ -91,7 +91,7 @@ def getUrl(url: str, timeout, expected_hash: Optional[bytes] = None) -> str:
             if r.status_code != 200:
                 msg = f"Failed to retrieve file at {url}\nServer response code: {r.status_code}, reason: {r.reason}"
                 raise ArchiveDownloadError(msg)
-        result = r.text
+        result: str = r.text
         filename = url.split("/")[-1]
         actual_hash = hashlib.sha256(bytes(result, "utf-8")).digest()
         if expected_hash is not None and expected_hash != actual_hash:
@@ -103,7 +103,7 @@ def getUrl(url: str, timeout, expected_hash: Optional[bytes] = None) -> str:
     return result
 
 
-def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout):
+def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout: Tuple[int, int]) -> None:
     logger = getLogger("aqt.helper")
     filename = Path(url).name
     with requests.sessions.Session() as session:
@@ -142,7 +142,7 @@ def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout)
                 )
 
 
-def retry_on_errors(action: Callable[[], Any], acceptable_errors: Tuple, num_retries: int, name: str):
+def retry_on_errors(action: Callable[[], Any], acceptable_errors: Tuple, num_retries: int, name: str) -> Any:
     logger = getLogger("aqt.helper")
     for i in range(num_retries):
         try:
@@ -158,7 +158,7 @@ def retry_on_errors(action: Callable[[], Any], acceptable_errors: Tuple, num_ret
             raise e from e
 
 
-def retry_on_bad_connection(function: Callable[[str], Any], base_url: str):
+def retry_on_bad_connection(function: Callable[[str], Any], base_url: str) -> Any:
     logger = getLogger("aqt.helper")
     fallback_url = secrets.choice(Settings.fallbacks)
     try:
@@ -177,7 +177,7 @@ def iter_list_reps(_list: List, num_reps: int) -> Generator:
             list_index = 0
 
 
-def get_hash(archive_path: str, algorithm: str, timeout) -> bytes:
+def get_hash(archive_path: str, algorithm: str, timeout: Tuple[int, int]) -> bytes:
     """
     Downloads a checksum and unhexlifies it to a `bytes` object, guaranteed to be the right length.
     Raises ChecksumDownloadFailure if the download failed, or if the checksum was un unexpected length.
@@ -206,11 +206,11 @@ def get_hash(archive_path: str, algorithm: str, timeout) -> bytes:
     )
 
 
-def altlink(url: str, alt: str):
+def altlink(url: str, alt: str) -> str:
     """
-    Blacklisting redirected(alt) location based on Settings.blacklist configuration.
-    When found black url, then try download a url + .meta4 that is a metalink version4
-    xml file, parse it and retrieve best alternative url.
+    Blacklisting redirected(alt) location based on Settings. Blacklist configuration.
+    When found black url, then try download an url + .meta4 that is a metalink version4
+    xml file, parse it and retrieve the best alternative url.
     """
     logger = getLogger("aqt.helper")
     if not any(alt.startswith(b) for b in Settings.blacklist):
@@ -253,7 +253,7 @@ class MyQueueListener(QueueListener):
         handlers: List[Handler] = []
         super().__init__(queue, *handlers)
 
-    def handle(self, record):
+    def handle(self, record) -> None:
         """
         Handle a record from subprocess.
         Override logger name then handle at proper logger.
@@ -264,7 +264,7 @@ class MyQueueListener(QueueListener):
         logger.handle(record)
 
 
-def ssplit(data: str):
+def ssplit(data: str) -> Generator:
     for element in data.split(","):
         yield element.strip()
 
@@ -302,7 +302,7 @@ def xml_to_modules(
 
 
 class MyConfigParser(configparser.ConfigParser):
-    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
+    def getlist(self, section: str, option: str, fallback: List[str] =[]) -> List[str]:
         value = self.get(section, option, fallback=None)
         if value is None:
             return fallback
@@ -312,7 +312,7 @@ class MyConfigParser(configparser.ConfigParser):
             result = fallback
         return result
 
-    def getlistint(self, section: str, option: str, fallback=[]):
+    def getlistint(self, section: str, option: str, fallback: List[int] =[]) -> List[int]:
         try:
             result = [int(x) for x in self.getlist(section, option)]
         except Exception:

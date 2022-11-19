@@ -35,7 +35,7 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, TargetConfig, ToolArchives
@@ -680,20 +680,20 @@ class Cli:
         )
         self._set_common_options(install_tool_parser)
 
-    def _warn_on_deprecated_command(self, old_name: str, new_name: str):
+    def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
         self.logger.warning(
             f"The command '{old_name}' is deprecated and marked for removal in a future version of aqt.\n"
             f"In the future, please use the command '{new_name}' instead."
         )
 
-    def _warn_on_deprecated_parameter(self, parameter_name: str, value: str):
+    def _warn_on_deprecated_parameter(self, parameter_name: str, value: Union[str, List[str]]) -> None:
         self.logger.warning(
             f"The parameter '{parameter_name}' with value '{value}' is deprecated and marked for "
             f"removal in a future version of aqt.\n"
             f"In the future, please omit this parameter."
         )
 
-    def _make_all_parsers(self, subparsers: argparse._SubParsersAction):
+    def _make_all_parsers(self, subparsers: argparse._SubParsersAction) -> None:
         deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
 
         def make_parser_it(cmd: str, desc: str, is_legacy: bool, set_parser_cmd, formatter_class):
@@ -970,7 +970,7 @@ class Cli:
 
     @staticmethod
     def _validate_version_str(
-        version_str: str, *, allow_latest: bool = False, allow_empty: bool = False, allow_minus: bool = False
+        version_str: Optional[str], *, allow_latest: bool = False, allow_empty: bool = False, allow_minus: bool = False
     ) -> None:
         """
         Raise CliInputError if the version is not an acceptable Version.
