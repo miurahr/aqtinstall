@@ -37,6 +37,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Optional, Tuple, cast
 
+from typed_argparse import Choices, TypedArgs
+
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, TargetConfig, ToolArchives
 from aqt.exceptions import (
@@ -60,7 +62,6 @@ from aqt.helper import (
 )
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
 from aqt.updater import Updater, dir_for_version
-from typed_argparse import Choices, TypedArgs
 
 try:
     import py7zr
