@@ -1,5 +1,4 @@
 include *.rst
-include *.cfg
 include LICENSE
 include pyproject.toml
 include .flake8

@@ -22,13 +22,13 @@ classifiers = [
 ]
 requires-python = ">=3.7"
 dependencies = [
-    "bs4",
+    "bs4",  # canonical name is beautifulsoup4
     "defusedxml",
     "humanize",
     "patch>=1.16",
     "py7zr>=0.20.2",
     "requests>2.20.0",
-    "semantic_version",
+    "semantic-version",
     "texttable",
 ]
 dynamic = ["version", "readme"]
