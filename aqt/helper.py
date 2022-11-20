@@ -227,7 +227,7 @@ def altlink(url: str, alt: str) -> str:
             return alt
         try:
             mirror_xml = ElementTree.fromstring(m.text)
-            meta_urls = {}
+            meta_urls: Dict[str, str] = {}
             for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
                 for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
                     meta_urls[u.attrib["priority"]] = u.text
