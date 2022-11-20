@@ -593,17 +593,15 @@ class MetadataFactory:
         return arches
 
     def fetch_versions(self, extension: str = "") -> Versions:
-        def filter_by(ver_ext: Tuple[Optional[Version], str]) -> bool:
-            version, ext = ver_ext
-            return version is not None and (self.spec is None or version in self.spec) and (ext == extension)
+        def filter_by(ver: Version, ext: str) -> bool:
+            return (self.spec is None or ver in self.spec) and ext == extension
 
         versions_extensions = self.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
         )
-        opt_versions = map(lambda _tuple: _tuple[0], filter(filter_by, versions_extensions))
-        versions: List[Version] = sorted(filter(None, opt_versions))
-        iterables = cast(Iterable[Tuple[int, Iterable[Version]]], itertools.groupby(versions, lambda version: version.minor))
-        return Versions(iterables)
+        versions = sorted([ver for ver, ext in versions_extensions if ver is not None and filter_by(ver, ext)])
+        grouped = cast(Iterable[Tuple[int, Iterable[Version]]], itertools.groupby(versions, lambda version: version.minor))
+        return Versions(grouped)
 
     def fetch_latest_version(self, ext: str) -> Optional[Version]:
         return self.fetch_versions(ext).latest()
