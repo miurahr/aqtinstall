@@ -806,7 +806,7 @@ class Cli:
 
     def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
-        list_parser = subparsers.add_parser(
+        list_parser: ListArgumentParser = subparsers.add_parser(
             "list-qt",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
@@ -897,7 +897,7 @@ class Cli:
 
     def _make_list_tool_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
-        list_parser = subparsers.add_parser(
+        list_parser: ListArgumentParser = subparsers.add_parser(
             "list-tool",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
