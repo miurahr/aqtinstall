@@ -69,9 +69,17 @@ except ImportError:
     EXT7Z = True
 
 
-class ListArgumentParser(argparse.ArgumentParser):
+class BaseArgumentParser(argparse.ArgumentParser):
+    """Global options and subcommand trick"""
 
-    arch: str
+    config: Optional[str]
+    func: object
+
+
+class ListArgumentParser(BaseArgumentParser):
+    """List-* command parser arguments and options"""
+
+    arch: Optional[str]
     archives: List[str]
     extension: str
     extensions: str
@@ -84,11 +92,18 @@ class ListArgumentParser(argparse.ArgumentParser):
     qt_version_spec: str
     spec: str
     target: str
+
+
+class ListToolArgumentParser(ListArgumentParser):
+    """List-tool command options"""
+
     tool_name: str
     tool_version: str
 
 
-class CommonInstallArgParser(argparse.ArgumentParser):
+class CommonInstallArgParser(BaseArgumentParser):
+    """Install-*/install common arguments"""
+
     is_legacy: bool
     target: str
     host: str
@@ -103,6 +118,8 @@ class CommonInstallArgParser(argparse.ArgumentParser):
 
 
 class InstallArgParser(CommonInstallArgParser):
+    """Install-qt arguments and options"""
+
     arch: Optional[str]
     qt_version: str
     qt_version_spec: str
@@ -114,6 +131,8 @@ class InstallArgParser(CommonInstallArgParser):
 
 
 class InstallToolArgParser(CommonInstallArgParser):
+    """Install-tool arguments and options"""
+
     tool_name: str
     version: Optional[str]
     tool_variant: Optional[str]
@@ -127,7 +146,7 @@ class Cli:
     UNHANDLED_EXCEPTION_CODE = 254
 
     def __init__(self):
-        parser = ListArgumentParser(
+        parser = argparse.ArgumentParser(
             prog="aqt",
             description="Another unofficial Qt Installer.\naqt helps you install Qt SDK, tools, examples and others\n",
             formatter_class=argparse.RawTextHelpFormatter,
@@ -615,7 +634,7 @@ class Cli:
         )
         show_list(meta)
 
-    def run_list_tool(self, args: ListArgumentParser):
+    def run_list_tool(self, args: ListToolArgumentParser):
         """Print tools"""
 
         if not args.target:
