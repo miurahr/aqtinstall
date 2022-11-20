@@ -865,65 +865,64 @@ def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
     assert out == expect
 
 
+LONG_MODULES_WIN_5140_120 = (
+    "   Module Name                        Display Name                     Release Date   Download Size   Installed Size\n"
+    "====================================================================================================================\n"
+    "qtcharts            Qt Charts for MinGW 7.3.0 32-bit                   2019-12-11     772.7K          7.8M          \n"
+    "qtdatavis3d         Qt Data Visualization for MinGW 7.3.0 32-bit       2019-12-11     620.2K          5.0M          \n"
+    "qtlottie            Qt Lottie Animation for MinGW 7.3.0 32-bit         2019-12-11     153.5K          968.4K        \n"
+    "qtnetworkauth       Qt Network Authorization for MinGW 7.3.0 32-bit    2019-12-11     98.7K           638.6K        \n"
+    "qtpurchasing        Qt Purchasing for MinGW 7.3.0 32-bit               2019-12-11     50.9K           306.8K        \n"
+    "qtquick3d           Qt Quick 3D for MinGW 7.3.0 32-bit                 2019-12-11     9.8M            21.2M         \n"
+    "qtquicktimeline     Qt Quick Timeline for MinGW 7.3.0 32-bit           2019-12-11     35.3K           154.1K        \n"
+    "qtscript            Qt Script for MinGW 7.3.0 32-bit                   2019-12-11     1.0M            5.5M          \n"
+    "qtvirtualkeyboard   Qt Virtual Keyboard for MinGW 7.3.0 32-bit         2019-12-11     2.1M            6.8M          \n"
+    "qtwebglplugin       Qt WebGL Streaming Plugin for MinGW 7.3.0 32-bit   2019-12-11     201.7K          1.0M          \n"
+)
+LONG_MODULES_WIN_5140_80 = (
+    "   Module Name                        Display Name                  \n"
+    "====================================================================\n"
+    "qtcharts            Qt Charts for MinGW 7.3.0 32-bit                \n"
+    "qtdatavis3d         Qt Data Visualization for MinGW 7.3.0 32-bit    \n"
+    "qtlottie            Qt Lottie Animation for MinGW 7.3.0 32-bit      \n"
+    "qtnetworkauth       Qt Network Authorization for MinGW 7.3.0 32-bit \n"
+    "qtpurchasing        Qt Purchasing for MinGW 7.3.0 32-bit            \n"
+    "qtquick3d           Qt Quick 3D for MinGW 7.3.0 32-bit              \n"
+    "qtquicktimeline     Qt Quick Timeline for MinGW 7.3.0 32-bit        \n"
+    "qtscript            Qt Script for MinGW 7.3.0 32-bit                \n"
+    "qtvirtualkeyboard   Qt Virtual Keyboard for MinGW 7.3.0 32-bit      \n"
+    "qtwebglplugin       Qt WebGL Streaming Plugin for MinGW 7.3.0 32-bit\n"
+)
+
+
 @pytest.mark.parametrize(
-    "columns, expect",
+    "columns, use_cli, expect",
     (
-        (
-            120,
-            "   Module Name                        Display Name                     Release Date   Download Size   "
-            "Installed Size\n"
-            "======================================================================================================"
-            "==============\n"
-            "qtcharts            Qt Charts for MinGW 7.3.0 32-bit                   2019-12-11     772.7K          "
-            "7.8M          \n"
-            "qtdatavis3d         Qt Data Visualization for MinGW 7.3.0 32-bit       2019-12-11     620.2K          "
-            "5.0M          \n"
-            "qtlottie            Qt Lottie Animation for MinGW 7.3.0 32-bit         2019-12-11     153.5K          "
-            "968.4K        \n"
-            "qtnetworkauth       Qt Network Authorization for MinGW 7.3.0 32-bit    2019-12-11     98.7K           "
-            "638.6K        \n"
-            "qtpurchasing        Qt Purchasing for MinGW 7.3.0 32-bit               2019-12-11     50.9K           "
-            "306.8K        \n"
-            "qtquick3d           Qt Quick 3D for MinGW 7.3.0 32-bit                 2019-12-11     9.8M            "
-            "21.2M         \n"
-            "qtquicktimeline     Qt Quick Timeline for MinGW 7.3.0 32-bit           2019-12-11     35.3K           "
-            "154.1K        \n"
-            "qtscript            Qt Script for MinGW 7.3.0 32-bit                   2019-12-11     1.0M            "
-            "5.5M          \n"
-            "qtvirtualkeyboard   Qt Virtual Keyboard for MinGW 7.3.0 32-bit         2019-12-11     2.1M            "
-            "6.8M          \n"
-            "qtwebglplugin       Qt WebGL Streaming Plugin for MinGW 7.3.0 32-bit   2019-12-11     201.7K          "
-            "1.0M          \n",
-        ),
-        (
-            80,
-            "   Module Name                        Display Name                  \n"
-            "====================================================================\n"
-            "qtcharts            Qt Charts for MinGW 7.3.0 32-bit                \n"
-            "qtdatavis3d         Qt Data Visualization for MinGW 7.3.0 32-bit    \n"
-            "qtlottie            Qt Lottie Animation for MinGW 7.3.0 32-bit      \n"
-            "qtnetworkauth       Qt Network Authorization for MinGW 7.3.0 32-bit \n"
-            "qtpurchasing        Qt Purchasing for MinGW 7.3.0 32-bit            \n"
-            "qtquick3d           Qt Quick 3D for MinGW 7.3.0 32-bit              \n"
-            "qtquicktimeline     Qt Quick Timeline for MinGW 7.3.0 32-bit        \n"
-            "qtscript            Qt Script for MinGW 7.3.0 32-bit                \n"
-            "qtvirtualkeyboard   Qt Virtual Keyboard for MinGW 7.3.0 32-bit      \n"
-            "qtwebglplugin       Qt WebGL Streaming Plugin for MinGW 7.3.0 32-bit\n",
-        ),
+        (120, False, LONG_MODULES_WIN_5140_120),
+        (80, False, LONG_MODULES_WIN_5140_80),
+        (120, True, LONG_MODULES_WIN_5140_120),
+        (80, True, LONG_MODULES_WIN_5140_80),
     ),
 )
-def test_show_list_long_qt_modules(capsys, monkeypatch, columns, expect):
+def test_show_list_long_qt_modules(capsys, monkeypatch, columns: int, use_cli: bool, expect: str):
     update_xml = (Path(__file__).parent / "data" / "windows-5140-update.xml").read_text("utf-8")
     monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: update_xml)
 
+    cli = Cli()
+
+    # Patching get_terminal_size prevents successful instantiation of Cli, so do it afterwards:
     monkeypatch.setattr(shutil, "get_terminal_size", lambda fallback: os.terminal_size((columns, 24)))
 
-    meta = MetadataFactory(
-        ArchiveId("qt", "windows", "desktop"),
-        modules_query=ModulesQuery("5.14.0", "win32_mingw73"),
-        is_long_listing=True,
-    )
-    show_list(meta)
+    if use_cli:
+        return_code = cli.run("list-qt windows desktop --long-modules 5.14.0 win32_mingw73".split())
+        assert return_code == 0
+    else:
+        meta = MetadataFactory(
+            ArchiveId("qt", "windows", "desktop"),
+            modules_query=ModulesQuery("5.14.0", "win32_mingw73"),
+            is_long_listing=True,
+        )
+        show_list(meta)
     out, err = capsys.readouterr()
     sys.stdout.write(out)
     sys.stderr.write(err)

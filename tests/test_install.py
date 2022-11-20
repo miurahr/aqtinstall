@@ -77,7 +77,7 @@ LIST_OF_FILES_AND_CONTENTS = Iterable[Dict[str, str]]
 class PatchedFile:
     filename: str
     unpatched_content: str
-    patched_content: Optional[str]
+    patched_content: Optional[str] = None  # When None, the file is expected not to be patched.
 
     def expected_content(self, **kwargs) -> str:
         if not self.patched_content:
@@ -345,6 +345,41 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"In the future, please use the command 'install-qt' instead.\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win32_mingw73.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (  # Mixing --modules with --archives
+            "install-qt windows desktop 5.14.0 win32_mingw73 -m qtcharts --archives qtbase".split(),
+            "windows",
+            "desktop",
+            "5.14.0",
+            {"std": "win32_mingw73"},
+            {"std": "mingw73_32"},
+            {"std": "windows_x86/desktop/qt5_5140/Updates.xml"},
+            {
+                "std": [
+                    plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73"),
+                    MockArchive(
+                        filename_7z=f"qtcharts-windows-win32_mingw73.7z",
+                        update_xml_name="qt.qt5.5140.qtcharts.win32_mingw73",
+                        contents=(PatchedFile(filename="lib/qtcharts.h", unpatched_content="... charts ...\n"),),
+                        should_install=True,
+                    ),
+                    MockArchive(
+                        filename_7z=f"qtlottie-windows-win32_mingw73.7z",
+                        update_xml_name="qt.qt5.5140.qtlottie.win32_mingw73",
+                        contents=(PatchedFile(filename="lib/qtlottie.h", unpatched_content="... lottie ...\n"),),
+                        should_install=False,
+                    ),
+                ]
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win32_mingw73.7z in .*\n"
+                r"INFO    : Downloading qtcharts...\n"
+                r"Finished installation of qtcharts-windows-win32_mingw73.7z in .*\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
