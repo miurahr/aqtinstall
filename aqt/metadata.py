@@ -635,7 +635,7 @@ class MetadataFactory:
             return None
 
         # Remove items that don't conform to simple_spec
-        tools_versions = list(filter(lambda tool_item: tool_item[2] in simple_spec, tools_versions))
+        tools_versions = [tool_item for tool_item in tools_versions if tool_item[2] in simple_spec]
 
         try:
             # Return the conforming item with the highest version.
@@ -897,7 +897,7 @@ class MetadataFactory:
             return "gcc_64"
         elif self.archive_id.host == "mac":
             return "clang_64"
-        arches = list(filter(lambda arch: QtRepoProperty.MINGW_ARCH_PATTERN.match(arch), self.fetch_arches(version)))
+        arches = [arch for arch in self.fetch_arches(version) if QtRepoProperty.MINGW_ARCH_PATTERN.match(arch)]
         selected_arch = QtRepoProperty.select_default_mingw(arches, is_dir=False)
         if not selected_arch:
             raise EmptyMetadata("No default desktop architecture available")

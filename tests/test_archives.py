@@ -207,7 +207,10 @@ def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fai
         return
 
     expect_json = json.loads((Path(__file__).parent / "data" / f"{datafile}-expect.json").read_text("utf-8"))
-    expect = next(filter(lambda x: x["Name"] == tool_variant_name, expect_json["variants_metadata"]))
+    try:
+        expect = next(x for x in expect_json["variants_metadata"] if x["Name"] == tool_variant_name)
+    except StopIteration:
+        raise Exception("Wrong test data.")
     expected_7z_files = set(expect["DownloadableArchives"])
     qt_pkgs = ToolArchives(host, target, tool_name, base, arch=tool_variant_name).archives
     url_begin = f"online/qtsdkrepository/mac_x64/{target}/{tool_name}"
