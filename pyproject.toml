@@ -28,8 +28,9 @@ dependencies = [
     "patch>=1.16",
     "py7zr>=0.20.2",
     "requests>2.20.0",
-    "semantic_version",
+    "semantic-version",
     "texttable",
+    "typed-argparse",
 ]
 dynamic = ["version", "readme"]
 
@@ -123,11 +124,11 @@ ensure_newline_before_comments = true
 
 [tool.mypy]
 # Untyped definitions and calls are disable in default
-check_untyped_defs = false
+check_untyped_defs = true
 disallow_incomplete_defs = false
 disallow_untyped_calls = false
 disallow_untyped_defs = false
-disallow_untyped_decorators = false
+disallow_untyped_decorators = true
 # not a all 3rd party package has type hints
 ignore_missing_imports = true
 # Optional check: implicit check enabled in mypy 0.980 or before

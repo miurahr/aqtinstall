@@ -60,6 +60,7 @@ from aqt.helper import (
 )
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
 from aqt.updater import Updater, dir_for_version
+from typed_argparse import Choices, TypedArgs
 
 try:
     import py7zr
@@ -69,9 +70,17 @@ except ImportError:
     EXT7Z = True
 
 
-class ListArgumentParser(argparse.ArgumentParser):
+class BaseArgumentParser(TypedArgs):
+    """Global options and tricks for ArgumentParser"""
 
-    arch: str
+    config: Optional[str]
+    func: object
+
+
+class ListArgumentParser(BaseArgumentParser):
+    """List-* command parser arguments and options"""
+
+    arch: Optional[str]  # arch is optional in legacy command
     archives: List[str]
     extension: str
     extensions: str
@@ -84,11 +93,18 @@ class ListArgumentParser(argparse.ArgumentParser):
     qt_version_spec: str
     spec: str
     target: str
+
+
+class ListToolArgumentParser(ListArgumentParser):
+    """List-tool command parser and options"""
+
     tool_name: str
     tool_version: str
 
 
-class CommonInstallArgParser(argparse.ArgumentParser):
+class CommonInstallArgParser(BaseArgumentParser):
+    """Install-*/install arguments"""
+
     is_legacy: bool
     target: str
     host: str
@@ -103,7 +119,9 @@ class CommonInstallArgParser(argparse.ArgumentParser):
 
 
 class InstallArgParser(CommonInstallArgParser):
-    arch: Optional[str]
+    """Install-qt arguments and options"""
+
+    arch: str
     qt_version: str
     qt_version_spec: str
 
@@ -114,6 +132,8 @@ class InstallArgParser(CommonInstallArgParser):
 
 
 class InstallToolArgParser(CommonInstallArgParser):
+    """Install-tool arguments and options"""
+
     tool_name: str
     version: Optional[str]
     tool_variant: Optional[str]
@@ -127,7 +147,7 @@ class Cli:
     UNHANDLED_EXCEPTION_CODE = 254
 
     def __init__(self):
-        parser = ListArgumentParser(
+        parser = argparse.ArgumentParser(
             prog="aqt",
             description="Another unofficial Qt Installer.\naqt helps you install Qt SDK, tools, examples and others\n",
             formatter_class=argparse.RawTextHelpFormatter,
@@ -615,7 +635,7 @@ class Cli:
         )
         show_list(meta)
 
-    def run_list_tool(self, args: ListArgumentParser):
+    def run_list_tool(self, args: ListToolArgumentParser):
         """Print tools"""
 
         if not args.target:
@@ -696,12 +716,12 @@ class Cli:
 
     def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
         install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
-        install_tool_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        install_tool_parser.add_argument("host", choices=Choices("linux", "mac", "windows"), help="host os name")
         if not is_legacy:
             install_tool_parser.add_argument(
                 "target",
                 default=None,
-                choices=["desktop", "winrt", "android", "ios"],
+                choices=Choices("desktop", "winrt", "android", "ios"),
                 help="Target SDK.",
             )
         install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
@@ -753,7 +773,7 @@ class Cli:
 
         def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
             parser = subparsers.add_parser(cmd, description=desc)
-            parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+            parser.add_argument("host", choices=Choices("linux", "mac", "windows"), help="host os name")
             parser.add_argument(
                 "qt_version_spec",
                 metavar="(VERSION | SPECIFICATION)",
@@ -801,17 +821,19 @@ class Cli:
             "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
             "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n",
         )
-        list_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        list_parser.add_argument("host", choices=Choices("linux", "mac", "windows"), help="host os name")
         list_parser.add_argument(
             "target",
             nargs="?",
             default=None,
-            choices=["desktop", "winrt", "android", "ios"],
+            choices=Choices("desktop", "winrt", "android", "ios"),
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
         list_parser.add_argument(
             "--extension",
-            choices=ArchiveId.ALL_EXTENSIONS,
+            choices=Choices(
+                "src_doc_examples", "x86_64", "wasm", "x86", "armv7", "arm64_v8a"
+            ),  # same as ArchiveId.ALL_EXTENSIONS
             help="Deprecated since aqt v3.1.0. Use of this flag will emit a warning, but will otherwise be ignored.",
         )
         list_parser.add_argument(
@@ -885,12 +907,12 @@ class Cli:
             "$ aqt list-tool mac desktop -l tools_ifw    # print tool variant names with metadata for QtIFW\n"
             "$ aqt list-tool mac desktop -l ifw          # print tool variant names with metadata for QtIFW\n",
         )
-        list_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        list_parser.add_argument("host", choices=Choices("linux", "mac", "windows"), help="host os name")
         list_parser.add_argument(
             "target",
             nargs="?",
             default=None,
-            choices=["desktop", "winrt", "android", "ios"],
+            choices=Choices("desktop", "winrt", "android", "ios"),
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
         list_parser.add_argument(
@@ -972,17 +994,17 @@ class Cli:
         """
         if is_legacy:
             subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
-        subparser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
+        subparser.add_argument("host", choices=Choices("linux", "mac", "windows"), help="host os name")
         if is_target_deprecated:
             subparser.add_argument(
                 "target",
-                choices=["desktop", "winrt", "android", "ios"],
+                choices=Choices("desktop", "winrt", "android", "ios"),
                 nargs="?",
                 help="Ignored. This parameter is deprecated and marked for removal in a future release. "
                 "It is present here for backwards compatibility.",
             )
         else:
-            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
+            subparser.add_argument("target", choices=Choices("desktop", "winrt", "android", "ios"), help="target sdk")
         if not is_legacy:
             subparser.add_argument(
                 "qt_version_spec",
