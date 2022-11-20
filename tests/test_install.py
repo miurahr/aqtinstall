@@ -361,13 +361,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 "std": [
                     plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73"),
                     MockArchive(
-                        filename_7z=f"qtcharts-windows-win32_mingw73.7z",
+                        filename_7z="qtcharts-windows-win32_mingw73.7z",
                         update_xml_name="qt.qt5.5140.qtcharts.win32_mingw73",
                         contents=(PatchedFile(filename="lib/qtcharts.h", unpatched_content="... charts ...\n"),),
                         should_install=True,
                     ),
                     MockArchive(
-                        filename_7z=f"qtlottie-windows-win32_mingw73.7z",
+                        filename_7z="qtlottie-windows-win32_mingw73.7z",
                         update_xml_name="qt.qt5.5140.qtlottie.win32_mingw73",
                         contents=(PatchedFile(filename="lib/qtlottie.h", unpatched_content="... lottie ...\n"),),
                         should_install=False,
