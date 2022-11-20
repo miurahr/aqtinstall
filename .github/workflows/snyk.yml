@@ -7,6 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      - run: |
+          pip install .[test,check]
+          pip freeze
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/python@master
         continue-on-error: true # To make sure that SARIF upload gets called
