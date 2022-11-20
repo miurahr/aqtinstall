@@ -239,13 +239,10 @@ def altlink(url: str, alt: str) -> str:
         else:
             # Return first priority item which is not blacklist in mirrors list,
             # if not found then return alt in default
-            return next(
-                filter(
-                    lambda mirror: not any(mirror.startswith(b) for b in Settings.blacklist),
-                    mirrors,
-                ),
-                alt,
-            )
+            try:
+                return next(mirror for mirror in mirrors if not any(mirror.startswith(b) for b in Settings.blacklist))
+            except StopIteration:
+                return alt
 
 
 class MyQueueListener(QueueListener):

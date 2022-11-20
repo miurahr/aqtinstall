@@ -23,7 +23,7 @@ import posixpath
 from dataclasses import dataclass, field
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Tuple
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element  # noqa
 
 from defusedxml import ElementTree
 

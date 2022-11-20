@@ -310,7 +310,7 @@ def test_list_archives(
     else:
         expected_mod_metadata = expect["modules_metadata_by_arch"][arch]
         if "all" not in modules_to_query:
-            expected_mod_metadata = filter(lambda mod: mod["Name"].split(".")[-2] in modules_to_query, expected_mod_metadata)
+            expected_mod_metadata = [mod for mod in expected_mod_metadata if mod["Name"].split(".")[-2] in modules_to_query]
         expected = set([arc.split("-")[0] for mod in expected_mod_metadata for arc in mod["DownloadableArchives"]])
 
     archives_query = [version, arch, *modules_to_query]

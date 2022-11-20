@@ -600,8 +600,8 @@ class MetadataFactory:
         versions_extensions = self.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
         )
-        opt_versions = map(lambda _tuple: _tuple[0], filter(filter_by, versions_extensions))
-        versions: List[Version] = sorted(filter(None, opt_versions))
+        opt_versions = [_tuple[0] for _tuple in filter(filter_by, versions_extensions)]
+        versions: List[Version] = sorted([x for x in filter(None, opt_versions)])
         iterables = cast(Iterable[Tuple[int, Iterable[Version]]], itertools.groupby(versions, lambda version: version.minor))
         return Versions(iterables)
 
@@ -637,7 +637,7 @@ class MetadataFactory:
             return None
 
         # Remove items that don't conform to simple_spec
-        tools_versions = list(filter(lambda tool_item: tool_item[2] in simple_spec, tools_versions))
+        tools_versions = [tool_item for tool_item in tools_versions if tool_item[2] in simple_spec]
 
         try:
             # Return the conforming item with the highest version.
@@ -899,7 +899,7 @@ class MetadataFactory:
             return "gcc_64"
         elif self.archive_id.host == "mac":
             return "clang_64"
-        arches = list(filter(lambda arch: QtRepoProperty.MINGW_ARCH_PATTERN.match(arch), self.fetch_arches(version)))
+        arches = [arch for arch in self.fetch_arches(version) if QtRepoProperty.MINGW_ARCH_PATTERN.match(arch)]
         selected_arch = QtRepoProperty.select_default_mingw(arches, is_dir=False)
         if not selected_arch:
             raise EmptyMetadata("No default desktop architecture available")

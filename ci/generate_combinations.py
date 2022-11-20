@@ -3,6 +3,7 @@
 import argparse
 import json
 import logging
+import sys
 from pathlib import Path
 from typing import Dict, Generator, Iterable, List, Optional, Tuple, Union
 
@@ -206,6 +207,6 @@ if __name__ == "__main__":
 
     tqdm = get_tqdm(args.no_tqdm)
 
-    exit(
+    sys.exit(
         main(filename=json_filename, is_write_file=args.write, is_verbose=args.verbose)
     )
