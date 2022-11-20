@@ -607,8 +607,8 @@ class Cli:
             modules_query = MetadataFactory.ModulesQuery(args.modules[0], args.modules[1])
             modules_ver, is_long = args.modules[0], False
         elif args.long_modules:
-            assert len(args.modules) == 2, "broken argument parser for list-qt"
-            modules_query = MetadataFactory.ModulesQuery(args.modules[0], args.modules[1])
+            assert len(args.long_modules) == 2, "broken argument parser for list-qt"
+            modules_query = MetadataFactory.ModulesQuery(args.long_modules[0], args.long_modules[1])
             modules_ver, is_long = args.long_modules[0], True
         else:
             modules_ver, modules_query, is_long = None, None, False
