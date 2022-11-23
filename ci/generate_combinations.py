@@ -5,7 +5,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, Generator, Iterable, List, Optional, Tuple, Union
+from typing import Dict, Generator, Iterable, List, Optional, Tuple, Union, NamedTuple
 
 from jsoncomparison import NO_DIFF, Compare
 
@@ -85,7 +85,7 @@ def iter_modules_for_qt_minor_groups(
         yield {
             "qt_version": f"{major}.{minor}",
             "modules": MetadataFactory(
-                ArchiveId("qt", host, target), modules_query=(f"{major}.{minor}.0", arch)
+                ArchiveId("qt", host, target), modules_query=MetadataFactory.ModulesQuery(f"{major}.{minor}.0", arch)
             ).getList(),
         }
 
