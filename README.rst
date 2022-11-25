@@ -4,7 +4,7 @@ Another Qt installer(aqt)
 - Release: |pypi|
 - Documentation: |docs|
 - Test status: |gha| and Coverage: |coveralls|
-- Project maturity |Package health| 
+- Project maturity |Package health|
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
@@ -142,7 +142,7 @@ When you decide to install Qt SDK version 6.2.0 for mingw v8.1:
 .. code-block:: console
 
     aqt install-qt windows desktop 6.2.0 win64_mingw81 -m all
- 
+
 The optional `-m all` argument installs all the modules available for Qt 6.2.0; you can leave it off if you don't want those modules.
 
 To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use this command (note that the module names are lowercase):
@@ -206,7 +206,7 @@ Some projects utilize aqtinstall, and there are several articles and discussions
 * Qt Study group presentation: `Another Qt CLI installer`_
 
 
-.. _`Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
+.. _`Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`: https://mindflakes.com/posts/2019/06/02/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
 .. _`Using Azure DevOps Pipelines with Qt`: https://lostdomain.org/2019/12/27/using-azure-devops-pipelines-with-qt/
 .. _`Using Azure CI for cross-platform Linux and Windows Qt application builds`: https://www.wincak.name/programming/using-azure-ci-for-cross-platform-linux-and-windows-qt-application-builds/
 .. _`Automatic installation for Travis CI (or any other CI)`: https://forum.qt.io/topic/114520/automatic-installation-for-travis-ci-or-any-other-ci/2
