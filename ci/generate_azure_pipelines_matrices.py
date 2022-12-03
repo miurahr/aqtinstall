@@ -296,17 +296,24 @@ mac_build_jobs.extend(
     [
         BuildJob("install-qt", "6.4.0", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=True),
         BuildJob("install-qt", "6.2.4", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=False),
+        BuildJob("install-qt", "6.4.1", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
         BuildJob("install-qt", "6.1.0", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
     ]
 )
 linux_build_jobs.extend(
-    [BuildJob("install-qt", "6.1.0", "linux", "android", "android_armv7", "android_armv7", is_autodesktop=True)]
+    [
+        BuildJob("install-qt", "6.1.0", "linux", "android", "android_armv7", "android_armv7", is_autodesktop=True),
+        BuildJob("install-qt", "6.4.1", "linux", "android", "android_arm64_v8a", "android_arm64_v8a", is_autodesktop=True),
+    ]
 )
 
 # Qt 6.3.0 for Windows-Android has win64_mingw available, but not win64_mingw81.
 # This will test that the path to mingw is not hardcoded.
 windows_build_jobs.extend(
-    [BuildJob("install-qt", "6.3.0", "windows", "android", "android_armv7", "android_armv7", is_autodesktop=True)]
+    [
+        BuildJob("install-qt", "6.3.0", "windows", "android", "android_armv7", "android_armv7", is_autodesktop=True),
+        BuildJob("install-qt", "6.4.1", "windows", "android", "android_x86_64", "android_x86_64", is_autodesktop=True),
+    ]
 )
 
 # Test binary patch of qmake
