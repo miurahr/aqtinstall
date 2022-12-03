@@ -23,7 +23,7 @@ import os
 import subprocess
 from logging import getLogger
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Union
 
 import patch
 
@@ -35,8 +35,8 @@ from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec,
 dir_for_version = QtRepoProperty.dir_for_version
 
 
-def unpatched_path(os_name: str, final_component: str) -> str:
-    return ("/home/qt/work/install" if os_name == "linux" else "/Users/qt/work/install") + "/" + final_component
+def unpatched_paths() -> List[str]:
+    return ["/home/qt/work/install", "/Users/qt/work/install"]
 
 
 class Updater:
@@ -69,10 +69,14 @@ class Updater:
         file.write_text(data, "UTF-8")
         os.chmod(str(file), st.st_mode)
 
-    def _patch_textfile(self, file: Path, old: str, new: str):
+    def _patch_textfile(self, file: Path, old: Union[str, List[str]], new: str):
         st = file.stat()
         data = file.read_text("UTF-8")
-        data = data.replace(old, new)
+        if isinstance(old, str):
+            data = data.replace(old, new)
+        else:
+            for old_str in old:
+                data = data.replace(old_str, new)
         file.write_text(data, "UTF-8")
         os.chmod(str(file), st.st_mode)
 
@@ -171,7 +175,7 @@ class Updater:
     def patch_qmake_script(self, base_dir, qt_version: str, os_name: str, desktop_arch_dir: str):
         sep = "\\" if os_name == "windows" else "/"
         patched = sep.join([base_dir, qt_version, desktop_arch_dir, "bin"])
-        unpatched = unpatched_path(os_name, "bin")
+        unpatched = [f"{p}/bin" for p in unpatched_paths()]
         qmake_path = self.prefix / "bin" / ("qmake.bat" if os_name == "windows" else "qmake")
         self.logger.info(f"Patching {qmake_path}")
         self._patch_textfile(qmake_path, unpatched, patched)
@@ -226,11 +230,11 @@ class Updater:
 
     def patch_target_qt_conf(self, base_dir: str, qt_version: str, arch_dir: str, os_name: str, desktop_arch_dir: str):
         target_qt_conf = self.prefix / "bin" / "target_qt.conf"
-        old_targetprefix = f'Prefix={unpatched_path(os_name, "target")}'
+        old_targetprefixes = [f"Prefix={p}/target" for p in unpatched_paths()]
         new_hostprefix = f"HostPrefix=../../{desktop_arch_dir}"
         new_targetprefix = "Prefix={}".format(str(Path(base_dir).joinpath(qt_version, arch_dir, "target")))
         new_hostdata = "HostData=../{}".format(arch_dir)
-        self._patch_textfile(target_qt_conf, old_targetprefix, new_targetprefix)
+        self._patch_textfile(target_qt_conf, old_targetprefixes, new_targetprefix)
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
