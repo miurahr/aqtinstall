@@ -154,10 +154,12 @@ steps:
       if [[ "$(Agent.OS)" == "Linux" ]]; then
         wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
         unzip android-ndk-r21e-linux-x86_64.zip
+        export ANDROID_NDK_HOST="linux-x86_64"
       fi
       if [[ "$(Agent.OS)" == "Darwin" ]]; then
         wget https://dl.google.com/android/repository/android-ndk-r21e-darwin-x86_64.zip
         unzip android-ndk-r21e-darwin-x86_64.zip
+        export ANDROID_NDK_HOST="darwin-x86_64"
       fi
       export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r21e
       mkdir $(Build.BinariesDirectory)/tests
