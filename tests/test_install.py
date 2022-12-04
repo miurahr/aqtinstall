@@ -690,9 +690,9 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"WARNING : You are installing the android version of Qt, which requires that the desktop version of "
                 r"Qt is also installed. You can install it with the following command:\n"
                 r"          `aqt install-qt linux desktop 6\.4\.1 gcc_64`\n"
-                r"INFO    : Downloading qtbase...\n"
+                r"INFO    : Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-MacOS-MacOS_12-Clang-Android-Android_ANY-ARM64\.7z in .*\n"
-                r"INFO    : Patching .*6\.4\.1/android_arm64_v8a/bin/qmake\n"
+                r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
