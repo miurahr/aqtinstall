@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import logging
 import os
+import stat
 import subprocess
 from logging import getLogger
 from pathlib import Path
@@ -69,8 +70,9 @@ class Updater:
         file.write_text(data, "UTF-8")
         os.chmod(str(file), st.st_mode)
 
-    def _patch_textfile(self, file: Path, old: Union[str, List[str]], new: str):
+    def _patch_textfile(self, file: Path, old: Union[str, List[str]], new: str, *, is_executable: bool = False):
         st = file.stat()
+        file_mode = st.st_mode | (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH if is_executable else 0)
         data = file.read_text("UTF-8")
         if isinstance(old, str):
             data = data.replace(old, new)
@@ -78,7 +80,7 @@ class Updater:
             for old_str in old:
                 data = data.replace(old_str, new)
         file.write_text(data, "UTF-8")
-        os.chmod(str(file), st.st_mode)
+        os.chmod(str(file), file_mode)
 
     def _detect_qmake(self) -> bool:
         """detect Qt configurations from qmake."""
@@ -178,7 +180,7 @@ class Updater:
         unpatched = [f"{p}/bin" for p in unpatched_paths()]
         qmake_path = self.prefix / "bin" / ("qmake.bat" if os_name == "windows" else "qmake")
         self.logger.info(f"Patching {qmake_path}")
-        self._patch_textfile(qmake_path, unpatched, patched)
+        self._patch_textfile(qmake_path, unpatched, patched, is_executable=True)
 
     def patch_qtcore(self, target):
         """patch to QtCore"""

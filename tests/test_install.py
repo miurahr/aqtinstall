@@ -1001,6 +1001,8 @@ def test_install(
                 for patched_file in archive.contents:
                     file_path = installed_path / patched_file.filename
                     assert file_path.is_file()
+                    if file_path.name == "qmake":
+                        assert os.access(file_path, os.X_OK), "qmake file must be executable"
 
                     expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
                     actual_content = file_path.read_text(encoding="utf_8")
