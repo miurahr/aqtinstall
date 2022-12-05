@@ -13,6 +13,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.0`_ (5, Dec. 2022)
+========================
+
+Fixed
+-----
+* Support Qt 6.4.1 Android installation (#621,#626,#627)
+* Fix URL of Nelson's blog on README
+
 Changed
 -------
 * Update pyproject.toml and drop setup.cfg
@@ -23,6 +31,12 @@ Changed
    - flake8-isort>=4.2.0
 * metadata: change link to changelog
 * docs: move CHANGELOG.rst into docs/
+* Refactoring internals and now check types with mypy
+
+Deprecated
+----------
+* Drop support for python 3.6
+
 
 `v3.0.2`_ (26, Oct. 2022)
 =========================
@@ -155,7 +169,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.0...HEAD
+.. _v3.1.0: https://github.com/miurahr/aqtinstall/compare/v3.0.2...v3.1.0
 .. _v3.0.2: https://github.com/miurahr/aqtinstall/compare/v3.0.1...v3.0.2
 .. _v3.0.1: https://github.com/miurahr/aqtinstall/compare/v3.0.0...v3.0.1
 .. _v3.0.0: https://github.com/miurahr/aqtinstall/compare/v2.2.3...v3.0.0
