@@ -662,13 +662,26 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "... blah blah blah ...\n",
                             ),
                             PatchedFile(
+                                filename="mkspecs/qdevice.pri",
+                                unpatched_content="blah blah blah...\n"
+                                "DEFAULT_ANDROID_NDK_HOST = mac-x86_64\n"
+                                "blah blah blah...\n",
+                                patched_content="blah blah blah...\n"
+                                "DEFAULT_ANDROID_NDK_HOST = linux-x86_64\n"
+                                "blah blah blah...\n",
+                            ),
+                            PatchedFile(
                                 filename="bin/target_qt.conf",
                                 unpatched_content="Prefix=/Users/qt/work/install/target\n"
                                 "HostPrefix=../../\n"
-                                "HostData=target\n",
+                                "HostData=target\n"
+                                "HostLibraryExecutables=./bin\n"
+                                "HostLibraryExecutables=./libexec\n",
                                 patched_content="Prefix={base_dir}{sep}6.4.1{sep}android_arm64_v8a{sep}target\n"
                                 "HostPrefix=../../gcc_64\n"
-                                "HostData=../android_arm64_v8a\n",
+                                "HostData=../android_arm64_v8a\n"
+                                "HostLibraryExecutables=./libexec\n"
+                                "HostLibraryExecutables=./libexec\n",
                             ),
                             PatchedFile(
                                 filename="bin/qmake",

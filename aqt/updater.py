@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import logging
 import os
+import re
 import stat
 import subprocess
 from logging import getLogger
@@ -70,15 +71,14 @@ class Updater:
         file.write_text(data, "UTF-8")
         os.chmod(str(file), st.st_mode)
 
-    def _patch_textfile(self, file: Path, old: Union[str, List[str]], new: str, *, is_executable: bool = False):
+    def _patch_textfile(self, file: Path, old: Union[str, re.Pattern], new: str, *, is_executable: bool = False):
         st = file.stat()
         file_mode = st.st_mode | (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH if is_executable else 0)
         data = file.read_text("UTF-8")
-        if isinstance(old, str):
-            data = data.replace(old, new)
+        if isinstance(old, re.Pattern):
+            data = old.sub(new, data)
         else:
-            for old_str in old:
-                data = data.replace(old_str, new)
+            data = data.replace(old, new)
         file.write_text(data, "UTF-8")
         os.chmod(str(file), file_mode)
 
@@ -177,10 +177,10 @@ class Updater:
     def patch_qmake_script(self, base_dir, qt_version: str, os_name: str, desktop_arch_dir: str):
         sep = "\\" if os_name == "windows" else "/"
         patched = sep.join([base_dir, qt_version, desktop_arch_dir, "bin"])
-        unpatched = [f"{p}/bin" for p in unpatched_paths()]
         qmake_path = self.prefix / "bin" / ("qmake.bat" if os_name == "windows" else "qmake")
         self.logger.info(f"Patching {qmake_path}")
-        self._patch_textfile(qmake_path, unpatched, patched, is_executable=True)
+        for unpatched in unpatched_paths():
+            self._patch_textfile(qmake_path, f"{unpatched}/bin", patched, is_executable=True)
 
     def patch_qtcore(self, target):
         """patch to QtCore"""
@@ -232,13 +232,28 @@ class Updater:
 
     def patch_target_qt_conf(self, base_dir: str, qt_version: str, arch_dir: str, os_name: str, desktop_arch_dir: str):
         target_qt_conf = self.prefix / "bin" / "target_qt.conf"
-        old_targetprefixes = [f"Prefix={p}/target" for p in unpatched_paths()]
         new_hostprefix = f"HostPrefix=../../{desktop_arch_dir}"
         new_targetprefix = "Prefix={}".format(str(Path(base_dir).joinpath(qt_version, arch_dir, "target")))
         new_hostdata = "HostData=../{}".format(arch_dir)
-        self._patch_textfile(target_qt_conf, old_targetprefixes, new_targetprefix)
+        new_host_lib_execs = "./bin" if os_name == "windows" else "./libexec"
+        old_host_lib_execs = re.compile(r"^HostLibraryExecutables=[^\n]*$", flags=re.MULTILINE)
+
+        self._patch_textfile(target_qt_conf, old_host_lib_execs, f"HostLibraryExecutables={new_host_lib_execs}")
+        for unpatched in unpatched_paths():
+            self._patch_textfile(target_qt_conf, f"Prefix={unpatched}/target", new_targetprefix)
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
+
+    def patch_qdevice_file(self, base_dir: str, qt_version: str, arch_dir: str, os_name: str):
+        """Qt 6.4.1+ specific, but it should not hurt anything if `mkspecs/qdevice.pri` does not exist"""
+
+        qdevice = Path(base_dir) / qt_version / arch_dir / "mkspecs/qdevice.pri"
+        if not qdevice.exists():
+            return
+
+        old_line = re.compile(r"^DEFAULT_ANDROID_NDK_HOST =[^\n]*$", flags=re.MULTILINE)
+        new_line = f"DEFAULT_ANDROID_NDK_HOST = {'darwin' if os_name == 'mac' else os_name}-x86_64"
+        self._patch_textfile(qdevice, old_line, new_line)
 
     @classmethod
     def update(cls, target: TargetConfig, base_path: Path, installed_desktop_arch_dir: Optional[str]):
@@ -296,6 +311,7 @@ class Updater:
 
                 updater.patch_qmake_script(base_dir, version_dir, target.os_name, desktop_arch_dir)
                 updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name, desktop_arch_dir)
+                updater.patch_qdevice_file(base_dir, version_dir, arch_dir, target.os_name)
         except IOError as e:
             raise UpdaterError(f"Updater caused an IO error: {e}") from e
 
