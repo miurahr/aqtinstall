@@ -636,6 +636,81 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ),
         ),
         (
+            "install-qt linux android 6.4.1 android_arm64_v8a".split(),
+            "linux",
+            "android",
+            "6.4.1",
+            {"std": "android_arm64_v8a"},
+            {"std": "android_arm64_v8a"},
+            {"std": "linux_x64/android/qt6_641_arm64_v8a/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-MacOS-MacOS_12-Clang-Android-Android_ANY-ARM64.7z",
+                        update_xml_name="qt.qt6.641.android_arm64_v8a",
+                        contents=(
+                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="mkspecs/qdevice.pri",
+                                unpatched_content="blah blah blah...\n"
+                                "DEFAULT_ANDROID_NDK_HOST = mac-x86_64\n"
+                                "blah blah blah...\n",
+                                patched_content="blah blah blah...\n"
+                                "DEFAULT_ANDROID_NDK_HOST = linux-x86_64\n"
+                                "blah blah blah...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/Users/qt/work/install/target\n"
+                                "HostPrefix=../../\n"
+                                "HostData=target\n"
+                                "HostLibraryExecutables=./bin\n"
+                                "HostLibraryExecutables=./libexec\n",
+                                patched_content="Prefix={base_dir}{sep}6.4.1{sep}android_arm64_v8a{sep}target\n"
+                                "HostPrefix=../../gcc_64\n"
+                                "HostData=../android_arm64_v8a\n"
+                                "HostLibraryExecutables=./libexec\n"
+                                "HostLibraryExecutables=./libexec\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/home/qt/work/install/bin\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.4.1/gcc_64/bin\n"
+                                "{base_dir}/6.4.1/gcc_64/bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                        ),
+                    ),
+                ]
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING : You are installing the android version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt linux desktop 6\.4\.1 gcc_64`\n"
+                r"INFO    : Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-MacOS-MacOS_12-Clang-Android-Android_ANY-ARM64\.7z in .*\n"
+                r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (
             "install-qt linux android 6.3.0 android_arm64_v8a".split(),
             "linux",
             "android",
@@ -939,6 +1014,8 @@ def test_install(
                 for patched_file in archive.contents:
                     file_path = installed_path / patched_file.filename
                     assert file_path.is_file()
+                    if file_path.name == "qmake":
+                        assert os.access(file_path, os.X_OK), "qmake file must be executable"
 
                     expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
                     actual_content = file_path.read_text(encoding="utf_8")
