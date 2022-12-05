@@ -27,6 +27,7 @@ import os
 import posixpath
 import secrets
 import sys
+import threading
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
@@ -321,13 +322,30 @@ class SettingsClass:
     """
     Class to hold configuration and settings.
     Actual values are stored in 'settings.ini' file.
-    It also holds a combinations database.
+    It also holds a `combinations` database.
     """
 
+    # this class is Borg
+    _shared_state: Dict[str, Any] = {
+        "config": None,
+        "configfile": None,
+        "loggingconf": None,
+        "_combinations": None,
+        "_lock": threading.Lock(),
+    }
+
+    def __new__(cls, *p, **k):
+        self = object.__new__(cls, *p, **k)
+        self.__dict__ = cls._shared_state
+        return self
+
     def __init__(self):
-        self.config = MyConfigParser()
-        self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
-        self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
+        if self.config is None:
+            with self._lock:
+                if self.config is None:
+                    self.config = MyConfigParser()
+                    self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
+                    self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
 
     def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
         with open(
@@ -478,6 +496,5 @@ Settings = SettingsClass()
 def setup_logging(env_key="LOG_CFG"):
     config = os.getenv(env_key, None)
     if config is not None and os.path.exists(config):
-        logging.config.fileConfig(config)
-    else:
-        logging.config.fileConfig(Settings.loggingconf)
+        Settings.loggingconf = config
+    logging.config.fileConfig(Settings.loggingconf)
