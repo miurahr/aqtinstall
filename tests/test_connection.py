@@ -37,9 +37,9 @@ def test_cli_unknown_version(capsys):
     """
 
     matcher = re.compile(
-        r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
-        r".*Specified Qt version is unknown: " + re.escape(wrong_version) + r"\.\n"
-        r".*Failed to locate XML data for Qt version '" + re.escape(wrong_version) + r"'\.\n"
+        r"^(INFO {4}: )?aqtinstall\(aqt\) v.* on Python 3.*\n"
+        r"(WARNING : )?.*Specified Qt version is unknown: " + re.escape(wrong_version) + r"\.\n"
+        r"(ERROR {3}: )?.*Failed to locate XML data for Qt version '" + re.escape(wrong_version) + r"'\.\n"
         r"==============================Suggested follow-up:==============================\n"
         r"\* Please use 'aqt list-qt mac desktop' to show versions available\.\n",
     )
