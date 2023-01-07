@@ -22,7 +22,7 @@
 import posixpath
 from dataclasses import dataclass, field
 from logging import getLogger
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Set, Tuple
 from xml.etree.ElementTree import Element  # noqa
 
 from defusedxml import ElementTree
@@ -293,7 +293,7 @@ class QtArchives:
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
         self.subarchives: Optional[Iterable[str]] = subarchives
-        self.mod_list: Iterable[str] = modules or []
+        self.mod_list: Set[str] = set(modules or [])
         self.is_include_base_package: bool = is_include_base_package
         self.timeout = timeout
         try:

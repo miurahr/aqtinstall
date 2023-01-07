@@ -575,6 +575,30 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
+        (  # Duplicates in the modules list
+            "install-qt windows desktop 6.1.0 win64_mingw81 -m qtcharts qtcharts qtcharts".split(),
+            "windows",
+            "desktop",
+            "6.1.0",
+            {"std": "win64_mingw81"},
+            {"std": "mingw81_64"},
+            {"std": "windows_x86/desktop/qt6_610/Updates.xml"},
+            {
+                "std": [
+                    plain_qtbase_archive("qt.qt6.610.win64_mingw81", "win64_mingw81"),
+                    qtcharts_module("6.1.0", "win64_mingw81"),
+                ]
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win64_mingw81.7z in .*\n"
+                r"INFO    : Downloading qtcharts...\n"
+                r"Finished installation of qtcharts-windows-win64_mingw81.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
         (
             "install-qt windows android 6.1.0 android_armv7".split(),
             "windows",
