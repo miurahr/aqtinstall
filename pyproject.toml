@@ -139,9 +139,9 @@ isolated_build = True
 
 [testenv]
 passenv =
-    GITHUB_*
-    APPVEYOR APPVEYOR_*
-    TRAVIS TRAVIS_*
+    GITHUB*
+    APPVEYOR*
+    TRAVIS*
     COVERALLS_*
     PYTEST_ADDOPTS
 extras = test, check, docs
