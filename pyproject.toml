@@ -42,7 +42,7 @@ aqt = "aqt.__main__:main"
 test = [
     "pytest>=6.0",
     "pytest-pep8",
-    "pytest-remotedata",
+    "pytest-remotedata<0.4.0",
     "pytest-cov",
     "pytest-socket",
     "pytest-leaks",
@@ -170,7 +170,7 @@ commands =
 deps =
     pytest
     pytest-leaks
-    pytest-remotedata
+    pytest-remotedata<0.4.0
     pytest-socket
     pytest-cov
 
