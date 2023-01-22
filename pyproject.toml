@@ -49,7 +49,7 @@ aqt = "aqt.__main__:main"
 test = [
     "pytest>=6.0",
     "pytest-pep8",
-    "pytest-remotedata",
+    "pytest-remotedata<0.4.0",
     "pytest-cov",
     "pytest-socket",
     "pytest-leaks",
@@ -177,9 +177,9 @@ isolated_build = True
 
 [testenv]
 passenv =
-    GITHUB_*
-    APPVEYOR APPVEYOR_*
-    TRAVIS TRAVIS_*
+    GITHUB*
+    APPVEYOR*
+    TRAVIS*
     COVERALLS_*
     PYTEST_ADDOPTS
 extras = test, check, docs
@@ -217,7 +217,7 @@ commands =
 deps =
     pytest
     pytest-leaks
-    pytest-remotedata
+    pytest-remotedata<0.4.0
     pytest-socket
     pytest-cov
 
