@@ -245,7 +245,7 @@ Let's install Qt for Android. This will be similar to installing Qt for Desktop 
 
     $ aqt install-qt windows android 6.2.4 android_armv7 -m qtcharts qtnetworkauth   # Install
 
-Please note that when you install Qt for android or ios, the installation will not
+Please note that when you install Qt6 for android or ios, the installation will not
 be functional unless you install the corresponding desktop version of Qt alongside it.
 You can do this automatically with the ``--autodesktop`` flag:
 

@@ -709,7 +709,7 @@ class Cli:
         install_qt_parser.add_argument(
             "--autodesktop",
             action="store_true",
-            help="For android, ios, and Qt6/wasm installations, a standard desktop Qt installation is required. "
+            help="For Qt6 android, ios, and wasm installations, an additional desktop Qt installation is required. "
             "When enabled, this option installs the required desktop version automatically.",
         )
 

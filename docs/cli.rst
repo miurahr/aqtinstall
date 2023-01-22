@@ -545,9 +545,10 @@ There are various combinations to accept according to Qt version.
 
 .. option:: --autodesktop
 
-    If you are installing an ios or android version of Qt, or the WASM version of Qt6,
+    If you are installing an ios or android version of Qt6, or the WASM version of Qt6,
     the corresponding desktop version of Qt must be installed alongside of it.
     Turn this option on to install it automatically.
+    This option will have no effect if you are installing Qt5 or a non-WASM desktop version of Qt6.
 
 .. option:: --noarchives
 
@@ -808,7 +809,14 @@ Example: Installing Android (armv7) Qt 5.13.2:
 
 .. code-block:: console
 
-    aqt install-qt linux android 5.13.2 android_armv7 --autodesktop
+    aqt install-qt linux android 5.13.2 android_armv7
+
+
+Example: Installing Android (armv7) Qt 6.4.2:
+
+.. code-block:: console
+
+    aqt install-qt linux android 6.4.2 android_armv7 --autodesktop
 
 
 Example: Install examples, doc and source:
