@@ -107,6 +107,11 @@ class Updater:
                 return True
         return False
 
+    def patch_prl(self, oldvalue):
+        for prlfile in self.prefix.joinpath("lib").glob("*.prl"):
+            self.logger.info("Patching {}".format(prlfile))
+            self._patch_textfile(prlfile, oldvalue, "$$[QT_INSTALL_LIBS]")
+
     def patch_pkgconfig(self, oldvalue, os_name):
         for pcfile in self.prefix.joinpath("lib", "pkgconfig").glob("*.pc"):
             self.logger.info("Patching {}".format(pcfile))
@@ -300,10 +305,14 @@ class Updater:
                 if target.os_name == "linux":
                     updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
                     updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
+                    updater.patch_prl("/home/qt/work/install/lib")
                 elif target.os_name == "mac":
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
+                    updater.patch_prl("/Users/qt/work/install/lib")
                 elif target.os_name == "windows":
+                    updater.patch_pkgconfig("c:/Users/qt/work/install", target.os_name)
+                    updater.patch_prl("c:/Users/qt/work/install/lib")
                     updater.make_qtenv2(base_dir, version_dir, arch_dir)
                 if version < Version("5.14.0"):
                     updater.patch_qtcore(target)
