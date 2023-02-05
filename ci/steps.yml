@@ -318,8 +318,8 @@ steps:
   ##----------------------------------------------------
   # wasm_32 on linux and mac
   - script: |
-      set -ex
-      git clone https://github.com/emscripten-core/emsdk.git
+      set -uex
+      git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
       cd emsdk
       ./emsdk install $(EMSDK_VERSION)
       ./emsdk activate --embedded $(EMSDK_VERSION)
@@ -347,7 +347,7 @@ steps:
 
   # wasm_32 on Windows cmd.exe
   - powershell: |
-      git clone https://github.com/emscripten-core/emsdk.git
+      git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
       cd emsdk
       .\emsdk install $(EMSDK_VERSION)
       .\emsdk activate --embedded $(EMSDK_VERSION)

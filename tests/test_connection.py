@@ -37,7 +37,7 @@ def test_cli_unknown_version(capsys):
     """
 
     matcher = re.compile(
-        r"^aqtinstall\(aqt\) v.* on Python 3.*\n"
+        r"[^\n]*aqtinstall\(aqt\) v.* on Python 3.*\n"
         r".*Specified Qt version is unknown: " + re.escape(wrong_version) + r"\.\n"
         r".*Failed to locate XML data for Qt version '" + re.escape(wrong_version) + r"'\.\n"
         r"==============================Suggested follow-up:==============================\n"

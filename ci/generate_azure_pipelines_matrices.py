@@ -35,7 +35,7 @@ class BuildJob:
         is_autodesktop: bool = False,
         tool_options: Optional[Dict[str, str]] = None,
         check_output_cmd: Optional[str] = None,
-        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit",
+        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit@3.1.29",
         autodesk_arch_folder: Optional[str] = None,
     ):
         self.command = command
@@ -410,7 +410,8 @@ for platform_build_job in all_platform_build_jobs:
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
                 ("QT_BINDIR", build_job.qt_bindir()),
                 ("WIN_QT_BINDIR", build_job.win_qt_bindir()),
-                ("EMSDK_VERSION", build_job.emsdk_version),
+                ("EMSDK_VERSION", (build_job.emsdk_version+"@main").split('@')[0]),
+                ("EMSDK_TAG",  (build_job.emsdk_version+"@main").split('@')[1]),
                 ("WIN_AUTODESK_QT_BINDIR", build_job.win_autodesk_qt_bindir()),
                 ("TOOL1_ARGS", build_job.tool_options.get("TOOL1_ARGS", "")),
                 ("LIST_TOOL1_CMD", build_job.tool_options.get("LIST_TOOL1_CMD", "")),

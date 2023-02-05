@@ -127,7 +127,6 @@ def mocked_requests_get(*args, **kwargs):
 
 
 def test_helper_downloadBinary_md5(tmp_path, monkeypatch):
-
     monkeypatch.setattr(requests.Session, "get", mocked_requests_get)
 
     expected = binascii.unhexlify("1d41a93e4a585bb01e4518d4af431933")
@@ -136,7 +135,6 @@ def test_helper_downloadBinary_md5(tmp_path, monkeypatch):
 
 
 def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
-
     monkeypatch.setattr(requests.Session, "get", mocked_requests_get)
 
     expected = binascii.unhexlify("07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd")
