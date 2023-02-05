@@ -13,6 +13,16 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.1`_ (10, Feb. 2023)
+=========================
+
+Fixed
+-----
+* CI: Pin EMSDK version (#641)
+* Test: update tox.ini config (#634)
+* Fix errors in install-* caused by duplicate modules (#633)
+
+
 `v3.1.0`_ (5, Dec. 2022)
 ========================
 
@@ -169,7 +179,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.1...HEAD
+.. _v3.1.1: https://github.com/miurahr/aqtinstall/compare/v3.1.0...v3.1.1
 .. _v3.1.0: https://github.com/miurahr/aqtinstall/compare/v3.0.2...v3.1.0
 .. _v3.0.2: https://github.com/miurahr/aqtinstall/compare/v3.0.1...v3.0.2
 .. _v3.0.1: https://github.com/miurahr/aqtinstall/compare/v3.0.0...v3.0.1
