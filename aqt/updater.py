@@ -282,6 +282,8 @@ class Updater:
                 "ios",
                 "android",
                 "wasm_32",
+                "wasm_singlethread",
+                "wasm_multithread",
                 "android_x86_64",
                 "android_arm64_v8a",
                 "android_x86",
