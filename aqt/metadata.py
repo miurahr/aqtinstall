@@ -591,9 +591,23 @@ class MetadataFactory:
 
     def fetch_arches(self, version: Version) -> List[str]:
         arches = []
+        qt_ver_str = self._get_qt_version_str(version)
         for extension in self.archive_id.all_extensions(version):
-            qt_ver_str = self._get_qt_version_str(version)
-            modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension))
+            modules: Dict[str, Dict[str, str]] = {}
+            try:
+                modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension))
+            except ArchiveDownloadError as e:
+                if extension == "":
+                    raise
+                else:
+                    self.logger.debug(e)
+                    self.logger.debug(
+                        f"Failed to retrieve arches list with extension `{extension}`. "
+                        f"Please check that this extension exists for this version of Qt: "
+                        f"if not, code changes will be necessary."
+                    )
+                    # It's ok to swallow this error: we will still print the other available architectures that aqt can
+                    # install successfully. This is to prevent future errors such as those reported in #643
 
             for name in modules.keys():
                 ver, arch = name.split(".")[-2:]
