@@ -25,7 +25,7 @@ jobs:
             py: "3.10"
             qtver: 6.1.0
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 20
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
