@@ -38,7 +38,12 @@ dir_for_version = QtRepoProperty.dir_for_version
 
 
 def unpatched_paths() -> List[str]:
-    return ["/home/qt/work/install", "/Users/qt/work/install"]
+    return [
+        "/home/qt/work/install/",
+        "/Users/qt/work/install/",
+        "\\home\\qt\\work\\install\\",
+        "\\Users\\qt\\work\\install\\",
+    ]
 
 
 class Updater:
@@ -180,7 +185,7 @@ class Updater:
         qmake_path = self.prefix / "bin" / ("qmake.bat" if os_name == "windows" else "qmake")
         self.logger.info(f"Patching {qmake_path}")
         for unpatched in unpatched_paths():
-            self._patch_textfile(qmake_path, f"{unpatched}/bin", patched, is_executable=True)
+            self._patch_textfile(qmake_path, f"{unpatched}bin", patched, is_executable=True)
 
     def patch_qtcore(self, target):
         """patch to QtCore"""
@@ -240,7 +245,7 @@ class Updater:
 
         self._patch_textfile(target_qt_conf, old_host_lib_execs, f"HostLibraryExecutables={new_host_lib_execs}")
         for unpatched in unpatched_paths():
-            self._patch_textfile(target_qt_conf, f"Prefix={unpatched}/target", new_targetprefix)
+            self._patch_textfile(target_qt_conf, f"Prefix={unpatched}target", new_targetprefix)
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
