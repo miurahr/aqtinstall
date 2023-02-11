@@ -1,0 +1,26 @@
+{
+  "architectures": [
+    "wasm_singlethread"
+  ],
+  "modules_by_arch": {
+    "wasm_singlethread": [
+      "qtcharts",
+      "qtdatavis3d",
+      "qtgrpc",
+      "qthttpserver",
+      "qtimageformats",
+      "qtlottie",
+      "qtmultimedia",
+      "qtquick3dphysics",
+      "qtscxml",
+      "qtspeech",
+      "qtvirtualkeyboard",
+      "qtwebchannel",
+      "qtwebsockets",
+      "qt5compat",
+      "qtquick3d",
+      "qtquicktimeline",
+      "qtshadertools"
+    ]
+  }
+}

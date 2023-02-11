@@ -243,7 +243,17 @@ steps:
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/helloworld
       make
-    condition: and(eq( variables['TARGET'], 'desktop' ), ne( variables['ARCH'], 'wasm_32' ), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), eq(variables['MODULE'], ''), eq(variables['SUBCOMMAND'], 'install-qt'))
+    condition: |
+        and(
+          eq( variables['TARGET'], 'desktop' ),
+          not( startsWith( variables['ARCH'], 'wasm_' ) ),
+          or(
+            eq(variables['Agent.OS'], 'Linux'),
+            eq(variables['Agent.OS'], 'Darwin')
+          ),
+          eq(variables['MODULE'], ''),
+          eq(variables['SUBCOMMAND'], 'install-qt')
+        )
     displayName: Build test with qmake for Linux and macOS w/o extra module
   - powershell: |
       if ( $env:TOOLCHAIN -eq 'MSVC' ) {
@@ -316,7 +326,7 @@ steps:
     displayName: Build test with qmake for Linux and macOS with extra module
 
   ##----------------------------------------------------
-  # wasm_32 on linux and mac
+  # wasm_32/single/multithread on linux and mac
   - script: |
       set -uex
       git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
@@ -337,7 +347,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     condition: |
       and(
-        eq( variables['ARCH'], 'wasm_32' ),
+        startsWith( variables['ARCH'], 'wasm_' ),
         or(
           eq(variables['Agent.OS'], 'Linux'),
           eq(variables['Agent.OS'], 'Darwin')
@@ -345,7 +355,7 @@ steps:
       )
     displayName: 'Build WebAssembler sample project on mac/linux'
 
-  # wasm_32 on Windows cmd.exe
+  # wasm_32/single/multithread on Windows cmd.exe
   - powershell: |
       git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
       cd emsdk
@@ -380,7 +390,7 @@ steps:
     workingDirectory: $(Build.BinariesDirectory)
     condition: |
       and(
-        eq( variables['ARCH'], 'wasm_32' ),
+        startsWith( variables['ARCH'], 'wasm_' ),
         eq( variables['Agent.OS'], 'Windows_NT' )
       )
     displayName: 'Build WebAssembler sample project on windows'

@@ -1,0 +1,290 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtcharts.wasm_multithread</Name>
+  <DisplayName>Qt Charts for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtcharts, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="779232" UncompressedSize="7404114" OS="Any"/>
+  <SHA1>a84793455e6f234204956d2a535ef7487e12f746</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtdatavis3d.wasm_multithread</Name>
+  <DisplayName>Qt Data Visualization for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtdatavis3d, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="598226" UncompressedSize="4649321" OS="Any"/>
+  <SHA1>942fb21a8ba4338a2c94c15bc3564d9ed016aa91</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtgrpc.wasm_multithread</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtgrpc, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgrpc-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="194841" UncompressedSize="2725367" OS="Any"/>
+  <SHA1>eab733c1b40b2ba93eac301090ed2e40d1bfb309</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qthttpserver.wasm_multithread</Name>
+  <DisplayName>Qt HTTP Server for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qthttpserver, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qthttpserver-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="60073" UncompressedSize="297714" OS="Any"/>
+  <SHA1>14b847981005d193938f7c3e8f6608d8518a6366</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtimageformats.wasm_multithread</Name>
+  <DisplayName>Qt ImageFormats for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtimageformats, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="303380" UncompressedSize="1283471" OS="Any"/>
+  <SHA1>ff3b43b3e1b9fe078761b75dada9d725f47d9af3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtlottie.wasm_multithread</Name>
+  <DisplayName>Qt Lottie Animation for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtlottie, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="155315" UncompressedSize="1007914" OS="Any"/>
+  <SHA1>3869563cef20f85ecc55e66fd0875a37a820175c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtmultimedia.wasm_multithread</Name>
+  <DisplayName>Qt Multimedia for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtmultimedia, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="756305" UncompressedSize="5109691" OS="Any"/>
+  <SHA1>8f7053696b1258f4e0511fd233e24be98b96bddf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtquick3dphysics</Name>
+  <DisplayName>Quick: 3D Physics</DisplayName>
+  <Description>Qt Quick 3D Physics provides a high-level QML module adding physical simulation capabilities to Qt Quick 3D.</Description>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.650.doc.qtquick3dphysics, qt.qt6.650.examples.qtquick3dphysics, qt.qt6.650.qtquick3d, qt.qt6.650.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" UncompressedSize="0" OS="Any"/>
+  <SHA1>05989ccb769ed6b46a60e453d401dd4415609363</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtquick3dphysics.wasm_multithread</Name>
+  <DisplayName>Quick: 3D Physics for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtquick3dphysics, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3dphysics-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1695314" UncompressedSize="11015126" OS="Any"/>
+  <SHA1>7cfea014ddc41082f6ac52a72930ec174d2cd484</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtscxml.wasm_multithread</Name>
+  <DisplayName>Qt State Machines for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtscxml, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="372984" UncompressedSize="3111720" OS="Any"/>
+  <SHA1>a6fb82aa712eae15f582835a3e858ad4b94961ac</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtspeech.wasm_multithread</Name>
+  <DisplayName>Qt Speech for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtspeech, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtspeech-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="61655" UncompressedSize="448732" OS="Any"/>
+  <SHA1>2e444441796b80824a742107514797a2d8e97234</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtvirtualkeyboard.wasm_multithread</Name>
+  <DisplayName>Qt Virtual Keyboard for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtvirtualkeyboard, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2202968" UncompressedSize="6817472" OS="Any"/>
+  <SHA1>fd072ead9d8d55fac3a9efb0e2c7a92af8fb047d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtwebchannel.wasm_multithread</Name>
+  <DisplayName>Qt WebChannel for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtwebchannel, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="93681" UncompressedSize="525510" OS="Any"/>
+  <SHA1>802b47541de55f8528e436d0354421138e598f90</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtwebsockets.wasm_multithread</Name>
+  <DisplayName>Qt WebSockets for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtwebsockets, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="90033" UncompressedSize="501424" OS="Any"/>
+  <SHA1>f5ea2a5ab7011919f9efd72c482bd41d4b9125b6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.qt5compat.wasm_multithread</Name>
+  <DisplayName>Qt 5 Compatibility Module for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.qt5compat, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="689869" UncompressedSize="2786165" OS="Any"/>
+  <SHA1>8573219387c9d6448da92f9c0eb2cd77fc5e4d6a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.qtquick3d.wasm_multithread</Name>
+  <DisplayName>Qt Quick 3D for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.qtquick3d, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2049798" UncompressedSize="13429045" OS="Any"/>
+  <SHA1>5a92d04743dc47cd410922b312018b2ca13707a9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.qtquicktimeline.wasm_multithread</Name>
+  <DisplayName>Qt Quick Timeline for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.qtquicktimeline, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="44721" UncompressedSize="263991" OS="Any"/>
+  <SHA1>7bce5d03611d856cf1675844c736a9f67dea055d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.qtshadertools.wasm_multithread</Name>
+  <DisplayName>Qt Shader Tools for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.qtshadertools, qt.qt6.650.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1306343" UncompressedSize="12245299" OS="Any"/>
+  <SHA1>c39e4c3ccda1d23253bf8049b417284380cc2715</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.wasm_multithread</Name>
+  <DisplayName>WebAssembly (multi-threaded)</DisplayName>
+  <Description>Qt 6.5.0 Prebuilt Components for WebAssembly (multi-threaded).</Description>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <Dependencies/>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>700</SortingPriority>
+  <DownloadableArchives>qtbase-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z, qtdeclarative-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z, qtsvg-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z, qttools-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z, qttranslations-MacOS-MacOS_12-Clang-MacOS-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="27570046" UncompressedSize="188468236" OS="Any"/>
+  <SHA1>c49a2335d6bb9ecd42a4d04c0693b928eeb03f19</SHA1>
+ </PackageUpdate>
+ <SHA1>e6fc59b20903417c2ab109b8aeb90f73e5cbabc7</SHA1>
+ <MetadataName>2023-01-24-1447_meta.7z</MetadataName>
+</Updates>

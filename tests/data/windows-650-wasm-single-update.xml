@@ -1,0 +1,290 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtcharts.wasm_singlethread</Name>
+  <DisplayName>Qt Charts for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtcharts, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="7422857" CompressedSize="783179" OS="Any"/>
+  <SHA1>8f5ed7a6950398e9c0009a1e71514c885d4950ae</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtdatavis3d.wasm_singlethread</Name>
+  <DisplayName>Qt Data Visualization for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtdatavis3d, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="4668609" CompressedSize="603274" OS="Any"/>
+  <SHA1>b721d4ccc387c2bce2064acda62e838bf3b0faf5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtgrpc.wasm_singlethread</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtgrpc, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgrpc-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="2677934" CompressedSize="192818" OS="Any"/>
+  <SHA1>8ee03c76df8602753c17e09471969050ff9ad143</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qthttpserver.wasm_singlethread</Name>
+  <DisplayName>Qt HTTP Server for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qthttpserver, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qthttpserver-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="280043" CompressedSize="56907" OS="Any"/>
+  <SHA1>a517c99db4438b786775d896dce33f26776484ce</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtimageformats.wasm_singlethread</Name>
+  <DisplayName>Qt ImageFormats for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtimageformats, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="1284624" CompressedSize="305040" OS="Any"/>
+  <SHA1>21721377df4a85a447883183d4c43490537bc5f7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtlottie.wasm_singlethread</Name>
+  <DisplayName>Qt Lottie Animation for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtlottie, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="1017662" CompressedSize="157225" OS="Any"/>
+  <SHA1>e84a9a593ac3ce61fbf01f28839adca16ba72662</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtmultimedia.wasm_singlethread</Name>
+  <DisplayName>Qt Multimedia for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtmultimedia, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="4990392" CompressedSize="736850" OS="Any"/>
+  <SHA1>b3cec4c569f81833fe8950eac8ef8ad18efa9c8e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtquick3dphysics</Name>
+  <DisplayName>Quick: 3D Physics</DisplayName>
+  <Description>Qt Quick 3D Physics provides a high-level QML module adding physical simulation capabilities to Qt Quick 3D.</Description>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.650.doc.qtquick3dphysics, qt.qt6.650.examples.qtquick3dphysics, qt.qt6.650.qtquick3d, qt.qt6.650.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile UncompressedSize="0" CompressedSize="0" OS="Any"/>
+  <SHA1>d7ae546041aa8afc9d75615538a7de5c74df2c76</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtquick3dphysics.wasm_singlethread</Name>
+  <DisplayName>Quick: 3D Physics for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtquick3dphysics, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3dphysics-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="11025662" CompressedSize="1705261" OS="Any"/>
+  <SHA1>ffae40c5ea3a64fad5d3c891b3321fb84f5dbb10</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtscxml.wasm_singlethread</Name>
+  <DisplayName>Qt State Machines for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtscxml, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="3131289" CompressedSize="375756" OS="Any"/>
+  <SHA1>196ec95bf0b8b94c71101b5b100e76a8219c7aa6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtspeech.wasm_singlethread</Name>
+  <DisplayName>Qt Speech for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtspeech, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtspeech-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="448553" CompressedSize="61755" OS="Any"/>
+  <SHA1>22af0b136ee5af85d5231e909644f05a2610c333</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtvirtualkeyboard.wasm_singlethread</Name>
+  <DisplayName>Qt Virtual Keyboard for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtvirtualkeyboard, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="5572282" CompressedSize="1702607" OS="Any"/>
+  <SHA1>0bf68731445a07c3d0343a7b2be575792e1d74ec</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtwebchannel.wasm_singlethread</Name>
+  <DisplayName>Qt WebChannel for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtwebchannel, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="486650" CompressedSize="88294" OS="Any"/>
+  <SHA1>3b77f28422d469dd639f53cfa3c90f17581599f2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.addons.qtwebsockets.wasm_singlethread</Name>
+  <DisplayName>Qt WebSockets for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.addons.qtwebsockets, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="508364" CompressedSize="90577" OS="Any"/>
+  <SHA1>c966978a11ef2baee84e26bc8cee4ca636b87130</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.qt5compat.wasm_singlethread</Name>
+  <DisplayName>Qt 5 Compatibility Module for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.qt5compat, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="2798732" CompressedSize="693708" OS="Any"/>
+  <SHA1>4362670c3f297d5f298602e5820843150a394585</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.qtquick3d.wasm_singlethread</Name>
+  <DisplayName>Qt Quick 3D for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.qtquick3d, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="13484701" CompressedSize="2035967" OS="Any"/>
+  <SHA1>a8cb6b3e15ed4357b60895a5b8f06938f381cbe4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.qtquicktimeline.wasm_singlethread</Name>
+  <DisplayName>Qt Quick Timeline for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.qtquicktimeline, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="265991" CompressedSize="44865" OS="Any"/>
+  <SHA1>e3b17d993959c4f9bf0bf1b1eef3eaa32dfa1135</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.qtshadertools.wasm_singlethread</Name>
+  <DisplayName>Qt Shader Tools for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <AutoDependOn>qt.qt6.650.qtshadertools, qt.qt6.650.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.650.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="12278702" CompressedSize="1314315" OS="Any"/>
+  <SHA1>4a159d7a4d73ea9e02a20600425228ea5fc72368</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.650.wasm_singlethread</Name>
+  <DisplayName>WebAssembly (single-threaded)</DisplayName>
+  <Description>Qt 6.5.0 Prebuilt Components for WebAssembly (single-threaded).</Description>
+  <Version>6.5.0-0-202301241223</Version>
+  <ReleaseDate>2023-01-24</ReleaseDate>
+  <Dependencies/>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>700</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z, qtdeclarative-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z, qtsvg-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z, qttools-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z, qttranslations-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile UncompressedSize="168349948" CompressedSize="23314413" OS="Any"/>
+  <SHA1>b3131ac0be2b917e3450eed517fa52aaef7031b3</SHA1>
+ </PackageUpdate>
+ <SHA1>c2e369a310d73abefd8f1f1c038762aad5349c31</SHA1>
+ <MetadataName>2023-01-24-1445_meta.7z</MetadataName>
+</Updates>
