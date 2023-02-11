@@ -491,6 +491,29 @@ def test_list_qt_cli(
     assert output_set == expect_set
 
 
+def test_list_missing_wasm_updates(monkeypatch, capsys):
+    """Require that MetadataFactory is resilient to missing wasm updates.xml files"""
+    data_dir = Path(__file__).parent / "data"
+    expect = set(json.loads((data_dir / "windows-620-expect.json").read_text("utf-8"))["architectures"])
+
+    def _mock_fetch_http(_, rest_of_url, *args, **kwargs: str) -> str:
+        htmltext = (Path(__file__).parent / "data" / "windows-desktop.html").read_text("utf-8")
+        if rest_of_url.endswith("windows_x86/desktop/"):
+            return htmltext
+        elif rest_of_url.endswith("windows_x86/desktop/qt6_620/Updates.xml"):
+            return (data_dir / "windows-620-update.xml").read_text("utf-8")
+        else:
+            raise ArchiveDownloadError(f"No such file at {rest_of_url}")
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
+
+    cli = Cli()
+    rv = cli.run("list-qt windows desktop --arch 6.2.0".split())
+    assert rv == 0
+    out, err = capsys.readouterr()
+    assert set(out.strip().split()) == expect
+
+
 @pytest.mark.parametrize(
     "qt_ver_str, expect_set", (("6.2.0", {"android_x86", "android_x86_64", "android_armv7", "android_arm64_v8a"}),)
 )
