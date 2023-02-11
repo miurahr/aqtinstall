@@ -103,6 +103,13 @@ steps:
           else                                                                  # fail if 'wasm_32' is in the list
             ! aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION) | grep -w -q "wasm_32"
           fi
+        
+          # Extra check for Qt 6.5.0 WASM:
+          for host in mac linux windows; do
+            export WASM_ARCHES=$(aqt list-qt $host desktop --arch 6.5.0)
+            echo $WASM_ARCHES | grep -w -q "wasm_singlethread"                  # fail if 'wasm_singlethread' is not in the list
+            echo $WASM_ARCHES | grep -w -q "wasm_multithread"                   # fail if 'wasm_multithread' is not in the list
+          done
         fi
         aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --arch latest
 
