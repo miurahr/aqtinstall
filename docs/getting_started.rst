@@ -269,6 +269,9 @@ We can find out whether or not that architecture is available for our version of
 
 Not every version of Qt supports WASM. This command shows us that we cannot use WASM with Qt 6.1.3.
 
+Please note that the WASM architecture for Qt 6.5.0+ changed from ``wasm_32`` to ``wasm_singlethread`` and
+``wasm_multithread``. Always use ``aqt list-qt`` to check what architectures are available for the desired version of Qt.
+
 We can check the modules available as before:
 
 .. code-block:: console

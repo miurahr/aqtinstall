@@ -406,43 +406,50 @@ def test_long_qt_modules(monkeypatch, host: str, target: str, version: str, arch
     assert table._rows(table.long_heading_keys) == expect["modules_long_by_arch"][arch]
 
 
-@pytest.fixture
-def expected_windows_desktop_plus_wasm_5140() -> Dict:
-    input_filenames = "windows-5140-expect.json", "windows-5140-wasm-expect.json"
+def expected_windows_desktop_plus_wasm_5140(is_wasm_threaded: bool) -> Dict:
+    if is_wasm_threaded:
+        input_filenames = (
+            "windows-5140-expect.json",
+            "windows-650-wasm-single-expect.json",
+            "windows-650-wasm-multi-expect.json",
+        )
+    else:
+        input_filenames = "windows-5140-expect.json", "windows-5140-wasm-expect.json"
     to_join = [json.loads((Path(__file__).parent / "data" / f).read_text("utf-8")) for f in input_filenames]
     return {
         "architectures": [arch for _dict in to_join for arch in _dict["architectures"]],
-        "modules_by_arch": {**to_join[0]["modules_by_arch"], **to_join[1]["modules_by_arch"]},
+        "modules_by_arch": {k: v for _dict in to_join for k, v in _dict["modules_by_arch"].items()},
     }
 
 
 @pytest.mark.parametrize(
-    "args, expect",
+    "args, is_wasm_threaded, expect",
     (
-        ("--modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
-        ("--spec 5.14 --modules latest win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
-        ("--modules 5.14.0 win32_mingw73", ["modules_by_arch", "win32_mingw73"]),
-        ("--modules 5.14.0 win32_msvc2017", ["modules_by_arch", "win32_msvc2017"]),
-        ("--modules 5.14.0 win64_mingw73", ["modules_by_arch", "win64_mingw73"]),
-        ("--modules 5.14.0 win64_msvc2015_64", ["modules_by_arch", "win64_msvc2015_64"]),
-        ("--modules 5.14.0 win64_msvc2017_64", ["modules_by_arch", "win64_msvc2017_64"]),
-        ("--arch latest", ["architectures"]),
-        ("--spec 5.14 --arch latest", ["architectures"]),
-        ("--arch 5.14.0", ["architectures"]),
+        ("--modules latest win64_msvc2017_64", False, ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--spec 5.14 --modules latest win64_msvc2017_64", False, ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--modules 5.14.0 win32_mingw73", False, ["modules_by_arch", "win32_mingw73"]),
+        ("--modules 5.14.0 win32_msvc2017", False, ["modules_by_arch", "win32_msvc2017"]),
+        ("--modules 5.14.0 win64_mingw73", False, ["modules_by_arch", "win64_mingw73"]),
+        ("--modules 5.14.0 win64_msvc2015_64", False, ["modules_by_arch", "win64_msvc2015_64"]),
+        ("--modules 5.14.0 win64_msvc2017_64", False, ["modules_by_arch", "win64_msvc2017_64"]),
+        ("--modules 6.5.0 wasm_singlethread", True, ["modules_by_arch", "wasm_singlethread"]),
+        ("--modules 6.5.0 wasm_multithread", True, ["modules_by_arch", "wasm_multithread"]),
+        ("--arch latest", True, ["architectures"]),
+        ("--spec 5.14 --arch latest", False, ["architectures"]),
+        ("--arch 5.14.0", False, ["architectures"]),
     ),
 )
 def test_list_qt_cli(
     monkeypatch,
     capsys,
-    expected_windows_desktop_plus_wasm_5140: Dict[str, Set[str]],
     args: str,
+    is_wasm_threaded: bool,
     expect: Union[Set[str], List[str]],
 ):
-    htmlfile, xmlfile, wasm_xmlfile = "windows-desktop.html", "windows-5140-update.xml", "windows-5140-wasm-update.xml"
     version_string_to_replace = "qt5.5140"
     if isinstance(expect, list):
         # In this case, 'expect' is a list of keys to follow to the expected values.
-        expected_dict = expected_windows_desktop_plus_wasm_5140
+        expected_dict = expected_windows_desktop_plus_wasm_5140(is_wasm_threaded)
         for key in expect:  # Follow the chain of keys to the list of values.
             expected_dict = expected_dict[key]
         assert isinstance(expected_dict, list)
@@ -452,13 +459,21 @@ def test_list_qt_cli(
     assert isinstance(expect_set, set)
 
     def _mock_fetch_http(_, rest_of_url, *args, **kwargs: str) -> str:
-        htmltext = (Path(__file__).parent / "data" / htmlfile).read_text("utf-8")
+        htmltext = (Path(__file__).parent / "data" / "windows-desktop.html").read_text("utf-8")
         if not rest_of_url.endswith("Updates.xml"):
             return htmltext
 
-        norm_xmltext = (Path(__file__).parent / "data" / xmlfile).read_text("utf-8")
-        wasm_xmltext = (Path(__file__).parent / "data" / wasm_xmlfile).read_text("utf-8")
-        xmltext = wasm_xmltext if rest_of_url.endswith("_wasm/Updates.xml") else norm_xmltext
+        def get_xml_filename() -> str:
+            if rest_of_url.endswith("_wasm/Updates.xml"):
+                return "windows-5140-wasm-update.xml"
+            elif rest_of_url.endswith("_wasm_singlethread/Updates.xml"):
+                return "windows-650-wasm-single-update.xml"
+            elif rest_of_url.endswith("_wasm_multithread/Updates.xml"):
+                return "windows-650-wasm-multi-update.xml"
+            else:
+                return "windows-5140-update.xml"
+
+        xmltext = (Path(__file__).parent / "data" / get_xml_filename()).read_text("utf-8")
         # If we are serving an Updates.xml, `aqt list` will look for a Qt version number.
         # We will replace the version numbers in the file with the requested version.
         match = re.search(r"qt(\d)_(\d+)", rest_of_url)
@@ -474,6 +489,29 @@ def test_list_qt_cli(
     out, err = capsys.readouterr()
     output_set = set(out.strip().split())
     assert output_set == expect_set
+
+
+def test_list_missing_wasm_updates(monkeypatch, capsys):
+    """Require that MetadataFactory is resilient to missing wasm updates.xml files"""
+    data_dir = Path(__file__).parent / "data"
+    expect = set(json.loads((data_dir / "windows-620-expect.json").read_text("utf-8"))["architectures"])
+
+    def _mock_fetch_http(_, rest_of_url, *args, **kwargs: str) -> str:
+        htmltext = (Path(__file__).parent / "data" / "windows-desktop.html").read_text("utf-8")
+        if rest_of_url.endswith("windows_x86/desktop/"):
+            return htmltext
+        elif rest_of_url.endswith("windows_x86/desktop/qt6_620/Updates.xml"):
+            return (data_dir / "windows-620-update.xml").read_text("utf-8")
+        else:
+            raise ArchiveDownloadError(f"No such file at {rest_of_url}")
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
+
+    cli = Cli()
+    rv = cli.run("list-qt windows desktop --arch 6.2.0".split())
+    assert rv == 0
+    out, err = capsys.readouterr()
+    assert set(out.strip().split()) == expect
 
 
 @pytest.mark.parametrize(
