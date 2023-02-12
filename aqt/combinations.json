@@ -234,6 +234,44 @@
           "qtwebview"
         ],
         "qt_version": "6.4"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qt3d",
+          "qt5compat",
+          "qtcharts",
+          "qtconnectivity",
+          "qtdatavis3d",
+          "qtgrpc",
+          "qthttpserver",
+          "qtimageformats",
+          "qtlanguageserver",
+          "qtlocation",
+          "qtlottie",
+          "qtmultimedia",
+          "qtnetworkauth",
+          "qtpdf",
+          "qtpositioning",
+          "qtquick3d",
+          "qtquick3dphysics",
+          "qtquickeffectmaker",
+          "qtquicktimeline",
+          "qtremoteobjects",
+          "qtscxml",
+          "qtsensors",
+          "qtserialbus",
+          "qtserialport",
+          "qtshadertools",
+          "qtspeech",
+          "qtvirtualkeyboard",
+          "qtwaylandcompositor",
+          "qtwebchannel",
+          "qtwebengine",
+          "qtwebsockets",
+          "qtwebview"
+        ],
+        "qt_version": "6.5"
       }
     ],
     "new_archive": [
@@ -292,6 +330,16 @@
         "target": "desktop"
       },
       {
+        "arch": "wasm_multithread",
+        "os_name": "linux",
+        "target": "desktop"
+      },
+      {
+        "arch": "wasm_singlethread",
+        "os_name": "linux",
+        "target": "desktop"
+      },
+      {
         "arch": "android",
         "os_name": "mac",
         "target": "android"
@@ -327,6 +375,16 @@
         "target": "desktop"
       },
       {
+        "arch": "wasm_multithread",
+        "os_name": "mac",
+        "target": "desktop"
+      },
+      {
+        "arch": "wasm_singlethread",
+        "os_name": "mac",
+        "target": "desktop"
+      },
+      {
         "arch": "ios",
         "os_name": "mac",
         "target": "ios"
@@ -358,6 +416,16 @@
       },
       {
         "arch": "wasm_32",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "wasm_multithread",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "wasm_singlethread",
         "os_name": "windows",
         "target": "desktop"
       },
@@ -563,6 +631,30 @@
         "tool_name": "tools_qtcreator"
       },
       {
+        "arch": "qt.tools.qtcreator_gui",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreator_gui.src",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreatordbg",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreatordev",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
         "arch": "qt.tools.qtdesignstudio",
         "os_name": "linux",
         "target": "desktop",
@@ -579,6 +671,12 @@
         "os_name": "linux",
         "target": "desktop",
         "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.qtcreator_gui.telemetry",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_telemetry_gui"
       },
       {
         "arch": "qt.tools.cmake",
@@ -647,6 +745,24 @@
         "tool_name": "tools_qtcreator"
       },
       {
+        "arch": "qt.tools.qtcreator_gui",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreatordbg",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreatordev",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
         "arch": "qt.tools.qtdesignstudio",
         "os_name": "mac",
         "target": "desktop",
@@ -663,6 +779,12 @@
         "os_name": "mac",
         "target": "desktop",
         "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.qtcreator_gui.telemetry",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_telemetry_gui"
       },
       {
         "arch": "qt.tools.cmake",
@@ -821,6 +943,30 @@
         "tool_name": "tools_qtcreator"
       },
       {
+        "arch": "qt.tools.qtcreator_gui",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreatorcdbext",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreatordbg",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreatordev",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtcreator_gui"
+      },
+      {
         "arch": "qt.tools.windows_kits_debuggers",
         "os_name": "windows",
         "target": "desktop",
@@ -843,6 +989,12 @@
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.qtcreator_gui.telemetry",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_telemetry_gui"
       },
       {
         "arch": "qt.tools.vcredist",
@@ -962,7 +1114,9 @@
       "6.3.1",
       "6.3.2",
       "6.4.0",
-      "6.4.1"
+      "6.4.1",
+      "6.4.2",
+      "6.5.0"
     ]
   }
 ]
