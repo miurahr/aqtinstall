@@ -709,7 +709,7 @@ class Cli:
         install_qt_parser.add_argument(
             "--autodesktop",
             action="store_true",
-            help="For android, ios, and Qt6/wasm installations, a standard desktop Qt installation is required. "
+            help="For Qt6 android, ios, and wasm installations, an additional desktop Qt installation is required. "
             "When enabled, this option installs the required desktop version automatically.",
         )
 
@@ -1055,9 +1055,8 @@ class Cli:
         self, should_autoinstall: bool, host: str, target: str, base_path: Path, version: Version, is_wasm: bool = False
     ) -> Tuple[Optional[str], Optional[str]]:
         """Returns expected_desktop_arch_dir, desktop_arch_to_install"""
-        is_wasm_qt6 = target == "desktop" and is_wasm and version >= Version("6.0.0")
-        if target not in ["ios", "android"] and not is_wasm_qt6:
-            # We do not need to worry about the desktop directory if target is not mobile, or it's not Qt6 wasm.
+        if version < Version("6.0.0") or (target not in ["ios", "android"] and not is_wasm):
+            # We only need to worry about the desktop directory for Qt6 mobile or wasm installs.
             return None, None
 
         installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version)
@@ -1070,7 +1069,7 @@ class Cli:
         desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
         expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
 
-        qt_type = "Qt6-WASM" if is_wasm_qt6 else target
+        qt_type = "Qt6-WASM" if is_wasm else target
         if should_autoinstall:
             # No desktop Qt is installed, but the user has requested installation. Find out what to install.
             self.logger.info(
