@@ -24,7 +24,7 @@ Fixed
 Changed
 -------
 * Update combinations.xml (#650)
-* Update documentation for `--autodesktop` flag (#638)
+* Update documentation for ``--autodesktop`` flag (#638)
 
 `v3.1.1`_ (10, Feb. 2023)
 =========================
