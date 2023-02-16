@@ -257,13 +257,14 @@ class Cli:
             return False
         return True
 
-    def _check_modules_arg(self, qt_version, modules):
+    def _select_unexpected_modules(self, qt_version: str, modules: Optional[List[str]]) -> List[str]:
+        """Returns a sorted list of all the requested modules that do not exist in the combinations.json file."""
         if modules is None:
-            return True
+            return []
         available = Settings.available_modules(qt_version)
         if available is None:
-            return False
-        return all([m in available for m in modules])
+            return sorted(modules)
+        return sorted(set(modules) - set(available))
 
     @staticmethod
     def _determine_qt_version(
@@ -388,14 +389,23 @@ class Cli:
         auto_desktop_archives: List[QtPackage] = get_auto_desktop_archives()
 
         if not self._check_qt_arg_versions(qt_version):
-            self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
+            self.logger.warning(
+                f'Specified Qt version "{qt_version}" did not exist when this version of aqtinstall was released. '
+                "This may not install properly, but we will try our best."
+            )
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning(
-                "Specified target combination is not valid or unknown: {} {} {}".format(os_name, target, arch)
+                f'Specified target combination "{os_name} {target} {arch}" did not exist when this version of '
+                "aqtinstall was released. This may not install properly, but we will try our best."
             )
         all_extra = True if modules is not None and "all" in modules else False
-        if not all_extra and not self._check_modules_arg(qt_version, modules):
-            self.logger.warning("Some of specified modules are unknown.")
+        if not all_extra:
+            unexpected_modules = self._select_unexpected_modules(qt_version, modules)
+            if unexpected_modules:
+                self.logger.warning(
+                    f"Specified modules {unexpected_modules} did not exist when this version of aqtinstall was released. "
+                    "This may not install properly, but we will try our best."
+                )
 
         qt_archives: QtArchives = retry_on_bad_connection(
             lambda base_url: QtArchives(
@@ -465,7 +475,10 @@ class Cli:
         archives = args.archives
         all_extra = True if modules is not None and "all" in modules else False
         if not self._check_qt_arg_versions(qt_version):
-            self.logger.warning("Specified Qt version is unknown: {}.".format(qt_version))
+            self.logger.warning(
+                f'Specified Qt version "{qt_version}" did not exist when this version of aqtinstall was released. '
+                "This may not install properly, but we will try our best."
+            )
 
         srcdocexamples_archives: SrcDocExamplesArchives = retry_on_bad_connection(
             lambda base_url: SrcDocExamplesArchives(
@@ -562,7 +575,10 @@ class Cli:
 
         for arch in archs:
             if not self._check_tools_arg_combination(os_name, tool_name, arch):
-                self.logger.warning("Specified target combination is not valid: {} {} {}".format(os_name, tool_name, arch))
+                self.logger.warning(
+                    f'Specified target combination "{os_name} {tool_name} {arch}" did not exist when this version of '
+                    "aqtinstall was released. This may not install properly, but we will try our best."
+                )
 
             tool_archives: ToolArchives = retry_on_bad_connection(
                 lambda base_url: ToolArchives(
