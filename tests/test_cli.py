@@ -68,6 +68,9 @@ def test_cli_select_unexpected_modules(qt_version: str, modules: Optional[List[s
     cli._setup_settings()
     assert cli._select_unexpected_modules(qt_version, modules) == unexpected_modules
 
+    nonexistent_qt = "5.16.0"
+    assert cli._select_unexpected_modules(nonexistent_qt, modules) == sorted(modules or [])
+
 
 def test_cli_check_combination():
     cli = Cli()
