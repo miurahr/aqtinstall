@@ -274,12 +274,8 @@ class Cli:
 
     def _select_unexpected_modules(self, qt_version: str, modules: Optional[List[str]]) -> List[str]:
         """Returns a sorted list of all the requested modules that do not exist in the combinations.json file."""
-        if modules is None:
-            return []
         available = Settings.available_modules(qt_version)
-        if available is None:
-            return sorted(modules)
-        return sorted(set(modules) - set(available))
+        return sorted(set(modules or []) - set(available or []))
 
     @staticmethod
     def _determine_qt_version(
