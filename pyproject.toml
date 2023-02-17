@@ -58,7 +58,7 @@ test = [
 ]
 check = [
     "mypy>=0.990",
-    "flake8<6",
+    "flake8<7",
     "flake8-black",
     "flake8-colors",
     "flake8-isort>=5.0.3,<6.0.0",
