@@ -53,13 +53,23 @@ def test_cli_help(capsys):
     assert expected_help(out)
 
 
-def test_cli_check_module():
+@pytest.mark.parametrize(
+    "qt_version, modules, unexpected_modules",
+    (
+        ("5.11.3", ["qtcharts", "qtwebengine"], []),
+        ("5.11.3", ["not_exist"], ["not_exist"]),
+        ("5.11.3", ["qtcharts", "qtwebengine", "not_exist"], ["not_exist"]),
+        ("5.11.3", None, []),
+        ("5.15.0", ["Unknown"], ["Unknown"]),
+    ),
+)
+def test_cli_select_unexpected_modules(qt_version: str, modules: Optional[List[str]], unexpected_modules: List[str]):
     cli = Cli()
     cli._setup_settings()
-    assert cli._check_modules_arg("5.11.3", ["qtcharts", "qtwebengine"])
-    assert not cli._check_modules_arg("5.7", ["not_exist"])
-    assert cli._check_modules_arg("5.14.0", None)
-    assert not cli._check_modules_arg("5.15.0", ["Unknown"])
+    assert cli._select_unexpected_modules(qt_version, modules) == unexpected_modules
+
+    nonexistent_qt = "5.16.0"
+    assert cli._select_unexpected_modules(nonexistent_qt, modules) == sorted(modules or [])
 
 
 def test_cli_check_combination():
