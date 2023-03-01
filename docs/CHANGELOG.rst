@@ -13,6 +13,15 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.3`_ (2, Mar. 2023)
+========================
+
+Changed
+-------
+* make the message about "unknown" Qt versions and modules
+  more friendly and easy to understand (#646,#654)
+
+
 `v3.1.2`_ (17, Feb. 2023)
 =========================
 
@@ -192,7 +201,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.3...HEAD
+.. _v3.1.3: https://github.com/miurahr/aqtinstall/compare/v3.1.2...v3.1.3
 .. _v3.1.2: https://github.com/miurahr/aqtinstall/compare/v3.1.1...v3.1.2
 .. _v3.1.1: https://github.com/miurahr/aqtinstall/compare/v3.1.0...v3.1.1
 .. _v3.1.0: https://github.com/miurahr/aqtinstall/compare/v3.0.2...v3.1.0
