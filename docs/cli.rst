@@ -919,16 +919,32 @@ Example: Install vcredist on Windows:
 .. code-block:: doscon
 
 
-    aqt install-tool windows tools_vcredist
+    aqt install-tool windows desktop tools_vcredist
     .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
-Example: Install MinGW on Windows
+Example: Install MinGW 8.1.0 on Windows:
 
 .. code-block:: doscon
 
-    aqt install-tool -O c:\Qt windows tools_mingw qt.tools.win64_mingw810
+    aqt install-tool -O c:\Qt windows desktop tools_mingw qt.tools.win64_mingw810
     set PATH=C:\Qt\Tools\mingw810_64\bin
+
+
+Example: Install MinGW 11.2.0 on Windows:
+
+.. code-block:: doscon
+
+    aqt install-tool -O c:\Qt windows desktop tools_mingw90
+    set PATH=C:\Qt\Tools\mingw1120_64\bin
+
+.. note::
+
+    This is not a typo; it is a mislabelled tool name!
+    ``tools_mingw90`` and the tool variant ``qt.tools.win64_mingw900``
+    do not contain MinGW 9.0.0; they actually contain MinGW 11.2.0!
+    Verify with ``aqt list-tool windows desktop --long-modules tools_mingw90``
+    in a wide terminal.
 
 
 Example: Show help message

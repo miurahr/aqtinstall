@@ -160,6 +160,8 @@ combination, so we will need to supply :ref:`aqt list-qt <list-qt command>` with
     qtcharts qtdatavis3d qtlottie qtnetworkauth qtpurchasing qtquick3d
     qtquicktimeline qtscript qtvirtualkeyboard qtwebengine qtwebglplugin
 
+.. _long_modules explanation:
+
 Let's say that we want to know more about these modules before we install them.
 We can use the ``--long-modules`` flag for that:
 
@@ -183,6 +185,26 @@ We can use the ``--long-modules`` flag for that:
 Note that if your terminal is wider than 95 characters, this command will show
 release dates and sizes in extra columns to the right.
 If you try this, you will notice that `debug_info` is 5.9 gigabytes installed.
+
+Also, notice that the 'Display Name' indicates which compiler the module is
+intended to be used with. In this case, for the architecture ``win64_mingw81``,
+you will most likely want to use the "MinGW 8.1.0 64-bit" compiler.
+Here's what the command prints when you use it with the ambiguously-named
+``win64_mingw`` architecture:
+
+.. code-block:: console
+
+    $ python -m aqt list-qt windows desktop --long-modules 6.2.4 win64_mingw
+       Module Name                         Display Name
+    =======================================================================
+    debug_info          Desktop MinGW 11.2.0 64-bit debug information files
+    qt3d                Qt 3D for MinGW 11.2.0 64-bit
+    qt5compat           Qt 5 Compatibility Module for MinGW 11.2.0 64-bit
+    qtactiveqt          Qt 3D for MinGW 11.2.0 64-bit
+    qtcharts            Qt Charts for MinGW 11.2.0 64-bit
+    ...
+
+You can find out how to install MinGW 8.1.0 and 11.2.0 in the `Installing Tools`_ section.
 
 Let's say that we want to install `qtcharts` and `qtnetworkauth`. 
 We can do that by using the `-m` flag with the :ref:`aqt install-qt <qt installation command>` command.
@@ -313,6 +335,7 @@ Let's find out what tools are available for Windows Desktop by using the
     tools_openssl_src
     tools_ninja
     tools_mingw
+    tools_mingw90
     tools_ifw
     tools_conan
     tools_cmake
@@ -359,6 +382,30 @@ that shows plenty of data pertinent to each tool variant available in `tools_min
 :ref:`aqt list-tool <list-tool command>` additionally prints the 'Display Name'
 and 'Description' for each tool if your terminal is wider than 95 characters;
 terminals that are narrower than this cannot display this table in a readable way.
+
+Please be aware that the tool ``tools_mingw90`` appears to be mislabelled:
+
+.. code-block:: console
+
+    $ aqt list-tool windows desktop tools_mingw90 -l
+
+       Tool Variant Name            Version          Release Date
+    =============================================================
+    qt.tools.win64_mingw900   9.0.0-1-202203221220   2022-03-22
+
+    $ aqt list-tool windows desktop tools_mingw90 -l
+
+       Tool Variant Name            Version          Release Date      Display Name            Description
+    ============================================================================================================
+    qt.tools.win64_mingw900   9.0.0-1-202203221220   2022-03-22     MinGW 11.2.0 64-bit   MinGW-builds 11.2.0
+                                                                                          64-bit toolchain with
+                                                                                          gcc 11.2.0
+
+The 'narrow display' for ``tools_mingw90`` cuts off the two columns of the table that
+show you what's really in that package: ``MinGW 11.2.0 64-bit``.
+If you are using the ``win64_mingw`` architecture for Qt 6.2.2+, then this is
+probably the compiler you want to install (see `long_modules explanation`_).
+
 
 Now let's install `mingw`, using the :ref:`aqt install-tool <tools installation command>` command.
 This command receives four parameters:
