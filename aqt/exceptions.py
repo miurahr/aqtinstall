@@ -102,3 +102,11 @@ class UpdaterError(AqtException):
 
 class OutOfMemory(AqtException):
     pass
+
+
+class OutOfDiskSpace(AqtException):
+    pass
+
+
+class DiskAccessNotPermitted(AqtException):
+    pass

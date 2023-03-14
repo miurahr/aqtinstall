@@ -22,6 +22,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import errno
 import gc
 import multiprocessing
 import os
@@ -47,6 +48,8 @@ from aqt.exceptions import (
     ArchiveListError,
     CliInputError,
     CliKeyboardInterrupt,
+    DiskAccessNotPermitted,
+    OutOfDiskSpace,
     OutOfMemory,
 )
 from aqt.helper import (
@@ -1127,6 +1130,23 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
         pool.starmap(installer, tasks)
         pool.close()
         pool.join()
+    except PermissionError as e:  # subclass of OSError
+        close_worker_pool_on_exception(e)
+        raise DiskAccessNotPermitted(
+            f"Failed to write to base directory at {base_dir}",
+            suggested_action=[
+                "Check that the destination is writable and does not already contain files owned by another user."
+            ],
+        ) from e
+    except OSError as e:
+        close_worker_pool_on_exception(e)
+        if e.errno == errno.ENOSPC:
+            raise OutOfDiskSpace(
+                "Insufficient disk space to complete installation.",
+                suggested_action=["Check available disk space.", "Check size requirements for installation."],
+            ) from e
+        else:
+            raise
     except KeyboardInterrupt as e:
         close_worker_pool_on_exception(e)
         raise CliKeyboardInterrupt("Installer halted by keyboard interrupt.") from e
