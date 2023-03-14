@@ -1,3 +1,4 @@
+import errno
 import hashlib
 import logging
 import os
@@ -1156,10 +1157,10 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
 
 
 @pytest.mark.parametrize(
-    "exception_class, settings_file, expect_end_msg, expect_return",
+    "exception, settings_file, expect_end_msg, expect_return",
     (
         (
-            RuntimeError,
+            RuntimeError(),
             "../aqt/settings.ini",
             "===========================PLEASE FILE A BUG REPORT===========================\n"
             "You have discovered a bug in aqt.\n"
@@ -1168,14 +1169,14 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
             Cli.UNHANDLED_EXCEPTION_CODE,
         ),
         (
-            KeyboardInterrupt,
+            KeyboardInterrupt(),
             "../aqt/settings.ini",
             "WARNING : Caught KeyboardInterrupt, terminating installer workers\n"
             "ERROR   : Installer halted by keyboard interrupt.",
             1,
         ),
         (
-            MemoryError,
+            MemoryError(),
             "../aqt/settings.ini",
             "WARNING : Caught MemoryError, terminating installer workers\n"
             "ERROR   : Out of memory when downloading and extracting archives in parallel.\n"
@@ -1187,7 +1188,7 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
             1,
         ),
         (
-            MemoryError,
+            MemoryError(),
             "data/settings_no_concurrency.ini",
             "WARNING : Caught MemoryError, terminating installer workers\n"
             "ERROR   : Out of memory when downloading and extracting archives.\n"
@@ -1197,11 +1198,39 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
             "(see https://aqtinstall.readthedocs.io/en/latest/cli.html#cmdoption-list-tool-external)",
             1,
         ),
+        (
+            OSError(errno.ENOSPC, "No space left on device"),
+            "../aqt/settings.ini",
+            "WARNING : Caught OSError, terminating installer workers\n"
+            "ERROR   : Insufficient disk space to complete installation.\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Check available disk space.\n"
+            "* Check size requirements for installation.",
+            1,
+        ),
+        (
+            OSError(),
+            "../aqt/settings.ini",
+            "===========================PLEASE FILE A BUG REPORT===========================\n"
+            "You have discovered a bug in aqt.\n"
+            "Please file a bug report at https://github.com/miurahr/aqtinstall/issues\n"
+            "Please remember to include a copy of this program's output in your report.",
+            Cli.UNHANDLED_EXCEPTION_CODE,
+        ),
+        (
+            PermissionError(),
+            "../aqt/settings.ini",
+            "WARNING : Caught PermissionError, terminating installer workers\n"
+            f"ERROR   : Failed to write to base directory at {os.getcwd()}\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Check that the destination is writable and does not already contain files owned by another user.",
+            1,
+        ),
     ),
 )
-def test_install_pool_exception(monkeypatch, capsys, exception_class, settings_file, expect_end_msg, expect_return):
+def test_install_pool_exception(monkeypatch, capsys, exception, settings_file, expect_end_msg, expect_return):
     def mock_installer_func(*args):
-        raise exception_class()
+        raise exception
 
     host, target, ver, arch = "windows", "desktop", "6.1.0", "win64_mingw81"
     updates_url = "windows_x86/desktop/qt6_610/Updates.xml"
