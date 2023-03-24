@@ -8,6 +8,18 @@ All notable changes to this project will be documented in this file.
 =============
 
 
+`v3.0.3`_ (25, Mar. 2023)
+=========================
+
+Fixed
+-----
+* Test: update tox.ini config (#634)
+* CI: Pin checkout at v3 in all workflows(#649)
+
+Changed
+-------
+* Standalone binary build with PyInstaller directly(#598)
+
 `v3.0.2`_ (26, Oct. 2022)
 =========================
 
@@ -304,7 +316,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.2...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.3...HEAD
+.. _v3.0.3: https://github.com/miurahr/aqtinstall/compare/v3.0.2...v3.0.3
 .. _v3.0.2: https://github.com/miurahr/aqtinstall/compare/v3.0.1...v3.0.2
 .. _v3.0.1: https://github.com/miurahr/aqtinstall/compare/v3.0.0...v3.0.1
 .. _v3.0.0: https://github.com/miurahr/aqtinstall/compare/v2.2.3...v3.0.0
