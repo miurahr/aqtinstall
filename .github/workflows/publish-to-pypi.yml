@@ -32,12 +32,12 @@ jobs:
         run: python -m twine check dist/*
       - name: Publish distribution 📦 to Test PyPI when releases branch
         if: ${{ startsWith(github.event.ref, 'refs/heads/releases') }}
-        uses: pypa/gh-action-pypi-publish@@release/v1
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.testpypi_password }}
           repository_url: https://test.pypi.org/legacy/
       - name: Publish distribution 📦 to PyPI
         if: ${{ startsWith(github.event.ref, 'refs/tags') }}
-        uses: pypa/gh-action-pypi-publish@@release/v1
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.pypi_password }}
