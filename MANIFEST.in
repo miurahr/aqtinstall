@@ -15,6 +15,7 @@ recursive-include tests *.ini
 recursive-include tests *.json
 recursive-include tests *.py
 recursive-include tests *.xml
+recursive-include tools *.py
 prune .github
 exclude .gitignore
 exclude .readthedocs.yml
