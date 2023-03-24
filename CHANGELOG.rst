@@ -7,8 +7,24 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v2.2.4`_ (24, Mar. 2023)
+=========================
+
+Backport following changes from 3.x :
+
+Fixed
+-----
+* Fix standalone executable build for windows (#565,#567)
+* Actions: Fix standalone executable upload (#581)
+* Test: update tox.ini config (#634)
+
+Changed
+-------
+* Standalone binary build with PyInstaller directly(#598)
+* metadata: change link to changelog
+
 `v2.2.3`_ (17, Aug. 2022)
--------------------------
+=========================
 
 Fixed
 -----
@@ -20,7 +36,7 @@ Added
 
 
 `v2.2.2`_ (11, Aug. 2022)
--------------------------
+=========================
 
 Added
 -----
@@ -32,7 +48,7 @@ Fixed
 
 
 `v2.2.1`_ (9, Aug. 2022)
-------------------------
+========================
 
 Changed
 -------
@@ -41,7 +57,7 @@ Changed
   respect ``baseurl`` set. (#545)
 
 `v2.2.0`_ (2, Aug. 2022)
-------------------------
+========================
 
 Added
 -----
@@ -270,7 +286,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.2.3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v2.2.4...HEAD
+.. _v2.2.4: https://github.com/miurahr/aqtinstall/compare/v2.2.3...v2.2.4
 .. _v2.2.3: https://github.com/miurahr/aqtinstall/compare/v2.2.2...v2.2.3
 .. _v2.2.2: https://github.com/miurahr/aqtinstall/compare/v2.2.1...v2.2.2
 .. _v2.2.1: https://github.com/miurahr/aqtinstall/compare/v2.2.0...v2.2.1
