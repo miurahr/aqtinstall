@@ -75,9 +75,6 @@ Wiki = "https://github.com/miurahr/aqtinstall/wiki"
 Source = "https://github.com/miurahr/aqtinstall"
 Changelog = "https://github.com/miurahr/aqtinstall/blob/master/CHANGELOG.rst"
 
-[tool.poetry]
-include = ["*.yml", "*.json", "*.ini"]
-
 [build-system]
 requires = ["setuptools>=61", "wheel", "setuptools_scm[toml]>=6.4"]
 build-backend = "setuptools.build_meta"

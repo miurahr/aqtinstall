@@ -30,25 +30,32 @@ jobs:
           architecture: ${{ matrix.arch }}
       - name: Build standalone binary
         run: |
-          ci/build_standalone.bat
-          cp .gravitybee\dist\latest\aqt.exe .gravitybee\dist\latest\aqt_${{ matrix.arch }}.exe
+          python -m venv venv
+          venv/Scripts/activate.ps1
+          python -m pip install -U pip wheel setuptools setuptools_scm pyinstaller
+          python -m pip install .
+          python tools/build_standalone.py ${{ matrix.arch }}
+          deactivate
+          Remove-Item venv -Recurse -Force
+        shell: pwsh
 
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: .gravitybee\dist\latest\aqt.exe
+          file: dist\aqt_x64.exe
+          asset_name: aqt.exe
           tag: ${{ github.ref }}
           overwrite: true
-        if: matrix.arch=='x64'
-
+        if: matrix.arch=='x64' && startsWith(github.ref, 'refs/tags/v')
       - name: Upload to Release for all architectures
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: .gravitybee\dist\latest\aqt_${{ matrix.arch }}.exe
+          file: dist\aqt_${{ matrix.arch }}.exe
           tag: ${{ github.ref }}
           overwrite: true
+        if: startsWith(github.ref, 'refs/tags/v')
       - name: Update continuous build
         uses: svenstaro/upload-release-action@v2
         with:
@@ -56,8 +63,9 @@ jobs:
           overwrite: true
           prerelease: true
           tag: Continuous
-          file: .gravitybee\dist\latest\aqt.exe
-        if: matrix.arch=='x64'
+          file: dist\aqt_x64.exe
+          asset_name: aqt.exe
+        if: matrix.arch=='x64' && startsWith(github.ref, 'refs/tags/v')
       - name: Update continuous build for all architectures
         uses: svenstaro/upload-release-action@v2
         with:
@@ -65,4 +73,5 @@ jobs:
           overwrite: true
           prerelease: true
           tag: Continuous
-          file: .gravitybee\dist\latest\aqt_${{ matrix.arch }}.exe
+          file: dist\aqt_${{ matrix.arch }}.exe
+        if: startsWith(github.ref, 'refs/tags/v')
