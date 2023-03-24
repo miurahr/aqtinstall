@@ -9,14 +9,14 @@ All notable changes to this project will be documented in this file.
 
 
 `v3.0.2`_ (26, Oct. 2022)
--------------------------
+=========================
 
 * Fix installation of Qt6/WASM arch on windows (#583,#584)
 * Docs: allow localization (#588)
 * Docs: Add Japanese translation (#595)
 
 `v3.0.1`_ (30, Sep. 2022)
--------------------------
+=========================
 
 * Actions: Fix standalone executable upload (#581)
 * Actions: Bump versions (#579)
@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file.
   - actions/setup-python@v4
 
 `v3.0.0`_ (29, Sep. 2022)
--------------------------
+=========================
 
 Added
 -----
@@ -42,7 +42,7 @@ Changed
 * CI: now test on MacOS 12(#541)
 
 `v2.2.3`_ (17, Aug. 2022)
--------------------------
+=========================
 
 Fixed
 -----
@@ -54,7 +54,7 @@ Added
 
 
 `v2.2.2`_ (11, Aug. 2022)
--------------------------
+=========================
 
 Added
 -----
@@ -66,7 +66,7 @@ Fixed
 
 
 `v2.2.1`_ (9, Aug. 2022)
-------------------------
+========================
 
 Changed
 -------
@@ -75,7 +75,7 @@ Changed
   respect ``baseurl`` set. (#545)
 
 `v2.2.0`_ (2, Aug. 2022)
-------------------------
+========================
 
 Added
 -----
