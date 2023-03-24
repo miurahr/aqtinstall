@@ -21,7 +21,7 @@ jobs:
       - name: Fetch release tag
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Set up Python 3.7🐍
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: 3.7
       - name: Install build and twine
@@ -32,12 +32,12 @@ jobs:
         run: python -m twine check dist/*
       - name: Publish distribution 📦 to Test PyPI when releases branch
         if: ${{ startsWith(github.event.ref, 'refs/heads/releases') }}
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@v1
         with:
           password: ${{ secrets.testpypi_password }}
           repository_url: https://test.pypi.org/legacy/
       - name: Publish distribution 📦 to PyPI
         if: ${{ startsWith(github.event.ref, 'refs/tags') }}
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@v1
         with:
           password: ${{ secrets.pypi_password }}
