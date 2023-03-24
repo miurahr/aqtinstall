@@ -706,7 +706,6 @@ def test_install(
     archives: List[MockArchive],
     expect_out,  # type: re.Pattern
 ):
-
     # For convenience, fill in version and arch dir: prevents repetitive data declarations
     for i in range(len(archives)):
         archives[i].version = version

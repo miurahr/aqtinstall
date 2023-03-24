@@ -204,7 +204,6 @@ def test_cli_check_mirror():
     ),
 )
 def test_set_arch(arch: Optional[str], host: str, target: str, version: str, expect: Optional[str]):
-
     if not expect:
         with pytest.raises(CliInputError) as e:
             Cli._set_arch(arch, host, target, version)
