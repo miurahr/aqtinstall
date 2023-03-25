@@ -13,6 +13,16 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.4`_ (25, Mar. 2023)
+=========================
+
+Changed
+-------
+* Add Qt 6.4.3 as known version(#661)
+* Catch OSError(errno.ENOSPC) and PermissionError (#657)
+* Update security policy
+
+
 `v3.1.3`_ (2, Mar. 2023)
 ========================
 
@@ -201,7 +211,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.4...HEAD
+.. _v3.1.4: https://github.com/miurahr/aqtinstall/compare/v3.1.3...v3.1.4
 .. _v3.1.3: https://github.com/miurahr/aqtinstall/compare/v3.1.2...v3.1.3
 .. _v3.1.2: https://github.com/miurahr/aqtinstall/compare/v3.1.1...v3.1.2
 .. _v3.1.1: https://github.com/miurahr/aqtinstall/compare/v3.1.0...v3.1.1
