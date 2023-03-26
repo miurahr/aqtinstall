@@ -1260,6 +1260,8 @@ def test_install_installer_archive_extraction_err(monkeypatch):
     monkeypatch.setattr("aqt.installer.subprocess.run", mock_extractor_that_fails)
 
     with pytest.raises(ArchiveExtractionError) as err, TemporaryDirectory() as temp_dir:
+        with open(Path(temp_dir) / "archive", "w"):
+            pass
         installer(
             qt_package=QtPackage(
                 "name",

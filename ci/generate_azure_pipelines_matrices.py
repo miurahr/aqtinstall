@@ -217,9 +217,16 @@ linux_build_jobs.extend(
             subarchives="qtbase qttools qt icu",
         ),
         BuildJob(
+            # Archives stored as .7z
             "install-src", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtlottie",
             # Fail the job if this path does not exist:
             check_output_cmd="ls -lh ./6.1.0/Src/qtlottie/",
+        ),
+        BuildJob(
+            # Archives stored as .tar.gz
+            "install-src", "6.4.3", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtlottie",
+            # Fail the job if this path does not exist:
+            check_output_cmd="ls -lh ./6.4.3/Src/qtlottie/",
         ),
         # Should install the `qtlottie` module, even though the archive `qtlottieanimation` is not specified:
         BuildJob(

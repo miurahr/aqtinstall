@@ -31,6 +31,7 @@ import posixpath
 import signal
 import subprocess
 import sys
+import tarfile
 import time
 from logging import getLogger
 from logging.handlers import QueueHandler
@@ -1221,7 +1222,11 @@ def installer(
         name=f"Downloading {name}",
     )
     gc.collect()
-    if command is None:
+
+    if tarfile.is_tarfile(archive):
+        with tarfile.open(archive) as tar_archive:
+            tar_archive.extractall(path=base_dir)
+    elif command is None:
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)
     else:
