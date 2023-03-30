@@ -189,6 +189,12 @@ windows_build_jobs.extend(
             spec=">1,<5.15",  # Don't redirect output! Must be wrapped in quotes!
             mirror=random.choice(MIRRORS),
         ),
+        BuildJob(
+            # Archives stored as .zip
+            "install-src", "6.4.3", "windows", "desktop", "gcc_64", "gcc_64", subarchives="qtlottie",
+            # Fail the job if this path does not exist:
+            check_output_cmd="ls -lh ./6.4.3/Src/qtlottie/",
+        ),
     ]
 )
 

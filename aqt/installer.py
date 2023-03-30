@@ -33,6 +33,7 @@ import subprocess
 import sys
 import tarfile
 import time
+import zipfile
 from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
@@ -1226,6 +1227,9 @@ def installer(
     if tarfile.is_tarfile(archive):
         with tarfile.open(archive) as tar_archive:
             tar_archive.extractall(path=base_dir)
+    elif zipfile.is_zipfile(archive):
+        with zipfile.ZipFile(archive) as zip_archive:
+            zip_archive.extractall(path=base_dir)
     elif command is None:
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)
