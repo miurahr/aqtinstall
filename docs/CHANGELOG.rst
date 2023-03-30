@@ -13,6 +13,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.5`_ (30, Mar. 2023)
+=========================
+
+Fixed
+-----
+* Fix failure to install Qt 6.4.3 source and docs on Windows(#665)
+* Fix failed .tar.gz extraction in `install-src` and `install-doc`(#663)
+
 `v3.1.4`_ (25, Mar. 2023)
 =========================
 
@@ -211,7 +219,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.4...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.5...HEAD
+.. _v3.1.5: https://github.com/miurahr/aqtinstall/compare/v3.1.4...v3.1.5
 .. _v3.1.4: https://github.com/miurahr/aqtinstall/compare/v3.1.3...v3.1.4
 .. _v3.1.3: https://github.com/miurahr/aqtinstall/compare/v3.1.2...v3.1.3
 .. _v3.1.2: https://github.com/miurahr/aqtinstall/compare/v3.1.1...v3.1.2
