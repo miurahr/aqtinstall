@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 Fixed
 -----
 * Fix failure to install Qt 6.4.3 source and docs on Windows(#665)
-* Fix failed .tar.gz extraction in ``install-src`` and ``install-doc``(#663)
+* Fix failed .tar.gz extraction in ``install-src`` and ``install-doc`` (#663)
 
 `v3.1.4`_ (25, Mar. 2023)
 =========================
