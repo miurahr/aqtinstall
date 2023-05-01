@@ -601,6 +601,12 @@
         "tool_name": "tools_openssl_x64"
       },
       {
+        "arch": "qt.tools.opensslv3.src",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_opensslv3_src"
+      },
+      {
         "arch": "qt.tools.qt3dstudio",
         "os_name": "linux",
         "target": "desktop",
@@ -911,6 +917,18 @@
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_openssl_x86"
+      },
+      {
+        "arch": "qt.tools.opensslv3.src",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_opensslv3_src"
+      },
+      {
+        "arch": "qt.tools.opensslv3.win_x64",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_opensslv3_x64"
       },
       {
         "arch": "qt.tools.qt3dstudio",
