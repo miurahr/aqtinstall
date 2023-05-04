@@ -13,6 +13,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.6`_ (4, May, 2023)
+========================
+
+Added
+-----
+* Add opensslv3 as known module (#674)
+* Add code signature for standalone binary
+
 `v3.1.5`_ (30, Mar. 2023)
 =========================
 
@@ -219,7 +227,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.5...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.6...HEAD
+.. _v3.1.6: https://github.com/miurahr/aqtinstall/compare/v3.1.5...v3.1.6
 .. _v3.1.5: https://github.com/miurahr/aqtinstall/compare/v3.1.4...v3.1.5
 .. _v3.1.4: https://github.com/miurahr/aqtinstall/compare/v3.1.3...v3.1.4
 .. _v3.1.3: https://github.com/miurahr/aqtinstall/compare/v3.1.2...v3.1.3
