@@ -543,7 +543,10 @@ class MetadataFactory:
 
         if archive_id.is_tools():
             if tool_name is not None:
-                _tool_name: str = "tools_" + tool_name if not tool_name.startswith("tools_") else tool_name
+                if not tool_name.startswith("tools_") and tool_name != "sdktool":
+                    _tool_name = f"tools_{tool_name}"
+                else:
+                    _tool_name = tool_name
                 if is_long_listing:
                     self.request_type = "tool long listing"
                     self._action: MetadataFactory.Action = lambda: self.fetch_tool_long_listing(_tool_name)
@@ -732,6 +735,8 @@ class MetadataFactory:
                 if not folder:
                     continue
                 if folder.startswith(filter_category):
+                    yield folder
+                if filter_category == "tools" and folder == "sdktool":
                     yield folder
         except Exception as e:
             raise ArchiveConnectionError(
