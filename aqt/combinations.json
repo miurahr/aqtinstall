@@ -547,6 +547,12 @@
     ],
     "tools": [
       {
+        "arch": "qt.tools.qtcreator",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "sdktool"
+      },
+      {
         "arch": "qt.tools.cmake",
         "os_name": "linux",
         "target": "desktop",
@@ -685,6 +691,12 @@
         "tool_name": "tools_telemetry_gui"
       },
       {
+        "arch": "qt.tools.qtcreator",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "sdktool"
+      },
+      {
         "arch": "qt.tools.cmake",
         "os_name": "mac",
         "target": "desktop",
@@ -791,6 +803,12 @@
         "os_name": "mac",
         "target": "desktop",
         "tool_name": "tools_telemetry_gui"
+      },
+      {
+        "arch": "qt.tools.qtcreator",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "sdktool"
       },
       {
         "arch": "qt.tools.cmake",
