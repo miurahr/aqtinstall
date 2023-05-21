@@ -312,6 +312,23 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ),
         ),
         (
+            "install-tool linux desktop sdktool qt.tools.qtcreator".split(),
+            "linux",
+            "desktop",
+            "10.0.1-0-202305050734",
+            {"std": ""},
+            {"std": ""},
+            {"std": "linux_x64/desktop/sdktool/Updates.xml"},
+            {"std": [tool_archive("linux", "sdktool", "qt.tools.qtcreator")]},
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Downloading qt.tools.qtcreator...\n"
+                r"Finished installation of sdktool-linux-qt.tools.qtcreator.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (
             "tool linux tools_qtcreator 1.2.3-0-197001020304 qt.tools.qtcreator".split(),
             "linux",
             "desktop",

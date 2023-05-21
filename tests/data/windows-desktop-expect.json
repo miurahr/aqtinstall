@@ -91,6 +91,7 @@
     "tools_ifw",
     "tools_generic",
     "tools_conan",
-    "tools_cmake"
+    "tools_cmake",
+    "sdktool"
   ]
 }

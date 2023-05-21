@@ -1,0 +1,14 @@
+{
+  "modules": [
+    "qt.tools.qtcreator"
+  ],
+  "long_listing": [
+    [
+      "qt.tools.qtcreator",
+      "10.0.1-0-202305050734",
+      "2023-05-05",
+      "SDKTool",
+      "SDKTool"
+    ]
+  ]
+}

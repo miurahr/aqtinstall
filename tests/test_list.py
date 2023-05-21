@@ -1066,7 +1066,13 @@ def fetch_expected_tooldata(json_filename: str) -> ToolData:
     return ToolData(tools)
 
 
-@pytest.mark.parametrize("host, target, tool_name", (("mac", "desktop", "tools_cmake"),))
+@pytest.mark.parametrize(
+    "host, target, tool_name",
+    (
+        ("mac", "desktop", "tools_cmake"),
+        ("mac", "desktop", "sdktool"),
+    ),
+)
 def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: str):
     html_file = f"{host}-{target}.html"
     xml_file = f"{host}-{target}-{tool_name}-update.xml"
@@ -1084,7 +1090,7 @@ def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: s
         if not rest_of_url.endswith("Updates.xml"):
             return htmltext
         folder = urlparse(rest_of_url).path.split("/")[-2]
-        assert folder.startswith("tools_")
+        assert folder.startswith("tools_") or folder in ["sdktool"]
         return xmltext
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
@@ -1092,27 +1098,31 @@ def test_list_tool_cli(monkeypatch, capsys, host: str, target: str, tool_name: s
     cli = Cli()
     cli.run(["list-tool", host, target])
     out, err = capsys.readouterr()
+    assert not err
     output_set = set(out.strip().split())
     assert output_set == expected_tools
 
     cli.run(["list-tool", host, target, tool_name])
     out, err = capsys.readouterr()
+    assert not err
     output_set = set(out.strip().split())
     assert output_set == expected_tool_modules
 
     # Test abbreviated tool name: "aqt list-tool mac desktop ifw"
-    assert tool_name.startswith("tools_")
-    short_tool_name = tool_name[6:]
+    assert tool_name.startswith("tools_") or tool_name in ["sdktool"]
+    short_tool_name = tool_name[6:] if tool_name.startswith("tools_") else tool_name
     cli.run(["list-tool", host, target, short_tool_name])
     out, err = capsys.readouterr()
+    assert not err
     output_set = set(out.strip().split())
     assert output_set == expected_tool_modules
 
     cli.run(["list-tool", host, target, tool_name, "-l"])
     out, err = capsys.readouterr()
+    assert not err
 
     expected_tooldata = format(fetch_expected_tooldata(xml_expect))
-    assert out.strip() == expected_tooldata
+    assert out.strip() == expected_tooldata.strip()
 
 
 def test_fetch_http_ok(monkeypatch):
