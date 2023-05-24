@@ -915,11 +915,11 @@ class Cli:
             "list-tool",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
-            "$ aqt list-tool mac desktop                 # print all tools for mac desktop\n"
-            "$ aqt list-tool mac desktop tools_ifw       # print all tool variant names for QtIFW\n"
-            "$ aqt list-tool mac desktop ifw             # print all tool variant names for QtIFW\n"
-            "$ aqt list-tool mac desktop -l tools_ifw    # print tool variant names with metadata for QtIFW\n"
-            "$ aqt list-tool mac desktop -l ifw          # print tool variant names with metadata for QtIFW\n",
+            "$ aqt list-tool mac desktop                   # print all tools for mac desktop\n"
+            "$ aqt list-tool mac desktop tools_ifw         # print all tool variant names for QtIFW\n"
+            "$ aqt list-tool mac desktop ifw               # print all tool variant names for QtIFW\n"
+            "$ aqt list-tool mac desktop tools_ifw --long  # print tool variant names with metadata for QtIFW\n"
+            "$ aqt list-tool mac desktop ifw --long        # print tool variant names with metadata for QtIFW\n",
         )
         list_parser.add_argument("host", choices=["linux", "mac", "windows"], help="host os name")
         list_parser.add_argument(
