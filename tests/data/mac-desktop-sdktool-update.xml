@@ -1,0 +1,20 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.qtcreator</Name>
+  <DisplayName>SDKTool</DisplayName>
+  <Description>SDKTool</Description>
+  <Version>10.0.1-0-202305050734</Version>
+  <ReleaseDate>2023-05-05</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Virtual>true</Virtual>
+  <ForcedInstallation>true</ForcedInstallation>
+  <DownloadableArchives>qtcreator_sdktool.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1821889" UncompressedSize="6058248" OS="Any"/>
+  <SHA1>450d20347716f794124272a38d7cf46df9c50169</SHA1>
+ </PackageUpdate>
+ <SHA1>c6d6c9ff8b3c0a75f1bb1804eb4955a6409ac867</SHA1>
+ <MetadataName>2023-05-05-0734_meta.7z</MetadataName>
+</Updates>
