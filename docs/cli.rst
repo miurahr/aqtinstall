@@ -943,7 +943,7 @@ Example: Install MinGW 11.2.0 on Windows:
     This is not a typo; it is a mislabelled tool name!
     ``tools_mingw90`` and the tool variant ``qt.tools.win64_mingw900``
     do not contain MinGW 9.0.0; they actually contain MinGW 11.2.0!
-    Verify with ``aqt list-tool windows desktop --long-modules tools_mingw90``
+    Verify with ``aqt list-tool --long windows desktop tools_mingw90``
     in a wide terminal.
 
 
