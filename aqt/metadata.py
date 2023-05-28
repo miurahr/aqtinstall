@@ -540,7 +540,6 @@ class MetadataFactory:
         self.archive_id = archive_id
         self.spec = spec
         self.base_url = base_url
-        self.ignore_updates_hash = Settings.ignore_updates_hash
 
         if archive_id.is_tools():
             if tool_name is not None:
@@ -785,7 +784,7 @@ class MetadataFactory:
 
     def _fetch_module_metadata(self, folder: str, predicate: Optional[Callable[[Element], bool]] = None):
         rest_of_url = posixpath.join(self.archive_id.to_url(), folder, "Updates.xml")
-        xml = self.fetch_http(rest_of_url, is_check_hash=not self.ignore_updates_hash)
+        xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
         return xml_to_modules(
             xml,
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,

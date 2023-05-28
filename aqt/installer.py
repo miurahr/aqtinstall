@@ -1209,7 +1209,7 @@ def installer(
     logger.addHandler(qh)
     #
     timeout = (Settings.connection_timeout, Settings.response_timeout)
-    hash = get_hash(qt_package.archive_path, algorithm="sha256", timeout=timeout)
+    hash = get_hash(qt_package.archive_path, algorithm="sha256", timeout=timeout) if not Settings.ignore_hash else None
 
     def download_bin(_base_url):
         url = posixpath.join(_base_url, qt_package.archive_path)
