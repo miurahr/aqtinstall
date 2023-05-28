@@ -457,6 +457,10 @@ class SettingsClass:
         return self.config.getint("requests", "max_retries_to_retrieve_hash", fallback=int(self.max_retries))
 
     @property
+    def ignore_updates_hash(self):
+        return self.config.getboolean("requests", "ignore_updates_hash", fallback=False)
+
+    @property
     def backoff_factor(self):
         return self.config.getfloat("requests", "retry_backoff", fallback=0.1)
 
