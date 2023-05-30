@@ -458,7 +458,7 @@ class SettingsClass:
 
     @property
     def ignore_hash(self):
-        return self.config.getboolean("requests", "ignore_hash", fallback=False)
+        return self.config.getboolean("requests", "INSECURE_NOT_FOR_PRODUCTION_ignore_hash", fallback=False)
 
     @property
     def backoff_factor(self):
