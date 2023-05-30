@@ -31,6 +31,7 @@ A file is like as follows:
     retry_backoff: 0.1
     max_retries_on_checksum_error: 5
     max_retries_to_retrieve_hash: 5
+    INSECURE_NOT_FOR_PRODUCTION_ignore_hash: False
 
     [mirrors]
     trusted_mirrors:
@@ -129,6 +130,13 @@ retry_backoff:
 max_retries_on_checksum_error:
     This setting controls how many times ``aqt`` will attempt to download a file,
     in the case of a checksum error.
+
+INSECURE_NOT_FOR_PRODUCTION_ignore_hash:
+    This is either ``True`` or ``False``.
+    The ``True`` setting disables hash checking when downloading files. Although
+    this is not recommended, this may help when hashes are not available.
+    The ``False`` setting will enforce hash checking. This is highly recommended
+    to avoid corrupted files.
 
 
 The ``[mirrors]`` section is a configuration for mirror handling.
