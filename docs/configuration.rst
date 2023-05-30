@@ -31,6 +31,7 @@ A file is like as follows:
     retry_backoff: 0.1
     max_retries_on_checksum_error: 5
     max_retries_to_retrieve_hash: 5
+    hash_algorithm: sha256
     INSECURE_NOT_FOR_PRODUCTION_ignore_hash: False
 
     [mirrors]
@@ -130,6 +131,10 @@ retry_backoff:
 max_retries_on_checksum_error:
     This setting controls how many times ``aqt`` will attempt to download a file,
     in the case of a checksum error.
+
+hash_algorithm:
+    This is either ``sha256``, ``sha1`` or ``md5``. ``sha256`` is the only safe 
+    value to use here. See also ``trusted_mirrors`` setting.
 
 INSECURE_NOT_FOR_PRODUCTION_ignore_hash:
     This is either ``True`` or ``False``.

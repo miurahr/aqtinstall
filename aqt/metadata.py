@@ -699,7 +699,7 @@ class MetadataFactory:
 
     def fetch_http(self, rest_of_url: str, is_check_hash: bool = True) -> str:
         timeout = (Settings.connection_timeout, Settings.response_timeout)
-        expected_hash = get_hash(rest_of_url, "sha256", timeout) if is_check_hash else None
+        expected_hash = get_hash(rest_of_url, Settings.hash_algorithm, timeout) if is_check_hash else None
         base_urls = self.base_url, random.choice(Settings.fallbacks)
 
         err: BaseException = AssertionError("unraisable")
