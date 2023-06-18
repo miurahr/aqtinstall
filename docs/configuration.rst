@@ -156,8 +156,8 @@ blacklist:
     Some mirror sites ignore a connection from IP addresses out of their preffered one.
     It will cause connection error or connection timeout.
     There are some known mirror sites in default.
-    When you are happy with the default sites,
-    you can override with your custom settings.
+    If you are not happy with the default sites,
+    you can override them with custom settings.
 
 fallbacks:
     It is a list of URL where is a good for access.
