@@ -13,6 +13,25 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.7`_ (1, Aug. 2023)
+========================
+
+Added
+-----
+Add support for standalone sdktool installation(#677)
+
+Fixed
+-----
+- Fixed command to check tools_mingw90 (#680)
+- Fixed help text for list-tool
+
+Changed
+-------
+* Add Qt 6.6.0, 6.5.2 and 6.5.1 as known version(#685,#698)
+* Default blacklist setting(#689)
+* Add test for sdktool(#678)
+
+
 `v3.1.6`_ (4, May, 2023)
 ========================
 
@@ -227,7 +246,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.6...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.7...HEAD
+.. _v3.1.7: https://github.com/miurahr/aqtinstall/compare/v3.1.6...v3.1.7
 .. _v3.1.6: https://github.com/miurahr/aqtinstall/compare/v3.1.5...v3.1.6
 .. _v3.1.5: https://github.com/miurahr/aqtinstall/compare/v3.1.4...v3.1.5
 .. _v3.1.4: https://github.com/miurahr/aqtinstall/compare/v3.1.3...v3.1.4
