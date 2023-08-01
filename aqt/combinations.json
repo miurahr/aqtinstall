@@ -272,6 +272,45 @@
           "qtwebview"
         ],
         "qt_version": "6.5"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qt3d",
+          "qt5compat",
+          "qtcharts",
+          "qtconnectivity",
+          "qtdatavis3d",
+          "qtgraphs",
+          "qtgrpc",
+          "qthttpserver",
+          "qtimageformats",
+          "qtlanguageserver",
+          "qtlocation",
+          "qtlottie",
+          "qtmultimedia",
+          "qtnetworkauth",
+          "qtpdf",
+          "qtpositioning",
+          "qtquick3d",
+          "qtquick3dphysics",
+          "qtquickeffectmaker",
+          "qtquicktimeline",
+          "qtremoteobjects",
+          "qtscxml",
+          "qtsensors",
+          "qtserialbus",
+          "qtserialport",
+          "qtshadertools",
+          "qtspeech",
+          "qtvirtualkeyboard",
+          "qtwaylandcompositor",
+          "qtwebchannel",
+          "qtwebengine",
+          "qtwebsockets",
+          "qtwebview"
+        ],
+        "qt_version": "6.6"
       }
     ],
     "new_archive": [
@@ -577,7 +616,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.45",
+        "arch": "qt.tools.ifw.46",
         "os_name": "linux",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -679,10 +718,22 @@
         "tool_name": "tools_qtdesignstudio_generation2"
       },
       {
+        "arch": "qtdesignstudio.lts",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio_generation2_lts"
+      },
+      {
         "arch": "qt.tools.qtcreator.telemetry",
         "os_name": "linux",
         "target": "desktop",
         "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.qtcreator_gui.telemetry_evaluator",
+        "os_name": "linux",
+        "target": "desktop",
+        "tool_name": "tools_telemetry_eval_gui"
       },
       {
         "arch": "qt.tools.qtcreator_gui.telemetry",
@@ -721,7 +772,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.45",
+        "arch": "qt.tools.ifw.46",
         "os_name": "mac",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -793,10 +844,22 @@
         "tool_name": "tools_qtdesignstudio_generation2"
       },
       {
+        "arch": "qtdesignstudio.lts",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio_generation2_lts"
+      },
+      {
         "arch": "qt.tools.qtcreator.telemetry",
         "os_name": "mac",
         "target": "desktop",
         "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.qtcreator_gui.telemetry_evaluator",
+        "os_name": "mac",
+        "target": "desktop",
+        "tool_name": "tools_telemetry_eval_gui"
       },
       {
         "arch": "qt.tools.qtcreator_gui.telemetry",
@@ -835,7 +898,7 @@
         "tool_name": "tools_generic"
       },
       {
-        "arch": "qt.tools.ifw.45",
+        "arch": "qt.tools.ifw.46",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_ifw"
@@ -1021,10 +1084,22 @@
         "tool_name": "tools_qtdesignstudio_generation2"
       },
       {
+        "arch": "qtdesignstudio.lts",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_qtdesignstudio_generation2_lts"
+      },
+      {
         "arch": "qt.tools.qtcreator.telemetry",
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_telemetry"
+      },
+      {
+        "arch": "qt.tools.qtcreator_gui.telemetry_evaluator",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_telemetry_eval_gui"
       },
       {
         "arch": "qt.tools.qtcreator_gui.telemetry",
@@ -1154,7 +1229,9 @@
       "6.4.2",
       "6.4.3",
       "6.5.0",
-      "6.5.1"
+      "6.5.1",
+      "6.5.2",
+      "6.6.0"
     ]
   }
 ]
