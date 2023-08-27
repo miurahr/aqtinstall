@@ -2,7 +2,7 @@ import re
 import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 import pytest
 
