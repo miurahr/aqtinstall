@@ -383,15 +383,6 @@ def test_cli_unexpected_error(monkeypatch, capsys):
     )
 
 
-def test_cli_set_7zip_nonexistent(monkeypatch):
-    cli = Cli()
-    cli._setup_settings()
-    with pytest.raises(CliInputError) as err:
-        cli._set_sevenzip("some_nonexistent_binary")
-    assert err.type == CliInputError
-    assert format(err.value) == "Specified 7zip command executable does not exist: 'some_nonexistent_binary'"
-
-
 @pytest.mark.parametrize("external_tool_exists", (True, False))
 def test_set_7zip_checks_external_tool_when_specified(monkeypatch, capsys, external_tool_exists: bool):
     cli = Cli()
