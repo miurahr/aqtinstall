@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Union
 import pytest
 
 from aqt.exceptions import CliInputError
+from aqt.helper import Settings
 from aqt.installer import Cli
 from aqt.metadata import MetadataFactory, SimpleSpec, Version
 
@@ -395,18 +396,19 @@ def test_cli_set_7zip_nonexistent(monkeypatch):
 def test_set_7zip_checks_external_tool_when_specified(monkeypatch, capsys, external_tool_exists: bool):
     cli = Cli()
     cli._setup_settings()
-    external, fallback = "my_7z_extractor", "7zipper"
+    external = "my_7z_extractor"
     def mock_subprocess_run(args, **kwargs):
         assert args[0] == external
         if not external_tool_exists:
             raise FileNotFoundError()
 
     monkeypatch.setattr("aqt.installer.subprocess.run", mock_subprocess_run)
+    monkeypatch.setattr("aqt.installer.EXT7Z", False)
     if external_tool_exists:
-        assert external == cli._set_sevenzip(external, fallback, is_p7zr_missing=False)
+        assert external == cli._set_sevenzip(external)
     else:
         with pytest.raises(CliInputError) as err:
-            cli._set_sevenzip(external, fallback, is_p7zr_missing=False)
+            cli._set_sevenzip(external)
         assert format(err.value) == format(f"Specified 7zip command executable does not exist: '{external}'")
     assert capsys.readouterr()[1] == ''
 
@@ -415,18 +417,19 @@ def test_set_7zip_checks_external_tool_when_specified(monkeypatch, capsys, exter
 def test_set_7zip_uses_fallback_when_py7zr_missing(monkeypatch, capsys, fallback_exists: bool):
     cli = Cli()
     cli._setup_settings()
-    external, fallback = None, "7zipper"
+    external, fallback = None, Settings.zipcmd
     def mock_subprocess_run(args, **kwargs):
         assert args[0] == fallback
         if not fallback_exists:
             raise FileNotFoundError()
 
     monkeypatch.setattr("aqt.installer.subprocess.run", mock_subprocess_run)
+    monkeypatch.setattr("aqt.installer.EXT7Z", True)
     if fallback_exists:
-        assert fallback == cli._set_sevenzip(external, fallback, is_p7zr_missing=True)
+        assert fallback == cli._set_sevenzip(external)
     else:
         with pytest.raises(CliInputError) as err:
-            cli._set_sevenzip(external, fallback, is_p7zr_missing=True)
+            cli._set_sevenzip(external)
         assert format(err.value) == format(f"Fallback 7zip command executable does not exist: '{fallback}'")
     assert f"Falling back to '{fallback}'" in capsys.readouterr()[1]
 
@@ -435,13 +438,14 @@ def test_set_7zip_uses_fallback_when_py7zr_missing(monkeypatch, capsys, fallback
 def test_set_7zip_chooses_p7zr_when_ext_missing(monkeypatch, capsys, fallback_exists: bool):
     cli = Cli()
     cli._setup_settings()
-    external, fallback = None, "7zipper"
+    external = None
 
     def mock_subprocess_run(args, **kwargs):
         assert False, "Should not try to run anything"
 
     monkeypatch.setattr("aqt.installer.subprocess.run", mock_subprocess_run)
-    assert cli._set_sevenzip(external, fallback, is_p7zr_missing=False) is None
+    monkeypatch.setattr("aqt.installer.EXT7Z", False)
+    assert cli._set_sevenzip(external) is None
     assert capsys.readouterr()[1] == ''
 
 

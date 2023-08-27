@@ -233,10 +233,11 @@ class Cli:
             "This may not install properly, but we will try our best."
         )
 
-    def _set_sevenzip(self, external: Optional[str], fallback: str, is_p7zr_missing: bool) -> Optional[str]:
+    def _set_sevenzip(self, external: Optional[str]) -> Optional[str]:
         sevenzip = external
+        fallback = Settings.zipcmd
         if not sevenzip:
-            if is_p7zr_missing:
+            if EXT7Z:
                 self.logger.warning(f"The py7zr module failed to load. Falling back to '{fallback}' for .7z extraction.")
                 self.logger.warning(f"You can use the  '--external | -E' flags to select your own extraction tool.")
                 sevenzip = fallback
@@ -363,9 +364,6 @@ class Cli:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
         modules = args.modules
         sevenzip = self._set_sevenzip(args.external)
-        if EXT7Z and sevenzip is None:
-            # override when py7zr is not exist
-            sevenzip = self._set_sevenzip("7z")
         if args.base is not None:
             if not self._check_mirror(args.base):
                 raise CliInputError(
@@ -480,9 +478,6 @@ class Cli:
         else:
             timeout = (Settings.connection_timeout, Settings.response_timeout)
         sevenzip = self._set_sevenzip(args.external)
-        if EXT7Z and sevenzip is None:
-            # override when py7zr is not exist
-            sevenzip = self._set_sevenzip(Settings.zipcmd)
         modules = getattr(args, "modules", None)  # `--modules` is invalid for `install-src`
         archives = args.archives
         all_extra = True if modules is not None and "all" in modules else False
@@ -554,9 +549,6 @@ class Cli:
         else:
             base_dir = output_dir
         sevenzip = self._set_sevenzip(args.external)
-        if EXT7Z and sevenzip is None:
-            # override when py7zr is not exist
-            sevenzip = self._set_sevenzip(Settings.zipcmd)
         version = getattr(args, "version", None)
         if version is not None:
             Cli._validate_version_str(version, allow_minus=True)
