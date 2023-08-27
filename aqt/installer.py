@@ -239,7 +239,7 @@ class Cli:
         if sevenzip is None:
             if EXT7Z:
                 self.logger.warning(f"The py7zr module failed to load. Falling back to '{fallback}' for .7z extraction.")
-                self.logger.warning(f"You can use the  '--external | -E' flags to select your own extraction tool.")
+                self.logger.warning("You can use the  '--external | -E' flags to select your own extraction tool.")
                 sevenzip = fallback
             else:
                 # Just use py7zr
