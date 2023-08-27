@@ -233,21 +233,26 @@ class Cli:
             "This may not install properly, but we will try our best."
         )
 
-    def _set_sevenzip(self, external):
+    def _set_sevenzip(self, external: Optional[str], fallback: str, is_p7zr_missing: bool) -> Optional[str]:
         sevenzip = external
-        if sevenzip is None:
-            return None
-
+        if not sevenzip:
+            if is_p7zr_missing:
+                self.logger.warning(f"The py7zr module failed to load. Falling back to '{fallback}' for .7z extraction.")
+                self.logger.warning(f"You can use the  '--external | -E' flags to select your own extraction tool.")
+                sevenzip = fallback
+            else:
+                # Just use py7zr
+                return None
         try:
             subprocess.run(
                 [sevenzip, "--help"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
+            return sevenzip
         except FileNotFoundError as e:
-            raise CliInputError("Specified 7zip command executable does not exist: {!r}".format(sevenzip)) from e
-
-        return sevenzip
+            qualifier = "Specified" if sevenzip == external else "Fallback"
+            raise CliInputError(f"{qualifier} 7zip command executable does not exist: '{sevenzip}'") from e
 
     @staticmethod
     def _set_arch(arch: Optional[str], os_name: str, target: str, qt_version_or_spec: str) -> str:
