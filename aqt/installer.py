@@ -236,7 +236,7 @@ class Cli:
     def _set_sevenzip(self, external: Optional[str]) -> Optional[str]:
         sevenzip = external
         fallback = Settings.zipcmd
-        if not sevenzip:
+        if sevenzip is None:
             if EXT7Z:
                 self.logger.warning(f"The py7zr module failed to load. Falling back to '{fallback}' for .7z extraction.")
                 self.logger.warning(f"You can use the  '--external | -E' flags to select your own extraction tool.")
