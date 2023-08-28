@@ -6,6 +6,7 @@ import posixpath
 import re
 import subprocess
 import sys
+import tarfile
 import textwrap
 from dataclasses import dataclass
 from datetime import datetime
@@ -108,7 +109,25 @@ class MockArchive:
         )
 
     def write_compressed_archive(self, dest: Path) -> None:
-        with TemporaryDirectory() as temp_dir, py7zr.SevenZipFile(dest / self.filename_7z, "w") as archive:
+        def open_writable_archive():
+            if self.filename_7z.endswith(".7z"):
+                return py7zr.SevenZipFile(dest / self.filename_7z, "w")
+            elif self.filename_7z.endswith(".tar.xz"):
+                return tarfile.open(dest / self.filename_7z, "w:xz")
+            # elif self.filename_7z.endswith(".zip"):
+            #     return tarfile.open(dest / "DUMMY-NOT-USED", "w")
+            else:
+                assert False, "Archive type not supported"
+
+        def write_to_archive(arc, src, arcname):
+            if self.filename_7z.endswith(".7z"):
+                arc.writeall(path=src, arcname=arcname)
+            elif self.filename_7z.endswith(".tar.xz"):
+                arc.add(name=src, arcname=arcname)
+            # elif self.filename_7z.endswith(".zip"):
+            #     shutil.make_archive(str(dest / self.filename_7z), "zip", src)
+
+        with TemporaryDirectory() as temp_dir, open_writable_archive() as archive:
             temp_path = Path(temp_dir)
 
             for folder in ("bin", "lib", "mkspecs"):
@@ -122,7 +141,7 @@ class MockArchive:
                 full_path.write_text(patched_file.unpatched_content, "utf_8")
 
             archive_name = "5.9" if self.version == "5.9.0" else self.version
-            archive.writeall(path=temp_path, arcname=archive_name)
+            write_to_archive(archive, temp_path, arcname=archive_name)
 
 
 def make_mock_geturl_download_archive(
@@ -138,7 +157,7 @@ def make_mock_geturl_download_archive(
     if desktop_archives is None:
         desktop_archives = []
     for _archive in [*standard_archives, *desktop_archives]:
-        assert _archive.filename_7z.endswith(".7z")
+        assert re.match(r".*\.(7z|tar\.xz)$", _archive.filename_7z), "Unsupported file type"
 
     standard_xml = "<Updates>\n{}\n</Updates>".format(
         "\n".join([archive.xml_package_update() for archive in standard_archives])
@@ -433,6 +452,41 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"In the future, please omit this parameter\.\n"
                 r"INFO    : Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-everywhere-src-5\.14\.2\.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (
+            "install-src linux desktop 6.5.0".split(),
+            "linux",
+            "desktop",
+            "6.5.0",
+            {"std": ""},
+            {"std": ""},
+            {"std": "linux_x64/desktop/qt6_650_src_doc_examples/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-everywhere-src-6.5.0.tar.xz",
+                        update_xml_name="qt.qt6.650.src",
+                        version="6.5.0",
+                        contents=(
+                            PatchedFile(
+                                filename="Src/qtbase/QtBaseSource.cpp",
+                                unpatched_content="int main(){ return 0; }",
+                                patched_content=None,  # not patched
+                            ),
+                        ),
+                    ),
+                ]
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING : The parameter 'target' with value 'desktop' is deprecated "
+                r"and marked for removal in a future version of aqt\.\n"
+                r"In the future, please omit this parameter\.\n"
+                r"INFO    : Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-everywhere-src-6\.5\.0\.tar\.xz in .*\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
