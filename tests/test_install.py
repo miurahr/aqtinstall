@@ -486,6 +486,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"and marked for removal in a future version of aqt\.\n"
                 r"In the future, please omit this parameter\.\n"
                 r"INFO    : Downloading qtbase\.\.\.\n"
+                r"([^\n]*Extracting may be unsafe; consider updating Python to 3.11.4 or greater\n)?"
                 r"Finished installation of qtbase-everywhere-src-6\.5\.0\.tar\.xz in .*\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
