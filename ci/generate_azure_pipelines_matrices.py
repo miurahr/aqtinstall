@@ -190,6 +190,15 @@ windows_build_jobs.extend(
             mirror=random.choice(MIRRORS),
         ),
         BuildJob(
+            "install-qt",
+            "6.5.2",
+            "windows",
+            "desktop",
+            "win64_msvc2019_arm64",
+            "msvc2019_arm64",
+            is_autodesktop=True,    # Should install win64_msvc2019_arm64 in parallel
+        ),
+        BuildJob(
             # Archives stored as .zip
             "install-src", "6.4.3", "windows", "desktop", "gcc_64", "gcc_64", subarchives="qtlottie",
             # Fail the job if this path does not exist:
