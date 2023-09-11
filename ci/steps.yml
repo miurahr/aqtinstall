@@ -172,7 +172,16 @@ steps:
       export PATH=$(QT_BINDIR):$PATH
       qmake $(Build.BinariesDirectory)/tests/accelbubble
       make
-    condition: and(eq(variables['TARGET'], 'android'), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')), ne(variables['SUBCOMMAND'], 'list'), ne(variables['SUBCOMMAND'], 'install-tool'))
+    condition: |
+      and(
+        eq(variables['TARGET'], 'android'),
+        or(
+          eq(variables['Agent.OS'], 'Linux'),
+          eq(variables['Agent.OS'], 'Darwin')
+        ),
+        ne(variables['SUBCOMMAND'], 'list'),
+        ne(variables['SUBCOMMAND'], 'install-tool')
+      )
     displayName: Build accelbubble example application to test for android
 
   ##----------------------------------------------------
@@ -294,7 +303,12 @@ steps:
         qmake $(Build.BinariesDirectory)\tests\helloworld
         mingw32-make
       }
-    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['MODULE'], ''), eq(variables['SUBCOMMAND'], 'install-qt'))
+    condition: |
+      and(
+        eq(variables['Agent.OS'], 'Windows_NT'),
+        eq(variables['MODULE'], ''),
+        eq(variables['SUBCOMMAND'], 'install-qt')
+      )
     displayName: build test with qmake w/o extra module
   - powershell: |
       # Load modules from cache  
@@ -312,7 +326,13 @@ steps:
       cd ..
       qmake $(Build.BinariesDirectory)\tests\redditclient
       nmake
-    condition: and(eq( variables['Agent.OS'], 'Windows_NT'), eq(variables['TOOLCHAIN'], 'MSVC'), ne(variables['MODULE'], ''), ne(variables['VSVER'], '2019'))
+    condition: |
+      and(
+        eq(variables['Agent.OS'], 'Windows_NT'),
+        eq(variables['TOOLCHAIN'], 'MSVC'),
+        ne(variables['MODULE'], ''),
+        ne(variables['VSVER'], '2019')
+      )
     displayName: build test with qmake with MSVC with extra module
   - bash: |
       set -ex
@@ -325,11 +345,15 @@ steps:
       qmake $(Build.BinariesDirectory)/tests/redditclient
       make
     condition: |
-      and(eq( variables['TARGET'], 'desktop'),
-          or(eq(variables['Agent.OS'], 'Linux'),
-          eq(variables['Agent.OS'], 'Darwin')),
-          ne(variables['MODULE'], ''),
-          eq(variables['SUBCOMMAND'], 'install-qt'))
+      and(
+        eq( variables['TARGET'], 'desktop'),
+        or(
+          eq(variables['Agent.OS'], 'Linux'),
+          eq(variables['Agent.OS'], 'Darwin')
+        ),
+        ne(variables['MODULE'], ''),
+        eq(variables['SUBCOMMAND'], 'install-qt')
+      )
     displayName: Build test with qmake for Linux and macOS with extra module
 
   ##----------------------------------------------------

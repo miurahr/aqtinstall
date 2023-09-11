@@ -390,7 +390,7 @@ class Cli:
         base_path = Path(base_dir)
 
         expect_desktop_archdir, autodesk_arch = self._get_autodesktop_dir_and_arch(
-            should_autoinstall, os_name, target, base_path, _version, is_wasm=(arch.startswith("wasm"))
+            should_autoinstall, os_name, target, base_path, _version, arch
         )
 
         def get_auto_desktop_archives() -> List[QtPackage]:
@@ -1069,24 +1069,34 @@ class Cli:
             raise CliInputError(f"Invalid version: '{version_str}'! Please use the form '5.X.Y'.") from e
 
     def _get_autodesktop_dir_and_arch(
-        self, should_autoinstall: bool, host: str, target: str, base_path: Path, version: Version, is_wasm: bool = False
+        self, should_autoinstall: bool, host: str, target: str, base_path: Path, version: Version, arch: str
     ) -> Tuple[Optional[str], Optional[str]]:
         """Returns expected_desktop_arch_dir, desktop_arch_to_install"""
-        if version < Version("6.0.0") or (target not in ["ios", "android"] and not is_wasm):
+        is_wasm = arch.startswith("wasm")
+        is_msvc = "msvc" in arch
+        is_win_desktop_msvc_arm64 = host == "windows" and target == "desktop" and is_msvc and arch.endswith("arm64")
+        if version < Version("6.0.0") or (
+            target not in ["ios", "android"] and not is_wasm and not is_win_desktop_msvc_arm64
+        ):
             # We only need to worry about the desktop directory for Qt6 mobile or wasm installs.
             return None, None
 
-        installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version)
+        installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version, is_msvc=is_msvc)
         if installed_desktop_arch_dir:
             # An acceptable desktop Qt is already installed, so don't do anything.
             self.logger.info(f"Found installed {host}-desktop Qt at {installed_desktop_arch_dir}")
             return installed_desktop_arch_dir.name, None
 
-        default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version)
+        default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version, is_msvc)
         desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
         expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
 
-        qt_type = "Qt6-WASM" if is_wasm else target
+        if is_win_desktop_msvc_arm64:
+            qt_type = "MSVC Arm64"
+        elif is_wasm:
+            qt_type = "Qt6-WASM"
+        else:
+            qt_type = target
         if should_autoinstall:
             # No desktop Qt is installed, but the user has requested installation. Find out what to install.
             self.logger.info(

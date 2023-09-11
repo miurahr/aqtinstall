@@ -165,8 +165,15 @@ def make_mock_geturl_download_archive(
     desktop_xml = "<Updates>\n{}\n</Updates>".format(
         "\n".join([archive.xml_package_update() for archive in desktop_archives])
     )
+    merged_xml = "<Updates>\n{}{}\n</Updates>".format(
+        "\n".join([archive.xml_package_update() for archive in standard_archives]),
+        "\n".join([archive.xml_package_update() for archive in desktop_archives]),
+    )
 
     def mock_getUrl(url: str, *args, **kwargs) -> str:
+        if standard_updates_url == desktop_updates_url and url.endswith(standard_updates_url):
+            # Edge case where both standard and desktop come from the same Updates.xml: ie msvc2019_arm64 and msvc2019_64
+            return merged_xml
         for xml, updates_url in (
             (standard_xml, standard_updates_url),
             (desktop_xml, desktop_updates_url),
@@ -733,6 +740,68 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ),
         ),
         (
+            "install-qt windows desktop 6.5.2 win64_msvc2019_arm64 --autodesktop".split(),
+            "windows",
+            "desktop",
+            "6.5.2",
+            {"std": "win64_msvc2019_arm64", "desk": "win64_msvc2019_64"},
+            {"std": "msvc2019_arm64", "desk": "msvc2019_64"},
+            {"std": "windows_x86/desktop/qt6_652/Updates.xml", "desk": "windows_x86/desktop/qt6_652/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-windows-win64_msvc2019_arm64.7z",
+                        update_xml_name="qt.qt6.652.win64_msvc2019_arm64",
+                        contents=(
+                            # Qt 6 msvc-arm64 should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/Users/qt/work/install/target\n"
+                                "HostPrefix=../../\n"
+                                "HostData=target\n",
+                                patched_content="Prefix={base_dir}{sep}6.5.2{sep}msvc2019_arm64{sep}target\n"
+                                "HostPrefix=../../msvc2019_64\n"
+                                "HostData=../msvc2019_arm64\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.5.2\\msvc2019_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                        ),
+                    ),
+                ],
+                "desk": [plain_qtbase_archive("qt.qt6.652.win64_msvc2019_64", "win64_msvc2019_64", host="windows")],
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : You are installing the MSVC Arm64 version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. Now installing Qt: desktop 6.5.2 win64_msvc2019_64\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win64_msvc2019_arm64.7z in .*\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win64_msvc2019_64.7z in .*\n"
+                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake.bat\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (
             "install-qt linux android 6.4.1 android_arm64_v8a".split(),
             "linux",
             "android",
@@ -1084,8 +1153,8 @@ def test_install(
     monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
     monkeypatch.setattr(
-        "aqt.metadata.MetadataFactory.fetch_default_desktop_arch",
-        lambda *args: {"windows": "win64_mingw1234", "linux": "gcc_64", "mac": "clang_64"}[host],
+        "aqt.metadata.MetadataFactory.fetch_arches",
+        lambda *args: [{"windows": "win64_mingw1234", "linux": "gcc_64", "mac": "clang_64"}[host]],
     )
 
     with TemporaryDirectory() as output_dir:
