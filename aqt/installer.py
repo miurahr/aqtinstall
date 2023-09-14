@@ -723,8 +723,9 @@ class Cli:
         install_qt_parser.add_argument(
             "--autodesktop",
             action="store_true",
-            help="For Qt6 android, ios, and wasm installations, an additional desktop Qt installation is required. "
-            "When enabled, this option installs the required desktop version automatically.",
+            help="For Qt6 android, ios, wasm, and msvc_arm64 installations, an additional desktop Qt installation is "
+            "required. When enabled, this option installs the required desktop version automatically. "
+            "It has no effect when the desktop installation is not required.",
         )
 
     def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
