@@ -121,6 +121,7 @@ jobs:
             else:
               command_line6.extend([qtver, "windows", "android", "android_armv7"])
               timeout = 360
+            print("Execute: {}".format(command_line6))
             try:
               res = subprocess.run(command_line6, timeout=timeout, check=True)
             except subprocess.CalledProcessError as cpe:
