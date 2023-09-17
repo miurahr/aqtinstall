@@ -1,6 +1,6 @@
 name: Test on GH actions environment
 
-on: push
+on: [push, pull_request]
 
 jobs:
   test:
@@ -112,15 +112,16 @@ jobs:
           if qtver.startswith('6'):
             command_line6 = []
             command_line6.extend(prefix)
-            if platform == 'ubuntu-20.04':
+            if platform.startswith("ubuntu"):
               command_line6.extend([qtver, "linux", "android", "android_armv7"])
               timeout = 360
-            elif platform == "macOS-latest":
+            elif platform.startswith("macOS"):
               command_line6.extend([qtver, "mac", "ios", "ios"])
               timeout = 360
             else:
               command_line6.extend([qtver, "windows", "android", "android_armv7"])
               timeout = 360
+            print("Execute: {}".format(command_line6))
             try:
               res = subprocess.run(command_line6, timeout=timeout, check=True)
             except subprocess.CalledProcessError as cpe:
