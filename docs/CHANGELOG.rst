@@ -13,6 +13,19 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Changed
+-------
+- Use 'tar' filter when extracting tarfiles (#707)
+- Log a warning when aqtinstall falls back to an external 7z extraction tool (#705)
+- Bump py7zr@0.20.6(#702)
+
+Fixed
+-----
+- Fix installation of win64_msvc2019_arm64 arch (#711)
+- Fix ``test_install`` that fails on Python<3.11.4 (#708)
+- Fix failing documentation builds (#706)
+- Fix: exception when target path is relative (#702)
+
 `v3.1.7`_ (1, Aug. 2023)
 ========================
 

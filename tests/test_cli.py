@@ -7,6 +7,7 @@ from typing import Dict, List, Optional
 import pytest
 
 from aqt.exceptions import CliInputError
+from aqt.helper import Settings
 from aqt.installer import Cli
 from aqt.metadata import MetadataFactory, SimpleSpec, Version
 
@@ -382,13 +383,63 @@ def test_cli_unexpected_error(monkeypatch, capsys):
     )
 
 
-def test_cli_set_7zip(monkeypatch):
+@pytest.mark.parametrize("external_tool_exists", (True, False))
+def test_set_7zip_checks_external_tool_when_specified(monkeypatch, capsys, external_tool_exists: bool):
     cli = Cli()
     cli._setup_settings()
-    with pytest.raises(CliInputError) as err:
-        cli._set_sevenzip("some_nonexistent_binary")
-    assert err.type == CliInputError
-    assert format(err.value) == "Specified 7zip command executable does not exist: 'some_nonexistent_binary'"
+    external = "my_7z_extractor"
+
+    def mock_subprocess_run(args, **kwargs):
+        assert args[0] == external
+        if not external_tool_exists:
+            raise FileNotFoundError()
+
+    monkeypatch.setattr("aqt.installer.subprocess.run", mock_subprocess_run)
+    monkeypatch.setattr("aqt.installer.EXT7Z", False)
+    if external_tool_exists:
+        assert external == cli._set_sevenzip(external)
+    else:
+        with pytest.raises(CliInputError) as err:
+            cli._set_sevenzip(external)
+        assert format(err.value) == format(f"Specified 7zip command executable does not exist: '{external}'")
+    assert capsys.readouterr()[1] == ""
+
+
+@pytest.mark.parametrize("fallback_exists", (True, False))
+def test_set_7zip_uses_fallback_when_py7zr_missing(monkeypatch, capsys, fallback_exists: bool):
+    cli = Cli()
+    cli._setup_settings()
+    external, fallback = None, Settings.zipcmd
+
+    def mock_subprocess_run(args, **kwargs):
+        assert args[0] == fallback
+        if not fallback_exists:
+            raise FileNotFoundError()
+
+    monkeypatch.setattr("aqt.installer.subprocess.run", mock_subprocess_run)
+    monkeypatch.setattr("aqt.installer.EXT7Z", True)
+    if fallback_exists:
+        assert fallback == cli._set_sevenzip(external)
+    else:
+        with pytest.raises(CliInputError) as err:
+            cli._set_sevenzip(external)
+        assert format(err.value) == format(f"Fallback 7zip command executable does not exist: '{fallback}'")
+    assert f"Falling back to '{fallback}'" in capsys.readouterr()[1]
+
+
+@pytest.mark.parametrize("fallback_exists", (True, False))
+def test_set_7zip_chooses_p7zr_when_ext_missing(monkeypatch, capsys, fallback_exists: bool):
+    cli = Cli()
+    cli._setup_settings()
+    external = None
+
+    def mock_subprocess_run(args, **kwargs):
+        assert False, "Should not try to run anything"
+
+    monkeypatch.setattr("aqt.installer.subprocess.run", mock_subprocess_run)
+    monkeypatch.setattr("aqt.installer.EXT7Z", False)
+    assert cli._set_sevenzip(external) is None
+    assert capsys.readouterr()[1] == ""
 
 
 @pytest.mark.parametrize(
@@ -415,58 +466,130 @@ def test_cli_choose_archive_dest(
 
 
 @pytest.mark.parametrize(
-    "host, is_auto, mocked_mingw, existing_arch_dirs, expect",
+    "host, target, arch, is_auto, mocked_arches, existing_arch_dirs, expect",
     (
         (  # not installed
             "windows",
+            "android",
+            "android_armv7",
             False,
-            "win64_mingw99",
+            ["win64_mingw99"],
             ["not_mingw"],
             {"install": None, "instruct": "win64_mingw99", "use_dir": "mingw99_64"},
         ),
         (  # Alt Desktop Qt already installed
             "windows",
+            "android",
+            "android_armv7",
             False,
-            "win64_mingw99",
+            ["win64_mingw99"],
             ["mingw128_32"],
             {"install": None, "instruct": None, "use_dir": "mingw128_32"},
         ),
         # not installed
-        ("linux", False, None, ["gcc_32"], {"install": None, "instruct": "gcc_64", "use_dir": "gcc_64"}),
+        (
+            "linux",
+            "android",
+            "android_armv7",
+            False,
+            [],
+            ["gcc_32"],
+            {"install": None, "instruct": "gcc_64", "use_dir": "gcc_64"},
+        ),
         (  # Desktop Qt already installed
             "linux",
+            "android",
+            "android_armv7",
             False,
-            None,
+            [],
             ["gcc_64"],
             {"install": None, "instruct": None, "use_dir": "gcc_64"},
         ),
         (  # not installed
             "windows",
+            "android",
+            "android_armv7",
             True,
-            "win64_mingw99",
+            ["win64_mingw99"],
             ["not_mingw"],
             {"install": "win64_mingw99", "instruct": None, "use_dir": "mingw99_64"},
         ),
         (  # Alt Desktop Qt already installed
             "windows",
+            "android",
+            "android_armv7",
             True,
-            "win64_mingw99",
+            ["win64_mingw99"],
             ["mingw128_32"],
             {"install": None, "instruct": None, "use_dir": "mingw128_32"},
         ),
         # not installed
-        ("linux", True, None, ["gcc_32"], {"install": "gcc_64", "instruct": None, "use_dir": "gcc_64"}),
+        (
+            "linux",
+            "android",
+            "android_armv7",
+            True,
+            [],
+            ["gcc_32"],
+            {"install": "gcc_64", "instruct": None, "use_dir": "gcc_64"},
+        ),
         (  # Desktop Qt already installed
             "linux",
+            "android",
+            "android_armv7",
             True,
-            None,
+            [],
             ["gcc_64"],
             {"install": None, "instruct": None, "use_dir": "gcc_64"},
         ),
+        (  # MSVC arm64 with --autodesktop: should install min64_msvc2019_64
+            "windows",
+            "desktop",
+            "win64_msvc2019_arm64",
+            True,
+            ["win64_mingw", "win64_msvc2019_64", "win64_msvc2019_arm64", "wasm_singlethread", "wasm_multithread"],
+            ["mingw128_32"],
+            {"install": "win64_msvc2019_64", "instruct": None, "use_dir": "msvc2019_64"},
+        ),
+        (  # MSVC arm64 without --autodesktop: should point to min64_msvc2019_64
+            "windows",
+            "desktop",
+            "win64_msvc2019_arm64",
+            False,
+            ["win64_mingw", "win64_msvc2019_64", "win64_msvc2019_arm64", "wasm_singlethread", "wasm_multithread"],
+            ["mingw128_32"],
+            {"install": None, "instruct": "win64_msvc2019_64", "use_dir": "msvc2019_64"},
+        ),
+        (  # MSVC arm64 without --autodesktop, with correct target already installed
+            "windows",
+            "desktop",
+            "win64_msvc2019_arm64",
+            False,
+            ["win64_mingw", "win64_msvc2019_64", "win64_msvc2019_arm64", "wasm_singlethread", "wasm_multithread"],
+            ["msvc2019_64"],
+            {"install": None, "instruct": None, "use_dir": "msvc2019_64"},
+        ),
+        (  # MSVC arm64 without --autodesktop, with wrong target already installed
+            "windows",
+            "desktop",
+            "win64_msvc2019_arm64",
+            False,
+            ["win64_mingw", "win64_msvc2019_64", "win64_msvc2019_arm64", "wasm_singlethread", "wasm_multithread"],
+            ["mingw128_32"],
+            {"install": None, "instruct": "win64_msvc2019_64", "use_dir": "msvc2019_64"},
+        ),
     ),
 )
-def test_get_autodesktop_dir_and_arch(
-    monkeypatch, capsys, host: str, is_auto: bool, mocked_mingw: str, existing_arch_dirs: List[str], expect: Dict[str, str]
+def test_get_autodesktop_dir_and_arch_non_android(
+    monkeypatch,
+    capsys,
+    host: str,
+    target: str,
+    arch: str,
+    is_auto: bool,
+    mocked_arches: List[str],
+    existing_arch_dirs: List[str],
+    expect: Dict[str, str],
 ):
     """
     :is_auto:               Simulates passing `--autodesktop` to aqt
@@ -477,16 +600,16 @@ def test_get_autodesktop_dir_and_arch(
     :expect[use_dir]:       The directory that includes `bin/qmake`; we will patch files in the mobile installation
                             with this value
     """
-    monkeypatch.setattr(MetadataFactory, "fetch_arches", lambda *args: [mocked_mingw])
+    monkeypatch.setattr(MetadataFactory, "fetch_arches", lambda *args: mocked_arches)
     monkeypatch.setattr(Cli, "run", lambda *args: 0)
 
-    target = "android"
     version = "6.2.3"
     cli = Cli()
     cli._setup_settings()
 
+    flavor = "MSVC Arm64" if arch == "win64_msvc2019_arm64" else target
     expect_msg_prefix = (
-        f"You are installing the {target} version of Qt, "
+        f"You are installing the {flavor} version of Qt, "
         f"which requires that the desktop version of Qt is also installed."
     )
 
@@ -497,7 +620,7 @@ def test_get_autodesktop_dir_and_arch(
             qmake.parent.mkdir(parents=True)
             qmake.write_text("exe file")
         autodesktop_arch_dir, autodesktop_arch_to_install = cli._get_autodesktop_dir_and_arch(
-            is_auto, host, target, base_dir, Version(version)
+            is_auto, host, target, base_dir, Version(version), arch
         )
         # It should choose the correct desktop arch directory for updates
         assert autodesktop_arch_dir == expect["use_dir"]

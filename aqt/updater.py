@@ -293,6 +293,7 @@ class Updater:
                 "android_arm64_v8a",
                 "android_x86",
                 "android_armv7",
+                "win64_msvc2019_arm64",
             ]:  # desktop version
                 updater.make_qtconf(base_dir, version_dir, arch_dir)
                 updater.patch_qmake()
@@ -308,13 +309,13 @@ class Updater:
                     updater.patch_qtcore(target)
             elif version in SimpleSpec(">=5.0,<6.0"):
                 updater.patch_qmake()
-            else:  # qt6 mobile or wasm
+            else:  # qt6 mobile, wasm, or msvc-arm64
                 if installed_desktop_arch_dir is not None:
                     desktop_arch_dir = installed_desktop_arch_dir
                 else:
                     # Use MetadataFactory to check what the default architecture should be
                     meta = MetadataFactory(ArchiveId("qt", os_name, "desktop"))
-                    desktop_arch_dir = meta.fetch_default_desktop_arch(version)
+                    desktop_arch_dir = meta.fetch_default_desktop_arch(version, is_msvc="msvc" in target.arch)
 
                 updater.patch_qmake_script(base_dir, version_dir, target.os_name, desktop_arch_dir)
                 updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name, desktop_arch_dir)

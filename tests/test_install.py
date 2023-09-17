@@ -6,6 +6,7 @@ import posixpath
 import re
 import subprocess
 import sys
+import tarfile
 import textwrap
 from dataclasses import dataclass
 from datetime import datetime
@@ -108,7 +109,25 @@ class MockArchive:
         )
 
     def write_compressed_archive(self, dest: Path) -> None:
-        with TemporaryDirectory() as temp_dir, py7zr.SevenZipFile(dest / self.filename_7z, "w") as archive:
+        def open_writable_archive():
+            if self.filename_7z.endswith(".7z"):
+                return py7zr.SevenZipFile(dest / self.filename_7z, "w")
+            elif self.filename_7z.endswith(".tar.xz"):
+                return tarfile.open(dest / self.filename_7z, "w:xz")
+            # elif self.filename_7z.endswith(".zip"):
+            #     return tarfile.open(dest / "DUMMY-NOT-USED", "w")
+            else:
+                assert False, "Archive type not supported"
+
+        def write_to_archive(arc, src, arcname):
+            if self.filename_7z.endswith(".7z"):
+                arc.writeall(path=src, arcname=arcname)
+            elif self.filename_7z.endswith(".tar.xz"):
+                arc.add(name=src, arcname=arcname)
+            # elif self.filename_7z.endswith(".zip"):
+            #     shutil.make_archive(str(dest / self.filename_7z), "zip", src)
+
+        with TemporaryDirectory() as temp_dir, open_writable_archive() as archive:
             temp_path = Path(temp_dir)
 
             for folder in ("bin", "lib", "mkspecs"):
@@ -122,7 +141,7 @@ class MockArchive:
                 full_path.write_text(patched_file.unpatched_content, "utf_8")
 
             archive_name = "5.9" if self.version == "5.9.0" else self.version
-            archive.writeall(path=temp_path, arcname=archive_name)
+            write_to_archive(archive, temp_path, arcname=archive_name)
 
 
 def make_mock_geturl_download_archive(
@@ -138,7 +157,7 @@ def make_mock_geturl_download_archive(
     if desktop_archives is None:
         desktop_archives = []
     for _archive in [*standard_archives, *desktop_archives]:
-        assert _archive.filename_7z.endswith(".7z")
+        assert re.match(r".*\.(7z|tar\.xz)$", _archive.filename_7z), "Unsupported file type"
 
     standard_xml = "<Updates>\n{}\n</Updates>".format(
         "\n".join([archive.xml_package_update() for archive in standard_archives])
@@ -146,8 +165,15 @@ def make_mock_geturl_download_archive(
     desktop_xml = "<Updates>\n{}\n</Updates>".format(
         "\n".join([archive.xml_package_update() for archive in desktop_archives])
     )
+    merged_xml = "<Updates>\n{}{}\n</Updates>".format(
+        "\n".join([archive.xml_package_update() for archive in standard_archives]),
+        "\n".join([archive.xml_package_update() for archive in desktop_archives]),
+    )
 
     def mock_getUrl(url: str, *args, **kwargs) -> str:
+        if standard_updates_url == desktop_updates_url and url.endswith(standard_updates_url):
+            # Edge case where both standard and desktop come from the same Updates.xml: ie msvc2019_arm64 and msvc2019_64
+            return merged_xml
         for xml, updates_url in (
             (standard_xml, standard_updates_url),
             (desktop_xml, desktop_updates_url),
@@ -438,6 +464,42 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ),
         ),
         (
+            "install-src linux desktop 6.5.0".split(),
+            "linux",
+            "desktop",
+            "6.5.0",
+            {"std": ""},
+            {"std": ""},
+            {"std": "linux_x64/desktop/qt6_650_src_doc_examples/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-everywhere-src-6.5.0.tar.xz",
+                        update_xml_name="qt.qt6.650.src",
+                        version="6.5.0",
+                        contents=(
+                            PatchedFile(
+                                filename="Src/qtbase/QtBaseSource.cpp",
+                                unpatched_content="int main(){ return 0; }",
+                                patched_content=None,  # not patched
+                            ),
+                        ),
+                    ),
+                ]
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING : The parameter 'target' with value 'desktop' is deprecated "
+                r"and marked for removal in a future version of aqt\.\n"
+                r"In the future, please omit this parameter\.\n"
+                r"INFO    : Downloading qtbase\.\.\.\n"
+                r"([^\n]*Extracting may be unsafe; consider updating Python to 3.11.4 or greater\n)?"
+                r"Finished installation of qtbase-everywhere-src-6\.5\.0\.tar\.xz in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (
             "install-src windows 5.14.2".split(),
             "windows",
             "desktop",
@@ -673,6 +735,68 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-android_armv7.7z in .*\n"
                 r"INFO    : Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]qmake.bat\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (
+            "install-qt windows desktop 6.5.2 win64_msvc2019_arm64 --autodesktop".split(),
+            "windows",
+            "desktop",
+            "6.5.2",
+            {"std": "win64_msvc2019_arm64", "desk": "win64_msvc2019_64"},
+            {"std": "msvc2019_arm64", "desk": "msvc2019_64"},
+            {"std": "windows_x86/desktop/qt6_652/Updates.xml", "desk": "windows_x86/desktop/qt6_652/Updates.xml"},
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-windows-win64_msvc2019_arm64.7z",
+                        update_xml_name="qt.qt6.652.win64_msvc2019_arm64",
+                        contents=(
+                            # Qt 6 msvc-arm64 should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/Users/qt/work/install/target\n"
+                                "HostPrefix=../../\n"
+                                "HostData=target\n",
+                                patched_content="Prefix={base_dir}{sep}6.5.2{sep}msvc2019_arm64{sep}target\n"
+                                "HostPrefix=../../msvc2019_64\n"
+                                "HostData=../msvc2019_arm64\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.5.2\\msvc2019_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                        ),
+                    ),
+                ],
+                "desk": [plain_qtbase_archive("qt.qt6.652.win64_msvc2019_64", "win64_msvc2019_64", host="windows")],
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : You are installing the MSVC Arm64 version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. Now installing Qt: desktop 6.5.2 win64_msvc2019_64\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win64_msvc2019_arm64.7z in .*\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win64_msvc2019_64.7z in .*\n"
+                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake.bat\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1029,8 +1153,8 @@ def test_install(
     monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
     monkeypatch.setattr(
-        "aqt.metadata.MetadataFactory.fetch_default_desktop_arch",
-        lambda *args: {"windows": "win64_mingw1234", "linux": "gcc_64", "mac": "clang_64"}[host],
+        "aqt.metadata.MetadataFactory.fetch_arches",
+        lambda *args: [{"windows": "win64_mingw1234", "linux": "gcc_64", "mac": "clang_64"}[host]],
     )
 
     with TemporaryDirectory() as output_dir:
