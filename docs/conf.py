@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'aqtinstall'
-copyright = u'2019-2021, Hiroshi Miura'
+copyright = u'2019-2023, Hiroshi Miura'
 author = u'Hiroshi Miura'
 
 # The version info for the project you're documenting, acts as replacement for
