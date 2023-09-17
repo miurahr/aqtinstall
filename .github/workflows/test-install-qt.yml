@@ -112,10 +112,10 @@ jobs:
           if qtver.startswith('6'):
             command_line6 = []
             command_line6.extend(prefix)
-            if platform == 'ubuntu-20.04':
+            if platform.startswith("ubuntu"):
               command_line6.extend([qtver, "linux", "android", "android_armv7"])
               timeout = 360
-            elif platform == "macOS-latest":
+            elif platform.startswith("macOS"):
               command_line6.extend([qtver, "mac", "ios", "ios"])
               timeout = 360
             else:
