@@ -634,18 +634,6 @@
         "tool_name": "tools_ninja"
       },
       {
-        "arch": "qt.tools.openssl.src",
-        "os_name": "linux",
-        "target": "desktop",
-        "tool_name": "tools_openssl_src"
-      },
-      {
-        "arch": "qt.tools.openssl.gcc_64",
-        "os_name": "linux",
-        "target": "desktop",
-        "tool_name": "tools_openssl_x64"
-      },
-      {
         "arch": "qt.tools.opensslv3.src",
         "os_name": "linux",
         "target": "desktop",
@@ -982,24 +970,6 @@
         "tool_name": "tools_ninja"
       },
       {
-        "arch": "qt.tools.openssl.src",
-        "os_name": "windows",
-        "target": "desktop",
-        "tool_name": "tools_openssl_src"
-      },
-      {
-        "arch": "qt.tools.openssl.win_x64",
-        "os_name": "windows",
-        "target": "desktop",
-        "tool_name": "tools_openssl_x64"
-      },
-      {
-        "arch": "qt.tools.openssl.win_x86",
-        "os_name": "windows",
-        "target": "desktop",
-        "tool_name": "tools_openssl_x86"
-      },
-      {
         "arch": "qt.tools.opensslv3.src",
         "os_name": "windows",
         "target": "desktop",
@@ -1231,6 +1201,7 @@
       "6.5.0",
       "6.5.1",
       "6.5.2",
+      "6.5.3",
       "6.6.0"
     ]
   }
