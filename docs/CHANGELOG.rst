@@ -13,14 +13,22 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.8`_ (1, Nov. 2023)
+========================
+
 Changed
 -------
+- Add 6.5.3 and openssl as known versions (#718)
+- Docs: remove deprecated configuration description (#714)
+- Test: test on python 3.8, 3.9 and 3.11 (#715)
+- Docs: Update documentation for ``--autodesktop`` flag (#713)
 - Use 'tar' filter when extracting tarfiles (#707)
 - Log a warning when aqtinstall falls back to an external 7z extraction tool (#705)
 - Bump py7zr@0.20.6(#702)
 
 Fixed
 -----
+- Fix failed CI (#716)
 - Fix installation of win64_msvc2019_arm64 arch (#711)
 - Fix ``test_install`` that fails on Python<3.11.4 (#708)
 - Fix failing documentation builds (#706)
@@ -259,7 +267,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.7...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.8...HEAD
+.. _v3.1.8: https://github.com/miurahr/aqtinstall/compare/v3.1.7...v3.1.8
 .. _v3.1.7: https://github.com/miurahr/aqtinstall/compare/v3.1.6...v3.1.7
 .. _v3.1.6: https://github.com/miurahr/aqtinstall/compare/v3.1.5...v3.1.6
 .. _v3.1.5: https://github.com/miurahr/aqtinstall/compare/v3.1.4...v3.1.5
