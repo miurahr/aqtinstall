@@ -395,6 +395,11 @@ class QtRepoProperty:
         return "gcc_64"
 
     @staticmethod
+    def default_win_msvc_desktop_arch_dir(_version: Version) -> str:
+        """_version is unused, but we expect it to matter for future releases"""
+        return "msvc2019_64"
+
+    @staticmethod
     def default_mac_desktop_arch_dir(version: Version) -> str:
         return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
 
@@ -465,7 +470,7 @@ class QtRepoProperty:
         return default_arch
 
     @staticmethod
-    def find_installed_desktop_qt_dir(host: str, base_path: Path, version: Version) -> Optional[Path]:
+    def find_installed_desktop_qt_dir(host: str, base_path: Path, version: Version, is_msvc: bool = False) -> Optional[Path]:
         """
         Locates the default installed desktop qt directory, somewhere in base_path.
         """
@@ -476,6 +481,9 @@ class QtRepoProperty:
         elif host == "linux":
             arch_path = installed_qt_version_dir / QtRepoProperty.default_linux_desktop_arch_dir()
             return arch_path if (arch_path / "bin/qmake").is_file() else None
+        elif host == "windows" and is_msvc:
+            arch_path = installed_qt_version_dir / QtRepoProperty.default_win_msvc_desktop_arch_dir(version)
+            return arch_path if (arch_path / "bin/qmake.exe").is_file() else None
 
         def contains_qmake_exe(arch_path: Path) -> bool:
             return (arch_path / "bin/qmake.exe").is_file()
@@ -920,12 +928,14 @@ class MetadataFactory:
             return str(self.archive_id)
         return "{} with spec {}".format(self.archive_id, self.spec)
 
-    def fetch_default_desktop_arch(self, version: Version) -> str:
+    def fetch_default_desktop_arch(self, version: Version, is_msvc: bool = False) -> str:
         assert self.archive_id.target == "desktop", "This function is meant to fetch desktop architectures"
         if self.archive_id.host == "linux":
             return "gcc_64"
         elif self.archive_id.host == "mac":
             return "clang_64"
+        elif self.archive_id.host == "windows" and is_msvc:
+            return "win64_msvc2019_64"
         arches = [arch for arch in self.fetch_arches(version) if QtRepoProperty.MINGW_ARCH_PATTERN.match(arch)]
         selected_arch = QtRepoProperty.select_default_mingw(arches, is_dir=False)
         if not selected_arch:

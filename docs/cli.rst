@@ -387,7 +387,7 @@ are described here:
 
 .. _py7zr: https://pypi.org/project/py7zr/
 .. _7-zip: https://www.7-zip.org/
-.. _Choco: https://community.chocolatey.org/packages/7zip/19.0
+.. _Choco: https://community.chocolatey.org/packages/7zip/
 .. _brew: https://formulae.brew.sh/formula/p7zip
 
 .. option:: --internal
@@ -545,10 +545,10 @@ There are various combinations to accept according to Qt version.
 
 .. option:: --autodesktop
 
-    If you are installing an ios or android version of Qt6, or the WASM version of Qt6,
+    If you are installing an ios, android, WASM, or msvc_arm64 version of Qt6,
     the corresponding desktop version of Qt must be installed alongside of it.
     Turn this option on to install it automatically.
-    This option will have no effect if you are installing Qt5 or a non-WASM desktop version of Qt6.
+    This option will have no effect if the desktop version of Qt is not required.
 
 .. option:: --noarchives
 

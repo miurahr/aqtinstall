@@ -13,6 +13,46 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.8`_ (1, Nov. 2023)
+========================
+
+Changed
+-------
+- Add 6.5.3 and openssl as known versions (#718)
+- Docs: remove deprecated configuration description (#714)
+- Test: test on python 3.8, 3.9 and 3.11 (#715)
+- Docs: Update documentation for ``--autodesktop`` flag (#713)
+- Use 'tar' filter when extracting tarfiles (#707)
+- Log a warning when aqtinstall falls back to an external 7z extraction tool (#705)
+- Bump py7zr@0.20.6(#702)
+
+Fixed
+-----
+- Fix failed CI (#716)
+- Fix installation of win64_msvc2019_arm64 arch (#711)
+- Fix ``test_install`` that fails on Python<3.11.4 (#708)
+- Fix failing documentation builds (#706)
+- Fix: exception when target path is relative (#702)
+
+`v3.1.7`_ (1, Aug. 2023)
+========================
+
+Added
+-----
+Add support for standalone sdktool installation(#677)
+
+Fixed
+-----
+- Fixed command to check tools_mingw90 (#680)
+- Fixed help text for list-tool
+
+Changed
+-------
+* Add Qt 6.6.0, 6.5.2 and 6.5.1 as known version(#685,#698)
+* Default blacklist setting(#689)
+* Add test for sdktool(#678)
+
+
 `v3.1.6`_ (4, May, 2023)
 ========================
 
@@ -227,7 +267,9 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.6...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.8...HEAD
+.. _v3.1.8: https://github.com/miurahr/aqtinstall/compare/v3.1.7...v3.1.8
+.. _v3.1.7: https://github.com/miurahr/aqtinstall/compare/v3.1.6...v3.1.7
 .. _v3.1.6: https://github.com/miurahr/aqtinstall/compare/v3.1.5...v3.1.6
 .. _v3.1.5: https://github.com/miurahr/aqtinstall/compare/v3.1.4...v3.1.5
 .. _v3.1.4: https://github.com/miurahr/aqtinstall/compare/v3.1.3...v3.1.4
