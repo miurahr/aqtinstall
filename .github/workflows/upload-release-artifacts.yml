@@ -12,12 +12,18 @@ on:
 
 jobs:
   build-standalone:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.system.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        system: [
+          {os: windows-latest, arch: x86, output_file: 'aqt_x86.exe', primary_artifact: '', secondary_artifact: 'aqt_x86.exe'},
+          {os: windows-latest, arch: x64, output_file: 'aqt_x64.exe', primary_artifact: 'aqt.exe', secondary_artifact: 'aqt_x64.exe'},
+          {os: macOS-latest, arch: x64, output_file: 'aqt_x64', primary_artifact: 'aqt-macos', secondary_artifact: 'aqt-macos_x64'}
+        ]
         py: [3.9]
-        arch: [x86, x64]
+    defaults:
+      run:
+        shell: ${{ matrix.system.os == 'windows-latest' && 'pwsh' || 'bash' }} {0}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -27,35 +33,35 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.py }}
-          architecture: ${{ matrix.arch }}
+          architecture: ${{ matrix.system.arch }}
       - name: Build standalone binary
         run: |
           python -m venv venv
-          venv/Scripts/activate.ps1
+          ${{ matrix.system.os == 'windows-latest' && 'venv/Scripts/activate.ps1' || 'chmod +x venv/bin/activate && venv/bin/activate' }}
           python -m pip install -U pip wheel setuptools setuptools_scm pyinstaller
           python -m pip install .
-          python tools/build_standalone.py ${{ matrix.arch }}
-          deactivate
-          Remove-Item venv -Recurse -Force
-        shell: pwsh
+          python tools/build_standalone.py ${{ matrix.system.arch }}
+          ${{ matrix.system.os == 'windows-latest' && 'deactivate' || 'chmod +x venv/bin/deactivate && venv/bin/deactivate' }}
+          ${{ matrix.system.os == 'windows-latest' && 'Remove-Item venv -Recurse -Force' || 'rm -rf venv' }}
 
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist\aqt_x64.exe
-          asset_name: aqt.exe
+          file: dist/${{ matrix.system.output_file }}
+          asset_name: ${{ matrix.system.primary_artifact }}
           tag: ${{ github.ref }}
           overwrite: true
-        if: matrix.arch=='x64' && startsWith(github.ref, 'refs/tags/v')
+        if: matrix.system.primary_artifact!='' && startsWith(github.ref, 'refs/tags/v')
       - name: Upload to Release for all architectures
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist\aqt_${{ matrix.arch }}.exe
+          file: dist/${{ matrix.system.output_file }}
+          asset_name: ${{ matrix.system.secondary_artifact }}
           tag: ${{ github.ref }}
           overwrite: true
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: matrix.system.secondary_artifact!='' && startsWith(github.ref, 'refs/tags/v')
       - name: Update continuous build
         uses: svenstaro/upload-release-action@v2
         with:
@@ -63,9 +69,9 @@ jobs:
           overwrite: true
           prerelease: true
           tag: Continuous
-          file: dist\aqt_x64.exe
-          asset_name: aqt.exe
-        if: matrix.arch=='x64' && startsWith(github.ref, 'refs/tags/v')
+          file: dist/${{ matrix.system.output_file }}
+          asset_name: ${{ matrix.system.primary_artifact }}
+        if: matrix.system.primary_artifact!='' && startsWith(github.ref, 'refs/tags/v')
       - name: Update continuous build for all architectures
         uses: svenstaro/upload-release-action@v2
         with:
@@ -73,5 +79,6 @@ jobs:
           overwrite: true
           prerelease: true
           tag: Continuous
-          file: dist\aqt_${{ matrix.arch }}.exe
-        if: startsWith(github.ref, 'refs/tags/v')
+          file: dist/${{ matrix.system.output_file }}
+          asset_name: ${{ matrix.system.secondary_artifact }}
+        if: matrix.system.secondary_artifact!='' && startsWith(github.ref, 'refs/tags/v')
