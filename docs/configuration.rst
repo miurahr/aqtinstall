@@ -134,7 +134,8 @@ max_retries_on_checksum_error:
 
 hash_algorithm:
     This is either ``sha256``, ``sha1`` or ``md5``. ``sha256`` is the only safe 
-    value to use here. See also ``trusted_mirrors`` setting.
+    value to use here. Default is ``sha256`` if not set.
+    See also ``trusted_mirrors`` setting.
 
 INSECURE_NOT_FOR_PRODUCTION_ignore_hash:
     This is either ``True`` or ``False``.
