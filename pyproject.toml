@@ -29,7 +29,7 @@ dependencies = [
     "humanize",
     "patch>=1.16",
     "py7zr>=0.20.2",
-    "requests>2.20.0",
+    "requests>2.31.0",
     "semantic_version",
     "texttable",
 ]
