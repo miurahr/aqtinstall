@@ -707,7 +707,7 @@ class MetadataFactory:
 
     def fetch_http(self, rest_of_url: str, is_check_hash: bool = True) -> str:
         timeout = (Settings.connection_timeout, Settings.response_timeout)
-        expected_hash = get_hash(rest_of_url, "sha256", timeout) if is_check_hash else None
+        expected_hash = get_hash(rest_of_url, Settings.hash_algorithm, timeout) if is_check_hash else None
         base_urls = self.base_url, random.choice(Settings.fallbacks)
 
         err: BaseException = AssertionError("unraisable")
@@ -792,7 +792,7 @@ class MetadataFactory:
 
     def _fetch_module_metadata(self, folder: str, predicate: Optional[Callable[[Element], bool]] = None):
         rest_of_url = posixpath.join(self.archive_id.to_url(), folder, "Updates.xml")
-        xml = self.fetch_http(rest_of_url)
+        xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
         return xml_to_modules(
             xml,
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,

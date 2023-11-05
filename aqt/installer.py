@@ -1217,12 +1217,12 @@ def installer(
     logger.addHandler(qh)
     #
     timeout = (Settings.connection_timeout, Settings.response_timeout)
-    hash = get_hash(qt_package.archive_path, algorithm="sha256", timeout=timeout)
+    hash = get_hash(qt_package.archive_path, Settings.hash_algorithm, timeout) if not Settings.ignore_hash else None
 
     def download_bin(_base_url):
         url = posixpath.join(_base_url, qt_package.archive_path)
         logger.debug("Download URL: {}".format(url))
-        return downloadBinaryFile(url, archive, "sha256", hash, timeout)
+        return downloadBinaryFile(url, archive, Settings.hash_algorithm, hash, timeout)
 
     retry_on_errors(
         action=lambda: retry_on_bad_connection(download_bin, base_url),

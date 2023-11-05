@@ -94,7 +94,15 @@ def getUrl(url: str, timeout: Tuple[float, float], expected_hash: Optional[bytes
                 raise ArchiveDownloadError(msg)
         result: str = r.text
         filename = url.split("/")[-1]
-        actual_hash = hashlib.sha256(bytes(result, "utf-8")).digest()
+        _kwargs = {"usedforsecurity": False} if sys.version_info >= (3, 9) else {}
+        if Settings.hash_algorithm == "sha256":
+            actual_hash = hashlib.sha256(bytes(result, "utf-8"), **_kwargs).digest()
+        elif Settings.hash_algorithm == "sha1":
+            actual_hash = hashlib.sha1(bytes(result, "utf-8"), **_kwargs).digest()
+        elif Settings.hash_algorithm == "md5":
+            actual_hash = hashlib.md5(bytes(result, "utf-8"), **_kwargs).digest()
+        else:
+            raise ArchiveChecksumError(f"Unknown hash algorithm: {Settings.hash_algorithm}.\nPlease check settings.ini")
         if expected_hash is not None and expected_hash != actual_hash:
             raise ArchiveChecksumError(
                 f"Downloaded file {filename} is corrupted! Detect checksum error.\n"
@@ -104,7 +112,7 @@ def getUrl(url: str, timeout: Tuple[float, float], expected_hash: Optional[bytes
     return result
 
 
-def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout: Tuple[float, float]) -> None:
+def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: Optional[bytes], timeout: Tuple[float, float]) -> None:
     logger = getLogger("aqt.helper")
     filename = Path(url).name
     with requests.sessions.Session() as session:
@@ -126,7 +134,10 @@ def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout:
         except requests.exceptions.Timeout as e:
             raise ArchiveConnectionError(f"Connection timeout: {e.args}") from e
         else:
-            hash = hashlib.new(hash_algo)
+            if sys.version_info >= (3, 9):
+                hash = hashlib.new(hash_algo, usedforsecurity=False)
+            else:
+                hash = hashlib.new(hash_algo)
             try:
                 with open(out, "wb") as fd:
                     for chunk in r.iter_content(chunk_size=8196):
@@ -455,6 +466,14 @@ class SettingsClass:
     @property
     def max_retries_to_retrieve_hash(self):
         return self.config.getint("requests", "max_retries_to_retrieve_hash", fallback=int(self.max_retries))
+
+    @property
+    def hash_algorithm(self):
+        return self.config.get("requests", "hash_algorithm", fallback="sha256")
+
+    @property
+    def ignore_hash(self):
+        return self.config.getboolean("requests", "INSECURE_NOT_FOR_PRODUCTION_ignore_hash", fallback=False)
 
     @property
     def backoff_factor(self):

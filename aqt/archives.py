@@ -27,7 +27,7 @@ from xml.etree.ElementTree import Element  # noqa
 
 from defusedxml import ElementTree
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveListError, NoPackageFound
+from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit
 from aqt.metadata import QtRepoProperty, Version
 
@@ -390,7 +390,16 @@ class QtArchives:
 
     def _download_update_xml(self, update_xml_path):
         """Hook for unit test."""
-        xml_hash = get_hash(update_xml_path, "sha256", self.timeout)
+        if not Settings.ignore_hash:
+            try:
+                xml_hash = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout)
+            except ChecksumDownloadFailure:
+                self.logger.warning(
+                    "Failed to download checksum for the file 'Updates.xml'. This may happen on unofficial mirrors."
+                )
+                xml_hash = None
+        else:
+            xml_hash = None
         return getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
 
     def _parse_update_xml(self, os_target_folder, update_xml_text, target_packages: Optional[ModuleToPackage]):
