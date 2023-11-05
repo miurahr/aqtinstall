@@ -13,6 +13,21 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Security
+--------
+* CVE-2023-32681: Bump requests@2.31.0 (#724)
+
+Changed
+-------
+* Remove a specific mirror from fallback (#688)
+* add ``debug`` extras for test and check
+* Bump pytest-remotedata@0.4.1
+
+Added
+-----
+* macOS binary build (#722)
+* ``ignore_hash`` and ``hash_algorithm`` options (#684)
+
 `v3.1.8`_ (1, Nov. 2023)
 ========================
 
