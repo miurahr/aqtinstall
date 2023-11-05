@@ -7,6 +7,16 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.0.4`_ (6, Nov. 2023)
+========================
+
+Security
+--------
+* CVE-2023-32681: Bump requests@2.31.0 (#724)
+
+Chnaged
+-------
+* Remove a specific mirror from fallback (#688)
 
 `v3.0.3`_ (25, Mar. 2023)
 =========================
@@ -316,7 +326,8 @@ Fixed
 
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.3...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.0.4...HEAD
+.. _v3.0.4: https://github.com/miurahr/aqtinstall/compare/v3.0.3...v3.0.4
 .. _v3.0.3: https://github.com/miurahr/aqtinstall/compare/v3.0.2...v3.0.3
 .. _v3.0.2: https://github.com/miurahr/aqtinstall/compare/v3.0.1...v3.0.2
 .. _v3.0.1: https://github.com/miurahr/aqtinstall/compare/v3.0.0...v3.0.1
