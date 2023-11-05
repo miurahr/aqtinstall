@@ -49,10 +49,9 @@ aqt = "aqt.__main__:main"
 test = [
     "pytest>=6.0",
     "pytest-pep8",
-    "pytest-remotedata<0.4.0",
     "pytest-cov",
+    "pytest-remotedata>=0.4.1",
     "pytest-socket",
-    "pytest-leaks",
     "pytest-timeout",
     "pympler",
 ]
@@ -74,6 +73,9 @@ docs = [
     "sphinx>=7.0",
     "sphinx_rtd_theme>=1.3",
     "sphinx-py3doc-enhanced-theme>=2.4",
+]
+debug = [
+    "pytest-leaks",
 ]
 
 [project.urls]
@@ -211,18 +213,13 @@ commands =
 
 [testenv:py39d]
 basepython = python3.9d
-extras = test
+extras = test, debug
 commands =
     python3.9-dbg -m pytest -v --no-cov -R : -k "test_install"
-deps =
-    pytest
-    pytest-leaks
-    pytest-remotedata<0.4.0
-    pytest-socket
-    pytest-cov
 
 [testenv:mprof]
 basepython = python3.9
+extras = debug
 commands =
     mprof run --multiprocess python -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
     mprof plot --output memory-profile.png
@@ -232,6 +229,7 @@ deps =
 
 [testenv:fil]
 basepython = python3.9
+extras = debug
 commands =
     fil-profile run -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
 deps =
