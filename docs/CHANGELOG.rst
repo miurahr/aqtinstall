@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.9`_ (6, Nov. 2023)
+========================
+
 Security
 --------
 * CVE-2023-32681: Bump requests@2.31.0 (#724)
@@ -20,8 +23,10 @@ Security
 Changed
 -------
 * Remove a specific mirror from fallback (#688)
-* add ``debug`` extras for test and check
+* add ``debug`` extras for test and check (#725)
 * Bump pytest-remotedata@0.4.1
+* Bump flake8,flake8-isort@6.0.0 (#726)
+* docs: change interpreted text to inline literals (#728)
 
 Added
 -----
@@ -282,7 +287,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.8...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.9...HEAD
+.. _v3.1.9: https://github.com/miurahr/aqtinstall/compare/v3.1.8...v3.1.9
 .. _v3.1.8: https://github.com/miurahr/aqtinstall/compare/v3.1.7...v3.1.8
 .. _v3.1.7: https://github.com/miurahr/aqtinstall/compare/v3.1.6...v3.1.7
 .. _v3.1.6: https://github.com/miurahr/aqtinstall/compare/v3.1.5...v3.1.6
