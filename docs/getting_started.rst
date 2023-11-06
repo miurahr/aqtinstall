@@ -83,7 +83,7 @@ is not on this list, we can use the `Available Qt versions`_ wiki page to get
 a rough idea of what versions support the architecture we want, and then use
 :ref:`aqt list-qt <list-qt command>` to confirm that the architecture is available.
 
-Let's say that we want to install Qt 6.2.0 with architecture `win64_mingw81`.
+Let's say that we want to install Qt 6.2.0 with architecture ``win64_mingw81``.
 The installation command we need is:
 
 .. code-block:: console
@@ -120,7 +120,7 @@ installed by default, using this command:
     $ aqt install-qt linux desktop 6.2.0 gcc_64 --external 7z
 
 .. _py7zr: https://pypi.org/project/py7zr/
-.. _p7zip: http://p7zip.sourceforge.net/
+.. _p7zip: https://p7zip.sourceforge.net/
 .. _7-zip: https://www.7-zip.org/
 
 Changing the output directory
@@ -128,7 +128,7 @@ Changing the output directory
 
 By default, ``aqt`` will install all of the Qt packages into the current
 working directory, in the subdirectory ``./<Qt version>/<arch>/``.
-For example, if we install Qt 6.2.0 for Windows desktop with arch `win64_mingw81`,
+For example, if we install Qt 6.2.0 for Windows desktop with arch ``win64_mingw81``,
 it would end up in ``./6.2.0/win64_mingw81``.
 
 If you would prefer to install it to another location, you
@@ -184,7 +184,7 @@ We can use the ``--long-modules`` flag for that:
 
 Note that if your terminal is wider than 95 characters, this command will show
 release dates and sizes in extra columns to the right.
-If you try this, you will notice that `debug_info` is 5.9 gigabytes installed.
+If you try this, you will notice that ``debug_info`` is 5.9 gigabytes installed.
 
 Also, notice that the 'Display Name' indicates which compiler the module is
 intended to be used with. In this case, for the architecture ``win64_mingw81``,
@@ -206,8 +206,8 @@ Here's what the command prints when you use it with the ambiguously-named
 
 You can find out how to install MinGW 8.1.0 and 11.2.0 in the `Installing Tools`_ section.
 
-Let's say that we want to install `qtcharts` and `qtnetworkauth`. 
-We can do that by using the `-m` flag with the :ref:`aqt install-qt <qt installation command>` command.
+Let's say that we want to install ``qtcharts`` and ``qtnetworkauth``.
+We can do that by using the ``-m`` flag with the :ref:`aqt install-qt <qt installation command>` command.
 This flag receives the name of at least one module as an argument:
 
 .. code-block:: console
@@ -235,8 +235,8 @@ The ``xargs`` equivalent to this command is an exercise left to the reader.
 If you want to install all available modules, you are probably better off using
 the ``all`` keyword, as discussed above. This scripting example is presented to
 give you a sense of how to accomplish something more complicated.
-Perhaps you want to install all modules except `qtnetworkauth`; you could write a script
-that removes `qtnetworkauth` from the output of :ref:`aqt list-qt <list-qt command>`,
+Perhaps you want to install all modules except ``qtnetworkauth``; you could write a script
+that removes ``qtnetworkauth`` from the output of :ref:`aqt list-qt <list-qt command>`,
 and pipe that into :ref:`aqt install-qt <qt installation command>`.
 This exercise is left to the reader.
 
@@ -340,7 +340,7 @@ Let's find out what tools are available for Windows Desktop by using the
     tools_conan
     tools_cmake
 
-Let's see what tool variants are available in `tools_mingw`:
+Let's see what tool variants are available in ``tools_mingw``:
 
 .. code-block:: console
 
@@ -378,7 +378,7 @@ Let's see some more details, using the ``-l`` or ``--long`` flag:
     qt.tools.win64_mingw810   8.1.0-1-202004170606   2020-04-17
 
 The ``-l`` flag causes :ref:`aqt list-tool <list-tool command>` to print a table
-that shows plenty of data pertinent to each tool variant available in `tools_mingw`.
+that shows plenty of data pertinent to each tool variant available in ``tools_mingw``.
 :ref:`aqt list-tool <list-tool command>` additionally prints the 'Display Name'
 and 'Description' for each tool if your terminal is wider than 95 characters;
 terminals that are narrower than this cannot display this table in a readable way.
@@ -407,26 +407,26 @@ If you are using the ``win64_mingw`` architecture for Qt 6.2.2+, then this is
 probably the compiler you want to install (see `long_modules explanation`_).
 
 
-Now let's install `mingw`, using the :ref:`aqt install-tool <tools installation command>` command.
+Now let's install ``mingw``, using the :ref:`aqt install-tool <tools installation command>` command.
 This command receives four parameters:
 
 1. The host operating system (windows, mac, or linux)
 2. The target SDK (desktop, android, ios, or winrt)
-3. The name of the tool (this is `tools_mingw` in our case)
+3. The name of the tool (this is ``tools_mingw`` in our case)
 4. (Optional) The tool variant name. We saw a list of these when we ran
-   :ref:`aqt list-tool <list-tool command>` with the `tool name` argument filled in.
+   :ref:`aqt list-tool <list-tool command>` with the ``tool name`` argument filled in.
 
-To install `mingw`, you could use this command (please don't):
+To install ``mingw``, you could use this command (please don't):
 
 .. code-block:: console
 
     $ aqt install-tool windows desktop tools_mingw    # please don't run this!
 
-Using this command will install every tool variant available in `tools_mingw`;
+Using this command will install every tool variant available in ``tools_mingw``;
 in this case, you would install 10 different versions of the same tool.
-For some tools, like `qtcreator` or `ifw`, this is an appropriate thing to do,
+For some tools, like ``qtcreator`` or ``ifw``, this is an appropriate thing to do,
 since each tool variant is a different program.
-However, for tools like `mingw` and `vcredist`, it would make more sense to use
+However, for tools like ``mingw`` and ``vcredist``, it would make more sense to use
 :ref:`aqt list-tool <list-tool command>` to see what tool variants are available,
 and then install just the tool variant you are interested in, like this:
 
@@ -456,7 +456,7 @@ reduce the footprint of your Qt installation.
 
 .. note::
 
-    Be careful about using the ``--archives`` flag; it is marked `Advanced` for a reason!
+    Be careful about using the ``--archives`` flag; it is marked ``Advanced`` for a reason!
     It is very easy to misuse this command and end up with a Qt installation that
     is missing the components that you need.
     Don't use it unless you know what you are doing!

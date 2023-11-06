@@ -620,7 +620,7 @@ Changed
 Fixed
 -----
 
-* Work around for http://download.qt.io/ returns wrong metalink xml data.(#105, #106)
+* Work around for https://download.qt.io/ returns wrong metalink xml data.(#105, #106)
 
 
 `v0.8a1`_ (28, Feb., 2020)
