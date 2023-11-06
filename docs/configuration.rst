@@ -99,7 +99,7 @@ min_module_size:
     and they are exactly 40 bytes when uncompressed.
     The authors feel that it is not useful for ``aqt list-*`` to list these empty modules.
     If you want to print these modules with ``aqt list-*``, please feel free to change
-    the `min_module_size` value to something less than 40.
+    the ``min_module_size`` value to something less than 40.
 
     This setting has no effect on your ability to install these modules.
     ``aqt install-*`` can will still install them without any warnings.

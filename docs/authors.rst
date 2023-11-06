@@ -14,6 +14,7 @@ David also leads many developments and reviews effort after 2.0.
 
 All contributors, listed alphabetically, are:
 
+* Alberto Mardegan(ignore_hash option)
 * Andrei Yankovich (tools ifw installation)
 * Aurélien Gâteau (patching to qmake)
 * Benjamin O (Github Actions and more)
@@ -25,15 +26,17 @@ All contributors, listed alphabetically, are:
 * Gamso (improve parsing of update.xml)
 * Julien Marrec (mypy, type hints)
 * Kyle Altendorf (7z binary path search)
-* lightmare (Documents)
-* Mike Tzou (Update fallback url)
+* @lebarsfa (ignore_hash/hash_algorithm options)
+* @lightmare (Documents)
 * Martin Delille (Documents)
+* Mike Tzou (Update fallback url)
 * mite-user (folder index handling of download web sites)
 * Mizux Seihax (Qt versions)
 * Mozi (CI/workflow improvement, log format)
 * Nelson Chen (CI tests)
 * @nikitalita (Binary distribution)
 * @pylipp (Documents)
+* @Steveice10 (MacOS binary build)
 * Sztergbaum Roman (Version database)
 * Thomas Grainger (CLI entry point)
 * @tsteven4 (fix patching to qmake, pkgconfig and libtool)
