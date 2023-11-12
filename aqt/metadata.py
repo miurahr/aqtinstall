@@ -521,7 +521,7 @@ class MetadataFactory:
         self,
         archive_id: ArchiveId,
         *,
-        base_url: str = Settings.baseurl,
+        base_url: Optional[str] = None,
         spec: Optional[SimpleSpec] = None,
         is_latest_version: bool = False,
         modules_query: Optional[ModulesQuery] = None,
@@ -547,7 +547,7 @@ class MetadataFactory:
         self.logger = getLogger("aqt.metadata")
         self.archive_id = archive_id
         self.spec = spec
-        self.base_url = base_url
+        self.base_url = base_url or Settings.baseurl
 
         if archive_id.is_tools():
             if tool_name is not None:
