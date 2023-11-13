@@ -13,6 +13,17 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.10`_ (14, Nov. 2023)
+==========================
+
+Fixed
+-----
+- list_* commands ignore base url setting (#731,#732)
+
+Changed
+-------
+- chore: support build on git export (#730)
+
 `v3.1.9`_ (6, Nov. 2023)
 ========================
 
@@ -287,7 +298,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.9...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.10...HEAD
+.. _v3.1.10: https://github.com/miurahr/aqtinstall/compare/v3.1.9...v3.1.10
 .. _v3.1.9: https://github.com/miurahr/aqtinstall/compare/v3.1.8...v3.1.9
 .. _v3.1.8: https://github.com/miurahr/aqtinstall/compare/v3.1.7...v3.1.8
 .. _v3.1.7: https://github.com/miurahr/aqtinstall/compare/v3.1.6...v3.1.7
