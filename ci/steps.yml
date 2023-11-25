@@ -288,7 +288,8 @@ steps:
         qmake $(Build.BinariesDirectory)\tests\helloworld
         jom
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
-        python -m aqt install-tool --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.$(MINGW_VARIANT)
+        python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
+          --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.$(MINGW_VARIANT)
         if ($?) {
           Write-Host 'Successfully installed tools_mingw'
         } else {
