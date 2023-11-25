@@ -311,6 +311,71 @@ steps:
         eq(variables['SUBCOMMAND'], 'install-qt')
       )
     displayName: build test with qmake w/o extra module
+
+# When --archives non-empty
+  - script: |
+        set -ex
+        rm -rf $(Build.BinariesDirectory)/tests
+        mkdir $(Build.BinariesDirectory)/tests
+        (cd $(Build.BinariesDirectory)/tests && 7zr x $(Build.SourcesDirectory)/ci/helloworld_qttools.7z)
+        export PATH=$(QT_BINDIR):$PATH
+        qmake -d $(Build.BinariesDirectory)/tests/helloworld_qttools
+        make
+    condition: |
+        and(
+          eq( variables['TARGET'], 'desktop' ),
+          not( startsWith( variables['ARCH'], 'wasm_' ) ),
+          or(
+            eq(variables['Agent.OS'], 'Linux'),
+            eq(variables['Agent.OS'], 'Darwin')
+          ),
+          contains(variables['SUBARCHIVES'], 'qttools'),
+          eq(variables['SUBCOMMAND'], 'install-qt')
+        )
+    displayName: build test with qmake for Linux and macOS with specific Qt modules (QT += uitools)
+  - powershell: |
+        if ( $env:TOOLCHAIN -eq 'MSVC' ) {
+          # Load modules from cache
+          $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
+          Write-Host $Env:PSModulePath
+          Import-Module "Pscx"
+          Import-Module "VSSetup"
+
+          Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
+          $env:Path += ";$(WIN_QT_BINDIR)"
+          try { rm -r -fo $(Build.BinariesDirectory)\tests } catch { $Error.Clear() }
+          mkdir $(Build.BinariesDirectory)\tests
+          cd $(Build.BinariesDirectory)\tests
+          7z x $(Build.SourcesDirectory)\ci\helloworld_qttools.7z
+          qmake -d $(Build.BinariesDirectory)\tests\helloworld_qttools
+          nmake
+        } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
+          Set-Item -Path Env:Path -Value ("$(Build.BinariesDirectory)\Qt\Tools\$(MINGW_FOLDER)\bin;$(WIN_QT_BINDIR);" + $Env:Path)
+          Write-Host "Path == " + $env:Path
+          if (![bool] (Get-Command -ErrorAction Ignore -Type Application mingw32-make)) {
+            python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
+               --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.$(MINGW_VARIANT)
+            if ($?) {
+              Write-Host 'Successfully installed tools_mingw'
+            } else {
+              throw 'Failed to install tools_mingw'
+            }
+          }
+          try { rm -r -fo $(Build.BinariesDirectory)\tests } catch { $Error.Clear() }
+          mkdir $(Build.BinariesDirectory)\tests
+          cd $(Build.BinariesDirectory)\tests
+          7z x $(Build.SourcesDirectory)\ci\helloworld_qttools.7z
+          qmake -d $(Build.BinariesDirectory)\tests\helloworld_qttools
+          mingw32-make
+        }
+    condition: |
+        and(
+          eq( variables['Agent.OS'], 'Windows_NT'),
+          contains(variables['SUBARCHIVES'], 'qttools'),
+          eq(variables['SUBCOMMAND'], 'install-qt')
+        )
+    displayName: build test with qmake with specific Qt modules (QT += uitools)
+
   - powershell: |
       # Load modules from cache  
       $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
