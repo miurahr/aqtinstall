@@ -137,6 +137,17 @@ windows_build_jobs.extend(
         ),
         BuildJob(
             "install-qt",
+            "5.11.3",
+            "windows",
+            "desktop",
+            "win32_mingw53",
+            "mingw53_32",
+            subarchives="qtwinextras qtmultimedia qtbase qttools",
+            mingw_variant="win32_mingw530",
+            mirror=random.choice(MIRRORS),
+        ),
+        BuildJob(
+            "install-qt",
             "5.13.2",
             "windows",
             "desktop",
@@ -164,6 +175,16 @@ windows_build_jobs.extend(
             "win64_msvc2019_64",
             "msvc2019_64",
             module="qtcharts qtnetworkauth",
+            mirror=random.choice(MIRRORS),
+        ),
+        BuildJob(
+            "install-qt",
+            "5.11.3",
+            "windows",
+            "desktop",
+            "win32_msvc2015",
+            "msvc2015",
+            subarchives="qtwinextras qtmultimedia qtbase qttools",
             mirror=random.choice(MIRRORS),
         ),
         BuildJob(
@@ -227,7 +248,7 @@ linux_build_jobs.extend(
             "desktop",
             "gcc_64",
             "gcc_64",
-            subarchives="qtbase qttools qt icu",
+            subarchives="qtbase qttools qt icu qttools",
         ),
         BuildJob(
             # Archives stored as .7z
