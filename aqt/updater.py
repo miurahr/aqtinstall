@@ -38,10 +38,6 @@ from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec,
 dir_for_version = QtRepoProperty.dir_for_version
 
 
-def dir_for_version(ver: Version) -> str:
-    return "5.9" if ver == Version("5.9.0") else f"{ver.major}.{ver.minor}.{ver.patch}"
-
-
 def unpatched_paths() -> List[str]:
     return [
         "/home/qt/work/install/",
