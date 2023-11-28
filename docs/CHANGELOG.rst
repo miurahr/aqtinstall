@@ -22,16 +22,16 @@ Changed
 - Add Qt 6.6.1 as known version (#740)
 - chore: Improved CI to catch the problem with incorrect PRL files (#738)
 - chore: Update CI execution trigger/schedule (#735)
-  - Full tests weekly on master
-    - mac, windows and linux
-    - Qt 5.12.12, 5.15.14, 6.5.3
-    - Python 3.9, 3.10, 3.11 and 3.12
-    - check sample app built
-  - Change trigger for GitHub actions
-    - mac, windows and linux
-    - Qt 4.9.9, 6.1.0
-    - Python 3.9 and 3.12
-    - check qmake works
+    - Full tests weekly on master
+        - mac, windows and linux
+        - Qt 5.12.12, 5.15.14, 6.5.3
+        - Python 3.9, 3.10, 3.11 and 3.12
+        - check sample app built
+    - Change trigger for GitHub actions
+        - mac, windows and linux
+        - Qt 4.9.9, 6.1.0
+        - Python 3.9 and 3.12
+        - check qmake works
 
 `v3.1.10`_ (14, Nov. 2023)
 ==========================
