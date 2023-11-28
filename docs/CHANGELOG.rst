@@ -13,6 +13,10 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Deprecated
+----------
+* Drop support for python 3.7
+
 Fixed
 -----
 - Patch ``*.prl`` and ``*.pc`` for mingw (#640, #739)
