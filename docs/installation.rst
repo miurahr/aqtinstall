@@ -8,16 +8,15 @@ Installation
 Requirements
 ------------
 
-- Minimum Python version:  3.6
-- Recommended Python version: 3.7.5 or later
+- Minimum Python version:  3.7.5
 
-- Dependent libraries: requests, py7zr, semantic_version, patch, texttable, bs4
+- Dependencies: requests, py7zr, semantic_version, patch, texttable, bs4, defusedxml, humanize
 
 
 Install by pip command
 ----------------------
 
-Same as usual, it can be installed with `pip`
+Same as usual, it can be installed with ``pip``
 
 .. code-block:: bash
 

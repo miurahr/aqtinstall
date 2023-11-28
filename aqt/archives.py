@@ -22,11 +22,12 @@
 import posixpath
 from dataclasses import dataclass, field
 from logging import getLogger
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Set, Tuple
+from xml.etree.ElementTree import Element  # noqa
 
 from defusedxml import ElementTree
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveListError, NoPackageFound
+from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit
 from aqt.metadata import QtRepoProperty, Version
 
@@ -124,12 +125,20 @@ class PackageUpdate:
     description: str
     release_date: str
     full_version: str
-    dependencies: List[str]
-    auto_dependon: Optional[List[str]]
-    downloadable_archives: Optional[List[str]]
+    dependencies: Iterable[str]
+    auto_dependon: Iterable[str]
+    downloadable_archives: Iterable[str]
     default: bool
     virtual: bool
     base: str
+
+    def __post_init__(self):
+        for iter_of_str in self.dependencies, self.auto_dependon, self.downloadable_archives:
+            assert isinstance(iter_of_str, Iterable) and not isinstance(iter_of_str, str)
+        for _str in self.name, self.display_name, self.description, self.release_date, self.full_version, self.base:
+            assert isinstance(_str, str)
+        for boolean in self.default, self.virtual:
+            assert isinstance(boolean, bool)
 
     @property
     def version(self):
@@ -219,7 +228,7 @@ class Updates:
     def merge(self, other):
         self.package_updates.extend(other.package_updates)
 
-    def get_depends(self, target: str):
+    def get_depends(self, target: str) -> Iterable[str]:
         # initialize
         filo = [target]
         packages = []
@@ -237,19 +246,18 @@ class Updates:
                                 filo.append(depend)
         return packages
 
-    def _get_text(self, item):
+    def _get_text(self, item: Optional[Element]) -> str:
         if item is not None and item.text is not None:
             return item.text
-        else:
-            return ""
+        return ""
 
-    def _get_list(self, item):
+    def _get_list(self, item: Optional[Element]) -> Iterable[str]:
         if item is not None and item.text is not None:
             return ssplit(item.text)
         else:
-            return None
+            return []
 
-    def _get_boolean(self, item):
+    def _get_boolean(self, item) -> bool:
         if "true" == item:
             return True
         else:
@@ -285,7 +293,7 @@ class QtArchives:
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []
         self.subarchives: Optional[Iterable[str]] = subarchives
-        self.mod_list: Iterable[str] = modules or []
+        self.mod_list: Set[str] = set(modules or [])
         self.is_include_base_package: bool = is_include_base_package
         self.timeout = timeout
         try:
@@ -342,8 +350,6 @@ class QtArchives:
             return ModuleToPackage({})
         base_package = {self._base_module_name(): list(self._base_package_names())}
         target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
-        if self.all_extra:
-            return target_packages
         for module in self.mod_list:
             suffix = self._module_name_suffix(module)
             package_names = [
@@ -384,7 +390,16 @@ class QtArchives:
 
     def _download_update_xml(self, update_xml_path):
         """Hook for unit test."""
-        xml_hash = get_hash(update_xml_path, "sha256", self.timeout)
+        if not Settings.ignore_hash:
+            try:
+                xml_hash = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout)
+            except ChecksumDownloadFailure:
+                self.logger.warning(
+                    "Failed to download checksum for the file 'Updates.xml'. This may happen on unofficial mirrors."
+                )
+                xml_hash = None
+        else:
+            xml_hash = None
         return getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
 
     def _parse_update_xml(self, os_target_folder, update_xml_text, target_packages: Optional[ModuleToPackage]):
@@ -399,11 +414,11 @@ class QtArchives:
         for packageupdate in package_updates:
             if not self.all_extra:
                 target_packages.remove_module_for_package(packageupdate.name)
-            should_filter_archives: bool = self.subarchives and self.should_filter_archives(packageupdate.name)
+            should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(packageupdate.name)
 
             for archive in packageupdate.downloadable_archives:
                 archive_name = archive.split("-", maxsplit=1)[0]
-                if should_filter_archives and archive_name not in self.subarchives:
+                if should_filter_archives and self.subarchives is not None and archive_name not in self.subarchives:
                     continue
                 archive_path = posixpath.join(
                     # online/qtsdkrepository/linux_x64/desktop/qt5_5150/
@@ -426,7 +441,7 @@ class QtArchives:
         # if we have located every requested package, then target_packages will be empty
         if not self.all_extra and len(target_packages) > 0:
             message = f"The packages {target_packages} were not found while parsing XML of package information!"
-            raise NoPackageFound(message, suggested_action=self.help_msg(target_packages.get_modules()))
+            raise NoPackageFound(message, suggested_action=self.help_msg(list(target_packages.get_modules())))
 
     def _append_tool_update(self, os_target_folder, update_xml, target, tool_version_str):
         packageupdate = update_xml.get(target)
@@ -463,12 +478,13 @@ class QtArchives:
                 )
             )
 
-    def help_msg(self, missing_modules: Iterable[str]) -> Iterable[str]:
+    def help_msg(self, missing_modules: Optional[List[str]] = None) -> List[str]:
+        _missing_modules: List[str] = missing_modules or []
         base_cmd = f"aqt list-qt {self.os_name} {self.target}"
         arch = f"Please use '{base_cmd} --arch {self.version}' to show architectures available."
         mods = f"Please use '{base_cmd} --modules {self.version} <arch>' to show modules available."
-        has_base_pkg: bool = self._base_module_name() in missing_modules
-        has_non_base_pkg: bool = len(list(missing_modules)) > 1 or not has_base_pkg
+        has_base_pkg: bool = self._base_module_name() in _missing_modules
+        has_non_base_pkg: bool = len(list(_missing_modules)) > 1 or not has_base_pkg
         messages = []
         if has_base_pkg:
             messages.append(arch)
@@ -499,7 +515,7 @@ class SrcDocExamplesArchives(QtArchives):
 
     def __init__(
         self,
-        flavor,
+        flavor: str,
         os_name,
         target,
         version,
@@ -510,7 +526,7 @@ class SrcDocExamplesArchives(QtArchives):
         is_include_base_package: bool = True,
         timeout=(5, 5),
     ):
-        self.flavor = flavor
+        self.flavor: str = flavor
         self.target = target
         self.os_name = os_name
         self.base = base
@@ -548,11 +564,12 @@ class SrcDocExamplesArchives(QtArchives):
         """
         return TargetConfig("src_doc_examples", self.target, self.arch, self.os_name)
 
-    def help_msg(self, missing_modules: Iterable[str]) -> Iterable[str]:
+    def help_msg(self, missing_modules: Optional[List[str]] = None) -> List[str]:
+        _missing_modules: List[str] = missing_modules or []
         cmd_type = "example" if self.flavor == "examples" else self.flavor
         base_cmd = f"aqt list-{cmd_type} {self.os_name} {self.version}"
         mods = f"Please use '{base_cmd} --modules' to show modules available."
-        has_non_base_pkg: bool = len(list(missing_modules)) > 1
+        has_non_base_pkg: bool = len(list(_missing_modules)) > 1
         messages = []
         if has_non_base_pkg:
             messages.append(mods)
@@ -574,8 +591,8 @@ class ToolArchives(QtArchives):
         tool_name: str,
         base: str,
         version_str: Optional[str] = None,
-        arch: Optional[str] = None,
-        timeout: Tuple[int, int] = (5, 5),
+        arch: str = "",
+        timeout: Tuple[float, float] = (5, 5),
     ):
         self.tool_name = tool_name
         self.os_name = os_name
@@ -605,7 +622,7 @@ class ToolArchives(QtArchives):
         update_xml = Updates.fromstring(self.base, update_xml_text)
         self._append_tool_update(os_target_folder, update_xml, self.arch, self.tool_version_str)
 
-    def help_msg(self, *args) -> Iterable[str]:
+    def help_msg(self, *args) -> List[str]:
         return [f"Please use 'aqt list-tool {self.os_name} {self.target} {self.tool_name}' to show tool variants available."]
 
     def get_target_config(self) -> TargetConfig:

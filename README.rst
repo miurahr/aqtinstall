@@ -4,6 +4,7 @@ Another Qt installer(aqt)
 - Release: |pypi|
 - Documentation: |docs|
 - Test status: |gha| and Coverage: |coveralls|
+- Project maturity |Package health|
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
    :target: http://badge.fury.io/py/aqtinstall
@@ -13,6 +14,11 @@ Another Qt installer(aqt)
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
 .. |coveralls| image:: https://coveralls.io/repos/github/miurahr/aqtinstall/badge.svg?branch=master
    :target: https://coveralls.io/github/miurahr/aqtinstall?branch=master
+.. |Package health| image:: https://snyk.io/advisor/python/aqtinstall/badge.svg
+  :target: https://snyk.io/advisor/python/aqtinstall
+  :alt: aqtinstall
+
+
 
 This is a utility alternative to the official graphical Qt installer, for using in CI environment
 where an interactive UI is not usable, or just on command line.
@@ -48,7 +54,7 @@ Requirements
 ------------
 
 - Minimum Python version:
-    3.6
+    3.7
 
 - Recommended Python version:
     3.9 (frequently tested on)
@@ -60,7 +66,6 @@ Requirements
     py7zr
     texttable
     bs4
-    dataclasses; python_version < "3.7"
     defusedxml
 
 - Operating Systems:
@@ -74,10 +79,9 @@ There is precise documentation with many examples.
 You are recommended to read the *Getting started* section.
 
 - Getting started: https://aqtinstall.readthedocs.io/en/latest/getting_started.html
-- Stable (v2.1.x): https://aqtinstall.readthedocs.io/en/stable
+- Stable (v3.0.x): https://aqtinstall.readthedocs.io/en/stable
 - Latest: https://aqtinstall.readthedocs.io/en/latest
-- Old (v2.0.6) : https://aqtinstall.readthedocs.io/en/v2.0.6/
-- Obsolete (v1.2.5) : https://aqtinstall.readthedocs.io/en/v1.2.5/index.html
+- Old (v2.2.3) : https://aqtinstall.readthedocs.io/en/v2.2.3/
 
 Install
 -------
@@ -138,7 +142,7 @@ When you decide to install Qt SDK version 6.2.0 for mingw v8.1:
 .. code-block:: console
 
     aqt install-qt windows desktop 6.2.0 win64_mingw81 -m all
- 
+
 The optional `-m all` argument installs all the modules available for Qt 6.2.0; you can leave it off if you don't want those modules.
 
 To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use this command (note that the module names are lowercase):
@@ -147,6 +151,12 @@ To install Qt 6.2.0 with the modules 'qtcharts' and 'qtnetworking', you can use 
 
     aqt install-qt windows desktop 6.2.0 win64_mingw81 -m qtcharts qtnetworking
 
+When you want to install Qt for android with required desktop toolsets
+
+.. code-block:: console
+
+    aqt install-qt linux android 5.13.2 android_armv7 --autodesktop
+
 
 When aqtinstall downloads and installs packages, it updates package configurations
 such as prefix directory in ``bin/qt.conf``, and ``bin/qconfig.pri``
@@ -154,6 +164,14 @@ to make it working well with installed directory.
 
 .. note::
    It is your own task to set some environment variables to fit your platform, such as PATH, QT_PLUGIN_PATH, QML_IMPORT_PATH, and QML2_IMPORT_PATH. aqtinstall will never do it for you, in order not to break the installation of multiple versions.
+
+.. warning::
+   If you are using aqtinstall to install the ios version of Qt, please be aware that
+   there are compatibility issues between XCode 13+ and versions of Qt less than 6.2.4.
+   You may use aqtinstall to install older versions of Qt for ios, but the developers of
+   aqtinstall cannot guarantee that older versions will work on the most recent versions of MacOS.
+   Aqtinstall is tested for ios on MacOS 12 with Qt 6.2.4 and greater.
+   All earlier versions of Qt are expected not to function.
 
 Testimonies
 -----------
@@ -188,7 +206,7 @@ Some projects utilize aqtinstall, and there are several articles and discussions
 * Qt Study group presentation: `Another Qt CLI installer`_
 
 
-.. _`Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`: https://mindflakes.com/posts/1/01/01/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
+.. _`Fast and lightweight headless Qt Installer from Qt Mirrors - aqtinstall`: https://mindflakes.com/posts/2019/06/02/fast-and-lightweight-headless-qt-installer-from-qt-mirrors-aqtinstall/
 .. _`Using Azure DevOps Pipelines with Qt`: https://lostdomain.org/2019/12/27/using-azure-devops-pipelines-with-qt/
 .. _`Using Azure CI for cross-platform Linux and Windows Qt application builds`: https://www.wincak.name/programming/using-azure-ci-for-cross-platform-linux-and-windows-qt-application-builds/
 .. _`Automatic installation for Travis CI (or any other CI)`: https://forum.qt.io/topic/114520/automatic-installation-for-travis-ci-or-any-other-ci/2

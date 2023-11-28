@@ -42,17 +42,15 @@ list-qt command
 
     aqt list-qt [-h | --help]
                 [-c | --config]
-                [--extension <extension>]
                 [--spec <specification>]
                 [--modules      (<Qt version> | latest) <architecture> |
                  --long-modules (<Qt version> | latest) <architecture> |
-                 --extensions   (<Qt version> | latest) |
                  --arch         (<Qt version> | latest) |
                  --archives     (<Qt version> | latest) architecture [modules...]
                  --latest-version]
                 <host> [<target>]
 
-List available versions of Qt, targets, extensions, modules, and architectures.
+List available versions of Qt, targets, modules, and architectures.
 
 .. describe:: host
 
@@ -67,21 +65,6 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 .. option:: --help, -h
 
     Display help text
-
-.. option:: --extension <Extension>
-
-    Extension of packages to list
-    {wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}
-
-    Use the ``--extensions`` flag to list all relevant options for a host/target.
-    Incompatible with the ``--extensions`` flag, but may be combined with any other flag.
-
-.. option:: --extensions (<Qt version> | latest)
-
-    Qt version in the format of "5.X.Y", or the keyword ``latest``.
-    When set, this prints all valid arguments for the ``--extension`` flag for
-    Qt 5.X.Y, or the latest version of Qt if ``latest`` is specified.
-    Incompatible with the ``--extension`` flag.
 
 .. option:: --spec <Specification>
 
@@ -98,7 +81,7 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 
 .. option:: --modules (<Qt version> | latest) <architecture>
 
-    This flag lists all the modules available for Qt 5.X.Y with a host/target/extension/architecture
+    This flag lists all the modules available for Qt 5.X.Y with a host/target/architecture
     combination, or the latest version of Qt if ``latest`` is specified.
     You can list available architectures by using ``aqt list-qt`` with the
     ``--arch`` flag described below.
@@ -149,7 +132,7 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 .. option:: --arch (<Qt version> | latest)
 
     Qt version in the format of "5.X.Y". When set, this prints all architectures
-    available for Qt 5.X.Y with a host/target/extension, or the latest version
+    available for Qt 5.X.Y with a host/target, or the latest version
     of Qt if ``latest`` is specified.
 
 .. _`list archives flag`:
@@ -174,7 +157,7 @@ List available versions of Qt, targets, extensions, modules, and architectures.
 .. option:: --latest-version
 
     Print only the newest version available
-    May be combined with the ``--extension`` and/or ``--spec`` flags.
+    May be combined with the ``--spec`` flag.
 
 
 .. _list-src command:
@@ -404,7 +387,7 @@ are described here:
 
 .. _py7zr: https://pypi.org/project/py7zr/
 .. _7-zip: https://www.7-zip.org/
-.. _Choco: https://community.chocolatey.org/packages/7zip/19.0
+.. _Choco: https://community.chocolatey.org/packages/7zip/
 .. _brew: https://formulae.brew.sh/formula/p7zip
 
 .. option:: --internal
@@ -510,6 +493,7 @@ install-qt command
         [-d | --archive-dest] <path>
         [-m | --modules (all | <module> [<module>...])]
         [--archives <archive> [<archive>...]]
+        [--autodesktop]
         [--noarchives]
         <host> <target> (<Qt version> | <spec>) [<arch>]
 
@@ -523,6 +507,8 @@ There are various combinations to accept according to Qt version.
 .. describe:: target
 
     desktop, ios, winrt, or android. The type of device for which you are developing Qt programs.
+    If your target is ios, please be aware that versions of Qt older than 6.2.4 are expected to be
+    non-functional with current versions of XCode (applies to any XCode greater than or equal to 13).
 
 .. describe:: Qt version
 
@@ -556,6 +542,13 @@ There are various combinations to accept according to Qt version.
    * android_armv7, android_arm64_v8a, android_x86, android_x86_64 for android
 
     Use the :ref:`List-Qt Command` to list available architectures.
+
+.. option:: --autodesktop
+
+    If you are installing an ios, android, WASM, or msvc_arm64 version of Qt6,
+    the corresponding desktop version of Qt must be installed alongside of it.
+    Turn this option on to install it automatically.
+    This option will have no effect if the desktop version of Qt is not required.
 
 .. option:: --noarchives
 
@@ -796,12 +789,12 @@ Command examples
 
 .. program:: None
 
-Example: Installing Qt SDK 5.12.0 for Linux with QtCharts and QtNetworkAuth:
+Example: Installing Qt SDK 5.12.12 for Linux with QtCharts and QtNetworkAuth:
 
 .. code-block:: console
 
     pip install aqtinstall
-    sudo aqt install-qt --outputdir /opt linux desktop 5.12.0 -m qtcharts qtnetworkauth
+    sudo aqt install-qt --outputdir /opt linux desktop 5.12.12 -m qtcharts qtnetworkauth
 
 
 Example: Installing the newest LTS version of Qt 5.12:
@@ -812,11 +805,18 @@ Example: Installing the newest LTS version of Qt 5.12:
     sudo aqt install-qt linux desktop 5.12 win64_mingw73
 
 
-Example: Installing Android (armv7) Qt 5.10.2:
+Example: Installing Android (armv7) Qt 5.13.2:
 
 .. code-block:: console
 
-    aqt install-qt linux android 5.10.2 android_armv7
+    aqt install-qt linux android 5.13.2 android_armv7
+
+
+Example: Installing Android (armv7) Qt 6.4.2:
+
+.. code-block:: console
+
+    aqt install-qt linux android 6.4.2 android_armv7 --autodesktop
 
 
 Example: Install examples, doc and source:
@@ -847,6 +847,13 @@ Example: Install Web Assembly
 .. code-block:: console
 
     aqt install-qt linux desktop 5.15.0 wasm_32
+
+
+Example: Install Qt6 for Web Assembly
+
+.. code-block:: console
+
+    aqt install-qt linux desktop 6.2.4 wasm_32 --autodesktop
 
 
 Example: List available versions of Qt on Linux
@@ -912,16 +919,32 @@ Example: Install vcredist on Windows:
 .. code-block:: doscon
 
 
-    aqt install-tool windows tools_vcredist
+    aqt install-tool windows desktop tools_vcredist
     .\Qt\Tools\vcredist\vcredist_msvc2019_x64.exe /norestart /q
 
 
-Example: Install MinGW on Windows
+Example: Install MinGW 8.1.0 on Windows:
 
 .. code-block:: doscon
 
-    aqt install-tool -O c:\Qt windows tools_mingw qt.tools.win64_mingw810
+    aqt install-tool -O c:\Qt windows desktop tools_mingw qt.tools.win64_mingw810
     set PATH=C:\Qt\Tools\mingw810_64\bin
+
+
+Example: Install MinGW 11.2.0 on Windows:
+
+.. code-block:: doscon
+
+    aqt install-tool -O c:\Qt windows desktop tools_mingw90
+    set PATH=C:\Qt\Tools\mingw1120_64\bin
+
+.. note::
+
+    This is not a typo; it is a mislabelled tool name!
+    ``tools_mingw90`` and the tool variant ``qt.tools.win64_mingw900``
+    do not contain MinGW 9.0.0; they actually contain MinGW 11.2.0!
+    Verify with ``aqt list-tool --long windows desktop tools_mingw90``
+    in a wide terminal.
 
 
 Example: Show help message

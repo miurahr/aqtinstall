@@ -31,6 +31,8 @@ A file is like as follows:
     retry_backoff: 0.1
     max_retries_on_checksum_error: 5
     max_retries_to_retrieve_hash: 5
+    hash_algorithm: sha256
+    INSECURE_NOT_FOR_PRODUCTION_ignore_hash: False
 
     [mirrors]
     trusted_mirrors:
@@ -97,7 +99,7 @@ min_module_size:
     and they are exactly 40 bytes when uncompressed.
     The authors feel that it is not useful for ``aqt list-*`` to list these empty modules.
     If you want to print these modules with ``aqt list-*``, please feel free to change
-    the `min_module_size` value to something less than 40.
+    the ``min_module_size`` value to something less than 40.
 
     This setting has no effect on your ability to install these modules.
     ``aqt install-*`` can will still install them without any warnings.
@@ -130,6 +132,18 @@ max_retries_on_checksum_error:
     This setting controls how many times ``aqt`` will attempt to download a file,
     in the case of a checksum error.
 
+hash_algorithm:
+    This is either ``sha256``, ``sha1`` or ``md5``. ``sha256`` is the only safe 
+    value to use here. Default is ``sha256`` if not set.
+    See also ``trusted_mirrors`` setting.
+
+INSECURE_NOT_FOR_PRODUCTION_ignore_hash:
+    This is either ``True`` or ``False``.
+    The ``True`` setting disables hash checking when downloading files. Although
+    this is not recommended, this may help when hashes are not available.
+    The ``False`` setting will enforce hash checking. This is highly recommended
+    to avoid corrupted files.
+
 
 The ``[mirrors]`` section is a configuration for mirror handling.
 
@@ -156,8 +170,8 @@ blacklist:
     Some mirror sites ignore a connection from IP addresses out of their preffered one.
     It will cause connection error or connection timeout.
     There are some known mirror sites in default.
-    When you are happy with the default sites,
-    you can override with your custom settings.
+    If you are not happy with the default sites,
+    you can override them with custom settings.
 
 fallbacks:
     It is a list of URL where is a good for access.

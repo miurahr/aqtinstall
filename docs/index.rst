@@ -14,7 +14,8 @@ Contents:
    CODE_OF_CONDUCT
    SECURITY
    authors
-   changes
+   CHANGELOG
+   previous_changes
 
 Indices and tables
 ==================

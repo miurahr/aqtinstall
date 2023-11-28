@@ -20,30 +20,21 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import logging
 import os
-import pathlib
 import re
+import stat
 import subprocess
 from logging import getLogger
-from typing import Union
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 import patch
 
 from aqt.archives import TargetConfig
 from aqt.exceptions import QmakeNotFound, UpdaterError
 from aqt.helper import Settings
-from aqt.metadata import SimpleSpec, Version
+from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version
 
-
-def default_desktop_arch_dir(host: str, version: Union[Version, str]) -> str:
-    version: Version = version if isinstance(version, Version) else Version(version)
-    if host == "linux":
-        return "gcc_64"
-    elif host == "mac":
-        return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
-    else:  # Windows
-        # This is a temporary solution. This arch directory cannot exist for many versions of Qt.
-        # TODO: determine this dynamically
-        return "mingw81_64"
+dir_for_version = QtRepoProperty.dir_for_version
 
 
 def dir_for_version(ver: Version) -> str:
@@ -71,8 +62,13 @@ def dir_for_arch(arch: str, os_name: str, version: Version) -> str:
     return arch_dir
 
 
-def unpatched_path(os_name: str, final_component: str) -> str:
-    return ("/home/qt/work/install" if os_name == "linux" else "/Users/qt/work/install") + "/" + final_component
+def unpatched_paths() -> List[str]:
+    return [
+        "/home/qt/work/install/",
+        "/Users/qt/work/install/",
+        "\\home\\qt\\work\\install\\",
+        "\\Users\\qt\\work\\install\\",
+    ]
 
 
 class QtConfig:
@@ -103,11 +99,13 @@ class QtConfig:
 
 
 class Updater:
-    def __init__(self, prefix: pathlib.Path, logger):
+    def __init__(self, prefix: Path, logger):
         self.logger = logger
         self.prefix = prefix
+        self.qmake_path: Optional[Path] = None
+        self.qconfigs: Dict[str, str] = {}
 
-    def _patch_binfile(self, file: pathlib.Path, key: bytes, newpath: bytes):
+    def _patch_binfile(self, file: Path, key: bytes, newpath: bytes):
         """Patch binary file with key/value"""
         st = file.stat()
         data = file.read_bytes()
@@ -122,7 +120,7 @@ class Updater:
         file.write_bytes(data)
         os.chmod(str(file), st.st_mode)
 
-    def _append_string(self, file: pathlib.Path, val: str):
+    def _append_string(self, file: Path, val: str):
         """Append string to file"""
         st = file.stat()
         data = file.read_text("UTF-8")
@@ -130,12 +128,41 @@ class Updater:
         file.write_text(data, "UTF-8")
         os.chmod(str(file), st.st_mode)
 
-    def _patch_textfile(self, file: pathlib.Path, old: str, new: str):
+    def _patch_textfile(self, file: Path, old: Union[str, re.Pattern], new: str, *, is_executable: bool = False):
         st = file.stat()
+        file_mode = st.st_mode | (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH if is_executable else 0)
         data = file.read_text("UTF-8")
-        data = data.replace(old, new)
+        if isinstance(old, re.Pattern):
+            data = old.sub(new, data)
+        else:
+            data = data.replace(old, new)
         file.write_text(data, "UTF-8")
-        os.chmod(str(file), st.st_mode)
+        os.chmod(str(file), file_mode)
+
+    def _detect_qmake(self) -> bool:
+        """detect Qt configurations from qmake."""
+        for qmake_path in [
+            self.prefix.joinpath("bin", "qmake"),
+            self.prefix.joinpath("bin", "qmake.exe"),
+        ]:
+            if not qmake_path.exists():
+                continue
+            try:
+                result = subprocess.run([str(qmake_path), "-query"], stdout=subprocess.PIPE)
+            except (subprocess.SubprocessError, IOError, OSError):
+                return False
+            if result.returncode == 0:
+                self.qmake_path = qmake_path
+                for line in result.stdout.splitlines():
+                    vals = line.decode("UTF-8").split(":")
+                    self.qconfigs[vals[0]] = vals[1]
+                return True
+        return False
+
+    def patch_prl(self, oldvalue):
+        for prlfile in self.prefix.joinpath("lib").glob("*.prl"):
+            self.logger.info("Patching {}".format(prlfile))
+            self._patch_textfile(prlfile, oldvalue, "$$[QT_INSTALL_LIBS]")
 
     def patch_pkgconfig(self, oldvalue, os_name):
         for pcfile in self.prefix.joinpath("lib", "pkgconfig").glob("*.pc"):
@@ -189,9 +216,10 @@ class Updater:
 
     def patch_qmake(self):
         """Patch to qmake binary"""
-        try:
-            qmake_config = QtConfig(prefix=self.prefix)
-            self.logger.info("Patching {}".format(str(qmake_config.qmake_path)))
+        if self._detect_qmake():
+            if self.qmake_path is None:
+                return
+            self.logger.info("Patching {}".format(str(self.qmake_path)))
             self._patch_binfile(
                 qmake_config.qmake_path,
                 key=b"qt_prfxpath=",
@@ -210,14 +238,13 @@ class Updater:
         except QmakeNotFound:
             pass
 
-    def patch_qmake_script(self, base_dir, qt_version: str, os_name):
-        arch_dir = default_desktop_arch_dir(os_name, qt_version)
+    def patch_qmake_script(self, base_dir, qt_version: str, os_name: str, desktop_arch_dir: str):
         sep = "\\" if os_name == "windows" else "/"
-        patched = sep.join([base_dir, qt_version, arch_dir, "bin"])
-        unpatched = unpatched_path(os_name, "bin")
+        patched = sep.join([base_dir, qt_version, desktop_arch_dir, "bin"])
         qmake_path = self.prefix / "bin" / ("qmake.bat" if os_name == "windows" else "qmake")
         self.logger.info(f"Patching {qmake_path}")
-        self._patch_textfile(qmake_path, unpatched, patched)
+        for unpatched in unpatched_paths():
+            self._patch_textfile(qmake_path, f"{unpatched}bin", patched, is_executable=True)
 
     def patch_qtcore(self, target):
         """patch to QtCore"""
@@ -254,7 +281,7 @@ class Updater:
             f.write("cd /D {}\n".format(os.path.join(base_dir, qt_version, arch_dir)))
             f.write("echo Remember to call vcvarsall.bat to complete environment setup!\n")
 
-    def set_license(self, base_dir, qt_version, arch_dir):
+    def set_license(self, base_dir: str, qt_version: str, arch_dir: str):
         """Update qtconfig.pri as OpenSource"""
         with open(os.path.join(base_dir, qt_version, arch_dir, "mkspecs", "qconfig.pri"), "r+") as f:
             lines = f.readlines()
@@ -267,58 +294,95 @@ class Updater:
                     line = "QT_LICHECK =\n"
                 f.write(line)
 
-    def patch_target_qt_conf(self, base_dir, qt_version, arch_dir, os_name):
+    def patch_target_qt_conf(self, base_dir: str, qt_version: str, arch_dir: str, os_name: str, desktop_arch_dir: str):
         target_qt_conf = self.prefix / "bin" / "target_qt.conf"
-        old_targetprefix = f'Prefix={unpatched_path(os_name, "target")}'
-        new_hostprefix = f"HostPrefix=../../{default_desktop_arch_dir(os_name, qt_version)}"
-        new_targetprefix = "Prefix={}".format(str(pathlib.Path(base_dir).joinpath(qt_version, arch_dir, "target")))
+        new_hostprefix = f"HostPrefix=../../{desktop_arch_dir}"
+        new_targetprefix = "Prefix={}".format(str(Path(base_dir).joinpath(qt_version, arch_dir, "target")))
         new_hostdata = "HostData=../{}".format(arch_dir)
-        self._patch_textfile(target_qt_conf, old_targetprefix, new_targetprefix)
+        new_host_lib_execs = "./bin" if os_name == "windows" else "./libexec"
+        old_host_lib_execs = re.compile(r"^HostLibraryExecutables=[^\n]*$", flags=re.MULTILINE)
+
+        self._patch_textfile(target_qt_conf, old_host_lib_execs, f"HostLibraryExecutables={new_host_lib_execs}")
+        for unpatched in unpatched_paths():
+            self._patch_textfile(target_qt_conf, f"Prefix={unpatched}target", new_targetprefix)
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
+    def patch_qdevice_file(self, base_dir: str, qt_version: str, arch_dir: str, os_name: str):
+        """Qt 6.4.1+ specific, but it should not hurt anything if `mkspecs/qdevice.pri` does not exist"""
+
+        qdevice = Path(base_dir) / qt_version / arch_dir / "mkspecs/qdevice.pri"
+        if not qdevice.exists():
+            return
+
+        old_line = re.compile(r"^DEFAULT_ANDROID_NDK_HOST =[^\n]*$", flags=re.MULTILINE)
+        new_line = f"DEFAULT_ANDROID_NDK_HOST = {'darwin' if os_name == 'mac' else os_name}-x86_64"
+        self._patch_textfile(qdevice, old_line, new_line)
+
     @classmethod
-    def update(cls, target: TargetConfig, base_dir: str):
+    def update(cls, target: TargetConfig, base_path: Path, installed_desktop_arch_dir: Optional[str]):
         """
         Make Qt configuration files, qt.conf and qtconfig.pri.
         And update pkgconfig and patch Qt5Core and qmake
+
+        :param installed_desktop_arch_dir:  This is the path to a desktop Qt  installation, like `Qt/6.3.0/mingw_win64`.
+                                            This may or may not contain an actual desktop Qt installation.
+                                            If it does not, the Updater will patch files in a mobile Qt installation
+                                            that point to this directory, and this installation will be non-functional
+                                            until the user installs a desktop Qt in this directory.
         """
         logger = getLogger("aqt.updater")
         arch = target.arch
         version = Version(target.version)
         os_name = target.os_name
         version_dir = dir_for_version(version)
-        arch_dir = dir_for_arch(arch, os_name, version)
-        prefix = pathlib.Path(base_dir) / version_dir / arch_dir
+        arch_dir = QtRepoProperty.get_arch_dir_name(os_name, arch, version)
+        base_dir = str(base_path)
         try:
+            prefix = base_path / version_dir / arch_dir
             updater = Updater(prefix, logger)
             updater.set_license(base_dir, version_dir, arch_dir)
             if target.arch not in [
                 "ios",
                 "android",
                 "wasm_32",
+                "wasm_singlethread",
+                "wasm_multithread",
                 "android_x86_64",
                 "android_arm64_v8a",
                 "android_x86",
                 "android_armv7",
+                "win64_msvc2019_arm64",
             ]:  # desktop version
                 updater.make_qtconf(base_dir, version_dir, arch_dir)
                 updater.patch_qmake()
                 if target.os_name == "linux":
                     updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
                     updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
+                    updater.patch_prl("/home/qt/work/install/lib")
                 elif target.os_name == "mac":
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
+                    updater.patch_prl("/Users/qt/work/install/lib")
                 elif target.os_name == "windows":
+                    updater.patch_pkgconfig("c:/Users/qt/work/install", target.os_name)
+                    updater.patch_prl("c:/Users/qt/work/install/lib")
                     updater.make_qtenv2(base_dir, version_dir, arch_dir)
                 if version < Version("5.14.0"):
                     updater.patch_qtcore(target)
             elif version in SimpleSpec(">=5.0,<6.0"):
                 updater.patch_qmake()
-            else:  # qt6 non-desktop
-                updater.patch_qmake_script(base_dir, version_dir, target.os_name)
-                updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name)
+            else:  # qt6 mobile, wasm, or msvc-arm64
+                if installed_desktop_arch_dir is not None:
+                    desktop_arch_dir = installed_desktop_arch_dir
+                else:
+                    # Use MetadataFactory to check what the default architecture should be
+                    meta = MetadataFactory(ArchiveId("qt", os_name, "desktop"))
+                    desktop_arch_dir = meta.fetch_default_desktop_arch(version, is_msvc="msvc" in target.arch)
+
+                updater.patch_qmake_script(base_dir, version_dir, target.os_name, desktop_arch_dir)
+                updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name, desktop_arch_dir)
+                updater.patch_qdevice_file(base_dir, version_dir, arch_dir, target.os_name)
         except IOError as e:
             raise UpdaterError(f"Updater caused an IO error: {e}") from e
 

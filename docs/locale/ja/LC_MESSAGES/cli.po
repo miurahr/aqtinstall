@@ -1,0 +1,764 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../cli.rst:4
+msgid "Command Line Options"
+msgstr "コマンドラインオプション"
+
+#: ../../cli.rst:6
+msgid ""
+"The CLI uses argparse to parse the command line options so the short or "
+"long versions may be used and the long options may be truncated to the "
+"shortest unambiguous abbreviation."
+msgstr "コマンドラインのインタフェースは、argparseライブラリを使用してコマンドラインのオプションを解析します。そのため、オプションに、短いバージョンや長いバージョンが使用できるます。長いオプションは最も短い明確な省略形も提供ます。"
+
+#: ../../cli.rst:10
+msgid "Generic commands"
+msgstr "一般的なコマンド"
+
+#: ../../cli.rst:18
+msgid "show generic help"
+msgstr "汎用ヘルプの表示"
+
+#: ../../cli.rst:26
+msgid "display version"
+msgstr "バージョンの表示"
+
+#: ../../cli.rst:30
+msgid "List-* Commands"
+msgstr "List-*コマンド"
+
+#: ../../cli.rst:32
+msgid ""
+"These commands are used to list the packages available for installation "
+"with ``aqt``."
+msgstr "このコマンドは、``aqt`でインストールできるパッケージを一覧表示するために使用します。"
+
+#: ../../cli.rst:37
+msgid "list-qt command"
+msgstr "list-qtコマンド"
+
+#: ../../cli.rst:55
+msgid ""
+"List available versions of Qt, targets, extensions, modules, and "
+"architectures."
+msgstr "Qtの利用可能なバージョン、ターゲット、拡張、モジュール、アーキテクチャを表示します。"
+
+#: ../../cli.rst:59 ../../cli.rst:197 ../../cli.rst:237 ../../cli.rst:282
+#: ../../cli.rst:320 ../../cli.rst:605 ../../cli.rst:665 ../../cli.rst:719
+#: ../../cli.rst:771
+msgid "linux, windows or mac"
+msgstr "linux、windows、またはmac"
+
+#: ../../cli.rst:63 ../../cli.rst:324
+msgid ""
+"desktop, winrt, ios or android. When omitted, the command prints all the "
+"targets available for a host OS. Note that winrt is only available on "
+"Windows, and ios is only available on Mac OS."
+msgstr "desktop、winrt、iosまたはandroid。省略すると、ホストOSで使用可能なすべてのターゲットが出力されます。winrtはWindowsでしか使用できず、iosはMac OSでしか使用できません。"
+
+#: ../../cli.rst:69 ../../cli.rst:338 ../../cli.rst:376
+msgid "Display help text"
+msgstr "ヘルプテキストを表示する"
+
+#: ../../cli.rst:73
+msgid ""
+"Extension of packages to list "
+"{wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}"
+msgstr "リスト表示するパッケージ拡張{wasm,src_doc_examples,preview,wasm_preview,x86_64,x86,armv7,arm64_v8a}"
+
+#: ../../cli.rst:76
+msgid ""
+"Use the ``--extensions`` flag to list all relevant options for a "
+"host/target. Incompatible with the ``--extensions`` flag, but may be "
+"combined with any other flag."
+msgstr "ホスト/ターゲットに関連するすべてのオプションをリストするには、`--extensions``フラグを使用してください。`--extensions``フラグとは互換性がありませんが、他のフラグと組み合わせることができます。"
+
+#: ../../cli.rst:81
+msgid ""
+"Qt version in the format of \"5.X.Y\", or the keyword ``latest``. When "
+"set, this prints all valid arguments for the ``--extension`` flag for Qt "
+"5.X.Y, or the latest version of Qt if ``latest`` is specified. "
+"Incompatible with the ``--extension`` flag."
+msgstr "\"5.X.Y\"形式のQtバージョン、またはキーワード``latest``。これを設定すると、Qt 5.X.Yの ``--extension`` フラグの有効な引数をすべて出力します。または、``latest``が指定されている場合はQtの最新バージョンを出力します。`--extension`フラグとは互換性がありません。"
+
+#: ../../cli.rst:88
+msgid ""
+"Print versions of Qt within a `SimpleSpec`_ that specifies a range of "
+"versions. You can specify partial versions, inequalities, etc. ``\"*\"`` "
+"would match all versions of Qt; ``\">6.0.2,<6.2.0\"`` would match all "
+"versions of Qt between 6.0.2 and 6.2.0, etc. For example, ``aqt list-qt "
+"windows desktop --spec \"5.12\"`` would print all versions of Qt for "
+"Windows Desktop beginning with 5.12. May be combined with any other flag "
+"to filter the output of that flag."
+msgstr "バージョンの範囲を指定する `SimpleSpec`_  内のQtのバージョンを表示します。部分的なバージョンや不等式などを指定できます。``\"*\"``  はQtのすべてのバージョンにマッチし、``\">6.0.2,<6.2.0\"``  は6.0.2から6.2.0までのQtのすべてのバージョンにマッチします。例えば、``aqt list-qt windows desktop --spec \"5.12\"`` と入力すると、5.12から始まるWindows デスクトップ用のQtのすべてのバージョンが出力されます。他のフラグと組み合わせて、そのフラグの出力をフィルタリングすることができます。"
+
+#: ../../cli.rst:101
+msgid ""
+"This flag lists all the modules available for Qt 5.X.Y with a "
+"host/target/extension/architecture combination, or the latest version of "
+"Qt if ``latest`` is specified. You can list available architectures by "
+"using ``aqt list-qt`` with the ``--arch`` flag described below."
+msgstr "このフラグは、Qt 5.X.Yで利用可能なすべてのモジュールをホスト/ターゲット/拡張/アーキテクチャの組み合わせで一覧表示します。``latest``  が指定されている場合はQtの最新バージョンを表示します。利用可能なアーキテクチャを一覧表示するには、以下で説明する ``--arch`` フラグを付けて ``aqt list-qt`` を使用します。"
+
+#: ../../cli.rst:108
+msgid ""
+"Long display for modules: Similar to ``--modules``, but shows extra "
+"metadata associated with each module. This metadata is displayed in a "
+"table that includes long display names for each module. If your terminal "
+"is wider than 95 characters, ``aqt list-qt`` will also display release "
+"dates and sizes for each module. An example of this output is displayed "
+"below."
+msgstr "モジュールの長い表示: ``--modules`` と似ていますが、各モジュールに関連付けられた追加のメタデータを表示します。このメタデータは、各モジュールの長い表示名を含む表に表示されます。端末の表示幅が95文字を超える場合、``aqt list-qt`` には各モジュールのリリース日とサイズも表示されます。この出力例を以下に示します。"
+
+#: ../../cli.rst:151
+msgid ""
+"Qt version in the format of \"5.X.Y\". When set, this prints all "
+"architectures available for Qt 5.X.Y with a host/target/extension, or the"
+" latest version of Qt if ``latest`` is specified."
+msgstr "Qt version in the format of \"5.X.Y\". 設定すると、ホスト/ターゲット/拡張機能を持つQt 5.X.Yで利用可能なすべてのアーキテクチャを出力します。``latest`` が指定されている場合は、最新バージョンのQtを出力します。"
+
+#: ../../cli.rst:158
+msgid ""
+"This flag requires a list of at least two arguments: 'Qt version' and "
+"'architecture'. The 'Qt version' argument can be in the format \"5.X.Y\" "
+"or the \"latest\" keyword. You can use the ``--arch`` flag to see a list "
+"of acceptable values for the 'architecture' argument. Any following "
+"arguments must be the names of modules available for the preceding "
+"version and architecture. You can use the ``--modules`` flag to see a "
+"list of acceptable values."
+msgstr "このフラグには、'Qt version'と'architecture'の2つ以上の引数のリストが必要です。'Qt version'引数は、\"5.X.Y\"または\"latest\"キーワードの形式にすることができます。'architecture' 引数に指定できる値のリストを見るには、``--arch`` フラグを使用します。後続の引数は、以前のバージョンとアーキテクチャーで使用できるモジュールの名前である必要があります。受け入れ可能な値のリストを見るために、``--modules`` フラグを使うことができます。"
+
+#: ../../cli.rst:164
+msgid ""
+"If you do not add a list of modules to this flag, this command will print"
+" a list of all the archives that make up the base Qt installation."
+msgstr "このフラグにモジュールのリストを追加しない場合、このコマンドは基本Qtインストールを構成するすべてのアーカイブのリストを出力します。"
+
+#: ../../cli.rst:167
+msgid ""
+"If you add a list of modules to this flag, this command will print a list"
+" of all the archives that make up the specified modules."
+msgstr "このフラグにモジュールのリストを追加すると、指定されたモジュールを構成するすべてのアーカイブのリストが出力されます。"
+
+#: ../../cli.rst:170
+msgid ""
+"The purpose of this command is to show you what arguments you can pass to"
+" the :ref:`archives flag <install archives flag>` when using the "
+"``install-*`` commands. This flag allows you to avoid installing parts of"
+" Qt that you do not need."
+msgstr "このコマンドの目的は、 ``install-*`` コマンドを使うときに :ref:`archives flag <install archives flag>` に渡すことができる引数を表示することです。このフラグを使うと、Qtの不要な部分をインストールするのを避けることができます。"
+
+#: ../../cli.rst:176
+msgid ""
+"Print only the newest version available May be combined with the "
+"``--extension`` and/or ``--spec`` flags."
+msgstr "入手可能な最新バージョンのみを印刷します。 ``--extension`` フラグや ``--spec`` フラグと組み合わせることができます。"
+
+#: ../../cli.rst:183
+msgid "list-src command"
+msgstr "list-srcコマンド"
+
+#: ../../cli.rst:193
+msgid ""
+"List source archives available for installation using the `install-src "
+"command`_."
+msgstr "`install-src command`_ を使って、インストール可能なソースアーカイブを一覧表示します。"
+
+#: ../../cli.rst:201 ../../cli.rst:241 ../../cli.rst:286 ../../cli.rst:532
+#: ../../cli.rst:614 ../../cli.rst:674 ../../cli.rst:728
+msgid ""
+"This is a Qt version such as 5.9.7, 5.12.1 etc. Use the :ref:`List-Qt "
+"Command` to list available versions."
+msgstr "これは5.9.7、5.12.1などのQtバージョンです。有効なバージョンを調べるには、:ref:`List-Qt Command` を使用してください。"
+
+#: ../../cli.rst:206 ../../cli.rst:246 ../../cli.rst:291 ../../cli.rst:537
+#: ../../cli.rst:619 ../../cli.rst:679 ../../cli.rst:733
+msgid ""
+"This is a `SimpleSpec`_ that specifies a range of versions. If you type "
+"something in the ``<Qt version>`` positional argument that cannot be "
+"interpreted as a version, it will be interpreted as a `SimpleSpec`_, and "
+"``aqt`` will select the highest available version within that "
+"`SimpleSpec`_."
+msgstr "これはバージョンの範囲を指定する `SimpleSpec`_ です。バージョンとして解釈できない何かを位置引数 ``<Qt version>`` に入力すると、それは `SimpleSpec`_ として解釈され、``aqt`` はその`SimpleSpec`_ 内で利用可能な最高バージョンを選択します。"
+
+#: ../../cli.rst:211
+msgid ""
+"For example, ``aqt list-src mac 5.12`` would print archives for the "
+"latest version of Qt 5.12 available (5.12.11 at the time of this "
+"writing)."
+msgstr "例えば、``aqt list-src mac 5.12``は入手可能な最新バージョンのQt 5.12(この記事を書いている時点では5.12.11)のアーカイブを出力します。"
+
+#: ../../cli.rst:218
+msgid "list-doc command"
+msgstr "list-docコマンド"
+
+#: ../../cli.rst:229
+msgid ""
+"List documentation archives and modules available for installation using "
+"the `install-doc command`_."
+msgstr "`install-docコマンド`_ を使ってインストール可能なドキュメントアーカイブとモジュールをリストアップできます。"
+
+#: ../../cli.rst:232
+msgid ""
+"By default, ``list-doc`` will print a list of archives available for "
+"installation using the `install-doc command`_, with the ``--archives`` "
+"option."
+msgstr "デフォルトでは、 ``list-doc`` は `install-docコマンド`_ と ``--archives`` オプションを使ってインストール可能なアーカイブのリストを出力します。"
+
+#: ../../cli.rst:251
+msgid ""
+"For example, ``aqt list-doc mac 5.12`` would print archives for the "
+"latest version of Qt 5.12 available (5.12.11 at the time of this "
+"writing)."
+msgstr "例えば、``aqt list-doc mac 5.12`` は入手可能な最新バージョンのQt 5.12(この記事を書いている時点では5.12.11)のアーカイブを出力します。"
+
+#: ../../cli.rst:256
+msgid ""
+"This flag causes ``list-doc`` to print a list of modules available for "
+"installation using the `install-doc command`_, with the ``--modules`` "
+"option."
+msgstr "このフラグは、``list-doc``に `install-doc command`_ と  ``--modules`` オプションを使ってインストール可能なモジュールのリストを出力させます。"
+
+#: ../../cli.rst:263
+msgid "list-example command"
+msgstr "list-exampleコマンド"
+
+#: ../../cli.rst:274
+msgid ""
+"List example archives and modules available for installation using the "
+"`install-example command`_."
+msgstr "`install-example command`_ を使ってインストール可能なアーカイブとモジュールの例を挙げます。"
+
+#: ../../cli.rst:277
+msgid ""
+"By default, ``list-example`` will print a list of archives available for "
+"installation using the `install-example command`_, with the "
+"``--archives`` option."
+msgstr "デフォルトでは、 ``list-example`` は `install-example command`_ と ``--archives`` オプションを使ってインストール可能なアーカイブのリストを出力します。"
+
+#: ../../cli.rst:296
+msgid ""
+"For example, ``aqt list-example mac 5.12`` would print archives for the "
+"latest version of Qt 5.12 available (5.12.11 at the time of this "
+"writing)."
+msgstr "例えば、 ``aqt list-example mac 5.12`` は入手可能な最新バージョンのQt 5.12(この記事を書いている時点では5.12.11)のアーカイブを出力します。"
+
+#: ../../cli.rst:301
+msgid ""
+"This flag causes ``list-example`` to print a list of modules available "
+"for installation using the `install-example command`_, with the "
+"``--modules`` option."
+msgstr "このフラグは、 ``list-example`` に `install-example command`_ と ``--modules`` オプションを使ってインストール可能なモジュールのリストを出力させます。"
+
+#: ../../cli.rst:308
+msgid "list-tool command"
+msgstr "list-toolコマンド"
+
+#: ../../cli.rst:316
+msgid "List available tools"
+msgstr "使用可能なツールを一覧表示"
+
+#: ../../cli.rst:330
+msgid ""
+"The name of a tool. Use ``aqt list-tool <host> <target>`` to see accepted"
+" values. When set, this prints all 'tool variant names' available."
+msgstr "ツールの名前です。利用可能な値を確認するには、 ``aqt list-tool <host> <target>`` を使用してください設定すると、利用可能なすべての 'ツールバリアント名'  を出力します。"
+
+#: ../../cli.rst:333
+msgid ""
+"The output of this command is meant to be used with the :ref:`aqt "
+"install-tool <Tools installation command>` below."
+msgstr "このコマンドの出力は、以下の :ref:`aqt install-tool <Tools installation command>` で使うことを意図しています。"
+
+#: ../../cli.rst:343
+msgid ""
+"Long display: shows extra metadata associated with each tool variant. "
+"This metadata is displayed in a table, and includes versions and release "
+"dates for each tool. If your terminal is wider than 95 characters, ``aqt "
+"list-tool`` will also display the names and descriptions for each tool. "
+"An example of this output is displayed below."
+msgstr "長い表示: 各ツールバリアントに関連付けられた追加のメタデータを表示します。このメタデータは表形式で表示され、各ツールのバージョンとリリース日が含まれます。あなたの端末の表示幅が95文字を超える場合、``aqt list-tool``  は各ツールの名前と説明も表示します。この出力例を以下に示します。"
+
+#: ../../cli.rst:360
+msgid "Install-* Commands"
+msgstr "Install-*コマンド"
+
+#: ../../cli.rst:362
+msgid "These commands are used to install Qt, tools, source, docs, and examples."
+msgstr "これらのコマンドは、Qt、ツール、ソース、ドキュメント、サンプルをインストールするために使用されます。"
+
+#: ../../cli.rst:368
+msgid "Common Options"
+msgstr "共通オプション"
+
+#: ../../cli.rst:370
+msgid ""
+"Most of these commands share the same command line options, and these "
+"options are described here:"
+msgstr "これらのコマンドのほとんどは、同じコマンドラインオプションを共有しています。次に、これらのオプションについて説明します。"
+
+#: ../../cli.rst:380
+msgid ""
+"Specify output directory. By default, aqt installs to the current working"
+" directory."
+msgstr "出力ディレクトリを指定します。デフォルトでは、aqtは現在の作業ディレクトリにインストールされます。"
+
+#: ../../cli.rst:385
+msgid ""
+"Specify mirror site base url such as  -b "
+"``https://mirrors.dotsrc.org/qtproject`` where 'online' folder exist."
+msgstr "'online' フォルダが存在する -b ``https://mirrors.dotsrc.org/qtproject`` などのミラーサイトベースURLを指定します。"
+
+#: ../../cli.rst:390
+msgid ""
+"Specify the path to your own ``settings.ini`` file. See :ref:`the "
+"Configuration section<configuration-ref>`."
+msgstr "独自の ``settings.ini`` ファイルへのパスを指定します。:ref:`the Configuration section <configuration-ref>` を参照してください。"
+
+#: ../../cli.rst:394
+msgid ""
+"The connection timeout, in seconds, for the download site. (default: 5 "
+"sec)"
+msgstr "ダウンロードサイトの接続タイムアウト(秒単位)。(デフォルト:5秒)"
+
+#: ../../cli.rst:398
+msgid ""
+"Specify external 7zip command path. By default, aqt uses py7zr_ for this "
+"task."
+msgstr "外部7zipコマンドのパスを指定します。デフォルトでは、aqtはこのタスクに py7zr_ を使用します。"
+
+#: ../../cli.rst:400
+msgid ""
+"In the past, our users have had success using 7-zip_ on Windows, Linux "
+"and Mac. You can install 7-zip on Windows with Choco_. The Linux/Mac port"
+" of 7-zip is called ``p7zip``, and you can install it with brew_ on Mac, "
+"or on Linux with your package manager."
+msgstr "これまで、ユーザは Windows、Linux、Macで 7-zip_ を使ってうまくやってきました。Windowsでは Choco_ を使って7-zipをインストールすることができます。Linux/Macのポートである 7-zipは ``p7zip`` と呼ばれており、brew_ on Macでインストールするか、Linuxではパッケージマネージャを使ってインストールすることができます。"
+
+#: ../../cli.rst:412
+msgid "Use the internal extractor, py7zr_"
+msgstr "内部エクストラクタ py7zr_ を使用します。"
+
+#: ../../cli.rst:416
+msgid ""
+"Keep downloaded archive when specified, otherwise remove after install. "
+"Use ``--archive-dest <path>`` to choose where aqt will place these files."
+" If you do not specify a download destination, aqt will place these files"
+" in the current working directory."
+msgstr "指定された場合はダウンロードされたアーカイブを保持します。指定されていない場合はインストール後に削除します。これらのファイルをaqtが配置する場所を選択するには、 ``--archive-dest <path>``を使用します。ダウンロード先を指定しない場合、aqtはこれらのファイルを現在の作業ディレクトリに配置します。"
+
+#: ../../cli.rst:423
+msgid ""
+"Set the destination path for downloaded archives (temp directory by "
+"default). All downloaded archives will be automatically deleted unless "
+"you have specified the ``--keep`` option above, or ``aqt`` crashes."
+msgstr "ダウンロードしたアーカイブの保存先パスを設定します(デフォルトディレクトリ)を設定します。上記の ``--keep`` オプションが指定されていないか、または ``aqt`` がクラッシュしない限り、ダウンロードしたアーカイブはすべて自動的に削除されます。"
+
+#: ../../cli.rst:427
+msgid ""
+"Note that this option refers to the intermediate ``.7z`` archives that "
+"``aqt`` downloads and then extracts to ``--outputdir``. Most users will "
+"not need to keep these files."
+msgstr "このオプションは、 ``aqt`` がダウンロードして ``--outputdir`` に展開する中間の ``.7z`` アーカイブを参照していることに注意してください。ほとんどのユーザはこれらのファイルを保持する必要はありません。"
+
+#: ../../cli.rst:433
+msgid ""
+"Specify extra modules to install as a list. Use the appropriate ``aqt "
+"list-*`` command to list available modules:"
+msgstr "リストとしてインストールする追加モジュールを指定してください。適切な ``aqt list-*`` コマンドを使って、利用可能なモジュールをリストしてください:"
+
+#: ../../cli.rst:437 ../../cli.rst:480
+msgid "Install command"
+msgstr "インストール・コマンド"
+
+#: ../../cli.rst:437 ../../cli.rst:480
+msgid "List command"
+msgstr "リストコマンド"
+
+#: ../../cli.rst:437 ../../cli.rst:480
+msgid "Usage of list command"
+msgstr "リストコマンドの使用法"
+
+#: ../../cli.rst:439 ../../cli.rst:482
+msgid "install-qt"
+msgstr "install-qt"
+
+#: ../../cli.rst:439 ../../cli.rst:482
+msgid "`list-qt command`_"
+msgstr "`list-qt command`_"
+
+#: ../../cli.rst:439
+msgid "``list-qt <host> <target> --modules <version> <arch>``"
+msgstr "``list-qt <host> <target> --modules <version> <arch>``"
+
+#: ../../cli.rst:441 ../../cli.rst:484
+msgid "install-example"
+msgstr "install-example"
+
+#: ../../cli.rst:441 ../../cli.rst:484
+msgid "`list-example command`_"
+msgstr "`list-example command`_"
+
+#: ../../cli.rst:441
+msgid "``list-example <host> <version> --modules``"
+msgstr "``list-example <host> <version> --modules``"
+
+#: ../../cli.rst:443 ../../cli.rst:488
+msgid "install-doc"
+msgstr "install-doc"
+
+#: ../../cli.rst:443 ../../cli.rst:488
+msgid "`list-doc command`_"
+msgstr "`list-doc command`_"
+
+#: ../../cli.rst:443
+msgid "``list-doc <host> <version> --modules``"
+msgstr "``list-doc <host> <version> --modules``"
+
+#: ../../cli.rst:447
+msgid ""
+"This option only applicable to ``install-qt``, ``install-example``, and "
+"``install-doc``."
+msgstr "このオプションは、 ``install-qt``、 ``install-example`` 、 ``install-doc`` にのみ適用できます。"
+
+#: ../../cli.rst:449
+msgid "You can install multiple modules like this:"
+msgstr "次のように、複数のモジュールをインストールできます。"
+
+#: ../../cli.rst:457
+msgid ""
+"If you wish to install every module available, you may use the ``all`` "
+"keyword instead of a list of modules, like this:"
+msgstr "利用可能なすべてのモジュールをインストールしたい場合は、次のように、モジュールのリストの代わりに ``all``キーワードを使うことができます。"
+
+#: ../../cli.rst:468
+msgid ""
+"[Advanced] Specify subset of archives to **limit** installed archives. It"
+" will only affect the base Qt installation and the ``debug_info`` module."
+" This is advanced option and not recommended to use for general usage. "
+"Main purpose is speed up CI/CD process by limiting installed modules. It "
+"can cause broken installation of Qt SDK."
+msgstr "[高度] アーカイブのサブセットを指定して、インストールされているアーカイブを**制限**します。これはQtの基本インストールと ``debug_info`` モジュールにのみ影響します。これは高度なオプションであり、一般的な使用にはお勧めできません。主な目的は、インストールされているモジュールを制限することによってCI/CDプロセスを高速化することです。Qt SDKのインストールが失敗する可能性があります。"
+
+#: ../../cli.rst:474
+msgid ""
+"This option is applicable to all the ``install-*`` commands except for "
+"``install-tool``."
+msgstr "このオプションは、``install-tool``を除くすべての ``install-*`` コマンドに適用できます。"
+
+#: ../../cli.rst:476
+msgid ""
+"You can print a list of all acceptable values to use with this command by"
+" using the appropriate ``aqt list-*`` command:"
+msgstr "適切な``aqt list-*`` コマンドを使えば、このコマンドで使える全ての値のリストを出力することができます。"
+
+#: ../../cli.rst:482
+msgid "``list-qt <host> <target> --archives <version>``"
+msgstr "``list-qt <host> <target> --archives <version>``"
+
+#: ../../cli.rst:484
+msgid "``list-example <host> <version>``"
+msgstr "``list-example <host> <version>``"
+
+#: ../../cli.rst:486
+msgid "install-src"
+msgstr "install-src"
+
+#: ../../cli.rst:486
+msgid "`list-src command`_"
+msgstr "`list-src command`_"
+
+#: ../../cli.rst:486
+msgid "``list-src <host> <version>``"
+msgstr "``list-src <host> <version>``"
+
+#: ../../cli.rst:488
+msgid "``list-doc <host> <version>``"
+msgstr "``list-doc <host> <version>``"
+
+#: ../../cli.rst:495
+msgid "install-qt command"
+msgstr "install-qtコマンド"
+
+#: ../../cli.rst:517
+msgid ""
+"Install Qt library, with specified version and target. There are various "
+"combinations to accept according to Qt version."
+msgstr "指定されたバージョンとターゲットでQtライブラリをインストールします。Qtのバージョンに応じて、さまざまな組み合わせを受け入れることができます。"
+
+#: ../../cli.rst:522
+msgid ""
+"linux, windows or mac. The operating system on which the Qt development "
+"tools will run."
+msgstr "linux, windows または、mac. Qt開発ツールが実行されるオペレーティングシステム。"
+
+#: ../../cli.rst:526
+msgid ""
+"desktop, ios, winrt, or android. The type of device for which you are "
+"developing Qt programs. If your target is ios, please be aware that "
+"versions of Qt older than 6.2.4 are expected to be non-functional with "
+"current versions of XCode (applies to any XCode greater than or equal to "
+"13)."
+msgstr "desktop, ios, winrt, または androidQtプログラムを開発するデバイスのタイプ。ターゲットがiosの場合、6.2.4よりも古いバージョンのQtは、現在のバージョンのXCodeでは機能しないことに注意してください(バージョン13以上のXCodeに適用されます)。"
+
+#: ../../cli.rst:542
+msgid ""
+"For example, ``aqt install-qt mac desktop 5.12`` would install the newest"
+" version of Qt 5.12 available, and ``aqt install-qt mac desktop \"*\"`` "
+"would install the highest version of Qt available."
+msgstr "例えば、``aqt install-qt mac desktop 5.12`` はQt 5.12の最新バージョンをインストールし、``aqt install-qt mac desktop \"*\"`` はQtの最新バージョンをインストールします。"
+
+#: ../../cli.rst:546
+msgid ""
+"When using this option, ``aqt`` will print the version that it has "
+"installed in the logs so that you can verify it easily."
+msgstr "このオプションを使用すると、``aqt`` はインストールされたバージョンをログに出力するので、簡単に確認できます。"
+
+#: ../../cli.rst:551
+msgid "The compiler architecture for which you are developing. Options:"
+msgstr "開発対象のコンパイラアーキテクチャ。オプション:"
+
+#: ../../cli.rst:553
+msgid "gcc_64 for linux desktop"
+msgstr "Linuxデスクトップの場合： gcc_64"
+
+#: ../../cli.rst:555
+msgid "clang_64 for mac desktop"
+msgstr "mac デスクトップの場合：  clang_64"
+
+#: ../../cli.rst:557
+msgid ""
+"win64_msvc2019_64, win64_msvc2017_64, win64_msvc2015_64, win32_msvc2015, "
+"win32_mingw53 for windows desktop"
+msgstr "Windowsデスクトップの場合は、win64_msvc2019_64, win64_msvc2017_64, win64_msvc2015_64, win32_msvc2015, win32_mingw53 "
+
+#: ../../cli.rst:559
+msgid "android_armv7, android_arm64_v8a, android_x86, android_x86_64 for android"
+msgstr "Androidの場合は： android_armv7, android_arm64_v8a, android_x86, android_x86_64"
+
+#: ../../cli.rst:561
+msgid "Use the :ref:`List-Qt Command` to list available architectures."
+msgstr ":ref:`List-Qt Command` を使用して、利用可能なアーキテクチャを一覧表示してください。"
+
+#: ../../cli.rst:565
+msgid ""
+"If you are installing an ios or android version of Qt, the corresponding "
+"desktop version of Qt must be installed alongside of it. Turn this option"
+" on to install it automatically."
+msgstr "iosまたはandroidバージョンのQtをインストールする場合は、対応するデスクトップバージョンのQtも一緒にインストールする必要があります。このオプションをオンにすると、自動的にインストールされます。"
+
+#: ../../cli.rst:570
+msgid ""
+"[Advanced] Specify not to install all base packages. This is advanced "
+"option and you should use it with ``--modules`` option. This allow you to"
+" add modules to existent Qt installation."
+msgstr "[高度]すべての基本パッケージをインストールしないように指定します。これは拡張オプションなので、``--modules`` オプションと一緒に使うべきです。これにより、既存のQtインストールにモジュールを追加できます。"
+
+#: ../../cli.rst:574 ../../cli.rst:635 ../../cli.rst:688 ../../cli.rst:743
+#: ../../cli.rst:790
+msgid "See `common options`_."
+msgstr "`common options`_ 参照"
+
+#: ../../cli.rst:580
+msgid "install-src command"
+msgstr "install-srcコマンド"
+
+#: ../../cli.rst:600
+msgid "Install Qt source code for the specified version and target."
+msgstr "指定されたバージョンとターゲットのQtソースコードをインストールします。"
+
+#: ../../cli.rst:609 ../../cli.rst:669 ../../cli.rst:723
+msgid ""
+"Deprecated and marked for removal in a future version of aqt. This "
+"parameter exists for backwards compatibility reasons, and its value is "
+"ignored."
+msgstr "将来のバージョンのaqtでは廃止され、削除される予定です。このパラメータは下位互換性のために存在し、その値は無視されます。"
+
+#: ../../cli.rst:624
+msgid ""
+"For example, ``aqt install-src mac 5.12`` would install sources for the "
+"newest version of Qt 5.12 available, and ``aqt install-src mac \"*\"`` "
+"would install sources for the highest version of Qt available."
+msgstr "例えば、``aqt install-src mac 5.12`` は入手可能な最新バージョンのQt 5.12のソースをインストールし、``aqt install-src mac \"*\"`` は入手可能な最新バージョンのQtのソースをインストールします。"
+
+#: ../../cli.rst:630
+msgid ""
+"by adding ``--kde`` option, KDE patch collection is applied for qtbase "
+"tree. It is only applied to Qt 5.15.2. When specified version is other "
+"than it, command will abort with error when using ``--kde``."
+msgstr "「--kde」オプションを追加すると、qtbaseのソースツリーにKDEパッチコレクションが適用されます。これはQt 5.15.2にのみ適用されます。指定されたバージョンがそれ以外の場合、``--kde`` を指定したコマンドはエラーで中断されます。"
+
+#: ../../cli.rst:641
+msgid "install-doc command"
+msgstr "install-docコマンド"
+
+#: ../../cli.rst:661
+msgid "Install Qt documentation for the specified version and target."
+msgstr "指定されたバージョンとターゲットのQtドキュメントをインストールします。"
+
+#: ../../cli.rst:684
+msgid ""
+"For example, ``aqt install-doc mac 5.12`` would install documentation for"
+" the newest version of Qt 5.12 available, and ``aqt install-doc mac "
+"\"*\"`` would install documentation for the highest version of Qt "
+"available."
+msgstr "例えば、``aqt install-doc mac 5.12`` と指定するとQt 5.12の最新バージョンのドキュメントがインストールされ、``aqt install-doc mac \"*\"`` と指定するとQtの最新バージョンのドキュメントがインストールされます。"
+
+#: ../../cli.rst:694
+msgid "install-example command"
+msgstr "install-exampleコマンド"
+
+#: ../../cli.rst:714
+msgid "Install Qt examples for the specified version and target."
+msgstr "指定されたバージョンとターゲットのQtサンプルをインストールします。"
+
+#: ../../cli.rst:738
+msgid ""
+"For example, ``aqt install-example mac 5.12`` would install examples for "
+"the newest version of Qt 5.12 available, and ``aqt install-example mac "
+"\"*\"`` would install examples for the highest version of Qt available."
+msgstr "例えば、``aqt install-example mac 5.12``はQt 5.12の最新バージョンのサンプルをインストールし、``aqt install-example mac \"*\"``はQtの最新バージョンのサンプルをインストールします。"
+
+#: ../../cli.rst:749
+msgid "install-tool command"
+msgstr "install-toolコマンド"
+
+#: ../../cli.rst:767
+msgid "Install tools like QtIFW, mingw, Cmake, Conan, and vcredist."
+msgstr "QtIFW、mingw、Cmake、Conan、vcredistなどのツールをインストールします。"
+
+#: ../../cli.rst:775
+msgid "desktop, ios or android"
+msgstr "desktop、ios、またはAndroid"
+
+#: ../../cli.rst:779
+msgid ""
+"install tools specified. tool name may be 'tools_openssl_x64', "
+"'tools_vcredist', 'tools_ninja', 'tools_ifw', 'tools_cmake'"
+msgstr "指定されたツールをインストールします。ツール名は'tools_openssl_x64'、'tools_vcredist'、'tools_ninja'、'tools_ifw'、'tools_cmake'のいずれかです。"
+
+#: ../../cli.rst:784
+msgid ""
+"Optional field to specify tool variant. It may be required for vcredist "
+"and mingw installation. tool variant names may be "
+"'qt.tools.win64_mingw810', 'qt.tools.vcredist_msvc2013_x64'."
+msgstr "ツールバリアントを指定するオプションのフィールド。vcredistおよびmingwのインストールで必要になる場合があります。ツールバリアント名は'qt.tools.win64_mingw810','qt.tools.vcredist_msvc2013_x64'のようになります。"
+
+#: ../../cli.rst:787
+msgid ""
+"You should use the :ref:`List-Tool command` to display what tools and "
+"tool variant names are available."
+msgstr ":ref:`List-Tool command`を使用して、使用可能なツールとツールバリアント名を表示する必要があります。"
+
+#: ../../cli.rst:794
+msgid "Legacy subcommands"
+msgstr "従来のサブコマンド"
+
+#: ../../cli.rst:796
+msgid ""
+"The subcommands ``install``, ``tool``, ``src``, ``doc``, and ``examples``"
+" have been deprecated in favor of the newer ``install-*`` commands, but "
+"they remain in aqt in case you still need to use them. Documentation for "
+"these older commands is still available at "
+"https://aqtinstall.readthedocs.io/en/v1.2.4/"
+msgstr "サブコマンドの「install」、「tool」、「src」、「doc」、および「examples」は、新しい「install-*」コマンドのために廃止されましたが、まだ使用する必要がある場合に備えて、aqtに残っています。これらの古いコマンドのドキュメントは、https://aqtinstall.readthedocs.io/en/v1.2.4/でまだ入手できます。"
+
+#: ../../cli.rst:803
+msgid "Command examples"
+msgstr "コマンドの例"
+
+#: ../../cli.rst:807
+msgid ""
+"Example: Installing Qt SDK 5.12.12 for Linux with QtCharts and "
+"QtNetworkAuth:"
+msgstr "例:QtChartsとQtNetworkAuthでQt SDK 5.12.12 for Linuxをインストールする:"
+
+#: ../../cli.rst:815
+msgid "Example: Installing the newest LTS version of Qt 5.12:"
+msgstr "例:Qt 5.12の最新のLTSバージョンをインストールする"
+
+#: ../../cli.rst:823
+msgid "Example: Installing Android (armv7) Qt 5.13.2:"
+msgstr "例:Android(armv7)Qt 5.13.2のインストール:"
+
+#: ../../cli.rst:830
+msgid "Example: Install examples, doc and source:"
+msgstr "例: example、docおよびsourceのインストール:"
+
+#: ../../cli.rst:838
+msgid ""
+"Example: Print archives available for installation with ``install-"
+"example/doc/src``:"
+msgstr "例: ``install-example/doc/src`` でインストール可能なアーカイブを一覧表示します。"
+
+#: ../../cli.rst:846
+msgid ""
+"Example: Print modules available for installation with ``install-"
+"example/doc``:"
+msgstr "例: ``install-example/doc`` でインストール可能なモジュールを一覧表示します:"
+
+#: ../../cli.rst:853
+msgid "Example: Install Web Assembly"
+msgstr "例: Webアセンブリのインストール"
+
+#: ../../cli.rst:860
+msgid "Example: List available versions of Qt on Linux"
+msgstr "例: Linuxで利用可能なQtのバージョンを一覧表示する"
+
+#: ../../cli.rst:867
+msgid "Example: List available versions of Qt6 on macOS"
+msgstr "例:macOS上で利用可能なQt6のバージョンを一覧表示する"
+
+#: ../../cli.rst:874
+msgid "Example: List available modules for latest version of Qt on macOS"
+msgstr "例:macOS上のQtの最新バージョンで利用可能なモジュールを一覧表示する"
+
+#: ../../cli.rst:881
+msgid "Example: List available architectures for Qt 6.1.2 on windows"
+msgstr "例:Windows上のQt 6.1.2で利用可能なアーキテクチャを一覧表示する"
+
+#: ../../cli.rst:888
+msgid "Example: List available tools on windows"
+msgstr "例: WIndowsで使用可能なツールを一覧表示する"
+
+#: ../../cli.rst:895
+msgid "Example: List the variants of IFW available:"
+msgstr "例:使用可能なIFWのバリエーションを一覧表示する。"
+
+#: ../../cli.rst:904
+msgid ""
+"Example: List the variants of IFW, including version, release date, "
+"description, etc.:"
+msgstr "例:バージョン、リリース日、説明など、IFWのバリエーションを一覧表示する。"
+
+#: ../../cli.rst:911
+msgid "Example: Install an Install FrameWork (IFW):"
+msgstr "例:Install FrameWork(IFW)のインストール:"
+
+#: ../../cli.rst:918
+msgid "Example: Install vcredist on Windows:"
+msgstr "例:Windowsへのvcredistのインストール:"
+
+#: ../../cli.rst:927
+msgid "Example: Install MinGW on Windows"
+msgstr "例:WindowsへのMinGWのインストール"
+
+#: ../../cli.rst:935
+msgid "Example: Show help message"
+msgstr "例:ヘルプメッセージの表示"
+

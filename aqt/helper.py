@@ -27,10 +27,11 @@ import os
 import posixpath
 import secrets
 import sys
-from logging import getLogger
+import threading
+from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Callable, Dict, Generator, List, Optional, Tuple
+from typing import Any, Callable, Dict, Generator, List, Optional, TextIO, Tuple, Union
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
 
@@ -48,7 +49,7 @@ from aqt.exceptions import (
 )
 
 
-def _get_meta(url: str):
+def _get_meta(url: str) -> requests.Response:
     return requests.get(url + ".meta4")
 
 
@@ -57,7 +58,7 @@ def _check_content_type(ct: str) -> bool:
     return any(ct.startswith(t) for t in candidate)
 
 
-def getUrl(url: str, timeout, expected_hash: Optional[bytes] = None) -> str:
+def getUrl(url: str, timeout: Tuple[float, float], expected_hash: Optional[bytes] = None) -> str:
     """
     Gets a file from `url` via HTTP GET.
 
@@ -91,9 +92,17 @@ def getUrl(url: str, timeout, expected_hash: Optional[bytes] = None) -> str:
             if r.status_code != 200:
                 msg = f"Failed to retrieve file at {url}\nServer response code: {r.status_code}, reason: {r.reason}"
                 raise ArchiveDownloadError(msg)
-        result = r.text
+        result: str = r.text
         filename = url.split("/")[-1]
-        actual_hash = hashlib.sha256(bytes(result, "utf-8")).digest()
+        _kwargs = {"usedforsecurity": False} if sys.version_info >= (3, 9) else {}
+        if Settings.hash_algorithm == "sha256":
+            actual_hash = hashlib.sha256(bytes(result, "utf-8"), **_kwargs).digest()
+        elif Settings.hash_algorithm == "sha1":
+            actual_hash = hashlib.sha1(bytes(result, "utf-8"), **_kwargs).digest()
+        elif Settings.hash_algorithm == "md5":
+            actual_hash = hashlib.md5(bytes(result, "utf-8"), **_kwargs).digest()
+        else:
+            raise ArchiveChecksumError(f"Unknown hash algorithm: {Settings.hash_algorithm}.\nPlease check settings.ini")
         if expected_hash is not None and expected_hash != actual_hash:
             raise ArchiveChecksumError(
                 f"Downloaded file {filename} is corrupted! Detect checksum error.\n"
@@ -103,7 +112,7 @@ def getUrl(url: str, timeout, expected_hash: Optional[bytes] = None) -> str:
     return result
 
 
-def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout):
+def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: Optional[bytes], timeout: Tuple[float, float]) -> None:
     logger = getLogger("aqt.helper")
     filename = Path(url).name
     with requests.sessions.Session() as session:
@@ -125,7 +134,10 @@ def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout)
         except requests.exceptions.Timeout as e:
             raise ArchiveConnectionError(f"Connection timeout: {e.args}") from e
         else:
-            hash = hashlib.new(hash_algo)
+            if sys.version_info >= (3, 9):
+                hash = hashlib.new(hash_algo, usedforsecurity=False)
+            else:
+                hash = hashlib.new(hash_algo)
             try:
                 with open(out, "wb") as fd:
                     for chunk in r.iter_content(chunk_size=8196):
@@ -142,7 +154,7 @@ def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: bytes, timeout)
                 )
 
 
-def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_retries: int, name: str):
+def retry_on_errors(action: Callable[[], Any], acceptable_errors: Tuple, num_retries: int, name: str) -> Any:
     logger = getLogger("aqt.helper")
     for i in range(num_retries):
         try:
@@ -158,7 +170,7 @@ def retry_on_errors(action: Callable[[], any], acceptable_errors: Tuple, num_ret
             raise e from e
 
 
-def retry_on_bad_connection(function: Callable[[str], any], base_url: str):
+def retry_on_bad_connection(function: Callable[[str], Any], base_url: str) -> Any:
     logger = getLogger("aqt.helper")
     fallback_url = secrets.choice(Settings.fallbacks)
     try:
@@ -177,7 +189,7 @@ def iter_list_reps(_list: List, num_reps: int) -> Generator:
             list_index = 0
 
 
-def get_hash(archive_path: str, algorithm: str, timeout) -> bytes:
+def get_hash(archive_path: str, algorithm: str, timeout: Tuple[float, float]) -> bytes:
     """
     Downloads a checksum and unhexlifies it to a `bytes` object, guaranteed to be the right length.
     Raises ChecksumDownloadFailure if the download failed, or if the checksum was un unexpected length.
@@ -206,11 +218,11 @@ def get_hash(archive_path: str, algorithm: str, timeout) -> bytes:
     )
 
 
-def altlink(url: str, alt: str):
+def altlink(url: str, alt: str) -> str:
     """
-    Blacklisting redirected(alt) location based on Settings.blacklist configuration.
-    When found black url, then try download a url + .meta4 that is a metalink version4
-    xml file, parse it and retrieve best alternative url.
+    Blacklisting redirected(alt) location based on Settings. Blacklist configuration.
+    When found black url, then try download an url + .meta4 that is a metalink version4
+    xml file, parse it and retrieve the best alternative url.
     """
     logger = getLogger("aqt.helper")
     if not any(alt.startswith(b) for b in Settings.blacklist):
@@ -227,7 +239,7 @@ def altlink(url: str, alt: str):
             return alt
         try:
             mirror_xml = ElementTree.fromstring(m.text)
-            meta_urls = {}
+            meta_urls: Dict[str, str] = {}
             for f in mirror_xml.iter("{urn:ietf:params:xml:ns:metalink}file"):
                 for u in f.iter("{urn:ietf:params:xml:ns:metalink}url"):
                     meta_urls[u.attrib["priority"]] = u.text
@@ -239,21 +251,18 @@ def altlink(url: str, alt: str):
         else:
             # Return first priority item which is not blacklist in mirrors list,
             # if not found then return alt in default
-            return next(
-                filter(
-                    lambda mirror: not any(mirror.startswith(b) for b in Settings.blacklist),
-                    mirrors,
-                ),
-                alt,
-            )
+            try:
+                return next(mirror for mirror in mirrors if not any(mirror.startswith(b) for b in Settings.blacklist))
+            except StopIteration:
+                return alt
 
 
 class MyQueueListener(QueueListener):
     def __init__(self, queue):
-        handlers = []
+        handlers: List[Handler] = []
         super().__init__(queue, *handlers)
 
-    def handle(self, record):
+    def handle(self, record) -> None:
         """
         Handle a record from subprocess.
         Override logger name then handle at proper logger.
@@ -264,7 +273,7 @@ class MyQueueListener(QueueListener):
         logger.handle(record)
 
 
-def ssplit(data: str):
+def ssplit(data: str) -> Generator[str, None, None]:
     for element in data.split(","):
         yield element.strip()
 
@@ -284,9 +293,9 @@ def xml_to_modules(
         parsed_xml = ElementTree.fromstring(xml_text)
     except ElementTree.ParseError as perror:
         raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
-    packages = {}
+    packages: Dict[str, Dict[str, str]] = {}
     for packageupdate in parsed_xml.iter("PackageUpdate"):
-        if predicate and not predicate(packageupdate):
+        if not predicate(packageupdate):
             continue
         name = packageupdate.find("Name").text
         packages[name] = {}
@@ -302,7 +311,7 @@ def xml_to_modules(
 
 
 class MyConfigParser(configparser.ConfigParser):
-    def getlist(self, section: str, option: str, fallback=[]) -> List[str]:
+    def getlist(self, section: str, option: str, fallback: List[str] = []) -> List[str]:
         value = self.get(section, option, fallback=None)
         if value is None:
             return fallback
@@ -312,7 +321,7 @@ class MyConfigParser(configparser.ConfigParser):
             result = fallback
         return result
 
-    def getlistint(self, section: str, option: str, fallback=[]):
+    def getlistint(self, section: str, option: str, fallback: List[int] = []) -> List[int]:
         try:
             result = [int(x) for x in self.getlist(section, option)]
         except Exception:
@@ -324,15 +333,32 @@ class SettingsClass:
     """
     Class to hold configuration and settings.
     Actual values are stored in 'settings.ini' file.
-    It also holds a combinations database.
+    It also holds a `combinations` database.
     """
 
-    def __init__(self):
-        self.config = MyConfigParser()
-        self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
-        self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
+    # this class is Borg
+    _shared_state: Dict[str, Any] = {
+        "config": None,
+        "configfile": None,
+        "loggingconf": None,
+        "_combinations": None,
+        "_lock": threading.Lock(),
+    }
 
-    def load_settings(self, file=None):
+    def __new__(cls, *p, **k):
+        self = object.__new__(cls, *p, **k)
+        self.__dict__ = cls._shared_state
+        return self
+
+    def __init__(self):
+        if self.config is None:
+            with self._lock:
+                if self.config is None:
+                    self.config = MyConfigParser()
+                    self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
+                    self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
+
+    def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
         with open(
             os.path.join(os.path.dirname(__file__), "combinations.json"),
             "r",
@@ -347,15 +373,11 @@ class SettingsClass:
             else:
                 # passed through command line argparse.FileType("r")
                 self.config.read_file(file)
-                self.configfile = file
+                self.configfile = file.name
                 file.close()
         else:
-            if isinstance(self.configfile, str):
-                with open(self.configfile, "r") as f:
-                    self.config.read_file(f)
-            else:
-                self.configfile.seek(0)
-                self.config.read_file(self.configfile)
+            with open(self.configfile, "r") as f:
+                self.config.read_file(f)
 
     @property
     def qt_combinations(self):
@@ -446,6 +468,14 @@ class SettingsClass:
         return self.config.getint("requests", "max_retries_to_retrieve_hash", fallback=int(self.max_retries))
 
     @property
+    def hash_algorithm(self):
+        return self.config.get("requests", "hash_algorithm", fallback="sha256")
+
+    @property
+    def ignore_hash(self):
+        return self.config.getboolean("requests", "INSECURE_NOT_FOR_PRODUCTION_ignore_hash", fallback=False)
+
+    @property
     def backoff_factor(self):
         return self.config.getfloat("requests", "retry_backoff", fallback=0.1)
 
@@ -485,6 +515,5 @@ Settings = SettingsClass()
 def setup_logging(env_key="LOG_CFG"):
     config = os.getenv(env_key, None)
     if config is not None and os.path.exists(config):
-        logging.config.fileConfig(config)
-    else:
-        logging.config.fileConfig(Settings.loggingconf)
+        Settings.loggingconf = config
+    logging.config.fileConfig(Settings.loggingconf)

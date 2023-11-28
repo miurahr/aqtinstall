@@ -1,0 +1,270 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../CODE_OF_CONDUCT.rst:3
+msgid "Contributor Covenant Code of Conduct"
+msgstr "Contributor Covenant Code of Conduct"
+
+#: ../../CODE_OF_CONDUCT.rst:6
+msgid "Our Pledge"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:8
+msgid ""
+"We as members, contributors, and leaders pledge to make participation in "
+"our community a harassment-free experience for everyone, regardless of "
+"age, body size, visible or invisible disability, ethnicity, sex "
+"characteristics, gender identity and expression, level of experience, "
+"education, socio-economic status, nationality, personal appearance, race,"
+" religion, or sexual identity and orientation."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:15
+msgid ""
+"We pledge to act and interact in ways that contribute to an open, "
+"welcoming, diverse, inclusive, and healthy community."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:19
+msgid "Our Standards"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:21
+msgid ""
+"Examples of behavior that contributes to a positive environment for our "
+"community include:"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:24
+msgid "Demonstrating empathy and kindness toward other people"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:25
+msgid "Being respectful of differing opinions, viewpoints, and experiences"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:26
+msgid "Giving and gracefully accepting constructive feedback"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:27
+msgid ""
+"Accepting responsibility and apologizing to those affected by our "
+"mistakes, and learning from the experience"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:29
+msgid ""
+"Focusing on what is best not just for us as individuals, but for the "
+"overall community"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:32
+msgid "Examples of unacceptable behavior include:"
+msgstr "Examples of unacceptable behavior include:"
+
+#: ../../CODE_OF_CONDUCT.rst:34
+msgid ""
+"The use of sexualized language or imagery, and sexual attention or "
+"advances of any kind"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:36
+msgid ""
+"Trolling, insulting or derogatory comments, and personal or political "
+"attacks"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:37
+msgid "Public or private harassment"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:38
+msgid ""
+"Publishing others' private information, such as a physical or email "
+"address, without their explicit permission"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:40
+msgid ""
+"Other conduct which could reasonably be considered inappropriate in a "
+"professional setting"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:44
+msgid "Enforcement Responsibilities"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:46
+msgid ""
+"Community leaders are responsible for clarifying and enforcing our "
+"standards of acceptable behavior and will take appropriate and fair "
+"corrective action in response to any behavior that they deem "
+"inappropriate, threatening, offensive, or harmful."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:51
+msgid ""
+"Community leaders have the right and responsibility to remove, edit, or "
+"reject comments, commits, code, wiki edits, issues, and other "
+"contributions that are not aligned to this Code of Conduct, and will "
+"communicate reasons for moderation decisions when appropriate."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:57
+msgid "Scope"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:59
+msgid ""
+"This Code of Conduct applies within all community spaces, and also "
+"applies when an individual is officially representing the community in "
+"public spaces. Examples of representing our community include using an "
+"official e-mail address, posting via an official social media account, or"
+" acting as an appointed representative at an online or offline event."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:66
+msgid "Enforcement"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:68
+msgid ""
+"Instances of abusive, harassing, or otherwise unacceptable behavior may "
+"be reported to the community leaders responsible for enforcement at "
+"Hiroshi Miura <miurahr@linux.com>. All complaints will be reviewed and "
+"investigated promptly and fairly."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:73
+msgid ""
+"All community leaders are obligated to respect the privacy and security "
+"of the reporter of any incident."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:77
+msgid "Enforcement Guidelines"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:79
+msgid ""
+"Community leaders will follow these Community Impact Guidelines in "
+"determining the consequences for any action they deem in violation of "
+"this Code of Conduct:"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:83
+msgid "Phase 1. Correction"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:87 ../../CODE_OF_CONDUCT.rst:98
+#: ../../CODE_OF_CONDUCT.rst:112 ../../CODE_OF_CONDUCT.rst:127
+msgid "**Community Impact**:"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:86
+msgid ""
+"Use of inappropriate language or other behavior deemed unprofessional or "
+"unwelcome in the community."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:92 ../../CODE_OF_CONDUCT.rst:106
+#: ../../CODE_OF_CONDUCT.rst:119 ../../CODE_OF_CONDUCT.rst:131
+msgid "**Consequence**:"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:90
+msgid ""
+"A private, written warning from community leaders, providing clarity "
+"around the nature of the violation and an explanation of why the behavior"
+" was inappropriate. A public apology may be requested."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:95
+msgid "Phase 2. Warning"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:98
+msgid "A violation through a single incident or series of actions."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:101
+msgid ""
+"A warning with consequences for continued behavior. No interaction with "
+"the people involved, including unsolicited interaction with those "
+"enforcing the Code of Conduct, for a specified period of time. This "
+"includes avoiding interactions in community spaces as well as external "
+"channels like social media. Violating these terms may lead to a temporary"
+" or permanent ban."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:109
+msgid "Phase 3. Temporary Ban"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:112
+msgid ""
+"A serious violation of community standards, including sustained "
+"inappropriate behavior."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:115
+msgid ""
+"A temporary ban from any sort of interaction or public communication with"
+" the community for a specified period of time. No public or private "
+"interaction with the people involved, including unsolicited interaction "
+"with those enforcing the Code of Conduct, is allowed during this period. "
+"Violating these terms may lead to a permanent ban."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:122
+msgid "Phase 4. Permanent Ban"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:125
+msgid ""
+"Demonstrating a pattern of violation of community standards, including "
+"sustained inappropriate behavior, harassment of an individual, or "
+"aggression toward or disparagement of classes of individuals."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:130
+msgid "A permanent ban from any sort of public interaction within the community."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:134
+msgid "Attribution"
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:136
+msgid ""
+"This Code of Conduct is adapted from the `Contributor Covenant`_ version "
+"2.0. You can take it from Contributor Covenant `homepage`_."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:139
+msgid ""
+"Community Impact Guidelines were inspired by `Mozilla's code of conduct "
+"enforcement ladder`_."
+msgstr ""
+
+#: ../../CODE_OF_CONDUCT.rst:141
+msgid ""
+"For answers to common questions about this code of conduct, see the "
+"`FAQ`_ or its translations_."
+msgstr ""
+

@@ -1,0 +1,152 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../authors.rst:6
+msgid "Authors"
+msgstr "作者"
+
+#: ../../authors.rst:8
+msgid "Aqtinstall is written and maintained by Hiroshi Miura <miurahr@linux.com>"
+msgstr "Aqtinstallは、三浦広志 <miurahr@linux.com> 氏により作成され、管理されています。"
+
+#: ../../authors.rst:10
+msgid "Original qli-installer is written by Linus Jahn"
+msgstr "オリジナルのqli-installerはLinus Jahn氏によって書かれました。"
+
+#: ../../authors.rst:12
+msgid ""
+"Significant contributions for improvements of version 2.0 and 2.1 by "
+"David Dalcino David also leads many developments and reviews effort after"
+" 2.0."
+msgstr "David Dalcinoによるバージョン2.0と2.1の改善への重要な貢献がありました。バージョン2.0以降の多くの開発とレビューの取り組みも主導しています。"
+
+#: ../../authors.rst:15
+msgid "All contributors, listed alphabetically, are:"
+msgstr "すべてのコントリビュータ(アルファベット順)は次のとおりです。"
+
+#: ../../authors.rst:17
+msgid "Andrei Yankovich (tools ifw installation)"
+msgstr ""
+
+#: ../../authors.rst:18
+msgid "Aurélien Gâteau (patching to qmake)"
+msgstr ""
+
+#: ../../authors.rst:19
+msgid "Benjamin O (Github Actions and more)"
+msgstr ""
+
+#: ../../authors.rst:20
+msgid "Christian Hoffmann (Update mirror list)"
+msgstr ""
+
+#: ../../authors.rst:21
+msgid ""
+"David Dalcino (Many improvements on CI automations, commands, tests, "
+"documents and so on)"
+msgstr ""
+
+#: ../../authors.rst:22
+msgid "Doronin Stanislav (document)"
+msgstr ""
+
+#: ../../authors.rst:23
+msgid "Fabrice Le Bars (32bit binary)"
+msgstr ""
+
+#: ../../authors.rst:24
+msgid "Felix Barz (Android, Explicit extra module installation)"
+msgstr ""
+
+#: ../../authors.rst:25
+msgid "Gamso (improve parsing of update.xml)"
+msgstr ""
+
+#: ../../authors.rst:26
+msgid "Julien Marrec (mypy, type hints)"
+msgstr ""
+
+#: ../../authors.rst:27
+msgid "Kyle Altendorf (7z binary path search)"
+msgstr ""
+
+#: ../../authors.rst:28
+msgid "lightmare (Documents)"
+msgstr ""
+
+#: ../../authors.rst:29
+msgid "Mike Tzou (Update fallback url)"
+msgstr ""
+
+#: ../../authors.rst:30
+msgid "Martin Delille (Documents)"
+msgstr ""
+
+#: ../../authors.rst:31
+msgid "mite-user (folder index handling of download web sites)"
+msgstr ""
+
+#: ../../authors.rst:32
+msgid "Mizux Seihax (Qt versions)"
+msgstr ""
+
+#: ../../authors.rst:33
+msgid "Mozi (CI/workflow improvement, log format)"
+msgstr ""
+
+#: ../../authors.rst:34
+msgid "Nelson Chen (CI tests)"
+msgstr ""
+
+#: ../../authors.rst:35
+msgid "@nikitalita (Binary distribution)"
+msgstr ""
+
+#: ../../authors.rst:36
+msgid "@pylipp (Documents)"
+msgstr ""
+
+#: ../../authors.rst:37
+msgid "Sztergbaum Roman (Version database)"
+msgstr ""
+
+#: ../../authors.rst:38
+msgid "Thomas Grainger (CLI entry point)"
+msgstr ""
+
+#: ../../authors.rst:39
+msgid "@tsteven4 (fix patching to qmake, pkgconfig and libtool)"
+msgstr ""
+
+#: ../../authors.rst:40
+msgid "Vadim Peretokin (Version database)"
+msgstr ""
+
+#: ../../authors.rst:41
+msgid "Vladyslav Hnatiuk (Version database)"
+msgstr ""
+
+#: ../../authors.rst:42
+msgid "@ypnos (Documents)"
+msgstr ""
+
+#: ../../authors.rst:44
+msgid ""
+"and many other participants and contributors. If you find a missing name "
+"to record, please feel free to tell me."
+msgstr "他にも多くの参加者や貢献者がいます。記録に名前がない方は、遠慮なく言ってください。"
+

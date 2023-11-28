@@ -207,7 +207,10 @@ def test_tools_variants(monkeypatch, tool_name, tool_variant_name, is_expect_fai
         return
 
     expect_json = json.loads((Path(__file__).parent / "data" / f"{datafile}-expect.json").read_text("utf-8"))
-    expect = next(filter(lambda x: x["Name"] == tool_variant_name, expect_json["variants_metadata"]))
+    try:
+        expect = next(x for x in expect_json["variants_metadata"] if x["Name"] == tool_variant_name)
+    except StopIteration:
+        raise Exception("Wrong test data.")
     expected_7z_files = set(expect["DownloadableArchives"])
     qt_pkgs = ToolArchives(host, target, tool_name, base, arch=tool_variant_name).archives
     url_begin = f"online/qtsdkrepository/mac_x64/{target}/{tool_name}"
@@ -346,6 +349,28 @@ qt_doc_5152_xml_weird_module = """
  </PackageUpdate>
 </Updates>
 """
+qt_doc_5152_xml_no_archives = """
+<Updates>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc.qtcharts</Name>
+  <DisplayName>Documentation for Qt 5.15.2 GPLv3 components (QtCharts)</DisplayName>
+  <Description>Documentation for Qt 5.15.2 GPLv3 components (QtCharts)</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Dependencies>lots.of.stuff</Dependencies>
+  <DownloadableArchives/>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt5.5152.doc</Name>
+  <DisplayName>Qt 5.15.2 Documentation</DisplayName>
+  <Description>Qt 5.15.2 documentation</Description>
+  <Version>5.15.2-0-202011130724</Version>
+  <ReleaseDate>2020-11-13</ReleaseDate>
+  <Dependencies>lots.more.stuff</Dependencies>
+  <DownloadableArchives></DownloadableArchives>
+ </PackageUpdate>
+</Updates>
+"""
 qt_example_5152_xml_module = """
 <Updates>
 <PackageUpdate>
@@ -475,6 +500,7 @@ def make_example_archives(subarchives, modules, is_include_base) -> SrcDocExampl
         (["tqtc"], ["all"], False, qt_doc_5152_xml_weird_module, make_doc_archives, {"weird-qtcharts-docs.7z"}),
         (["tqtc"], ["qtcharts"], False, qt_doc_5152_xml_weird_module, make_doc_archives, {"weird-qtcharts-docs.7z"}),
         (["qtdoc"], ["qtcharts"], False, qt_example_5152_xml_module, make_example_archives, {"qtcharts-examples.7z"}),
+        ([], [], True, qt_doc_5152_xml_no_archives, make_doc_archives, set()),
     ),
 )
 def test_archives_weird_module_7z_name(

@@ -1,19 +1,26 @@
 name: Test on GH actions environment
 
-on: push
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - releases/*
 
 jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macOS-latest, ubuntu-latest]
-        py: [3.9]
-        qtver: [5.9.9, 5.12.8, 6.1.0]
+        os: [windows-latest, ubuntu-latest]
+        py: ["3.9", "3.12"]
+        qtver: [5.9.9, 6.1.0]
         artifact: [standard]
         include:
           - os: windows-latest
-            py: 3.9
+            py: "3.10"
             qtver: 6.1.0
             artifact: binary
           - os: ubuntu-20.04
@@ -22,15 +29,15 @@ jobs:
             artifact: standard
         exclude:
           - os: ubuntu-latest
-            py: 3.9
+            py: "3.10"
             qtver: 6.1.0
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 20
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.py }}
       - name: Run pytest
@@ -40,12 +47,29 @@ jobs:
       - name: Build and install
         if: matrix.artifact == 'standard'
         run: |
-          python setup.py --version
           python -m pip install ./ --user
-      - name: Build Standalone binary
-        if: matrix.artifact == 'binary'
+      - name: Build Standalone binary(linux,mac)
+        if: matrix.artifact == 'binary' && matrix.os != 'windows-latest'
         run: |
-          ci/build_standalone.bat
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install -U pip wheel setuptools setuptools_scm pyinstaller
+          python -m pip install .
+          python tools/build_standalone.py
+          deactivate
+          rm -rf venv
+        shell: bash
+      - name: Build Standalone binary(windows)
+        if: matrix.artifact == 'binary' && matrix.os == 'windows-latest'
+        run: |
+          python -m venv venv
+          venv/Scripts/activate.ps1
+          python -m pip install -U pip wheel setuptools setuptools_scm pyinstaller
+          python -m pip install .
+          python tools/build_standalone.py
+          deactivate
+          Remove-Item venv -Recurse -Force
+        shell: pwsh
       - name: Run aqt
         run: |
           import os
@@ -57,11 +81,14 @@ jobs:
           artifact = "${{ matrix.artifact }}"
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
+          env = os.environ.copy()
+          github_workspace = pathlib.Path(env["GITHUB_WORKSPACE"])
           if artifact == "binary":
             if platform.startswith("windows"):
-              prefix = ["../.gravitybee/dist/latest/aqt.exe", "install"]
+              bin_path = str(github_workspace / "dist" / "aqt.exe")
             else:
-              prefix = ["../.gravitybee/dist/latest/aqt", "install"]
+              bin_path = (github_workspace / "dist" / "aqt").as_posix()
+            prefix = [bin_path, "install"]
           else:
             prefix = ["python", "-m", "aqt", "install"]
           command_line = []
@@ -81,8 +108,6 @@ jobs:
             args = [qtver, "linux", "desktop", "gcc_64"]
           command_line.extend(args)
           command_line.extend(["--archives", "qtbase", "icu", "qt"])
-          env = os.environ.copy()
-          github_workspace = pathlib.Path(env["GITHUB_WORKSPACE"])
           env["AQT_CONFIG"] = (github_workspace / "ci" / "settings.ini").as_posix()
           env["LOG_CFG"] = (github_workspace / "ci" / "logging.ini").as_posix()
           print("Execute: {}".format(command_line))
@@ -94,15 +119,16 @@ jobs:
           if qtver.startswith('6'):
             command_line6 = []
             command_line6.extend(prefix)
-            if platform == 'ubuntu-20.04':
+            if platform.startswith("ubuntu"):
               command_line6.extend([qtver, "linux", "android", "android_armv7"])
               timeout = 360
-            elif platform == "macOS-latest":
+            elif platform.startswith("macOS"):
               command_line6.extend([qtver, "mac", "ios", "ios"])
               timeout = 360
             else:
               command_line6.extend([qtver, "windows", "android", "android_armv7"])
               timeout = 360
+            print("Execute: {}".format(command_line6))
             try:
               res = subprocess.run(command_line6, timeout=timeout, check=True)
             except subprocess.CalledProcessError as cpe:
@@ -164,4 +190,4 @@ jobs:
         if: matrix.artifact == 'binary'
         with:
           name: aqt-${{ matrix.os }}-standalone
-          path: .gravitybee\dist\latest\aqt*
+          path: dist\aqt*

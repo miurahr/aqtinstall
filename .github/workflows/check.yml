@@ -1,4 +1,4 @@
-name: Check package
+name: Check tox tests, lint and types
 
 on:
   push:
@@ -16,14 +16,14 @@ jobs:
     name: Check packaging 📦
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 20
     - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: '3.9'
     - name: Install tools
       run: |
         pip install -U pip

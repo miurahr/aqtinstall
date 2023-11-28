@@ -1,0 +1,667 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../getting_started.rst:4
+msgid "Getting Started"
+msgstr "スタートアップガイド"
+
+#: ../../getting_started.rst:6
+msgid ""
+"``aqt`` is a tool that can be used to install Qt, modules, tools related "
+"to Qt, source, docs, and examples, available at https://download.qt.io/. "
+"Before running ``aqt``, you will need to tell ``aqt`` exactly what you "
+"want it to install. This section of the documentation is meant to walk "
+"you through the process of finding out what packages are available to "
+"``aqt``, so you can tell ``aqt`` what you want to install."
+msgstr "``aqt`` は、Qt、モジュール、Qtに関連するツール、ソース、ドキュメント、サンプルなどをインストールするためのツールで、https://download.qt.io/ から入手できます。``aqt`` を実行する前に、何をインストールしたいのかを正確に ``aqt`` に指示する必要があります。このセクションでは、どのようなパッケージが ``aqt`` に用意されているのかを調べ、何をインストールしたいのかを ``aqt`` に指示できるようにするための手順を説明します。"
+
+#: ../../getting_started.rst:13
+msgid ""
+"Please note that every ``aqt`` subcommand has a ``--help`` option; please"
+" use it if you are having trouble!"
+msgstr "すべての ``aqt`` サブコマンドには ``--help`` オプションがあります。なにか疑問が発生した場合は、このオプションを使用してください!"
+
+#: ../../getting_started.rst:18
+msgid "Installing Qt"
+msgstr "Qtをインストールする"
+
+#: ../../getting_started.rst:20
+msgid "General usage of ``aqt`` looks like this:"
+msgstr "``aqt``の一般的な使い方は以下のようになります:"
+
+#: ../../getting_started.rst:26
+msgid ""
+"If you have installed ``aqt`` with pip, you can run it with the command "
+"script ``aqt``, but in some cases you may need to run it as ``python -m "
+"aqt``. Some older operating systems may require you to specify Python "
+"version 3, like this: ``python3 -m aqt``."
+msgstr "pipと一緒に``aqt``をインストールしている場合は、コマンドスクリプト``aqt``で実行することができますが、場合によっては``python-m aqt``として実行する必要があるかもしれません。古いオペレーティングシステムでは、``python3-m aqt``のようにPythonバージョン3を指定する必要があるかもしれません。"
+
+#: ../../getting_started.rst:30
+msgid "To use ``aqt`` to install Qt, you will need to tell ``aqt`` four things:"
+msgstr "Qtをインストールするには、``aqt`` に次の4つのことを伝える必要があります。"
+
+#: ../../getting_started.rst:32 ../../getting_started.rst:410
+msgid "The host operating system (windows, mac, or linux)"
+msgstr "ホストオペレーティングシステム(Windows、Mac、Linux)"
+
+#: ../../getting_started.rst:33 ../../getting_started.rst:411
+msgid "The target SDK (desktop, android, ios, or winrt)"
+msgstr "ターゲットSDK(デスクトップ、android、ios、winrt)"
+
+#: ../../getting_started.rst:34
+msgid "The version of Qt you would like to install"
+msgstr "インストールしたいQtのバージョン"
+
+#: ../../getting_started.rst:35
+msgid "The target architecture"
+msgstr "ターゲット・アーキテクチャ"
+
+#: ../../getting_started.rst:37
+msgid ""
+"Keep in mind that Qt for IOS is only available on Mac OS, and Qt for "
+"WinRT is only available on Windows."
+msgstr "Qt for IOSはMac OSでのみ利用可能であり、Qt for WinRTはWindowsでのみ利用可能であることに注意してください。"
+
+#: ../../getting_started.rst:40
+msgid ""
+"To find out what versions of Qt are available, you can use the :ref:`aqt "
+"list-qt command <list-qt command>`. This command will print all versions "
+"of Qt available for Windows Desktop:"
+msgstr "利用可能なQtのバージョンを調べるには、 :ref:`aqt list-qt command <list-qt command>` を使うことができます。このコマンドはWindowsデスクトップで利用可能なQtのすべてのバージョンを出力します:"
+
+#: ../../getting_started.rst:57
+msgid ""
+"Notice that the version numbers are sorted, grouped by minor version "
+"number, and separated by a single space-character. The output of all of "
+"the :ref:`aqt list-qt <list-qt command>` commands is intended to make it "
+"easier for you to write programs that consume the output of :ref:`aqt "
+"list-qt <list-qt command>`."
+msgstr "バージョン番号がソートされ、マイナーバージョン番号でグループ化され、1つのスペース文字で区切られていることに注意してください。すべての :ref:`aqt list-qt <list-qt command>` コマンドの出力は、 :ref:`aqt list-qt <list-qt command>` の出力を消費するプログラムを作成しやすくするためのものです。"
+
+#: ../../getting_started.rst:62
+msgid ""
+"Because the :ref:`aqt list-qt <list-qt command>` command directly queries"
+" the Qt downloads repository at https://download.qt.io/, the results of "
+"this command will always be accurate. The `Available Qt versions`_ wiki "
+"page was last modified at some point in the past, so it may or may not be"
+" up to date."
+msgstr ":ref:`aqt list-qt <list-qt command>` コマンドは https://download.qt.io/ にあるQtダウンロードリポジトリに直接問い合わせますので、このコマンドの結果は常に正確になります。`Available Qt versions`_ wikiページは過去のある時点での更新ですので、最新であるかどうかは保障されません。"
+
+#: ../../getting_started.rst:69
+msgid ""
+"Now that we know what versions of Qt are available, let's choose version "
+"6.2.0."
+msgstr "使用可能なQtのバージョンがわかったので、バージョン6.2.0を選択します。"
+
+#: ../../getting_started.rst:71
+msgid ""
+"The next thing we need to do is find out what architectures are available"
+" for Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-"
+"qt <list-qt command>` with the ``--arch`` flag:"
+msgstr "次にすべきことは、Qt 6.2.0 for Windows Desktopで利用可能なアーキテクチャを見つけることです。これを行うには、:ref:`aqt list-qt <list-qt command>` に ``--arch`` フラグを付けて確認します:"
+
+#: ../../getting_started.rst:80
+msgid ""
+"Notice that this is a very small subset of the architectures listed in "
+"the `Available Qt versions`_ wiki page. If we need to use some "
+"architecture that is not on this list, we can use the `Available Qt "
+"versions`_ wiki page to get a rough idea of what versions support the "
+"architecture we want, and then use :ref:`aqt list-qt <list-qt command>` "
+"to confirm that the architecture is available."
+msgstr "これは `Available Qt versions`_ wikiページにリストされているアーキテクチャの非常に小さなサブセットであることに注意してください。このリストにないアーキテクチャを使用する必要がある場合は、`Available Qt versions`_ wikiページを使用して、どのバージョンが希望するアーキテクチャをサポートしているかの大まかなアイデアを得てから、 :ref:`aqt list-qt <list-qt command>` を使用して、アーキテクチャが使用可能であることを確認します。"
+
+#: ../../getting_started.rst:86
+msgid ""
+"Let's say that we want to install Qt 6.2.0 with architecture "
+"`win64_mingw81`. The installation command we need is:"
+msgstr "Qt 6.2.0を `win64_mingw81` アーキテクチャでインストールしたいとします。必要なインストールコマンドは以下のとおりです。"
+
+#: ../../getting_started.rst:93
+msgid ""
+"Let's say that we want to install the next version of Qt 6.2 as soon as "
+"it is available. We can do this by using a `SimpleSpec <https://python-"
+"semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec>`_"
+" instead of an explicit version:"
+msgstr "Qt 6.2の次のバージョンが利用可能になったらすぐにインストールしたいとしましょう。これを行うには、明示的なバージョンではなく `SimpleSpec <https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec>`_ を使用します。"
+
+#: ../../getting_started.rst:104
+msgid "External 7-zip extractor"
+msgstr "7-Zip 解凍 外部 コマンド"
+
+#: ../../getting_started.rst:106
+msgid ""
+"By default, ``aqt`` extracts the 7zip archives stored in the Qt "
+"repository using py7zr_, which is installed alongside ``aqt``. You can "
+"specify an alternate 7zip command path instead by using the ``-E`` or "
+"``--external`` flag. For example, you could use 7-zip_ on a Windows "
+"desktop, using this command:"
+msgstr "デフォルトでは、``aqt`` はQtリポジトリに保存されている 7-zipアーカイブを、 ``aqt`` と一緒にインストールされている py7zr_ を使って抽出します。代わりに、 ``-E`` または ``--external`` フラグを使って7-zipコマンドパスを指定することもできます。例えば、Windowsデスクトップで次のコマンドを使って 7-zip_ を使うことができます。"
+
+#: ../../getting_started.rst:115
+msgid ""
+"On Linux, you can specify p7zip_, a Linux port of 7-zip_, which is often "
+"installed by default, using this command:"
+msgstr "Linuxでは、次のコマンドを使用して p7zip_ (Linuxに移植された 7-zip_ )を指定できます。これはデフォルトでインストールされることが多い 7-zip_ です。"
+
+#: ../../getting_started.rst:127
+msgid "Changing the output directory"
+msgstr "出力ディレクトリの変更"
+
+#: ../../getting_started.rst:129
+msgid ""
+"By default, ``aqt`` will install all of the Qt packages into the current "
+"working directory, in the subdirectory ``./<Qt version>/<arch>/``. For "
+"example, if we install Qt 6.2.0 for Windows desktop with arch "
+"`win64_mingw81`, it would end up in ``./6.2.0/win64_mingw81``."
+msgstr "デフォルトでは、``aqt`` はすべてのQtパッケージを現在の作業ディレクトリのサブディレクトリ ``./<Qt version>/<arch>/`` にインストールします。例えば、Qt 6.2.0 for Windows desktopをarch `win64_mingw81` でインストールすると、その結果は ``./6.2.0/win64_mingw81`` になります。"
+
+#: ../../getting_started.rst:134
+msgid ""
+"If you would prefer to install it to another location, you will need to "
+"use the ``-O`` or ``--outputdir`` flag. This option also works for all of"
+" the other subcommands that begin with ``aqt install-``."
+msgstr "別の場所にインストールしたい場合は、``-O``  または ``--outputdir`` フラグを使う必要があります。このオプションは、``aqt install-`` で始まる他のすべてのサブコマンドにも使えます。"
+
+#: ../../getting_started.rst:139
+msgid ""
+"To install to ``C:\\Qt``, the default directory used by the standard gui "
+"installer, you may use this command:"
+msgstr "純正のGUIインストーラが使うデフォルトのディレクトリである ``C:\\Qt`` にインストールするには、以下のコマンドを使います:"
+
+#: ../../getting_started.rst:149
+msgid "Installing Modules"
+msgstr "モジュールのインストール"
+
+#: ../../getting_started.rst:151
+msgid ""
+"Let's say we need to install some modules for Qt 5.15.2 on Windows "
+"Desktop. First we need to find out what the modules are called, and we "
+"can do that with :ref:`aqt list-qt <list-qt command>` with the "
+"``--modules`` flag. Each version of Qt has a different list of modules "
+"for each host OS/ target SDK/ architecture combination, so we will need "
+"to supply :ref:`aqt list-qt <list-qt command>` with that information:"
+msgstr "Qt 5.15.2用のモジュールをWindows デスクトップにインストールする必要があるとします。まず、モジュールが何と呼ばれているかを調べる必要があります。そのためには :ref:`aqt list-qt <list-qt command>` と ``--modules`` フラグを使用します。Qtの各バージョンには、ホストOS/ターゲットSDK/アーキテクチャの組み合わせごとに異なるモジュールリストがあるので、その情報を :ref:`aqt list-qt <list-qt command>` に提供する必要があります:"
+
+#: ../../getting_started.rst:163
+msgid ""
+"Let's say that we want to know more about these modules before we install"
+" them. We can use the ``--long-modules`` flag for that:"
+msgstr "これらのモジュールをインストールする前に、これらのモジュールについてもっと知りたいとしましょう。そのためには  ``--long-modules`` フラグを使うことができます:"
+
+#: ../../getting_started.rst:183
+msgid ""
+"Note that if your terminal is wider than 95 characters, this command will"
+" show release dates and sizes in extra columns to the right. If you try "
+"this, you will notice that `debug_info` is 5.9 gigabytes installed."
+msgstr "端末の表示幅が95文字以上の場合、このコマンドはリリース日とサイズを右側のスペースに表示します。これを試してみると、``debug_info`` では、5.9ギガバイトがインストールされることに気付くでしょう。"
+
+#: ../../getting_started.rst:187
+msgid ""
+"Let's say that we want to install `qtcharts` and `qtnetworkauth`. We can "
+"do that by using the `-m` flag with the :ref:`aqt install-qt <qt "
+"installation command>` command. This flag receives the name of at least "
+"one module as an argument:"
+msgstr "``qtcharts``と ``qtnetworkauth`` をインストールしたいとします。これは :ref:`aqt install-qt <qt installation command>` コマンドで ``-m`` フラグを使うことでできます。このフラグは少なくとも1つのモジュールの名前を引数として受け取ります:"
+
+#: ../../getting_started.rst:195
+msgid ""
+"If we wish to install all the modules that are available, we can do that "
+"with the ``all`` keyword:"
+msgstr "利用可能なすべてのモジュールをインストールしたい場合は、``all`` キーワードでインストールできます。"
+
+#: ../../getting_started.rst:201
+msgid ""
+"Remember that the :ref:`aqt list-qt <list-qt command>` command is meant "
+"to be scriptable? One way to install all modules available for Qt 5.15.2 "
+"is to send the output of :ref:`aqt list-qt <list-qt command>` into "
+":ref:`aqt install-qt <qt installation command>`, like this:"
+msgstr ":ref:`aqt list-qt <list-qt command>` コマンドは、スクリプト化できるように意図して作られていることを覚えていますか?Qt 5.15.2で利用可能なすべてのモジュールをインストールする1つの方法は :ref:`aqt list-qt <list-qt command>` の出力を :ref:`aqt install-qt <qt installation command>` に以下のように送ることです:"
+
+#: ../../getting_started.rst:210
+msgid ""
+"You will need a Unix-style shell to run this command, or at least git-"
+"bash on Windows. The ``xargs`` equivalent to this command is an exercise "
+"left to the reader."
+msgstr "このコマンドを実行するにはUnixスタイルのシェルが必要ですし、Windowsでは少なくともgit-bashが必要です。この ``xargs`` に相当するコマンドは、読者の練習課題です。"
+
+#: ../../getting_started.rst:213
+msgid ""
+"If you want to install all available modules, you are probably better off"
+" using the ``all`` keyword, as discussed above. This scripting example is"
+" presented to give you a sense of how to accomplish something more "
+"complicated. Perhaps you want to install all modules except "
+"`qtnetworkauth`; you could write a script that removes `qtnetworkauth` "
+"from the output of :ref:`aqt list-qt <list-qt command>`, and pipe that "
+"into :ref:`aqt install-qt <qt installation command>`. This exercise is "
+"left to the reader."
+msgstr "利用可能なモジュールをすべてインストールしたい場合は、上で説明したように、「all」キーワードを使った方が良いでしょう。このスクリプト例は、より複雑なことを実現する方法を理解するためのものです。:ref:`aqt list-qt <list-qt command>` の出力から `qtnetworkauth` を削除するスクリプトを書いて、それを :ref:`aqt install-qt <qt installation command>` にパイプで渡すことができます。これは読者の練習課題です。"
+
+#: ../../getting_started.rst:223
+msgid "Installing Qt for Android"
+msgstr "Android用Qtのインストール"
+
+#: ../../getting_started.rst:225
+msgid ""
+"Let's install Qt for Android. Installing Qt 5 will be similar to "
+"installing Qt for Desktop on Windows, but there will be differences when "
+"we get to Qt 6."
+msgstr "Qt for Androidをインストールしてみましょう。Qt 5のインストールはWindows上のQt for Desktopのインストールと似ていますが、Qt 6では違いがあります。"
+
+#: ../../getting_started.rst:243
+msgid ""
+"Let's see what happens when we try to list architectures and modules for "
+"Qt 6:"
+msgstr "Qt 6のアーキテクチャとモジュールをリストアップしようとすると何が起こるか見てみましょう。"
+
+#: ../../getting_started.rst:257
+msgid ""
+"The Qt 6 for Android repositories are a little different than the Qt 5 "
+"repositories, and the :ref:`aqt list-qt <list-qt command>` tool doesn't "
+"know where to look for modules and architectures if you don't tell it "
+"what architecture you need. I know, it sounds a little backwards, but "
+"that's how the Qt repo was put together."
+msgstr "Qt 6 for AndroidリポジトリはQt 5リポジトリとは少し異なり、 :ref:`aqt list-qt <list-qt command>` ツールは、必要なアーキテクチャを教えなければ、モジュールやアーキテクチャを探す場所を知りません。少し機能後退したように聞こえますが、それがQtリポジトリが組み立てられた方法です。"
+
+#: ../../getting_started.rst:262
+msgid ""
+"There are four architectures available, and the error message from "
+":ref:`aqt list-qt <list-qt command>` just told us what they are: "
+"`x86_64`, `x86`, `armv7`, and `arm64_v8a`."
+msgstr "利用可能なアーキテクチャは4つありますが、:ref:`aqt list-qt <list-qt command>` のエラーメッセージが、その4つを教えてくれます: `x86_64`、`x86`、`armv7`、`arm64_v8a`です。"
+
+#: ../../getting_started.rst:265
+msgid ""
+"We know we want to use `armv7` for the architecture, but we don't know "
+"exactly what value for 'architecture' we need to pass to :ref:`aqt "
+"install-qt <qt installation command>` yet, so we will use :ref:`aqt list-"
+"qt <list-qt command>` again:"
+msgstr "アーキテクチャに ``armv7`` を使いたいことはわかっていますが、:ref:`aqt install-qt <qt installation command>` に渡す必要のある'アーキテクチャ'の値が正確にはまだ分からないので、もう一度 :ref:`aqt list-qt <list-qt command>` を使います:"
+
+#: ../../getting_started.rst:274
+msgid ""
+"You should be thinking, \"Well, that was silly. All it did was add "
+"`android_` to the beginning of the architecture I gave it. Why do I need "
+"to use ``aqt list-qt --arch`` for that?\" The answer is, ``aqt list-qt "
+"--arch`` is checking to see what actually exists in the Qt repository. If"
+" it prints an error message, instead of the obvious `android_armv7`, we "
+"would know that Qt 6.2.0 for that architecture doesn't exist for some "
+"reason, and any attempt to install it with :ref:`aqt install-qt <qt "
+"installation command>` will fail."
+msgstr "「ばかげている」そう思われるかもしれません。「私が引数に付与したアーキテクチャの最初に `android_` を 追加しただけだ。なぜそのために`aqt list-qt--arch`を使う必要があるのか?」おそらく、そう考えるでしょう。 その答えは、``aqt list-qt-arch`` はQtリポジトリに実際に何が存在するかをチェックしているということです。期待した ``android_armv7`` の出力ではなくエラーメッセージが出力された場合、Qt 6.2.0のそのアーキテクチャ用のパッケージが何らかの理由で存在しないことがわかります。そのため、:ref:`aqt install-qt <qt installation command>`でインストールしようとすると失敗します。"
+
+#: ../../getting_started.rst:282
+msgid ""
+"If we want to install Qt 6.2.0 for armv7, we use this command to print "
+"available modules:"
+msgstr "armv7用のQt 6.2.0をインストールしたい場合は、次のコマンドを使って利用可能なモジュールを出力します。"
+
+#: ../../getting_started.rst:292
+msgid ""
+"Finally, let's install Qt 6.2.0 for Android armv7 with the ``qtcharts`` "
+"and ``qtnetworkauth`` modules:"
+msgstr "最後に、``qtcharts`` と ``qtnetworkauth`` モジュールとともに、Qt 6.2.0 for Android armv7をインストールしましょう。"
+
+#: ../../getting_started.rst:299
+msgid ""
+"Please note that when you install Qt for android or ios, the installation"
+" will not be functional unless you install the corresponding desktop "
+"version of Qt alongside it. You can do this automatically with the "
+"``--autodesktop`` flag:"
+msgstr "Qt for androidまたはiosをインストールする場合、対応するデスクトップバージョンのQtを一緒にインストールしない限り、正しく機能しないことに注意してください。``--autodesktop`` フラグをつけることで、自動的にデスクトップバージョンのインストールを実行できます:"
+
+#: ../../getting_started.rst:308
+msgid "Installing Qt for WASM"
+msgstr "WASM用Qtのインストール"
+
+#: ../../getting_started.rst:310
+msgid ""
+"To find out how to install Qt for WASM, we need to tell :ref:`aqt list-qt"
+" <list-qt command>` that we are using the `wasm` architecture. We can do "
+"that by using the ``--extension wasm`` flag."
+msgstr "Qt for WASMをインストールする方法を知るためには、:ref:`aqt list-q t<list-qt command>` に、私たちが ``wasm`` アーキテクチャを使いたい、ということを伝える必要があります。``--extension wasm`` フラグを使うことで、指定できます。"
+
+#: ../../getting_started.rst:320
+msgid ""
+"There are only a few versions of Qt that support WASM, and they are only "
+"available for desktop targets. If we tried this command with `android`, "
+"`winrt`, or `ios` targets, we would have seen an error message."
+msgstr "WASMをサポートするQtのバージョンはわずかしかなく、デスクトップターゲットでのみ利用できます。このコマンドを`android`、`winrt`、`ios`ターゲットで実行すると、エラーメッセージが表示されます。"
+
+#: ../../getting_started.rst:324
+msgid "We can check the architecture and modules available as before:"
+msgstr "以前と同様に、利用可能なアーキテクチャとモジュールを確認できます。"
+
+#: ../../getting_started.rst:335
+msgid "We can install Qt for WASM as before:"
+msgstr "以前と同じようにQt for WASMをインストールできます。"
+
+#: ../../getting_started.rst:343
+msgid "Installing Tools"
+msgstr "ツールをインストールする"
+
+#: ../../getting_started.rst:345
+msgid ""
+"Let's find out what tools are available for Windows Desktop by using the "
+":ref:`aqt list-tool <list-tool command>` command:"
+msgstr ":ref:`aqt list-tool <list-tool command>` コマンドを使って、Windows Desktopで利用できるツールを調べてみましょう。"
+
+#: ../../getting_started.rst:364
+msgid "Let's see what tool variants are available in `tools_mingw`:"
+msgstr "``tools_mingw`` で利用できるツールのバリエーションを見てみましょう:"
+
+#: ../../getting_started.rst:380
+msgid ""
+"This gives us a list of things that we could install using :ref:`aqt "
+"install-tool <tools installation command>`. Let's see some more details, "
+"using the ``-l`` or ``--long`` flag:"
+msgstr "このコマンドの出力は、以下の :ref:`aqt install-tool <Tools installation command>` で使える値のリストになります。以下のように、``--l`` または ``--long`` フラグを使用して詳細を調べてみましょう。"
+
+#: ../../getting_started.rst:401
+msgid ""
+"The ``-l`` flag causes :ref:`aqt list-tool <list-tool command>` to print "
+"a table that shows plenty of data pertinent to each tool variant "
+"available in `tools_mingw`. :ref:`aqt list-tool <list-tool command>` "
+"additionally prints the 'Display Name' and 'Description' for each tool if"
+" your terminal is wider than 95 characters; terminals that are narrower "
+"than this cannot display this table in a readable way."
+msgstr ":ref:`aqt list-tool <list-tool command>` は、``tools_mingw`` で利用可能な各ツールに関連する、豊富なデータが含まれるテーブルを出力します。:ref:`aqt list-tool <list-tool command>` は、端末の幅が95文字より広い場合、各ツールの 「表示名」と「説明」を出力します。これより表示幅の狭い端末では、このテーブルを読みやすい形で表示することはできません。"
+
+#: ../../getting_started.rst:407
+msgid ""
+"Now let's install `mingw`, using the :ref:`aqt install-tool <tools "
+"installation command>` command. This command receives four parameters:"
+msgstr "では、:ref:`aqt install-tool <tools installation command>` コマンドを使って`mingw`をインストールしましょう。このコマンドは4つのパラメータを受け取ります:"
+
+#: ../../getting_started.rst:412
+msgid "The name of the tool (this is `tools_mingw` in our case)"
+msgstr "ツールの名前(この例では`tools_mingw`です)"
+
+#: ../../getting_started.rst:413
+msgid ""
+"(Optional) The tool variant name. We saw a list of these when we ran "
+":ref:`aqt list-tool <list-tool command>` with the `tool name` argument "
+"filled in."
+msgstr "(オプション)ツールのバリアント名。:ref:`aqt list-tool <list-tool command>` を`tool name` 引数つきで実行したときに、リストに表示されます。"
+
+#: ../../getting_started.rst:416
+msgid "To install `mingw`, you could use this command (please don't):"
+msgstr "`mingw`をインストールするためには、以下のコマンドを使えます(が、使わないでください):"
+
+#: ../../getting_started.rst:422
+msgid ""
+"Using this command will install every tool variant available in "
+"`tools_mingw`; in this case, you would install 10 different versions of "
+"the same tool. For some tools, like `qtcreator` or `ifw`, this is an "
+"appropriate thing to do, since each tool variant is a different program. "
+"However, for tools like `mingw` and `vcredist`, it would make more sense "
+"to use :ref:`aqt list-tool <list-tool command>` to see what tool variants"
+" are available, and then install just the tool variant you are interested"
+" in, like this:"
+msgstr "このコマンドを使用すると、`tools_mingw`  で利用可能なすべてのツールバリエーションがインストールされます。この場合、同じツールの10種類の異なるバージョンをインストールすることになります。``qtcreator`` や ``ifw`` のようないくつかのツールでは、それぞれのツールバリエーションが異なるプログラムなので、これは適切なことです。。しかし、``mingw``や``vcredist``のようなツールでは、:ref:`aqt list-tool <list-tool command>` を使ってどんなバリエーションが利用可能か調べてから、必要なツールのバリエーションだけをインストールする方が理にかなっています:"
+
+#: ../../getting_started.rst:435
+msgid ""
+"Please note that ``aqt install-tool`` does not recognize the "
+"``installscript.qs`` related to each tool. When you install these tools "
+"with the standard gui installer, the installer may use the "
+"``installscript.qs`` script to make additional changes to your system. If"
+" you need those changes to occur, it will be your responsibility to make "
+"those changes happen, because ``aqt`` is not capable of running this "
+"script."
+msgstr "``aqt install-tool`` は、各ツールに関連する``installscript.qs`` を認識しないことに注意してください。これらのツールを標準のGUIインストーラでインストールする場合、インストーラは``installscript.qs`` スクリプトを使ってシステムに追加の変更を加えることができます。これらの変更が必要な場合、``aqt`` はこのスクリプトを実行することができないので、変更を加えるのはあなたの責任になります。"
+
+#: ../../getting_started.rst:443
+msgid "Installing a subset of Qt archives [Advanced]"
+msgstr "Qtアーカイブのサブセットをインストールする[上級編]"
+
+#: ../../getting_started.rst:446
+msgid "Introduction"
+msgstr "はじめに"
+
+#: ../../getting_started.rst:448
+msgid ""
+"You may have noticed that by default, ``aqt install-qt`` installs a lot "
+"of archives that you may or may not need, and a typical installation can "
+"take up more disk space than necessary. If you installed the module "
+"``debug_info``, it may have installed more than 1 gigabyte of data. This "
+"section will help you to reduce the footprint of your Qt installation."
+msgstr "お気づきかもしれませんが、デフォルトでは ``aqt install-qt`` は多くのアーカイブをインストールしますが、その必要はないかもしれませんし、一般的なインストールでは必要以上のディスク容量を消費します。モジュール ``debug_info`` をインストールした場合、1 GB以上のデータがインストールされている可能性があります。この節では、Qtインストールのフットプリントを減らすための手助けをします。"
+
+#: ../../getting_started.rst:456
+msgid ""
+"Be careful about using the ``--archives`` flag; it is marked `Advanced` "
+"for a reason! It is very easy to misuse this command and end up with a Qt"
+" installation that is missing the components that you need. Don't use it "
+"unless you know what you are doing!"
+msgstr "``--archives`` フラグの使用には注意してください。`Advanced` とマークされているのは理由があります! このコマンドを誤用しますと、必須コンポーネントがない不完全なQtインストール結果になります。自分が何をしているのかわかっていない限り、使用しないでください!"
+
+#: ../../getting_started.rst:463
+msgid "Minimum Qt Installation"
+msgstr "Qtの最小インストール"
+
+#: ../../getting_started.rst:465
+msgid ""
+"Normally, when you run ``aqt install-qt``, the program will print a long "
+"list of archives that it is downloading, extracting, and installing, "
+"including ``qtbase``, ``qtmultimedia``, ``qt3d``, and ~25 more items. We "
+"can use the ``--archives`` flag to choose which of these archives we will"
+" actually install. The ``--archives`` flag can only affect two modules: "
+"the base Qt installation and the ``debug_info`` module."
+msgstr "通常、``aqt install-qt`` を実行すると、このプログラムはダウンロード、抽出、インストールしているアーカイブの長いリストを出力します。このリストには、``qtbase``、``qtmultimedia``、``qt3d``、そして約25項目が含まれています。これらのアーカイブのどれを実際にインストールするかは、``--archives`` フラグを使って選択することができます。 ``--archives`` フラグは、Qtの基本インストールモジュールと``debug_info``モジュールの2つのモジュールにしか影響しません。"
+
+#: ../../getting_started.rst:473
+msgid ""
+"In this documentation, **\"modules\"**, **\"archives\"**, and **\"the "
+"base Qt installation\"** refer to different things, and are defined here:"
+msgstr "このドキュメントでは、**\"modules\"**, **\"archives\"**, **\"base Qt installation\"** はそれぞれ別のものを指しており、ここで定義されています:"
+
+#: ../../getting_started.rst:476
+msgid ""
+"**Archives**: In this context, an **archive** is a bundle of files "
+"compressed with the 7zip algorithm. It exists on a disk drive as a file "
+"with the extension ``.7z``."
+msgstr "**Archives**: このコンテキストでは、**Archive** は 7-zipで圧縮されたファイルのバンドルです。これはディスクドライブ上に拡張子``.7z``\"のファイルとして存在します。"
+
+#: ../../getting_started.rst:480
+msgid ""
+"**Modules**: The Qt repository organizes groups of archives into modules."
+" A **module** contains one or more **archives**."
+msgstr "**Modules**:  Qtリポジトリが一連のアーカイブをモジュールとして編成しています。**module** には、ひとつか複数の **archives** が含まれます。"
+
+#: ../../getting_started.rst:483
+msgid ""
+"**the base Qt installation**: By definition, this is just another "
+"**module** that contains 20-30 **archives**. This documentation refers to"
+" it as **the base Qt installation** instead of a **module** for several "
+"reasons:"
+msgstr "**the base Qt installation**: 定義上、これは20から30の**archives** を含む単なる **module** です。このドキュメントでは、さまざまな事情から**module**ではなく、 **the base Qt installation** とよんでいます。"
+
+#: ../../getting_started.rst:488
+msgid "The ``aqt install-qt`` installs this module by default."
+msgstr "``aqt install-qt`` はデフォルトでこのモジュールをインストールします。"
+
+#: ../../getting_started.rst:489
+msgid "You cannot specify this module with ``aqt install-qt --modules``."
+msgstr "このモジュールを``aqt install-qt --modules`` で指定することはできません。"
+
+#: ../../getting_started.rst:490
+msgid ""
+"The ``aqt list-qt --modules`` command is incapable of printing this "
+"module."
+msgstr "``aqt list-qt--modules`` コマンドはこのモジュールの説明を表示できません。"
+
+#: ../../getting_started.rst:491
+msgid ""
+"``aqt`` transforms the names of modules as they exist in the Qt "
+"repository so that they are easier to read and write. If the name of "
+"**the base Qt installation** were transformed using the same rules, the "
+"name would be empty."
+msgstr "``aqt`` はQtリポジトリに存在するモジュールの名前を読みやすく書きやすくするために変換します。**the base Qt installation** の名前を同じ規則を使って変換された場合、名前は空になります。"
+
+#: ../../getting_started.rst:496
+msgid ""
+"The fully-qualified name of the **base Qt installation** module is "
+"usually something like ``qt.qt6.620.gcc_64``. The fully-qualified name of"
+" the ``qtcharts`` module could be something like "
+"``qt.qt6.620.qtcharts.gcc_64``. It would be difficult to read and write a"
+" list of 20 modules with the prefix ``qt.qt6.620.`` and the suffix "
+"``.gcc_64``, because these parts are repetitive and not meaningful. Only "
+"the ``qtcharts`` part is useful."
+msgstr "**base Qt installation**  モジュールの完全修飾名は通常、``qt.qt6.620.gcc_64`` のようなものです。``qtcharts`` モジュールの完全修飾名は通常、``qt.qt6.620.qtcharts.gcc_64`` のようなものです。プレフィックス ``qt.qt6.620.``とサフィックス``.gcc_64``を持つ20個のモジュールのリストを読み書きするのは難しいでしょう。なぜならこれらの部分は反復的で意味がないからです。ただ``qtcharts`` の部分だけが役に立つからです。"
+
+#: ../../getting_started.rst:504
+msgid ""
+"Let's say that we want to install Qt 5.15.2 for Linux desktop, using the "
+"gcc_64 architecture. The ``qtbase`` archive includes the bare minimum for"
+" a working Qt installation, and we can install it alone with the "
+"``--archives`` flag:"
+msgstr "gcc_64アーキテクチャを使ってQt 5.15.2をLinuxデスクトップにインストールしたいとしましょう。``qtbase`` アーカイブには、動作中のQtインストールに最低限必要なものが含まれています。また、``--archives`` フラグを付けて単独でインストールすることもできます。"
+
+#: ../../getting_started.rst:512
+msgid ""
+"This time, ``aqt install-qt`` will only install one archive, ``qtbase``, "
+"instead of the ~27 archives it installs by default."
+msgstr "今回、``aqt install-qt``は、デフォルトでインストールされる約27のアーカイブではなく、``qtbase``という1つのアーカイブだけをインストールします。"
+
+#: ../../getting_started.rst:516
+msgid "Installing More Than The Bare Minimum"
+msgstr "最小インストール数を超えるインストール"
+
+#: ../../getting_started.rst:518
+msgid ""
+"Let's say that the ``qtbase`` archive is missing some features that you "
+"need. Using the ``--archives qtbase`` flag causes ``aqt install-qt`` to "
+"omit roughly 27 archives. We can print a list of these archives with the "
+"``aqt list-qt --archives`` command:"
+msgstr "``qtbase``アーカイブに必要な機能が欠けているとします。``--archives qtbase``フラグを使用すると、``aqt install-qt``は約27のアーカイブを省略します。``aqt list-qt --archives``コマンドでこれらのアーカイブのリストを表示することができます:"
+
+#: ../../getting_started.rst:530
+msgid ""
+"Here, we have used the ``--archives`` flag with two arguments: the "
+"version of Qt we are interested in, and the architecture we are using. As"
+" a result, the command printed a list of archives that are part of the "
+"base (non-minimal) Qt installation."
+msgstr "ここでは、関心のあるQtのバージョンと使用しているアーキテクチャの2つの引数を持つ``--archives``フラグを使用しました。その結果、コマンドはベース(最小ではない)Qtインストールの一部であるアーカイブのリストを出力しました。"
+
+#: ../../getting_started.rst:535
+msgid ""
+"Let's say we need to use ``qtmultimedia``, ``qtdeclarative``, ``qtsvg``, "
+"and nothing else. Remember that the ``qtbase`` archive is required for a "
+"minimal working Qt installation. We can install these archives using this"
+" command:"
+msgstr "``qtmultimedia``、``qtdeclarative``、``qtsvg``を使う必要があり、それ以外は何も使わないとしましょう。``qtbase``アーカイブは最低限動作するQtインストールに必要であることを覚えておいてください。これらのアーカイブは次のコマンドを使ってインストールできます:"
+
+#: ../../getting_started.rst:544
+msgid "Installing Modules With Archives Specified"
+msgstr "アーカイブを指定してモジュールをインストールする"
+
+#: ../../getting_started.rst:546
+msgid ""
+"As of aqt v2.1.0, the ``--archives`` flag will only apply to the base Qt "
+"installation and to the ``debug_info`` module. Previous versions of aqt "
+"required that when installing modules with the ``--archives`` flag, the "
+"user must specify archives for each module, otherwise they would not be "
+"installed. This behavior has been changed to prevent such mistakes."
+msgstr "aqt v2.1.0以降では、``--archives``フラグはQtの基本インストールと``debug_info``モジュールにのみ適用されます。aqtの以前のバージョンでは、``--archives``フラグを付けてモジュールをインストールする場合、ユーザはモジュールごとにアーカイブを指定する必要がありました。指定しないとインストールされませんでした。このようなミスを防止するために、この動作を変更しました。"
+
+#: ../../getting_started.rst:552
+msgid ""
+"Let's say that we need to install the bare minimum Qt 5.15.2, with the "
+"modules ``qtcharts`` and ``qtlottie``:"
+msgstr "モジュール``qtcharts``と``qtlottie``を使って、最低限のQt 5.15.2をインストールする必要があるとしましょう。"
+
+#: ../../getting_started.rst:558
+msgid ""
+"This command will successfully install 3 archives: 1 for ``qtbase``, and "
+"one each for the two modules. If we had tried to use this command with "
+"previous versions of aqt, we would not have installed the two modules "
+"because we did not specify them in the ``--archives`` list."
+msgstr "このコマンドは3つのアーカイブを正しくインストールします。1つは``qtbase``用で、もう1つは2つのモジュール用です。このコマンドをaqtの以前のバージョンで使用しようとすると、2つのモジュールは``--archives``リストに指定されていなかったので、インストールされませんでした。"
+
+#: ../../getting_started.rst:564
+msgid ""
+"You can still misuse the ``--archives`` flag by omitting the ``qtbase`` "
+"archive, or by omitting archives that another archive or module is "
+"dependent on. You may not notice that there is a problem until you try to"
+" compile a program, and compilation fails."
+msgstr "``qtbase``アーカイブを省略したり、他のアーカイブやモジュールが依存しているアーカイブを省略することで、``--archives``フラグを誤用することもできます。プログラムをコンパイルしようとしてコンパイルが失敗するまで、問題があることに気づかないかもしれません。"
+
+#: ../../getting_started.rst:570
+msgid "Installing the ``debug_info`` module"
+msgstr "``debug_info``モジュールのインストール"
+
+#: ../../getting_started.rst:572
+msgid ""
+"Now let's say we need to install the ``debug_info`` module, which is "
+"particularly large: around one gigabyte. We do not want to install all of"
+" it, so we can use ``aqt install-qt --archives`` to choose which archives"
+" we want to install. Remember that the ``--archives`` flag"
+msgstr "ここで、``debug_info``モジュールをインストールする必要があるとしましょう。このモジュールは非常に大きく、約1.0GBです。すべてをインストールしたくないので、``aqt install-qt --archives``を使ってインストールしたいアーカイブを選ぶことができます。この場合の``--archives``フラグは"
+
+#: ../../getting_started.rst:577
+msgid ""
+"``aqt list-qt --archives`` to print which archives are part of the "
+"``debug_info`` module:"
+msgstr "``aqt list-qt --archives``で、どのアーカイブが``debug_info``モジュールの一部であるかを表示します。"
+
+#: ../../getting_started.rst:589
+msgid ""
+"This is a lot of archives. Note that there's a name collision between the"
+" ``debug_info`` archives and the archives in every other module/Qt base "
+"install: this is because there's a ``debug_info`` archive that "
+"corresponds to almost every other archive available."
+msgstr "ここにはたくさんのアーカイブがあります。``debug_info``アーカイブと他のすべてのモジュール/Qtベースインストールのアーカイブとの間に名前の衝突があることに注意してください。これは、利用可能な他のほとんどすべてのアーカイブに対応する``debug_info``アーカイブがあるからです。"
+
+#: ../../getting_started.rst:595
+msgid ""
+"Let's install Qt with ``qtcharts`` and ``debug_info`` with some archives "
+"specified:"
+msgstr "``qtcharts``と``debug_info``つきでQtをインストールし、いくつかのアーカイブを指定しましょう。"
+
+#: ../../getting_started.rst:602
+msgid ""
+"Notice what we did here: We specified the ``qtcharts`` and ``debug_info``"
+" modules, and we specified the ``qtbase``, ``qtcharts``, and "
+"``qtdeclarative`` archives. This will install a total of 6 archives:"
+msgstr "ここで行ったことに注目してください:``qtcharts`` モジュールと``debug_info``モジュールを指定し、``qtbase``アーカイブ、``qtcharts``アーカイブ、``qtdeclarative`` アーカイブを指定しました。これで合計6つのアーカイブがインストールされます:"
+
+#: ../../getting_started.rst:606
+msgid ""
+"the 3 archives named ``qtbase``, ``qtcharts``, and ``qtdeclarative`` from"
+" the ``debug_info`` module,"
+msgstr "``debug_info``モジュールからの3つのアーカイブ ``qtbase``、``qtcharts``、``qtdeclarative``"
+
+#: ../../getting_started.rst:607
+msgid "the 1 archive ``qtcharts`` from the ``qtcharts`` module, and"
+msgstr "``qtcharts``モジュールからのアーカイブ``qtcharts``、および"
+
+#: ../../getting_started.rst:608
+msgid ""
+"the 2 archives ``qtbase`` and ``qtdeclarative`` from the base Qt "
+"installation."
+msgstr "基本Qtインストールの``qtbase``と``qtdeclarative``の2つのアーカイブです。"
+
+#: ../../getting_started.rst:611
+msgid ""
+"At present, ``aqt install-qt`` is incapable of installing any archive "
+"from the ``debug_info`` module without also installing the corresponding "
+"module from the base Qt installation. For instance, you cannot install "
+"the ``debug_info`` archive for ``qtbase`` without also installing the "
+"usual ``qtbase`` archive."
+msgstr "現在、``aqt install-qt``は、基本Qtインストールから対応するモジュールをインストールせずに、``debug_info`` モジュールからアーカイブをインストールすることはできません。例えば、通常の``qtbase``アーカイブをインストールせずに、``qtbase``用の``debug_info`` アーカイブをインストールすることはできません。"
+

@@ -1,0 +1,144 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../installation.rst:6
+msgid "Installation"
+msgstr ""
+
+#: ../../installation.rst:9
+msgid "Requirements"
+msgstr ""
+
+#: ../../installation.rst:11
+msgid "Minimum Python version:  3.6"
+msgstr ""
+
+#: ../../installation.rst:12
+msgid "Recommended Python version: 3.7.5 or later"
+msgstr ""
+
+#: ../../installation.rst:14
+msgid "Dependent libraries: requests, py7zr, semantic_version, patch, texttable, bs4"
+msgstr ""
+
+#: ../../installation.rst:18
+msgid "Install by pip command"
+msgstr ""
+
+#: ../../installation.rst:20
+msgid "Same as usual, it can be installed with `pip`"
+msgstr ""
+
+#: ../../installation.rst:29
+msgid "Command changes"
+msgstr ""
+
+#: ../../installation.rst:31
+msgid "From version 2.0.0, sub commands are changed. The previous versions of these sub commands have been retained for backwards compatibility, but are no longer recommended."
+msgstr ""
+
+#: ../../installation.rst:36
+msgid "New sub commands"
+msgstr ""
+
+#: ../../installation.rst:36
+msgid "Legacy sub commands"
+msgstr ""
+
+#: ../../installation.rst:36
+msgid "Note"
+msgstr ""
+
+#: ../../installation.rst:38
+msgid "install-qt"
+msgstr ""
+
+#: ../../installation.rst:38
+msgid "install"
+msgstr ""
+
+#: ../../installation.rst:38
+#: ../../installation.rst:45
+#: ../../installation.rst:49
+#: ../../installation.rst:54
+msgid "Version moved after target"
+msgstr ""
+
+#: ../../installation.rst:40
+msgid "install-tool"
+msgstr ""
+
+#: ../../installation.rst:40
+msgid "tool"
+msgstr ""
+
+#: ../../installation.rst:40
+msgid "Arguments are changed"
+msgstr ""
+
+#: ../../installation.rst:42
+msgid "New syntax doesn't take version"
+msgstr ""
+
+#: ../../installation.rst:45
+msgid "install-example"
+msgstr ""
+
+#: ../../installation.rst:45
+msgid "examples"
+msgstr ""
+
+#: ../../installation.rst:47
+msgid "Caution with last (s)"
+msgstr ""
+
+#: ../../installation.rst:49
+msgid "install-src"
+msgstr ""
+
+#: ../../installation.rst:49
+msgid "src"
+msgstr ""
+
+#: ../../installation.rst:51
+msgid "New command only can take --kde option"
+msgstr ""
+
+#: ../../installation.rst:54
+msgid "install-doc"
+msgstr ""
+
+#: ../../installation.rst:54
+msgid "doc"
+msgstr ""
+
+#: ../../installation.rst:56
+msgid "list"
+msgstr ""
+
+#: ../../installation.rst:56
+msgid "Legacy list commands are removed."
+msgstr ""
+
+#: ../../installation.rst:59
+msgid "list-qt"
+msgstr ""
+
+#: ../../installation.rst:61
+msgid "list-tool"
+msgstr ""

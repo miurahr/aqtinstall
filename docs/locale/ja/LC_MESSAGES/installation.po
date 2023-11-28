@@ -1,0 +1,147 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019-2021, Hiroshi Miura
+# This file is distributed under the same license as the aqtinstall package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr "Project-Id-Version: aqtinstall 3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-09 22:56+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../installation.rst:6
+msgid "Installation"
+msgstr "インストール"
+
+#: ../../installation.rst:9
+msgid "Requirements"
+msgstr "要件"
+
+#: ../../installation.rst:11
+msgid "Minimum Python version:  3.6"
+msgstr "Pythonの最小バージョン:3.6"
+
+#: ../../installation.rst:12
+msgid "Recommended Python version: 3.7.5 or later"
+msgstr "推奨Pythonバージョン:3.7.5以降"
+
+#: ../../installation.rst:14
+msgid ""
+"Dependent libraries: requests, py7zr, semantic_version, patch, texttable,"
+" bs4"
+msgstr "依存ライブラリ:requests,py7zr,semantic_version,patch,texttable,bs4"
+
+#: ../../installation.rst:18
+msgid "Install by pip command"
+msgstr "pipコマンドによるインストール"
+
+#: ../../installation.rst:20
+msgid "Same as usual, it can be installed with `pip`"
+msgstr "いつもと同じように、``pip`` でインストールできます。"
+
+#: ../../installation.rst:29
+msgid "Command changes"
+msgstr "コマンドの変更"
+
+#: ../../installation.rst:31
+msgid ""
+"From version 2.0.0, sub commands are changed. The previous versions of "
+"these sub commands have been retained for backwards compatibility, but "
+"are no longer recommended."
+msgstr "バージョン2.0.0から、サブコマンドが変更されました。これらのサブコマンドの以前のバージョンは、下位互換性のために保持されていますが、お勧めできません。"
+
+#: ../../installation.rst:36
+msgid "New sub commands"
+msgstr "新しいサブコマンド"
+
+#: ../../installation.rst:36
+msgid "Legacy sub commands"
+msgstr "レガシーサブコマンド"
+
+#: ../../installation.rst:36
+msgid "Note"
+msgstr "Note"
+
+#: ../../installation.rst:38
+msgid "install-qt"
+msgstr "install-qt"
+
+#: ../../installation.rst:38
+msgid "install"
+msgstr "install"
+
+#: ../../installation.rst:38 ../../installation.rst:45
+#: ../../installation.rst:49 ../../installation.rst:54
+msgid "Version moved after target"
+msgstr "バージョンはターゲットの後に移動しました"
+
+#: ../../installation.rst:40
+msgid "install-tool"
+msgstr "install-tool"
+
+#: ../../installation.rst:40
+msgid "tool"
+msgstr "tool"
+
+#: ../../installation.rst:40
+msgid "Arguments are changed"
+msgstr "引数が変更されました"
+
+#: ../../installation.rst:42
+msgid "New syntax doesn't take version"
+msgstr "新しい構文はバージョンを使用しません"
+
+#: ../../installation.rst:45
+msgid "install-example"
+msgstr "install-example"
+
+#: ../../installation.rst:45
+msgid "examples"
+msgstr "examples"
+
+#: ../../installation.rst:47
+msgid "Caution with last (s)"
+msgstr "最後の引数に注意"
+
+#: ../../installation.rst:49
+msgid "install-src"
+msgstr "install-src"
+
+#: ../../installation.rst:49
+msgid "src"
+msgstr "src"
+
+#: ../../installation.rst:51
+msgid "New command only can take --kde option"
+msgstr "新しいコマンドは--kdeオプションしか使えません"
+
+#: ../../installation.rst:54
+msgid "install-doc"
+msgstr "install-doc"
+
+#: ../../installation.rst:54
+msgid "doc"
+msgstr "doc"
+
+#: ../../installation.rst:56
+msgid "list"
+msgstr "list"
+
+#: ../../installation.rst:56
+msgid "Legacy list commands are removed."
+msgstr "従来のリストコマンドは削除されました。"
+
+#: ../../installation.rst:59
+msgid "list-qt"
+msgstr "list-qt"
+
+#: ../../installation.rst:61
+msgid "list-tool"
+msgstr "list-tool"
+

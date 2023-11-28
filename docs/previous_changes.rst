@@ -2,9 +2,174 @@
 
 .. default-role:: any
 
-.. _changes:
+.. _previous_changes:
 
-.. include:: ../CHANGELOG.rst
+====================
+Changes until v2.0.6
+====================
+
+`v2.0.6`_ (7, Feb. 2022)
+========================
+
+Fixed
+-----
+* Fix archives flag(#459)
+* Accept the case Update.xml in Server has delimiter without space(#479)
+* Fix getUrl function to use property http session and retry(#473)
+
+Added
+-----
+* 32bit release binary(#471)
+
+Changed
+-------
+* Update combinations.xml
+  * Qt 6.2.2, 6.2.3, 6.3.0(#481,#484)
+
+`v2.0.5`_ (11, Dec. 2021)
+=========================
+
+Changed
+-------
+* Reduce memory consumption: garbage collection on install subprocess(#464)
+* Cache PowerShell modules on Azure Pipeline(#465)
+
+`v2.0.4`_ (5, Dec. 2021)
+=========================
+
+Fixed
+=====
+* Allow duplicated install on the directory previously installed(#438,#462)
+* Memory error on 32bit python on Windows(#436,#462)
+
+Changed
+=======
+* Change list-src, list-doc and list-example command(#453)
+
+`v2.0.3`_ (25, Nov. 2021)
+=========================
+
+Added
+-----
+* Improve --keep and new --archive-dest options(#458)
+
+Fixed
+-----
+* Fix cross-platform installation failure (#450)
+* CI: update OSes, Windows-2019, macOS-10.15(#444,#456)
+* CI: fix failure of uploading coveralls(#446)
+* CI: test for QtIFW(#451)
+
+Changed
+-------
+* combinations matrix json(#452)
+
+`v2.0.2`_ (1, Nov. 2021)
+=========================
+
+Added
+-----
+* Support Qt 6.2.1 (#441)
+
+Fixed
+-----
+* Degraded install-tool (#442,#443)
+
+Changed
+-------
+* Add suggestion to use ``--external`` for MemoryError (#439)
+
+
+`v2.0.1`_ (29, Oct. 2021)
+=========================
+
+Added
+-----
+* Allow retries on checksum error(#420)
+* Run on Python 3.10(#424)
+* Add more mirrors for fallback(#432)
+* Add fallback URL message(#434)
+
+Fixed
+-----
+* ``--noarchives`` inconsistency(#429)
+* Allow multiprocessing error propagation(#419)
+* Legacy command behavior, reproduce also old bugs (#414)
+* Fix crash on ``crash install-qt <host> <tgt> <spec>`` with no specified arch(#435)
+
+Changed
+-------
+* Print working directory and version in error message(#418)
+
+Security
+--------
+* Use HTTPS for mirror site(#430)
+
+
+`v2.0.0`_ (29, Sep. 2021)
+=========================
+
+Added
+-----
+* Add error messages when user inputs an invalid semantic version(#291)
+* Security Policy document(#341)
+* CodeQL static code analysis(#341)
+* CI: generate combination json in actions (#318,#343)
+* Test: add and improve unit tests(#327,#359)
+* Docs: getting started section(#351)
+* Docs: recommend python3 for old systems(#349)
+* Automatically update combinations.json (#343,#344,#345,#386,#390,#395)
+* CI: test with Qt6.2 with modules(#346)
+* README: link documentation for stable(#329)
+* Support WASM on Qt 6.2.0(#384)
+* Add Binary distribution for Windows(#393,#397)
+* Add list-qt --archives feature(#400)
+* Require architecture when listing modules(#401)
+
+Changed
+-------
+* list subcommand now support tool information(#235)
+* list subcommand can show versions, architectures and modules.(#235)
+* C: bundle jom.zip in source(#295)
+* Add max_retries configuration for connection(#296)
+* Change settings.ini to introduce [requests] section(#297)
+* Change log format for logging file.
+* Extension validation for tool subcommand(#314)
+* list subcommand has --tool-long option(#304, #319)
+* tool subcommand now install without version spec(#299)
+* README example command is now easy to copy-and-paste(#322)
+* list subcommand update(#331)
+* Improve handle of Ctrl-C keyboard interruption(#337)
+* Update combinations.json(#344,#386)
+* Turn warnings into errors when building docs(#360)
+* Update documentations(#358,#357)
+* Test: consolidate lint configuration to pyproject.toml(#356)
+* Test: black configuration to max_line_length=125 (#356)
+* New subcommand syntax (#354,#355)
+* Failed on missing modules(#374)
+* Failed on missing tools(#375)
+* Remove 'addons' prefix for some modules for Qt6+ (#368)
+* Fix inappropriate warnings(#370)
+* Update README to fix version 2 (#377)
+* list-qt: Specify version by SimpleSpec(#392)
+* Add helpful error messages when modules/tools/Qt version does not exist(#402)
+
+Fixed
+-----
+* Fix helper.getUrl() to handle several response statuses(#292)
+* Fix Qt 6.2.0 target path for macOS.(#289)
+* Fix WinRT installation patching(#311)
+* Fix Qt 5.9.0 installation (#312)
+* Link documentations for stable/latest on README
+* Check python version when starting command (#352)
+* README: remove '$' from example command line(#321)
+* README: fix command line example lexer(#322)
+* CI: fix release script launch conditions(#298)
+* Handle special case for Qt 5.9.0(#364)
+* Running python2 -m aqt does not trigger Python version check (#372,#373)
+* docs(cli): correct the parameter of "list-tool" in an example(#399)
+* Doc: Fix broken mirror link in cli.rst (#403)
+* CI: fix release action fails with no files found(#405)
 
 
 `v1.2.5`_ (14, Aug. 2021)
@@ -455,7 +620,7 @@ Changed
 Fixed
 -----
 
-* Work around for http://download.qt.io/ returns wrong metalink xml data.(#105, #106)
+* Work around for https://download.qt.io/ returns wrong metalink xml data.(#105, #106)
 
 
 `v0.8a1`_ (28, Feb., 2020)
@@ -864,6 +1029,13 @@ Fixed
 .. _7zip: https://www.7-zip.org/
 .. _requests: https://pypi.org/project/requests
 .. _argparse: https://pypi.org/project/argparse/
+.. _v2.0.6: https://github.com/miurahr/aqtinstall/compare/v2.0.5...v2.0.6
+.. _v2.0.5: https://github.com/miurahr/aqtinstall/compare/v2.0.4...v2.0.5
+.. _v2.0.4: https://github.com/miurahr/aqtinstall/compare/v2.0.3...v2.0.4
+.. _v2.0.3: https://github.com/miurahr/aqtinstall/compare/v2.0.2...v2.0.3
+.. _v2.0.2: https://github.com/miurahr/aqtinstall/compare/v2.0.1...v2.0.2
+.. _v2.0.1: https://github.com/miurahr/aqtinstall/compare/v2.0.0...v2.0.1
+.. _v2.0.0: https://github.com/miurahr/aqtinstall/compare/v1.2.5...v2.0.0
 .. _v1.2.5: https://github.com/miurahr/aqtinstall/compare/v1.2.4...v1.2.5
 .. _v1.2.4: https://github.com/miurahr/aqtinstall/compare/v1.2.3...v1.2.4
 .. _v1.2.3: https://github.com/miurahr/aqtinstall/compare/v1.2.2...v1.2.3

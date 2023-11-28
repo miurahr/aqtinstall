@@ -1,6 +1,5 @@
 include *.rst
 include *.txt
-include *.cfg
 include LICENSE
 include pyproject.toml
 include .flake8
@@ -10,15 +9,15 @@ recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst
 recursive-include docs Makefile
+recursive-include docs *.po
+recursive-include docs *.pot
 recursive-include tests *.html
 recursive-include tests *.ini
 recursive-include tests *.json
 recursive-include tests *.py
 recursive-include tests *.xml
+recursive-include tools *.py
 prune .github
 exclude .gitignore
 exclude .readthedocs.yml
 exclude azure-pipelines.yml
-exclude qtaccount.ini
-exclude aqtinstall.log
-

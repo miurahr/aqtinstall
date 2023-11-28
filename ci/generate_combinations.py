@@ -3,8 +3,9 @@
 import argparse
 import json
 import logging
+import sys
 from pathlib import Path
-from typing import Dict, Generator, Iterable, List, Optional, Tuple, Union
+from typing import Dict, Generator, Iterable, List, Optional, Tuple, Union, NamedTuple
 
 from jsoncomparison import NO_DIFF, Compare
 
@@ -28,44 +29,21 @@ def iter_archive_ids(
     category: str,
     hosts: Iterable[str] = ArchiveId.HOSTS,
     targets: Optional[Iterable[str]] = None,
-    add_extensions: bool = False,
 ) -> Generator[ArchiveId, None, None]:
-    def iter_extensions() -> Generator[str, None, None]:
-        if add_extensions and category == "qt":
-            if target == "android":
-                yield from ("", "x86_64", "x86", "armv7", "arm64_v8a")
-                return
-            elif target == "desktop":
-                yield from ("wasm", "")
-                return
-        yield ""
-
     for host in sorted(hosts):
         use_targets = targets
         if use_targets is None:
             use_targets = ArchiveId.TARGETS_FOR_HOST[host]
         for target in use_targets:
-            for ext in iter_extensions():
-                yield ArchiveId(category, host, target, ext)
+            yield ArchiveId(category, host, target)
 
 
 def iter_arches() -> Generator[dict, None, None]:
     logger.info("Fetching arches")
-    archive_ids = list(iter_archive_ids(category="qt", add_extensions=True))
+    archive_ids = list(iter_archive_ids(category="qt"))
     for archive_id in tqdm(archive_ids):
         for version in ("latest", "5.15.2", "5.13.2", "5.9.9"):
-            if archive_id.extension == "wasm" and (
-                version == "5.9.9" or version == "latest"
-            ):
-                continue
-            if archive_id.target == "android":
-                if version == "latest" and archive_id.extension == "":
-                    continue
-                if version != "latest" and archive_id.extension != "":
-                    continue
-            for arch_name in MetadataFactory(
-                archive_id, architectures_ver=version
-            ).getList():
+            for arch_name in MetadataFactory(archive_id, architectures_ver=version).getList():
                 yield {
                     "os_name": archive_id.host,
                     "target": archive_id.target,
@@ -107,7 +85,7 @@ def iter_modules_for_qt_minor_groups(
         yield {
             "qt_version": f"{major}.{minor}",
             "modules": MetadataFactory(
-                ArchiveId("qt", host, target), modules_query=(f"{major}.{minor}.0", arch)
+                ArchiveId("qt", host, target), modules_query=MetadataFactory.ModulesQuery(f"{major}.{minor}.0", arch)
             ).getList(),
         }
 
@@ -229,6 +207,6 @@ if __name__ == "__main__":
 
     tqdm = get_tqdm(args.no_tqdm)
 
-    exit(
+    sys.exit(
         main(filename=json_filename, is_write_file=args.write, is_verbose=args.verbose)
     )
