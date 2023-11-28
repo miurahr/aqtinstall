@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import logging
 import os
+import pathlib
 import re
 import stat
 import subprocess
@@ -39,27 +40,6 @@ dir_for_version = QtRepoProperty.dir_for_version
 
 def dir_for_version(ver: Version) -> str:
     return "5.9" if ver == Version("5.9.0") else f"{ver.major}.{ver.minor}.{ver.patch}"
-
-
-def dir_for_arch(arch: str, os_name: str, version: Version) -> str:
-    if arch is None:
-        arch_dir = ""
-    elif arch.startswith("win64_mingw"):
-        arch_dir = arch[6:] + "_64"
-    elif arch.startswith("win32_mingw"):
-        arch_dir = arch[6:] + "_32"
-    elif arch.startswith("win"):
-        m = re.match(r"win\d{2}_(msvc\d{4})_(winrt_x\d{2})", arch)
-        if m:
-            a, b = m.groups()
-            arch_dir = b + "_" + a
-        else:
-            arch_dir = arch[6:]
-    elif os_name == "mac" and arch == "clang_64":
-        arch_dir = default_desktop_arch_dir(os_name, version)
-    else:
-        arch_dir = arch
-    return arch_dir
 
 
 def unpatched_paths() -> List[str]:
@@ -139,26 +119,6 @@ class Updater:
         file.write_text(data, "UTF-8")
         os.chmod(str(file), file_mode)
 
-    def _detect_qmake(self) -> bool:
-        """detect Qt configurations from qmake."""
-        for qmake_path in [
-            self.prefix.joinpath("bin", "qmake"),
-            self.prefix.joinpath("bin", "qmake.exe"),
-        ]:
-            if not qmake_path.exists():
-                continue
-            try:
-                result = subprocess.run([str(qmake_path), "-query"], stdout=subprocess.PIPE)
-            except (subprocess.SubprocessError, IOError, OSError):
-                return False
-            if result.returncode == 0:
-                self.qmake_path = qmake_path
-                for line in result.stdout.splitlines():
-                    vals = line.decode("UTF-8").split(":")
-                    self.qconfigs[vals[0]] = vals[1]
-                return True
-        return False
-
     def patch_prl(self, oldvalue):
         for prlfile in self.prefix.joinpath("lib").glob("*.prl"):
             self.logger.info("Patching {}".format(prlfile))
@@ -216,10 +176,9 @@ class Updater:
 
     def patch_qmake(self):
         """Patch to qmake binary"""
-        if self._detect_qmake():
-            if self.qmake_path is None:
-                return
-            self.logger.info("Patching {}".format(str(self.qmake_path)))
+        try:
+            qmake_config = QtConfig(prefix=self.prefix)
+            self.logger.info("Patching {}".format(str(qmake_config.qmake_path)))
             self._patch_binfile(
                 qmake_config.qmake_path,
                 key=b"qt_prfxpath=",
@@ -403,7 +362,7 @@ class Notifier:
         version = Version(target.version)
         os_name = target.os_name
         version_dir = dir_for_version(version)
-        arch_dir = dir_for_arch(arch, os_name, version)
+        arch_dir = QtRepoProperty.get_arch_dir_name(arch, os_name, version)
         prefix = pathlib.Path(base_dir) / version_dir / arch_dir
         if os_name == "windows":
             sdktoolbinary = pathlib.Path(base_dir) / "Tools" / "QtCreator" / "bin" / "sdktool.exe"
