@@ -89,7 +89,7 @@ class PlatformBuildJobs:
 
 python_versions = ["3.9", "3.11", "3.12"]
 
-qt_versions = ["5.12.12", "5.15.14", "6.5.3"]
+qt_versions = ["5.12.12", "5.15.2", "6.5.3"]
 
 linux_build_jobs = []
 mac_build_jobs = []
