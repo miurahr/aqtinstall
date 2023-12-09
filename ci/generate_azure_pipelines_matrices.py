@@ -35,7 +35,8 @@ class BuildJob:
         is_autodesktop: bool = False,
         tool_options: Optional[Dict[str, str]] = None,
         check_output_cmd: Optional[str] = None,
-        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit@3.1.29",
+        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit",
+        emsdk_tag: str = "3.1.29",
         autodesk_arch_folder: Optional[str] = None,
     ):
         self.command = command
@@ -56,6 +57,7 @@ class BuildJob:
         self.output_dir = output_dir
         self.check_output_cmd = check_output_cmd
         self.emsdk_version = emsdk_version
+        self.emsdk_tag = emsdk_tag
         self.autodesk_arch_folder = autodesk_arch_folder
 
     def qt_bindir(self, *, sep='/') -> str:
@@ -314,7 +316,7 @@ linux_build_jobs.append(
 )
 linux_build_jobs.append(
     BuildJob("install-qt", "6.4.0", "linux", "desktop", "wasm_32", "wasm_32",
-             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="gcc_64")
+             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", emsdk_tag="main", autodesk_arch_folder="gcc_64")
 )
 for job_queue, host, desk_arch in (
     (linux_build_jobs, "linux", "gcc_64"),
@@ -324,21 +326,21 @@ for job_queue, host, desk_arch in (
     for wasm_arch in ("wasm_singlethread", "wasm_multithread"):
         job_queue.append(
             BuildJob("install-qt", "6.5.0", host, "desktop", wasm_arch, wasm_arch,
-                     is_autodesktop=True, emsdk_version="sdk-3.1.25-64bit", autodesk_arch_folder=desk_arch)
+                     is_autodesktop=True, emsdk_version="sdk-3.1.25-64bit", emsdk_tag="main", autodesk_arch_folder=desk_arch)
         )
 mac_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "mac", "desktop", "wasm_32", "wasm_32")
 )
 mac_build_jobs.append(
     BuildJob("install-qt", "6.4.0", "mac", "desktop", "wasm_32", "wasm_32",
-             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="clang_64")
+             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", emsdk_tag="main", autodesk_arch_folder="clang_64")
 )
 windows_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "windows", "desktop", "wasm_32", "wasm_32")
 )
 windows_build_jobs.append(
     BuildJob("install-qt", "6.4.0", "windows", "desktop", "wasm_32", "wasm_32",
-             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="mingw_64",
+             is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", emsdk_tag="main", autodesk_arch_folder="mingw_64",
              mingw_variant="win64_mingw900")
 )
 
@@ -461,8 +463,8 @@ for platform_build_job in all_platform_build_jobs:
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
                 ("QT_BINDIR", build_job.qt_bindir()),
                 ("WIN_QT_BINDIR", build_job.win_qt_bindir()),
-                ("EMSDK_VERSION", (build_job.emsdk_version+"@main").split('@')[0]),
-                ("EMSDK_TAG",  (build_job.emsdk_version+"@main").split('@')[1]),
+                ("EMSDK_VERSION", build_job.emsdk_version),
+                ("EMSDK_TAG",  build_job.emsdk_tag),
                 ("WIN_AUTODESK_QT_BINDIR", build_job.win_autodesk_qt_bindir()),
                 ("TOOL1_ARGS", build_job.tool_options.get("TOOL1_ARGS", "")),
                 ("LIST_TOOL1_CMD", build_job.tool_options.get("LIST_TOOL1_CMD", "")),
