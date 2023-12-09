@@ -312,7 +312,8 @@ mac_build_jobs.extend(
 
 # WASM
 linux_build_jobs.append(
-    BuildJob("install-qt", "5.14.2", "linux", "desktop", "wasm_32", "wasm_32")
+    BuildJob("install-qt", "5.14.2", "linux", "desktop", "wasm_32", "wasm_32",
+             emsdk_version="sdk-3.1.14-64bit", emsdk_tag="main")
 )
 linux_build_jobs.append(
     BuildJob("install-qt", "6.4.0", "linux", "desktop", "wasm_32", "wasm_32",
@@ -329,14 +330,16 @@ for job_queue, host, desk_arch in (
                      is_autodesktop=True, emsdk_version="sdk-3.1.25-64bit", emsdk_tag="main", autodesk_arch_folder=desk_arch)
         )
 mac_build_jobs.append(
-    BuildJob("install-qt", "5.14.2", "mac", "desktop", "wasm_32", "wasm_32")
+    BuildJob("install-qt", "5.14.2", "mac", "desktop", "wasm_32", "wasm_32",
+             emsdk_version="sdk-3.1.14-64bit", emsdk_tag="main")
 )
 mac_build_jobs.append(
     BuildJob("install-qt", "6.4.0", "mac", "desktop", "wasm_32", "wasm_32",
              is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", emsdk_tag="main", autodesk_arch_folder="clang_64")
 )
 windows_build_jobs.append(
-    BuildJob("install-qt", "5.14.2", "windows", "desktop", "wasm_32", "wasm_32")
+    BuildJob("install-qt", "5.14.2", "windows", "desktop", "wasm_32", "wasm_32",
+             emsdk_version="sdk-3.1.14-64bit", emsdk_tag="main")
 )
 windows_build_jobs.append(
     BuildJob("install-qt", "6.4.0", "windows", "desktop", "wasm_32", "wasm_32",
