@@ -367,7 +367,7 @@ class QtArchives:
     def _append_depends_tool(self, arch, tool_name):
         os_target_folder = posixpath.join(
             "online/qtsdkrepository",
-            self.os_name + ("_x86" if self.os_name == "windows" else "_x64"),
+            self.os_name + ("_x86" if self.os_name == "windows" else ("" if self.os_name == "linux_arm64" else "_x64")),
             self.target,
             tool_name,
         )
@@ -379,7 +379,7 @@ class QtArchives:
     def _get_archives_base(self, name, target_packages):
         os_target_folder = posixpath.join(
             "online/qtsdkrepository",
-            self.os_name + ("_x86" if self.os_name == "windows" else "_x64"),
+            self.os_name + ("_x86" if self.os_name == "windows" else ("" if self.os_name == "linux_arm64" else "_x64")),
             self.target,
             # tools_ifw/
             name,
