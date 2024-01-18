@@ -317,6 +317,44 @@ You can do this automatically with the ``--autodesktop`` flag:
     $ aqt install-qt linux desktop 6.2.0 wasm_32 -m qtcharts qtnetworkauth --autodesktop
 
 
+Installing Docs
+---------------
+
+The :ref:`aqt list-doc <list-doc command>` command lists documentation
+archives for a given version by default:
+
+.. code-block:: console
+
+    $ aqt list-tool mac 6.6.1
+    qdoc qmake qt5 qtassistant qtcmake qtconcurrent qtcore qtdbus qtdesigner qtdistancefieldgenerator qtdoc qtgui qthelp qtlabsplatform qtlinguist qtnetwork qtopengl qtplatformintegration qtprintsupport qtqml qtqmlcore qtqmlmodels qtqmltest qtqmlworkerscript qtqmlxmllistmodel qtquick qtquickcontrols qtquickdialogs qtsql qtsvg qttestlib qtuitools qtwaylandcompositor qtwidgets qtxml
+
+This is what will be installed by default, you can select a subset of archives
+with ``--archives``.
+``--modules`` will list additional documentation modules that can be installed:
+
+
+.. code-block:: console
+
+    $ aqt list-doc mac 6.6.1 --modules
+    qt3d qt5compat qtactiveqt qtbluetooth qtcharts qtdatavis3d qtgraphs qtgrpc qthttpserver qtimageformats qtlocation qtlottie qtmultimedia qtnetworkauth qtnfc qtpdf qtpositioning qtquick3d qtquick3dphysics qtquickeffectmaker qtquicktimeline qtremoteobjects qtscxml qtsensors qtserialbus qtserialport qtshadertools qtspeech qtvirtualkeyboard qtwebchannel qtwebengine qtwebsockets qtwebview
+
+``--archives`` and ``--modules`` can be used together.
+For example to only install the docs for ``qtquick`` and ``qt3d``,
+use the :ref:`aqt install-doc <install-doc command>` command like this:
+
+.. code-block:: console
+
+    $ aqt install-doc mac 6.6.1 --archives qtquick --modules qt3d
+    INFO    : Downloading qt3d...
+    INFO    : Downloading qtquick...
+    INFO    : Redirected: qt.mirror.constant.com
+    INFO    : Redirected: qt.mirror.constant.com
+    INFO    : Finished installation of qt3d-documentation.tar.xz in 1.51932292
+    INFO    : Finished installation of qtquick-documentation.tar.xz in 2.63531679
+    INFO    : Finished installation
+    INFO    : Time elapsed: 4.00115146 second
+
+
 Installing Tools
 ----------------
 
