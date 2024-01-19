@@ -325,7 +325,7 @@ archives for a given version by default:
 
 .. code-block:: console
 
-    $ aqt list-tool mac 6.6.1
+    $ aqt list-doc mac 6.6.1
     qdoc qmake qt5 qtassistant qtcmake qtconcurrent qtcore qtdbus qtdesigner qtdistancefieldgenerator qtdoc qtgui qthelp qtlabsplatform qtlinguist qtnetwork qtopengl qtplatformintegration qtprintsupport qtqml qtqmlcore qtqmlmodels qtqmltest qtqmlworkerscript qtqmlxmllistmodel qtquick qtquickcontrols qtquickdialogs qtsql qtsvg qttestlib qtuitools qtwaylandcompositor qtwidgets qtxml
 
 This is what will be installed by default, you can select a subset of archives
