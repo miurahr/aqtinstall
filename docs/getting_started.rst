@@ -328,9 +328,10 @@ archives for a given version by default:
     $ aqt list-doc mac 6.6.1
     qdoc qmake qt5 qtassistant qtcmake qtconcurrent qtcore qtdbus qtdesigner qtdistancefieldgenerator qtdoc qtgui qthelp qtlabsplatform qtlinguist qtnetwork qtopengl qtplatformintegration qtprintsupport qtqml qtqmlcore qtqmlmodels qtqmltest qtqmlworkerscript qtqmlxmllistmodel qtquick qtquickcontrols qtquickdialogs qtsql qtsvg qttestlib qtuitools qtwaylandcompositor qtwidgets qtxml
 
-This is what will be installed by default, you can select a subset of archives
-with ``--archives``.
-``--modules`` will list additional documentation modules that can be installed:
+This is what will be installed by default when you run ``aqt install-doc mac 6.6.1`` 
+without any other flags or arguments. 
+You can select a subset of archives with the ``--archives`` flag.
+The ``--modules`` flag will list additional documentation modules that can be installed:
 
 
 .. code-block:: console
