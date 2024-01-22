@@ -321,7 +321,7 @@ Installing Docs
 ---------------
 
 The :ref:`aqt list-doc <list-doc command>` command lists documentation
-archives for a given version by default:
+archives for a given Qt version:
 
 .. code-block:: console
 
