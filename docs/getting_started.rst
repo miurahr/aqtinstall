@@ -331,7 +331,8 @@ archives for a given Qt version:
 All of the above archives will be installed when you run ``aqt install-doc mac 6.6.1`` 
 without any other flags or arguments. 
 You can select a subset of them with the ``--archives`` flag.
-The ``--modules`` flag will list additional documentation modules that can be installed:
+
+The ``--modules`` flag lists additional documentation modules that can be installed:
 
 
 .. code-block:: console
