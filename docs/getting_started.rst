@@ -326,7 +326,11 @@ archives for a given Qt version:
 .. code-block:: console
 
     $ aqt list-doc mac 6.6.1
-    qdoc qmake qt5 qtassistant qtcmake qtconcurrent qtcore qtdbus qtdesigner qtdistancefieldgenerator qtdoc qtgui qthelp qtlabsplatform qtlinguist qtnetwork qtopengl qtplatformintegration qtprintsupport qtqml qtqmlcore qtqmlmodels qtqmltest qtqmlworkerscript qtqmlxmllistmodel qtquick qtquickcontrols qtquickdialogs qtsql qtsvg qttestlib qtuitools qtwaylandcompositor qtwidgets qtxml
+    qdoc qmake qt5 qtassistant qtcmake qtconcurrent qtcore qtdbus qtdesigner
+    qtdistancefieldgenerator qtdoc qtgui qthelp qtlabsplatform qtlinguist qtnetwork
+    qtopengl qtplatformintegration qtprintsupport qtqml qtqmlcore qtqmlmodels qtqmltest
+    qtqmlworkerscript qtqmlxmllistmodel qtquick qtquickcontrols qtquickdialogs qtsql
+    qtsvg qttestlib qtuitools qtwaylandcompositor qtwidgets qtxml
 
 All of the above archives will be installed when you run ``aqt install-doc mac 6.6.1`` 
 without any other flags or arguments. 
