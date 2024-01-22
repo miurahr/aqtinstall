@@ -339,7 +339,7 @@ The ``--modules`` flag will list additional documentation modules that can be in
     $ aqt list-doc mac 6.6.1 --modules
     qt3d qt5compat qtactiveqt qtbluetooth qtcharts qtdatavis3d qtgraphs qtgrpc qthttpserver qtimageformats qtlocation qtlottie qtmultimedia qtnetworkauth qtnfc qtpdf qtpositioning qtquick3d qtquick3dphysics qtquickeffectmaker qtquicktimeline qtremoteobjects qtscxml qtsensors qtserialbus qtserialport qtshadertools qtspeech qtvirtualkeyboard qtwebchannel qtwebengine qtwebsockets qtwebview
 
-``The --archives`` and ``--modules`` flags can be used together.
+The ``--archives`` and ``--modules`` flags can be used together.
 For example, to only install the docs for ``qtquick`` and ``qt3d``,
 use the :ref:`aqt install-doc <install-doc command>` command like this:
 
