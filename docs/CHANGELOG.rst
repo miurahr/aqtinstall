@@ -17,6 +17,9 @@ Deprecated
 ----------
 * Drop support for python 3.7
 
+`v3.1.11`_ (28, Nov. 2023)
+==========================
+
 Fixed
 -----
 - Patch ``*.prl`` and ``*.pc`` for mingw (#640, #739)
@@ -322,7 +325,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.10...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.11...HEAD
+.. _v3.1.11: https://github.com/miurahr/aqtinstall/compare/v3.1.10...v3.1.11
 .. _v3.1.10: https://github.com/miurahr/aqtinstall/compare/v3.1.9...v3.1.10
 .. _v3.1.9: https://github.com/miurahr/aqtinstall/compare/v3.1.8...v3.1.9
 .. _v3.1.8: https://github.com/miurahr/aqtinstall/compare/v3.1.7...v3.1.8
