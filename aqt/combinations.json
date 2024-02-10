@@ -311,6 +311,72 @@
           "qtwebview"
         ],
         "qt_version": "6.6"
+      },
+      {
+        "modules": [
+          "debug_info",
+          "qt3d",
+          "qt3d.debug_information",
+          "qt5compat",
+          "qtcharts",
+          "qtcharts.debug_information",
+          "qtconnectivity",
+          "qtconnectivity.debug_information",
+          "qtdatavis3d",
+          "qtdatavis3d.debug_information",
+          "qtgraphs",
+          "qtgraphs.debug_information",
+          "qtgrpc",
+          "qtgrpc.debug_information",
+          "qthttpserver",
+          "qthttpserver.debug_information",
+          "qtimageformats",
+          "qtimageformats.debug_information",
+          "qtlanguageserver",
+          "qtlanguageserver.debug_information",
+          "qtlocation",
+          "qtlocation.debug_information",
+          "qtlottie",
+          "qtlottie.debug_information",
+          "qtmultimedia",
+          "qtmultimedia.debug_information",
+          "qtnetworkauth",
+          "qtnetworkauth.debug_information",
+          "qtpdf",
+          "qtpositioning",
+          "qtpositioning.debug_information",
+          "qtquick3d",
+          "qtquick3dphysics",
+          "qtquick3dphysics.debug_information",
+          "qtquickeffectmaker",
+          "qtquickeffectmaker.debug_information",
+          "qtquicktimeline",
+          "qtremoteobjects",
+          "qtremoteobjects.debug_information",
+          "qtscxml",
+          "qtscxml.debug_information",
+          "qtsensors",
+          "qtsensors.debug_information",
+          "qtserialbus",
+          "qtserialbus.debug_information",
+          "qtserialport",
+          "qtserialport.debug_information",
+          "qtshadertools",
+          "qtspeech",
+          "qtspeech.debug_information",
+          "qtvirtualkeyboard",
+          "qtvirtualkeyboard.debug_information",
+          "qtwaylandcompositor",
+          "qtwebchannel",
+          "qtwebchannel.debug_information",
+          "qtwebengine",
+          "qtwebengine.debug_information",
+          "qtwebsockets",
+          "qtwebsockets.debug_information",
+          "qtwebview",
+          "qtwebview.debug_information"
+        ],
+        "qt_version": "6.7"
       }
     ],
     "new_archive": [
@@ -360,6 +426,11 @@
       },
       {
         "arch": "gcc_64",
+        "os_name": "linux",
+        "target": "desktop"
+      },
+      {
+        "arch": "linux_gcc_64",
         "os_name": "linux",
         "target": "desktop"
       },
@@ -495,6 +566,11 @@
       },
       {
         "arch": "win32_msvc2019",
+        "os_name": "windows",
+        "target": "desktop"
+      },
+      {
+        "arch": "win64_llvm_mingw",
         "os_name": "windows",
         "target": "desktop"
       },
@@ -892,6 +968,12 @@
         "tool_name": "tools_ifw"
       },
       {
+        "arch": "qt.tools.win64_llvm_mingw1706",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_llvm_mingw1706"
+      },
+      {
         "arch": "qt.tools.maintenance",
         "os_name": "windows",
         "target": "desktop",
@@ -956,6 +1038,12 @@
         "os_name": "windows",
         "target": "desktop",
         "tool_name": "tools_mingw"
+      },
+      {
+        "arch": "qt.tools.win64_mingw1310",
+        "os_name": "windows",
+        "target": "desktop",
+        "tool_name": "tools_mingw1310"
       },
       {
         "arch": "qt.tools.win64_mingw900",
@@ -1203,7 +1291,8 @@
       "6.5.2",
       "6.5.3",
       "6.6.0",
-      "6.6.1"
+      "6.6.1",
+      "6.7.0"
     ]
   }
 ]
