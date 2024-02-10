@@ -286,18 +286,15 @@ class TableMetadata(ABC):
 
     @property
     @abstractmethod
-    def short_heading_keys(self) -> Iterable[str]:
-        ...
+    def short_heading_keys(self) -> Iterable[str]: ...
 
     @property
     @abstractmethod
-    def long_heading_keys(self) -> Iterable[str]:
-        ...
+    def long_heading_keys(self) -> Iterable[str]: ...
 
     @property
     @abstractmethod
-    def name_heading(self) -> str:
-        ...
+    def name_heading(self) -> str: ...
 
     def __format__(self, format_spec: str) -> str:
         short = False
