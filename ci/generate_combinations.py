@@ -43,6 +43,8 @@ def iter_arches() -> Generator[dict, None, None]:
     archive_ids = list(iter_archive_ids(category="qt"))
     for archive_id in tqdm(archive_ids):
         for version in ("latest", "6.5.3", "6.2.4", "5.15.2", "5.13.2", "5.9.9"):
+            if archive_id.target == "winrt" and (version == "latest" or version.startswith("6")):
+                continue
             for arch_name in MetadataFactory(archive_id, architectures_ver=version).getList():
                 yield {
                     "os_name": archive_id.host,
