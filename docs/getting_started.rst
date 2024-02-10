@@ -238,7 +238,13 @@ give you a sense of how to accomplish something more complicated.
 Perhaps you want to install all modules except ``qtnetworkauth``; you could write a script
 that removes ``qtnetworkauth`` from the output of :ref:`aqt list-qt <list-qt command>`,
 and pipe that into :ref:`aqt install-qt <qt installation command>`.
-This exercise is left to the reader.
+For example: 
+
+.. code-block:: console
+
+    $ aqt install-qt windows desktop 5.15.2 win64_mingw81 \
+        -m $(for mod in $(aqt list-qt windows desktop --modules 5.15.2 win64_mingw81); \
+        do [[ "$mod" != "qtnetworkauth" ]] && echo -n "$mod "; done)
 
 
 Installing Qt for Android
