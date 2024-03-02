@@ -206,7 +206,7 @@ def repository_path_for_os(os_name: str, arch: str) -> str:
         return os_name + "_x64"
 
 
-def repository_paths_for_os(os_name: str, version: Optional[Version] = None) -> tuple[str]:
+def repository_paths_for_os(os_name: str, version: Optional[Version] = None) -> Tuple[str, ...]:
     if os_name == "windows":
         return ("windows_x86",)
     elif os_name == "linux" and (version is None or version >= Version("6.7.0")):
@@ -814,7 +814,9 @@ class MetadataFactory:
         )
         return f"{version.major}{version.minor}{patch}"
 
-    def _fetch_module_metadata(self, folder: str, version : Optional[Version] = None, predicate: Optional[Callable[[Element], bool]] = None):
+    def _fetch_module_metadata(
+        self, folder: str, version: Optional[Version] = None, predicate: Optional[Callable[[Element], bool]] = None
+    ):
         xmls = (
             self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
             for rest_of_url in (posixpath.join(url, folder, "Updates.xml") for url in self.archive_id.to_urls(version))

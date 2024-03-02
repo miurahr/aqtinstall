@@ -261,9 +261,12 @@ class Cli:
         if arch is not None and arch != "":
             return arch
         if os_name == "linux" and target == "desktop":
-            if Version(qt_version_or_spec) >= Version("6.7.0"):
-                return "linux_gcc_64"
-            else:
+            try:
+                if Version(qt_version_or_spec) >= Version("6.7.0"):
+                    return "linux_gcc_64"
+                else:
+                    return "gcc_64"
+            except ValueError:
                 return "gcc_64"
         elif os_name == "mac" and target == "desktop":
             return "clang_64"
