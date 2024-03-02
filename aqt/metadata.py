@@ -197,6 +197,24 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
     raise ValueError("Invalid version string '{}'".format(qt_ver))
 
 
+def repository_path_for_os(os_name: str, arch: str) -> str:
+    if os_name == "windows":
+        return "windows_x86"
+    elif os_name == "linux" and arch == "linux_gcc_arm64":
+        return "linux_arm64"
+    else:
+        return os_name + "_x64"
+
+
+def repository_paths_for_os(os_name: str, version: Optional[Version] = None) -> tuple[str]:
+    if os_name == "windows":
+        return ("windows_x86",)
+    elif os_name == "linux" and (version is None or version >= Version("6.7.0")):
+        return ("linux_x64", "linux_arm64")
+    else:
+        return (os_name + "_x64",)
+
+
 class ArchiveId:
     CATEGORIES = ("tools", "qt")
     HOSTS = ("windows", "mac", "linux")
@@ -228,12 +246,14 @@ class ArchiveId:
     def is_tools(self) -> bool:
         return self.category == "tools"
 
-    def to_url(self) -> str:
-        return "online/qtsdkrepository/{os}{arch}/{target}/".format(
-            os=self.host,
-            arch="_x86" if self.host == "windows" else "_x64",
-            target=self.target,
-        )
+    def to_urls(self, version: Optional[Version] = None) -> List[str]:
+        return [
+            "online/qtsdkrepository/{os_path}/{target}/".format(
+                os_path=os_path,
+                target=self.target,
+            )
+            for os_path in repository_paths_for_os(self.host, version)
+        ]
 
     def to_folder(self, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
         return "{category}{major}_{ver}{ext}".format(
@@ -603,7 +623,7 @@ class MetadataFactory:
         for extension in self.archive_id.all_extensions(version):
             modules: Dict[str, Dict[str, str]] = {}
             try:
-                modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension))
+                modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension), version)
             except ArchiveDownloadError as e:
                 if extension == "":
                     raise
@@ -628,8 +648,11 @@ class MetadataFactory:
         def filter_by(ver: Version, ext: str) -> bool:
             return (self.spec is None or ver in self.spec) and ext == extension
 
-        versions_extensions = self.get_versions_extensions(
-            self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
+        versions_extensions = itertools.chain.from_iterable(
+            (
+                self.get_versions_extensions(self.fetch_http(url, False), self.archive_id.category)
+                for url in self.archive_id.to_urls()
+            )
         )
         versions = sorted([ver for ver, ext in versions_extensions if ver is not None and filter_by(ver, ext)])
         grouped = cast(Iterable[Tuple[int, Iterable[Version]]], itertools.groupby(versions, lambda version: version.minor))
@@ -639,8 +662,12 @@ class MetadataFactory:
         return self.fetch_versions(ext).latest()
 
     def fetch_tools(self) -> List[str]:
-        html_doc = self.fetch_http(self.archive_id.to_url(), False)
-        return list(self.iterate_folders(html_doc, self.base_url, filter_category="tools"))
+        html_docs = [self.fetch_http(url, False) for url in self.archive_id.to_urls()]
+        return list(
+            itertools.chain.from_iterable(
+                (self.iterate_folders(html_doc, self.base_url, filter_category="tools") for html_doc in html_docs)
+            )
+        )
 
     def fetch_tool_modules(self, tool_name: str) -> List[str]:
         tool_data = self._fetch_module_metadata(tool_name)
@@ -787,13 +814,20 @@ class MetadataFactory:
         )
         return f"{version.major}{version.minor}{patch}"
 
-    def _fetch_module_metadata(self, folder: str, predicate: Optional[Callable[[Element], bool]] = None):
-        rest_of_url = posixpath.join(self.archive_id.to_url(), folder, "Updates.xml")
-        xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
-        return xml_to_modules(
-            xml,
-            predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
+    def _fetch_module_metadata(self, folder: str, version : Optional[Version] = None, predicate: Optional[Callable[[Element], bool]] = None):
+        xmls = (
+            self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
+            for rest_of_url in (posixpath.join(url, folder, "Updates.xml") for url in self.archive_id.to_urls(version))
         )
+        modules: Dict[str, Dict[str, str]] = {}
+        for xml in xmls:
+            modules.update(
+                xml_to_modules(
+                    xml,
+                    predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
+                )
+            )
+        return modules
 
     def fetch_modules(self, version: Version, arch: str) -> List[str]:
         """Returns list of modules"""
@@ -801,7 +835,7 @@ class MetadataFactory:
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension))
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension), version)
 
         def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
             _match = pattern.match(name)
@@ -847,7 +881,7 @@ class MetadataFactory:
         def matches_arch(element: Element) -> bool:
             return bool(pattern.match(MetadataFactory.require_text(element, "Name")))
 
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension), matches_arch)
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension), version, matches_arch)
         m: Dict[str, Dict[str, str]] = {}
         for key, value in modules_meta.items():
             match = pattern.match(key)
@@ -864,7 +898,7 @@ class MetadataFactory:
             cmd_type in ("doc", "examples") and self.archive_id.target == "desktop"
         ), "Internal misuse of fetch_modules_sde"
         qt_ver_str = self._get_qt_version_str(version)
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, "src_doc_examples"))
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, "src_doc_examples"), version)
         # pattern: Match all names "qt.qt5.12345.doc.(\w+)
         pattern = re.compile(r"^qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\." + cmd_type + r"\.(.+)$")
 
@@ -902,7 +936,7 @@ class MetadataFactory:
         predicate = no_modules if not modules else all_modules if "all" in modules else specify_modules
         try:
             mod_metadata = self._fetch_module_metadata(
-                self.archive_id.to_folder(qt_version_str, extension), predicate=predicate
+                self.archive_id.to_folder(qt_version_str, extension), version, predicate=predicate
             )
         except (AttributeError, ValueError) as e:
             raise ArchiveListError(f"Downloaded metadata is corrupted. {e}") from e
