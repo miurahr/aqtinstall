@@ -206,10 +206,10 @@ def repository_path_for_os(os_name: str, arch: str) -> str:
         return os_name + "_x64"
 
 
-def repository_paths_for_os(os_name: str, version: Optional[Version] = None) -> Tuple[str, ...]:
+def repository_paths_for_os(os_name: str, target: str, version: Optional[Version] = None) -> Tuple[str, ...]:
     if os_name == "windows":
         return ("windows_x86",)
-    elif os_name == "linux" and (version is None or version >= Version("6.7.0")):
+    elif os_name == "linux" and target == "desktop" and (version is None or version >= Version("6.7.0")):
         return ("linux_x64", "linux_arm64")
     else:
         return (os_name + "_x64",)
@@ -252,7 +252,7 @@ class ArchiveId:
                 os_path=os_path,
                 target=self.target,
             )
-            for os_path in repository_paths_for_os(self.host, version)
+            for os_path in repository_paths_for_os(self.host, self.target, version)
         ]
 
     def to_folder(self, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
