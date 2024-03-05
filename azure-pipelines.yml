@@ -53,3 +53,15 @@ jobs:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.linux'] ]
   steps:
     - template: ci/steps.yml
+
+- job: Linux ARM64
+  dependsOn: MatricesGenerator
+  pool:
+    vmImage: 'ubuntu-22.04'
+  container:
+    image: ubuntu:22.04
+    options: --platform linux/arm64
+  strategy:
+    matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.linux_arm64'] ]
+  steps:
+    - template: ci/steps.yml

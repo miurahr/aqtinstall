@@ -387,7 +387,7 @@ class QtRepoProperty:
             return QtRepoProperty.default_mac_desktop_arch_dir(version)
         elif host == "linux" and arch in ("gcc_64", "linux_gcc_64"):
             return "gcc_64"
-        elif host == "linux" and arch == "linux_gcc_arm64":
+        elif host == "linux_arm64" and arch == "linux_gcc_arm64":
             return "gcc_arm64"
         else:
             return arch
@@ -936,7 +936,12 @@ class MetadataFactory:
     def fetch_default_desktop_arch(self, version: Version, is_msvc: bool = False) -> str:
         assert self.archive_id.target == "desktop", "This function is meant to fetch desktop architectures"
         if self.archive_id.host == "linux":
-            return "gcc_64"
+            if version >= Version("6.7.0"):
+                return "linux_gcc_64"
+            else:
+                return "gcc_64"
+        elif self.archive_id.host == "linux_arm64":
+            return "linux_gcc_arm64"
         elif self.archive_id.host == "mac":
             return "clang_64"
         elif self.archive_id.host == "windows" and is_msvc:

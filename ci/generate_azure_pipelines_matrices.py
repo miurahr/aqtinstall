@@ -92,11 +92,13 @@ python_versions = ["3.9", "3.11", "3.12"]
 qt_versions = ["5.12.12", "5.15.14", "6.5.3"]
 
 linux_build_jobs = []
+linux_arm64_build_jobs = []
 mac_build_jobs = []
 windows_build_jobs = []
 
 all_platform_build_jobs = [
     PlatformBuildJobs("linux", linux_build_jobs),
+    PlatformBuildJobs("linux_arm64", linux_arm64_build_jobs),
     PlatformBuildJobs("mac", mac_build_jobs),
     PlatformBuildJobs("windows", windows_build_jobs),
 ]
@@ -106,6 +108,7 @@ for qt_version in qt_versions:
     linux_build_jobs.append(
         BuildJob("install-qt", qt_version, "linux", "desktop", "gcc_64", "gcc_64")
     )
+linux_arm64_build_jobs.append(BuildJob("install-qt", "6.7.0", "linux_arm64", "desktop", "linux_gcc_arm64", "gcc_arm64"))
 
 # Mac Desktop
 for qt_version in qt_versions:
@@ -368,32 +371,36 @@ windows_build_jobs.extend(
 )
 
 # Test binary patch of qmake
-linux_build_jobs.extend(
-    [
-        # New output dir is shorter than the default value; qmake could fail to
-        # locate prefix dir if the value is patched wrong
-        BuildJob(
-            "install-qt",
-            "5.12.11",
-            "linux",
-            "desktop",
-            "gcc_64",
-            "gcc_64",
-            output_dir="/t/Q",
-        ),
-        # New output dir is longer than the default value.
-        # This case is meant to work without any bugfix; if this fails, the test is setup wrong
-        BuildJob(
-            "install-qt",
-            "5.12.11",
-            "linux",
-            "desktop",
-            "gcc_64",
-            "gcc_64",
-            output_dir="/some/super/long/arbitrary/path/to" * 5,
-        ),
-    ]
-)
+for lst, os_name, version, arch, arch_dir in (
+    (linux_build_jobs, "linux", "5.12.11", "gcc_64", "gcc_64"),
+    (linux_arm64_build_jobs, "linux_arm64", "6.7.0", "linux_gcc_arm64", "gcc_arm64"),
+):
+    lst.extend(
+        [
+            # New output dir is shorter than the default value; qmake could fail to
+            # locate prefix dir if the value is patched wrong
+            BuildJob(
+                "install-qt",
+                version,
+                os_name,
+                "desktop",
+                arch,
+                arch_dir,
+                output_dir="/t/Q",
+            ),
+            # New output dir is longer than the default value.
+            # This case is meant to work without any bugfix; if this fails, the test is setup wrong
+            BuildJob(
+                "install-qt",
+                version,
+                os_name,
+                "desktop",
+                arch,
+                arch_dir,
+                output_dir="/some/super/long/arbitrary/path/to" * 5,
+            ),
+        ]
+    )
 
 qt_creator_bin_path = "./Tools/QtCreator/bin/"
 qt_creator_mac_bin_path = "./Qt Creator.app/Contents/MacOS/"
@@ -479,6 +486,9 @@ for platform_build_job in all_platform_build_jobs:
 print("Setting Variables below")
 print(
     f"##vso[task.setVariable variable=linux;isOutput=true]{json.dumps(matrices['linux'])}"
+)
+print(
+    f"##vso[task.setVariable variable=linux_arm64;isOutput=true]{json.dumps(matrices['linux_arm64'])}"
 )
 print(
     f"##vso[task.setVariable variable=windows;isOutput=true]{json.dumps(matrices['windows'])}"
