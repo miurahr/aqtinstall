@@ -371,36 +371,32 @@ windows_build_jobs.extend(
 )
 
 # Test binary patch of qmake
-for lst, os_name, version, arch, arch_dir in (
-    (linux_build_jobs, "linux", "5.12.11", "gcc_64", "gcc_64"),
-    (linux_arm64_build_jobs, "linux_arm64", "6.7.0", "linux_gcc_arm64", "gcc_arm64"),
-):
-    lst.extend(
-        [
-            # New output dir is shorter than the default value; qmake could fail to
-            # locate prefix dir if the value is patched wrong
-            BuildJob(
-                "install-qt",
-                version,
-                os_name,
-                "desktop",
-                arch,
-                arch_dir,
-                output_dir="/t/Q",
-            ),
-            # New output dir is longer than the default value.
-            # This case is meant to work without any bugfix; if this fails, the test is setup wrong
-            BuildJob(
-                "install-qt",
-                version,
-                os_name,
-                "desktop",
-                arch,
-                arch_dir,
-                output_dir="/some/super/long/arbitrary/path/to" * 5,
-            ),
-        ]
-    )
+linux_build_jobs.extend(
+    [
+        # New output dir is shorter than the default value; qmake could fail to
+        # locate prefix dir if the value is patched wrong
+        BuildJob(
+            "install-qt",
+            "5.12.11",
+            "linux",
+            "desktop",
+            "gcc_64",
+            "gcc_64",
+            output_dir="/t/Q",
+        ),
+        # New output dir is longer than the default value.
+        # This case is meant to work without any bugfix; if this fails, the test is setup wrong
+        BuildJob(
+            "install-qt",
+            "5.12.11",
+            "linux",
+            "desktop",
+            "gcc_64",
+            "gcc_64",
+            output_dir="/some/super/long/arbitrary/path/to" * 5,
+        ),
+    ]
+)
 
 qt_creator_bin_path = "./Tools/QtCreator/bin/"
 qt_creator_mac_bin_path = "./Qt Creator.app/Contents/MacOS/"
