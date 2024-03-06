@@ -37,6 +37,10 @@ To use ``aqt`` to install Qt, you will need to tell ``aqt`` four things:
 Keep in mind that Qt for IOS is only available on Mac OS, and Qt for WinRT is
 only available on Windows.
 
+In current versions of Qt, mac binaries are universal.
+As of Qt 6.7.0, Linux desktop now supports the arm64 architecture.
+This is implemented as a new host type - ``linux`` is amd64, ``linux_arm64`` is arm64.
+
 To find out what versions of Qt are available, you can use the :ref:`aqt list-qt command <list-qt command>`.
 This command will print all versions of Qt available for Windows Desktop:
 
