@@ -29,7 +29,7 @@ Some older operating systems may require you to specify Python version 3, like t
 
 To use ``aqt`` to install Qt, you will need to tell ``aqt`` four things:
 
-1. The host operating system (windows, mac, or linux)
+1. The host operating system (windows, mac, linux, or linux_arm64)
 2. The target SDK (desktop, android, ios, or winrt)
 3. The version of Qt you would like to install
 4. The target architecture
@@ -99,6 +99,12 @@ instead of an explicit version:
 
     $ aqt install-qt windows desktop 6.2 win64_mingw81
 
+As of Qt 6.7.0, arm64 architecture is now supported for linux desktop.
+It is implemented using both a different host (``linux_arm64``) and architecture (``linux_gcc_arm64``).
+
+.. code-block:: console
+
+    $ aqt install-qt linux_arm64 desktop 6.7.0 linux_gcc_arm64
 
 External 7-zip extractor
 ------------------------
@@ -458,7 +464,7 @@ probably the compiler you want to install (see `long_modules explanation`_).
 Now let's install ``mingw``, using the :ref:`aqt install-tool <tools installation command>` command.
 This command receives four parameters:
 
-1. The host operating system (windows, mac, or linux)
+1. The host operating system (windows, mac, linux, or linux_arm64)
 2. The target SDK (desktop, android, ios, or winrt)
 3. The name of the tool (this is ``tools_mingw`` in our case)
 4. (Optional) The tool variant name. We saw a list of these when we ran

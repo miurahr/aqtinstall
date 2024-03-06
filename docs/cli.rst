@@ -54,7 +54,7 @@ List available versions of Qt, targets, modules, and architectures.
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: target
 
@@ -177,7 +177,7 @@ List source archives available for installation using the `install-src command`_
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: Qt version
 
@@ -217,7 +217,7 @@ installation using the `install-doc command`_, with the ``--archives`` option.
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: Qt version
 
@@ -262,7 +262,7 @@ installation using the `install-example command`_, with the ``--archives`` optio
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: Qt version
 
@@ -300,7 +300,7 @@ List available tools
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: target
 
@@ -502,7 +502,7 @@ There are various combinations to accept according to Qt version.
 
 .. describe:: host
 
-    linux, windows or mac. The operating system on which the Qt development tools will run.
+    linux, linux_arm64, windows or mac. The operating system on which the Qt development tools will run.
 
 .. describe:: target
 
@@ -533,7 +533,9 @@ There are various combinations to accept according to Qt version.
 
    The compiler architecture for which you are developing. Options:
 
-   * gcc_64 for linux desktop
+   * gcc_64 or linux_gcc_64 for linux desktop
+
+   * linux_gcc_arm64 for linux_arm64 desktop
 
    * clang_64 for mac desktop
 
@@ -587,7 +589,7 @@ Install Qt source code for the specified version and target.
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: target
 
@@ -647,7 +649,7 @@ Install Qt documentation for the specified version and target.
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: target
 
@@ -701,7 +703,7 @@ Install Qt examples for the specified version and target.
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: target
 
@@ -753,7 +755,7 @@ Install tools like QtIFW, mingw, Cmake, Conan, and vcredist.
 
 .. describe:: host
 
-    linux, windows or mac
+    linux, linux_arm64, windows or mac
 
 .. describe:: target
 
@@ -802,8 +804,14 @@ Example: Installing the newest LTS version of Qt 5.12:
 .. code-block:: console
 
     pip install aqtinstall
-    sudo aqt install-qt linux desktop 5.12 win64_mingw73
+    sudo aqt install-qt linux desktop 5.12 gcc_64
 
+Example: Installing the newest LTS version of Qt 6.7 for linux arm64:
+
+.. code-block:: console
+
+    pip install aqtinstall
+    sudo aqt install-qt linux_arm64 desktop 6.7
 
 Example: Installing Android (armv7) Qt 5.13.2:
 
