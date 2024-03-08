@@ -1,0 +1,15 @@
+{
+  "qt": {
+    "qt": [
+      "6.7.0"
+    ],
+    "preview": [
+    ]
+  },
+  "tools": [
+    "tools_maintenance",
+    "tools_ifw",
+    "tools_cmake",
+    "sdktool"
+  ]
+}

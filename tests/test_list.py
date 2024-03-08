@@ -128,6 +128,7 @@ def spec_regex():
         ("windows", "winrt", "windows-winrt.html", "windows-winrt-expect.json"),
         ("linux", "android", "linux-android.html", "linux-android-expect.json"),
         ("linux", "desktop", "linux-desktop.html", "linux-desktop-expect.json"),
+        ("linux_arm64", "desktop", "linux_arm64-desktop.html", "linux_arm64-desktop-expect.json"),
         ("mac", "android", "mac-android.html", "mac-android-expect.json"),
         ("mac", "desktop", "mac-desktop.html", "mac-desktop-expect.json"),
         ("mac", "ios", "mac-ios.html", "mac-ios-expect.json"),

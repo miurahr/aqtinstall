@@ -92,11 +92,13 @@ python_versions = ["3.9", "3.11", "3.12"]
 qt_versions = ["5.12.12", "5.15.14", "6.5.3"]
 
 linux_build_jobs = []
+linux_arm64_build_jobs = []
 mac_build_jobs = []
 windows_build_jobs = []
 
 all_platform_build_jobs = [
     PlatformBuildJobs("linux", linux_build_jobs),
+    PlatformBuildJobs("linux_arm64", linux_arm64_build_jobs),
     PlatformBuildJobs("mac", mac_build_jobs),
     PlatformBuildJobs("windows", windows_build_jobs),
 ]
@@ -106,6 +108,7 @@ for qt_version in qt_versions:
     linux_build_jobs.append(
         BuildJob("install-qt", qt_version, "linux", "desktop", "gcc_64", "gcc_64")
     )
+linux_arm64_build_jobs.append(BuildJob("install-qt", "6.7.0", "linux_arm64", "desktop", "linux_gcc_arm64", "gcc_arm64"))
 
 # Mac Desktop
 for qt_version in qt_versions:
@@ -479,6 +482,9 @@ for platform_build_job in all_platform_build_jobs:
 print("Setting Variables below")
 print(
     f"##vso[task.setVariable variable=linux;isOutput=true]{json.dumps(matrices['linux'])}"
+)
+print(
+    f"##vso[task.setVariable variable=linux_arm64;isOutput=true]{json.dumps(matrices['linux_arm64'])}"
 )
 print(
     f"##vso[task.setVariable variable=windows;isOutput=true]{json.dumps(matrices['windows'])}"

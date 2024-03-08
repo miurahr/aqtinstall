@@ -199,11 +199,12 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 class ArchiveId:
     CATEGORIES = ("tools", "qt")
-    HOSTS = ("windows", "mac", "linux")
+    HOSTS = ("windows", "mac", "linux", "linux_arm64")
     TARGETS_FOR_HOST = {
         "windows": ["android", "desktop", "winrt"],
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
+        "linux_arm64": ["desktop"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
     ALL_EXTENSIONS = {"", "wasm", "src_doc_examples", *EXTENSIONS_REQUIRED_ANDROID_QT6}
@@ -231,7 +232,7 @@ class ArchiveId:
     def to_url(self) -> str:
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
-            arch="_x86" if self.host == "windows" else "_x64",
+            arch=("_x86" if self.host == "windows" else ("" if self.host == "linux_arm64" else "_x64")),
             target=self.target,
         )
 
@@ -384,12 +385,16 @@ class QtRepoProperty:
                 return arch[6:]
         elif host == "mac" and arch == "clang_64":
             return QtRepoProperty.default_mac_desktop_arch_dir(version)
+        elif host == "linux" and arch in ("gcc_64", "linux_gcc_64"):
+            return "gcc_64"
+        elif host == "linux_arm64" and arch == "linux_gcc_arm64":
+            return "gcc_arm64"
         else:
             return arch
 
     @staticmethod
-    def default_linux_desktop_arch_dir() -> str:
-        return "gcc_64"
+    def default_linux_desktop_arch_dir() -> tuple[str, str]:
+        return ("gcc_64", "gcc_arm64")
 
     @staticmethod
     def default_win_msvc_desktop_arch_dir(_version: Version) -> str:
@@ -476,8 +481,11 @@ class QtRepoProperty:
             arch_path = installed_qt_version_dir / QtRepoProperty.default_mac_desktop_arch_dir(version)
             return arch_path if (arch_path / "bin/qmake").is_file() else None
         elif host == "linux":
-            arch_path = installed_qt_version_dir / QtRepoProperty.default_linux_desktop_arch_dir()
-            return arch_path if (arch_path / "bin/qmake").is_file() else None
+            for arch_dir in QtRepoProperty.default_linux_desktop_arch_dir():
+                arch_path = installed_qt_version_dir / arch_dir
+                if (arch_path / "bin/qmake").is_file():
+                    return arch_path
+            return None
         elif host == "windows" and is_msvc:
             arch_path = installed_qt_version_dir / QtRepoProperty.default_win_msvc_desktop_arch_dir(version)
             return arch_path if (arch_path / "bin/qmake.exe").is_file() else None
@@ -928,7 +936,12 @@ class MetadataFactory:
     def fetch_default_desktop_arch(self, version: Version, is_msvc: bool = False) -> str:
         assert self.archive_id.target == "desktop", "This function is meant to fetch desktop architectures"
         if self.archive_id.host == "linux":
-            return "gcc_64"
+            if version >= Version("6.7.0"):
+                return "linux_gcc_64"
+            else:
+                return "gcc_64"
+        elif self.archive_id.host == "linux_arm64":
+            return "linux_gcc_arm64"
         elif self.archive_id.host == "mac":
             return "clang_64"
         elif self.archive_id.host == "windows" and is_msvc:
