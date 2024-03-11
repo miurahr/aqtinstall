@@ -29,7 +29,7 @@ from defusedxml import ElementTree
 
 from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit
-from aqt.metadata import QtRepoProperty, Version
+from aqt.metadata import QtRepoProperty, Version, repository_path_for_os
 
 
 @dataclass
@@ -367,7 +367,7 @@ class QtArchives:
     def _append_depends_tool(self, arch, tool_name):
         os_target_folder = posixpath.join(
             "online/qtsdkrepository",
-            self.os_name + ("_x86" if self.os_name == "windows" else "_x64"),
+            repository_path_for_os(self.os_name, arch),
             self.target,
             tool_name,
         )
@@ -379,7 +379,7 @@ class QtArchives:
     def _get_archives_base(self, name, target_packages):
         os_target_folder = posixpath.join(
             "online/qtsdkrepository",
-            self.os_name + ("_x86" if self.os_name == "windows" else "_x64"),
+            repository_path_for_os(self.os_name, self.arch),
             self.target,
             # tools_ifw/
             name,
