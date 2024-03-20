@@ -50,6 +50,14 @@ def setup_settings():
                 r".*6\.1\.1.*clang_64.*mkspecs.*qconfig.pri.*"
             ),
         ),
+        (
+                TargetConfig("6.7.0", "desktop", "linux_gcc_64", "linux"),
+                re.compile(
+                    r"Updater caused an IO error: .*No such file or directory: "
+                    # '.*' wildcard used to match path separators on windows/*nix
+                    r".*6\.7\.0.*gcc_64.*mkspecs.*qconfig.pri.*"
+                ),
+        ),
     ),
 )
 def test_updater_update_license_io_error(monkeypatch, target_config: TargetConfig, expected_err_pattern: re.Pattern):
