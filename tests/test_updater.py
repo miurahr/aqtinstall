@@ -51,12 +51,12 @@ def setup_settings():
             ),
         ),
         (
-                TargetConfig("6.7.0", "desktop", "linux_gcc_64", "linux"),
-                re.compile(
-                    r"Updater caused an IO error: .*No such file or directory: "
-                    # '.*' wildcard used to match path separators on windows/*nix
-                    r".*6\.7\.0.*gcc_64.*mkspecs.*qconfig.pri.*"
-                ),
+            TargetConfig("6.7.0", "desktop", "linux_gcc_64", "linux"),
+            re.compile(
+                r"Updater caused an IO error: .*No such file or directory: "
+                # '.*' wildcard used to match path separators on windows/*nix
+                r".*6\.7\.0.*gcc_64.*mkspecs.*qconfig.pri.*"
+            ),
         ),
     ),
 )
