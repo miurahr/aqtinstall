@@ -384,6 +384,8 @@ class QtRepoProperty:
                 return arch[6:]
         elif host == "mac" and arch == "clang_64":
             return QtRepoProperty.default_mac_desktop_arch_dir(version)
+        elif host == "linux":
+            return QtRepoProperty.default_linux_desktop_arch_dir()
         else:
             return arch
 
