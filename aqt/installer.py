@@ -1079,7 +1079,7 @@ class Cli:
             # We only need to worry about the desktop directory for Qt6 mobile or wasm installs.
             return None, None
 
-        installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version, is_msvc=is_msvc)
+        installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, arch, base_path, version)
         if installed_desktop_arch_dir:
             # An acceptable desktop Qt is already installed, so don't do anything.
             self.logger.info(f"Found installed {host}-desktop Qt at {installed_desktop_arch_dir}")

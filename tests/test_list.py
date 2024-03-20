@@ -1202,17 +1202,17 @@ def test_select_default_mingw(monkeypatch, host: str, expected: Union[str, Excep
 
 
 @pytest.mark.parametrize(
-    "expected_result, installed_files",
+    "expected_result, arch, installed_files",
     (
-        ("mingw73_32", ["mingw73_32/bin/qmake.exe", "msvc2017/bin/qmake.exe"]),
-        (None, ["msvc2017/bin/qmake.exe"]),
-        (None, ["mingw73_win/bin/qmake.exe"]),  # Bad directory: mingw73_win does not fit the mingw naming convention
-        (None, ["mingw73_32/bin/qmake", "msvc2017/bin/qmake.exe"]),
-        ("mingw81_32", ["mingw73_32/bin/qmake.exe", "mingw81_32/bin/qmake.exe"]),
-        ("mingw73_64", ["mingw73_64/bin/qmake.exe", "mingw73_32/bin/qmake.exe"]),
+        ("mingw73_32", "mingw73_32", ["mingw73_32/bin/qmake.exe", "msvc2017/bin/qmake.exe"]),
+        (None, "win64_msvc2017", ["msvc2017/bin/qmake.exe"]),
+        (None, "mingw73_64", ["mingw73_win/bin/qmake.exe"]),  # Bad directory: mingw73_win does not fit the mingw naming convention
+        (None, "mingw73_32", ["mingw73_32/bin/qmake", "msvc2017/bin/qmake.exe"]),
+        ("mingw81_32", "mingw81_32", ["mingw73_32/bin/qmake.exe", "mingw81_32/bin/qmake.exe"]),
+        ("mingw73_64", "mingw73_64", ["mingw73_64/bin/qmake.exe", "mingw73_32/bin/qmake.exe"]),
     ),
 )
-def test_find_installed_qt_mingw_dir(expected_result: str, installed_files: List[str]):
+def test_find_installed_qt_mingw_dir(expected_result: str, arch: str, installed_files: List[str]):
     qt_ver = "6.3.0"
     host = "windows"
 
@@ -1224,5 +1224,5 @@ def test_find_installed_qt_mingw_dir(expected_result: str, installed_files: List
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("Mock installed file")
 
-        actual_result = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, Version(qt_ver))
+        actual_result = QtRepoProperty.find_installed_desktop_qt_dir(host, arch, base_path, Version(qt_ver))
         assert (actual_result.name if actual_result else None) == expected_result

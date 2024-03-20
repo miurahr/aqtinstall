@@ -372,6 +372,25 @@ class QtRepoProperty:
 
     @staticmethod
     def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
+        if host == "windows":
+            return QtRepoProperty.default_win_desktop_arch_dir(version, arch)
+        elif host == "mac" and arch == "clang_64":
+            return QtRepoProperty.default_mac_desktop_arch_dir(version, arch)
+        elif host == "linux":
+            return QtRepoProperty.default_linux_desktop_arch_dir(version, arch)
+        else:
+            return arch
+
+    @staticmethod
+    def default_linux_desktop_arch_dir(_version: Version, arch: str) -> str:
+        """_version is unused, but we expet it to matter for future releases"""
+        if arch == "x86_64" or arch.startswith("android"):
+            return "gcc_64"
+        return arch
+
+    @staticmethod
+    def default_win_desktop_arch_dir(_version: Version, arch: str) -> str:
+        """_version is unused, but we expect it to matter for future releases"""
         if arch.startswith("win64_mingw"):
             return arch[6:] + "_64"
         elif arch.startswith("win32_mingw"):
@@ -380,24 +399,16 @@ class QtRepoProperty:
             m = re.match(r"win\d{2}_(?P<msvc>msvc\d{4})_(?P<winrt>winrt_x\d{2})", arch)
             if m:
                 return f"{m.group('winrt')}_{m.group('msvc')}"
+            if "msvc" in arch:
+                return "msvc2019_64"
             else:
                 return arch[6:]
-        elif host == "mac" and arch == "clang_64":
-            return QtRepoProperty.default_mac_desktop_arch_dir(version)
         else:
+            # ex. android
             return arch
 
     @staticmethod
-    def default_linux_desktop_arch_dir() -> str:
-        return "gcc_64"
-
-    @staticmethod
-    def default_win_msvc_desktop_arch_dir(_version: Version) -> str:
-        """_version is unused, but we expect it to matter for future releases"""
-        return "msvc2019_64"
-
-    @staticmethod
-    def default_mac_desktop_arch_dir(version: Version) -> str:
+    def default_mac_desktop_arch_dir(version: Version, _arch: str) -> str:
         return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
 
     @staticmethod
@@ -467,7 +478,7 @@ class QtRepoProperty:
         return default_arch
 
     @staticmethod
-    def find_installed_desktop_qt_dir(host: str, base_path: Path, version: Version, is_msvc: bool = False) -> Optional[Path]:
+    def find_installed_desktop_qt_dir(host: str, arch: str, base_path: Path, version: Version) -> Optional[Path]:
         """
         Locates the default installed desktop qt directory, somewhere in base_path.
         """
@@ -476,11 +487,13 @@ class QtRepoProperty:
             arch_path = installed_qt_version_dir / QtRepoProperty.default_mac_desktop_arch_dir(version)
             return arch_path if (arch_path / "bin/qmake").is_file() else None
         elif host == "linux":
-            arch_path = installed_qt_version_dir / QtRepoProperty.default_linux_desktop_arch_dir()
+            arch_path = installed_qt_version_dir / QtRepoProperty.default_linux_desktop_arch_dir(version, arch)
             return arch_path if (arch_path / "bin/qmake").is_file() else None
-        elif host == "windows" and is_msvc:
-            arch_path = installed_qt_version_dir / QtRepoProperty.default_win_msvc_desktop_arch_dir(version)
+        elif host == "windows":
+            arch_path = installed_qt_version_dir / QtRepoProperty.default_win_desktop_arch_dir(version, arch)
             return arch_path if (arch_path / "bin/qmake.exe").is_file() else None
+        else:
+            return None
 
         def contains_qmake_exe(arch_path: Path) -> bool:
             return (arch_path / "bin/qmake.exe").is_file()
