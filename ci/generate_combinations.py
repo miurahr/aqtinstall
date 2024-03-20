@@ -42,7 +42,9 @@ def iter_arches() -> Generator[dict, None, None]:
     logger.info("Fetching arches")
     archive_ids = list(iter_archive_ids(category="qt"))
     for archive_id in tqdm(archive_ids):
-        for version in ("latest", "5.15.2", "5.13.2", "5.9.9"):
+        for version in ("latest", "6.5.3", "6.2.4", "5.15.2", "5.13.2", "5.9.9"):
+            if archive_id.target == "winrt" and (version == "latest" or version.startswith("6")):
+                continue
             for arch_name in MetadataFactory(archive_id, architectures_ver=version).getList():
                 yield {
                     "os_name": archive_id.host,
@@ -82,10 +84,12 @@ def iter_modules_for_qt_minor_groups(
 ) -> Generator[Dict, None, None]:
     logger.info("Fetching qt modules for {}/{}".format(host, target))
     for major, minor in tqdm(list(iter_qt_minor_groups(host, target))):
+        use_linux_gcc = (host == "linux" and arch == "gcc_64" and major == 6 and minor >= 7)
+        use_arch = "linux_gcc_64" if use_linux_gcc else arch
         yield {
             "qt_version": f"{major}.{minor}",
             "modules": MetadataFactory(
-                ArchiveId("qt", host, target), modules_query=MetadataFactory.ModulesQuery(f"{major}.{minor}.0", arch)
+                ArchiveId("qt", host, target), modules_query=MetadataFactory.ModulesQuery(f"{major}.{minor}.0", use_arch)
             ).getList(),
         }
 
