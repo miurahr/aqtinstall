@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Deprecated
+----------
+* Drop support for python 3.7
 
 `v3.1.12`_ (2, Mar. 2024)
 =========================

@@ -20,7 +20,7 @@ classifiers = [
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     "bs4",  # canonical name is beautifulsoup4
     "defusedxml",
@@ -174,7 +174,7 @@ markers = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py{37,38,39,310,311}, py39d, mprof, fil, mypy
+envlist = check, docs, py{38,39,310,311,312}, py39d, mprof, fil, mypy
 isolated_build = True
 
 [testenv]
@@ -248,4 +248,5 @@ python =
     3.9: py39, docs, check, mypy
     3.10: py310
     3.11: py311
+    3.12: py312
 """

@@ -8,7 +8,7 @@ Installation
 Requirements
 ------------
 
-- Minimum Python version:  3.7.5
+- Minimum Python version:  3.8.10
 
 - Dependencies: requests, py7zr, semantic_version, patch, texttable, bs4, defusedxml, humanize
 
