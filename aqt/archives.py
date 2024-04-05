@@ -377,9 +377,14 @@ class QtArchives:
         self._append_tool_update(os_target_folder, update_xml, arch, None)
 
     def _get_archives_base(self, name, target_packages):
+        os_name = self.os_name
+        if self.os_name == "windows":
+            os_name += "_x86"
+        elif os_name != "linux_arm64" and os_name != "all_os":
+            os_name += "_x64"
         os_target_folder = posixpath.join(
             "online/qtsdkrepository",
-            self.os_name + ("_x86" if self.os_name == "windows" else ("" if self.os_name == "linux_arm64" else "_x64")),
+            os_name,
             self.target,
             # tools_ifw/
             name,
