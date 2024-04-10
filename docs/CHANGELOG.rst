@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Added
+-----
+- Add support for arm64 architecture on linux desktop (#766)
 
 `v3.1.12`_ (2, Mar. 2024)
 =========================

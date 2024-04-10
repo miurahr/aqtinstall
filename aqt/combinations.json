@@ -440,6 +440,11 @@
         "target": "desktop"
       },
       {
+        "arch": "linux_gcc_arm64",
+        "os_name": "linux_arm64",
+        "target": "desktop"
+      },
+      {
         "arch": "wasm_32",
         "os_name": "linux",
         "target": "desktop"
