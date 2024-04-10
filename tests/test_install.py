@@ -1464,6 +1464,25 @@ def test_install_installer_archive_extraction_err(monkeypatch):
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
+        (
+            "install-qt linux_arm64 desktop 6.7 linux_gcc_arm64".split(),
+            "linux_arm64",
+            "desktop",
+            "6.7.0",
+            "linux_gcc_arm64",
+            "gcc_arm64",
+            "https://www.alt.qt.mirror.com",
+            "linux_arm64/desktop/qt6_670/Updates.xml",
+            [plain_qtbase_archive("qt.qt6.670.linux_gcc_arm64", "linux_gcc_arm64", host="linux_arm64")],
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Resolved spec '6\.7' to 6\.7\.0\n"
+                r"INFO    : Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-linux_arm64-linux_gcc_arm64\.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
     ),
 )
 def test_installer_passes_base_to_metadatafactory(
@@ -1491,7 +1510,13 @@ def test_installer_passes_base_to_metadatafactory(
 
     def mock_get_url(url: str, *args, **kwargs) -> str:
         # If we are fetching an index.html file, get it from tests/data/
-        if url == f"{base_url}/online/qtsdkrepository/{host}_x{'86' if host == 'windows' else '64'}/{target}/":
+        if host == "linux_arm64":
+            repo_dir = "linux_arm64"
+        elif host == "windows":
+            repo_dir = "windows_x86"
+        else:
+            repo_dir = f"{host}_x64"
+        if url == f"{base_url}/online/qtsdkrepository/{repo_dir}/{target}/":
             return (Path(__file__).parent / "data" / f"{host}-{target}.html").read_text("utf-8")
 
         # Intercept and check the base url, but only if it's not a hash.
@@ -1517,4 +1542,4 @@ def test_installer_passes_base_to_metadatafactory(
         sys.stdout.write(out)
         sys.stderr.write(err)
 
-        assert expect_out.match(err)
+        assert expect_out.match(err), err

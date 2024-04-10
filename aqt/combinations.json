@@ -318,6 +318,7 @@
           "qt3d",
           "qt3d.debug_information",
           "qt5compat",
+          "qt5compat.debug_information",
           "qtcharts",
           "qtcharts.debug_information",
           "qtconnectivity",
@@ -346,11 +347,13 @@
           "qtpositioning",
           "qtpositioning.debug_information",
           "qtquick3d",
+          "qtquick3d.debug_information",
           "qtquick3dphysics",
           "qtquick3dphysics.debug_information",
           "qtquickeffectmaker",
           "qtquickeffectmaker.debug_information",
           "qtquicktimeline",
+          "qtquicktimeline.debug_information",
           "qtremoteobjects",
           "qtremoteobjects.debug_information",
           "qtscxml",
@@ -362,11 +365,13 @@
           "qtserialport",
           "qtserialport.debug_information",
           "qtshadertools",
+          "qtshadertools.debug_information",
           "qtspeech",
           "qtspeech.debug_information",
           "qtvirtualkeyboard",
           "qtvirtualkeyboard.debug_information",
           "qtwaylandcompositor",
+          "qtwaylandcompositor.debug_information",
           "qtwebchannel",
           "qtwebchannel.debug_information",
           "qtwebengine",
@@ -432,6 +437,11 @@
       {
         "arch": "linux_gcc_64",
         "os_name": "linux",
+        "target": "desktop"
+      },
+      {
+        "arch": "linux_gcc_arm64",
+        "os_name": "linux_arm64",
         "target": "desktop"
       },
       {
@@ -1293,6 +1303,7 @@
       "6.6.0",
       "6.6.1",
       "6.6.2",
+      "6.6.3",
       "6.7.0"
     ]
   }
