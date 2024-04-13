@@ -393,7 +393,7 @@ class QtRepoProperty:
             return arch
 
     @staticmethod
-    def default_linux_desktop_arch_dir() -> tuple[str, str]:
+    def default_linux_desktop_arch_dir() -> Tuple[str, str]:
         return ("gcc_64", "gcc_arm64")
 
     @staticmethod
