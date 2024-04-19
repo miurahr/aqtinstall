@@ -677,11 +677,16 @@ class Cli:
         show_list(meta)
 
     def run_list_src_doc_examples(self, args: ListArgumentParser, cmd_type: str):
-        target = "desktop"  # The only valid target for src/doc/examples is "desktop"
+        target = "desktop"
         version = Cli._determine_qt_version(args.qt_version_spec, args.host, target, arch="")
+        if version >= Version("6.7.0"):
+            target = "qt"
+            host = "all_os"
+        else:
+            host = args.host
         is_fetch_modules: bool = getattr(args, "modules", False)
         meta = MetadataFactory(
-            archive_id=ArchiveId("qt", args.host, target),
+            archive_id=ArchiveId("qt", host, target),
             src_doc_examples_query=MetadataFactory.SrcDocExamplesQuery(cmd_type, version, is_fetch_modules),
         )
         show_list(meta)
