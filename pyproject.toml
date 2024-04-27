@@ -1,24 +1,24 @@
 [project]
 name = "aqtinstall"
-description = "Another unofficial Qt installer"
-license = {text = "MIT License"}
+description = "another unofficial qt installer"
+license = {text = "mit license"}
 authors = [
-    {name = "Hiroshi Miura", email = "miurahr@linux.com"},
+    {name = "hiroshi miura", email = "miurahr@linux.com"},
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Environment :: Console",
-    "Environment :: X11 Applications :: Qt",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: MacOS :: MacOS X",
-    "Operating System :: Microsoft :: Windows",
-    "Operating System :: POSIX",
-    "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python",
-    "Programming Language :: C++",
-    "Topic :: Software Development",
-    "Topic :: Software Development :: Libraries",
+    "development status :: 4 - beta",
+    "environment :: console",
+    "environment :: x11 applications :: qt",
+    "intended audience :: developers",
+    "license :: osi approved :: mit license",
+    "operating system :: macos :: macos x",
+    "operating system :: microsoft :: windows",
+    "operating system :: posix",
+    "operating system :: posix :: linux",
+    "programming language :: python",
+    "programming language :: c++",
+    "topic :: software development",
+    "topic :: software development :: libraries",
 ]
 requires-python = ">=3.7"
 dependencies = [
