@@ -17,9 +17,20 @@ Deprecated
 ----------
 * Drop support for python 3.7
 
+`v3.1.13`_ (13, Apr. 2024)
+==========================
+
 Added
 -----
 - Add support for arm64 architecture on linux desktop (#766)
+
+Changed
+-------
+- Add Qt 6.6.3 as known version (#773)
+
+Document
+--------
+- Add example command line that show combinations of sub-commands (#759)
 
 `v3.1.12`_ (2, Mar. 2024)
 =========================
@@ -347,7 +358,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.12...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.13...HEAD
+.. _v3.1.13: https://github.com/miurahr/aqtinstall/compare/v3.1.12...v3.1.13
 .. _v3.1.12: https://github.com/miurahr/aqtinstall/compare/v3.1.11...v3.1.12
 .. _v3.1.11: https://github.com/miurahr/aqtinstall/compare/v3.1.10...v3.1.11
 .. _v3.1.10: https://github.com/miurahr/aqtinstall/compare/v3.1.9...v3.1.10
