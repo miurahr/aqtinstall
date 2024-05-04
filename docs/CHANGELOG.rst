@@ -17,6 +17,20 @@ Deprecated
 ----------
 * Drop support for python 3.7
 
+`v3.1.15`_ (4, May 2024)
+========================
+
+Fixed
+-----
+* Fix unintentional broken pyproject.toml
+
+`v3.1.14`_ (27, Apr. 2024)
+==========================
+
+Fixed
+-----
+* Fix binary release CD provisioning
+
 `v3.1.13`_ (13, Apr. 2024)
 ==========================
 
@@ -358,7 +372,9 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.13...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.15...HEAD
+.. _v3.1.15: https://github.com/miurahr/aqtinstall/compare/v3.1.14...v3.1.15
+.. _v3.1.14: https://github.com/miurahr/aqtinstall/compare/v3.1.13...v3.1.14
 .. _v3.1.13: https://github.com/miurahr/aqtinstall/compare/v3.1.12...v3.1.13
 .. _v3.1.12: https://github.com/miurahr/aqtinstall/compare/v3.1.11...v3.1.12
 .. _v3.1.11: https://github.com/miurahr/aqtinstall/compare/v3.1.10...v3.1.11
