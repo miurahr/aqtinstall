@@ -29,7 +29,7 @@ from defusedxml import ElementTree
 
 from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit
-from aqt.metadata import QtRepoProperty, Version, SimpleSpec
+from aqt.metadata import QtRepoProperty, Version
 
 
 @dataclass
