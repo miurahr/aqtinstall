@@ -18,9 +18,9 @@ jobs:
         system: [
           {os: windows-latest, arch: x86, output_file: 'aqt_x86.exe', primary_artifact: '', secondary_artifact: 'aqt_x86.exe'},
           {os: windows-latest, arch: x64, output_file: 'aqt_x64.exe', primary_artifact: 'aqt.exe', secondary_artifact: 'aqt_x64.exe'},
-          {os: macOS-13, arch: x64, output_file: 'aqt_x64', primary_artifact: 'aqt-macos', secondary_artifact: 'aqt-macos_x64'}
+          {os: macOS-latest, arch: x64, output_file: 'aqt_x64', primary_artifact: 'aqt-macos', secondary_artifact: 'aqt-macos_x64'}
         ]
-        py: [3.12]
+        py: [3.9]
     defaults:
       run:
         shell: ${{ matrix.system.os == 'windows-latest' && 'pwsh' || 'bash' }} {0}
