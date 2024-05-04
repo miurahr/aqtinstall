@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2021 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2024 Hiroshi Miura <miurahr@linux.com>
 # Copyright (C) 2020, Aurélien Gâteau
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -481,6 +481,9 @@ class Cli:
         else:
             qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
+        if Version(qt_version) in SimpleSpec(">=6.7.0"):
+            os_name = "all_os"
+            target = "qt"
         if args.timeout is not None:
             timeout = (args.timeout, args.timeout)
         else:

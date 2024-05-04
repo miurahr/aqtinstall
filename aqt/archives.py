@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2022 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2024 Hiroshi Miura <miurahr@linux.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -29,7 +29,7 @@ from defusedxml import ElementTree
 
 from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit
-from aqt.metadata import QtRepoProperty, Version
+from aqt.metadata import QtRepoProperty, Version, SimpleSpec
 
 
 @dataclass
@@ -388,6 +388,18 @@ class QtArchives:
         update_xml_text = self._download_update_xml(update_xml_url)
         self._parse_update_xml(os_target_folder, update_xml_text, target_packages)
 
+    def _get_archives_doc(self, name, target_packages):
+        os_target_folder = posixpath.join(
+            "online/qtsdkrepository",
+            self.os_name
+            + ("" if self.os_name in ("all_os", "linux_arm64") else ("_x86" if self.os_name == "windows" else "_x64")),
+            self.target,
+            name,
+        )
+        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
+        update_xml_text = self._download_update_xml(update_xml_url)
+        self._parse_update_xml(os_target_folder, update_xml_text, target_packages)
+
     def _download_update_xml(self, update_xml_path):
         """Hook for unit test."""
         if not Settings.ignore_hash:
@@ -532,7 +544,7 @@ class SrcDocExamplesArchives(QtArchives):
         self.base = base
         self.logger = getLogger("aqt.archives")
         super(SrcDocExamplesArchives, self).__init__(
-            os_name,
+            self.os_name,
             target,
             version,
             arch=self.flavor,
@@ -556,6 +568,9 @@ class SrcDocExamplesArchives(QtArchives):
 
     def _module_name_suffix(self, module: str) -> str:
         return f"{self.flavor}.{module}"
+
+    def _get_archives(self):
+        self._get_archives_doc(f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}", self._target_packages())
 
     def get_target_config(self) -> TargetConfig:
         """Get target configuration.
