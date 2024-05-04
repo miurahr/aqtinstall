@@ -482,7 +482,7 @@ class Cli:
             qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
         # Override target/os for recent Qt
-        if Version(qt_version) >= Version("6.7.0"):
+        if Version(qt_version) in SimpleSpec(">=6.7.0"):
             target = "qt"
             os_name = "all_os"
         if args.timeout is not None:
