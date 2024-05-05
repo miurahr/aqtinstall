@@ -199,12 +199,13 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 class ArchiveId:
     CATEGORIES = ("tools", "qt")
-    HOSTS = ("windows", "mac", "linux", "linux_arm64")
+    HOSTS = ("windows", "mac", "linux", "linux_arm64", "all_os")
     TARGETS_FOR_HOST = {
         "windows": ["android", "desktop", "winrt"],
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
+        "all_os": ["qt"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
     ALL_EXTENSIONS = {"", "wasm", "src_doc_examples", *EXTENSIONS_REQUIRED_ANDROID_QT6}
@@ -232,7 +233,7 @@ class ArchiveId:
     def to_url(self) -> str:
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
-            arch=("_x86" if self.host == "windows" else ("" if self.host == "linux_arm64" else "_x64")),
+            arch=("_x86" if self.host == "windows" else ("" if self.host in ("linux_arm64", "all_os") else "_x64")),
             target=self.target,
         )
 
@@ -868,8 +869,9 @@ class MetadataFactory:
 
     def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
         """Returns list of modules for src/doc/examples"""
-        assert (
-            cmd_type in ("doc", "examples") and self.archive_id.target == "desktop"
+        assert cmd_type in ("doc", "examples") and self.archive_id.target in (
+            "desktop",
+            "qt",
         ), "Internal misuse of fetch_modules_sde"
         qt_ver_str = self._get_qt_version_str(version)
         modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, "src_doc_examples"))
@@ -885,8 +887,9 @@ class MetadataFactory:
 
     def fetch_archives_sde(self, cmd_type: str, version: Version) -> List[str]:
         """Returns list of archives for src/doc/examples"""
-        assert (
-            cmd_type in ("src", "doc", "examples") and self.archive_id.target == "desktop"
+        assert cmd_type in ("src", "doc", "examples") and self.archive_id.target in (
+            "desktop",
+            "qt",
         ), "Internal misuse of fetch_archives_sde"
         return self.fetch_archives(version, cmd_type, [], is_sde=True)
 
