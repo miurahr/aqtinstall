@@ -35,10 +35,10 @@ body:
       label: Operating System
       description: On what Operating System(s) do you observe the problem?
       multiple: true
-    options:
-      - "Linux/Unix"
-      - MacOS
-      - Windows
+      options:
+        - "Linux/Unix"
+        - MacOS
+        - Windows
     validations:
       required: true 
   - type: textarea
