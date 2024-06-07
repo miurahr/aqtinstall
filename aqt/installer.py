@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2021 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2024 Hiroshi Miura <miurahr@linux.com>
 # Copyright (C) 2020, Aurélien Gâteau
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -750,13 +750,13 @@ class Cli:
     def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
         install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
         install_tool_parser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
         )
         if not is_legacy:
             install_tool_parser.add_argument(
                 "target",
                 default=None,
-                choices=["desktop", "winrt", "android", "ios"],
+                choices=["wasm", "desktop", "winrt", "android", "ios"],
                 help="Target SDK.",
             )
         install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
@@ -809,7 +809,7 @@ class Cli:
         def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
             parser = subparsers.add_parser(cmd, description=desc)
             parser.add_argument(
-                "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+                "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
             )
             parser.add_argument(
                 "qt_version_spec",
@@ -859,13 +859,13 @@ class Cli:
             "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n",
         )
         list_parser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
         )
         list_parser.add_argument(
             "target",
             nargs="?",
             default=None,
-            choices=["desktop", "winrt", "android", "ios"],
+            choices=["desktop", "winrt", "android", "ios", "qt", "wasm"],
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
         list_parser.add_argument(
@@ -1034,18 +1034,18 @@ class Cli:
         if is_legacy:
             subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
         subparser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
         )
         if is_target_deprecated:
             subparser.add_argument(
                 "target",
-                choices=["desktop", "winrt", "android", "ios"],
+                choices=["desktop", "winrt", "android", "ios", "wasm"],
                 nargs="?",
                 help="Ignored. This parameter is deprecated and marked for removal in a future release. "
                 "It is present here for backwards compatibility.",
             )
         else:
-            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
+            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios", "wasm"], help="target sdk")
         if not is_legacy:
             subparser.add_argument(
                 "qt_version_spec",
@@ -1114,7 +1114,7 @@ class Cli:
             self.logger.info(f"Found installed {host}-desktop Qt at {installed_desktop_arch_dir}")
             return installed_desktop_arch_dir.name, None
 
-        default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version, is_msvc)
+        default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version, is_msvc, is_wasm)
         desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
         expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
 

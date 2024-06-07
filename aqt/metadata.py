@@ -206,7 +206,7 @@ class ArchiveId:
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
-        "all_os": ["qt"],
+        "all_os": ["android", "qt", "wasm"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
     ALL_EXTENSIONS = {"", "wasm", "src_doc_examples", *EXTENSIONS_REQUIRED_ANDROID_QT6}
@@ -232,6 +232,8 @@ class ArchiveId:
         return self.category == "tools"
 
     def to_url(self) -> str:
+        if self.host == "all_os":
+            return "online/qtsdkrepository/{host}/{target}/".format(host=self.host, target=self.target)
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
             arch=(
@@ -269,6 +271,8 @@ class ArchiveId:
             return [""]
 
     def __str__(self) -> str:
+        if self.host == "all_os":
+            return "{host}/{target}".format(host=self.host, target=self.target)
         return "{cat}/{host}/{target}".format(
             cat=self.category,
             host=self.host,
@@ -950,9 +954,9 @@ class MetadataFactory:
             return str(self.archive_id)
         return "{} with spec {}".format(self.archive_id, self.spec)
 
-    def fetch_default_desktop_arch(self, version: Version, is_msvc: bool = False) -> str:
+    def fetch_default_desktop_arch(self, version: Version, is_msvc: bool = False, is_wasm: bool = False) -> str:
         assert self.archive_id.target == "desktop", "This function is meant to fetch desktop architectures"
-        if self.archive_id.host == "linux":
+        if self.archive_id.host == "linux" or is_wasm:
             if version >= Version("6.7.0"):
                 return "linux_gcc_64"
             else:
