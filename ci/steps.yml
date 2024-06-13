@@ -454,6 +454,7 @@ steps:
 
   # wasm_32/single/multithread on Windows cmd.exe
   - powershell: |
+      Write-Host "Installing emsdk version=$EMSDK_VERSION with tag=$EMSDK_TAG"
       git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
       cd emsdk
       .\emsdk install $(EMSDK_VERSION)
