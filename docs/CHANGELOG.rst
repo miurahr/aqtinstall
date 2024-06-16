@@ -13,9 +13,17 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.16`_ (16, June 2024)
+==========================
+
+Fixed
+-----
+* Install Qt for Android 6.7.* (#791)
+* Override host/target for src/docs if Qt > 6.7.0 (#776)
+
 Deprecated
 ----------
-* Drop support for python 3.7
+* Drop support for python 3.7(#741)
 
 `v3.1.15`_ (4, May 2024)
 ========================
@@ -372,7 +380,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.15...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.16...HEAD
+.. _v3.1.16: https://github.com/miurahr/aqtinstall/compare/v3.1.15...v3.1.16
 .. _v3.1.15: https://github.com/miurahr/aqtinstall/compare/v3.1.14...v3.1.15
 .. _v3.1.14: https://github.com/miurahr/aqtinstall/compare/v3.1.13...v3.1.14
 .. _v3.1.13: https://github.com/miurahr/aqtinstall/compare/v3.1.12...v3.1.13
