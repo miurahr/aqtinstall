@@ -384,13 +384,23 @@ class QtArchives:
             os_name += "_x64"
         if self.target == "android" and self.version >= Version("6.7.0"):
             os_name = "all_os"
-        os_target_folder = posixpath.join(
-            "online/qtsdkrepository",
-            os_name,
-            self.target,
-            # tools_ifw/
-            name,
-        )
+        #
+        if os_name == "windows_x86" and self.version >= Version("6.8.0"):
+            os_target_folder = posixpath.join(
+                "online/qtsdkrepository",
+                os_name,
+                self.target,
+                name,
+                name,
+            )
+        else:
+            os_target_folder = posixpath.join(
+                "online/qtsdkrepository",
+                os_name,
+                self.target,
+                # tools_ifw/
+                name,
+            )
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
         update_xml_text = self._download_update_xml(update_xml_url)
         self._parse_update_xml(os_target_folder, update_xml_text, target_packages)
