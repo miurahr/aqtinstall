@@ -380,12 +380,12 @@ class QtArchives:
         os_name = self.os_name
         if self.os_name == "windows":
             os_name += "_x86"
-        elif os_name != "linux_arm64" and os_name != "all_os":
+        elif os_name != "linux_arm64" and os_name != "all_os" and os_name != "windows_arm64":
             os_name += "_x64"
         if self.target == "android" and self.version >= Version("6.7.0"):
             os_name = "all_os"
         #
-        if os_name == "windows_x86" and self.version >= Version("6.8.0"):
+        if os_name in ("windows_x86", "windows_arm64") and self.version >= Version("6.8.0"):
             os_target_folder = posixpath.join(
                 "online/qtsdkrepository",
                 os_name,

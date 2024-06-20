@@ -199,9 +199,10 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 class ArchiveId:
     CATEGORIES = ("tools", "qt")
-    HOSTS = ("windows", "mac", "linux", "linux_arm64", "all_os")
+    HOSTS = ("windows", "windows_arm64", "mac", "linux", "linux_arm64", "all_os")
     TARGETS_FOR_HOST = {
         "windows": ["android", "desktop", "winrt"],
+        "windows_arm64": ["desktop"],
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
@@ -233,7 +234,7 @@ class ArchiveId:
     def to_url(self) -> str:
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
-            arch=("_x86" if self.host == "windows" else ("" if self.host in ("linux_arm64", "all_os") else "_x64")),
+            arch=("_x86" if self.host == "windows" else ("" if self.host in ("linux_arm64", "all_os", "windows_arm64") else "_x64")),
             target=self.target,
         )
 
@@ -957,7 +958,10 @@ class MetadataFactory:
         elif self.archive_id.host == "mac":
             return "clang_64"
         elif self.archive_id.host == "windows" and is_msvc:
-            return "win64_msvc2019_64"
+            if version >= Version("6.8.0"):
+                return "win64_msvc2022_64"
+            else:
+                return "win64_msvc2019_64"
         arches = [arch for arch in self.fetch_arches(version) if QtRepoProperty.MINGW_ARCH_PATTERN.match(arch)]
         selected_arch = QtRepoProperty.select_default_mingw(arches, is_dir=False)
         if not selected_arch:
