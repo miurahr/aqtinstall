@@ -234,7 +234,11 @@ class ArchiveId:
     def to_url(self) -> str:
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
-            arch=("_x86" if self.host == "windows" else ("" if self.host in ("linux_arm64", "all_os", "windows_arm64") else "_x64")),
+            arch=(
+                "_x86"
+                if self.host == "windows"
+                else ("" if self.host in ("linux_arm64", "all_os", "windows_arm64") else "_x64")
+            ),
             target=self.target,
         )
 
