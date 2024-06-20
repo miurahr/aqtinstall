@@ -54,10 +54,10 @@ Requirements
 ------------
 
 - Minimum Python version:
-    3.7
+    3.8
 
 - Recommended Python version:
-    3.9 (frequently tested on)
+    3.9, 3.12 (frequently tested on)
 
 - Dependencies:
     requests
@@ -79,7 +79,7 @@ There is precise documentation with many examples.
 You are recommended to read the *Getting started* section.
 
 - Getting started: https://aqtinstall.readthedocs.io/en/latest/getting_started.html
-- Stable (v3.0.x): https://aqtinstall.readthedocs.io/en/stable
+- Stable (v3.1.x): https://aqtinstall.readthedocs.io/en/stable
 - Latest: https://aqtinstall.readthedocs.io/en/latest
 - Old (v2.2.3) : https://aqtinstall.readthedocs.io/en/v2.2.3/
 
