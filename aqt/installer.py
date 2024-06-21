@@ -280,6 +280,8 @@ class Cli:
                     return "android"
             except ValueError:
                 pass
+        elif os_name == "windows_arm64" and target == "desktop":
+            return "windows_msvc2022_arm64"
         raise CliInputError("Please supply a target architecture.", should_show_help=True)
 
     def _check_mirror(self, mirror):
@@ -747,7 +749,9 @@ class Cli:
 
     def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
         install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
-        install_tool_parser.add_argument("host", choices=["linux", "linux_arm64", "mac", "windows"], help="host os name")
+        install_tool_parser.add_argument(
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+        )
         if not is_legacy:
             install_tool_parser.add_argument(
                 "target",
@@ -804,7 +808,9 @@ class Cli:
 
         def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
             parser = subparsers.add_parser(cmd, description=desc)
-            parser.add_argument("host", choices=["linux", "linux_arm64", "mac", "windows"], help="host os name")
+            parser.add_argument(
+                "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            )
             parser.add_argument(
                 "qt_version_spec",
                 metavar="(VERSION | SPECIFICATION)",
@@ -852,7 +858,9 @@ class Cli:
             "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
             "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n",
         )
-        list_parser.add_argument("host", choices=["linux", "linux_arm64", "mac", "windows"], help="host os name")
+        list_parser.add_argument(
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+        )
         list_parser.add_argument(
             "target",
             nargs="?",
@@ -936,7 +944,9 @@ class Cli:
             "$ aqt list-tool mac desktop tools_ifw --long  # print tool variant names with metadata for QtIFW\n"
             "$ aqt list-tool mac desktop ifw --long        # print tool variant names with metadata for QtIFW\n",
         )
-        list_parser.add_argument("host", choices=["linux", "linux_arm64", "mac", "windows"], help="host os name")
+        list_parser.add_argument(
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+        )
         list_parser.add_argument(
             "target",
             nargs="?",
@@ -1023,7 +1033,9 @@ class Cli:
         """
         if is_legacy:
             subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
-        subparser.add_argument("host", choices=["linux", "linux_arm64", "mac", "windows"], help="host os name")
+        subparser.add_argument(
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+        )
         if is_target_deprecated:
             subparser.add_argument(
                 "target",

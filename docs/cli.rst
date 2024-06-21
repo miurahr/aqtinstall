@@ -502,7 +502,7 @@ There are various combinations to accept according to Qt version.
 
 .. describe:: host
 
-    linux, linux_arm64, windows or mac. The operating system on which the Qt development tools will run.
+    linux, linux_arm64, windows, windows_arm64, all_os, or mac. The operating system on which the Qt development tools will run.
 
 .. describe:: target
 
@@ -539,7 +539,9 @@ There are various combinations to accept according to Qt version.
 
    * clang_64 for mac desktop
 
-   * win64_msvc2019_64, win64_msvc2017_64, win64_msvc2015_64, win32_msvc2015, win32_mingw53 for windows desktop
+   * win64_msvc2022_64, win64_mingw, win64_llvm_mingw, win64_msvc2019_64, win64_msvc2019_arm64, win64_msvc2017_64, win64_msvc2015_64, win32_msvc2015, win32_mingw53 for windows desktop
+
+   * win64_msvc2022_arm64 for windows_arm64 desktop
 
    * android_armv7, android_arm64_v8a, android_x86, android_x86_64 for android
 

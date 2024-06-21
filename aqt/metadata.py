@@ -199,9 +199,10 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 class ArchiveId:
     CATEGORIES = ("tools", "qt")
-    HOSTS = ("windows", "mac", "linux", "linux_arm64", "all_os")
+    HOSTS = ("windows", "windows_arm64", "mac", "linux", "linux_arm64", "all_os")
     TARGETS_FOR_HOST = {
         "windows": ["android", "desktop", "winrt"],
+        "windows_arm64": ["desktop"],
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
@@ -233,17 +234,29 @@ class ArchiveId:
     def to_url(self) -> str:
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
-            arch=("_x86" if self.host == "windows" else ("" if self.host in ("linux_arm64", "all_os") else "_x64")),
+            arch=(
+                "_x86"
+                if self.host == "windows"
+                else ("" if self.host in ("linux_arm64", "all_os", "windows_arm64") else "_x64")
+            ),
             target=self.target,
         )
 
-    def to_folder(self, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
-        return "{category}{major}_{ver}{ext}".format(
-            category=self.category,
-            major=qt_version_no_dots[0],
-            ver=qt_version_no_dots,
-            ext="_" + extension if extension else "",
-        )
+    def to_folder(self, version: Version, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
+        if version >= Version("6.8.0"):
+            return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
+                category=self.category,
+                major=qt_version_no_dots[0],
+                ver=qt_version_no_dots,
+                ext="_" + extension if extension else "",
+            )
+        else:
+            return "{category}{major}_{ver}{ext}".format(
+                category=self.category,
+                major=qt_version_no_dots[0],
+                ver=qt_version_no_dots,
+                ext="_" + extension if extension else "",
+            )
 
     def all_extensions(self, version: Version) -> List[str]:
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
@@ -611,8 +624,9 @@ class MetadataFactory:
         qt_ver_str = self._get_qt_version_str(version)
         for extension in self.archive_id.all_extensions(version):
             modules: Dict[str, Dict[str, str]] = {}
+            folder = self.archive_id.to_folder(version, qt_ver_str, extension)
             try:
-                modules = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension))
+                modules = self._fetch_module_metadata(folder)
             except ArchiveDownloadError as e:
                 if extension == "":
                     raise
@@ -810,7 +824,7 @@ class MetadataFactory:
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension))
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, extension))
 
         def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
             _match = pattern.match(name)
@@ -856,7 +870,7 @@ class MetadataFactory:
         def matches_arch(element: Element) -> bool:
             return bool(pattern.match(MetadataFactory.require_text(element, "Name")))
 
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, extension), matches_arch)
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, extension), matches_arch)
         m: Dict[str, Dict[str, str]] = {}
         for key, value in modules_meta.items():
             match = pattern.match(key)
@@ -874,7 +888,7 @@ class MetadataFactory:
             "qt",
         ), "Internal misuse of fetch_modules_sde"
         qt_ver_str = self._get_qt_version_str(version)
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(qt_ver_str, "src_doc_examples"))
+        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, "src_doc_examples"))
         # pattern: Match all names "qt.qt5.12345.doc.(\w+)
         pattern = re.compile(r"^qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\." + cmd_type + r"\.(.+)$")
 
@@ -913,7 +927,7 @@ class MetadataFactory:
         predicate = no_modules if not modules else all_modules if "all" in modules else specify_modules
         try:
             mod_metadata = self._fetch_module_metadata(
-                self.archive_id.to_folder(qt_version_str, extension), predicate=predicate
+                self.archive_id.to_folder(version, qt_version_str, extension), predicate=predicate
             )
         except (AttributeError, ValueError) as e:
             raise ArchiveListError(f"Downloaded metadata is corrupted. {e}") from e
@@ -948,7 +962,10 @@ class MetadataFactory:
         elif self.archive_id.host == "mac":
             return "clang_64"
         elif self.archive_id.host == "windows" and is_msvc:
-            return "win64_msvc2019_64"
+            if version >= Version("6.8.0"):
+                return "win64_msvc2022_64"
+            else:
+                return "win64_msvc2019_64"
         arches = [arch for arch in self.fetch_arches(version) if QtRepoProperty.MINGW_ARCH_PATTERN.match(arch)]
         selected_arch = QtRepoProperty.select_default_mingw(arches, is_dir=False)
         if not selected_arch:
