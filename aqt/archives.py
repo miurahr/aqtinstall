@@ -362,7 +362,11 @@ class QtArchives:
         return target_packages
 
     def _get_archives(self):
-        self._get_archives_base(f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}", self._target_packages())
+        if self.version >= Version("6.8.0"):
+            name = f"qt{self.version.major}_{self._version_str()}/qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+        else:
+            name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+        self._get_archives_base(name, self._target_packages())
 
     def _append_depends_tool(self, arch, tool_name):
         os_target_folder = posixpath.join(
@@ -378,29 +382,19 @@ class QtArchives:
 
     def _get_archives_base(self, name, target_packages):
         os_name = self.os_name
+        if self.target == "android" and self.version >= Version("6.7.0"):
+            os_name = "all_os"
         if self.os_name == "windows":
             os_name += "_x86"
         elif os_name != "linux_arm64" and os_name != "all_os" and os_name != "windows_arm64":
             os_name += "_x64"
-        if self.target == "android" and self.version >= Version("6.7.0"):
-            os_name = "all_os"
-        #
-        if os_name in ("windows_x86", "windows_arm64") and self.version >= Version("6.8.0"):
-            os_target_folder = posixpath.join(
-                "online/qtsdkrepository",
-                os_name,
-                self.target,
-                name,
-                name,
-            )
-        else:
-            os_target_folder = posixpath.join(
-                "online/qtsdkrepository",
-                os_name,
-                self.target,
-                # tools_ifw/
-                name,
-            )
+        os_target_folder = posixpath.join(
+            "online/qtsdkrepository",
+            os_name,
+            self.target,
+            # tools_ifw/
+            name,
+        )
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
         update_xml_text = self._download_update_xml(update_xml_url)
         self._parse_update_xml(os_target_folder, update_xml_text, target_packages)
