@@ -363,7 +363,8 @@ class QtArchives:
 
     def _get_archives(self):
         if self.version >= Version("6.8.0"):
-            name = f"qt{self.version.major}_{self._version_str()}/qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+            name = (f"qt{self.version.major}_{self._version_str()}"
+                    f"/qt{self.version.major}_{self._version_str()}{self._arch_ext()}")
         else:
             name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
         self._get_archives_base(name, self._target_packages())
