@@ -13,6 +13,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.17`_ (28, July 2024)
+==========================
+
+Fixed
+-----
+* list and install Qt 6.8.0 and windows_arm64(#800)
+* installation of android for Qt 6.8.0 (#801)
+
 `v3.1.16`_ (16, June 2024)
 ==========================
 
@@ -380,7 +388,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.16...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.17...HEAD
+.. _v3.1.17: https://github.com/miurahr/aqtinstall/compare/v3.1.16...v3.1.17
 .. _v3.1.16: https://github.com/miurahr/aqtinstall/compare/v3.1.15...v3.1.16
 .. _v3.1.15: https://github.com/miurahr/aqtinstall/compare/v3.1.14...v3.1.15
 .. _v3.1.14: https://github.com/miurahr/aqtinstall/compare/v3.1.13...v3.1.14
