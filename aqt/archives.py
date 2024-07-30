@@ -578,6 +578,10 @@ class SrcDocExamplesArchives(QtArchives):
         """
         return TargetConfig("src_doc_examples", self.target, self.arch, self.os_name)
 
+    def _get_archives(self):
+        name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+        self._get_archives_base(name, self._target_packages())
+
     def help_msg(self, missing_modules: Optional[List[str]] = None) -> List[str]:
         _missing_modules: List[str] = missing_modules or []
         cmd_type = "example" if self.flavor == "examples" else self.flavor
