@@ -359,11 +359,6 @@ class SettingsClass:
                     self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
 
     def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
-        with open(
-            os.path.join(os.path.dirname(__file__), "combinations.json"),
-            "r",
-        ) as j:
-            self._combinations = json.load(j)[0]
         if file is not None:
             if isinstance(file, str):
                 result = self.config.read(file)

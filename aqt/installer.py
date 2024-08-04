@@ -293,11 +293,6 @@ class Cli:
             return False
         return True
 
-    def _select_unexpected_modules(self, qt_version: str, modules: Optional[List[str]]) -> List[str]:
-        """Returns a sorted list of all the requested modules that do not exist in the combinations.json file."""
-        available = Settings.available_modules(qt_version)
-        return sorted(set(modules or []) - set(available or []))
-
     @staticmethod
     def _determine_qt_version(
         qt_version_or_spec: str, host: str, target: str, arch: str, base_url: str = Settings.baseurl
@@ -422,10 +417,6 @@ class Cli:
         if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
             self.logger.warning(self._warning_unknown_target_arch_combo([os_name, target, arch]))
         all_extra = True if modules is not None and "all" in modules else False
-        if not all_extra:
-            unexpected_modules = self._select_unexpected_modules(qt_version, modules)
-            if unexpected_modules:
-                self.logger.warning(self._warning_unexpected_modules(unexpected_modules))
 
         qt_archives: QtArchives = retry_on_bad_connection(
             lambda base_url: QtArchives(
