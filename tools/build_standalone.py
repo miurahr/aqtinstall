@@ -24,7 +24,7 @@ if __name__ == "__main__":
         adddata_arg = "{src:s};aqt"
     else:
         adddata_arg = "{src:s}:aqt"
-    for data in ["aqt/logging.ini", "aqt/settings.ini", "aqt/combinations.json"]:
+    for data in ["aqt/logging.ini", "aqt/settings.ini"]:
         args.append('--add-data')
         args.append(adddata_arg.format(src=data))
     args.append(os.path.join(tools_dir, "launch_aqt.py"))

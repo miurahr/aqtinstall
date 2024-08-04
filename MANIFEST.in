@@ -4,7 +4,6 @@ include LICENSE
 include pyproject.toml
 include .flake8
 recursive-include aqt *.ini
-recursive-include aqt *.json
 recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst

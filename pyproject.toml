@@ -40,7 +40,7 @@ packages = ["aqt"]
 readme = {file = ["README.rst"]}
 
 [tool.setuptools.package-data]
-aqt = ["*.yml", "*.json", "*.ini"]
+aqt = ["*.yml", "*.ini"]
 
 [project.scripts]
 aqt = "aqt.__main__:main"
