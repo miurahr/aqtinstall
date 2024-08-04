@@ -1194,8 +1194,6 @@ def test_install(
         (
             "install-qt windows desktop 5.16.0 win32_mingw73",
             None,
-            'WARNING : Specified Qt version "5.16.0" did not exist when this version of aqtinstall was released. '
-            "This may not install properly, but we will try our best.\n"
             "ERROR   : Failed to locate XML data for Qt version '5.16.0'.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-qt windows desktop' to show versions available.\n",
@@ -1203,8 +1201,6 @@ def test_install(
         (
             "install-qt windows desktop 5.15.0 bad_arch",
             "windows-5150-update.xml",
-            'WARNING : Specified target combination "windows desktop bad_arch" did not exist when this version of '
-            "aqtinstall was released. This may not install properly, but we will try our best.\n"
             "ERROR   : The packages ['qt_base'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-qt windows desktop --arch 5.15.0' to show architectures available.\n",
@@ -1212,8 +1208,6 @@ def test_install(
         (
             "install-qt windows desktop 5.15.0 win32_mingw73 -m nonexistent foo",
             "windows-5150-update.xml",
-            "WARNING : Specified modules ['foo', 'nonexistent'] did not exist when this version of aqtinstall "
-            "was released. This may not install properly, but we will try our best.\n"
             "ERROR   : The packages ['foo', 'nonexistent', 'qt_base'] were not found"
             " while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
@@ -1251,8 +1245,6 @@ def test_install(
         (
             "install-tool windows desktop tools_vcredist nonexistent",
             "windows-desktop-tools_vcredist-update.xml",
-            'WARNING : Specified target combination "windows tools_vcredist nonexistent" did not exist when this version of '
-            "aqtinstall was released. This may not install properly, but we will try our best.\n"
             "ERROR   : The package 'nonexistent' was not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-tool windows desktop tools_vcredist' to show tool variants available.\n",
@@ -1260,8 +1252,6 @@ def test_install(
         (
             "install-tool windows desktop tools_nonexistent nonexistent",
             None,
-            'WARNING : Specified target combination "windows tools_nonexistent nonexistent" did not exist when this '
-            "version of aqtinstall was released. This may not install properly, but we will try our best.\n"
             "ERROR   : Failed to locate XML data for the tool 'tools_nonexistent'.\n"
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-tool windows desktop' to show tools available.\n",
