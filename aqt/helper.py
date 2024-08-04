@@ -332,7 +332,6 @@ class SettingsClass:
     """
     Class to hold configuration and settings.
     Actual values are stored in 'settings.ini' file.
-    It also holds a `combinations` database.
     """
 
     # this class is Borg
@@ -340,7 +339,6 @@ class SettingsClass:
         "config": None,
         "configfile": None,
         "loggingconf": None,
-        "_combinations": None,
         "_lock": threading.Lock(),
     }
 
@@ -372,39 +370,6 @@ class SettingsClass:
         else:
             with open(self.configfile, "r") as f:
                 self.config.read_file(f)
-
-    @property
-    def qt_combinations(self):
-        return self._combinations["qt"]
-
-    @property
-    def tools_combinations(self):
-        return self._combinations["tools"]
-
-    @property
-    def available_versions(self):
-        return self._combinations["versions"]
-
-    @property
-    def available_offline_installer_version(self):
-        res = self._combinations["new_archive"]
-        res.extend(self._combinations["versions"])
-        return res
-
-    def available_modules(self, qt_version):
-        """Known module names
-
-        :returns: dictionary of qt_version and module names
-        :rtype: List[str]
-        """
-        modules = self._combinations["modules"]
-        versions = qt_version.split(".")
-        version = "{}.{}".format(versions[0], versions[1])
-        result = None
-        for record in modules:
-            if record["qt_version"] == version:
-                result = record["modules"]
-        return result
 
     @property
     def archive_download_location(self):
