@@ -212,12 +212,6 @@ class Cli:
                 return True
         return False
 
-    def _check_qt_arg_versions(self, version):
-        return version in Settings.available_versions
-
-    def _check_qt_arg_version_offline(self, version):
-        return version in Settings.available_offline_installer_version
-
     def _warning_unknown_qt_version(self, qt_version: str) -> str:
         return self._warning_on_bad_combination(f'Qt version "{qt_version}"')
 
@@ -412,10 +406,6 @@ class Cli:
 
         auto_desktop_archives: List[QtPackage] = get_auto_desktop_archives()
 
-        if not self._check_qt_arg_versions(qt_version):
-            self.logger.warning(self._warning_unknown_qt_version(qt_version))
-        if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
-            self.logger.warning(self._warning_unknown_target_arch_combo([os_name, target, arch]))
         all_extra = True if modules is not None and "all" in modules else False
 
         qt_archives: QtArchives = retry_on_bad_connection(
@@ -486,8 +476,6 @@ class Cli:
         modules = getattr(args, "modules", None)  # `--modules` is invalid for `install-src`
         archives = args.archives
         all_extra = True if modules is not None and "all" in modules else False
-        if not self._check_qt_arg_versions(qt_version):
-            self.logger.warning(self._warning_unknown_qt_version(qt_version))
 
         srcdocexamples_archives: SrcDocExamplesArchives = retry_on_bad_connection(
             lambda base_url: SrcDocExamplesArchives(
@@ -580,9 +568,6 @@ class Cli:
             archs = [args.tool_variant]
 
         for arch in archs:
-            if not self._check_tools_arg_combination(os_name, tool_name, arch):
-                self.logger.warning(self._warning_unknown_target_arch_combo([os_name, tool_name, arch]))
-
             tool_archives: ToolArchives = retry_on_bad_connection(
                 lambda base_url: ToolArchives(
                     os_name=os_name,
