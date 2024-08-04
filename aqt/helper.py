@@ -21,7 +21,6 @@
 import binascii
 import configparser
 import hashlib
-import json
 import logging.config
 import os
 import posixpath
