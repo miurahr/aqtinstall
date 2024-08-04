@@ -43,12 +43,11 @@ This program is distributed under MIT license.
 Qt SDK and its related files are under its licenses. When using aqtinstall, you are considered
 to agree upon Qt licenses. **aqtinstall installs Qt SDK as of a (L)GPL Free Software.**
 
-For details see `Qt licensing`_ and `Licenses used in Qt5`_
+For details see `Qt Licensing`_ and `Licenses used in Qt6`_
 
-.. _`Qt licensing`: https://www.qt.io/licensing/
+.. _`Qt Licensing`: https://doc.qt.io/qt-6/licensing.html
 
-.. _`Licenses used in Qt5`: https://doc.qt.io/qt-5/licenses-used-in-qt.html
-
+.. _`Licenses used in Qt6`: https://doc.qt.io/qt-6/licenses-used-in-qt.html
 
 Requirements
 ------------
