@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
 
 Deprecated
 ----------
-* Qt version/architecture/modules checking (#807, #812)
+* Qt version/architecture/modules checking (#748, #807, #812)
 
 `v3.1.18`_ (3, August 2024)
 ===========================
