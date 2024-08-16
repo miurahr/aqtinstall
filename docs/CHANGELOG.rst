@@ -13,8 +13,8 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
-Deprecated
-----------
+Deleted
+-------
 * Qt version/architecture/modules checking (#748, #807, #812)
 
 `v3.1.18`_ (3, August 2024)
