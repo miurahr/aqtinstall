@@ -200,33 +200,6 @@ class Cli:
             )
             return Cli.UNHANDLED_EXCEPTION_CODE
 
-    def _check_tools_arg_combination(self, os_name, tool_name, arch):
-        for c in Settings.tools_combinations:
-            if c["os_name"] == os_name and c["tool_name"] == tool_name and c["arch"] == arch:
-                return True
-        return False
-
-    def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
-        for c in Settings.qt_combinations:
-            if c["os_name"] == os_name and c["target"] == target and c["arch"] == arch:
-                return True
-        return False
-
-    def _warning_unknown_qt_version(self, qt_version: str) -> str:
-        return self._warning_on_bad_combination(f'Qt version "{qt_version}"')
-
-    def _warning_unknown_target_arch_combo(self, args: List[str]) -> str:
-        return self._warning_on_bad_combination(f"target combination \"{' '.join(args)}\"")
-
-    def _warning_unexpected_modules(self, unexpected_modules: List[str]) -> str:
-        return self._warning_on_bad_combination(f"modules {unexpected_modules}")
-
-    def _warning_on_bad_combination(self, combo_message: str) -> str:
-        return (
-            f"Specified {combo_message} did not exist when this version of aqtinstall was released. "
-            "This may not install properly, but we will try our best."
-        )
-
     def _set_sevenzip(self, external: Optional[str]) -> Optional[str]:
         sevenzip = external
         fallback = Settings.zipcmd
