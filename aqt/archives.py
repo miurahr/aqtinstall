@@ -288,7 +288,6 @@ class QtArchives:
         self.arch: str = arch
         self.os_name: str = os_name
         self.all_extra: bool = all_extra
-        self.arch_list: List[str] = [item.get("arch") for item in Settings.qt_combinations]
         self.base: str = base
         self.logger = getLogger("aqt.archives")
         self.archives: List[QtPackage] = []

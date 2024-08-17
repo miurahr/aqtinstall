@@ -200,39 +200,6 @@ class Cli:
             )
             return Cli.UNHANDLED_EXCEPTION_CODE
 
-    def _check_tools_arg_combination(self, os_name, tool_name, arch):
-        for c in Settings.tools_combinations:
-            if c["os_name"] == os_name and c["tool_name"] == tool_name and c["arch"] == arch:
-                return True
-        return False
-
-    def _check_qt_arg_combination(self, qt_version, os_name, target, arch):
-        for c in Settings.qt_combinations:
-            if c["os_name"] == os_name and c["target"] == target and c["arch"] == arch:
-                return True
-        return False
-
-    def _check_qt_arg_versions(self, version):
-        return version in Settings.available_versions
-
-    def _check_qt_arg_version_offline(self, version):
-        return version in Settings.available_offline_installer_version
-
-    def _warning_unknown_qt_version(self, qt_version: str) -> str:
-        return self._warning_on_bad_combination(f'Qt version "{qt_version}"')
-
-    def _warning_unknown_target_arch_combo(self, args: List[str]) -> str:
-        return self._warning_on_bad_combination(f"target combination \"{' '.join(args)}\"")
-
-    def _warning_unexpected_modules(self, unexpected_modules: List[str]) -> str:
-        return self._warning_on_bad_combination(f"modules {unexpected_modules}")
-
-    def _warning_on_bad_combination(self, combo_message: str) -> str:
-        return (
-            f"Specified {combo_message} did not exist when this version of aqtinstall was released. "
-            "This may not install properly, but we will try our best."
-        )
-
     def _set_sevenzip(self, external: Optional[str]) -> Optional[str]:
         sevenzip = external
         fallback = Settings.zipcmd
@@ -292,11 +259,6 @@ class Cli:
         else:
             return False
         return True
-
-    def _select_unexpected_modules(self, qt_version: str, modules: Optional[List[str]]) -> List[str]:
-        """Returns a sorted list of all the requested modules that do not exist in the combinations.json file."""
-        available = Settings.available_modules(qt_version)
-        return sorted(set(modules or []) - set(available or []))
 
     @staticmethod
     def _determine_qt_version(
@@ -417,15 +379,7 @@ class Cli:
 
         auto_desktop_archives: List[QtPackage] = get_auto_desktop_archives()
 
-        if not self._check_qt_arg_versions(qt_version):
-            self.logger.warning(self._warning_unknown_qt_version(qt_version))
-        if not self._check_qt_arg_combination(qt_version, os_name, target, arch):
-            self.logger.warning(self._warning_unknown_target_arch_combo([os_name, target, arch]))
         all_extra = True if modules is not None and "all" in modules else False
-        if not all_extra:
-            unexpected_modules = self._select_unexpected_modules(qt_version, modules)
-            if unexpected_modules:
-                self.logger.warning(self._warning_unexpected_modules(unexpected_modules))
 
         qt_archives: QtArchives = retry_on_bad_connection(
             lambda base_url: QtArchives(
@@ -495,8 +449,6 @@ class Cli:
         modules = getattr(args, "modules", None)  # `--modules` is invalid for `install-src`
         archives = args.archives
         all_extra = True if modules is not None and "all" in modules else False
-        if not self._check_qt_arg_versions(qt_version):
-            self.logger.warning(self._warning_unknown_qt_version(qt_version))
 
         srcdocexamples_archives: SrcDocExamplesArchives = retry_on_bad_connection(
             lambda base_url: SrcDocExamplesArchives(
@@ -589,9 +541,6 @@ class Cli:
             archs = [args.tool_variant]
 
         for arch in archs:
-            if not self._check_tools_arg_combination(os_name, tool_name, arch):
-                self.logger.warning(self._warning_unknown_target_arch_combo([os_name, tool_name, arch]))
-
             tool_archives: ToolArchives = retry_on_bad_connection(
                 lambda base_url: ToolArchives(
                     os_name=os_name,

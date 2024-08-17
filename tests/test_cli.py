@@ -55,40 +55,6 @@ def test_cli_help(capsys):
 
 
 @pytest.mark.parametrize(
-    "qt_version, modules, unexpected_modules",
-    (
-        ("5.11.3", ["qtcharts", "qtwebengine"], []),
-        ("5.11.3", ["not_exist"], ["not_exist"]),
-        ("5.11.3", ["qtcharts", "qtwebengine", "not_exist"], ["not_exist"]),
-        ("5.11.3", None, []),
-        ("5.15.0", ["Unknown"], ["Unknown"]),
-    ),
-)
-def test_cli_select_unexpected_modules(qt_version: str, modules: Optional[List[str]], unexpected_modules: List[str]):
-    cli = Cli()
-    cli._setup_settings()
-    assert cli._select_unexpected_modules(qt_version, modules) == unexpected_modules
-
-    nonexistent_qt = "5.16.0"
-    assert cli._select_unexpected_modules(nonexistent_qt, modules) == sorted(modules or [])
-
-
-def test_cli_check_combination():
-    cli = Cli()
-    cli._setup_settings()
-    assert cli._check_qt_arg_combination("5.11.3", "linux", "desktop", "gcc_64")
-    assert cli._check_qt_arg_combination("5.11.3", "mac", "desktop", "clang_64")
-    assert not cli._check_qt_arg_combination("5.14.0", "android", "desktop", "clang_64")
-
-
-def test_cli_check_version():
-    cli = Cli()
-    cli._setup_settings()
-    assert cli._check_qt_arg_versions("5.12.0")
-    assert not cli._check_qt_arg_versions("5.12")
-
-
-@pytest.mark.parametrize(
     "host, target, arch, version_or_spec, expected_version, is_bad_spec",
     (
         ("windows", "desktop", "wasm_32", "6.1", None, False),
