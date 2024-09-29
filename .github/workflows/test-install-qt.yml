@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
-        py: ["3.9", "3.12"]
-        qtver: [6.5.3, 6.6.3]
+        py: ["3.12"]
+        qtver: [6.5.3, 6.6.3, 6.8.0]
         artifact: [standard]
         include:
           - os: windows-latest
