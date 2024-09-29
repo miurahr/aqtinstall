@@ -186,7 +186,7 @@ jobs:
               print('PREFIX {}'.format(result))
         shell: python
         working-directory: ${{ github.workspace }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: matrix.artifact == 'binary'
         with:
           name: aqt-${{ matrix.os }}-standalone
