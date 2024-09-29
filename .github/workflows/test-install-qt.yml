@@ -91,7 +91,7 @@ jobs:
           command_line.extend(prefix)
           if platform == "windows-latest":
             if qtver.startswith('6.5'):
-              args = ["windows", "desktop", qtver, "win64_mingw81"]
+              args = ["windows", "desktop", qtver, "win64_mingw"]
             else:
               args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
           elif platform == "macOS-latest":
@@ -138,7 +138,7 @@ jobs:
           qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
             if qtver.startswith('6.5'):
-              arch_dir = 'mingw81_64'
+              arch_dir = 'mingw_64'
             else:
               arch_dir = 'msvc2019_64'
           elif platform == "macOS-latest":
