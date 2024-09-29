@@ -54,7 +54,7 @@ jobs:
   steps:
     - template: ci/steps.yml
 
-- job: Linux ARM64
+- job: Linux_ARM64
   dependsOn: MatricesGenerator
   pool:
     vmImage: 'ubuntu-22.04'
