@@ -16,8 +16,7 @@ def expected_help(actual, prefix=None):
     expected = (
         "usage: aqt [-h] [-c CONFIG]\n"
         "           {install-qt,install-tool,install-doc,install-example,install-src,"
-        "list-qt,list-tool,list-doc,list-example,list-src,"
-        "install,tool,doc,examples,src,help,version}\n"
+        "list-qt,list-tool,list-doc,list-example,list-src,help,version}\n"
         "           ...\n"
         "\n"
         "Another unofficial Qt Installer.\n"
@@ -32,13 +31,9 @@ def expected_help(actual, prefix=None):
         "  aqt accepts several subcommands:\n"
         "  install-* subcommands are commands that install components\n"
         "  list-* subcommands are commands that show available components\n"
-        "  \n"
-        "  commands {install|tool|src|examples|doc} are deprecated and marked for "
-        "removal\n"
         "\n"
         "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,"
-        "list-tool,list-doc,list-example,list-src,"
-        "install,tool,doc,examples,src,help,version}\n"
+        "list-tool,list-doc,list-example,list-src,help,version}\n"
         "                        Please refer to each help message by using '--help' "
         "with each subcommand\n",
     )
@@ -110,14 +105,12 @@ def test_cli_invalid_version(capsys, invalid_version):
     cli._setup_settings()
 
     matcher = re.compile(
-        r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+      #  r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
         r"(.*\n)*"
         r"ERROR   :.*Invalid version: '" + invalid_version + r"'! Please use the form '5\.X\.Y'\.\n.*"
     )
 
     for cmd in (
-        ("install", invalid_version, "mac", "desktop"),
-        ("doc", invalid_version, "mac", "desktop"),
         ("list-qt", "mac", "desktop", "--arch", invalid_version),
     ):
         cli = Cli()
@@ -234,52 +227,6 @@ def test_cli_input_errors(capsys, cmd, expect_msg, should_show_help):
     assert err.rstrip().endswith(expect_msg)
 
 
-# These commands use the new syntax with the legacy commands
-@pytest.mark.parametrize(
-    "cmd",
-    (
-        "install linux desktop 5.10.0",
-        "install linux desktop 5.10.0 gcc_64",
-        "src linux desktop 5.10.0",
-        "doc linux desktop 5.10.0",
-        "example linux desktop 5.10.0",
-        "tool windows desktop tools_ifw",
-    ),
-)
-def test_cli_legacy_commands_with_wrong_syntax(cmd):
-    cli = Cli()
-    cli._setup_settings()
-    with pytest.raises(SystemExit) as e:
-        cli.run(cmd.split())
-    assert e.type == SystemExit
-
-
-@pytest.mark.parametrize(
-    "cmd",
-    (
-        "tool windows desktop tools_ifw qt.tools.ifw.31",  # New syntax
-        "tool windows desktop tools_ifw 1.2.3",
-    ),
-)
-def test_cli_legacy_tool_new_syntax(monkeypatch, capsys, cmd):
-    # These incorrect commands cannot be filtered out directly by argparse because
-    # they have the correct number of arguments.
-    command = cmd.split()
-
-    expected = (
-        "WARNING : The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
-        "In the future, please use the command 'install-tool' instead.\n"
-        "ERROR   : Invalid version: 'tools_ifw'! Please use the form '5.X.Y'.\n"
-    )
-
-    cli = Cli()
-    cli._setup_settings()
-    assert 1 == cli.run(command)
-    out, err = capsys.readouterr()
-    actual = err[err.index("\n") + 1 :]
-    assert actual == expected
-
-
 @pytest.mark.parametrize(
     "cmd, expect_err",
     (
@@ -306,28 +253,6 @@ def test_cli_list_qt_deprecated_flags(capsys, cmd: str, expect_err: str):
     assert 0 == cli.run(cmd.split())
     out, err = capsys.readouterr()
     assert err == expect_err
-
-
-# These commands come directly from examples in the legacy documentation
-@pytest.mark.parametrize(
-    "cmd",
-    (
-        "install 5.10.0 linux desktop",  # default arch
-        "install 5.10.2 linux android android_armv7",
-        "src 5.15.2 windows desktop --archives qtbase --kde",
-        "doc 5.15.2 windows desktop -m qtcharts qtnetworkauth",
-        "examples 5.15.2 windows desktop -m qtcharts qtnetworkauth",
-        "tool linux tools_ifw 4.0 qt.tools.ifw.40",
-    ),
-)
-def test_cli_legacy_commands_with_correct_syntax(monkeypatch, cmd):
-    # Pretend to install correctly when any command is run
-    for func in ("run_install_qt", "run_install_src", "run_install_doc", "run_install_example", "run_install_tool"):
-        monkeypatch.setattr(Cli, func, lambda *args, **kwargs: 0)
-
-    cli = Cli()
-    cli._setup_settings()
-    assert 0 == cli.run(cmd.split())
 
 
 def test_cli_unexpected_error(monkeypatch, capsys):

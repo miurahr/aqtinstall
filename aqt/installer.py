@@ -167,8 +167,7 @@ class Cli:
             title="subcommands",
             description="aqt accepts several subcommands:\n"
             "install-* subcommands are commands that install components\n"
-            "list-* subcommands are commands that show available components\n\n"
-            "commands {install|tool|src|examples|doc} are deprecated and marked for removal\n",
+            "list-* subcommands are commands that show available components\n",
             help="Please refer to each help message by using '--help' with each subcommand",
         )
         self._make_all_parsers(subparsers)
