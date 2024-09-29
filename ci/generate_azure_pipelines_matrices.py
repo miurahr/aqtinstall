@@ -60,7 +60,7 @@ class BuildJob:
 
     def qt_bindir(self, *, sep='/') -> str:
         out_dir = f"$(Build.BinariesDirectory){sep}Qt" if not self.output_dir else self.output_dir
-        version_dir = "5.9" if self.qt_version == "5.9.0" else self.qt_version
+        version_dir = self.qt_version
         return f"{out_dir}{sep}{version_dir}{sep}{self.archdir}{sep}bin"
 
     def win_qt_bindir(self) -> str:
@@ -68,7 +68,7 @@ class BuildJob:
 
     def autodesk_qt_bindir(self, *, sep='/') -> str:
         out_dir = f"$(Build.BinariesDirectory){sep}Qt" if not self.output_dir else self.output_dir
-        version_dir = "5.9" if self.qt_version == "5.9.0" else self.qt_version
+        version_dir = self.qt_version
         return f"{out_dir}{sep}{version_dir}{sep}{self.autodesk_arch_folder or self.archdir}{sep}bin"
 
     def win_autodesk_qt_bindir(self) -> str:
@@ -113,10 +113,20 @@ linux_arm64_build_jobs.append(BuildJob("install-qt", "6.7.0", "linux_arm64", "de
 # Mac Desktop
 for qt_version in qt_versions:
     mac_build_jobs.append(
-        BuildJob("install-qt", qt_version, "mac", "desktop", "clang_64", "clang_64")
+        BuildJob("install-qt", qt_version, "mac", "desktop", "clang_64", "macos")
     )
+mac_build_jobs.append(BuildJob(
+            "install-qt",
+            "6.2.0",
+            "mac",
+            "desktop",
+            "clang_64",
+            "macos",
+            module="qtcharts qtnetworkauth", ))
 
 # Windows Desktop
+for qt_version in qt_versions:
+    windows_build_jobs.append(BuildJob("install-qt", qt_version, "windows", "desktop", "win64_msvc2019_64", "msvc2019_64"))
 windows_build_jobs.extend(
     [
         BuildJob(
@@ -171,19 +181,6 @@ linux_build_jobs.extend(
         BuildJob('list', '6.1.0', 'linux', 'android', 'android_armv7', '', spec=">6.0,<6.1.1", list_options={}),
     ]
 )
-mac_build_jobs.extend(
-    [
-        BuildJob(
-            "install-qt",
-            "6.2.0",
-            "mac",
-            "desktop",
-            "clang_64",
-            "macos",
-            module="qtcharts qtnetworkauth",
-        ),
-    ]
-)
 
 # WASM
 linux_build_jobs.append(
@@ -216,7 +213,6 @@ mac_build_jobs.extend(
         BuildJob("install-qt", "6.4.3", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=True),
         BuildJob("install-qt", "6.2.4", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=False),
         BuildJob("install-qt", "6.4.3", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
-        BuildJob("install-qt", "6.1.3", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
     ]
 )
 linux_build_jobs.extend(

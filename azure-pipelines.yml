@@ -1,11 +1,5 @@
-trigger: none
-pr: none
-schedules:
-- cron: '0 12 * * 0'
-  displayName: Weekly sunday full tests
-  branches:
-    include:
-      - master
+trigger: [master]
+pr: [master]
 
 jobs:
 - job: MatricesGenerator
