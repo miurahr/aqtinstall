@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2021 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2021,2024 Hiroshi Miura <miurahr@linux.com>
 # Copyright (C) 2020, Aurélien Gâteau
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -109,7 +109,6 @@ class ListToolArgumentParser(ListArgumentParser):
 class CommonInstallArgParser(BaseArgumentParser):
     """Install-*/install common arguments"""
 
-    is_legacy: bool
     target: str
     host: str
 
@@ -316,8 +315,6 @@ class Cli:
         """Run install subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
-        if args.is_legacy:
-            self._warn_on_deprecated_command("install", "install-qt")
         target: str = args.target
         os_name: str = args.host
         qt_version_or_spec: str = getattr(args, "qt_version", getattr(args, "qt_version_spec", ""))
@@ -411,12 +408,7 @@ class Cli:
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
         self.show_aqt_version()
-        if args.is_legacy:
-            if cmd_name is None:
-                self._warn_on_deprecated_command(old_name=flavor, new_name=f"install-{flavor}")
-            else:
-                self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
-        elif getattr(args, "target", None) is not None:
+        if getattr(args, "target", None) is not None:
             self._warn_on_deprecated_parameter("target", args.target)
         target = "desktop"  # The only valid target for src/doc/examples is "desktop"
         os_name = args.host
@@ -503,11 +495,9 @@ class Cli:
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
-        if args.is_legacy:
-            self._warn_on_deprecated_command("tool", "install-tool")
         tool_name = args.tool_name  # such as tools_openssl_x64
         os_name = args.host  # windows, linux and mac
-        target = "desktop" if args.is_legacy else args.target  # desktop, android and ios
+        target = args.target  # desktop, android and ios
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -655,9 +645,9 @@ class Cli:
         """Display version information"""
         self.logger.info(self._format_aqt_version())
 
-    def _set_install_qt_parser(self, install_qt_parser, *, is_legacy: bool):
-        install_qt_parser.set_defaults(func=self.run_install_qt, is_legacy=is_legacy)
-        self._set_common_arguments(install_qt_parser, is_legacy=is_legacy)
+    def _set_install_qt_parser(self, install_qt_parser):
+        install_qt_parser.set_defaults(func=self.run_install_qt)
+        self._set_common_arguments(install_qt_parser)
         self._set_common_options(install_qt_parser)
         install_qt_parser.add_argument(
             "arch",
@@ -695,23 +685,20 @@ class Cli:
             "It has no effect when the desktop installation is not required.",
         )
 
-    def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
-        install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
+    def _set_install_tool_parser(self, install_tool_parser):
+        install_tool_parser.set_defaults(func=self.run_install_tool)
         install_tool_parser.add_argument(
             "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
         )
-        if not is_legacy:
-            install_tool_parser.add_argument(
-                "target",
-                default=None,
-                choices=["desktop", "winrt", "android", "ios"],
-                help="Target SDK.",
-            )
+        install_tool_parser.add_argument(
+            "target",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios"],
+            help="Target SDK.",
+        )
         install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
-        if is_legacy:
-            install_tool_parser.add_argument("version", help="Version of tool variant")
 
-        tool_variant_opts = {} if is_legacy else {"nargs": "?", "default": None}
+        tool_variant_opts = {"nargs": "?", "default": None}
         install_tool_parser.add_argument(
             "tool_variant",
             **tool_variant_opts,
@@ -736,17 +723,15 @@ class Cli:
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction) -> None:
         deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
 
-        def make_parser_it(cmd: str, desc: str, is_legacy: bool, set_parser_cmd, formatter_class):
-            description = f"{desc} {deprecated_msg}" if is_legacy else desc
+        def make_parser_it(cmd: str, desc: str, set_parser_cmd, formatter_class):
             kwargs = {"formatter_class": formatter_class} if formatter_class else {}
-            p = subparsers.add_parser(cmd, description=description, **kwargs)
-            set_parser_cmd(p, is_legacy=is_legacy)
+            p = subparsers.add_parser(cmd, description=desc, **kwargs)
+            set_parser_cmd(p)
 
-        def make_parser_sde(cmd: str, desc: str, is_legacy: bool, action, is_add_kde: bool, is_add_modules: bool = True):
-            description = f"{desc} {deprecated_msg}" if is_legacy else desc
-            parser = subparsers.add_parser(cmd, description=description)
-            parser.set_defaults(func=action, is_legacy=is_legacy)
-            self._set_common_arguments(parser, is_legacy=is_legacy, is_target_deprecated=True)
+        def make_parser_sde(cmd: str, desc: str, action, is_add_kde: bool, is_add_modules: bool = True):
+            parser = subparsers.add_parser(cmd, description=desc)
+            parser.set_defaults(func=action)
+            self._set_common_arguments(parser, is_target_deprecated=True)
             self._set_common_options(parser)
             if is_add_modules:
                 self._set_module_options(parser)
@@ -769,23 +754,17 @@ class Cli:
             if cmd_type != "src":
                 parser.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
 
-        make_parser_it("install-qt", "Install Qt.", False, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
-        make_parser_it("install-tool", "Install tools.", False, self._set_install_tool_parser, None)
-        make_parser_sde("install-doc", "Install documentation.", False, self.run_install_doc, False)
-        make_parser_sde("install-example", "Install examples.", False, self.run_install_example, False)
-        make_parser_sde("install-src", "Install source.", False, self.run_install_src, True, is_add_modules=False)
+        make_parser_it("install-qt", "Install Qt.", self._set_install_qt_parser, argparse.RawTextHelpFormatter)
+        make_parser_it("install-tool", "Install tools.", self._set_install_tool_parser, None)
+        make_parser_sde("install-doc", "Install documentation.", self.run_install_doc, False)
+        make_parser_sde("install-example", "Install examples.", self.run_install_example, False)
+        make_parser_sde("install-src", "Install source.", self.run_install_src, True, is_add_modules=False)
 
         self._make_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
         make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
         make_parser_list_sde("list-src", "List source archives available (use with install-src)", "src")
-
-        make_parser_it("install", "Install Qt.", True, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
-        make_parser_it("tool", "Install tools.", True, self._set_install_tool_parser, None)
-        make_parser_sde("doc", "Install documentation.", True, self.run_install_doc, False)
-        make_parser_sde("examples", "Install examples.", True, self.run_install_example, False)
-        make_parser_sde("src", "Install source.", True, self.run_install_src, True)
 
         self._make_common_parsers(subparsers)
 
@@ -973,14 +952,10 @@ class Cli:
             "(Default: all archives).",
         )
 
-    def _set_common_arguments(self, subparser, *, is_legacy: bool, is_target_deprecated: bool = False):
+    def _set_common_arguments(self, subparser, *, is_target_deprecated: bool = False):
         """
-        Legacy commands require that the version comes before host and target.
-        Non-legacy commands require that the host and target are before the version.
         install-src/doc/example commands do not require a "target" argument anymore, as of 11/22/2021
         """
-        if is_legacy:
-            subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
         subparser.add_argument(
             "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
         )
@@ -994,12 +969,11 @@ class Cli:
             )
         else:
             subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
-        if not is_legacy:
-            subparser.add_argument(
-                "qt_version_spec",
-                metavar="(VERSION | SPECIFICATION)",
-                help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
-            )
+        subparser.add_argument(
+            "qt_version_spec",
+            metavar="(VERSION | SPECIFICATION)",
+            help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+        )
 
     def _setup_settings(self, args=None):
         # setup logging
