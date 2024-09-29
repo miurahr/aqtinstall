@@ -28,10 +28,6 @@ jobs:
       run: |
         pip install -U pip
         pip install tox tox-gh-actions coveralls coverage[toml]
-    - name: Check invocation with Python2
-      run: |
-        ! python2 -m aqt help
-        [[ $(python2 -m aqt help) == "aqtinstall requires python 3!" ]]
     - name: Check
       run: tox
       env:
