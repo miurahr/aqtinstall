@@ -84,9 +84,9 @@ jobs:
               bin_path = str(github_workspace / "dist" / "aqt.exe")
             else:
               bin_path = (github_workspace / "dist" / "aqt").as_posix()
-            prefix = [bin_path, "install"]
+            prefix = [bin_path, "install-qt"]
           else:
-            prefix = ["python", "-m", "aqt", "install"]
+            prefix = ["python", "-m", "aqt", "install-qt"]
           command_line = []
           command_line.extend(prefix)
           if platform == "windows-latest":
