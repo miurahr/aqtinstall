@@ -139,7 +139,7 @@ jobs:
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
-            if qtver.startswith('6.5'):
+            if qtver.startswith('6.6'):
               arch_dir = 'mingw_64'
             else:
               arch_dir = 'msvc2019_64'
