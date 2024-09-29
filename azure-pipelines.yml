@@ -11,11 +11,11 @@ jobs:
 - job: MatricesGenerator
   displayName: Matrices Generator
   pool:
-    vmImage: 'ubuntu-20.04'
+    vmImage: 'ubuntu-22.04'
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.9'
+        versionSpec: '3.12'
         addToPath: true
     - bash: python ci/generate_azure_pipelines_matrices.py
       name: mtrx
@@ -54,7 +54,7 @@ jobs:
   steps:
     - template: ci/steps.yml
 
-- job: Linux ARM64
+- job: Linux_ARM64
   dependsOn: MatricesGenerator
   pool:
     vmImage: 'ubuntu-22.04'

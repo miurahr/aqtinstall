@@ -16,23 +16,19 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest]
         py: ["3.9", "3.12"]
-        qtver: [5.9.9, 6.1.0]
+        qtver: [6.5.3, 6.6.3]
         artifact: [standard]
         include:
           - os: windows-latest
-            py: "3.10"
-            qtver: 6.1.0
+            py: "3.12"
+            qtver: 6.6.3
             artifact: binary
-          - os: ubuntu-20.04
-            py: "3.10"
-            qtver: 6.1.0
-            artifact: standard
-        exclude:
-          - os: ubuntu-latest
-            py: "3.10"
-            qtver: 6.1.0
+          - os: windows-latest
+            py: "3.12"
+            qtver: 6.5.3
+            artifact: binary
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 20
           fetch-tags: true
@@ -94,14 +90,10 @@ jobs:
           command_line = []
           command_line.extend(prefix)
           if platform == "windows-latest":
-            if qtver.startswith('5.15'):
-              args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
-            elif qtver.startswith('5.14'):
-              args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
-            elif qtver.startswith('6'):
+            if qtver.startswith('6.5'):
               args = [qtver, "windows", "desktop", "win64_mingw81"]
             else:
-              args = [qtver, "windows", "desktop", "win64_msvc2015_64"]
+              args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
           elif platform == "macOS-latest":
             args = [qtver, "mac", "desktop", "clang_64"]
           else:
@@ -145,14 +137,10 @@ jobs:
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
-            if qtver.startswith('5.15'):
-              arch_dir = 'msvc2019_64'
-            elif qtver.startswith('5.14'):
-              arch_dir = 'msvc2017_64'
-            elif qtver.startswith('6'):
+            if qtver.startswith('6.5'):
               arch_dir = 'mingw81_64'
             else:
-              arch_dir = 'msvc2015_64'
+              arch_dir = 'msvc2019_64'
           elif platform == "macOS-latest":
             arch_dir = 'clang_64'
           else:
@@ -186,7 +174,7 @@ jobs:
               print('PREFIX {}'.format(result))
         shell: python
         working-directory: ${{ github.workspace }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: matrix.artifact == 'binary'
         with:
           name: aqt-${{ matrix.os }}-standalone

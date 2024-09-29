@@ -25,7 +25,7 @@ jobs:
       run:
         shell: ${{ matrix.system.os == 'windows-latest' && 'pwsh' || 'bash' }} {0}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 20
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*

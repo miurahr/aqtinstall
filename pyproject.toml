@@ -111,7 +111,7 @@ exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", 
 
 [tool.black]
 line-length = 125
-target-version = ['py39']
+target-version = ['py312']
 
 [tool.isort]
 line_length = 125
@@ -174,7 +174,7 @@ markers = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = check, docs, py{38,39,310,311,312}, py39d, mprof, fil, mypy
+envlist = check, docs, py{39,310,311,312,313}, mprof, fil, mypy
 isolated_build = True
 
 [testenv]
@@ -189,14 +189,14 @@ commands =
     python -m pytest -vv
 
 [testenv:check]
-basepython = python3.9
+basepython = python3.12
 extras = check
 commands =
     check-manifest {toxinidir}
     flake8 aqt tests
 
 [testenv:mypy]
-basepython = python3.9
+basepython = python3.12
 extras = check
 commands = mypy aqt
 deps =
@@ -205,20 +205,14 @@ deps =
     types-psutil
 
 [testenv:docs]
-basepython = python3.9
+basepython = python3.12
 extras = docs
 commands =
     sphinx-build {posargs:-E} -W -b html docs build/docs
     sphinx-build -W -b linkcheck docs build/docs
 
-[testenv:py39d]
-basepython = python3.9d
-extras = test, debug
-commands =
-    python3.9-dbg -m pytest -v --no-cov -R : -k "test_install"
-
 [testenv:mprof]
-basepython = python3.9
+basepython = python3.12
 extras = debug
 commands =
     mprof run --multiprocess python -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
@@ -228,7 +222,7 @@ deps =
     matplotlib
 
 [testenv:fil]
-basepython = python3.9
+basepython = python3.12
 extras = debug
 commands =
     fil-profile run -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
@@ -244,9 +238,9 @@ commands =
 
 [gh-actions]
 python =
-    3.8: py38
-    3.9: py39, docs, check, mypy
+    3.9: py39
     3.10: py310
     3.11: py311
-    3.12: py312
+    3.12: py312, docs, check, mypy
+    3.13-dev: py313
 """

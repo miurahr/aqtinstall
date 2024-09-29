@@ -87,7 +87,7 @@ class PlatformBuildJobs:
         self.build_jobs = build_jobs
 
 
-python_versions = ["3.9", "3.11", "3.12"]
+python_versions = ["3.11", "3.12"]
 
 qt_versions = ["5.12.12", "5.15.14", "6.5.3"]
 
@@ -213,7 +213,7 @@ windows_build_jobs.extend(
         ),
         BuildJob(
             "install-qt",
-            "6.5.2",
+            "6.5.3",
             "windows",
             "desktop",
             "win64_msvc2019_arm64",
@@ -267,17 +267,17 @@ linux_build_jobs.extend(
         ),
         # Should install the `qtlottie` module, even though the archive `qtlottieanimation` is not specified:
         BuildJob(
-            "install-doc", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64",
+            "install-doc", "6.1.3", "linux", "desktop", "gcc_64", "gcc_64",
             subarchives="qtdoc", module="qtlottie",
             # Fail the job if these paths do not exist:
-            check_output_cmd="ls -lh ./Docs/Qt-6.1.0/qtdoc/ ./Docs/Qt-6.1.0/qtlottieanimation/",
+            check_output_cmd="ls -lh ./Docs/Qt-6.1.3/qtdoc/ ./Docs/Qt-6.1.3/qtlottieanimation/",
         ),
         # Should install the `qtcharts` module, even though the archive `qtcharts` is not specified:
         BuildJob(
-            "install-example", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64",
+            "install-example", "6.1.3", "linux", "desktop", "gcc_64", "gcc_64",
             subarchives="qtdoc", module="qtcharts",
             # Fail the job if these paths do not exist:
-            check_output_cmd="ls -lh ./Examples/Qt-6.1.0/charts/ ./Examples/Qt-6.1.0/demos/ ./Examples/Qt-6.1.0/tutorials/",
+            check_output_cmd="ls -lh ./Examples/Qt-6.1.3/charts/ ./Examples/Qt-6.1.3/demos/ ./Examples/Qt-6.1.3/tutorials/",
         ),
         # test for list commands
         BuildJob('list', '5.15.2', 'linux', 'desktop', 'gcc_64', '', spec="<6", list_options={'HAS_WASM': "True"}),
@@ -333,14 +333,14 @@ mac_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "mac", "desktop", "wasm_32", "wasm_32")
 )
 mac_build_jobs.append(
-    BuildJob("install-qt", "6.4.0", "mac", "desktop", "wasm_32", "wasm_32",
+    BuildJob("install-qt", "6.4.3", "mac", "desktop", "wasm_32", "wasm_32",
              is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="clang_64")
 )
 windows_build_jobs.append(
     BuildJob("install-qt", "5.14.2", "windows", "desktop", "wasm_32", "wasm_32")
 )
 windows_build_jobs.append(
-    BuildJob("install-qt", "6.4.0", "windows", "desktop", "wasm_32", "wasm_32",
+    BuildJob("install-qt", "6.4.3", "windows", "desktop", "wasm_32", "wasm_32",
              is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="mingw_64",
              mingw_variant="win64_mingw900")
 )
@@ -348,16 +348,16 @@ windows_build_jobs.append(
 # mobile SDK
 mac_build_jobs.extend(
     [
-        BuildJob("install-qt", "6.4.0", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=True),
+        BuildJob("install-qt", "6.4.3", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=True),
         BuildJob("install-qt", "6.2.4", "mac", "ios", "ios", "ios", module="qtsensors", is_autodesktop=False),
-        BuildJob("install-qt", "6.4.1", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
-        BuildJob("install-qt", "6.1.0", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
+        BuildJob("install-qt", "6.4.3", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
+        BuildJob("install-qt", "6.1.3", "mac", "android", "android_armv7", "android_armv7", is_autodesktop=True),
     ]
 )
 linux_build_jobs.extend(
     [
-        BuildJob("install-qt", "6.1.0", "linux", "android", "android_armv7", "android_armv7", is_autodesktop=True),
-        BuildJob("install-qt", "6.4.1", "linux", "android", "android_arm64_v8a", "android_arm64_v8a", is_autodesktop=True),
+        BuildJob("install-qt", "6.1.3", "linux", "android", "android_armv7", "android_armv7", is_autodesktop=True),
+        BuildJob("install-qt", "6.4.3", "linux", "android", "android_arm64_v8a", "android_arm64_v8a", is_autodesktop=True),
     ]
 )
 
@@ -365,8 +365,8 @@ linux_build_jobs.extend(
 # This will test that the path to mingw is not hardcoded.
 windows_build_jobs.extend(
     [
-        BuildJob("install-qt", "6.3.0", "windows", "android", "android_armv7", "android_armv7", is_autodesktop=True),
-        BuildJob("install-qt", "6.4.1", "windows", "android", "android_x86_64", "android_x86_64", is_autodesktop=True),
+        BuildJob("install-qt", "6.3.2", "windows", "android", "android_armv7", "android_armv7", is_autodesktop=True),
+        BuildJob("install-qt", "6.4.3", "windows", "android", "android_x86_64", "android_x86_64", is_autodesktop=True),
     ]
 )
 
