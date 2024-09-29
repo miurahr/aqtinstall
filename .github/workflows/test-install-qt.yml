@@ -108,7 +108,7 @@ jobs:
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
           assert res.returncode == 0
-          if qtver.startswith('6'):
+          if qtver.startswith('6.6'):
             command_line6 = []
             command_line6.extend(prefix)
             if platform.startswith("ubuntu"):
@@ -149,29 +149,31 @@ jobs:
             res = run([f"{qtver}/{arch_dir}/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
           except CalledProcessError as cpe:
             exit(cpe.returncode)
-          if res.returncode == 0:
-            qt_prefix_path = pathlib.Path.cwd() / qtver / arch_dir
+          assert res.returncode == 0
+          print('Check prefix path qmake recognized...')
+          qt_prefix_path = pathlib.Path.cwd() / qtver / arch_dir
+          for line in res.stdout.splitlines():
+            if line.startswith(b'QT_INSTALL_PREFIX'):
+              result = line[18:].decode('UTF-8')
+              assert qt_prefix_path.samefile(result)
+          print('QT_INSTALL_PREFIX {}\nExpected path {}'.format(result, qt_prefix_path))
+          if qtver.startswith('6.6'):
+            print('Check prefix path by android/ios qmake recognized...')
+            if platform == "windows-latest":
+              qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
+            elif platform == "macOS-latest":
+              qmake = os.path.join(qtver, 'ios', 'bin', 'qmake')
+            else:
+              qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
+            try:
+              res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
+            except CalledProcessError as cpe:
+              exit(cpe.returncode)
+            assert res.returncode == 0
             for line in res.stdout.splitlines():
               if line.startswith(b'QT_INSTALL_PREFIX'):
                 result = line[18:].decode('UTF-8')
-                assert qt_prefix_path.samefile(result)
-            print('PREFIX {}'.format(result))
-            if qtver.startswith('6'):
-              if platform == "windows-latest" and qtver.startswith('6'):
-                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
-              elif platform == "macOS-latest" and qtver.startswith('6'):
-                qmake = os.path.join(qtver, 'ios', 'bin', 'qmake')
-              else:
-                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
-              try:
-                res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
-              except CalledProcessError as cpe:
-                exit(cpe.returncode)
-              assert res.returncode == 0
-              for line in res.stdout.splitlines():
-                if line.startswith(b'QT_INSTALL_PREFIX'):
-                  result = line[18:].decode('UTF-8')
-              print('PREFIX {}'.format(result))
+            print('QT_INATALL_PREFIX {}'.format(result))
         shell: python
         working-directory: ${{ github.workspace }}
       - uses: actions/upload-artifact@v4
