@@ -32,7 +32,7 @@ jobs:
             py: "3.10"
             qtver: 6.1.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 20
           fetch-tags: true
@@ -88,24 +88,24 @@ jobs:
               bin_path = str(github_workspace / "dist" / "aqt.exe")
             else:
               bin_path = (github_workspace / "dist" / "aqt").as_posix()
-            prefix = [bin_path, "install"]
+            prefix = [bin_path, "install-qt"]
           else:
-            prefix = ["python", "-m", "aqt", "install"]
+            prefix = ["python", "-m", "aqt", "install-qt"]
           command_line = []
           command_line.extend(prefix)
           if platform == "windows-latest":
             if qtver.startswith('5.15'):
-              args = [qtver, "windows", "desktop", "win64_msvc2019_64"]
+              args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
             elif qtver.startswith('5.14'):
-              args = [qtver, "windows", "desktop", "win64_msvc2017_64"]
+              args = ["windows", "desktop", qtver, "win64_msvc2017_64"]
             elif qtver.startswith('6'):
-              args = [qtver, "windows", "desktop", "win64_mingw81"]
+              args = ["windows", "desktop", qtver, "win64_mingw81"]
             else:
-              args = [qtver, "windows", "desktop", "win64_msvc2015_64"]
+              args = ["windows", "desktop", qtver, "win64_msvc2015_64"]
           elif platform == "macOS-latest":
-            args = [qtver, "mac", "desktop", "clang_64"]
+            args = ["mac", "desktop", qtver, "clang_64"]
           else:
-            args = [qtver, "linux", "desktop", "gcc_64"]
+            args = ["linux", "desktop", qtver, "gcc_64"]
           command_line.extend(args)
           command_line.extend(["--archives", "qtbase", "icu", "qt"])
           env["AQT_CONFIG"] = (github_workspace / "ci" / "settings.ini").as_posix()
@@ -120,13 +120,13 @@ jobs:
             command_line6 = []
             command_line6.extend(prefix)
             if platform.startswith("ubuntu"):
-              command_line6.extend([qtver, "linux", "android", "android_armv7"])
+              command_line6.extend(["linux", "android", qtver, "android_armv7"])
               timeout = 360
             elif platform.startswith("macOS"):
-              command_line6.extend([qtver, "mac", "ios", "ios"])
+              command_line6.extend(["mac", "ios", qtver, "ios"])
               timeout = 360
             else:
-              command_line6.extend([qtver, "windows", "android", "android_armv7"])
+              command_line6.extend(["windows", "android", qtver, "android_armv7"])
               timeout = 360
             print("Execute: {}".format(command_line6))
             try:
@@ -186,7 +186,7 @@ jobs:
               print('PREFIX {}'.format(result))
         shell: python
         working-directory: ${{ github.workspace }}
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: matrix.artifact == 'binary'
         with:
           name: aqt-${{ matrix.os }}-standalone
