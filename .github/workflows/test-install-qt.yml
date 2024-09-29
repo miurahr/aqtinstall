@@ -23,10 +23,6 @@ jobs:
             py: "3.12"
             qtver: 6.6.3
             artifact: binary
-          - os: windows-latest
-            py: "3.12"
-            qtver: 6.5.3
-            artifact: binary
           - os: ubuntu-latest
             py: "3.12"
             qtver: 6.8.0
