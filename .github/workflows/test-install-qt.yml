@@ -90,7 +90,7 @@ jobs:
           command_line = []
           command_line.extend(prefix)
           if platform == "windows-latest":
-            if qtver.startswith('6.5'):
+            if qtver.startswith('6.6'):
               args = ["windows", "desktop", qtver, "win64_mingw"]
             else:
               args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
@@ -162,20 +162,24 @@ jobs:
           if qtver.startswith('6.6'):
             print('Check prefix path by android/ios qmake recognized...')
             if platform == "windows-latest":
+              target_dir = 'android_armv7'
               qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
             elif platform == "macOS-latest":
+              target_dir = 'ios'
               qmake = os.path.join(qtver, 'ios', 'bin', 'qmake')
             else:
+              target_dir = 'android_armv7'
               qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
             try:
               res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
             except CalledProcessError as cpe:
               exit(cpe.returncode)
             assert res.returncode == 0
+            expected_path = pathlib.Path.cwd() / qtver / target_dir
             for line in res.stdout.splitlines():
               if line.startswith(b'QT_INSTALL_PREFIX'):
                 result = line[18:].decode('UTF-8')
-            print('QT_INATALL_PREFIX {}'.format(result))
+            print('QT_INATALL_PREFIX {}\nExpected path {}'.format(result, expected_path))
         shell: python
         working-directory: ${{ github.workspace }}
       - uses: actions/upload-artifact@v4
