@@ -721,7 +721,6 @@ class Cli:
         )
 
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction) -> None:
-        deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
 
         def make_parser_it(cmd: str, desc: str, set_parser_cmd, formatter_class):
             kwargs = {"formatter_class": formatter_class} if formatter_class else {}

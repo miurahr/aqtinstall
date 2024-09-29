@@ -105,14 +105,12 @@ def test_cli_invalid_version(capsys, invalid_version):
     cli._setup_settings()
 
     matcher = re.compile(
-      #  r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+        #  r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
         r"(.*\n)*"
         r"ERROR   :.*Invalid version: '" + invalid_version + r"'! Please use the form '5\.X\.Y'\.\n.*"
     )
 
-    for cmd in (
-        ("list-qt", "mac", "desktop", "--arch", invalid_version),
-    ):
+    for cmd in (("list-qt", "mac", "desktop", "--arch", invalid_version),):
         cli = Cli()
         assert cli.run(cmd) == 1
         out, err = capsys.readouterr()
