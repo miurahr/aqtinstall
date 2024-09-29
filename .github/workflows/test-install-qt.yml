@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest]
         py: ["3.12"]
-        qtver: [6.5.3, 6.6.3, 6.8.0]
+        qtver: [6.5.3, 6.6.3]
         artifact: [standard]
         include:
           - os: windows-latest
@@ -27,6 +27,10 @@ jobs:
             py: "3.12"
             qtver: 6.5.3
             artifact: binary
+          - os: ubuntu-latest
+            py: "3.12"
+            qtver: 6.8.0
+            artifact: standard
     steps:
       - uses: actions/checkout@v4
         with:
@@ -96,6 +100,8 @@ jobs:
               args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
           elif platform == "macOS-latest":
             args = ["mac", "desktop", qtver, "clang_64"]
+          elif qtver.startswith('6.8'):
+            args = ["linux", "desktop", qtver, "linux_gcc_64"]
           else:
             args = ["linux", "desktop", qtver, "gcc_64"]
           command_line.extend(args)
