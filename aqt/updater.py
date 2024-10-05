@@ -228,7 +228,7 @@ class Updater:
             f.write("echo Remember to call vcvarsall.bat to complete environment setup!\n")
 
     def set_license(self, base_dir: str, qt_version: str, arch_dir: str):
-        """Update qtconfig.pri as OpenSource"""
+        """Update qconfig.pri as OpenSource"""
         with open(os.path.join(base_dir, qt_version, arch_dir, "mkspecs", "qconfig.pri"), "r+") as f:
             lines = f.readlines()
             f.seek(0)

@@ -387,7 +387,7 @@ class QtRepoProperty:
 
     @staticmethod
     def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
-        if arch.startswith("win64_mingw"):
+        if arch.startswith("win64") and arch.endswith("mingw"):
             return arch[6:] + "_64"
         elif arch.startswith("win32_mingw"):
             return arch[6:] + "_32"
