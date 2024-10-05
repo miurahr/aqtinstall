@@ -136,6 +136,15 @@ windows_build_jobs.extend(
             "desktop",
             "win64_msvc2019_arm64",
             "msvc2019_arm64",
+            is_autodesktop=True,  # Should install win64_msvc2019_arm64 in parallel
+        ),
+        BuildJob(
+            "install-qt",
+            "6.7.3",
+            "windows",
+            "desktop",
+            "win64_llvm_mingw",
+            "llvm_mingw",
             is_autodesktop=True,    # Should install win64_msvc2019_arm64 in parallel
         ),
         BuildJob(
