@@ -75,10 +75,32 @@ class BuildJob:
         return self.autodesk_qt_bindir(sep='\\')
 
     def mingw_folder(self) -> str:
+        """
+        Tool variant         -> folder name
+        --------------------    -----------------
+        win64_llvm_mingw1706 -> llvm-mingw1706_64
+        win64_mingw1310      -> mingw1310_64
+        win64_mingw900       -> mingw1120_64 (tool contains mingw 11.2.0 instead of 9.0.0)
+        win64_mingw810       -> mingw810_64
+        """
         if not self.mingw_variant:
             return ""
-        match = re.match(r"^win(\d+)_(mingw\d+)$", self.mingw_variant)
-        return f"{match[2]}_{match[1]}"
+        match = re.match(r"^win(?P<bits>\d+)_(?P<llvm>llvm_)?(?P<mingw>mingw\d+)$", self.mingw_variant)
+        if match.group('llvm'):
+            return f"llvm-{match.group('mingw')}_{match.group('bits')}"
+        if match.group('mingw') == "mingw900":  # tool contains mingw 11.2.0, not 9.0.0
+            return f"mingw1120_{match.group('bits')}"
+        return f"{match.group('mingw')}_{match.group('bits')}"
+
+    def mingw_tool_name(self) -> str:
+        if self.mingw_variant == "win64_mingw900":
+            return "tools_mingw90"
+        elif self.mingw_variant == "win64_mingw1310":
+            return "tools_mingw1310"
+        elif self.mingw_variant == "win64_llvm_mingw1706":
+            return "tools_llvm_mingw1706"
+        else:
+            return "tools_mingw"
 
 
 class PlatformBuildJobs:
@@ -145,6 +167,7 @@ windows_build_jobs.extend(
             "desktop",
             "win64_llvm_mingw",
             "llvm-mingw_64",
+            mingw_variant="win64_llvm_mingw1706",
             is_autodesktop=True,    # Should install win64_msvc2019_arm64 in parallel
         ),
         BuildJob(
@@ -300,6 +323,7 @@ for platform_build_job in all_platform_build_jobs:
                 ("SUBARCHIVES", build_job.subarchives if build_job.subarchives else ""),
                 ("SPEC", build_job.spec if build_job.spec else ""),
                 ("MINGW_VARIANT", build_job.mingw_variant),
+                ("MINGW_TOOL_NAME", build_job.mingw_tool_name()),
                 ("MINGW_FOLDER", build_job.mingw_folder()),
                 ("IS_AUTODESKTOP", str(build_job.is_autodesktop)),
                 ("HAS_WASM", build_job.list_options.get("HAS_WASM", "True")),
