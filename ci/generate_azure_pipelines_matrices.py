@@ -144,7 +144,7 @@ windows_build_jobs.extend(
             "windows",
             "desktop",
             "win64_llvm_mingw",
-            "llvm_mingw",
+            "llvm_mingw_64",
             is_autodesktop=True,    # Should install win64_msvc2019_arm64 in parallel
         ),
         BuildJob(
