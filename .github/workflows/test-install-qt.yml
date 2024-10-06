@@ -15,35 +15,31 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
-        py: ["3.9", "3.12"]
-        qtver: [5.9.9, 6.1.0]
+        py: ["3.12"]
+        qtver: [6.5.3, 6.6.3]
         artifact: [standard]
         include:
           - os: windows-latest
-            py: "3.10"
-            qtver: 6.1.0
+            py: "3.12"
+            qtver: 6.6.3
             artifact: binary
-          - os: ubuntu-20.04
-            py: "3.10"
-            qtver: 6.1.0
+          - os: windows-latest
+            py: "3.12"
+            qtver: 6.7.3
             artifact: standard
-        exclude:
           - os: ubuntu-latest
-            py: "3.10"
-            qtver: 6.1.0
+            py: "3.12"
+            qtver: 6.8.0
+            artifact: standard
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 20
           fetch-tags: true
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.py }}
-      - name: Run pytest
-        run: |
-          python -m pip install tox-gh-actions build
-          tox
       - name: Build and install
         if: matrix.artifact == 'standard'
         run: |
@@ -94,16 +90,14 @@ jobs:
           command_line = []
           command_line.extend(prefix)
           if platform == "windows-latest":
-            if qtver.startswith('5.15'):
-              args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
-            elif qtver.startswith('5.14'):
-              args = ["windows", "desktop", qtver, "win64_msvc2017_64"]
-            elif qtver.startswith('6'):
-              args = ["windows", "desktop", qtver, "win64_mingw81"]
+            if qtver.startswith('6.6'):
+              args = ["windows", "desktop", qtver, "win64_mingw"]
             else:
-              args = ["windows", "desktop", qtver, "win64_msvc2015_64"]
-          elif platform == "macOS-latest":
+              args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
+          elif platform.startswith("macOS"):
             args = ["mac", "desktop", qtver, "clang_64"]
+          elif qtver.startswith('6.8'):
+            args = ["linux", "desktop", qtver, "linux_gcc_64"]
           else:
             args = ["linux", "desktop", qtver, "gcc_64"]
           command_line.extend(args)
@@ -116,7 +110,7 @@ jobs:
           except subprocess.CalledProcessError as cpe:
             exit(cpe.returncode)
           assert res.returncode == 0
-          if qtver.startswith('6'):
+          if qtver.startswith('6.6'):
             command_line6 = []
             command_line6.extend(prefix)
             if platform.startswith("ubuntu"):
@@ -145,14 +139,10 @@ jobs:
           platform = "${{ matrix.os }}"
           qtver = "${{ matrix.qtver }}"
           if platform == "windows-latest":
-            if qtver.startswith('5.15'):
-              arch_dir = 'msvc2019_64'
-            elif qtver.startswith('5.14'):
-              arch_dir = 'msvc2017_64'
-            elif qtver.startswith('6'):
-              arch_dir = 'mingw81_64'
+            if qtver.startswith('6.6'):
+              arch_dir = 'mingw_64'
             else:
-              arch_dir = 'msvc2015_64'
+              arch_dir = 'msvc2019_64'
           elif platform == "macOS-latest":
             arch_dir = 'clang_64'
           else:
@@ -161,29 +151,35 @@ jobs:
             res = run([f"{qtver}/{arch_dir}/bin/qmake", "-query"], timeout=15, check=True, stdout=PIPE)
           except CalledProcessError as cpe:
             exit(cpe.returncode)
-          if res.returncode == 0:
-            qt_prefix_path = pathlib.Path.cwd() / qtver / arch_dir
+          assert res.returncode == 0
+          print('Check prefix path qmake recognized...')
+          qt_prefix_path = pathlib.Path.cwd() / qtver / arch_dir
+          for line in res.stdout.splitlines():
+            if line.startswith(b'QT_INSTALL_PREFIX'):
+              result = line[18:].decode('UTF-8')
+              assert qt_prefix_path.samefile(result)
+          print('QT_INSTALL_PREFIX {}\nExpected path {}'.format(result, qt_prefix_path))
+          if qtver.startswith('6.6'):
+            print('Check prefix path by android/ios qmake recognized...')
+            if platform == "windows-latest":
+              target_dir = 'android_armv7'
+              qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
+            elif platform == "macOS-latest":
+              target_dir = 'ios'
+              qmake = os.path.join(qtver, 'ios', 'bin', 'qmake')
+            else:
+              target_dir = 'android_armv7'
+              qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
+            try:
+              res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
+            except CalledProcessError as cpe:
+              exit(cpe.returncode)
+            assert res.returncode == 0
+            expected_path = pathlib.Path.cwd() / qtver / target_dir
             for line in res.stdout.splitlines():
               if line.startswith(b'QT_INSTALL_PREFIX'):
                 result = line[18:].decode('UTF-8')
-                assert qt_prefix_path.samefile(result)
-            print('PREFIX {}'.format(result))
-            if qtver.startswith('6'):
-              if platform == "windows-latest" and qtver.startswith('6'):
-                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake.bat')
-              elif platform == "macOS-latest" and qtver.startswith('6'):
-                qmake = os.path.join(qtver, 'ios', 'bin', 'qmake')
-              else:
-                qmake = os.path.join(qtver, 'android_armv7', 'bin', 'qmake')
-              try:
-                res = run([qmake, "-query"], timeout=15, check=True, stdout=PIPE)
-              except CalledProcessError as cpe:
-                exit(cpe.returncode)
-              assert res.returncode == 0
-              for line in res.stdout.splitlines():
-                if line.startswith(b'QT_INSTALL_PREFIX'):
-                  result = line[18:].decode('UTF-8')
-              print('PREFIX {}'.format(result))
+            print('QT_INATALL_PREFIX {}\nExpected path {}'.format(result, expected_path))
         shell: python
         working-directory: ${{ github.workspace }}
       - uses: actions/upload-artifact@v4

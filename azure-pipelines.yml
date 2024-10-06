@@ -1,21 +1,15 @@
-trigger: none
-pr: none
-schedules:
-- cron: '0 12 * * 0'
-  displayName: Weekly sunday full tests
-  branches:
-    include:
-      - master
+trigger: [master]
+pr: [master]
 
 jobs:
 - job: MatricesGenerator
   displayName: Matrices Generator
   pool:
-    vmImage: 'ubuntu-20.04'
+    vmImage: 'ubuntu-22.04'
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.9'
+        versionSpec: '3.12'
         addToPath: true
     - bash: python ci/generate_azure_pipelines_matrices.py
       name: mtrx
@@ -24,7 +18,7 @@ jobs:
 - job: Mac
   dependsOn: MatricesGenerator
   pool:
-    vmImage: 'macOS-12'
+    vmImage: 'macOS-14'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.mac'] ]
   steps:
@@ -54,14 +48,14 @@ jobs:
   steps:
     - template: ci/steps.yml
 
-- job: Linux ARM64
-  dependsOn: MatricesGenerator
-  pool:
-    vmImage: 'ubuntu-22.04'
-  container:
-    image: ubuntu:22.04
-    options: --platform linux/arm64
-  strategy:
-    matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.linux_arm64'] ]
-  steps:
-    - template: ci/steps.yml
+#- job: Linux_ARM64
+#  dependsOn: MatricesGenerator
+#  pool:
+#    vmImage: 'ubuntu-22.04'
+#  container:
+#    image: ubuntu:22.04
+#    options: --platform linux/arm64
+#  strategy:
+#    matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.linux_arm64'] ]
+#  steps:
+#    - template: ci/steps.yml
