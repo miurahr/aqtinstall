@@ -10,6 +10,7 @@ Contents:
    getting_started
    cli
    configuration
+   appendix
    CONTRIBUTE
    CODE_OF_CONDUCT
    SECURITY
