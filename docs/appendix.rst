@@ -47,4 +47,4 @@ When you got connection error with specific mirror site, when administrator of t
 or the site policy limit the access in specific IP range, but you are not in it in any reason, but https://download.qt.io/
 mother site redirect you there.
 
-Please check `Configuration`_ section how to specify a blacklist of proxy site.
+Please check :ref:`configuration-ref` section how to specify a blacklist of proxy site.
