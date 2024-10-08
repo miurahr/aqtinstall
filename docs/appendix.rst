@@ -3,7 +3,7 @@
 Appendix
 ========
 
-Hint to avoid netowrk errors
+Hint to avoid network errors
 ----------------------------
 
 This section provide several hints, if you need to use aqtinstall in an environment that is limited to access the internet,
