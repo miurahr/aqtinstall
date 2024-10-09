@@ -81,7 +81,7 @@ steps:
           [[ $($(QT_BINDIR)/qmake -query QT_HOST_PREFIX) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
         fi
       fi
-      if [[ "$(SUBCOMMAND)" == "list" ]]; then
+      if [[ "$(SUBCOMMAND)" == "list-*" ]]; then
         aqt list-qt $(HOST)                                                     # print all targets for host
         aqt list-tool $(HOST) $(TARGET)                                         # print all tools for host/target
         aqt list-tool $(HOST) $(TARGET) qt3dstudio_runtime_240                  # print all tool variant names for qt3dstudio
