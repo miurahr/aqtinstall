@@ -289,7 +289,7 @@ steps:
         jom
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
         python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
-          --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.$(MINGW_VARIANT)
+          --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop $(MINGW_TOOL_NAME) qt.tools.$(MINGW_VARIANT)
         if ($?) {
           Write-Host 'Successfully installed tools_mingw'
         } else {
@@ -354,7 +354,7 @@ steps:
           Write-Host "Path == " + $env:Path
           if (![bool] (Get-Command -ErrorAction Ignore -Type Application mingw32-make)) {
             python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
-               --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop tools_mingw qt.tools.$(MINGW_VARIANT)
+               --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop $(MINGW_TOOL_NAME) qt.tools.$(MINGW_VARIANT)
             if ($?) {
               Write-Host 'Successfully installed tools_mingw'
             } else {
