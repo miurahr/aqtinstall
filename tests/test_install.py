@@ -354,45 +354,6 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
-        (
-            "tool linux tools_qtcreator 1.2.3-0-197001020304 qt.tools.qtcreator".split(),
-            "linux",
-            "desktop",
-            "1.2.3",
-            {"std": ""},
-            {"std": ""},
-            {"std": "linux_x64/desktop/tools_qtcreator/Updates.xml"},
-            {"std": [tool_archive("linux", "tools_qtcreator", "qt.tools.qtcreator", datetime(1970, 1, 2, 3, 4, 5, 6))]},
-            re.compile(
-                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING : The command 'tool' is deprecated and marked for removal in a future version of aqt.\n"
-                r"In the future, please use the command 'install-tool' instead.\n"
-                r"INFO    : Downloading qt.tools.qtcreator...\n"
-                r"Finished installation of tools_qtcreator-linux-qt.tools.qtcreator.7z in .*\n"
-                r"INFO    : Finished installation\n"
-                r"INFO    : Time elapsed: .* second"
-            ),
-        ),
-        (
-            "install 5.14.0 windows desktop win32_mingw73".split(),
-            "windows",
-            "desktop",
-            "5.14.0",
-            {"std": "win32_mingw73"},
-            {"std": "mingw73_32"},
-            {"std": "windows_x86/desktop/qt5_5140/Updates.xml"},
-            {"std": [plain_qtbase_archive("qt.qt5.5140.win32_mingw73", "win32_mingw73")]},
-            re.compile(
-                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING : The command 'install' is deprecated"
-                r" and marked for removal in a future version of aqt.\n"
-                r"In the future, please use the command 'install-qt' instead.\n"
-                r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-windows-win32_mingw73.7z in .*\n"
-                r"INFO    : Finished installation\n"
-                r"INFO    : Time elapsed: .* second"
-            ),
-        ),
         (  # Mixing --modules with --archives
             "install-qt windows desktop 5.14.0 win32_mingw73 -m qtcharts --archives qtbase".split(),
             "windows",
@@ -527,26 +488,6 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-everywhere-src-5\.14\.2\.7z in .*\n"
-                r"INFO    : Finished installation\n"
-                r"INFO    : Time elapsed: .* second"
-            ),
-        ),
-        (
-            "install 5.9.0 windows desktop win32_mingw53".split(),
-            "windows",
-            "desktop",
-            "5.9.0",
-            {"std": "win32_mingw53"},
-            {"std": "mingw53_32"},
-            {"std": "windows_x86/desktop/qt5_59/Updates.xml"},
-            {"std": [plain_qtbase_archive("qt.59.win32_mingw53", "win32_mingw53")]},
-            re.compile(
-                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"WARNING : The command 'install' is deprecated"
-                r" and marked for removal in a future version of aqt.\n"
-                r"In the future, please use the command 'install-qt' instead.\n"
-                r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-windows-win32_mingw53.7z in .*\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
