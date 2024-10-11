@@ -168,7 +168,7 @@ windows_build_jobs.extend(
             "win64_llvm_mingw",
             "llvm-mingw_64",
             mingw_variant="win64_llvm_mingw1706",
-            is_autodesktop=True,    # Should install win64_msvc2019_arm64 in parallel
+            is_autodesktop=False,
         ),
         BuildJob(
             # Archives stored as .zip
