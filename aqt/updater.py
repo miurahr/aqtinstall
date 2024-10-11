@@ -299,6 +299,7 @@ class Updater:
                 "android_x86",
                 "android_armv7",
                 "win64_msvc2019_arm64",
+                "win64_msvc2022_arm64_cross_compiled",
             ]:  # desktop version
                 updater.make_qtconf(base_dir, version_dir, arch_dir)
                 updater.patch_qmake()

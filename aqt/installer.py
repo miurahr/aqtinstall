@@ -1050,7 +1050,9 @@ class Cli:
         """Returns expected_desktop_arch_dir, desktop_arch_to_install"""
         is_wasm = arch.startswith("wasm")
         is_msvc = "msvc" in arch
-        is_win_desktop_msvc_arm64 = host == "windows" and target == "desktop" and is_msvc and arch.endswith("arm64")
+        is_win_desktop_msvc_arm64 = (
+            host == "windows" and target == "desktop" and is_msvc and arch.endswith(("arm64", "arm64_cross_compiled"))
+        )
         if version < Version("6.0.0") or (
             target not in ["ios", "android"] and not is_wasm and not is_win_desktop_msvc_arm64
         ):

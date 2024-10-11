@@ -395,6 +395,8 @@ class QtRepoProperty:
             m = re.match(r"win\d{2}_(?P<msvc>msvc\d{4})_(?P<winrt>winrt_x\d{2})", arch)
             if m:
                 return f"{m.group('winrt')}_{m.group('msvc')}"
+            elif arch.endswith("_cross_compiled"):
+                return arch[6:-15]
             else:
                 return arch[6:]
         elif host == "mac" and arch == "clang_64":
@@ -412,8 +414,10 @@ class QtRepoProperty:
 
     @staticmethod
     def default_win_msvc_desktop_arch_dir(_version: Version) -> str:
-        """_version is unused, but we expect it to matter for future releases"""
-        return "msvc2019_64"
+        if _version >= Version("6.8.0"):
+            return "msvc2022_64"
+        else:
+            return "msvc2019_64"
 
     @staticmethod
     def default_mac_desktop_arch_dir(version: Version) -> str:
