@@ -94,7 +94,7 @@ jobs:
               args = ["windows", "desktop", qtver, "win64_mingw"]
             else:
               args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
-          elif platform == "macOS-latest":
+          elif platform.startswith("macOS"):
             args = ["mac", "desktop", qtver, "clang_64"]
           elif qtver.startswith('6.8'):
             args = ["linux", "desktop", qtver, "linux_gcc_64"]
