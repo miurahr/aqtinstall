@@ -179,7 +179,7 @@ steps:
           eq(variables['Agent.OS'], 'Linux'),
           eq(variables['Agent.OS'], 'Darwin')
         ),
-        ne(variables['SUBCOMMAND'], 'list-qt'),
+        ne(variables['SUBCOMMAND'], 'list-commands'),
         ne(variables['SUBCOMMAND'], 'install-tool')
       )
     displayName: Build accelbubble example application to test for android
