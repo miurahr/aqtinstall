@@ -177,8 +177,8 @@ linux_build_jobs.extend(
             check_output_cmd="ls -lh ./Examples/Qt-6.1.3/charts/ ./Examples/Qt-6.1.3/demos/ ./Examples/Qt-6.1.3/tutorials/",
         ),
         # test for list commands
-        BuildJob('list-*', '6.1.0', 'linux', 'desktop', 'gcc_64', '', spec=">6.0,<6.1.1", list_options={'HAS_WASM': "False"}),
-        BuildJob('list-*', '6.1.0', 'linux', 'android', 'android_armv7', '', spec=">6.0,<6.1.1", list_options={}),
+        BuildJob('list-commands', '6.1.0', 'linux', 'desktop', 'gcc_64', '', spec=">6.0,<6.1.1", list_options={'HAS_WASM': "False"}),
+        BuildJob('list-commands', '6.1.0', 'linux', 'android', 'android_armv7', '', spec=">6.0,<6.1.1", list_options={}),
     ]
 )
 
