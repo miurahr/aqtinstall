@@ -38,7 +38,7 @@ jobs:
         tox -e mypy | reviewdog -f mypy -reporter=github-pr-review -fail-on-error=true
         tox -e docs
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Test
       run: tox -e py312
       env:
