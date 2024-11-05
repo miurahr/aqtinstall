@@ -32,8 +32,15 @@ jobs:
       run: |
         pip install -U pip
         pip install tox tox-gh-actions coveralls coverage[toml]
-    - name: Check
-      run: tox
+    - name: Lint checks
+      run: |
+        tox -e check | reviewdog -f flake8 -reporter=github-pr-review -fail-on-error=true
+        tox -e mypy | reviewdog -f mypy -reporter=github-pr-review -fail-on-error=true
+        tox -e docs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Test
+      run: tox -e py312
       env:
         PYTEST_ADDOPTS: --cov-config=pyproject.toml --cov --cov-append --verbose
     - name: Upload Coverage
