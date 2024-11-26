@@ -361,14 +361,38 @@ class QtArchives:
         return target_packages
 
     def _get_archives(self):
-        if self.version >= Version("6.8.0"):
-            name = (
-                f"qt{self.version.major}_{self._version_str()}"
-                f"/qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
-            )
+        if (self.target == "desktop" and self.arch in ("wasm_singlethread", "wasm_multithread")):
+            base_url = "online/qtsdkrepository/all_os/wasm"
+            if self.version >= Version("6.8.0"):
+                name = f"qt6_{self._version_str()}/qt6_{self._version_str()}_{self.arch}"
+            else:
+                name = f"qt6_{self._version_str()}_{self.arch}"
+            self.logger.debug(f"WASM path: {self.base}/{base_url}/{name}/Updates.xml")
+            os_target_folder = posixpath.join(base_url, name)
         else:
-            name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
-        self._get_archives_base(name, self._target_packages())
+            if self.version >= Version("6.8.0"):
+                name = (
+                    f"qt{self.version.major}_{self._version_str()}"
+                    f"/qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+                )
+            else:
+                name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+
+            os_name = self.os_name
+            if self.target == "android" and self.version >= Version("6.7.0"):
+                os_name = "all_os"
+
+            os_target_folder = posixpath.join(
+                "online/qtsdkrepository",
+                os_name + ("_x86" if os_name == "windows" else (
+                    "" if os_name in ("linux_arm64", "all_os", "windows_arm64") else "_x64")),
+                self.target,
+                name
+            )
+
+        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
+        update_xml_text = self._download_update_xml(update_xml_url)
+        self._parse_update_xml(os_target_folder, update_xml_text, self._target_packages())
 
     def _append_depends_tool(self, arch, tool_name):
         os_target_folder = posixpath.join(
