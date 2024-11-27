@@ -170,31 +170,67 @@ class Versions:
 
 
 def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
-    """Converts a Qt version string (596, 512, 5132, etc) into a semantic version.
-    This makes a lot of assumptions based on established patterns:
-    If is_preview is True, the number is interpreted as ver[0].ver[1:], with no patch.
-    If the version is 3 digits, then major, minor, and patch each get 1 digit.
-    If the version is 4 or more digits, then major gets 1 digit, minor gets 2 digits
-    and patch gets all the rest.
-    As of May 2021, the version strings at https://download.qt.io/online/qtsdkrepository
-    conform to this pattern; they are not guaranteed to do so in the future.
+    """Converts a Qt version string into a semantic version.
+    Handles both traditional format (e.g. '51212' -> '5.12.12') and
+    new format with underscores (e.g. '6_7_3' -> '6.7.3').
+
+    Args:
+        qt_ver: Version string (e.g. '51212', '600', '6_7_3')
+        is_preview: Whether this is a preview version
+
+    Returns:
+        Version object or None if invalid format
+
+    Examples:
+        >>> get_semantic_version('51212', False)
+        Version('5.12.12')
+        >>> get_semantic_version('600', False)
+        Version('6.0.0')
+        >>> get_semantic_version('6_7_3', False)
+        Version('6.7.3')
     """
-    if not qt_ver or any(not ch.isdigit() for ch in qt_ver):
+    if not qt_ver:
         return None
-    if is_preview:
-        return Version(
-            major=int(qt_ver[:1]),
-            minor=int(qt_ver[1:]),
-            patch=0,
-            prerelease=("preview",),
-        )
-    elif len(qt_ver) >= 4:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:]))
-    elif len(qt_ver) == 3:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:]))
-    elif len(qt_ver) == 2:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
-    raise ValueError("Invalid version string '{}'".format(qt_ver))
+
+    try:
+        # Handle versions with underscores (new format)
+        if '_' in qt_ver:
+            parts = qt_ver.split('_')
+            if len(parts) < 2 or len(parts) > 3:
+                return None
+
+            major = int(parts[0])
+            minor = int(parts[1])
+            patch = int(parts[2]) if len(parts) == 3 else 0
+
+            version_str = f"{major}.{minor}.{patch}"
+            if is_preview:
+                version_str += ".dev0"
+            return Version(version_str)
+
+        # Handle traditional format (continuous digits)
+        if any(not ch.isdigit() for ch in qt_ver):
+            return None
+
+        # For traditional format, construct version parts first
+        if len(qt_ver) >= 4:
+            major, minor, patch = int(qt_ver[:1]), int(qt_ver[1:3]), int(qt_ver[3:])
+        elif len(qt_ver) == 3:
+            major, minor, patch = int(qt_ver[:1]), int(qt_ver[1:2]), int(qt_ver[2:])
+        elif len(qt_ver) == 2:
+            major, minor, patch = int(qt_ver[:1]), int(qt_ver[1:]), 0
+        else:
+            return None
+
+        # Then create the version string with appropriate preview suffix
+        version_str = f"{major}.{minor}.{patch}"
+        if is_preview:
+            version_str += ".dev0"
+
+        return Version(version_str)
+
+    except ValueError:
+        return None
 
 
 class ArchiveId:
