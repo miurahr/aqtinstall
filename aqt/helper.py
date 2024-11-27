@@ -30,7 +30,8 @@ import threading
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from typing import Any, Callable, Dict, Generator, List, Optional, TextIO, Tuple, Union
+from typing import Any, Callable, Dict, Generator, TextIO, Union
+from typing import List, Optional, Tuple
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
 
@@ -82,9 +83,9 @@ def getUrl(url: str, timeout: Tuple[float, float], expected_hash: Optional[bytes
                 logger.info("Redirected: {}".format(urlparse(newurl).hostname))
                 r = session.get(newurl, stream=True, timeout=timeout)
         except (
-            ConnectionResetError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
+                ConnectionResetError,
+                requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout,
         ) as e:
             raise ArchiveConnectionError(f"Failure to connect to {url}: {type(e).__name__}") from e
         else:
@@ -278,8 +279,8 @@ def ssplit(data: str) -> Generator[str, None, None]:
 
 
 def xml_to_modules(
-    xml_text: str,
-    predicate: Callable[[Element], bool],
+        xml_text: str,
+        predicate: Callable[[Element], bool],
 ) -> Dict[str, Dict[str, str]]:
     """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
     Only report elements that satisfy `predicate(element)`.
