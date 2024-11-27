@@ -361,7 +361,7 @@ class QtArchives:
         return target_packages
 
     def _get_archives(self):
-        if (self.target == "desktop" and self.arch in ("wasm_singlethread", "wasm_multithread")):
+        if self.target == "desktop" and self.version >= Version("6.7.0") and self.arch in ("wasm_singlethread", "wasm_multithread"):
             base_url = "online/qtsdkrepository/all_os/wasm"
             if self.version >= Version("6.8.0"):
                 name = f"qt6_{self._version_str()}/qt6_{self._version_str()}_{self.arch}"
