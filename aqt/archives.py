@@ -481,6 +481,8 @@ class QtArchives:
                 )
 
     def _parse_update_xmls(self, update_xmls, target_packages: Optional[ModuleToPackage]):
+        if not target_packages:
+            target_packages = ModuleToPackage({})
         for update_xml in update_xmls:
             self._parse_update_xml(update_xml.target_folder, update_xml.xml_text, target_packages)
         # if we have located every requested package, then target_packages will be empty
