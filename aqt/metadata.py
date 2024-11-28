@@ -642,7 +642,7 @@ class MetadataFactory:
                 return module_with_arch, None
             module, arch = module_with_arch.rsplit(".", 1)
             if module.startswith("addons."):
-                module = module[len("addons.") :]
+                module = module[len("addons."):]
             return module, arch
 
         # Get regular modules

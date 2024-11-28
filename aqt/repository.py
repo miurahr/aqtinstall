@@ -194,7 +194,7 @@ class QtRepoProperty:
         elif architecture == "wasm_multithread":
             return "wasm_multithread"
         elif architecture.startswith("android_") and is_version_ge_6:
-            ext = architecture[len("android_") :]
+            ext = architecture[len("android_"):]
             if ext in QtRepoProperty.EXTENSIONS_REQUIRED_ANDROID_QT6:
                 return ext
         return ""
