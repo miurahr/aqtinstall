@@ -231,14 +231,39 @@ class ArchiveId:
     def is_tools(self) -> bool:
         return self.category == "tools"
 
-    def to_url(self) -> str:
-        return "online/qtsdkrepository/{os}{arch}/{target}/".format(
+    def to_os_arch(self):
+        return "{os}{arch}".format(
             os=self.host,
             arch=(
                 "_x86"
                 if self.host == "windows"
                 else ("" if self.host in ("linux_arm64", "all_os", "windows_arm64") else "_x64")
             ),
+        )
+
+    def to_extension_folder(self, module, version, arch) -> str:
+        extarch = arch
+        if self.host == "windows":
+            extarch = arch.replace("win64_", "", 1) 
+        elif self.host == "linux":
+            extarch = "x86_64"
+        elif self.host == "linux_arm64":
+            extarch = "arm64"
+        return "online/qtsdkrepository/{osarch}/extensions/{ext}/{ver}/{extarch}/".format(
+            osarch=self.to_os_arch(),
+            ext=module,
+            ver=version,
+            extarch=extarch,
+        )
+
+    def to_extension_url(self) -> str:
+        return "online/qtsdkrepository/{osarch}/extensions/".format(
+            osarch=self.to_os_arch(),
+        )
+
+    def to_url(self) -> str:
+        return "online/qtsdkrepository/{osarch}/{target}/".format(
+            osarch=self.to_os_arch(),
             target=self.target,
         )
 
@@ -667,6 +692,10 @@ class MetadataFactory:
     def fetch_latest_version(self, ext: str) -> Optional[Version]:
         return self.fetch_versions(ext).latest()
 
+    def fetch_extensions(self) -> List[str]:
+        html_doc = self.fetch_http(self.archive_id.to_extension_url(), False)
+        return list(self.iterate_folders(html_doc, self.base_url))
+
     def fetch_tools(self) -> List[str]:
         html_doc = self.fetch_http(self.archive_id.to_url(), False)
         return list(self.iterate_folders(html_doc, self.base_url, filter_category="tools"))
@@ -824,6 +853,14 @@ class MetadataFactory:
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
         )
 
+    def _fetch_extension_metadata(self, url: str, predicate: Optional[Callable[[Element], bool]] = None):
+        rest_of_url = posixpath.join(url, "Updates.xml")
+        xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
+        return xml_to_modules(
+            xml,
+            predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
+        )
+
     def fetch_modules(self, version: Version, arch: str) -> List[str]:
         """Returns list of modules"""
         extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
@@ -849,6 +886,9 @@ class MetadataFactory:
             module, _arch = to_module_arch(name)
             if _arch == arch:
                 modules.add(cast(str, module))
+        if version >= Version("6.8.0"):
+            for ext in self.fetch_extensions():
+                modules.add(ext)
         return sorted(modules)
 
     @staticmethod
@@ -863,6 +903,8 @@ class MetadataFactory:
         extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590(\.addons)?\.(?P<module>[^.]+)\.gcc_64$")
+        #          qt.qt6.680.addons.qtwebsockets.win64_msvc2022_64
+        #          qt.qt6.680.debug_info.win64_msvc2022_64
         pattern = re.compile(
             r"^(preview\.)?qt\.(qt"
             + str(version.major)
@@ -885,6 +927,25 @@ class MetadataFactory:
                 if module is not None:
                     m[module] = value
 
+        # Examples: extensions.qtwebengine.680.debug_information
+        #           extensions.qtwebengine.680.win64_msvc2022_64
+        ext_pattern = re.compile(
+            r"^extensions\."
+            + r"(?P<module>[^.]+)\."
+            + qt_ver_str
+            + r"\."
+            + arch
+            + r"$"
+        )
+        if version >= Version("6.8.0"):
+            for ext in self.fetch_extensions():
+                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))
+                for key, value in ext_meta.items():
+                    ext_match = ext_pattern.match(key)
+                    if ext_match is not None:
+                        module = ext_match.group("module")
+                        if module is not None:
+                            m[module] = value
         return ModuleData(m)
 
     def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
