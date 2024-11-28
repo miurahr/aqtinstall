@@ -405,25 +405,28 @@ class QtArchives:
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
         update_xml_text = self._download_update_xml(update_xml_url)
         update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
-        arch = self.arch
-        if self.os_name == "windows":
-            arch = self.arch.replace("win64_", "", 1) 
-        elif self.os_name == "linux":
-            arch = "x86_64"
-        elif self.os_name == "linux_arm64":
-            arch = "arm64"
-        for ext in ["qtwebengine", "qtpdf"]:
-            extensions_target_folder = posixpath.join(
-                "online/qtsdkrepository",
-                os_name,
-                "extensions",
-                ext,
-                self._version_str(),
-                arch
-            )
-            extensions_xml_url = posixpath.join(extensions_target_folder, "Updates.xml")
-            extensions_xml_text = self._download_update_xml(extensions_xml_url)
-            update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
+
+        if self.version >= Version("6.8.0"):
+            arch = self.arch
+            if self.os_name == "windows":
+                arch = self.arch.replace("win64_", "", 1) 
+            elif self.os_name == "linux":
+                arch = "x86_64"
+            elif self.os_name == "linux_arm64":
+                arch = "arm64"
+            for ext in ["qtwebengine", "qtpdf"]:
+                extensions_target_folder = posixpath.join(
+                    "online/qtsdkrepository",
+                    os_name,
+                    "extensions",
+                    ext,
+                    self._version_str(),
+                    arch
+                )
+                extensions_xml_url = posixpath.join(extensions_target_folder, "Updates.xml")
+                extensions_xml_text = self._download_update_xml(extensions_xml_url)
+                update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
+
         self._parse_update_xmls(update_xmls, target_packages)
 
     def _download_update_xml(self, update_xml_path):
