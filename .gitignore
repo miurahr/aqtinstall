@@ -18,3 +18,8 @@ Qt/
 .eggs
 qtaccount.ini
 .pytest_cache
+.build_standalone.sh
+aqt.spec
+fil-result/
+memory-profile.png
+mprofile_*
