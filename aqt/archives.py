@@ -457,6 +457,27 @@ class QtArchives:
                 self.logger.debug(f"No extension found at {extension_path}")
             return False
 
+        def validate_arch():
+            valid_arches = []
+            qt_ver_str = self._version_str()
+            for extension in self.archive_id.all_extensions(self.version):
+                try:
+                    folder = self.archive_id.to_folder(self.version, qt_ver_str, extension)
+                    xml = self._download_update_xml(folder)
+                    modules = Updates.fromstring(self.base, xml).get()
+                    for module in modules:
+                        if module.arch == self.arch:
+                            return  # Found valid arch
+                except ArchiveDownloadError:
+                    continue
+            raise NoPackageFound(
+                f"The packages ['qt_base'] were not found while parsing XML of package information!",
+                suggested_action=self.help_msg()
+            )
+
+        validate_arch()
+
+
         # Check for WASM paths first
         if (
             self.target == "desktop"
@@ -815,10 +836,11 @@ class SrcDocExamplesArchives(QtArchives):
         update_xml = Updates.fromstring(self.base, update_xml_text)
         base_url = self.base
 
+        # Update: those tests are failing for bad errror msg basically frustrating
         # Add this check here:
         if not self.all_extra and len(target_packages) > 0:
             package_updates = update_xml.get_from(self.arch, self.is_include_base_package, target_packages)
-            if not package_updates:  # Add this check
+            if not package_updates:
                 missing = sorted(list(target_packages.get_modules()))
                 raise NoPackageFound(
                     f"The packages {missing} were not found while parsing XML of package information!",

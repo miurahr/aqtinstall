@@ -482,14 +482,24 @@ class Cli:
     def run_install_example(self, args):
         """Run example subcommand"""
         start_time = time.perf_counter()
-        self._run_src_doc_examples("examples", args, cmd_name="example")
-        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+        try:
+            self._run_src_doc_examples("examples", args)
+            self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+            return 1  # Return error code if no exception thrown but nothing found
+        except AqtException as e:
+            self.logger.error(format(e), exc_info=Settings.print_stacktrace_on_error)
+            return 1
 
     def run_install_doc(self, args):
         """Run doc subcommand"""
         start_time = time.perf_counter()
-        self._run_src_doc_examples("doc", args)
-        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+        try:
+            self._run_src_doc_examples("doc", args)
+            self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+            return 1  # Return error code if no exception thrown but nothing found
+        except AqtException as e:
+            self.logger.error(format(e), exc_info=Settings.print_stacktrace_on_error)
+            return 1
 
     def run_install_tool(self, args: InstallToolArgParser):
         """Run tool subcommand"""
