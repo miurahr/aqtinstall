@@ -244,7 +244,7 @@ class ArchiveId:
     def to_extension_folder(self, module, version, arch) -> str:
         extarch = arch
         if self.host == "windows":
-            extarch = arch.replace("win64_", "", 1) 
+            extarch = arch.replace("win64_", "", 1)
         elif self.host == "linux":
             extarch = "x86_64"
         elif self.host == "linux_arm64":
@@ -929,14 +929,7 @@ class MetadataFactory:
 
         # Examples: extensions.qtwebengine.680.debug_information
         #           extensions.qtwebengine.680.win64_msvc2022_64
-        ext_pattern = re.compile(
-            r"^extensions\."
-            + r"(?P<module>[^.]+)\."
-            + qt_ver_str
-            + r"\."
-            + arch
-            + r"$"
-        )
+        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
         if version >= Version("6.8.0"):
             for ext in self.fetch_extensions():
                 ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))

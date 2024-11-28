@@ -31,10 +31,12 @@ from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownl
 from aqt.helper import Settings, get_hash, getUrl, ssplit
 from aqt.metadata import QtRepoProperty, Version
 
+
 @dataclass
 class UpdateXmls:
     target_folder: str
     xml_text: str
+
 
 @dataclass
 class TargetConfig:
@@ -409,19 +411,14 @@ class QtArchives:
         if self.version >= Version("6.8.0"):
             arch = self.arch
             if self.os_name == "windows":
-                arch = self.arch.replace("win64_", "", 1) 
+                arch = self.arch.replace("win64_", "", 1)
             elif self.os_name == "linux":
                 arch = "x86_64"
             elif self.os_name == "linux_arm64":
                 arch = "arm64"
             for ext in ["qtwebengine", "qtpdf"]:
                 extensions_target_folder = posixpath.join(
-                    "online/qtsdkrepository",
-                    os_name,
-                    "extensions",
-                    ext,
-                    self._version_str(),
-                    arch
+                    "online/qtsdkrepository", os_name, "extensions", ext, self._version_str(), arch
                 )
                 extensions_xml_url = posixpath.join(extensions_target_folder, "Updates.xml")
                 extensions_xml_text = self._download_update_xml(extensions_xml_url)
