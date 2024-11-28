@@ -125,7 +125,7 @@ class QtRepoProperty:
         }
 
     @staticmethod
-    def convert_arch_for_extension(os_name: str, arch: str) -> Tuple[str, str]:
+    def convert_arch_for_extension(os_name: str, arch: str):
         """Convert architecture name for extensions path and package name
         Returns (folder_arch, package_arch) where:
         - folder_arch: used in the path: <os>_x64/extensions/<module>/<version>/<folder_arch>
