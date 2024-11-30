@@ -190,7 +190,7 @@ class Updates:
             dependencies = updates._get_list(packageupdate.find("Dependencies"))
             auto_dependon = updates._get_list(packageupdate.find("AutoDependOn"))
             archives = updates._get_list(packageupdate.find("DownloadableArchives"))
-            archive_install_paths = []
+            archive_install_paths = updates._get_list(None)
             default = updates._get_boolean(packageupdate.find("Default"))
             virtual = updates._get_boolean(packageupdate.find("Virtual"))
             if packageupdate.find(extract_xpath) is not None:

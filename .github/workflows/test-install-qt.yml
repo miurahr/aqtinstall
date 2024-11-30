@@ -31,6 +31,11 @@ jobs:
             py: "3.12"
             qtver: 6.8.0
             artifact: standard
+          - os: ubuntu-latest
+            py: "3.12"
+            # 6.8.1 introduces Operations elements in Updates.xml
+            qtver: 6.8.1
+            artifact: standard
     steps:
       - uses: actions/checkout@v4
         with:
