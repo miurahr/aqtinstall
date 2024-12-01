@@ -1340,6 +1340,7 @@ def test_install_installer_archive_extraction_err(monkeypatch):
                 "base_url",
                 "archive_path",
                 "archive",
+                "archive_install_path",
                 "package_desc",
                 "pkg_update_name",
             ),
