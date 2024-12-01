@@ -64,7 +64,7 @@ from aqt.helper import (
     setup_logging,
 )
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
-from aqt.updater import Updater, dir_for_version
+from aqt.updater import Notifier, Updater, dir_for_version
 
 try:
     import py7zr
@@ -403,6 +403,7 @@ class Cli:
             if autodesk_arch is not None:
                 d_target_config = TargetConfig(str(_version), "desktop", autodesk_arch, os_name)
                 Updater.update(d_target_config, base_path, expect_desktop_archdir)
+            Notifier.notify_sdk(target_config, base_dir)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
