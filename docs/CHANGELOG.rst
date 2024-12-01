@@ -422,6 +422,7 @@ Security
 
 .. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.19...HEAD
 .. _v3.1.19: https://github.com/miurahr/aqtinstall/compare/v3.1.18...v3.1.19
+.. _v3.1.18: https://github.com/miurahr/aqtinstall/compare/v3.1.17...v3.1.18
 .. _v3.1.17: https://github.com/miurahr/aqtinstall/compare/v3.1.16...v3.1.17
 .. _v3.1.16: https://github.com/miurahr/aqtinstall/compare/v3.1.15...v3.1.16
 .. _v3.1.15: https://github.com/miurahr/aqtinstall/compare/v3.1.14...v3.1.15
