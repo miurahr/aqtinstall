@@ -13,9 +13,30 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.19`_ (1, December 2024)
+=============================
+
+Added
+-----
+* Support Python 3.13 (#821)
+
+Fixed
+-----
+* Support Qt 6.8.1, fix the installation failures (#840, #841)
+* Fix for arch win64_msvc2022_arm64_cross_compiled (#832)
+* Fix for error when installing win64_llvm_mingw for Qt6.7 and 6.8 (#826)
+
+Changed
+-------
+* Test target version to 6.5.x, 6.6.x, 6.7.x and 6.8.0 (#822)
+* CI: change target macos-14 (#827)
+* Update document to have appendix to explain special cases (#830)
+
 Deleted
 -------
+* Drop old syntax (#823)
 * Qt version/architecture/modules checking (#748, #807, #812)
+* Drop support for Python 3.8
 
 `v3.1.18`_ (3, August 2024)
 ===========================
@@ -399,8 +420,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.18...HEAD
-.. _v3.1.18: https://github.com/miurahr/aqtinstall/compare/v3.1.17...v3.1.18
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.19...HEAD
+.. _v3.1.19: https://github.com/miurahr/aqtinstall/compare/v3.1.18...v3.1.19
 .. _v3.1.17: https://github.com/miurahr/aqtinstall/compare/v3.1.16...v3.1.17
 .. _v3.1.16: https://github.com/miurahr/aqtinstall/compare/v3.1.15...v3.1.16
 .. _v3.1.15: https://github.com/miurahr/aqtinstall/compare/v3.1.14...v3.1.15
