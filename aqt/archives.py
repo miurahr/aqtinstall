@@ -21,6 +21,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import posixpath
 from dataclasses import dataclass, field
+from itertools import islice, zip_longest
 from logging import getLogger
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 from xml.etree.ElementTree import Element  # noqa
@@ -52,6 +53,7 @@ class QtPackage:
     base_url: str
     archive_path: str
     archive: str
+    archive_install_path: str
     package_desc: str
     pkg_update_name: str
     version: Optional[Version] = field(default=None)
@@ -134,12 +136,13 @@ class PackageUpdate:
     dependencies: Iterable[str]
     auto_dependon: Iterable[str]
     downloadable_archives: Iterable[str]
+    archive_install_paths: Iterable[str]
     default: bool
     virtual: bool
     base: str
 
     def __post_init__(self):
-        for iter_of_str in self.dependencies, self.auto_dependon, self.downloadable_archives:
+        for iter_of_str in self.dependencies, self.auto_dependon, self.downloadable_archives, self.archive_install_paths:
             assert isinstance(iter_of_str, Iterable) and not isinstance(iter_of_str, str)
         for _str in self.name, self.display_name, self.description, self.release_date, self.full_version, self.base:
             assert isinstance(_str, str)
@@ -183,6 +186,7 @@ class Updates:
         except ElementTree.ParseError as perror:
             raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
         updates = Updates()
+        extract_xpath = "Operations/Operation[@name='Extract']/Argument"
         for packageupdate in update_xml.iter("PackageUpdate"):
             pkg_name = updates._get_text(packageupdate.find("Name"))
             display_name = updates._get_text(packageupdate.find("DisplayName"))
@@ -192,8 +196,20 @@ class Updates:
             dependencies = updates._get_list(packageupdate.find("Dependencies"))
             auto_dependon = updates._get_list(packageupdate.find("AutoDependOn"))
             archives = updates._get_list(packageupdate.find("DownloadableArchives"))
+            archive_install_paths = updates._get_list(None)
             default = updates._get_boolean(packageupdate.find("Default"))
             virtual = updates._get_boolean(packageupdate.find("Virtual"))
+            if packageupdate.find(extract_xpath) is not None:
+                arc_args = map(
+                    lambda x: x.text,
+                    islice(packageupdate.iterfind(extract_xpath), 1, None, 2),
+                )
+                archives = ssplit(", ".join(arc_args))
+                path_args = map(
+                    lambda x: x.text.replace("@TargetDir@/", "", 1),
+                    islice(packageupdate.iterfind(extract_xpath), 0, None, 2),
+                )
+                archive_install_paths = ssplit(", ".join(path_args))
             updates.package_updates.append(
                 PackageUpdate(
                     pkg_name,
@@ -204,6 +220,7 @@ class Updates:
                     dependencies,
                     auto_dependon,
                     archives,
+                    archive_install_paths,
                     default,
                     virtual,
                     base,
@@ -454,7 +471,9 @@ class QtArchives:
                 target_packages.remove_module_for_package(packageupdate.name)
             should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(packageupdate.name)
 
-            for archive in packageupdate.downloadable_archives:
+            for archive, archive_install_path in zip_longest(
+                packageupdate.downloadable_archives, packageupdate.archive_install_paths, fillvalue=""
+            ):
                 archive_name = archive.split("-", maxsplit=1)[0]
                 if should_filter_archives and self.subarchives is not None and archive_name not in self.subarchives:
                     continue
@@ -472,6 +491,7 @@ class QtArchives:
                         base_url=base_url,
                         archive_path=archive_path,
                         archive=archive,
+                        archive_install_path=archive_install_path,
                         package_desc=packageupdate.description,
                         pkg_update_name=packageupdate.name,  # For testing purposes
                     )
@@ -499,10 +519,11 @@ class QtArchives:
             raise NoPackageFound(message, suggested_action=self.help_msg())
         package_desc = packageupdate.description
         downloadable_archives = packageupdate.downloadable_archives
+        archive_install_paths = packageupdate.archive_install_paths
         if not downloadable_archives:
             message = f"The package '{self.arch}' contains no downloadable archives!"
             raise NoPackageFound(message)
-        for archive in downloadable_archives:
+        for archive, archive_install_path in zip_longest(downloadable_archives, archive_install_paths, fillvalue=""):
             archive_path = posixpath.join(
                 # online/qtsdkrepository/linux_x64/desktop/tools_ifw/
                 os_target_folder,
@@ -517,6 +538,7 @@ class QtArchives:
                     base_url=self.base,
                     archive_path=archive_path,
                     archive=archive,
+                    archive_install_path=archive_install_path,
                     package_desc=package_desc,
                     pkg_update_name=name,  # Redundant
                 )
