@@ -36,11 +36,9 @@ jobs:
           arch: ${{ env.qt_host_arch }}
           dir: ${{ env.workspace_root }}
           modules: ${{ env.qt_modules }}
-          cache: 'true'
-          cache-key-prefix: 'install-qt-host'
           aqtsource: 'git+https://github.com/Kidev/aqtinstall.git@semver2'
 
-      - name: Install Qt for target architecture
+      - name: Install Qt for target WASM
         uses: jurplel/install-qt-action@v4.1.1
         with:
           version: ${{ env.qt_version }}
@@ -49,20 +47,20 @@ jobs:
           arch: ${{ env.qt_target_wasm }}
           dir: ${{ env.workspace_root }}
           modules: ${{ env.qt_modules_wasm }}
-          cache: 'true'
-          cache-key-prefix: 'install-qt-wasm'
           aqtsource: 'git+https://github.com/Kidev/aqtinstall.git@semver2'
 
       - name: Checking installs
         shell: bash
         run: |
+          echo "\nHOST"
           ls "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/"
+          echo "\nWASM"
           ls "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/"
           
           files=(
-            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Quick3D.lib"
-            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Pdf.lib"
-            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/Qt6Quick3D.lib"
+            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/libQt6Quick3D.a"
+            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Pdf.a"
+            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/libQt6Quick3D.a"
           )
 
           for file in "${files[@]}"; do
