@@ -231,7 +231,7 @@ class ArchiveId:
     def is_tools(self) -> bool:
         return self.category == "tools"
 
-    def to_os_arch(self):
+    def to_os_arch(self) -> str:
         return "{os}{arch}".format(
             os=self.host,
             arch=(
