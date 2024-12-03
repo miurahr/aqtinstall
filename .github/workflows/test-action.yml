@@ -56,6 +56,9 @@ jobs:
       - name: Checking installs
         shell: bash
         run: |
+          ls "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/"
+          ls "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/"
+          
           files=(
             "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Quick3D.lib"
             "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Pdf.lib"
