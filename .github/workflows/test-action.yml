@@ -2,7 +2,6 @@ name: Test install-qt-action
 
 on:
   push:
-  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -21,12 +20,6 @@ jobs:
       qt_root: '/home/runner/work/aqtinstall/aqtinstall/Qt'
     runs-on: ubuntu-24.04
     steps:
-      - name: Install tools
-        shell: bash
-        run: |
-          sudo apt update
-          sudo apt-get -y install build-essential libgl1-mesa-dev curl python3 python3-venv
-
       - name: Install Qt for host architecture
         uses: jurplel/install-qt-action@v4.1.1
         with:
@@ -52,10 +45,17 @@ jobs:
       - name: Checking installs
         shell: bash
         run: |
-          echo "\nHOST"
-          ls "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/"
-          echo "\nWASM"
-          ls "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/"
+          ls -la "${{ env.qt_root }}/${{ env.qt_version }}"
+          echo ""
+          echo "== HOST ${{ env.qt_host_arch_folder }} =="
+          ls -la "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/"
+          echo ""
+          echo "== HOST ${{ env.qt_host_arch }} =="
+          ls -la "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch }}/lib/"
+          echo ""
+          echo "== WASM =="
+          ls -la "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/"
+          echo ""
           
           files=(
             "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Quick3D.lib"
