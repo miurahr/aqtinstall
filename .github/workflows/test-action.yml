@@ -1,0 +1,70 @@
+name: Test install-qt-action
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: "Test install-qt-action"
+    env:
+      workspace_root: '/home/runner/work/aqtinstall/aqtinstall'
+      qt_host: 'windows'
+      qt_target: 'desktop'
+      qt_version: '6.8.0'
+      qt_host_arch: 'win64_msvc2022_64'
+      qt_host_arch_folder: 'msvc2022_64'
+      qt_target_wasm: 'wasm_singlethread'
+      qt_modules: 'qtquick3d qtpdf'
+      qt_modules_wasm: 'qtquick3d'
+      qt_root: '/home/runner/work/aqtinstall/aqtinstall/Qt'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install Qt for host architecture
+        uses: jurplel/install-qt-action@v4.1.1
+        with:
+          version: ${{ env.qt_version }}
+          host: ${{ env.qt_host }}
+          target: ${{ env.qt_target }}
+          arch: ${{ env.qt_host_arch }}
+          dir: ${{ env.workspace_root }}
+          modules: ${{ env.qt_modules }}
+          aqtsource: 'git+https://github.com/Kidev/aqtinstall.git@semver2'
+
+      - name: Install Qt for target WASM
+        uses: jurplel/install-qt-action@v4.1.1
+        with:
+          version: ${{ env.qt_version }}
+          host: ${{ env.qt_host }}
+          target: ${{ env.qt_target }}
+          arch: ${{ env.qt_target_wasm }}
+          dir: ${{ env.workspace_root }}
+          modules: ${{ env.qt_modules_wasm }}
+          aqtsource: 'git+https://github.com/Kidev/aqtinstall.git@semver2'
+
+      - name: Checking installs
+        shell: bash
+        run: |
+          ls -la "${{ env.qt_root }}/${{ env.qt_version }}"
+          echo ""
+          echo "== HOST ${{ env.qt_host_arch_folder }} =="
+          ls -la "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/"
+          echo ""
+          echo "== WASM =="
+          ls -la "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/"
+          echo ""
+          
+          files=(
+            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Quick3D.lib"
+            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Pdf.lib"
+            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/libQt6Quick3D.a"
+          )
+
+          for file in "${files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Error: File not found: $file"
+              exit 1
+            fi
+          done
+
+          echo "All required files are present."

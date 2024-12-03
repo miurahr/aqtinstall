@@ -187,7 +187,11 @@ class ArchiveId:
         return self.category == "tools"
 
     def to_url(self) -> str:
-        if self.target == "desktop" and self.host in ("wasm_singlethread", "wasm_multithread"):
+        if (
+            self.target == "desktop"
+            and self.host in ("wasm_singlethread", "wasm_multithread")
+            and self.version >= Version("6.7.0")
+        ):
             return "online/qtsdkrepository/all_os/wasm/"
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
