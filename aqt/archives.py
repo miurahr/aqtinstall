@@ -814,16 +814,23 @@ class SrcDocExamplesArchives(QtArchives):
 
         update_xml = Updates.fromstring(self.base, update_xml_text)
         base_url = self.base
-        if self.all_extra:
-            package_updates = update_xml.get_from(self.arch, self.is_include_base_package)
-        else:
+
+        # Add this check here:
+        if not self.all_extra and len(target_packages) > 0:
             package_updates = update_xml.get_from(self.arch, self.is_include_base_package, target_packages)
+            if not package_updates:  # Add this check
+                missing = sorted(list(target_packages.get_modules()))
+                raise NoPackageFound(
+                    f"The packages {missing} were not found while parsing XML of package information!",
+                    suggested_action=self.help_msg(missing),
+                )
+        else:
+            package_updates = update_xml.get_from(self.arch, self.is_include_base_package)
 
         for packageupdate in package_updates:
             if not self.all_extra:
                 target_packages.remove_module_for_package(packageupdate.name)
             should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(packageupdate.name)
-
             for archive in packageupdate.downloadable_archives:
                 archive_name = archive.split("-", maxsplit=1)[0]
                 if should_filter_archives and self.subarchives is not None and archive_name not in self.subarchives:

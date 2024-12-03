@@ -25,9 +25,7 @@ import re
 import secrets as random
 import shutil
 from abc import ABC, abstractmethod
-from functools import reduce
 from logging import getLogger
-from pathlib import Path
 from typing import Callable, Dict, Generator, Iterable, Iterator, List, NamedTuple, Optional, Set, Tuple, Union, cast
 from urllib.parse import ParseResult, urlparse
 from xml.etree.ElementTree import Element
