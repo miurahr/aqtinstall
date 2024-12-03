@@ -58,8 +58,8 @@ jobs:
           ls "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/"
           
           files=(
-            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/libQt6Quick3D.a"
-            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Pdf.a"
+            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Quick3D.lib"
+            "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_host_arch_folder }}/lib/Qt6Pdf.lib"
             "${{ env.qt_root }}/${{ env.qt_version }}/${{ env.qt_target_wasm }}/lib/libQt6Quick3D.a"
           )
 
