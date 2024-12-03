@@ -1,9 +1,11 @@
 import re
 from functools import reduce
 from pathlib import Path
-from typing import List, Tuple, Optional
-from semantic_version import Version as SemanticVersion
+from typing import List, Optional, Tuple
+
 from semantic_version import SimpleSpec
+from semantic_version import Version as SemanticVersion
+
 
 class Version(SemanticVersion):
     """Override semantic_version.Version class
@@ -103,20 +105,16 @@ class QtRepoProperty:
             # Linux x64
             ("linux", "gcc_64"): ("x86_64", "linux_gcc_64"),
             ("linux", "linux_gcc_64"): ("x86_64", "linux_gcc_64"),
-
             # Linux ARM64
             ("linux_arm64", "gcc_arm64"): ("arm64", "linux_gcc_arm64"),
             ("linux_arm64", "linux_gcc_arm64"): ("arm64", "linux_gcc_arm64"),
-
             # Windows
             ("windows", "win64_msvc2022_64"): ("msvc2022_64", "win64_msvc2022_64"),
             ("windows", "win64_mingw"): ("mingw", "win64_mingw"),
             ("windows", "win64_llvm_mingw"): ("llvm_mingw", "win64_llvm_mingw"),
-
             # macOS
             ("mac", "clang_64"): ("clang_64", "clang_64"),
             ("mac", "ios"): ("ios", "ios"),
-
             # Android (all_os)
             ("all_os", "android_x86_64"): ("qt6_680_x86_64", "android_x86_64"),
             ("all_os", "android_x86"): ("qt6_680_x86", "android_x86"),
@@ -225,6 +223,7 @@ class QtRepoProperty:
         """
         ArchBitsVer = Tuple[str, int, Optional[int]]
         pattern = QtRepoProperty.MINGW_DIR_PATTERN if is_dir else QtRepoProperty.MINGW_ARCH_PATTERN
+
         def mingw_arch_with_bits_and_version(arch: str) -> Optional[ArchBitsVer]:
             match = pattern.match(arch)
             if not match:
@@ -232,6 +231,7 @@ class QtRepoProperty:
             bits = int(match.group("bits"))
             ver = None if not match.group("version") else int(match.group("version"))
             return arch, bits, ver
+
         def select_superior_arch(lhs: ArchBitsVer, rhs: ArchBitsVer) -> ArchBitsVer:
             _, l_bits, l_ver = lhs
             _, r_bits, r_ver = rhs
@@ -242,6 +242,7 @@ class QtRepoProperty:
             elif l_ver is None:
                 return rhs
             return lhs if l_ver > r_ver else rhs
+
         candidates: List[ArchBitsVer] = list(filter(None, map(mingw_arch_with_bits_and_version, mingw_arches)))
         if len(candidates) == 0:
             return None
@@ -266,8 +267,10 @@ class QtRepoProperty:
         elif host == "windows" and is_msvc:
             arch_path = installed_qt_version_dir / QtRepoProperty.default_win_msvc_desktop_arch_dir(version)
             return arch_path if (arch_path / "bin/qmake.exe").is_file() else None
+
         def contains_qmake_exe(arch_path: Path) -> bool:
             return (arch_path / "bin/qmake.exe").is_file()
+
         paths = [d for d in installed_qt_version_dir.glob("mingw*")]
         directories = list(filter(contains_qmake_exe, paths))
         arch_dirs = [d.name for d in directories]
@@ -279,9 +282,9 @@ class QtRepoProperty:
         if version >= Version("6.7.0"):
             return True
         return (
-                version in SimpleSpec(">=6.2.0,<6.5.0")
-                or (host == "linux" and version in SimpleSpec(">=5.13,<6"))
-                or version in SimpleSpec(">=5.13.1,<6")
+            version in SimpleSpec(">=6.2.0,<6.5.0")
+            or (host == "linux" and version in SimpleSpec(">=5.13,<6"))
+            or version in SimpleSpec(">=5.13.1,<6")
         )
 
     @staticmethod

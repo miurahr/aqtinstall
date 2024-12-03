@@ -17,7 +17,7 @@ jobs:
       qt_host_arch_folder: 'msvc2022_64'
       qt_target_wasm: 'wasm_singlethread'
       qt_modules: 'qtquick3d qtpdf'
-      qt_modules_wasm: 'qtquick3d qtpdf'
+      qt_modules_wasm: 'qtquick3d'
       qt_root: '/home/runner/work/aqtinstall/aqtinstall/Qt'
     runs-on: ubuntu-24.04
     steps:

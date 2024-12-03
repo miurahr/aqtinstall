@@ -31,6 +31,7 @@ from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownl
 from aqt.helper import Settings, get_hash, getUrl, ssplit
 from aqt.repository import QtRepoProperty, Version
 
+
 @dataclass
 class TargetConfig:
     version: str
@@ -272,17 +273,17 @@ class QtArchives:
     """
 
     def __init__(
-            self,
-            os_name: str,
-            target: str,
-            version_str: str,
-            arch: str,
-            base: str,
-            subarchives: Optional[Iterable[str]] = None,
-            modules: Optional[Iterable[str]] = None,
-            all_extra: bool = False,
-            is_include_base_package: bool = True,
-            timeout=(5, 5),
+        self,
+        os_name: str,
+        target: str,
+        version_str: str,
+        arch: str,
+        base: str,
+        subarchives: Optional[Iterable[str]] = None,
+        modules: Optional[Iterable[str]] = None,
+        all_extra: bool = False,
+        is_include_base_package: bool = True,
+        timeout=(5, 5),
     ):
         self.version: Version = Version(version_str)
         self.target: str = target
@@ -312,20 +313,16 @@ class QtArchives:
             # Linux x64
             ("linux", "gcc_64"): ("x86_64", "linux_gcc_64"),
             ("linux", "linux_gcc_64"): ("x86_64", "linux_gcc_64"),
-
             # Linux ARM64
             ("linux_arm64", "gcc_arm64"): ("arm64", "linux_gcc_arm64"),
             ("linux_arm64", "linux_gcc_arm64"): ("arm64", "linux_gcc_arm64"),
-
             # Windows
             ("windows", "win64_msvc2022_64"): ("msvc2022_64", "win64_msvc2022_64"),
             ("windows", "win64_mingw"): ("mingw", "win64_mingw"),
             ("windows", "win64_llvm_mingw"): ("llvm_mingw", "win64_llvm_mingw"),
-
             # macOS
             ("mac", "clang_64"): ("clang_64", "clang_64"),
             ("mac", "ios"): ("ios", "ios"),
-
             # Android (all_os)
             ("all_os", "android_x86_64"): ("qt6_680_x86_64", "android_x86_64"),
             ("all_os", "android_x86"): ("qt6_680_x86", "android_x86"),
@@ -339,8 +336,9 @@ class QtArchives:
         # Default to original arch for both path and package
         return arch, arch
 
-    def _handle_updates_xml(self, os_target_folder: str, update_xml_text: str,
-                            target_packages: Optional[ModuleToPackage]) -> None:
+    def _handle_updates_xml(
+        self, os_target_folder: str, update_xml_text: str, target_packages: Optional[ModuleToPackage]
+    ) -> None:
         """Parse regular Qt module Updates.xml file"""
         if not target_packages:
             target_packages = ModuleToPackage({})
@@ -397,18 +395,13 @@ class QtArchives:
         for packageupdate in update_xml.package_updates:
             if packageupdate.name == package_pattern:
                 found_package = True
-                should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(
-                    packageupdate.name)
+                should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(packageupdate.name)
 
                 for archive in packageupdate.downloadable_archives:
                     archive_name = archive.split("-", maxsplit=1)[0]
                     if should_filter_archives and self.subarchives is not None and archive_name not in self.subarchives:
                         continue
-                    archive_path = posixpath.join(
-                        os_target_folder,
-                        packageupdate.name,
-                        packageupdate.full_version + archive
-                    )
+                    archive_path = posixpath.join(os_target_folder, packageupdate.name, packageupdate.full_version + archive)
                     self.archives.append(
                         QtPackage(
                             name=archive_name,
@@ -434,8 +427,11 @@ class QtArchives:
                 if self.version >= Version("6.8.0"):
                     # Construct extensions path, e.g. linux_x64/extensions/qtwebengine/680/x86_64
                     version_short = f"{self.version.major}{self.version.minor}{self.version.patch}"
-                    os_arch = self.os_name + ("_x86" if self.os_name == "windows" else (
-                        "" if self.os_name in ("linux_arm64", "all_os", "windows_arm64") else "_x64"))
+                    os_arch = self.os_name + (
+                        "_x86"
+                        if self.os_name == "windows"
+                        else ("" if self.os_name in ("linux_arm64", "all_os", "windows_arm64") else "_x64")
+                    )
 
                     # Convert arch based on OS and input arch
                     folder_arch, package_arch = self._convert_arch_for_extension(self.os_name, self.arch)
@@ -462,8 +458,11 @@ class QtArchives:
             return False
 
         # Check for WASM paths first
-        if self.target == "desktop" and self.version >= Version("6.7.0") and self.arch in (
-        "wasm_singlethread", "wasm_multithread"):
+        if (
+            self.target == "desktop"
+            and self.version >= Version("6.7.0")
+            and self.arch in ("wasm_singlethread", "wasm_multithread")
+        ):
             base_url = "online/qtsdkrepository/all_os/wasm"
             if self.version >= Version("6.8.0"):
                 name = f"qt6_{self._version_str()}/qt6_{self._version_str()}_{self.arch}"
@@ -488,10 +487,14 @@ class QtArchives:
 
             os_target_folder = posixpath.join(
                 "online/qtsdkrepository",
-                os_name + ("_x86" if os_name == "windows" else (
-                    "" if os_name in ("linux_arm64", "all_os", "windows_arm64") else "_x64")),
+                os_name
+                + (
+                    "_x86"
+                    if os_name == "windows"
+                    else ("" if os_name in ("linux_arm64", "all_os", "windows_arm64") else "_x64")
+                ),
                 self.target,
-                name
+                name,
             )
 
         # Process main Updates.xml and modules
@@ -649,18 +652,13 @@ class QtArchives:
         for packageupdate in update_xml.package_updates:
             if packageupdate.name == package_pattern:
                 found_package = True
-                should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(
-                    packageupdate.name)
+                should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(packageupdate.name)
 
                 for archive in packageupdate.downloadable_archives:
                     archive_name = archive.split("-", maxsplit=1)[0]
                     if should_filter_archives and self.subarchives is not None and archive_name not in self.subarchives:
                         continue
-                    archive_path = posixpath.join(
-                        os_target_folder,
-                        packageupdate.name,
-                        packageupdate.full_version + archive
-                    )
+                    archive_path = posixpath.join(os_target_folder, packageupdate.name, packageupdate.full_version + archive)
                     self.archives.append(
                         QtPackage(
                             name=archive_name,
@@ -752,17 +750,17 @@ class SrcDocExamplesArchives(QtArchives):
     """Hold doc/src/example archive package list."""
 
     def __init__(
-            self,
-            flavor: str,
-            os_name,
-            target,
-            version,
-            base,
-            subarchives=None,
-            modules=None,
-            all_extra=False,
-            is_include_base_package: bool = True,
-            timeout=(5, 5),
+        self,
+        flavor: str,
+        os_name,
+        target,
+        version,
+        base,
+        subarchives=None,
+        modules=None,
+        all_extra=False,
+        is_include_base_package: bool = True,
+        timeout=(5, 5),
     ):
         self.flavor: str = flavor
         self.target = target
@@ -807,8 +805,9 @@ class SrcDocExamplesArchives(QtArchives):
         target_packages = self._target_packages()
         self._get_archives_base(name, target_packages)
 
-    def _parse_archives_xml(self, os_target_folder: str, update_xml_text: str,
-                            target_packages: Optional[ModuleToPackage] = None):
+    def _parse_archives_xml(
+        self, os_target_folder: str, update_xml_text: str, target_packages: Optional[ModuleToPackage] = None
+    ):
         """Parse src/doc/example specific Updates.xml"""
         if not target_packages:
             target_packages = ModuleToPackage({})
@@ -873,6 +872,7 @@ class SrcDocExamplesArchives(QtArchives):
         if has_non_base_pkg:
             messages.append(mods)
         return messages
+
 
 class ToolArchives(QtArchives):
     """Hold tool archive package list

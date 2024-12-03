@@ -40,6 +40,7 @@ from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, Archive
 from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
 from aqt.repository import QtRepoProperty, Version
 
+
 class SimpleSpec(SemanticSimpleSpec):
     pass
 
@@ -54,8 +55,6 @@ class SimpleSpec(SemanticSimpleSpec):
             '* "5.6": matches every version beginning with 5.6\n'
             '* "5.*.3": matches versions with major=5 and patch=3'
         )
-
-
 
 
 class Versions:
@@ -123,8 +122,8 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
     try:
         # Handle versions with underscores (new format)
-        if '_' in qt_ver:
-            parts = qt_ver.split('_')
+        if "_" in qt_ver:
+            parts = qt_ver.split("_")
             if len(parts) < 2 or len(parts) > 3:
                 return None
 
@@ -190,7 +189,11 @@ class ArchiveId:
         return self.category == "tools"
 
     def to_url(self) -> str:
-        if self.target == "desktop" and self.host in ("wasm_singlethread", "wasm_multithread") and self.version >= Version("6.7.0"):
+        if (
+            self.target == "desktop"
+            and self.host in ("wasm_singlethread", "wasm_multithread")
+            and self.version >= Version("6.7.0")
+        ):
             return "online/qtsdkrepository/all_os/wasm/"
         return "online/qtsdkrepository/{os}{arch}/{target}/".format(
             os=self.host,
@@ -657,8 +660,11 @@ class MetadataFactory:
 
         # Check for extensions if Qt >= 6.8.0
         if version >= Version("6.8.0"):
-            os_arch = self.archive_id.host + ("_x86" if self.archive_id.host == "windows" else (
-                "" if self.archive_id.host in ("linux_arm64", "all_os", "windows_arm64") else "_x64"))
+            os_arch = self.archive_id.host + (
+                "_x86"
+                if self.archive_id.host == "windows"
+                else ("" if self.archive_id.host in ("linux_arm64", "all_os", "windows_arm64") else "_x64")
+            )
 
             # Convert arch for extensions path
             folder_arch, package_arch = QtRepoProperty.convert_arch_for_extension(self.archive_id.host, arch)
@@ -666,13 +672,7 @@ class MetadataFactory:
             # Try each known extension
             for extension_module in QtRepoProperty.known_extensions():
                 extension_path = posixpath.join(
-                    "online/qtsdkrepository",
-                    os_arch,
-                    "extensions",
-                    extension_module,
-                    qt_ver_str,
-                    folder_arch,
-                    "Updates.xml"
+                    "online/qtsdkrepository", os_arch, "extensions", extension_module, qt_ver_str, folder_arch, "Updates.xml"
                 )
 
                 try:
