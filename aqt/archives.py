@@ -835,7 +835,9 @@ class SrcDocExamplesArchives(QtArchives):
         update_xml = Updates.fromstring(self.base, update_xml_text)
         base_url = self.base
 
-        if not self.all_extra and len(target_packages) > 0:
+        if self.all_extra:
+            package_updates = update_xml.get_from(self.arch, self.is_include_base_package)
+        else:
             package_updates = update_xml.get_from(self.arch, self.is_include_base_package, target_packages)
             if not package_updates:
                 missing = sorted(list(target_packages.get_modules()))
@@ -843,8 +845,6 @@ class SrcDocExamplesArchives(QtArchives):
                     f"The packages {missing} were not found while parsing XML of package information!",
                     suggested_action=self.help_msg(missing),
                 )
-        else:
-            package_updates = update_xml.get_from(self.arch, self.is_include_base_package)
 
         for packageupdate in package_updates:
             if not self.all_extra:
