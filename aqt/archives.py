@@ -34,6 +34,12 @@ from aqt.metadata import QtRepoProperty, Version
 
 
 @dataclass
+class UpdateXmls:
+    target_folder: str
+    xml_text: str
+
+
+@dataclass
 class TargetConfig:
     version: str
     target: str
@@ -371,6 +377,7 @@ class QtArchives:
             package_names = [
                 f"qt.qt{self.version.major}.{self._version_str()}.{suffix}",
                 f"qt.{self._version_str()}.{suffix}",
+                f"extensions.{module}.{self._version_str()}.{self.arch}",
             ]
             if not module.startswith("addons."):
                 package_names.append(f"qt.qt{self.version.major}.{self._version_str()}.addons.{suffix}")
@@ -416,7 +423,25 @@ class QtArchives:
         )
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
         update_xml_text = self._download_update_xml(update_xml_url)
-        self._parse_update_xml(os_target_folder, update_xml_text, target_packages)
+        update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
+
+        if self.version >= Version("6.8.0"):
+            arch = self.arch
+            if self.os_name == "windows":
+                arch = self.arch.replace("win64_", "", 1)
+            elif self.os_name == "linux":
+                arch = "x86_64"
+            elif self.os_name == "linux_arm64":
+                arch = "arm64"
+            for ext in ["qtwebengine", "qtpdf"]:
+                extensions_target_folder = posixpath.join(
+                    "online/qtsdkrepository", os_name, "extensions", ext, self._version_str(), arch
+                )
+                extensions_xml_url = posixpath.join(extensions_target_folder, "Updates.xml")
+                extensions_xml_text = self._download_update_xml(extensions_xml_url)
+                update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
+
+        self._parse_update_xmls(update_xmls, target_packages)
 
     def _download_update_xml(self, update_xml_path):
         """Hook for unit test."""
@@ -471,6 +496,12 @@ class QtArchives:
                         pkg_update_name=packageupdate.name,  # For testing purposes
                     )
                 )
+
+    def _parse_update_xmls(self, update_xmls, target_packages: Optional[ModuleToPackage]):
+        if not target_packages:
+            target_packages = ModuleToPackage({})
+        for update_xml in update_xmls:
+            self._parse_update_xml(update_xml.target_folder, update_xml.xml_text, target_packages)
         # if we have located every requested package, then target_packages will be empty
         if not self.all_extra and len(target_packages) > 0:
             message = f"The packages {target_packages} were not found while parsing XML of package information!"
