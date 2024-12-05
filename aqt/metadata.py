@@ -170,31 +170,55 @@ class Versions:
 
 
 def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
-    """Converts a Qt version string (596, 512, 5132, etc) into a semantic version.
-    This makes a lot of assumptions based on established patterns:
-    If is_preview is True, the number is interpreted as ver[0].ver[1:], with no patch.
-    If the version is 3 digits, then major, minor, and patch each get 1 digit.
-    If the version is 4 or more digits, then major gets 1 digit, minor gets 2 digits
-    and patch gets all the rest.
-    As of May 2021, the version strings at https://download.qt.io/online/qtsdkrepository
-    conform to this pattern; they are not guaranteed to do so in the future.
+    """Converts a Qt version string into a semantic version.
+    Handles both traditional format (e.g. '51212' -> '5.12.12') and
+    new format with underscores (e.g. '6_7_3' -> '6.7.3').
+
+    Args:
+        qt_ver: Version string (e.g. '51212', '600', '6_7_3')
+        is_preview: Whether this is a preview version
+
+    Returns:
+        Version object or None if invalid format
     """
-    if not qt_ver or any(not ch.isdigit() for ch in qt_ver):
+    if not qt_ver:
         return None
-    if is_preview:
-        return Version(
-            major=int(qt_ver[:1]),
-            minor=int(qt_ver[1:]),
-            patch=0,
-            prerelease=("preview",),
-        )
-    elif len(qt_ver) >= 4:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:]))
-    elif len(qt_ver) == 3:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:]))
-    elif len(qt_ver) == 2:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
-    raise ValueError("Invalid version string '{}'".format(qt_ver))
+
+    try:
+        # Handle versions with underscores (new format)
+        if "_" in qt_ver:
+            parts = qt_ver.split("_")
+            if not (2 <= len(parts) <= 3):
+                return None
+
+            version_parts = [int(p) for p in parts]
+            major, minor = version_parts[:2]
+            patch = version_parts[2] if len(version_parts) > 2 else 0
+
+            version_str = f"{major}.{minor}.{patch}"
+            version_str += ".dev0" if is_preview else ""
+            return Version(version_str)
+
+        # Handle traditional format (continuous digits)
+        if not qt_ver.isdigit():
+            return None
+
+        # Parse version parts based on string length
+        if len(qt_ver) >= 4:
+            major, minor, patch = int(qt_ver[0]), int(qt_ver[1:3]), int(qt_ver[3:])
+        elif len(qt_ver) == 3:
+            major, minor, patch = int(qt_ver[0]), int(qt_ver[1]), int(qt_ver[2])
+        elif len(qt_ver) == 2:
+            major, minor, patch = int(qt_ver[0]), int(qt_ver[1]), 0
+        else:
+            return None
+
+        version_str = f"{major}.{minor}.{patch}"
+        version_str += ".dev0" if is_preview else ""
+        return Version(version_str)
+
+    except ValueError:
+        return None
 
 
 class ArchiveId:
@@ -206,7 +230,7 @@ class ArchiveId:
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
-        "all_os": ["qt"],
+        "all_os": ["qt", "wasm"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
     ALL_EXTENSIONS = {"", "wasm", "src_doc_examples", *EXTENSIONS_REQUIRED_ANDROID_QT6}
@@ -262,6 +286,8 @@ class ArchiveId:
         )
 
     def to_url(self) -> str:
+        if self.target == "desktop" and self.host in ("wasm_singlethread", "wasm_multithread"):
+            return "online/qtsdkrepository/all_os/wasm/"
         return "online/qtsdkrepository/{osarch}/{target}/".format(
             osarch=self.to_os_arch(),
             target=self.target,
@@ -546,6 +572,8 @@ class QtRepoProperty:
 
     @staticmethod
     def is_in_wasm_range(host: str, version: Version) -> bool:
+        if version >= Version("6.7.0"):
+            return True
         return (
             version in SimpleSpec(">=6.2.0,<6.5.0")
             or (host == "linux" and version in SimpleSpec(">=5.13,<6"))
