@@ -13,6 +13,13 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.20`_ (11, December 2024)
+==============================
+
+Fixed
+-----
+* search for modules in extensions directory (#838)
+
 `v3.1.19`_ (1, December 2024)
 =============================
 
@@ -420,7 +427,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.19...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.20...HEAD
+.. _v3.1.20: https://github.com/miurahr/aqtinstall/compare/v3.1.19...v3.1.20
 .. _v3.1.19: https://github.com/miurahr/aqtinstall/compare/v3.1.18...v3.1.19
 .. _v3.1.18: https://github.com/miurahr/aqtinstall/compare/v3.1.17...v3.1.18
 .. _v3.1.17: https://github.com/miurahr/aqtinstall/compare/v3.1.16...v3.1.17
