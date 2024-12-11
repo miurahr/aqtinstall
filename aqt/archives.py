@@ -385,14 +385,32 @@ class QtArchives:
         return target_packages
 
     def _get_archives(self):
-        if self.version >= Version("6.8.0"):
-            name = (
-                f"qt{self.version.major}_{self._version_str()}"
-                f"/qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
-            )
+        """Fetch and parse archive information"""
+        # Handle WASM paths for 6.7+
+        if (
+            self.target == "desktop"
+            and self.version >= Version("6.7.0")
+            and self.arch in ("wasm_singlethread", "wasm_multithread")
+        ):
+            base_url = "online/qtsdkrepository/all_os/wasm"
+            if self.version >= Version("6.8.0"):
+                name = f"qt6_{self._version_str()}/qt6_{self._version_str()}_{self.arch}"
+            else:
+                name = f"qt6_{self._version_str()}_{self.arch}"
+            os_target_folder = posixpath.join(base_url, name)
+            update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
+            update_xml_text = self._download_update_xml(update_xml_url)
+            self._parse_update_xml(os_target_folder, update_xml_text, self._target_packages())
         else:
-            name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
-        self._get_archives_base(name, self._target_packages())
+            # Use standard path structure
+            if self.version >= Version("6.8.0"):
+                name = (
+                    f"qt{self.version.major}_{self._version_str()}"
+                    f"/qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+                )
+            else:
+                name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+            self._get_archives_base(name, self._target_packages())
 
     def _append_depends_tool(self, arch, tool_name):
         os_target_folder = posixpath.join(
