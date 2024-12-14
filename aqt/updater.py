@@ -184,13 +184,22 @@ class Updater:
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
 
-    def patch_qmake_script(self, base_dir, qt_version: str, os_name: str, desktop_arch_dir: str):
+    def patch_qt_scripts(self, base_dir, version_dir: str, os_name: str, desktop_arch_dir: str, version: Version):
         sep = "\\" if os_name == "windows" else "/"
-        patched = sep.join([base_dir, qt_version, desktop_arch_dir, "bin"])
-        qmake_path = self.prefix / "bin" / ("qmake.bat" if os_name == "windows" else "qmake")
-        self.logger.info(f"Patching {qmake_path}")
-        for unpatched in unpatched_paths():
-            self._patch_textfile(qmake_path, f"{unpatched}bin", patched, is_executable=True)
+        patched = sep.join([base_dir, version_dir, desktop_arch_dir, "bin"])
+
+        def patch_script(script_name):
+            script_path = self.prefix / "bin" / (script_name + ".bat" if os_name == "windows" else script_name)
+            self.logger.info(f"Patching {script_path}")
+            for unpatched in unpatched_paths():
+                self._patch_textfile(script_path, f"{unpatched}bin", patched, is_executable=True)
+
+        patch_script("qmake")
+        if version >= Version("6.2.2"):
+            patch_script("qtpaths")
+        if version >= Version("6.5.0"):
+            patch_script("qmake6")
+            patch_script("qtpaths6")
 
     def patch_qtcore(self, target):
         """patch to QtCore"""
@@ -327,7 +336,7 @@ class Updater:
                     meta = MetadataFactory(ArchiveId("qt", os_name, "desktop"))
                     desktop_arch_dir = meta.fetch_default_desktop_arch(version, is_msvc="msvc" in target.arch)
 
-                updater.patch_qmake_script(base_dir, version_dir, target.os_name, desktop_arch_dir)
+                updater.patch_qt_scripts(base_dir, version_dir, target.os_name, desktop_arch_dir, version)
                 updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name, desktop_arch_dir)
                 updater.patch_qdevice_file(base_dir, version_dir, arch_dir, target.os_name)
         except IOError as e:
