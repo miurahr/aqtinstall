@@ -911,9 +911,19 @@ class MetadataFactory:
             module, _arch = to_module_arch(name)
             if _arch == arch:
                 modules.add(cast(str, module))
-        if version >= Version("6.8.0"):
-            for ext in self.fetch_extensions():
-                modules.add(ext)
+
+        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
+        for ext in QtRepoProperty.known_extensions(version):
+            try:
+                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))
+                for key, value in ext_meta.items():
+                    ext_match = ext_pattern.match(key)
+                    if ext_match is not None:
+                        module = ext_match.group("module")
+                        if module is not None:
+                            modules.add(ext)
+            except (ChecksumDownloadFailure, ArchiveDownloadError):
+                pass
         return sorted(modules)
 
     @staticmethod
