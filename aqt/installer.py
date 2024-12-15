@@ -678,7 +678,7 @@ class Cli:
             "\nandroid:              Qt 5.14:          android (optional)"
             "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
             "\n                                        android_x86, android_armv7"
-            "\nwasm:                 wasm_singlethread, wasm_multithread",
+            "\nall_os/wasm:          wasm_singlethread, wasm_multithread",
         )
         self._set_common_options(install_qt_parser)
         self._set_module_options(install_qt_parser)
@@ -770,7 +770,7 @@ class Cli:
         make_parser_sde("install-example", "Install examples.", self.run_install_example, False)
         make_parser_sde("install-src", "Install source.", self.run_install_src, True, is_add_modules=False)
 
-        self._set_list_qt_parser(subparsers)
+        self._make_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
         make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
@@ -778,7 +778,7 @@ class Cli:
 
         self._make_common_parsers(subparsers)
 
-    def _set_list_qt_parser(self, subparsers: argparse._SubParsersAction):
+    def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: ListArgumentParser = subparsers.add_parser(
             "list-qt",
@@ -794,7 +794,7 @@ class Cli:
             "$ aqt list-qt mac desktop --arch latest                          # print architectures for the latest Qt 5\n"
             "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
             "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n"
-            "$ aqt list-qt all_os wasm --arch 6.7.3                          # print architectures for Qt WASM 6.7.3\n",
+            "$ aqt list-qt all_os wasm --arch 6.8.1                           # print architectures for Qt WASM 6.8.1\n",
         )
         list_parser.add_argument(
             "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"

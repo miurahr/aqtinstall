@@ -199,14 +199,14 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 class ArchiveId:
     CATEGORIES = ("tools", "qt")
-    HOSTS = ("windows", "windows_arm64", "mac", "linux", "linux_arm64", "all_os")  # Added all_os
+    HOSTS = ("windows", "windows_arm64", "mac", "linux", "linux_arm64", "all_os")
     TARGETS_FOR_HOST = {
         "windows": ["android", "desktop", "winrt"],
         "windows_arm64": ["desktop"],
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
-        "all_os": ["wasm", "qt"],  # Add wasm target for all_os
+        "all_os": ["wasm", "qt"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
     ALL_EXTENSIONS = {
