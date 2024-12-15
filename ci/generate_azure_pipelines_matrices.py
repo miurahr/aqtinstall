@@ -8,6 +8,8 @@ import re
 from itertools import product
 from typing import Dict, Optional
 
+from semantic_version import Version
+
 MIRRORS = [
     "https://ftp.jaist.ac.jp/pub/qtproject",
     "https://ftp1.nluug.nl/languages/qt",
@@ -111,7 +113,7 @@ class PlatformBuildJobs:
 
 python_versions = ["3.12"]
 
-qt_versions = ["6.5.3"]
+qt_versions = ["6.8.1"]
 
 linux_build_jobs = []
 linux_arm64_build_jobs = []
@@ -123,6 +125,7 @@ all_platform_build_jobs = [
     PlatformBuildJobs("linux_arm64", linux_arm64_build_jobs),
     PlatformBuildJobs("mac", mac_build_jobs),
     PlatformBuildJobs("windows", windows_build_jobs),
+    PlatformBuildJobs("all_os", windows_build_jobs),
 ]
 
 # Linux Desktop
@@ -238,6 +241,41 @@ windows_build_jobs.append(
              is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="mingw_64",
              mingw_variant="win64_mingw900")
 )
+
+# WASM post 6.7.x
+EMSDK_FOR_QT = {
+    "6.2": "2.0.14",
+    "6.3": "3.0.0",
+    "6.4": "3.1.14",
+    "6.5": "3.1.25",
+    "6.6": "3.1.37",
+    "6.7": "3.1.50",
+    "6.8": "3.1.56",
+}
+
+def emsdk_version_for_qt(version_of_qt: str) -> str:
+    qt_major_minor = ".".join(version_of_qt.split(".")[:2])
+
+    if qt_major_minor in EMSDK_FOR_QT:
+        return EMSDK_FOR_QT[qt_major_minor]
+
+    latest_version = max(EMSDK_FOR_QT.keys(), key=Version)
+    return EMSDK_FOR_QT[latest_version]
+
+linux_build_jobs.append(
+    BuildJob("install-qt", "6.7.3", "all_os", "wasm", "wasm_multithread", "wasm_multithread",
+             is_autodesktop=True, emsdk_version=f"sdk-{emsdk_version_for_qt("6.7.3")}-64bit", autodesk_arch_folder="gcc_64")
+)
+for job_queue, host, desk_arch, target, qt_version in (
+    (linux_build_jobs, "all_os", "gcc_64", "wasm", qt_versions[0]),
+    (mac_build_jobs, "all_os", "clang_64", "wasm", qt_versions[0]),
+    (windows_build_jobs, "all_os", "mingw_64", "wasm", qt_versions[0]),
+):
+    for wasm_arch in ("wasm_singlethread", "wasm_multithread"):
+        job_queue.append(
+            BuildJob("install-qt", qt_version, host, target, wasm_arch, wasm_arch,
+                     is_autodesktop=True, emsdk_version=f"sdk-{emsdk_version_for_qt(qt_version)}-64bit", autodesk_arch_folder=desk_arch)
+        )
 
 # mobile SDK
 mac_build_jobs.extend(
