@@ -37,7 +37,14 @@ from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata, ChecksumDownloadFailure
+from aqt.exceptions import (
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    CliInputError,
+    EmptyMetadata,
+    ChecksumDownloadFailure,
+)
 from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
 
 
@@ -561,6 +568,7 @@ class QtRepoProperty:
         if version >= Version("6.8.0"):
             return ["qtpdf", "qtwebengine"]
         return []
+
 
 class MetadataFactory:
     """Retrieve metadata of Qt variations, versions, and descriptions from Qt site."""
