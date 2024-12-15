@@ -41,9 +41,9 @@ from aqt.exceptions import (
     ArchiveConnectionError,
     ArchiveDownloadError,
     ArchiveListError,
+    ChecksumDownloadFailure,
     CliInputError,
     EmptyMetadata,
-    ChecksumDownloadFailure,
 )
 from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
 
