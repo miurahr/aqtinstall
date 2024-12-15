@@ -647,8 +647,17 @@ class Cli:
 
     def _set_install_qt_parser(self, install_qt_parser):
         install_qt_parser.set_defaults(func=self.run_install_qt)
-        self._set_common_arguments(install_qt_parser)
-        self._set_common_options(install_qt_parser)
+        install_qt_parser.add_argument(
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
+        )
+        install_qt_parser.add_argument(
+            "target", choices=["desktop", "winrt", "android", "ios", "wasm", "qt"], help="Target SDK"
+        )
+        install_qt_parser.add_argument(
+            "qt_version_spec",
+            metavar="(VERSION | SPECIFICATION)",
+            help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+        )
         install_qt_parser.add_argument(
             "arch",
             nargs="?",
@@ -668,8 +677,10 @@ class Cli:
             "\n                      win64_msvc2017_winrt_armv7"
             "\nandroid:              Qt 5.14:          android (optional)"
             "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
-            "\n                                        android_x86, android_armv7",
+            "\n                                        android_x86, android_armv7"
+            "\nwasm:                 wasm_singlethread, wasm_multithread",
         )
+        self._set_common_options(install_qt_parser)
         self._set_module_options(install_qt_parser)
         self._set_archive_options(install_qt_parser)
         install_qt_parser.add_argument(
@@ -759,7 +770,7 @@ class Cli:
         make_parser_sde("install-example", "Install examples.", self.run_install_example, False)
         make_parser_sde("install-src", "Install source.", self.run_install_src, True, is_add_modules=False)
 
-        self._make_list_qt_parser(subparsers)
+        self._set_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
         make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
@@ -767,7 +778,7 @@ class Cli:
 
         self._make_common_parsers(subparsers)
 
-    def _make_list_qt_parser(self, subparsers: argparse._SubParsersAction):
+    def _set_list_qt_parser(self, subparsers: argparse._SubParsersAction):
         """Creates a subparser that works with the MetadataFactory, and adds it to the `subparsers` parameter"""
         list_parser: ListArgumentParser = subparsers.add_parser(
             "list-qt",
@@ -782,16 +793,17 @@ class Cli:
             "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for 5.9.9/mac/desktop\n"
             "$ aqt list-qt mac desktop --arch latest                          # print architectures for the latest Qt 5\n"
             "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
-            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n",
+            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n"
+            "$ aqt list-qt all_os wasm --arch 6.7.3                          # print architectures for Qt WASM 6.7.3\n",
         )
         list_parser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
         )
         list_parser.add_argument(
             "target",
             nargs="?",
             default=None,
-            choices=["desktop", "winrt", "android", "ios"],
+            choices=["desktop", "winrt", "android", "ios", "wasm"],
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
         list_parser.add_argument(
@@ -956,18 +968,18 @@ class Cli:
         install-src/doc/example commands do not require a "target" argument anymore, as of 11/22/2021
         """
         subparser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
         )
         if is_target_deprecated:
             subparser.add_argument(
                 "target",
-                choices=["desktop", "winrt", "android", "ios"],
+                choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
                 nargs="?",
                 help="Ignored. This parameter is deprecated and marked for removal in a future release. "
                 "It is present here for backwards compatibility.",
             )
         else:
-            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
+            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios", "wasm", "qt"], help="target sdk")
         subparser.add_argument(
             "qt_version_spec",
             metavar="(VERSION | SPECIFICATION)",
@@ -1026,10 +1038,19 @@ class Cli:
             host == "windows" and target == "desktop" and is_msvc and arch.endswith(("arm64", "arm64_cross_compiled"))
         )
         if version < Version("6.0.0") or (
-            target not in ["ios", "android"] and not is_wasm and not is_win_desktop_msvc_arm64
+            target not in ["ios", "android", "wasm"] and not is_wasm and not is_win_desktop_msvc_arm64
         ):
             # We only need to worry about the desktop directory for Qt6 mobile or wasm installs.
             return None, None
+
+        # For WASM installations on all_os, we need to choose a default desktop host
+        if host == "all_os":
+            if sys.platform.startswith("linux"):
+                host = "linux"
+            elif sys.platform == "darwin":
+                host = "mac"
+            else:
+                host = "windows"
 
         installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version, is_msvc=is_msvc)
         if installed_desktop_arch_dir:
@@ -1037,7 +1058,16 @@ class Cli:
             self.logger.info(f"Found installed {host}-desktop Qt at {installed_desktop_arch_dir}")
             return installed_desktop_arch_dir.name, None
 
-        default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version, is_msvc)
+        try:
+            default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(
+                version, is_msvc
+            )
+        except ValueError as e:
+            if "Target 'desktop' is invalid" in str(e):
+                # Special case for all_os host which doesn't support desktop target
+                return None, None
+            raise
+
         desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
         expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
 
@@ -1047,6 +1077,7 @@ class Cli:
             qt_type = "Qt6-WASM"
         else:
             qt_type = target
+
         if should_autoinstall:
             # No desktop Qt is installed, but the user has requested installation. Find out what to install.
             self.logger.info(

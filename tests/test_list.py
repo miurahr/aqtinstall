@@ -416,11 +416,48 @@ def expected_windows_desktop_plus_wasm_5140(is_wasm_threaded: bool) -> Dict:
         )
     else:
         input_filenames = "windows-5140-expect.json", "windows-5140-wasm-expect.json"
+
     to_join = [json.loads((Path(__file__).parent / "data" / f).read_text("utf-8")) for f in input_filenames]
-    return {
-        "architectures": [arch for _dict in to_join for arch in _dict["architectures"]],
-        "modules_by_arch": {k: v for _dict in to_join for k, v in _dict["modules_by_arch"].items()},
-    }
+
+    result = {"architectures": [], "modules_by_arch": {}}
+
+    # Gather architectures from all sources
+    for source in to_join:
+        result["architectures"].extend(source["architectures"])
+        if "modules_by_arch" in source:
+            result["modules_by_arch"].update(source["modules_by_arch"])
+
+    # Remove duplicates while preserving order
+    seen = set()
+    result["architectures"] = [x for x in result["architectures"] if not (x in seen or seen.add(x))]
+
+    return result
+
+
+@pytest.mark.parametrize(
+    "host, target, version, arch, expect_arches",
+    [
+        ("all_os", "wasm", "6.7.3", "", {"wasm_singlethread", "wasm_multithread"}),
+        ("all_os", "wasm", "6.8.0", "", {"wasm_singlethread", "wasm_multithread"}),
+    ],
+)
+def test_list_wasm_arches(monkeypatch, capsys, host: str, target: str, version: str, arch: str, expect_arches: Set[str]):
+    def _mock_fetch_http(_, rest_of_url: str, *args, **kwargs) -> str:
+        if rest_of_url.endswith("Updates.xml"):
+            if version >= "6.8.0":
+                return (Path(__file__).parent / "data" / "windows-680-wasm-single-update.xml").read_text("utf-8")
+            else:
+                return (Path(__file__).parent / "data" / "windows-673-wasm-single-update.xml").read_text("utf-8")
+        return ""  # Return empty HTML since we don't need it
+
+    monkeypatch.setattr("aqt.metadata.getUrl", _mock_fetch_http)
+    monkeypatch.setattr("aqt.metadata.MetadataFactory.fetch_http", _mock_fetch_http)
+
+    cli = Cli()
+    cli._setup_settings()
+    assert 0 == cli.run(["list-qt", host, target, "--arch", version])
+    out, err = capsys.readouterr()
+    assert set(out.strip().split()) == expect_arches
 
 
 @pytest.mark.parametrize(

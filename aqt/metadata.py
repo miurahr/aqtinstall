@@ -199,17 +199,24 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
 
 class ArchiveId:
     CATEGORIES = ("tools", "qt")
-    HOSTS = ("windows", "windows_arm64", "mac", "linux", "linux_arm64", "all_os")
+    HOSTS = ("windows", "windows_arm64", "mac", "linux", "linux_arm64", "all_os")  # Added all_os
     TARGETS_FOR_HOST = {
         "windows": ["android", "desktop", "winrt"],
         "windows_arm64": ["desktop"],
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
-        "all_os": ["qt"],
+        "all_os": ["wasm", "qt"],  # Add wasm target for all_os
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
-    ALL_EXTENSIONS = {"", "wasm", "src_doc_examples", *EXTENSIONS_REQUIRED_ANDROID_QT6}
+    ALL_EXTENSIONS = {
+        "",
+        "wasm",
+        "src_doc_examples",
+        *EXTENSIONS_REQUIRED_ANDROID_QT6,
+        "wasm_singlethread",
+        "wasm_multithread",
+    }
 
     def __init__(self, category: str, host: str, target: str):
         if category not in ArchiveId.CATEGORIES:
@@ -269,13 +276,23 @@ class ArchiveId:
 
     def to_folder(self, version: Version, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
         if version >= Version("6.8.0"):
-            return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
-                category=self.category,
-                major=qt_version_no_dots[0],
-                ver=qt_version_no_dots,
-                ext="_" + extension if extension else "",
-            )
+            if self.target == "wasm":
+                # For Qt 6.8+ WASM, path structure is qt6_681/qt6_681_wasm_multithread
+                return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
+                    category=self.category,
+                    major=qt_version_no_dots[0],
+                    ver=qt_version_no_dots,
+                    ext="_" + extension if extension else "",
+                )
+            else:
+                return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
+                    category=self.category,
+                    major=qt_version_no_dots[0],
+                    ver=qt_version_no_dots,
+                    ext="_" + extension if extension else "",
+                )
         else:
+            # Pre-6.8 structure remains the same
             return "{category}{major}_{ver}{ext}".format(
                 category=self.category,
                 major=qt_version_no_dots[0],
@@ -286,8 +303,8 @@ class ArchiveId:
     def all_extensions(self, version: Version) -> List[str]:
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
             return ["", "wasm"]
-        elif self.target == "desktop" and QtRepoProperty.is_in_wasm_threaded_range(version):
-            return ["", "wasm_singlethread", "wasm_multithread"]
+        elif self.target == "wasm" and QtRepoProperty.is_in_wasm_threaded_range(version):
+            return ["wasm_singlethread", "wasm_multithread"]
         elif self.target == "android" and version >= Version("6.0.0"):
             return list(ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6)
         else:
