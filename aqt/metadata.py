@@ -239,6 +239,8 @@ class ArchiveId:
         return self.category == "tools"
 
     def to_os_arch(self) -> str:
+        if self.host == "all_os":
+            return "all_os"
         return "{os}{arch}".format(
             os=self.host,
             arch=(
@@ -277,22 +279,18 @@ class ArchiveId:
     def to_folder(self, version: Version, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
         if version >= Version("6.8.0"):
             if self.target == "wasm":
-                # For Qt 6.8+ WASM, path structure is qt6_681/qt6_681_wasm_multithread
-                return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
-                    category=self.category,
-                    major=qt_version_no_dots[0],
-                    ver=qt_version_no_dots,
-                    ext="_" + extension if extension else "",
-                )
-            else:
-                return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
-                    category=self.category,
-                    major=qt_version_no_dots[0],
-                    ver=qt_version_no_dots,
-                    ext="_" + extension if extension else "",
-                )
+                # Qt 6.8+ WASM uses a split folder structure
+                folder = f"qt{version.major}_{qt_version_no_dots}"
+                if extension:
+                    folder = f"{folder}/{folder}_{extension}"
+                return folder
+        elif version >= Version("6.5.0") and self.target == "wasm":
+            # Qt 6.5-6.7 WASM uses direct wasm_[single|multi]thread folder
+            if extension:
+                return f"qt{version.major}_{qt_version_no_dots}_{extension}"
+            return f"qt{version.major}_{qt_version_no_dots}"
         else:
-            # Pre-6.8 structure remains the same
+            # Pre-6.8 structure for non-WASM or pre-6.5 structure
             return "{category}{major}_{ver}{ext}".format(
                 category=self.category,
                 major=qt_version_no_dots[0],
@@ -429,6 +427,10 @@ class QtRepoProperty:
 
     @staticmethod
     def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
+        """
+        Determines the architecture directory name based on host, architecture and version.
+        Special handling is done for WASM, mingw, MSVC and various platform-specific cases.
+        """
         if arch.startswith("win64_mingw"):
             return arch[6:] + "_64"
         elif arch.startswith("win64_llvm"):
@@ -449,6 +451,8 @@ class QtRepoProperty:
             return "gcc_64"
         elif host == "linux_arm64" and arch == "linux_gcc_arm64":
             return "gcc_arm64"
+        elif host == "all_os" and arch in ("wasm_singlethread", "wasm_multithread", "wasm_32"):
+            return arch
         else:
             return arch
 
