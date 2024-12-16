@@ -410,7 +410,7 @@ class QtArchives:
         os_name = self.os_name
         if self.target == "android" and self.version >= Version("6.7.0"):
             os_name = "all_os"
-        if self.os_name == "windows":
+        elif self.os_name == "windows":
             os_name += "_x86"
         elif os_name != "linux_arm64" and os_name != "all_os" and os_name != "windows_arm64":
             os_name += "_x64"
