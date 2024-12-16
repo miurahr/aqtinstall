@@ -37,7 +37,14 @@ from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
+from aqt.exceptions import (
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    ChecksumDownloadFailure,
+    CliInputError,
+    EmptyMetadata,
+)
 from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
 
 
@@ -556,6 +563,12 @@ class QtRepoProperty:
     def is_in_wasm_threaded_range(version: Version) -> bool:
         return version in SimpleSpec(">=6.5.0")
 
+    @staticmethod
+    def known_extensions(version: Version) -> List[str]:
+        if version >= Version("6.8.0"):
+            return ["qtpdf", "qtwebengine"]
+        return []
+
 
 class MetadataFactory:
     """Retrieve metadata of Qt variations, versions, and descriptions from Qt site."""
@@ -886,9 +899,19 @@ class MetadataFactory:
             module, _arch = to_module_arch(name)
             if _arch == arch:
                 modules.add(cast(str, module))
-        if version >= Version("6.8.0"):
-            for ext in self.fetch_extensions():
-                modules.add(ext)
+
+        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
+        for ext in QtRepoProperty.known_extensions(version):
+            try:
+                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))
+                for key, value in ext_meta.items():
+                    ext_match = ext_pattern.match(key)
+                    if ext_match is not None:
+                        module = ext_match.group("module")
+                        if module is not None:
+                            modules.add(ext)
+            except (ChecksumDownloadFailure, ArchiveDownloadError):
+                pass
         return sorted(modules)
 
     @staticmethod
@@ -930,8 +953,8 @@ class MetadataFactory:
         # Examples: extensions.qtwebengine.680.debug_information
         #           extensions.qtwebengine.680.win64_msvc2022_64
         ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
-        if version >= Version("6.8.0"):
-            for ext in self.fetch_extensions():
+        for ext in QtRepoProperty.known_extensions(version):
+            try:
                 ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))
                 for key, value in ext_meta.items():
                     ext_match = ext_pattern.match(key)
@@ -939,6 +962,8 @@ class MetadataFactory:
                         module = ext_match.group("module")
                         if module is not None:
                             m[module] = value
+            except (ChecksumDownloadFailure, ArchiveDownloadError):
+                pass
         return ModuleData(m)
 
     def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
