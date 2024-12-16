@@ -724,6 +724,33 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "{base_dir}\\6.5.2\\msvc2019_64\\bin\n"
                                 "... blah blah blah ...\n",
                             ),
+                            PatchedFile(
+                                filename="bin/qtpaths.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.5.2\\msvc2019_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake6.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.5.2\\msvc2019_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qtpaths6.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.5.2\\msvc2019_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
                 ],
@@ -738,6 +765,9 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win64_msvc2019_64.7z in .*\n"
                 r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake.bat\n"
+                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qtpaths.bat\n"
+                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake6.bat\n"
+                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qtpaths6.bat\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -801,6 +831,17 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "{base_dir}/6.4.1/gcc_64/bin\n"
                                 "... blah blah blah ...\n",
                             ),
+                            PatchedFile(
+                                filename="bin/qtpaths",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/home/qt/work/install/bin\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.4.1/gcc_64/bin\n"
+                                "{base_dir}/6.4.1/gcc_64/bin\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
                 ]
@@ -813,6 +854,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-MacOS-MacOS_12-Clang-Android-Android_ANY-ARM64\.7z in .*\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
+                r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qtpaths\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -861,6 +903,15 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "{base_dir}/6.3.0/gcc_64/bin\n"
                                 "... blah blah blah ...\n",
                             ),
+                            PatchedFile(
+                                filename="bin/qtpaths",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/home/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.3.0/gcc_64/bin\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
                 ]
@@ -873,6 +924,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-linux-android_arm64_v8a.7z in .*\n"
                 r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
+                r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qtpaths\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1043,6 +1095,15 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "{base_dir}\\6.2.4\\mingw1234_64\\bin\n"
                                 "... blah blah blah ...\n",
                             ),
+                            PatchedFile(
+                                filename="bin/qtpaths.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.2.4\\mingw1234_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
                 ],
@@ -1055,6 +1116,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-wasm_32\.7z in .*\n"
                 r"INFO    : Patching .*6\.2\.4[/\\]wasm_32[/\\]bin[/\\]qmake.bat\n"
+                r"INFO    : Patching .*6\.2\.4[/\\]wasm_32[/\\]bin[/\\]qtpaths.bat\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
