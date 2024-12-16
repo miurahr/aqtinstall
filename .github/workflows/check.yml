@@ -29,10 +29,22 @@ jobs:
         pip install -U pip
         pip install tox tox-gh-actions coveralls coverage[toml]
     - name: Check
-      run: tox
+      run: |
+        tox
+        coverage xml -o cobertura.xml
       env:
         PYTEST_ADDOPTS: --cov-config=pyproject.toml --cov --cov-append --verbose
     - name: Upload Coverage
       run: coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+    - name: Send coverage to codacy
+      run: |
+        curl -LS -o codacy-coverage-reporter-assembly.jar "$(curl -LSs https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({name, browser_download_url} | select(.name | endswith(".jar"))) | .[0].browser_download_url')"
+        java -jar codacy-coverage-reporter-assembly.jar report -l Python -t ${PROJECT_TOKEN} -r cobertura.xml
+      env:
+        PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
