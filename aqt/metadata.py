@@ -221,8 +221,6 @@ class ArchiveId:
         "wasm",
         "src_doc_examples",
         *EXTENSIONS_REQUIRED_ANDROID_QT6,
-        # "wasm_singlethread",
-        # "wasm_multithread",
     }
 
     def __init__(self, category: str, host: str, target: str):
@@ -437,6 +435,19 @@ class QtRepoProperty:
         Determines the architecture directory name based on host, architecture and version.
         Special handling is done for WASM, mingw, MSVC and various platform-specific cases.
         """
+        # If host is all_os and we have a desktop arch (from autodesktop),
+        # call ourselves again with the correct host based on arch prefix
+        if host == "all_os":
+            if arch.startswith("linux_"):
+                return QtRepoProperty.get_arch_dir_name("linux", arch, version)
+            elif arch.startswith("win"):
+                return QtRepoProperty.get_arch_dir_name("windows", arch, version)
+            elif arch == "clang_64":
+                return QtRepoProperty.get_arch_dir_name("mac", arch, version)
+            elif arch in ("wasm_singlethread", "wasm_multithread", "wasm_32"):
+                return arch
+
+        # Rest of the original method
         if arch.startswith("win64_mingw"):
             return arch[6:] + "_64"
         elif arch.startswith("win64_llvm"):
@@ -457,8 +468,6 @@ class QtRepoProperty:
             return "gcc_64"
         elif host == "linux_arm64" and arch == "linux_gcc_arm64":
             return "gcc_arm64"
-        elif host == "all_os" and arch in ("wasm_singlethread", "wasm_multithread", "wasm_32"):
-            return arch
         else:
             return arch
 

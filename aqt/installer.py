@@ -366,7 +366,16 @@ class Cli:
 
         def get_auto_desktop_archives() -> List[QtPackage]:
             def to_archives(baseurl: str) -> QtArchives:
-                return QtArchives(os_name, "desktop", qt_version, cast(str, autodesk_arch), base=baseurl, timeout=timeout)
+                # Use host_os instead of os_name for desktop Qt
+                host_os = os_name
+                if host_os == "all_os":
+                    if sys.platform.startswith("linux"):
+                        host_os = "linux"
+                    elif sys.platform == "darwin":
+                        host_os = "mac"
+                    else:
+                        host_os = "windows"
+                return QtArchives(host_os, "desktop", qt_version, cast(str, autodesk_arch), base=baseurl, timeout=timeout)
 
             if autodesk_arch is not None:
                 return cast(QtArchives, retry_on_bad_connection(to_archives, base)).archives
