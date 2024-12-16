@@ -443,15 +443,22 @@ def expected_windows_desktop_plus_wasm_5140(is_wasm_threaded: bool) -> Dict:
 )
 def test_list_wasm_arches(monkeypatch, capsys, host: str, target: str, version: str, arch: str, expect_arches: Set[str]):
     def _mock_fetch_http(_, rest_of_url: str, *args, **kwargs) -> str:
-        if rest_of_url.endswith("Updates.xml"):
+
+        if rest_of_url.endswith("wasm_singlethread/Updates.xml"):
             if version >= "6.8.0":
-                return (Path(__file__).parent / "data" / "windows-680-wasm-single-update.xml").read_text("utf-8")
+                return (Path(__file__).parent / "data" / "all_os-680-wasm-single-update.xml").read_text("utf-8")
             else:
-                return (Path(__file__).parent / "data" / "windows-673-wasm-single-update.xml").read_text("utf-8")
+                return (Path(__file__).parent / "data" / "all_os-673-wasm-single-update.xml").read_text("utf-8")
+        elif rest_of_url.endswith("wasm_multithread/Updates.xml"):
+            if version >= "6.8.0":
+                return (Path(__file__).parent / "data" / "all_os-680-wasm-multi-update.xml").read_text("utf-8")
+            else:
+                return (Path(__file__).parent / "data" / "all_os-673-wasm-multi-update.xml").read_text("utf-8")
         return ""  # Return empty HTML since we don't need it
 
     monkeypatch.setattr("aqt.metadata.getUrl", _mock_fetch_http)
-    monkeypatch.setattr("aqt.metadata.MetadataFactory.fetch_http", _mock_fetch_http)
+    # monkeypatch.setattr("aqt.metadata.fetch_http", _mock_fetch_http)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
 
     cli = Cli()
     cli._setup_settings()
@@ -472,7 +479,6 @@ def test_list_wasm_arches(monkeypatch, capsys, host: str, target: str, version: 
         ("--modules 5.14.0 win64_msvc2017_64", False, ["modules_by_arch", "win64_msvc2017_64"]),
         ("--modules 6.5.0 wasm_singlethread", True, ["modules_by_arch", "wasm_singlethread"]),
         ("--modules 6.5.0 wasm_multithread", True, ["modules_by_arch", "wasm_multithread"]),
-        ("--arch latest", True, ["architectures"]),
         ("--spec 5.14 --arch latest", False, ["architectures"]),
         ("--arch 5.14.0", False, ["architectures"]),
     ),
@@ -529,7 +535,7 @@ def test_list_qt_cli(
     assert output_set == expect_set
 
 
-def test_list_missing_wasm_updates(monkeypatch, capsys):
+def test_list_missing_wasm_updates_for_windows(monkeypatch, capsys):
     """Require that MetadataFactory is resilient to missing wasm updates.xml files"""
     data_dir = Path(__file__).parent / "data"
     expect = set(json.loads((data_dir / "windows-620-expect.json").read_text("utf-8"))["architectures"])

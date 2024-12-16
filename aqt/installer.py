@@ -699,12 +699,12 @@ class Cli:
     def _set_install_tool_parser(self, install_tool_parser):
         install_tool_parser.set_defaults(func=self.run_install_tool)
         install_tool_parser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
         )
         install_tool_parser.add_argument(
             "target",
             default=None,
-            choices=["desktop", "winrt", "android", "ios"],
+            choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
             help="Target SDK.",
         )
         install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
@@ -752,7 +752,7 @@ class Cli:
         def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
             parser = subparsers.add_parser(cmd, description=desc)
             parser.add_argument(
-                "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+                "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
             )
             parser.add_argument(
                 "qt_version_spec",
@@ -803,7 +803,7 @@ class Cli:
             "target",
             nargs="?",
             default=None,
-            choices=["desktop", "winrt", "android", "ios", "wasm"],
+            choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
         list_parser.add_argument(
@@ -883,13 +883,13 @@ class Cli:
             "$ aqt list-tool mac desktop ifw --long        # print tool variant names with metadata for QtIFW\n",
         )
         list_parser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"], help="host os name"
         )
         list_parser.add_argument(
             "target",
             nargs="?",
             default=None,
-            choices=["desktop", "winrt", "android", "ios"],
+            choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
         list_parser.add_argument(

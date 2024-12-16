@@ -214,8 +214,8 @@ class ArchiveId:
         "wasm",
         "src_doc_examples",
         *EXTENSIONS_REQUIRED_ANDROID_QT6,
-        "wasm_singlethread",
-        "wasm_multithread",
+        # "wasm_singlethread",
+        # "wasm_multithread",
     }
 
     def __init__(self, category: str, host: str, target: str):
@@ -289,14 +289,13 @@ class ArchiveId:
             if extension:
                 return f"qt{version.major}_{qt_version_no_dots}_{extension}"
             return f"qt{version.major}_{qt_version_no_dots}"
-        else:
-            # Pre-6.8 structure for non-WASM or pre-6.5 structure
-            return "{category}{major}_{ver}{ext}".format(
-                category=self.category,
-                major=qt_version_no_dots[0],
-                ver=qt_version_no_dots,
-                ext="_" + extension if extension else "",
-            )
+        # Pre-6.8 structure for non-WASM or pre-6.5 structure
+        return "{category}{major}_{ver}{ext}".format(
+            category=self.category,
+            major=qt_version_no_dots[0],
+            ver=qt_version_no_dots,
+            ext="_" + extension if extension else "",
+        )
 
     def all_extensions(self, version: Version) -> List[str]:
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
