@@ -457,7 +457,6 @@ def test_list_wasm_arches(monkeypatch, capsys, host: str, target: str, version: 
         return ""  # Return empty HTML since we don't need it
 
     monkeypatch.setattr("aqt.metadata.getUrl", _mock_fetch_http)
-    # monkeypatch.setattr("aqt.metadata.fetch_http", _mock_fetch_http)
     monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
 
     cli = Cli()

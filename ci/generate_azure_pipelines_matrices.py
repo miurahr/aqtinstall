@@ -8,8 +8,6 @@ import re
 from itertools import product
 from typing import Dict, Optional
 
-from semantic_version import Version
-
 MIRRORS = [
     "https://ftp.jaist.ac.jp/pub/qtproject",
     "https://ftp1.nluug.nl/languages/qt",
@@ -125,7 +123,12 @@ class BuildJob:
         if qt_major_minor in BuildJob.EMSDK_FOR_QT:
             return BuildJob.EMSDK_FOR_QT[qt_major_minor]
 
-        latest_version = max(BuildJob.EMSDK_FOR_QT.keys(), key=Version)
+        # Find the latest version using string comparison
+        latest_version = "0.0"
+        for version in BuildJob.EMSDK_FOR_QT.keys():
+            if version > latest_version:
+                latest_version = version
+
         return BuildJob.EMSDK_FOR_QT[latest_version]
 
 
