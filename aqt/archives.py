@@ -386,10 +386,17 @@ class QtArchives:
 
     def _get_archives(self):
         if self.version >= Version("6.8.0"):
+            # if self.os_name == 'all_os':
             name = (
                 f"qt{self.version.major}_{self._version_str()}"
+                # f"/qt{self.version.major}_{self._version_str()}"
                 f"/qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
             )
+            # else:
+            #    name = (
+            #        f"qt{self.version.major}_{self._version_str()}"
+            #        f"/qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
+            #   )
         else:
             name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
         self._get_archives_base(name, self._target_packages())
@@ -454,7 +461,7 @@ class QtArchives:
         """Hook for unit test."""
         if not Settings.ignore_hash:
             try:
-                xml_hash = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout)
+                xml_hash = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout, one_rep=silent)
             except ChecksumDownloadFailure:
                 if silent:
                     return None

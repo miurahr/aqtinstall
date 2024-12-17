@@ -263,6 +263,7 @@ class ArchiveId:
             extarch = "x86_64"
         elif self.host == "linux_arm64":
             extarch = "arm64"
+
         return "online/qtsdkrepository/{osarch}/extensions/{ext}/{ver}/{extarch}/".format(
             osarch=self.to_os_arch(),
             ext=module,
@@ -289,6 +290,9 @@ class ArchiveId:
                 if extension:
                     folder = f"{folder}/{folder}_{extension}"
                 return folder
+            else:
+                base = f"qt{version.major}_{qt_version_no_dots}"
+                return f"{base}/{base}"
         elif version >= Version("6.5.0") and self.target == "wasm":
             # Qt 6.5-6.7 WASM uses direct wasm_[single|multi]thread folder
             if extension:

@@ -274,7 +274,7 @@ linux_build_jobs.append(
              is_autodesktop=True, emsdk_version=f"sdk-{BuildJob.emsdk_version_for_qt("6.7.3")}-64bit", autodesk_arch_folder="gcc_64")
 )
 for job_queue, host, desk_arch, target, qt_version in (
-    (linux_build_jobs, "all_os", "gcc_64", "wasm", qt_versions[0]),
+    (linux_build_jobs, "all_os", "linux_gcc_64", "wasm", qt_versions[0]),
     (mac_build_jobs, "all_os", "clang_64", "wasm", qt_versions[0]),
     (windows_build_jobs, "all_os", "mingw_64", "wasm", qt_versions[0]),
 ):

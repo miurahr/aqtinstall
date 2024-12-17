@@ -188,7 +188,7 @@ def iter_list_reps(_list: List, num_reps: int) -> Generator:
             list_index = 0
 
 
-def get_hash(archive_path: str, algorithm: str, timeout: Tuple[float, float]) -> bytes:
+def get_hash(archive_path: str, algorithm: str, timeout: Tuple[float, float], one_rep=False) -> bytes:
     """
     Downloads a checksum and unhexlifies it to a `bytes` object, guaranteed to be the right length.
     Raises ChecksumDownloadFailure if the download failed, or if the checksum was un unexpected length.
@@ -210,6 +210,8 @@ def get_hash(archive_path: str, algorithm: str, timeout: Tuple[float, float]) ->
             if len(_hash) == hash_lengths[algorithm]:
                 return binascii.unhexlify(_hash)
         except (ArchiveConnectionError, ArchiveDownloadError, binascii.Incomplete, binascii.Error):
+            if one_rep:
+                break
             pass
     filename = archive_path.split("/")[-1]
     raise ChecksumDownloadFailure(
