@@ -26,7 +26,6 @@ jobs:
         run: |
           ./bin/reviewdog -runners=flake8,mypy,pylint -reporter=github-pr-check -conf=.reviewdog.yml
         env:
-          REVIEWDOG_TOKEN: ${{ secrets.REVIEWDOG_TOKEN }}
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docs:
