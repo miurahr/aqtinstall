@@ -177,7 +177,7 @@ mac_build_jobs.append(BuildJob(
 
 # Windows Desktop
 for qt_version in qt_versions:
-    windows_build_jobs.append(BuildJob("install-qt", qt_version, "windows", "desktop", "win64_msvc2019_64", "msvc2019_64"))
+    windows_build_jobs.append(BuildJob("install-qt", qt_version, "windows", "desktop", "win64_msvc2022_64", "msvc2022_64"))
 windows_build_jobs.extend(
     [
         BuildJob(
