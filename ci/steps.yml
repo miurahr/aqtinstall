@@ -237,7 +237,11 @@ steps:
       } else {
         Write-Host '##vso[task.setvariable variable=ARCHITECTURE]x86'
       }
-      if ('$(ARCH)' -like '*msvc2019*') {
+      if ('$(ARCH)' -like '*msvc2022*') {
+        Write-Host '##vso[task.setvariable variable=VSVER]2022'
+        # Set C++20 and __cplusplus flags for MSVC 2022
+        Write-Host '##vso[task.setvariable variable=QMAKE_FLAGS]/std:c++20 /Zc:__cplusplus'
+      } elseif ('$(ARCH)' -like '*msvc2019*') {
         Write-Host '##vso[task.setvariable variable=VSVER]2019'
       } elseif ('$(ARCH)' -like '*msvc2017*') {
         Write-Host '##vso[task.setvariable variable=VSVER]2017'
@@ -271,6 +275,7 @@ steps:
           eq(variables['SUBCOMMAND'], 'install-qt')
         )
     displayName: Build test with qmake for Linux and macOS w/o extra module
+  # Update the MSVC build step to use the new compiler flags
   - powershell: |
       if ( $env:TOOLCHAIN -eq 'MSVC' ) {
         # Load modules from cache  
@@ -285,7 +290,13 @@ steps:
         cd $(Build.BinariesDirectory)\tests
         7z x $(Build.SourcesDirectory)\ci\helloworld.7z
         cd ..
-        qmake $(Build.BinariesDirectory)\tests\helloworld
+        
+        # Add QMAKE_CXXFLAGS for MSVC 2022
+        if ('$(VSVER)' -eq '2022') {
+          qmake "QMAKE_CXXFLAGS += $(QMAKE_FLAGS)" $(Build.BinariesDirectory)\tests\helloworld
+        } else {
+          qmake $(Build.BinariesDirectory)\tests\helloworld
+        }
         jom
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
         python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
