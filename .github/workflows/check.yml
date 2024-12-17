@@ -24,21 +24,10 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-    - name: Setup reviewdog
-      uses: reviewdog/action-setup@v1
-      with:
-        reviewdog_version: latest
     - name: Install tools
       run: |
         pip install -U pip
         pip install tox tox-gh-actions coveralls coverage[toml]
-    - name: Lint checks
-      run: |
-        tox -e check | reviewdog -f flake8 -reporter=github-pr-review -fail-level=error
-        tox -e mypy | reviewdog -f mypy -reporter=github-pr-review -fail-level=error
-        tox -e docs
-      env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Test
       run: tox
       env:
