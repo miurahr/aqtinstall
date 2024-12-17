@@ -157,7 +157,7 @@ all_platform_build_jobs = [
 # Linux Desktop
 for qt_version in qt_versions:
     linux_build_jobs.append(
-        BuildJob("install-qt", qt_version, "linux", "desktop", "gcc_64", "gcc_64")
+        BuildJob("install-qt", qt_version, "linux", "desktop", "linux_gcc_64", "gcc_64")
     )
 linux_arm64_build_jobs.append(BuildJob("install-qt", "6.7.0", "linux_arm64", "desktop", "linux_gcc_arm64", "gcc_arm64"))
 
