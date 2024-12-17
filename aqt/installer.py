@@ -1157,6 +1157,7 @@ def installer(
     name = qt_package.name
     base_url = qt_package.base_url
     archive: Path = archive_dest / qt_package.archive
+    base_dir = posixpath.join(base_dir, qt_package.archive_install_path)
     start_time = time.perf_counter()
     Settings.load_settings(file=settings_ini)
     # setup queue logger
