@@ -13,6 +13,20 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Fixed
+-----
+* Handle cases where extensions don't exist(#852)
+* Fix computation of archive location for android install(#854)
+
+Added
+-----
+* Patch additional Qt scripts (#853)
+* readme: badge of Codacy code quality dashboard. (#856)
+
+Removed
+-------
+* CI: wiki creation workflow
+
 `v3.1.20`_ (11, December 2024)
 ==============================
 
