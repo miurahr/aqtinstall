@@ -237,16 +237,8 @@ steps:
       } else {
         Write-Host '##vso[task.setvariable variable=ARCHITECTURE]x86'
       }
-      if ('$(ARCH)' -like '*msvc2022*') {
+      if ('$(ARCH)' -like '*msvc*') {
         Write-Host '##vso[task.setvariable variable=VSVER]2022'
-        # Set C++20 and __cplusplus flags for MSVC 2022
-        Write-Host '##vso[task.setvariable variable=QMAKE_FLAGS]/std:c++20 /Zc:__cplusplus'
-      } elseif ('$(ARCH)' -like '*msvc2019*') {
-        Write-Host '##vso[task.setvariable variable=VSVER]2019'
-      } elseif ('$(ARCH)' -like '*msvc2017*') {
-        Write-Host '##vso[task.setvariable variable=VSVER]2017'
-      } else {
-        Write-Host '##vso[task.setvariable variable=VSVER]2015'
       }
       cd $(WIN_QT_BINDIR)
       unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
@@ -290,13 +282,7 @@ steps:
         cd $(Build.BinariesDirectory)\tests
         7z x $(Build.SourcesDirectory)\ci\helloworld.7z
         cd ..
-        
-        # Add QMAKE_CXXFLAGS for MSVC 2022
-        if ('$(VSVER)' -eq '2022') {
-          qmake "QMAKE_CXXFLAGS += $(QMAKE_FLAGS)" $(Build.BinariesDirectory)\tests\helloworld
-        } else {
-          qmake $(Build.BinariesDirectory)\tests\helloworld
-        }
+        qmake $(Build.BinariesDirectory)\tests\helloworld
         jom
       } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
         python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
@@ -408,7 +394,7 @@ steps:
         eq(variables['Agent.OS'], 'Windows_NT'),
         eq(variables['TOOLCHAIN'], 'MSVC'),
         ne(variables['MODULE'], ''),
-        ne(variables['VSVER'], '2019')
+        ne(variables['VSVER'], '2022')
       )
     displayName: build test with qmake with MSVC with extra module
   - bash: |
