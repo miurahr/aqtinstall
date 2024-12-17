@@ -68,6 +68,7 @@ check = [
     "readme-renderer",
     "pygments",
     "packaging",
+    "pylint",
 ]
 docs = [
     "sphinx>=7.0",

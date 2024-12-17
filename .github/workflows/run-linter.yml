@@ -22,6 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -U pip tox wheel setuptools coveralls coverage[toml]
+          pip install .[check]
       - name: run reviewdog
         run: |
           ./bin/reviewdog -runners=flake8,mypy,pylint -reporter=github-pr-check -conf=.reviewdog.yml
