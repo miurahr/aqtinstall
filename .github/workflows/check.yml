@@ -29,7 +29,7 @@ jobs:
       run: |
         pip install -U pip
         pip install tox tox-gh-actions coveralls coverage[toml]
-    - name: Check
+    - name: Test
       run: |
         tox
         coverage xml -o cobertura.xml
