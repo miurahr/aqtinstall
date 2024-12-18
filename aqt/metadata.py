@@ -437,21 +437,8 @@ class QtRepoProperty:
     def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
         """
         Determines the architecture directory name based on host, architecture and version.
-        Special handling is done for WASM, mingw, MSVC and various platform-specific cases.
+        Special handling is done for mingw, MSVC and various platform-specific cases.
         """
-        # If host is all_os and we have a desktop arch (from autodesktop),
-        # call ourselves again with the correct host based on arch prefix
-        if host == "all_os":
-            if arch.startswith("linux_"):
-                return QtRepoProperty.get_arch_dir_name("linux", arch, version)
-            elif arch.startswith("win"):
-                return QtRepoProperty.get_arch_dir_name("windows", arch, version)
-            elif arch == "clang_64":
-                return QtRepoProperty.get_arch_dir_name("mac", arch, version)
-            elif arch in ("wasm_singlethread", "wasm_multithread", "wasm_32"):
-                return arch
-
-        # Rest of the original method
         if arch.startswith("win64_mingw"):
             return arch[6:] + "_64"
         elif arch.startswith("win64_llvm"):

@@ -317,6 +317,7 @@ class Cli:
         self.show_aqt_version()
         target: str = args.target
         os_name: str = args.host
+        effective_os_name: str = Cli._get_effective_os_name(os_name)
         qt_version_or_spec: str = getattr(args, "qt_version", getattr(args, "qt_version_spec", ""))
         arch: str = self._set_arch(args.arch, os_name, target, qt_version_or_spec)
         keep: bool = args.keep or Settings.always_keep_archives
@@ -366,16 +367,14 @@ class Cli:
 
         def get_auto_desktop_archives() -> List[QtPackage]:
             def to_archives(baseurl: str) -> QtArchives:
-                # Use host_os instead of os_name for desktop Qt
-                host_os = os_name
-                if host_os == "all_os":
-                    if sys.platform.startswith("linux"):
-                        host_os = "linux"
-                    elif sys.platform == "darwin":
-                        host_os = "mac"
-                    else:
-                        host_os = "windows"
-                return QtArchives(host_os, "desktop", qt_version, cast(str, autodesk_arch), base=baseurl, timeout=timeout)
+                return QtArchives(
+                    effective_os_name,
+                    "desktop",
+                    qt_version,
+                    cast(str, autodesk_arch),
+                    base=baseurl,
+                    timeout=timeout,
+                )
 
             if autodesk_arch is not None:
                 return cast(QtArchives, retry_on_bad_connection(to_archives, base)).archives
@@ -403,6 +402,7 @@ class Cli:
         )
         qt_archives.archives.extend(auto_desktop_archives)
         target_config = qt_archives.get_target_config()
+        target_config.os_name = effective_os_name
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
             run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
@@ -410,7 +410,7 @@ class Cli:
         if not nopatch:
             Updater.update(target_config, base_path, expect_desktop_archdir)
             if autodesk_arch is not None:
-                d_target_config = TargetConfig(str(_version), "desktop", autodesk_arch, os_name)
+                d_target_config = TargetConfig(str(_version), "desktop", autodesk_arch, effective_os_name)
                 Updater.update(d_target_config, base_path, expect_desktop_archdir)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
@@ -1053,13 +1053,7 @@ class Cli:
             return None, None
 
         # For WASM installations on all_os, we need to choose a default desktop host
-        if host == "all_os":
-            if sys.platform.startswith("linux"):
-                host = "linux"
-            elif sys.platform == "darwin":
-                host = "mac"
-            else:
-                host = "windows"
+        host = Cli._get_effective_os_name(host)
 
         installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version, is_msvc=is_msvc)
         if installed_desktop_arch_dir:
@@ -1101,6 +1095,17 @@ class Cli:
                 f"          `aqt install-qt {host} desktop {version} {default_desktop_arch}`"
             )
             return expected_desktop_arch_path.name, None
+
+    @staticmethod
+    def _get_effective_os_name(host: str) -> str:
+        if host != "all_os":
+            return host
+        elif sys.platform.startswith("linux"):
+            return "linux"
+        elif sys.platform == "darwin":
+            return "mac"
+        else:
+            return "windows"
 
 
 def is_64bit() -> bool:
