@@ -40,6 +40,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/setup-java@v4
+      if: ( github.event_name == 'push' ) && ( github.ref == 'refs/heads/master' )
       with:
         distribution: 'temurin'
         java-version: '21'
