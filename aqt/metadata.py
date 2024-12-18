@@ -185,22 +185,58 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
     and patch gets all the rest.
     As of May 2021, the version strings at https://download.qt.io/online/qtsdkrepository
     conform to this pattern; they are not guaranteed to do so in the future.
+    As of December 2024, it can handle version strings like 6_7_3 as well.
     """
-    if not qt_ver or any(not ch.isdigit() for ch in qt_ver):
+    if not qt_ver:
         return None
+
+    # Handle versions with underscores (new format)
+    if "_" in qt_ver:
+        parts = qt_ver.split("_")
+        if not (2 <= len(parts) <= 3):
+            return None
+
+        try:
+            version_parts = [int(p) for p in parts]
+        except ValueError:
+            return None
+
+        major, minor = version_parts[:2]
+        patch = version_parts[2] if len(version_parts) > 2 else 0
+
+        if is_preview:
+            minor_patch_combined = int(f"{minor}{patch}") if patch > 0 else minor
+            return Version(
+                major=major,
+                minor=minor_patch_combined,
+                patch=0,
+                prerelease=("preview",),
+            )
+
+        return Version(
+            major=major,
+            minor=minor,
+            patch=patch,
+        )
+
+    # Handle traditional format (continuous digits)
+    if not qt_ver.isdigit():
+        return None
+
     if is_preview:
         return Version(
-            major=int(qt_ver[:1]),
+            major=int(qt_ver[0]),
             minor=int(qt_ver[1:]),
             patch=0,
             prerelease=("preview",),
         )
     elif len(qt_ver) >= 4:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:]))
+        return Version(major=int(qt_ver[0]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:]))
     elif len(qt_ver) == 3:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:]))
+        return Version(major=int(qt_ver[0]), minor=int(qt_ver[1]), patch=int(qt_ver[2]))
     elif len(qt_ver) == 2:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
+        return Version(major=int(qt_ver[0]), minor=int(qt_ver[1]), patch=0)
+
     raise ValueError("Invalid version string '{}'".format(qt_ver))
 
 
