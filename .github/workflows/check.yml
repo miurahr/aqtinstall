@@ -44,6 +44,7 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
     - name: Send coverage to codacy
+      if: ( github.event_name == 'push' ) && ( github.ref == 'refs/heads/master' )
       run: |
         java -jar ci/codacy-coverage-reporter-assembly.jar report -l Python -t ${PROJECT_TOKEN} -r cobertura.xml
       env:
