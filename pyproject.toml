@@ -160,6 +160,10 @@ warn_unused_ignores = true
 module = "texttable"
 ignore_missing_imports = true
 
+[tool.pylint.format]
+# Maximum number of characters on a single line.
+max-line-length = 125
+
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
