@@ -2,15 +2,21 @@ name: Run linter
 
 on:
   pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   linter:
     name: Linter
     runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          lfs: true
       - name: Setup python
         uses: actions/setup-python@v5
         with:
@@ -25,7 +31,7 @@ jobs:
           pip install .[check]
       - name: run reviewdog
         run: |
-          ./bin/reviewdog -runners=flake8,mypy -reporter=github-pr-check -conf=.reviewdog.yml
+          ./bin/reviewdog -runners=flake8,mypy -reporter=github-pr-review -conf=.reviewdog.yml
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
