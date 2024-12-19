@@ -454,7 +454,7 @@ class QtArchives:
         """Hook for unit test."""
         if not Settings.ignore_hash:
             try:
-                xml_hash = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout, one_rep=silent)
+                xml_hash = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout)
             except ChecksumDownloadFailure:
                 if silent:
                     return None
