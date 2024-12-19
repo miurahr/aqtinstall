@@ -308,6 +308,9 @@ steps:
         eq(variables['SUBCOMMAND'], 'install-qt')
       )
     displayName: build test with qmake w/o extra module
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
 
 # When --archives non-empty
   - script: |
@@ -372,6 +375,9 @@ steps:
           eq(variables['SUBCOMMAND'], 'install-qt')
         )
     displayName: build test with qmake with specific Qt modules (QT += uitools)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
 
   - powershell: |
       # Load modules from cache  
