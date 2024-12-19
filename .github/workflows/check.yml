@@ -1,4 +1,4 @@
-name: Check tox tests, lint and types
+name: Check tox tests
 
 on:
   push:
