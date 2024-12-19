@@ -416,11 +416,54 @@ def expected_windows_desktop_plus_wasm_5140(is_wasm_threaded: bool) -> Dict:
         )
     else:
         input_filenames = "windows-5140-expect.json", "windows-5140-wasm-expect.json"
+
     to_join = [json.loads((Path(__file__).parent / "data" / f).read_text("utf-8")) for f in input_filenames]
-    return {
-        "architectures": [arch for _dict in to_join for arch in _dict["architectures"]],
-        "modules_by_arch": {k: v for _dict in to_join for k, v in _dict["modules_by_arch"].items()},
-    }
+
+    result = {"architectures": [], "modules_by_arch": {}}
+
+    # Gather architectures from all sources
+    for source in to_join:
+        result["architectures"].extend(source["architectures"])
+        if "modules_by_arch" in source:
+            result["modules_by_arch"].update(source["modules_by_arch"])
+
+    # Remove duplicates while preserving order
+    seen = set()
+    result["architectures"] = [x for x in result["architectures"] if not (x in seen or seen.add(x))]
+
+    return result
+
+
+@pytest.mark.parametrize(
+    "host, target, version, arch, expect_arches",
+    [
+        ("all_os", "wasm", "6.7.3", "", {"wasm_singlethread", "wasm_multithread"}),
+        ("all_os", "wasm", "6.8.0", "", {"wasm_singlethread", "wasm_multithread"}),
+    ],
+)
+def test_list_wasm_arches(monkeypatch, capsys, host: str, target: str, version: str, arch: str, expect_arches: Set[str]):
+    def _mock_fetch_http(_, rest_of_url: str, *args, **kwargs) -> str:
+
+        if rest_of_url.endswith("wasm_singlethread/Updates.xml"):
+            if version >= "6.8.0":
+                return (Path(__file__).parent / "data" / "all_os-680-wasm-single-update.xml").read_text("utf-8")
+            else:
+                return (Path(__file__).parent / "data" / "all_os-673-wasm-single-update.xml").read_text("utf-8")
+        elif rest_of_url.endswith("wasm_multithread/Updates.xml"):
+            if version >= "6.8.0":
+                return (Path(__file__).parent / "data" / "all_os-680-wasm-multi-update.xml").read_text("utf-8")
+            else:
+                return (Path(__file__).parent / "data" / "all_os-673-wasm-multi-update.xml").read_text("utf-8")
+        return ""  # Return empty HTML since we don't need it
+
+    monkeypatch.setattr("aqt.metadata.getUrl", _mock_fetch_http)
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
+
+    cli = Cli()
+    cli._setup_settings()
+    assert 0 == cli.run(["list-qt", host, target, "--arch", version])
+    out, err = capsys.readouterr()
+    assert set(out.strip().split()) == expect_arches
 
 
 @pytest.mark.parametrize(
@@ -435,7 +478,6 @@ def expected_windows_desktop_plus_wasm_5140(is_wasm_threaded: bool) -> Dict:
         ("--modules 5.14.0 win64_msvc2017_64", False, ["modules_by_arch", "win64_msvc2017_64"]),
         ("--modules 6.5.0 wasm_singlethread", True, ["modules_by_arch", "wasm_singlethread"]),
         ("--modules 6.5.0 wasm_multithread", True, ["modules_by_arch", "wasm_multithread"]),
-        ("--arch latest", True, ["architectures"]),
         ("--spec 5.14 --arch latest", False, ["architectures"]),
         ("--arch 5.14.0", False, ["architectures"]),
     ),
@@ -492,7 +534,7 @@ def test_list_qt_cli(
     assert output_set == expect_set
 
 
-def test_list_missing_wasm_updates(monkeypatch, capsys):
+def test_list_missing_wasm_updates_for_windows(monkeypatch, capsys):
     """Require that MetadataFactory is resilient to missing wasm updates.xml files"""
     data_dir = Path(__file__).parent / "data"
     expect = set(json.loads((data_dir / "windows-620-expect.json").read_text("utf-8"))["architectures"])

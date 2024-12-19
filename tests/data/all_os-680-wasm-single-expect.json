@@ -1,0 +1,42 @@
+{
+  "architectures": [
+    "wasm_singlethread"
+  ],
+  "modules_by_arch": {
+    "wasm_singlethread": [
+      "qtspeech",
+      "qtdatavis3d",
+      "qtwebsockets",
+      "qtgraphs",
+      "qtmultimedia",
+      "qtlottie",
+      "qtremoteobjects",
+      "qtimageformats",
+      "qtinsighttracker",
+      "qtsensors",
+      "qtscxml",
+      "qtserialport",
+      "qtquick3dphysics",
+      "qtpdf",
+      "qtpositioning",
+      "qtcharts",
+      "qtvirtualkeyboard",
+      "qtlocation",
+      "qtconnectivity",
+      "qtserialbus",
+      "qt3d",
+      "qthttpserver",
+      "qtquicktimeline",
+      "qtlanguageserver",
+      "qtquickeffectmaker",
+      "qt5compat",
+      "qtwebchannel",
+      "qtshadertools",
+      "qtnetworkauth",
+      "qtquick3d",
+      "qtgrpc",
+      "qtwebengine",
+      "qtwebview"
+    ]
+  }
+}
