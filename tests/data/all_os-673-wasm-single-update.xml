@@ -1,0 +1,575 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtcharts, qt.qt6.673.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>77be84bfdcd36e24e74bc5135f8bb8c455289f7a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtcharts.wasm_singlethread</Name>
+  <DisplayName>Qt Charts for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtcharts, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="782872" OS="Any" UncompressedSize="7448108"/>
+  <SHA1>71a06c1502e04cfe597cf0d2cd3ecf8601be70f8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtdatavis3d, qt.qt6.673.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>282b060a16dab0ab1bfef4f14ff404b0a75d0fa6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtdatavis3d.wasm_singlethread</Name>
+  <DisplayName>Qt Data Visualization for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtdatavis3d, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="605848" OS="Any" UncompressedSize="4703654"/>
+  <SHA1>ce5eaecb6ad2558b36d9b737ee9451540f145721</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtgraphs</Name>
+  <DisplayName>Qt Graphs</DisplayName>
+  <Description>Qt Graphs is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtgraphs, qt.qt6.673.examples.qtgraphs</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7908333c49b26cf85f039abb57527c2d21f18b8f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtgraphs.wasm_singlethread</Name>
+  <DisplayName>Qt Graphs for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtgraphs, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgraphs-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="665131" OS="Any" UncompressedSize="5064065"/>
+  <SHA1>685b423175f6b00a936ed9d98c0a9197fa618774</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtgrpc</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC</DisplayName>
+  <Description>QtGrpc contains the two modules QtProtobuf and QtGrpc:&lt;br&gt;QtProtobuf provides a generator which can be used to generate Qt-based classes from messages defined in .proto files.&lt;br&gt;QtGrpc provides support for generating Qt-based clients and servers based on service description in .proto files, as well as communicating with gRPC services using QtProtobuf messages.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtgrpc, qt.qt6.673.examples.qtgrpc</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>05ec70a33253f9ef9fa208031c9d4fe48857963d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtgrpc.wasm_singlethread</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtgrpc, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgrpc-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="715425" OS="Any" UncompressedSize="11358570"/>
+  <SHA1>f63130294eccfbd678fcc58c647e9db05855da2f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qthttpserver</Name>
+  <DisplayName>Qt HTTP Server</DisplayName>
+  <Description>Qt HTTP Server supports building an HTTP server into an application.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <Dependencies>qt.qt6.673.doc.qthttpserver, qt.qt6.673.examples.qthttpserver, qt.qt6.673.addons.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f01dae56692eaddb92503fe595418f0308e9b2b4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qthttpserver.wasm_singlethread</Name>
+  <DisplayName>Qt HTTP Server for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qthttpserver, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qthttpserver-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="60731" OS="Any" UncompressedSize="305622"/>
+  <SHA1>ecd13a6de2d341857253c0290d37989cb3485a75</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtimageformats</Name>
+  <DisplayName>Qt Image Formats</DisplayName>
+  <Description>The Qt Image Formats  provides optional support for other image file formats. The core Qt Gui library by default supports reading and writing image files of the most common file formats: PNG, JPEG, BMP, GIF and a few more.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtimageformats, qt.qt6.673.examples.qtimageformats</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ec46cd9ccca583a4290972f5ebaa18138204685e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtimageformats.wasm_singlethread</Name>
+  <DisplayName>Qt ImageFormats for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtimageformats, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="309473" OS="Any" UncompressedSize="1306224"/>
+  <SHA1>a9345ecaec221617e8db77e3792015ca4c4446d7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtlottie, qt.qt6.673.examples.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f2162061943cbbcdd76c614090c450038bad84ad</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtlottie.wasm_singlethread</Name>
+  <DisplayName>Qt Lottie Animation for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtlottie, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="175708" OS="Any" UncompressedSize="1183554"/>
+  <SHA1>e3d2a6f5cb7c158f5264594c59dff6305c7615cd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtmultimedia</Name>
+  <DisplayName>Qt Multimedia</DisplayName>
+  <Description>Qt Multimedia provides a rich set of QML types and C++ classes to handle multimedia content.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtmultimedia, qt.qt6.673.examples.qtmultimedia</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>1d8cda4e556407cd92e2864858a6a01c6d115f7e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtmultimedia.wasm_singlethread</Name>
+  <DisplayName>Qt Multimedia for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtmultimedia, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="869131" OS="Any" UncompressedSize="5979779"/>
+  <SHA1>5b6571e5ad40bf0be8eb5d84b4dd7e9a828c0801</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtquick3dphysics</Name>
+  <DisplayName>Qt Quick 3D Physics</DisplayName>
+  <Description>Qt Quick 3D Physics provides a high-level QML module adding physical simulation capabilities to Qt Quick 3D.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.673.doc.qtquick3dphysics, qt.qt6.673.examples.qtquick3dphysics</Dependencies>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>a6a941df75a2ceccd4b06b669ea6528dc3d9f517</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtquick3dphysics.wasm_singlethread</Name>
+  <DisplayName>Qt Quick 3D Physics for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtquick3dphysics, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3dphysics-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1710736" OS="Any" UncompressedSize="11060813"/>
+  <SHA1>3063bd411f812b1949b7d8fc63b220180a0c72f2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtscxml</Name>
+  <DisplayName>Qt State Machines</DisplayName>
+  <Description>The Qt State Machines package provides API's and execution models that can be used to effectively embed the elements and semantics of statecharts in Qt applications. For advanced use cases the state machines can even be created from State Chart XML (SCXML) files.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtscxml, qt.qt6.673.examples.qtscxml</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b0c3df55f85aade3eb40014282ca9fe8c8c4c4dd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtscxml.wasm_singlethread</Name>
+  <DisplayName>Qt State Machines for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtscxml, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="376876" OS="Any" UncompressedSize="3144539"/>
+  <SHA1>241a914987b814f855352a86077801bdf0b9bce0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtspeech</Name>
+  <DisplayName>Qt Speech</DisplayName>
+  <Description>The Qt Speech module allows using text to speech engines</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.673.doc.qtspeech, qt.qt6.673.examples.qtspeech</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>9740107b1ed53e76dcfcd35f431deb00b537778b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtspeech.wasm_singlethread</Name>
+  <DisplayName>Qt Speech for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtspeech, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtspeech-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="92490" OS="Any" UncompressedSize="681943"/>
+  <SHA1>cdf49a20527144ade88a725c2ee276f44cc12625</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your ownlayouts and styles.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtvirtualkeyboard, qt.qt6.673.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>1f2ac1a30b9da4dd79f4798f8743be13150adf0b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtvirtualkeyboard.wasm_singlethread</Name>
+  <DisplayName>Qt Virtual Keyboard for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtvirtualkeyboard, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1742516" OS="Any" UncompressedSize="6013016"/>
+  <SHA1>ff8ccb5ffaedf5c28a627624a14ad7a517debaf9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebchannel</Name>
+  <DisplayName>Qt WebChannel</DisplayName>
+  <Description>Qt WebChannel enables peer-to-peer communication between a server (QML/C++ application) and a client (HTML/JavaScript or QML application). It is supported out of the box by Qt WebEngine. In addition it can work on all browsers that support WebSockets, enabling Qt WebChannel clients to run in any JavaScript environment (including QML). This requires the implementation of a custom transport based on Qt WebSockets.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtwebchannel, qt.qt6.673.examples.qtwebchannel</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>da42619606a21a0ca7f515acbc5eeb457dd7ff56</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebchannel.wasm_singlethread</Name>
+  <DisplayName>Qt WebChannel for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtwebchannel, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="92782" OS="Any" UncompressedSize="548580"/>
+  <SHA1>6a37503d2f3aa4d78d89a85b32d99fa6e0fb46d2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebsockets</Name>
+  <DisplayName>Qt WebSockets</DisplayName>
+  <Description>WebSocket is a web-based protocol designed to enable two-way communication between a client application and a remote host. It enables the two entities to send data back and forth if the initial handshake succeeds. WebSocket is the solution for applications that struggle to get real-time data feeds with less network latency and minimum data exchange.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtwebsockets, qt.qt6.673.examples.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>3a15047e8ef5d06bf89df43d9743be6ead565be4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebsockets.wasm_singlethread</Name>
+  <DisplayName>Qt WebSockets for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtwebsockets, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="95296" OS="Any" UncompressedSize="534490"/>
+  <SHA1>f9ea9bbf83646b2f0d7901902eb5107f8c96db92</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebview</Name>
+  <DisplayName>Qt WebView</DisplayName>
+  <Description>Qt WebView provides a way to display web content in a QML application without necessarily including a full web browser stack by using native APIs where it makes sense. This is useful on mobile platforms such as Android, iOS, and UWP (Universal Windows Platform); especially on iOS, where policy dictates that all web content is displayed using the operating system's web view. On Windows, Linux, and macOS, Qt WebView depends on the Qt WebEngine module to render content.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtwebview, qt.qt6.673.examples.qtwebview</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ddc751e31ae2b2040301b3e4e8f05ee1f7f31753</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebview.wasm_singlethread</Name>
+  <DisplayName>Qt WebView for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtwebview, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebview-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="68330" OS="Any" UncompressedSize="483715"/>
+  <SHA1>597599d3a80b0e83c560f21ec20fc37e5ce593cf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qt5compat</Name>
+  <DisplayName>Qt 5 Compatibility Module</DisplayName>
+  <Description>Qt 5 Compatibility Module Prebuilt Components for Qt 6.7.3. Qt 5 Compatibility Module allows to continue using some dedicated functionality which has been removed in Qt 6.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.673.doc.qt5compat, qt.qt6.673.examples.qt5compat, qt.qt6.673.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>31d68ac01017dfbd485f18c1a7ebf7f860034850</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qt5compat.wasm_singlethread</Name>
+  <DisplayName>Qt 5 Compatibility Module for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.qt5compat, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="695067" OS="Any" UncompressedSize="2833684"/>
+  <SHA1>abf74cbf94d485bdf1404b699bde0469f2c141b8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtquick3d</Name>
+  <DisplayName>Qt Quick 3D</DisplayName>
+  <Description>Qt Quick 3D provides high-level 3D API for Qt Quick.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>89</SortingPriority>
+  <Dependencies>qt.qt6.673.doc.qtquick3d, qt.qt6.673.examples.qtquick3d, qt.qt6.673.qtshadertools, qt.qt6.673.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>239986ced27c5acdbd7a902b497da8e7a2c0c9c5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtquick3d.wasm_singlethread</Name>
+  <DisplayName>Qt Quick 3D for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.qtquick3d, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2154103" OS="Any" UncompressedSize="15052442"/>
+  <SHA1>b452ee793c48169bd2bed4a16fbe495c897dd0fb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline</DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>0</SortingPriority>
+  <Dependencies>qt.qt6.673.doc.qtquicktimeline, qt.qt6.673.examples.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>e6590a2989f9211fc57ce5e4db2f8d2c3a050e87</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtquicktimeline.wasm_singlethread</Name>
+  <DisplayName>Qt Quick Timeline for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.qtquicktimeline, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="66026" OS="Any" UncompressedSize="487038"/>
+  <SHA1>2831765da634703a5a5285456de2794c725e4783</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtshadertools</Name>
+  <DisplayName>Qt Shader Tools</DisplayName>
+  <Description>Qt Shader conditioning tool Prebuilt Components for Qt 6.7.3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.673.doc.qtshadertools, qt.qt6.673.examples.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ec51d11d1808d098a70ce8026abfac335a171cd7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtshadertools.wasm_singlethread</Name>
+  <DisplayName>Qt Shader Tools for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.qtshadertools, qt.qt6.673.wasm_singlethread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_singlethread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1690502" OS="Any" UncompressedSize="14792024"/>
+  <SHA1>fc0ff5673c442904049871a2dce5c628ec4df316</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.wasm_singlethread</Name>
+  <DisplayName>WebAssembly (single-threaded)</DisplayName>
+  <Description>Qt 6.7.3 Prebuilt Components for WebAssembly (single-threaded).</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Dependencies>qt.qt6.673.patcher</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>700</SortingPriority>
+  <DownloadableArchives>qtbase-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z, qtsvg-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z, qtdeclarative-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z, qttools-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z, qttranslations-Windows-Windows_10_22H2-Clang-Windows-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="25480292" OS="Any" UncompressedSize="186103072"/>
+  <SHA1>282ef5bf73fa21946043e03b61587edc4080994b</SHA1>
+ </PackageUpdate>
+ <SHA1>343d558e9c2e278fa3fb206de1bc25e1e961ff54</SHA1>
+ <MetadataName>2024-09-20-0846_meta.7z</MetadataName>
+</Updates>

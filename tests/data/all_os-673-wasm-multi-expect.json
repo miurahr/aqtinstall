@@ -1,0 +1,38 @@
+{
+  "architectures": [
+    "wasm_multithread"
+  ],
+  "modules_by_arch": {
+    "wasm_multithread": [
+      "qtserialbus",
+      "qtwebchannel",
+      "qtconnectivity",
+      "qtlanguageserver",
+      "qtquickeffectmaker",
+      "qtimageformats",
+      "qtinsighttracker",
+      "qtwebsockets",
+      "qtquick3dphysics",
+      "qt3d",
+      "qthttpserver",
+      "qtpdf",
+      "qtdatavis3d",
+      "qtsensors",
+      "qtwebview",
+      "qtnetworkauth",
+      "qtgraphs",
+      "qtmultimedia",
+      "qtremoteobjects",
+      "qtvirtualkeyboard",
+      "qtcharts",
+      "qtlottie",
+      "qtgrpc",
+      "qtspeech",
+      "qtlocation",
+      "qtserialport",
+      "qtwebengine",
+      "qtscxml",
+      "qtpositioning"
+    ]
+  }
+}

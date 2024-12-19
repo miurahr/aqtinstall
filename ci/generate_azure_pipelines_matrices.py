@@ -16,6 +16,17 @@ MIRRORS = [
 
 
 class BuildJob:
+
+    EMSDK_FOR_QT = {
+        "6.2": "2.0.14",
+        "6.3": "3.0.0",
+        "6.4": "3.1.14",
+        "6.5": "3.1.25",
+        "6.6": "3.1.37",
+        "6.7": "3.1.50",
+        "6.8": "3.1.56",
+    }
+
     def __init__(
         self,
         command,
@@ -35,7 +46,7 @@ class BuildJob:
         is_autodesktop: bool = False,
         tool_options: Optional[Dict[str, str]] = None,
         check_output_cmd: Optional[str] = None,
-        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit@3.1.29",
+        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit@3.1.29", # did not change for safety, created func self.emsdk_version()
         autodesk_arch_folder: Optional[str] = None,
     ):
         self.command = command
@@ -102,6 +113,24 @@ class BuildJob:
         else:
             return "tools_mingw"
 
+    def emsdk_version(self) -> str:
+        return BuildJob.emsdk_version_for_qt(self.qt_version)
+
+    @staticmethod
+    def emsdk_version_for_qt(version_of_qt: str) -> str:
+        qt_major_minor = ".".join(version_of_qt.split(".")[:2])
+
+        if qt_major_minor in BuildJob.EMSDK_FOR_QT:
+            return BuildJob.EMSDK_FOR_QT[qt_major_minor]
+
+        # Find the latest version using string comparison
+        latest_version = "0.0"
+        for version in BuildJob.EMSDK_FOR_QT.keys():
+            if version > latest_version:
+                latest_version = version
+
+        return BuildJob.EMSDK_FOR_QT[latest_version]
+
 
 class PlatformBuildJobs:
     def __init__(self, platform, build_jobs):
@@ -111,7 +140,7 @@ class PlatformBuildJobs:
 
 python_versions = ["3.12"]
 
-qt_versions = ["6.5.3"]
+qt_versions = ["6.8.1"]
 
 linux_build_jobs = []
 linux_arm64_build_jobs = []
@@ -128,7 +157,7 @@ all_platform_build_jobs = [
 # Linux Desktop
 for qt_version in qt_versions:
     linux_build_jobs.append(
-        BuildJob("install-qt", qt_version, "linux", "desktop", "gcc_64", "gcc_64")
+        BuildJob("install-qt", qt_version, "linux", "desktop", "linux_gcc_64", "gcc_64")
     )
 linux_arm64_build_jobs.append(BuildJob("install-qt", "6.7.0", "linux_arm64", "desktop", "linux_gcc_arm64", "gcc_arm64"))
 
@@ -148,7 +177,7 @@ mac_build_jobs.append(BuildJob(
 
 # Windows Desktop
 for qt_version in qt_versions:
-    windows_build_jobs.append(BuildJob("install-qt", qt_version, "windows", "desktop", "win64_msvc2019_64", "msvc2019_64"))
+    windows_build_jobs.append(BuildJob("install-qt", qt_version, "windows", "desktop", "win64_msvc2022_64", "msvc2022_64"))
 windows_build_jobs.extend(
     [
         BuildJob(
@@ -238,6 +267,22 @@ windows_build_jobs.append(
              is_autodesktop=True, emsdk_version="sdk-3.1.14-64bit", autodesk_arch_folder="mingw_64",
              mingw_variant="win64_mingw900")
 )
+
+# WASM post 6.7.x
+linux_build_jobs.append(
+    BuildJob("install-qt", "6.7.3", "all_os", "wasm", "wasm_multithread", "wasm_multithread",
+             is_autodesktop=True, emsdk_version=f"sdk-{BuildJob.emsdk_version_for_qt("6.7.3")}-64bit", autodesk_arch_folder="gcc_64")
+)
+for job_queue, host, desk_arch, target, qt_version in (
+    (linux_build_jobs, "all_os", "linux_gcc_64", "wasm", qt_versions[0]),
+    (mac_build_jobs, "all_os", "clang_64", "wasm", qt_versions[0]),
+    (windows_build_jobs, "all_os", "mingw_64", "wasm", qt_versions[0]),
+):
+    for wasm_arch in ("wasm_singlethread", "wasm_multithread"):
+        job_queue.append(
+            BuildJob("install-qt", qt_version, host, target, wasm_arch, wasm_arch,
+                     is_autodesktop=True, emsdk_version=f"sdk-{BuildJob.emsdk_version_for_qt(qt_version)}-64bit", autodesk_arch_folder=desk_arch)
+        )
 
 # mobile SDK
 mac_build_jobs.extend(
