@@ -79,7 +79,7 @@ class Version(SemanticVersion):
         prerelease=None,
         build=None,
         partial=False,
-    ):
+    ) -> None:
         if version_string is None:
             super(Version, self).__init__(
                 version_string=None,
