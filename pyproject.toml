@@ -110,6 +110,9 @@ source = ["aqt", "tests"]
 show_missing = true
 exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", "def __repr__"]
 
+[tool.pylint]
+max-line-length = 125
+
 [tool.black]
 line-length = 125
 target-version = ['py312']
