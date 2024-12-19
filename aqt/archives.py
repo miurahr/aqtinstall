@@ -623,7 +623,7 @@ class SrcDocExamplesArchives(QtArchives):
         )
 
     def _arch_ext(self) -> str:
-        return "_src_doc_examples"
+        return "_" + QtRepoProperty.sde_ext(self.version)
 
     def _base_module_name(self) -> str:
         """
