@@ -20,7 +20,6 @@ jobs:
       with:
         fetch-depth: 20
         fetch-tags: true
-        lfs: true
     - name: Set up Python 3.12
       uses: actions/setup-python@v5
       with:
@@ -47,6 +46,6 @@ jobs:
     - name: Send coverage to codacy
       if: ( github.event_name == 'push' ) && ( github.ref == 'refs/heads/master' )
       run: |
-        java -jar ci/codacy-coverage-reporter-assembly.jar report -l Python -t ${PROJECT_TOKEN} -r cobertura.xml
+        java -jar ci/codacy-coverage-reporter.jar report -l Python -t ${PROJECT_TOKEN} -r cobertura.xml
       env:
         PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
