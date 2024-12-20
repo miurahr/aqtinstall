@@ -134,11 +134,11 @@ class MockArchive:
 
 
 def make_mock_geturl_download_archive(
-        *,
-        standard_archives: List[MockArchive],
-        desktop_archives: Optional[List[MockArchive]] = None,
-        standard_updates_url: str,
-        desktop_updates_url: str = "",
+    *,
+    standard_archives: List[MockArchive],
+    desktop_archives: Optional[List[MockArchive]] = None,
+    standard_updates_url: str,
+    desktop_updates_url: str = "",
 ) -> Tuple[GET_URL_TYPE, DOWNLOAD_ARCHIVE_TYPE]:
     """
     Returns a mock 'getUrl' and a mock 'downloadArchive' function.
@@ -177,8 +177,8 @@ def make_mock_geturl_download_archive(
         if standard_updates_url == desktop_updates_url and url.endswith(standard_updates_url):
             return merged_xml
         for xml, updates_url in (
-                (standard_xml, standard_updates_url),
-                (desktop_xml, desktop_updates_url),
+            (standard_xml, standard_updates_url),
+            (desktop_xml, desktop_updates_url),
         ):
             basename = posixpath.dirname(updates_url)
             if not updates_url:
@@ -304,9 +304,7 @@ def qtpositioning_module(ver: str, arch: str) -> MockArchive:
     )
 
 
-def plain_qtbase_archive(
-    update_xml_name: str, arch: str, host: str = "windows", should_install: bool = True
-) -> MockArchive:
+def plain_qtbase_archive(update_xml_name: str, arch: str, host: str = "windows", should_install: bool = True) -> MockArchive:
     return MockArchive(
         filename_7z=f"qtbase-{host}-{arch}.7z",
         update_xml_name=update_xml_name,
@@ -327,9 +325,7 @@ def plain_qtbase_archive(
     )
 
 
-def tool_archive(
-    host: str, tool_name: str, variant: str, date: datetime = datetime.now()
-) -> MockArchive:
+def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datetime.now()) -> MockArchive:
     return MockArchive(
         filename_7z=f"{tool_name}-{host}-{variant}.7z",
         update_xml_name=variant,
@@ -396,21 +392,13 @@ def tool_archive(
                     MockArchive(
                         filename_7z="qtcharts-windows-win32_mingw73.7z",
                         update_xml_name="qt.qt5.5140.qtcharts.win32_mingw73",
-                        contents=(
-                            PatchedFile(
-                                filename="lib/qtcharts.h", unpatched_content="... charts ...\n"
-                            ),
-                        ),
+                        contents=(PatchedFile(filename="lib/qtcharts.h", unpatched_content="... charts ...\n"),),
                         should_install=True,
                     ),
                     MockArchive(
                         filename_7z="qtlottie-windows-win32_mingw73.7z",
                         update_xml_name="qt.qt5.5140.qtlottie.win32_mingw73",
-                        contents=(
-                            PatchedFile(
-                                filename="lib/qtlottie.h", unpatched_content="... lottie ...\n"
-                            ),
-                        ),
+                        contents=(PatchedFile(filename="lib/qtlottie.h", unpatched_content="... lottie ...\n"),),
                         should_install=False,
                     ),
                 ]
@@ -596,9 +584,7 @@ def tool_archive(
             {"std": "windows_x86/desktop/qt6_620/Updates.xml"},
             {
                 "std": [
-                    plain_qtbase_archive(
-                        "qt.qt6.620.win64_mingw73", "win64_mingw73", should_install=False
-                    ),
+                    plain_qtbase_archive("qt.qt6.620.win64_mingw73", "win64_mingw73", should_install=False),
                     qtpositioning_module("6.2.0", "win64_mingw73"),
                 ]
             },
@@ -795,11 +781,7 @@ def tool_archive(
                         ),
                     ),
                 ],
-                "desk": [
-                    plain_qtbase_archive(
-                        "qt.qt6.652.win64_msvc2019_64", "win64_msvc2019_64", host="windows"
-                    )
-                ],
+                "desk": [plain_qtbase_archive("qt.qt6.652.win64_msvc2019_64", "win64_msvc2019_64", host="windows")],
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
@@ -1170,8 +1152,7 @@ def tool_archive(
             ),
         ),
         (
-            "install-qt all_os wasm 6.8.0 wasm_singlethread -m qtcharts qtpositioning "
-            "--autodesktop".split(),
+            "install-qt all_os wasm 6.8.0 wasm_singlethread -m qtcharts qtpositioning " "--autodesktop".split(),
             "all_os",
             "wasm",
             "6.8.0",
@@ -1188,48 +1169,47 @@ def tool_archive(
                         filename_7z="qtbase-wasm_singlethread.7z",
                         update_xml_name="qt.qt6.680.wasm_singlethread",
                         contents=(
-                                PatchedFile(
-                                    filename="mkspecs/qconfig.pri",
-                                    unpatched_content="QT_EDITION = Not OpenSource\nQT_LICHECK = Not Empty\n",
-                                    patched_content="QT_EDITION = OpenSource\nQT_LICHECK =\n"
-                                ),
-                                PatchedFile(
-                                    filename="bin/target_qt.conf",
-                                    unpatched_content="Prefix=/Users/qt/work/install/target\nHostPrefix=../../\nHostData=target\n",
-                                    patched_content="Prefix={base_dir}{sep}6.8.0{sep}wasm_singlethread{sep}target\n"
-                                                    "HostPrefix=../../gcc_64\n"
-                                                    "HostData=../wasm_singlethread\n"
-                                ),
-                                PatchedFile(
-                                    filename="bin/qmake",
-                                    unpatched_content="/Users/qt/work/install/bin\n",
-                                    patched_content="{base_dir}/6.8.0/gcc_64/bin\n"
-                                ),
-                                PatchedFile(
-                                    filename="bin/qtpaths",
-                                    unpatched_content="/Users/qt/work/install/bin\n",
-                                    patched_content="{base_dir}/6.8.0/gcc_64/bin\n"
-                                ),
-                                PatchedFile(
-                                    filename="bin/qmake6",
-                                    unpatched_content="/Users/qt/work/install/bin\n",
-                                    patched_content="{base_dir}/6.8.0/gcc_64/bin\n"
-                                ),
-                                PatchedFile(
-                                    filename="bin/qtpaths6",
-                                    unpatched_content="/Users/qt/work/install/bin\n",
-                                    patched_content="{base_dir}/6.8.0/gcc_64/bin\n"
-                                )
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="QT_EDITION = Not OpenSource\nQT_LICHECK = Not Empty\n",
+                                patched_content="QT_EDITION = OpenSource\nQT_LICHECK =\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="Prefix=/Users/qt/work/install/target\nHostPrefix=../../\nHostData=target\n",
+                                patched_content="Prefix={base_dir}{sep}6.8.0{sep}wasm_singlethread{sep}target\n"
+                                "HostPrefix=../../gcc_64\n"
+                                "HostData=../wasm_singlethread\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake",
+                                unpatched_content="/Users/qt/work/install/bin\n",
+                                patched_content="{base_dir}/6.8.0/gcc_64/bin\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qtpaths",
+                                unpatched_content="/Users/qt/work/install/bin\n",
+                                patched_content="{base_dir}/6.8.0/gcc_64/bin\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake6",
+                                unpatched_content="/Users/qt/work/install/bin\n",
+                                patched_content="{base_dir}/6.8.0/gcc_64/bin\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qtpaths6",
+                                unpatched_content="/Users/qt/work/install/bin\n",
+                                patched_content="{base_dir}/6.8.0/gcc_64/bin\n",
+                            ),
                         ),
                         version="6.8.0",
-                        arch_dir="wasm_singlethread"
+                        arch_dir="wasm_singlethread",
                     ),
                     # WASM modules
                     qtcharts_module("6.8.0", "wasm_singlethread"),
                     qtpositioning_module("6.8.0", "wasm_singlethread"),
                 ],
-                "desk": [plain_qtbase_archive("qt.qt6.680.linux_gcc_64", "linux_gcc_64",
-                                              host="linux")]
+                "desk": [plain_qtbase_archive("qt.qt6.680.linux_gcc_64", "linux_gcc_64", host="linux")],
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
@@ -1253,7 +1233,7 @@ def tool_archive(
                 r"INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]qtpaths6\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
-            )
+            ),
         ),
     ),
 )
@@ -1407,9 +1387,7 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
 
     def mock_get_url(url, *args, **kwargs):
         if not xml_file:
-            raise ArchiveDownloadError(
-                f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found"
-            )
+            raise ArchiveDownloadError(f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found")
         return xml
 
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
@@ -1504,9 +1482,7 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
         ),
     ),
 )
-def test_install_pool_exception(
-    monkeypatch, capsys, exception, settings_file, expect_end_msg, expect_return
-):
+def test_install_pool_exception(monkeypatch, capsys, exception, settings_file, expect_end_msg, expect_return):
     def mock_installer_func(*args):
         raise exception
 
@@ -1531,9 +1507,7 @@ def test_install_pool_exception(
 
 def test_install_installer_archive_extraction_err(monkeypatch):
     def mock_extractor_that_fails(*args, **kwargs):
-        raise subprocess.CalledProcessError(
-            returncode=1, cmd="some command", output="out", stderr="err"
-        )
+        raise subprocess.CalledProcessError(returncode=1, cmd="some command", output="out", stderr="err")
 
     monkeypatch.setattr("aqt.installer.get_hash", lambda *args, **kwargs: "")
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", lambda *args: None)
@@ -1613,11 +1587,7 @@ def test_install_installer_archive_extraction_err(monkeypatch):
             "gcc_arm64",
             "https://www.alt.qt.mirror.com",
             "linux_arm64/desktop/qt6_670/Updates.xml",
-            [
-                plain_qtbase_archive(
-                    "qt.qt6.670.linux_gcc_arm64", "linux_gcc_arm64", host="linux_arm64"
-                )
-            ],
+            [plain_qtbase_archive("qt.qt6.670.linux_gcc_arm64", "linux_gcc_arm64", host="linux_arm64")],
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Resolved spec '6\.7' to 6\.7\.0\n"
