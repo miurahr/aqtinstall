@@ -6,7 +6,6 @@ import posixpath
 import re
 import subprocess
 import sys
-import tarfile
 import textwrap
 from dataclasses import dataclass
 from datetime import datetime
@@ -249,7 +248,7 @@ def qtcharts_module(ver: str, arch: str) -> MockArchive:
                     f"""\
                     {{
                         "module_name": "Charts",
-                        "version": "{ver}", 
+                        "version": "{ver}",
                         "built_with": {{
                             "compiler_id": "GNU",
                             "compiler_target": "",
@@ -1175,9 +1174,9 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 patched_content="QT_EDITION = OpenSource\nQT_LICHECK =\n",
                             ),
                             PatchedFile(
-                                filename="bin/target_qt.conf",
-                                unpatched_content="Prefix=/Users/qt/work/install/target\nHostPrefix=../../\nHostData=target\n",
-                                patched_content="Prefix={base_dir}{sep}6.8.0{sep}wasm_singlethread{sep}target\n"
+                                "bin/target_qt.conf",
+                                "Prefix=/Users/qt/work/install/target\nHostPrefix=../../\nHostData=target\n",
+                                "Prefix={base_dir}{sep}6.8.0{sep}wasm_singlethread{sep}target\n"
                                 "HostPrefix=../../gcc_64\n"
                                 "HostData=../wasm_singlethread\n",
                             ),
@@ -1209,7 +1208,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                     qtcharts_module("6.8.0", "wasm_singlethread"),
                     qtpositioning_module("6.8.0", "wasm_singlethread"),
                 ],
-                "desk": [plain_qtbase_archive("qt.qt6.680.linux_gcc_64", "linux_gcc_64", host="linux")],
+                "desk": [
+                    # Desktop base package
+                    plain_qtbase_archive("qt.qt6.680.linux_gcc_64", "linux_gcc_64", host="linux"),
+                    # Desktop modules
+                    qtcharts_module("6.8.0", "gcc_64"),
+                    qtpositioning_module("6.8.0", "gcc_64")
+                ]
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
