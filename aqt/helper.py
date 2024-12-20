@@ -143,6 +143,8 @@ def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: Optional[bytes]
                         fd.write(chunk)
                         hash.update(chunk)
                     fd.flush()
+            except requests.exceptions.ReadTimeout as e:
+                raise ArchiveConnectionError(f"Read timeout: {e.args}") from e
             except Exception as e:
                 raise ArchiveDownloadError(f"Download of {filename} has error: {e}") from e
             if exp is not None and hash.digest() != exp:
