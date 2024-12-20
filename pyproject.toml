@@ -69,6 +69,7 @@ check = [
     "pygments",
     "packaging",
     "pylint",
+    "types-requests",
 ]
 docs = [
     "sphinx>=7.0",
