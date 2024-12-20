@@ -433,7 +433,7 @@ class QtArchives:
                 arch = "x86_64"
             elif self.os_name == "linux_arm64":
                 arch = "arm64"
-            for ext in ["qtwebengine", "qtpdf"]:
+            for ext in QtRepoProperty.known_extensions(self.version):
                 extensions_target_folder = posixpath.join(
                     "online/qtsdkrepository", os_name, "extensions", ext, self._version_str(), arch
                 )
@@ -441,12 +441,11 @@ class QtArchives:
                 # The extension may or may not exist for this version and arch.
                 try:
                     extensions_xml_text = self._download_update_xml(extensions_xml_url, True)
+                    self.logger.info("Found extension {}".format(ext))
+                    update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
                 except ArchiveDownloadError:
                     # In case _download_update_xml ignores the hash and tries to get the url.
                     pass
-                if extensions_xml_text:
-                    self.logger.info("Found extension {}".format(ext))
-                    update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
 
         self._parse_update_xmls(update_xmls, target_packages)
 
