@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import logging
 import os
+import pathlib
 import re
 import stat
 import subprocess
@@ -30,7 +31,7 @@ from typing import Dict, List, Optional, Union
 import patch
 
 from aqt.archives import TargetConfig
-from aqt.exceptions import UpdaterError
+from aqt.exceptions import QmakeNotFound, UpdaterError
 from aqt.helper import Settings
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version
 
@@ -44,6 +45,33 @@ def unpatched_paths() -> List[str]:
         "\\home\\qt\\work\\install\\",
         "\\Users\\qt\\work\\install\\",
     ]
+
+
+class QtConfig:
+    """
+    detect Qt configurations from qmake.
+    """
+
+    def __init__(self, prefix: pathlib.Path):
+        self.qmake_path = None
+        self.qconfigs = {}
+        for qmake_path in [
+            prefix.joinpath("bin", "qmake"),
+            prefix.joinpath("bin", "qmake.exe"),
+        ]:
+            if not qmake_path.exists():
+                continue
+            try:
+                result = subprocess.run([str(qmake_path), "-query"], stdout=subprocess.PIPE)
+            except (subprocess.SubprocessError, IOError, OSError):
+                raise QmakeNotFound()
+            if result.returncode == 0:
+                self.qmake_path = qmake_path
+                for line in result.stdout.splitlines():
+                    vals = line.decode("UTF-8").split(":")
+                    self.qconfigs[vals[0]] = vals[1]
+                return
+        raise QmakeNotFound()
 
 
 class Updater:
@@ -86,26 +114,6 @@ class Updater:
             data = data.replace(old, new)
         file.write_text(data, "UTF-8")
         os.chmod(str(file), file_mode)
-
-    def _detect_qmake(self) -> bool:
-        """detect Qt configurations from qmake."""
-        for qmake_path in [
-            self.prefix.joinpath("bin", "qmake"),
-            self.prefix.joinpath("bin", "qmake.exe"),
-        ]:
-            if not qmake_path.exists():
-                continue
-            try:
-                result = subprocess.run([str(qmake_path), "-query"], stdout=subprocess.PIPE)
-            except (subprocess.SubprocessError, IOError, OSError):
-                return False
-            if result.returncode == 0:
-                self.qmake_path = qmake_path
-                for line in result.stdout.splitlines():
-                    vals = line.decode("UTF-8").split(":")
-                    self.qconfigs[vals[0]] = vals[1]
-                return True
-        return False
 
     def patch_prl(self, oldvalue):
         for prlfile in self.prefix.joinpath("lib").glob("*.prl"):
@@ -164,25 +172,26 @@ class Updater:
 
     def patch_qmake(self):
         """Patch to qmake binary"""
-        if self._detect_qmake():
-            if self.qmake_path is None:
-                return
-            self.logger.info("Patching {}".format(str(self.qmake_path)))
+        try:
+            qmake_config = QtConfig(prefix=self.prefix)
+            self.logger.info("Patching {}".format(str(qmake_config.qmake_path)))
             self._patch_binfile(
-                self.qmake_path,
+                qmake_config.qmake_path,
                 key=b"qt_prfxpath=",
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
             self._patch_binfile(
-                self.qmake_path,
+                qmake_config.qmake_path,
                 key=b"qt_epfxpath=",
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
             self._patch_binfile(
-                self.qmake_path,
+                qmake_config.qmake_path,
                 key=b"qt_hpfxpath=",
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
+        except QmakeNotFound:
+            pass
 
     def patch_qt_scripts(self, base_dir, version_dir: str, os_name: str, desktop_arch_dir: str, version: Version):
         sep = "\\" if os_name == "windows" else "/"
@@ -350,3 +359,75 @@ class Updater:
             logger.info("Apply patch: " + p)
             patchfile = patch.fromurl(PATCH_URL_BASE + p)
             patchfile.apply(strip=True, root=os.path.join(src_dir, "qtbase"))
+
+
+class Notifier:
+    @staticmethod
+    def notify_sdk(target, base_dir):
+        arch = target.arch
+        version = Version(target.version)
+        os_name = target.os_name
+        version_dir = dir_for_version(version)
+        arch_dir = QtRepoProperty.get_arch_dir_name(arch, os_name, version)
+        prefix = pathlib.Path(base_dir) / version_dir / arch_dir
+        if os_name == "windows":
+            sdktoolbinary = pathlib.Path(base_dir) / "Tools" / "QtCreator" / "bin" / "sdktool.exe"
+            toolchain = "x86-windows-generic-64bit"
+            component_name = "fix.me.component.name.should.unique"  # FIXME
+        elif os_name == "mac":
+            sdktoolbinary = pathlib.Path(base_dir) / "Tools" / "QtCreator" / "libexec" / "qtcreator" / "sdktool"
+            toolchain = "x86-macos-generic-mach_o-64bit"
+            component_name = "fix.me.component.name.should.unique"  # FIXME
+        else:
+            sdktoolbinary = pathlib.Path(base_dir) / "Tools" / "QtCreator" / "libexec" / "qtcreator" / "sdktool"
+            toolchain = "x86-linux-generic-elf-64bit"
+            component_name = "fix.me.component.name.should.unique"  # FIXME
+        if not sdktoolbinary.exists():
+            return
+        try:
+            qmake_config = QtConfig(prefix)
+        except QmakeNotFound:
+            # give up notifying
+            return
+        # register Qt
+        qmake_full_path = qmake_config.qmake_path.absolute()
+        command_args = [
+            sdktoolbinary,
+            "addQt",
+            "--id",
+            component_name,
+            "--name",
+            "Desktop Qt {} {}".format(version, arch),
+            "--type",
+            "Qt4ProjectManager.QtVersion.Desktop",
+            "--qmake",
+            qmake_full_path,
+        ]
+        try:
+            subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+        except subprocess.CalledProcessError as cpe:
+            msg = "\n".join(filter(None, [f"sdktool error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+            raise UpdaterError(msg) from cpe
+        # register SDK
+        kitname = component_name + "_kit"
+        command_args = [
+            sdktoolbinary,
+            "addKit",
+            "--id",
+            kitname,
+            "--name",
+            "Desktop Qt {} {}".format(version, arch),
+            "--Ctoolchain",
+            toolchain,
+            "--Cxxtoolchain",
+            toolchain,
+            "--qt",
+            component_name,
+            "--devicetype",
+            "Desktop",
+        ]
+        try:
+            subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+        except subprocess.CalledProcessError as cpe:
+            msg = "\n".join(filter(None, [f"sdktool error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+            raise UpdaterError(msg) from cpe

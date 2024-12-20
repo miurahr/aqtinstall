@@ -104,6 +104,10 @@ class OutOfMemory(AqtException):
     pass
 
 
+class QmakeNotFound(AqtException):
+    pass
+
+
 class OutOfDiskSpace(AqtException):
     pass
 
