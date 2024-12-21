@@ -402,7 +402,7 @@ class QtArchives:
         if self.version >= Version("6.8.0"):
             return [
                 f"qt.qt{self.version.major}.{self._version_str()}.addons.{module}.{self.arch}",
-                f"extensions.{module}.{self._version_str()}.{self.arch}"
+                f"extensions.{module}.{self._version_str()}.{self.arch}",
             ]
         return []
 
@@ -467,7 +467,7 @@ class QtArchives:
                     # In case _download_update_xml ignores the hash and tries to get the url.
                     pass
                 if extensions_xml_text:
-                    #self.logger.info("Found extension {}".format(ext))
+                    self.logger.info("Found extension {}".format(ext))
                     update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
 
         self._parse_update_xmls(update_xmls, target_packages)

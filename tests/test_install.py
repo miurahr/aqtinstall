@@ -824,14 +824,17 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : You are installing the MSVC Arm64 version of Qt, which requires that the desktop version of "
                 r"Qt is also installed. Now installing Qt: desktop 6.5.2 win64_msvc2019_64\n"
-                r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-windows-win64_msvc2019_arm64.7z in .*\n"
+                r"(?:INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n)?"  # Make second header optional
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-win64_msvc2019_64.7z in .*\n"
-                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake.bat\n"
-                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qtpaths.bat\n"
-                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake6.bat\n"
-                r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qtpaths6.bat\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-windows-win64_msvc2019_arm64.7z in .*\n"
+                r"INFO    : Patching .*6\.5\.2[/\\\\]msvc2019_arm64[/\\\\]bin[/\\\\]qmake.bat\n"
+                r"INFO    : Patching .*6\.5\.2[/\\\\]msvc2019_arm64[/\\\\]bin[/\\\\]qtpaths.bat\n"
+                r"INFO    : Patching .*6\.5\.2[/\\\\]msvc2019_arm64[/\\\\]bin[/\\\\]qmake6.bat\n"
+                r"INFO    : Patching .*6\.5\.2[/\\\\]msvc2019_arm64[/\\\\]bin[/\\\\]qtpaths6.bat\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1109,11 +1112,14 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : You are installing the ios version of Qt, which requires that the desktop version of Qt is "
                 r"also installed. Now installing Qt: desktop 6\.1\.2 clang_64\n"
-                r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-mac-ios.7z in .*\n"
+                r"(?:INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n)?"  # Make second header optional
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-mac-clang_64.7z in .*\n"
-                r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-mac-ios.7z in .*\n"
+                r"INFO    : Patching .*6\.1\.2[/\\\\]ios[/\\\\]bin[/\\\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1188,7 +1194,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
-    )
+    ),
 )
 def test_install(
     monkeypatch,
@@ -1257,10 +1263,6 @@ def test_install(
                     actual_content = file_path.read_text(encoding="utf_8")
                     assert actual_content == expect_content
 
-@pytest.fixture
-def temp_dir(tmp_path):
-    """Fixture to provide a temporary directory that persists until the test ends"""
-    return tmp_path
 
 @pytest.mark.parametrize(
     "version, str_version, wasm_arch",
@@ -1300,101 +1302,113 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
 
     # Desktop archives for each possible host OS
     desk_archives_by_host = {
-        "linux": ([
-            plain_qtbase_archive(f"qt.qt6.{str_version}.linux_gcc_64", "linux_gcc_64", host="linux"),
-            MockArchive(
-                filename_7z="qtcharts-linux-gcc_64.7z",
-                update_xml_name=f"qt.qt6.{str_version}.qtcharts.gcc_64",
-                version=version,
-                arch_dir="gcc_64",
-                contents=(
-                    PatchedFile(
-                        filename="modules/Charts.json",
-                        unpatched_content='{"module_name": "Charts"}',
-                        patched_content=None,
+        "linux": (
+            [
+                plain_qtbase_archive(f"qt.qt6.{str_version}.linux_gcc_64", "linux_gcc_64", host="linux"),
+                MockArchive(
+                    filename_7z="qtcharts-linux-gcc_64.7z",
+                    update_xml_name=f"qt.qt6.{str_version}.qtcharts.gcc_64",
+                    version=version,
+                    arch_dir="gcc_64",
+                    contents=(
+                        PatchedFile(
+                            filename="modules/Charts.json",
+                            unpatched_content='{"module_name": "Charts"}',
+                            patched_content=None,
+                        ),
                     ),
-                )
-            ),
-            MockArchive(
-                filename_7z="qtquick3d-linux-gcc_64.7z",
-                update_xml_name=f"qt.qt6.{str_version}.qtquick3d.gcc_64",
-                version=version,
-                arch_dir="gcc_64",
-                contents=(
-                    PatchedFile(
-                        filename="modules/Quick3D.json",
-                        unpatched_content='{"module_name": "Quick3D"}',
-                        patched_content=None,
+                ),
+                MockArchive(
+                    filename_7z="qtquick3d-linux-gcc_64.7z",
+                    update_xml_name=f"qt.qt6.{str_version}.qtquick3d.gcc_64",
+                    version=version,
+                    arch_dir="gcc_64",
+                    contents=(
+                        PatchedFile(
+                            filename="modules/Quick3D.json",
+                            unpatched_content='{"module_name": "Quick3D"}',
+                            patched_content=None,
+                        ),
                     ),
-                )
-            )
-        ], "linux_x64", "gcc_64"),
-        "darwin": ([
-            plain_qtbase_archive(f"qt.qt6.{str_version}.clang_64", "clang_64", host="mac"),
-            MockArchive(
-                filename_7z="qtcharts-mac-clang_64.7z",
-                update_xml_name=f"qt.qt6.{str_version}.qtcharts.clang_64",
-                version=version,
-                arch_dir="clang_64",
-                contents=(
-                    PatchedFile(
-                        filename="modules/Charts.json",
-                        unpatched_content='{"module_name": "Charts"}',
-                        patched_content=None,
+                ),
+            ],
+            "linux_x64",
+            "gcc_64",
+        ),
+        "darwin": (
+            [
+                plain_qtbase_archive(f"qt.qt6.{str_version}.clang_64", "clang_64", host="mac"),
+                MockArchive(
+                    filename_7z="qtcharts-mac-clang_64.7z",
+                    update_xml_name=f"qt.qt6.{str_version}.qtcharts.clang_64",
+                    version=version,
+                    arch_dir="clang_64",
+                    contents=(
+                        PatchedFile(
+                            filename="modules/Charts.json",
+                            unpatched_content='{"module_name": "Charts"}',
+                            patched_content=None,
+                        ),
                     ),
-                )
-            ),
-            MockArchive(
-                filename_7z="qtquick3d-mac-clang_64.7z",
-                update_xml_name=f"qt.qt6.{str_version}.qtquick3d.clang_64",
-                version=version,
-                arch_dir="clang_64",
-                contents=(
-                    PatchedFile(
-                        filename="modules/Quick3D.json",
-                        unpatched_content='{"module_name": "Quick3D"}',
-                        patched_content=None,
+                ),
+                MockArchive(
+                    filename_7z="qtquick3d-mac-clang_64.7z",
+                    update_xml_name=f"qt.qt6.{str_version}.qtquick3d.clang_64",
+                    version=version,
+                    arch_dir="clang_64",
+                    contents=(
+                        PatchedFile(
+                            filename="modules/Quick3D.json",
+                            unpatched_content='{"module_name": "Quick3D"}',
+                            patched_content=None,
+                        ),
                     ),
-                )
-            )
-        ], "mac_x64", "clang_64"),
-        "win32": ([
-            plain_qtbase_archive(f"qt.qt6.{str_version}.win64_mingw", "win64_mingw", host="windows"),
-            MockArchive(
-                filename_7z="qtcharts-windows-win64_mingw.7z",
-                update_xml_name=f"qt.qt6.{str_version}.qtcharts.win64_mingw",
-                version=version,
-                arch_dir="mingw_64",
-                contents=(
-                    PatchedFile(
-                        filename="modules/Charts.json",
-                        unpatched_content='{"module_name": "Charts"}',
-                        patched_content=None,
+                ),
+            ],
+            "mac_x64",
+            "clang_64",
+        ),
+        "win32": (
+            [
+                plain_qtbase_archive(f"qt.qt6.{str_version}.win64_mingw", "win64_mingw", host="windows"),
+                MockArchive(
+                    filename_7z="qtcharts-windows-win64_mingw.7z",
+                    update_xml_name=f"qt.qt6.{str_version}.qtcharts.win64_mingw",
+                    version=version,
+                    arch_dir="mingw_64",
+                    contents=(
+                        PatchedFile(
+                            filename="modules/Charts.json",
+                            unpatched_content='{"module_name": "Charts"}',
+                            patched_content=None,
+                        ),
                     ),
-                )
-            ),
-            MockArchive(
-                filename_7z="qtquick3d-windows-win64_mingw.7z",
-                update_xml_name=f"qt.qt6.{str_version}.qtquick3d.win64_mingw",
-                version=version,
-                arch_dir="mingw_64",
-                contents=(
-                    PatchedFile(
-                        filename="modules/Quick3D.json",
-                        unpatched_content='{"module_name": "Quick3D"}',
-                        patched_content=None,
+                ),
+                MockArchive(
+                    filename_7z="qtquick3d-windows-win64_mingw.7z",
+                    update_xml_name=f"qt.qt6.{str_version}.qtquick3d.win64_mingw",
+                    version=version,
+                    arch_dir="mingw_64",
+                    contents=(
+                        PatchedFile(
+                            filename="modules/Quick3D.json",
+                            unpatched_content='{"module_name": "Quick3D"}',
+                            patched_content=None,
+                        ),
                     ),
-                )
-            )
-        ], "windows_x86", "mingw_64"),
+                ),
+            ],
+            "windows_x86",
+            "mingw_64",
+        ),
     }
 
-    if sys.platform.startswith('linux'):
-        desktop_archives, platform_dir, desk_arch = desk_archives_by_host['linux']
-    elif sys.platform == 'darwin':
-        desktop_archives, platform_dir, desk_arch = desk_archives_by_host['darwin']
+    if sys.platform.startswith("linux"):
+        desktop_archives, platform_dir, desk_arch = desk_archives_by_host["linux"]
+    elif sys.platform == "darwin":
+        desktop_archives, platform_dir, desk_arch = desk_archives_by_host["darwin"]
     else:
-        desktop_archives, platform_dir, desk_arch = desk_archives_by_host['win32']
+        desktop_archives, platform_dir, desk_arch = desk_archives_by_host["win32"]
 
     def mock_get_url(url: str, *args, **kwargs) -> str:
         wasm_base = f"all_os/wasm/qt6_{str_version}/qt6_{str_version}_{wasm_arch}"
@@ -1402,24 +1416,20 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
 
         if url.endswith(".sha256"):
             base = url[:-7]  # Remove .sha256
-            if any(base.endswith(path) for path in
-                   [f"{wasm_base}/Updates.xml", f"{desktop_base}/Updates.xml"]):
+            if any(base.endswith(path) for path in [f"{wasm_base}/Updates.xml", f"{desktop_base}/Updates.xml"]):
                 # For main Updates.xml files, read the appropriate file and generate its hash
                 if "wasm" in base:
-                    xml = (Path(
-                        __file__).parent / "data" / "all_os-680-wasm-single-update.xml").read_text()
+                    xml = (Path(__file__).parent / "data" / "all_os-680-wasm-single-update.xml").read_text()
                 else:
                     if platform_dir == "linux_x64":
-                        xml = (Path(
-                            __file__).parent / "data" / "linux-680-desktop-update.xml").read_text()
+                        xml = (Path(__file__).parent / "data" / "linux-680-desktop-update.xml").read_text()
                     else:
-                        xml = (Path(
-                            __file__).parent / "data" / "windows-680-desktop-update.xml").read_text()
+                        xml = (Path(__file__).parent / "data" / "windows-680-desktop-update.xml").read_text()
                 return f"{hashlib.sha256(bytes(xml, 'utf-8')).hexdigest()} Updates.xml"
             return f"{hashlib.sha256(b'mock').hexdigest()} {url.split('/')[-1][:-7]}"
 
         # Handle extension URLs for Qt 6.8
-        if '/extensions/' in url:
+        if "/extensions/" in url:
             if url.endswith("Updates.xml"):
                 return "<Updates></Updates>"
             if url.endswith(".sha256"):
@@ -1427,14 +1437,12 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
 
         # Handle main Updates.xml files
         if url.endswith(f"{wasm_base}/Updates.xml"):
-            return (Path(
-                __file__).parent / "data" / "all_os-680-wasm-single-update.xml").read_text()
+            return (Path(__file__).parent / "data" / "all_os-680-wasm-single-update.xml").read_text()
         elif url.endswith(f"{desktop_base}/Updates.xml"):
             if platform_dir == "linux_x64":
                 return (Path(__file__).parent / "data" / "linux-680-desktop-update.xml").read_text()
             else:
-                return (Path(
-                    __file__).parent / "data" / "windows-680-desktop-update.xml").read_text()
+                return (Path(__file__).parent / "data" / "windows-680-desktop-update.xml").read_text()
 
         assert False, f"No mocked url available for '{url}'"
 
@@ -1448,57 +1456,55 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
                         return
 
             # For unknown archives, create basic structure
-            with py7zr.SevenZipFile(out, 'w') as archive:
+            with py7zr.SevenZipFile(out, "w") as archive:
                 # Determine if this is a desktop archive and get the appropriate arch
-                is_desktop = False
                 arch_dir = wasm_arch
-                for desk_indicator in ['gcc_64', 'clang_64', 'mingw']:
+                for desk_indicator in ["gcc_64", "clang_64", "mingw"]:
                     if desk_indicator in url:
-                        is_desktop = True
-                        if 'linux' in url.lower():
-                            arch_dir = 'gcc_64'
-                        elif 'mac' in url.lower():
-                            arch_dir = 'clang_64'
-                        else:  # Windows
-                            arch_dir = 'mingw_64'
+                        if "linux" in url.lower():
+                            arch_dir = "gcc_64"
+                        elif "mac" in url.lower():
+                            arch_dir = "clang_64"
+                        else:
+                            arch_dir = "mingw_64"
                         break
 
                 # Set the appropriate path prefix
                 prefix = f"6.8.0/{arch_dir}"
 
                 basic_files = {
-                    f'{prefix}/mkspecs/qconfig.pri': 'QT_EDITION = OpenSource\nQT_LICHECK =\n',
-                    f'{prefix}/bin/target_qt.conf': 'Prefix=...\n',  # Basic config
-                    f'{prefix}/bin/qmake': '#!/bin/sh\necho "Mock qmake"\n',
-                    f'{prefix}/bin/qmake6': '#!/bin/sh\necho "Mock qmake6"\n',
-                    f'{prefix}/bin/qtpaths': '#!/bin/sh\necho "Mock qtpaths"\n',
-                    f'{prefix}/bin/qtpaths6': '#!/bin/sh\necho "Mock qtpaths6"\n',
-                    f'{prefix}/lib/dummy': '',  # Empty file in lib
+                    f"{prefix}/mkspecs/qconfig.pri": "QT_EDITION = OpenSource\nQT_LICHECK =\n",
+                    f"{prefix}/bin/target_qt.conf": "Prefix=...\n",  # Basic config
+                    f"{prefix}/bin/qmake": '#!/bin/sh\necho "Mock qmake"\n',
+                    f"{prefix}/bin/qmake6": '#!/bin/sh\necho "Mock qmake6"\n',
+                    f"{prefix}/bin/qtpaths": '#!/bin/sh\necho "Mock qtpaths"\n',
+                    f"{prefix}/bin/qtpaths6": '#!/bin/sh\necho "Mock qtpaths6"\n',
+                    f"{prefix}/lib/dummy": "",  # Empty file in lib
                 }
                 for filepath, content in basic_files.items():
-                    archive.writestr(content.encode('utf-8'), filepath)
+                    archive.writestr(content.encode("utf-8"), filepath)
+
         except Exception as e:
             sys.stderr.write(f"Warning: Error in mock_download_archive: {e}\n")
             # Even in case of error, create minimal structure
-            with py7zr.SevenZipFile(out, 'w') as archive:
+            with py7zr.SevenZipFile(out, "w") as archive:
                 # Determine if this is a desktop archive
-                if any(desk_indicator in url for desk_indicator in ['gcc_64', 'clang_64', 'mingw']):
-                    if 'linux' in url.lower():
+                if any(desk_indicator in url for desk_indicator in ["gcc_64", "clang_64", "mingw"]):
+                    if "linux" in url.lower():
                         prefix = "6.8.0/gcc_64"
-                    elif 'mac' in url.lower():
+                    elif "mac" in url.lower():
                         prefix = "6.8.0/clang_64"
                     else:
                         prefix = "6.8.0/mingw_64"
                 else:
                     prefix = f"6.8.0/{wasm_arch}"
 
-                archive.writestr(b'QT_EDITION = OpenSource\nQT_LICHECK =\n',
-                                 f'{prefix}/mkspecs/qconfig.pri')
-                archive.writestr(b'#!/bin/sh\necho "Mock qmake6"\n', f'{prefix}/bin/qmake6')
-                archive.writestr(b'#!/bin/sh\necho "Mock qmake"\n', f'{prefix}/bin/qmake')
-                archive.writestr(b'#!/bin/sh\necho "Mock qtpaths6"\n', f'{prefix}/bin/qtpaths6')
-                archive.writestr(b'#!/bin/sh\necho "Mock qtpaths"\n', f'{prefix}/bin/qtpaths')
-                archive.writestr(b'Prefix=...\n', f'{prefix}/bin/target_qt.conf')
+                archive.writestr(b"QT_EDITION = OpenSource\nQT_LICHECK =\n", f"{prefix}/mkspecs/qconfig.pri")
+                archive.writestr(b'#!/bin/sh\necho "Mock qmake6"\n', f"{prefix}/bin/qmake6")
+                archive.writestr(b'#!/bin/sh\necho "Mock qmake"\n', f"{prefix}/bin/qmake")
+                archive.writestr(b'#!/bin/sh\necho "Mock qtpaths6"\n', f"{prefix}/bin/qtpaths6")
+                archive.writestr(b'#!/bin/sh\necho "Mock qtpaths"\n', f"{prefix}/bin/qtpaths")
+                archive.writestr(b"Prefix=...\n", f"{prefix}/bin/target_qt.conf")
         return
 
     # Setup mocks
@@ -1507,16 +1513,25 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
 
     # Run the installation
-
     with TemporaryDirectory() as output_dir:
         cli = Cli()
         cli._setup_settings()
 
-        result = cli.run([
-            "install-qt", "all_os", "wasm", version, wasm_arch,
-            "-m", "qtcharts", "qtquick3d", "--autodesktop",
-            "--outputdir", str(temp_dir)
-        ])
+        result = cli.run(
+            [
+                "install-qt",
+                "all_os",
+                "wasm",
+                version,
+                wasm_arch,
+                "-m",
+                "qtcharts",
+                "qtquick3d",
+                "--autodesktop",
+                "--outputdir",
+                output_dir,
+            ]
+        )
 
         assert result == 0
 
@@ -1529,18 +1544,24 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
         expected_pattern = re.compile(
             r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
             r"INFO    : You are installing the Qt6-WASM version of Qt, which requires that "
-            r"the desktop version of Qt is also installed\. Now installing Qt: desktop " + version + r".*\n"
-                                                                                                     r"(?:INFO    : Found extension .*\n)*"  # Match any number of extension lines
-                                                                                                     r"INFO    : Downloading qtbase\.\.\.\n"
-                                                                                                     r"Finished installation of qtbase-.*\n"
-                                                                                                     r"INFO    : Downloading qtcharts\.\.\.\n"
-                                                                                                     r"Finished installation of qtcharts-.*\n"
-                                                                                                     r"INFO    : Downloading qtquick3d\.\.\.\n"
-                                                                                                     r"Finished installation of qtquick3d-.*\n"
-                                                                                                     r"(?:INFO    : Patching.*\n)*"  # Match any number of patching lines
-                                                                                                     r"INFO    : Finished installation\n"
-                                                                                                     r"INFO    : Time elapsed: .* second",
-            re.MULTILINE
+            r"the desktop version of Qt is also installed\. Now installing Qt: desktop " + version + r" linux_gcc_64\n"
+            r"(?:INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n)?"  # Make second header optional
+            # Match any number of extension lines
+            r"(?:INFO    : Found extension .*\n)*"
+            # Match any number of download sequences for first installation
+            r"(?:INFO    : Downloading .*\.\.\.\n"
+            r"Finished installation of .*\.7z in [\d\.]+\n)*"
+            r"INFO    : Finished installation\n"
+            r"INFO    : Time elapsed: [\d\.]+ second\n"
+            # Match any number of extension lines for second installation
+            r"(?:INFO    : Found extension .*\n)*"
+            # Match any number of download sequences for second installation
+            r"(?:INFO    : Downloading .*\.\.\.\n" r"Finished installation of .*\.7z in [\d\.]+\n)*"
+            # Match patching lines
+            r"(?:INFO    : Patching .*6\.8\.0/wasm_singlethread/bin/(?:qmake|qtpaths)6?\n)*"
+            r"INFO    : Finished installation\n"
+            r"INFO    : Time elapsed: [\d\.]+ second\n?$",
+            re.MULTILINE,
         )
 
         assert expected_pattern.match(err)
