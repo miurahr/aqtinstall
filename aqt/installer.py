@@ -343,20 +343,25 @@ class Cli:
         else:
             base = Settings.baseurl
         if hasattr(args, "qt_version_spec"):
-            qt_version: str = str(Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch, base_url=base))
+            qt_version: str = str(
+                Cli._determine_qt_version(args.qt_version_spec, os_name, target, arch,
+                                          base_url=base))
         else:
             qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
         archives = args.archives
         if args.noarchives:
             if modules is None:
-                raise CliInputError("When `--noarchives` is set, the `--modules` option is mandatory.")
+                raise CliInputError(
+                    "When `--noarchives` is set, the `--modules` option is mandatory.")
             if archives is not None:
-                raise CliInputError("Options `--archives` and `--noarchives` are mutually exclusive.")
+                raise CliInputError(
+                    "Options `--archives` and `--noarchives` are mutually exclusive.")
         else:
             if modules is not None and archives is not None:
                 archives.extend(modules)
-        nopatch = args.noarchives or (archives is not None and "qtbase" not in archives)  # type: bool
+        nopatch = args.noarchives or (
+                    archives is not None and "qtbase" not in archives)  # type: bool
         should_autoinstall: bool = args.autodesktop
         _version = Version(qt_version)
         base_path = Path(base_dir)
@@ -371,9 +376,15 @@ class Cli:
         # If autodesktop is enabled and we need a desktop installation, do it first
         if should_autoinstall and autodesk_arch is not None:
             # Create new args for desktop installation
-            desktop_args = ["install-qt", effective_os_name, "desktop", qt_version, autodesk_arch]
+            desktop_args = [
+                "install-qt",
+                effective_os_name,
+                "desktop",
+                qt_version,
+                autodesk_arch
+            ]
 
-            # Copy over all relevant flags
+            # Copy over all relevant flags including modules
             if modules:
                 desktop_args.extend(["-m"] + modules)
             if args.base:
@@ -389,7 +400,7 @@ class Cli:
             if output_dir:
                 desktop_args.extend(["--outputdir", output_dir])
 
-            # Run desktop installation
+            # Run desktop installation first
             desktop_result = self.run(desktop_args)
             if desktop_result != 0:
                 return desktop_result
@@ -422,7 +433,8 @@ class Cli:
             Updater.update(target_config, base_path, expect_desktop_archdir)
 
         self.logger.info("Finished installation")
-        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+        self.logger.info(
+            "Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
         self.show_aqt_version()

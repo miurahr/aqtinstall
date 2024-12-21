@@ -368,21 +368,34 @@ class QtArchives:
         return f"{module}.{self.arch}"
 
     def _target_packages(self) -> ModuleToPackage:
+        """Build mapping between module names and their possible package names"""
         if self.all_extra:
             return ModuleToPackage({})
+
         base_package = {self._base_module_name(): list(self._base_package_names())}
         target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
+
         for module in self.mod_list:
             suffix = self._module_name_suffix(module)
+            # Standard formats
             package_names = [
                 f"qt.qt{self.version.major}.{self._version_str()}.{suffix}",
                 f"qt.{self._version_str()}.{suffix}",
-                f"extensions.{module}.{self._version_str()}.{self.arch}",
             ]
-            if not module.startswith("addons."):
-                package_names.append(f"qt.qt{self.version.major}.{self._version_str()}.addons.{suffix}")
+            # Add Qt6.8+ addon formats
+            package_names.extend(self._get_addon_formats(suffix))
             target_packages.add(module, package_names)
+
         return target_packages
+
+    def _get_addon_formats(self, module: str) -> List[str]:
+        """Generate possible formats for Qt6.8+ addon modules."""
+        if self.version >= Version("6.8.0"):
+            return [
+                f"qt.qt{self.version.major}.{self._version_str()}.addons.{module}.{self.arch}",
+                f"extensions.{module}.{self._version_str()}.{self.arch}"
+            ]
+        return []
 
     def _get_archives(self):
         if self.version >= Version("6.8.0"):

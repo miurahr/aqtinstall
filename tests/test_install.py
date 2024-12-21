@@ -822,15 +822,12 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                # First desktop installation
-                r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : You are installing the MSVC Arm64 version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. Now installing Qt: desktop 6.5.2 win64_msvc2019_64\n"
                 r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-windows-win64_msvc2019_64\.7z in .*\n"
-                r"INFO    : Finished installation\n"
-                r"INFO    : Time elapsed: .* second\n"
-                # Then ARM64 installation
+                r"Finished installation of qtbase-windows-win64_msvc2019_arm64.7z in .*\n"
                 r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-windows-win64_msvc2019_arm64\.7z in .*\n"
+                r"Finished installation of qtbase-windows-win64_msvc2019_64.7z in .*\n"
                 r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake.bat\n"
                 r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qtpaths.bat\n"
                 r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake6.bat\n"
@@ -1110,15 +1107,12 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                # First desktop installation
-                r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"INFO    : Downloading qtbase\.\.\.\n"
-                r"Finished installation of qtbase-mac-clang_64\.7z in .*\n"
-                r"INFO    : Finished installation\n"
-                r"INFO    : Time elapsed: .* second\n"
-                # Then iOS installation
-                r"INFO    : Downloading qtbase\.\.\.\n"
-                r"Finished installation of qtbase-mac-ios\.7z in .*\n"
+                r"INFO    : You are installing the ios version of Qt, which requires that the desktop version of Qt is "
+                r"also installed. Now installing Qt: desktop 6\.1\.2 clang_64\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-mac-ios.7z in .*\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-mac-clang_64.7z in .*\n"
                 r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -1309,29 +1303,18 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                # First desktop installation
-                r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : You are installing the Qt6-WASM version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. Now installing Qt: desktop 6\.8\.0 linux_gcc_64\n"
+                r"INFO    : Found extension qtwebengine\n"
+                r"INFO    : Found extension qtpdf\n"
+                r"INFO    : Found extension qtwebengine\n"
+                r"INFO    : Found extension qtpdf\n"
                 r"INFO    : Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-.*linux.*\.7z in .*\n"
                 r"INFO    : Downloading qtcharts\.\.\.\n"
                 r"Finished installation of qtcharts-linux.*\.7z in .*\n"
                 r"INFO    : Downloading qtquick3d\.\.\.\n"
                 r"Finished installation of qtquick3d-linux.*\.7z in .*\n"
-                r"INFO    : Finished installation\n"
-                r"INFO    : Time elapsed: .* second\n"
-                # Then WASM installation
-                r"INFO    : Found extension qtwebengine\n"
-                r"INFO    : Found extension qtpdf\n"
-                r"INFO    : Downloading qtbase\.\.\.\n"
-                r"Finished installation of qtbase-wasm_singlethread\.7z in .*\n"
-                r"INFO    : Downloading qtcharts\.\.\.\n"
-                r"Finished installation of qtcharts-wasm.*\.7z in .*\n"
-                r"INFO    : Downloading qtquick3d\.\.\.\n"
-                r"Finished installation of qtquick3d-wasm.*\.7z in .*\n"
-                r"INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]qmake\n"
-                r"INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]qtpaths\n"
-                r"INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]qmake6\n"
-                r"INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]qtpaths6\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
