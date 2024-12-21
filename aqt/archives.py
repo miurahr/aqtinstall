@@ -377,14 +377,23 @@ class QtArchives:
 
         for module in self.mod_list:
             suffix = self._module_name_suffix(module)
-            # Standard formats
+            prefix = "qt.qt{}.{}.".format(self.version.major, self._version_str())
+            basic_prefix = "qt.{}.".format(self._version_str())
+
+            # All possible package name formats
             package_names = [
-                f"qt.qt{self.version.major}.{self._version_str()}.{suffix}",
-                f"qt.{self._version_str()}.{suffix}",
+                f"{prefix}{suffix}",
+                f"{basic_prefix}{suffix}",
+                f"{prefix}addons.{suffix}",
+                f"{basic_prefix}addons.{suffix}",
+                f"extensions.{module}.{self._version_str()}.{self.arch}",
+                f"{prefix}{module}.{self.arch}",  # Qt6.8+ format
+                f"{basic_prefix}{module}.{self.arch}",  # Qt6.8+ format
+                f"{prefix}addons.{module}.{self.arch}",  # Qt6.8+ addons format
+                f"{basic_prefix}addons.{module}.{self.arch}",  # Qt6.8+ addons format
             ]
-            # Add Qt6.8+ addon formats
-            package_names.extend(self._get_addon_formats(suffix))
-            target_packages.add(module, package_names)
+
+            target_packages.add(module, list(set(package_names)))  # Remove duplicates
 
         return target_packages
 
@@ -458,7 +467,7 @@ class QtArchives:
                     # In case _download_update_xml ignores the hash and tries to get the url.
                     pass
                 if extensions_xml_text:
-                    self.logger.info("Found extension {}".format(ext))
+                    #self.logger.info("Found extension {}".format(ext))
                     update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
 
         self._parse_update_xmls(update_xmls, target_packages)
