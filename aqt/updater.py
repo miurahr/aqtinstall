@@ -47,7 +47,7 @@ def unpatched_paths() -> List[str]:
 
 
 class Updater:
-    def __init__(self, prefix: Path, logger):
+    def __init__(self, prefix: Path, logger) -> None:
         self.logger = logger
         self.prefix = prefix
         self.qmake_path: Optional[Path] = None

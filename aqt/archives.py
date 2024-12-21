@@ -173,7 +173,7 @@ class PackageUpdate:
 class Updates:
     package_updates: List[PackageUpdate]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.package_updates = []
 
     def extend(self, other):
