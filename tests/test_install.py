@@ -147,15 +147,34 @@ def make_mock_geturl_download_archive(
     for _archive in [*standard_archives, *desktop_archives]:
         assert re.match(r".*\.(7z|tar\.xz)$", _archive.filename_7z), "Unsupported file type"
 
+    def _generate_package_update_xml(archive: MockArchive) -> str:
+        """Helper to generate package XML with proper addon structure for Qt 6.8"""
+        is_qt68_addon = (
+            archive.version.startswith("6.8")
+            and "addons" in archive.update_xml_name
+            and not archive.update_xml_name.endswith(("_64", "_arm64", "_32", "wasm_singlethread"))
+        )
+
+        return textwrap.dedent(
+            f"""\
+            <PackageUpdate>
+             <Name>{archive.update_xml_name}</Name>
+             <Version>{archive.version}-0-{archive.date.strftime("%Y%m%d%H%M")}</Version>
+             <Description>{getattr(archive, 'package_desc', 'none')}</Description>
+             <DownloadableArchives>{archive.filename_7z}</DownloadableArchives>
+             {f'<Dependencies>qt.qt6.680.gcc_64</Dependencies>' if is_qt68_addon else ''}
+            </PackageUpdate>"""
+        )
+
     standard_xml = "<Updates>\n{}\n</Updates>".format(
-        "\n".join([archive.xml_package_update() for archive in standard_archives])
+        "\n".join([_generate_package_update_xml(archive) for archive in standard_archives])
     )
     desktop_xml = "<Updates>\n{}\n</Updates>".format(
-        "\n".join([archive.xml_package_update() for archive in desktop_archives])
+        "\n".join([_generate_package_update_xml(archive) for archive in desktop_archives])
     )
     merged_xml = "<Updates>\n{}{}\n</Updates>".format(
-        "\n".join([archive.xml_package_update() for archive in standard_archives]),
-        "\n".join([archive.xml_package_update() for archive in desktop_archives]),
+        "\n".join([_generate_package_update_xml(archive) for archive in standard_archives]),
+        "\n".join([_generate_package_update_xml(archive) for archive in desktop_archives]),
     )
 
     # Empty extension XML response
@@ -210,6 +229,24 @@ def make_mock_geturl_download_archive(
         locate_archive().write_compressed_archive(Path(out).parent)
 
     return mock_getUrl, mock_download_archive
+
+
+def _generate_package_update_xml(archive: MockArchive) -> str:
+    """Helper to generate package XML with proper addon structure"""
+    is_qt68_addon = archive.version.startswith("6.8") and not archive.update_xml_name.endswith(
+        ("_64", "_arm64", "_32", "wasm_singlethread")
+    )
+
+    return textwrap.dedent(
+        f"""\
+         <PackageUpdate>
+          <Name>{archive.update_xml_name}</Name>
+          <Version>{archive.version}-0-{archive.date.strftime("%Y%m%d%H%M")}</Version>
+          <Description>{getattr(archive, 'package_desc', 'none')}</Description>
+          <DownloadableArchives>{archive.filename_7z}</DownloadableArchives>
+          {f'<Dependencies>qt.qt6.680.gcc_64</Dependencies>' if is_qt68_addon else ''}
+         </PackageUpdate>"""
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -703,6 +740,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
+        # --autodesktop test edited
         (
             "install-qt windows desktop 6.5.2 win64_msvc2019_arm64 --autodesktop".split(),
             "windows",
@@ -784,12 +822,15 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"INFO    : You are installing the MSVC Arm64 version of Qt, which requires that the desktop version of "
-                r"Qt is also installed. Now installing Qt: desktop 6.5.2 win64_msvc2019_64\n"
+                # First desktop installation
+                r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-windows-win64_msvc2019_arm64.7z in .*\n"
+                r"Finished installation of qtbase-windows-win64_msvc2019_64\.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second\n"
+                # Then ARM64 installation
                 r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-windows-win64_msvc2019_64.7z in .*\n"
+                r"Finished installation of qtbase-windows-win64_msvc2019_arm64\.7z in .*\n"
                 r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake.bat\n"
                 r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qtpaths.bat\n"
                 r"INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\]qmake6.bat\n"
@@ -1015,6 +1056,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
+        # --autodesktop test edited
         (
             "install-qt mac ios 6.1.2 --autodesktop".split(),
             "mac",
@@ -1032,7 +1074,6 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-mac-ios.7z",
                         update_xml_name="qt.qt6.612.ios",
                         contents=(
-                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
                             PatchedFile(
                                 filename="mkspecs/qconfig.pri",
                                 unpatched_content="... blah blah blah ...\n"
@@ -1069,12 +1110,15 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"INFO    : You are installing the ios version of Qt, which requires that the desktop version of "
-                r"Qt is also installed. Now installing Qt: desktop 6\.1\.2 clang_64\n"
-                r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-mac-ios.7z in .*\n"
-                r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-mac-clang_64.7z in .*\n"
+                # First desktop installation
+                r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-mac-clang_64\.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second\n"
+                # Then iOS installation
+                r"INFO    : Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-mac-ios\.7z in .*\n"
                 r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -1150,8 +1194,9 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
+        # 6.8.0 WASM with --autodesktop test
         (
-            "install-qt all_os wasm 6.8.0 wasm_singlethread -m qtcharts qtpositioning " "--autodesktop".split(),
+            ["install-qt", "all_os", "wasm", "6.8.0", "wasm_singlethread", "-m", "qtcharts", "qtquick3d", "--autodesktop"],
             "all_os",
             "wasm",
             "6.8.0",
@@ -1205,33 +1250,84 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         arch_dir="wasm_singlethread",
                     ),
                     # WASM modules
-                    qtcharts_module("6.8.0", "wasm_singlethread"),
-                    qtpositioning_module("6.8.0", "wasm_singlethread"),
+                    MockArchive(
+                        filename_7z="qtcharts-wasm_singlethread.7z",
+                        update_xml_name="qt.qt6.680.qtcharts.wasm_singlethread",
+                        contents=(
+                            PatchedFile(
+                                filename="modules/Charts.json",
+                                unpatched_content="Some charts content",
+                                patched_content=None,
+                            ),
+                        ),
+                        version="6.8.0",
+                        arch_dir="wasm_singlethread",
+                    ),
+                    MockArchive(
+                        filename_7z="qtquick3d-wasm_singlethread.7z",
+                        update_xml_name="qt.qt6.680.qtquick3d.wasm_singlethread",
+                        contents=(
+                            PatchedFile(
+                                filename="modules/Quick3D.json",
+                                unpatched_content="Some quick3d content",
+                                patched_content=None,
+                            ),
+                        ),
+                        version="6.8.0",
+                        arch_dir="wasm_singlethread",
+                    ),
                 ],
                 "desk": [
-                    # Desktop base package
                     plain_qtbase_archive("qt.qt6.680.linux_gcc_64", "linux_gcc_64", host="linux"),
-                    # Desktop modules
-                    qtcharts_module("6.8.0", "gcc_64"),
-                    qtpositioning_module("6.8.0", "gcc_64")
-                ]
+                    MockArchive(
+                        filename_7z="qtcharts-linux-gcc_64.7z",
+                        update_xml_name="qt.qt6.680.addons.qtcharts.gcc_64",
+                        contents=(
+                            PatchedFile(
+                                filename="modules/Charts.json",
+                                unpatched_content='{\n    "module_name": "Charts",\n    "version": "6.8.0",\n    "description": "Desktop Charts module",\n    "built_with": {\n        "compiler_id": "GNU",\n        "compiler_target": "",\n        "compiler_version": "1.2.3.4",\n        "cross_compiled": false,\n        "target_system": "Linux"\n    }\n}',
+                                patched_content=None,
+                            ),
+                        ),
+                        version="6.8.0",
+                        arch_dir="gcc_64",
+                    ),
+                    MockArchive(
+                        filename_7z="qtquick3d-linux-gcc_64.7z",
+                        update_xml_name="qt.qt6.680.addons.qtquick3d.gcc_64",
+                        contents=(
+                            PatchedFile(
+                                filename="modules/Quick3D.json",
+                                unpatched_content='{\n    "module_name": "Quick3D",\n    "version": "6.8.0",\n    "description": "Desktop Quick3D module",\n    "built_with": {\n        "compiler_id": "GNU",\n        "compiler_target": "",\n        "compiler_version": "1.2.3.4",\n        "cross_compiled": false,\n        "target_system": "Linux"\n    }\n}',
+                                patched_content=None,
+                            ),
+                        ),
+                        version="6.8.0",
+                        arch_dir="gcc_64",
+                    ),
+                ],
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"INFO    : You are installing the Qt6-WASM version of Qt, which requires that the desktop version of "
-                r"Qt is also installed\. Now installing Qt: desktop 6\.8\.0 .*\n"
-                r"INFO    : Found extension qtwebengine\n"
-                r"INFO    : Found extension qtpdf\n"
+                # First desktop installation
+                r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Downloading qtbase\.\.\.\n"
+                r"Finished installation of qtbase-.*linux.*\.7z in .*\n"
+                r"INFO    : Downloading qtcharts\.\.\.\n"
+                r"Finished installation of qtcharts-linux.*\.7z in .*\n"
+                r"INFO    : Downloading qtquick3d\.\.\.\n"
+                r"Finished installation of qtquick3d-linux.*\.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second\n"
+                # Then WASM installation
                 r"INFO    : Found extension qtwebengine\n"
                 r"INFO    : Found extension qtpdf\n"
                 r"INFO    : Downloading qtbase\.\.\.\n"
                 r"Finished installation of qtbase-wasm_singlethread\.7z in .*\n"
                 r"INFO    : Downloading qtcharts\.\.\.\n"
-                r"Finished installation of qtcharts-windows-wasm_singlethread\.7z in .*\n"
-                r"INFO    : Downloading qtlocation\.\.\.\n"
-                r"Finished installation of qtlocation-windows-wasm_singlethread\.7z in .*\n"
-                r"INFO    : Downloading qtbase\.\.\.\n"
-                r"Finished installation of qtbase-.*\.7z in .*\n"
+                r"Finished installation of qtcharts-wasm.*\.7z in .*\n"
+                r"INFO    : Downloading qtquick3d\.\.\.\n"
+                r"Finished installation of qtquick3d-wasm.*\.7z in .*\n"
                 r"INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]qmake\n"
                 r"INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]qtpaths\n"
                 r"INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]qmake6\n"

@@ -361,42 +361,40 @@ class Cli:
         _version = Version(qt_version)
         base_path = Path(base_dir)
 
+        # Determine if 'all' extra modules should be included
+        all_extra = True if modules is not None and "all" in modules else False
+
         expect_desktop_archdir, autodesk_arch = self._get_autodesktop_dir_and_arch(
             should_autoinstall, os_name, target, base_path, _version, arch
         )
 
-        def get_auto_desktop_archives() -> List[QtPackage]:
-            def to_archives(baseurl: str, for_modules: bool = False) -> QtArchives:
-                return QtArchives(
-                    effective_os_name,
-                    "desktop",
-                    qt_version,
-                    cast(str, autodesk_arch),
-                    base=baseurl,
-                    modules=modules if for_modules else None,
-                    # Pass modules for module installation
-                    timeout=timeout,
-                )
+        # If autodesktop is enabled and we need a desktop installation, do it first
+        if should_autoinstall and autodesk_arch is not None:
+            # Create new args for desktop installation
+            desktop_args = ["install-qt", effective_os_name, "desktop", qt_version, autodesk_arch]
 
-            if autodesk_arch is not None:
-                # Get base Qt archives
-                base_archives = cast(QtArchives, retry_on_bad_connection(lambda url: to_archives(url, False), base)).archives
+            # Copy over all relevant flags
+            if modules:
+                desktop_args.extend(["-m"] + modules)
+            if args.base:
+                desktop_args.extend(["--base", args.base])
+            if args.timeout:
+                desktop_args.extend(["--timeout", str(args.timeout)])
+            if args.external:
+                desktop_args.extend(["--external", args.external])
+            if args.keep:
+                desktop_args.append("--keep")
+            if args.archive_dest:
+                desktop_args.extend(["--archive-dest", args.archive_dest])
+            if output_dir:
+                desktop_args.extend(["--outputdir", output_dir])
 
-                # Get module archives if modules were specified
-                module_archives = []
-                if modules:
-                    module_archives = cast(
-                        QtArchives, retry_on_bad_connection(lambda url: to_archives(url, True), base)
-                    ).archives
+            # Run desktop installation
+            desktop_result = self.run(desktop_args)
+            if desktop_result != 0:
+                return desktop_result
 
-                return base_archives + module_archives
-            else:
-                return []
-
-        auto_desktop_archives: List[QtPackage] = get_auto_desktop_archives()
-
-        all_extra = True if modules is not None and "all" in modules else False
-
+        # Main installation
         qt_archives: QtArchives = retry_on_bad_connection(
             lambda base_url: QtArchives(
                 os_name,
@@ -412,18 +410,17 @@ class Cli:
             ),
             base,
         )
-        qt_archives.archives.extend(auto_desktop_archives)
+
         target_config = qt_archives.get_target_config()
         target_config.os_name = effective_os_name
+
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
             run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
 
         if not nopatch:
             Updater.update(target_config, base_path, expect_desktop_archdir)
-            if autodesk_arch is not None:
-                d_target_config = TargetConfig(str(_version), "desktop", autodesk_arch, effective_os_name)
-                Updater.update(d_target_config, base_path, expect_desktop_archdir)
+
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
