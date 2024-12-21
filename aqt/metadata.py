@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import itertools
 import operator
+import os
 import posixpath
 import re
 import secrets as random
@@ -79,7 +80,7 @@ class Version(SemanticVersion):
         prerelease=None,
         build=None,
         partial=False,
-    ):
+    ) -> None:
         if version_string is None:
             super(Version, self).__init__(
                 version_string=None,
@@ -326,6 +327,14 @@ class ArchiveId:
                 if extension:
                     folder = f"{folder}/{folder}_{extension}"
                 return folder
+            elif not ((self.host == "all_os") and (self.target == "qt")):
+                # Non-WASM, non-all_os/qt case
+                return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
+                    category=self.category,
+                    major=qt_version_no_dots[0],
+                    ver=qt_version_no_dots,
+                    ext="_" + extension if extension else "",
+                )
             else:
                 base = f"qt{version.major}_{qt_version_no_dots}"
                 return f"{base}/{base}"
@@ -334,6 +343,7 @@ class ArchiveId:
             if extension:
                 return f"qt{version.major}_{qt_version_no_dots}_{extension}"
             return f"qt{version.major}_{qt_version_no_dots}"
+
         # Pre-6.8 structure for non-WASM or pre-6.5 structure
         return "{category}{major}_{ver}{ext}".format(
             category=self.category,
@@ -624,6 +634,16 @@ class QtRepoProperty:
         if version >= Version("6.8.0"):
             return ["qtpdf", "qtwebengine"]
         return []
+
+    @staticmethod
+    def sde_ext(version: Version) -> str:
+        if version >= Version("6.8.0"):
+            if os.linesep == "\r\n":
+                return "windows_line_endings_src"
+            else:
+                return "unix_line_endings_src"
+        else:
+            return "src_doc_examples"
 
 
 class MetadataFactory:
@@ -1029,7 +1049,9 @@ class MetadataFactory:
             "qt",
         ), "Internal misuse of fetch_modules_sde"
         qt_ver_str = self._get_qt_version_str(version)
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, "src_doc_examples"))
+        modules_meta = self._fetch_module_metadata(
+            self.archive_id.to_folder(version, qt_ver_str, QtRepoProperty.sde_ext(version))
+        )
         # pattern: Match all names "qt.qt5.12345.doc.(\w+)
         pattern = re.compile(r"^qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\." + cmd_type + r"\.(.+)$")
 
@@ -1049,7 +1071,11 @@ class MetadataFactory:
         return self.fetch_archives(version, cmd_type, [], is_sde=True)
 
     def fetch_archives(self, version: Version, arch: str, modules: List[str], is_sde: bool = False) -> List[str]:
-        extension = "src_doc_examples" if is_sde else QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+        extension = (
+            QtRepoProperty.sde_ext(version)
+            if is_sde
+            else QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+        )
         qt_version_str = self._get_qt_version_str(version)
         nonempty = MetadataFactory._has_nonempty_downloads
 

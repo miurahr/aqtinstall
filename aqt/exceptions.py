@@ -24,7 +24,7 @@ DOCS_CONFIG = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#co
 
 
 class AqtException(Exception):
-    def __init__(self, *args, suggested_action: Optional[List[str]] = None, should_show_help: bool = False, **kwargs):
+    def __init__(self, *args, suggested_action: Optional[List[str]] = None, should_show_help: bool = False, **kwargs) -> None:
         self.suggested_action: List[str] = suggested_action or []
         self.should_show_help: bool = should_show_help or False
         super(AqtException, self).__init__(*args, **kwargs)
@@ -53,7 +53,7 @@ class ArchiveChecksumError(ArchiveDownloadError):
 
 
 class ChecksumDownloadFailure(ArchiveDownloadError):
-    def __init__(self, *args, suggested_action: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *args, suggested_action: Optional[List[str]] = None, **kwargs) -> None:
         if suggested_action is None:
             suggested_action = []
         suggested_action.extend(

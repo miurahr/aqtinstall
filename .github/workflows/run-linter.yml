@@ -1,0 +1,53 @@
+name: Run linter
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  linter:
+    name: Linter
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Setup reviewdog
+        run: |
+          /usr/bin/sh ci/reviewdog_install.sh -b ./bin/ v0.20.3
+      - name: Install dependencies
+        run: |
+          pip install -U pip tox wheel setuptools coveralls coverage[toml]
+          pip install .[check]
+      - name: run reviewdog
+        run: |
+          ./bin/reviewdog -runners=flake8,mypy -reporter=github-pr-review -conf=.reviewdog.yml
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docs:
+    name: Document checks
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Install dependencies
+        run: |
+          pip install -U pip tox wheel setuptools setuptools_scm[toml]
+      - name: docs build and link check
+        run: |
+          tox -e docs

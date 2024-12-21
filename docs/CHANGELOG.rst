@@ -13,6 +13,24 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.1.21`_ (20, December 2024)
+==============================
+
+Fixed
+-----
+* Handle cases where extensions don't exist(#852)
+* Fix computation of archive location for android install(#854)
+* Wrong dependency version for py7zr
+
+Added
+-----
+* Patch additional Qt scripts (#853)
+* readme: badge of Codacy code quality dashboard. (#856)
+
+Removed
+-------
+* CI: wiki creation workflow
+
 `v3.1.20`_ (11, December 2024)
 ==============================
 
@@ -427,7 +445,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.20...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.21...HEAD
+.. _v3.1.21: https://github.com/miurahr/aqtinstall/compare/v3.1.20...v3.1.21
 .. _v3.1.20: https://github.com/miurahr/aqtinstall/compare/v3.1.19...v3.1.20
 .. _v3.1.19: https://github.com/miurahr/aqtinstall/compare/v3.1.18...v3.1.19
 .. _v3.1.18: https://github.com/miurahr/aqtinstall/compare/v3.1.17...v3.1.18

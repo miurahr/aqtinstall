@@ -149,7 +149,7 @@ class Cli:
 
     UNHANDLED_EXCEPTION_CODE = 254
 
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(
             prog="aqt",
             description="Another unofficial Qt Installer.\naqt helps you install Qt SDK, tools, examples and others\n",

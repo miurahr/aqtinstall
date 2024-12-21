@@ -26,7 +26,7 @@ dependencies = [
     "defusedxml",
     "humanize",
     "patch>=1.16",
-    "py7zr>=1.0.0-rc1",
+    "py7zr>=0.22.0",
     "requests>=2.31.0",
     "semantic-version",
     "texttable",
@@ -68,6 +68,8 @@ check = [
     "readme-renderer",
     "pygments",
     "packaging",
+    "pylint",
+    "types-requests",
 ]
 docs = [
     "sphinx>=7.0",
@@ -108,6 +110,9 @@ source = ["aqt", "tests"]
 [tool.coverage.report]
 show_missing = true
 exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", "def __repr__"]
+
+[tool.pylint]
+max-line-length = 125
 
 [tool.black]
 line-length = 125
@@ -241,6 +246,6 @@ python =
     3.9: py39
     3.10: py310
     3.11: py311
-    3.12: py312, docs, check, mypy
-    3.13-dev: py313
+    3.12: py312
+    3.13: py313
 """
