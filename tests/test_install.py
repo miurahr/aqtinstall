@@ -231,24 +231,6 @@ def make_mock_geturl_download_archive(
     return mock_getUrl, mock_download_archive
 
 
-def _generate_package_update_xml(archive: MockArchive) -> str:
-    """Helper to generate package XML with proper addon structure"""
-    is_qt68_addon = archive.version.startswith("6.8") and not archive.update_xml_name.endswith(
-        ("_64", "_arm64", "_32", "wasm_singlethread")
-    )
-
-    return textwrap.dedent(
-        f"""\
-         <PackageUpdate>
-          <Name>{archive.update_xml_name}</Name>
-          <Version>{archive.version}-0-{archive.date.strftime("%Y%m%d%H%M")}</Version>
-          <Description>{getattr(archive, 'package_desc', 'none')}</Description>
-          <DownloadableArchives>{archive.filename_7z}</DownloadableArchives>
-          {f'<Dependencies>qt.qt6.680.gcc_64</Dependencies>' if is_qt68_addon else ''}
-         </PackageUpdate>"""
-    )
-
-
 @pytest.fixture(autouse=True)
 def disable_multiprocessing(monkeypatch):
     # This blocks all multiprocessing, which would otherwise spawn processes that are not monkeypatched

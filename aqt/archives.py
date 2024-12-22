@@ -281,10 +281,7 @@ class Updates:
             return []
 
     def _get_boolean(self, item) -> bool:
-        if "true" == item:
-            return True
-        else:
-            return False
+        return bool("true" == item)
 
 
 class QtArchives:
@@ -397,15 +394,6 @@ class QtArchives:
 
         return target_packages
 
-    def _get_addon_formats(self, module: str) -> List[str]:
-        """Generate possible formats for Qt6.8+ addon modules."""
-        if self.version >= Version("6.8.0"):
-            return [
-                f"qt.qt{self.version.major}.{self._version_str()}.addons.{module}.{self.arch}",
-                f"extensions.{module}.{self._version_str()}.{self.arch}",
-            ]
-        return []
-
     def _get_archives(self):
         if self.version >= Version("6.8.0"):
             name = (
@@ -415,18 +403,6 @@ class QtArchives:
         else:
             name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
         self._get_archives_base(name, self._target_packages())
-
-    def _append_depends_tool(self, arch, tool_name):
-        os_target_folder = posixpath.join(
-            "online/qtsdkrepository",
-            self.os_name + ("_x86" if self.os_name == "windows" else ("" if self.os_name == "linux_arm64" else "_x64")),
-            self.target,
-            tool_name,
-        )
-        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
-        update_xml_text = self._download_update_xml(update_xml_url)
-        update_xml = Updates.fromstring(self.base, update_xml_text)
-        self._append_tool_update(os_target_folder, update_xml, arch, None)
 
     def _get_archives_base(self, name, target_packages):
         os_name = self.os_name
