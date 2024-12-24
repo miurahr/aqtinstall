@@ -442,11 +442,12 @@ class QtArchives:
                 try:
                     extensions_xml_text = self._download_update_xml(extensions_xml_url, True)
                 except ArchiveDownloadError:
-                    # In case _download_update_xml ignores the hash and tries to get the url.
+                    # In case _download_update_xml failed to get the url because of no extension.
                     pass
-                if extensions_xml_text:
-                    self.logger.info("Found extension {}".format(ext))
-                    update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
+                else:
+                    if extensions_xml_text:
+                        self.logger.info("Found extension {}".format(ext))
+                        update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
 
         self._parse_update_xmls(update_xmls, target_packages)
 
