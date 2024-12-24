@@ -813,7 +813,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"(?:.*\n)*$"
-            )
+            ),
         ),
         (
             "install-qt linux android 6.4.1 android_arm64_v8a".split(),
@@ -1095,7 +1095,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"(?:.*\n)*$"
-            )
+            ),
         ),
         (
             "install-qt windows desktop 6.2.4 wasm_32".split(),

@@ -400,8 +400,10 @@ class Cli:
             is_wasm = arch.startswith("wasm")
             is_msvc = "msvc" in arch
             is_win_desktop_msvc_arm64 = (
-                    effective_os_name == "windows" and target == "desktop" and is_msvc and arch.endswith(
-                ("arm64", "arm64_cross_compiled"))
+                effective_os_name == "windows"
+                and target == "desktop"
+                and is_msvc
+                and arch.endswith(("arm64", "arm64_cross_compiled"))
             )
             if is_win_desktop_msvc_arm64:
                 qt_type = "MSVC Arm64"
@@ -412,8 +414,10 @@ class Cli:
 
             # Create new args for desktop installation
             self.logger.info("")
-            self.logger.info(f"Autodesktop will now install {effective_os_name} desktop "
-                             f"{qt_version} {autodesk_arch} as required by {qt_type}")
+            self.logger.info(
+                f"Autodesktop will now install {effective_os_name} desktop "
+                f"{qt_version} {autodesk_arch} as required by {qt_type}"
+            )
 
             desktop_args = args
             args.autodesktop = False
@@ -426,8 +430,7 @@ class Cli:
 
         else:
             self.logger.info("Finished installation")
-            self.logger.info(
-                "Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+            self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
         self.show_aqt_version()
@@ -1125,9 +1128,7 @@ class Cli:
 
         if should_autoinstall:
             # No desktop Qt is installed, but the user has requested installation. Find out what to install.
-            self.logger.info(
-                f"You are installing the {qt_type} version of Qt"
-            )
+            self.logger.info(f"You are installing the {qt_type} version of Qt")
             return expected_desktop_arch_path.name, default_desktop_arch
         else:
             self.logger.warning(
