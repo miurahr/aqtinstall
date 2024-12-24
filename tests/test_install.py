@@ -18,7 +18,7 @@ import py7zr
 import pytest
 
 from aqt.archives import QtPackage
-from aqt.exceptions import ArchiveDownloadError, ArchiveExtractionError
+from aqt.exceptions import ArchiveDownloadError, ArchiveExtractionError, ChecksumDownloadFailure
 from aqt.helper import Settings
 from aqt.installer import Cli, installer
 
@@ -1315,9 +1315,11 @@ def test_install_nonexistent_extensions(monkeypatch, capsys, cmd, xml_files: Lis
 
     def mock_get_hash(path, *args, **kwargs):
         nonlocal xml_file
-        nonlocal xml
         xml_file = next(xml_file_iterator)
-        xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8") if xml_file else ""
+        if not xml_file:
+            raise ChecksumDownloadFailure(f"Failed to download checksum for the file '{xml_file}'")
+        nonlocal xml
+        xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
         return hashlib.sha256(bytes(xml, "utf-8")).hexdigest()
 
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
