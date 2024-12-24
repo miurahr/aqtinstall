@@ -18,13 +18,15 @@
 # COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-from typing import List, Optional
+from typing import List, Optional, Any
 
 DOCS_CONFIG = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration"
 
 
 class AqtException(Exception):
-    def __init__(self, *args, suggested_action: Optional[List[str]] = None, should_show_help: bool = False, **kwargs) -> None:
+    def __init__(
+        self, *args, suggested_action: Optional[List[str]] = None, should_show_help: bool = False, **kwargs: Any
+    ) -> None:
         self.suggested_action: List[str] = suggested_action or []
         self.should_show_help: bool = should_show_help or False
         super(AqtException, self).__init__(*args, **kwargs)

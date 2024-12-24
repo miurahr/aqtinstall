@@ -19,4 +19,5 @@ recursive-include tools *.py
 prune .github
 exclude .gitignore
 exclude .readthedocs.yml
+exclude .reviewdog.yml
 exclude azure-pipelines.yml
