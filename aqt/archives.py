@@ -23,7 +23,7 @@ import posixpath
 from dataclasses import dataclass, field
 from itertools import islice, zip_longest
 from logging import getLogger
-from typing import Dict, Iterable, List, Optional, Set, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from xml.etree.ElementTree import Element  # noqa
 
 from defusedxml import ElementTree
@@ -448,11 +448,11 @@ class QtArchives:
 
         self._parse_update_xmls(update_xmls, target_packages)
 
-    def _download_update_xml(self, update_xml_path, silent=False):
+    def _download_update_xml(self, update_xml_path: str, silent: bool = False) -> Optional[str]:
         """Hook for unit test."""
         if not Settings.ignore_hash:
             try:
-                xml_hash = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout)
+                xml_hash: Optional[bytes] = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout)
             except ChecksumDownloadFailure:
                 if silent:
                     return None
@@ -467,7 +467,9 @@ class QtArchives:
             xml_hash = None
         return getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
 
-    def _parse_update_xml(self, os_target_folder, update_xml_text, target_packages: Optional[ModuleToPackage]):
+    def _parse_update_xml(
+        self, os_target_folder: str, update_xml_text: str, target_packages: Optional[ModuleToPackage]
+    ) -> None:
         if not target_packages:
             target_packages = ModuleToPackage({})
         update_xml = Updates.fromstring(self.base, update_xml_text)
@@ -507,7 +509,7 @@ class QtArchives:
                     )
                 )
 
-    def _parse_update_xmls(self, update_xmls, target_packages: Optional[ModuleToPackage]):
+    def _parse_update_xmls(self, update_xmls: list[UpdateXmls], target_packages: Optional[ModuleToPackage]) -> None:
         if not target_packages:
             target_packages = ModuleToPackage({})
         for update_xml in update_xmls:
@@ -698,7 +700,7 @@ class ToolArchives(QtArchives):
     def _get_archives(self):
         self._get_archives_base(self.tool_name, None)
 
-    def _parse_update_xml(self, os_target_folder, update_xml_text, *ignored):
+    def _parse_update_xml(self, os_target_folder: str, update_xml_text: str, *ignored: Any) -> None:
         update_xml = Updates.fromstring(self.base, update_xml_text)
         self._append_tool_update(os_target_folder, update_xml, self.arch, self.tool_version_str)
 
