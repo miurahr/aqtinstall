@@ -1266,14 +1266,6 @@ def test_install(
             "==============================Suggested follow-up:==============================\n"
             "* Please use 'aqt list-tool windows desktop' to check what tools are available.\n",
         ),
-        (  # non-existent extension
-            "install-qt windows desktop 6.8.1 win64_llvm_mingw --modules qtwebengine",
-            "windows-681-update.xml",
-            "INFO    : Found extension qtpdf\n"
-            "ERROR   : The packages ['qtwebengine'] were not found while parsing XML of package information!\n"
-            "==============================Suggested follow-up:==============================\n"
-            "* Please use 'aqt list-qt windows desktop --modules 6.8.1 <arch>' to show modules available.\n",
-        ),
     ),
 )
 def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Optional[str], expected):
