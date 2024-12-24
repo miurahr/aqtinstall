@@ -515,6 +515,8 @@ def test_get_autodesktop_dir_and_arch_non_android(
         if is_installed:
             assert any("Found installed" in line for line in err_lines), "Expected 'Found installed' message."
         elif expect["install"]:
-            assert any("You are installing" in line for line in err_lines), "Expected autodesktop install message."
+            assert any(
+                f"You are installing the {flavor} version of Qt" in line for line in err_lines
+            ), "Expected autodesktop install message."
         elif expect["instruct"]:
             assert any("You can install" in line for line in err_lines), "Expected install instruction message."
