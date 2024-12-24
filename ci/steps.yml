@@ -237,12 +237,8 @@ steps:
       } else {
         Write-Host '##vso[task.setvariable variable=ARCHITECTURE]x86'
       }
-      if ('$(ARCH)' -like '*msvc2019*') {
-        Write-Host '##vso[task.setvariable variable=VSVER]2019'
-      } elseif ('$(ARCH)' -like '*msvc2017*') {
-        Write-Host '##vso[task.setvariable variable=VSVER]2017'
-      } else {
-        Write-Host '##vso[task.setvariable variable=VSVER]2015'
+      if ('$(ARCH)' -like '*msvc*') {
+        Write-Host '##vso[task.setvariable variable=VSVER]2022'
       }
       cd $(WIN_QT_BINDIR)
       unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
@@ -271,6 +267,7 @@ steps:
           eq(variables['SUBCOMMAND'], 'install-qt')
         )
     displayName: Build test with qmake for Linux and macOS w/o extra module
+  # Update the MSVC build step to use the new compiler flags
   - powershell: |
       if ( $env:TOOLCHAIN -eq 'MSVC' ) {
         # Load modules from cache  
@@ -311,6 +308,9 @@ steps:
         eq(variables['SUBCOMMAND'], 'install-qt')
       )
     displayName: build test with qmake w/o extra module
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
 
 # When --archives non-empty
   - script: |
@@ -375,6 +375,9 @@ steps:
           eq(variables['SUBCOMMAND'], 'install-qt')
         )
     displayName: build test with qmake with specific Qt modules (QT += uitools)
+    env:
+      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
 
   - powershell: |
       # Load modules from cache  
@@ -397,7 +400,7 @@ steps:
         eq(variables['Agent.OS'], 'Windows_NT'),
         eq(variables['TOOLCHAIN'], 'MSVC'),
         ne(variables['MODULE'], ''),
-        ne(variables['VSVER'], '2019')
+        ne(variables['VSVER'], '2022')
       )
     displayName: build test with qmake with MSVC with extra module
   - bash: |

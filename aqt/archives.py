@@ -281,10 +281,7 @@ class Updates:
             return []
 
     def _get_boolean(self, item) -> bool:
-        if "true" == item:
-            return True
-        else:
-            return False
+        return bool("true" == item)
 
 
 class QtArchives:
@@ -368,20 +365,33 @@ class QtArchives:
         return f"{module}.{self.arch}"
 
     def _target_packages(self) -> ModuleToPackage:
+        """Build mapping between module names and their possible package names"""
         if self.all_extra:
             return ModuleToPackage({})
+
         base_package = {self._base_module_name(): list(self._base_package_names())}
         target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
+
         for module in self.mod_list:
             suffix = self._module_name_suffix(module)
+            prefix = "qt.qt{}.{}.".format(self.version.major, self._version_str())
+            basic_prefix = "qt.{}.".format(self._version_str())
+
+            # All possible package name formats
             package_names = [
-                f"qt.qt{self.version.major}.{self._version_str()}.{suffix}",
-                f"qt.{self._version_str()}.{suffix}",
+                f"{prefix}{suffix}",
+                f"{basic_prefix}{suffix}",
+                f"{prefix}addons.{suffix}",
+                f"{basic_prefix}addons.{suffix}",
                 f"extensions.{module}.{self._version_str()}.{self.arch}",
+                f"{prefix}{module}.{self.arch}",  # Qt6.8+ format
+                f"{basic_prefix}{module}.{self.arch}",  # Qt6.8+ format
+                f"{prefix}addons.{module}.{self.arch}",  # Qt6.8+ addons format
+                f"{basic_prefix}addons.{module}.{self.arch}",  # Qt6.8+ addons format
             ]
-            if not module.startswith("addons."):
-                package_names.append(f"qt.qt{self.version.major}.{self._version_str()}.addons.{suffix}")
-            target_packages.add(module, package_names)
+
+            target_packages.add(module, list(set(package_names)))  # Remove duplicates
+
         return target_packages
 
     def _get_archives(self):
@@ -393,18 +403,6 @@ class QtArchives:
         else:
             name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
         self._get_archives_base(name, self._target_packages())
-
-    def _append_depends_tool(self, arch, tool_name):
-        os_target_folder = posixpath.join(
-            "online/qtsdkrepository",
-            self.os_name + ("_x86" if self.os_name == "windows" else ("" if self.os_name == "linux_arm64" else "_x64")),
-            self.target,
-            tool_name,
-        )
-        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
-        update_xml_text = self._download_update_xml(update_xml_url)
-        update_xml = Updates.fromstring(self.base, update_xml_text)
-        self._append_tool_update(os_target_folder, update_xml, arch, None)
 
     def _get_archives_base(self, name, target_packages):
         os_name = self.os_name
