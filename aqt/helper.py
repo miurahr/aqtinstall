@@ -19,17 +19,17 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import binascii
-import configparser
 import hashlib
 import logging.config
 import os
 import posixpath
 import secrets
 import sys
-import threading
+from configparser import ConfigParser
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
+from threading import Lock
 from typing import Any, Callable, Dict, Generator, List, Optional, TextIO, Tuple, Union
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
@@ -309,7 +309,7 @@ def xml_to_modules(
     return packages
 
 
-class MyConfigParser(configparser.ConfigParser):
+class MyConfigParser(ConfigParser):
     def getlist(self, section: str, option: str, fallback: List[str] = []) -> List[str]:
         value = self.get(section, option, fallback=None)
         if value is None:
@@ -339,7 +339,7 @@ class SettingsClass:
         "config": None,
         "configfile": None,
         "loggingconf": None,
-        "_lock": threading.Lock(),
+        "_lock": Lock(),
     }
 
     def __new__(cls, *p, **k):
@@ -348,6 +348,8 @@ class SettingsClass:
         return self
 
     def __init__(self) -> None:
+        self.config: Optional[ConfigParser]
+        self._lock: Lock
         if self.config is None:
             with self._lock:
                 if self.config is None:
@@ -356,6 +358,8 @@ class SettingsClass:
                     self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
 
     def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
+        if self.config is None:
+            return
         if file is not None:
             if isinstance(file, str):
                 result = self.config.read(file)
