@@ -441,8 +441,9 @@ class QtArchives:
                 # The extension may or may not exist for this version and arch.
                 try:
                     extensions_xml_text = self._download_update_xml(extensions_xml_url, True)
-                    self.logger.info("Found extension {}".format(ext))
-                    update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
+                    if extensions_xml_text:
+                        self.logger.info("Found extension {}".format(ext))
+                        update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
                 except ArchiveDownloadError:
                     # In case _download_update_xml ignores the hash and tries to get the url.
                     pass
