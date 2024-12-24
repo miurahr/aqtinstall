@@ -804,17 +804,16 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"INFO    : You are installing the MSVC Arm64 version of Qt, which requires that the desktop version "
-                r"of Qt is also installed. Now installing Qt: desktop 6\.5\.2 win64_msvc2019_64\n"
-                r"(?:INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n)?"  # Make second header optional
+                r"INFO    : You are installing the MSVC Arm64 version of Qt\n"
                 r"INFO    : Downloading qtbase...\n"
-                r"(?:Finished installation of qtbase-windows-win64_msvc2019_(?:64|arm64).7z in .*\n"
+                r"(?:.*\n)*?"
+                r"(INFO    : Patching .*?[/\\]6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\](?:qmake|qtpaths)(?:6)?\.bat\n)*"
+                r"INFO    : \n"
+                r"INFO    : Autodesktop will now install windows desktop 6\.5\.2 win64_msvc2019_64 as required by MSVC Arm64\n"
+                r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-windows-win64_msvc2019_(?:64|arm64).7z in .*\n)"
-                r"(?:INFO    : Patching .*6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\](?:qmake|qtpaths)(?:6)?\.bat\n)*"
-                r"INFO    : Finished installation\n"
-                r"INFO    : Time elapsed: .* second"
-            ),
+                r"(?:.*\n)*$"
+            )
         ),
         (
             "install-qt linux android 6.4.1 android_arm64_v8a".split(),
@@ -1087,15 +1086,16 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-                r"INFO    : You are installing the ios version of Qt, which requires that the desktop version "
-                r"of Qt is also installed. Now installing Qt: desktop 6\.1\.2 clang_64\n"
-                r"(?:INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n)?"
-                r"(?:INFO    : Downloading qtbase...\n"
-                r"Finished installation of qtbase-mac-(?:clang_64|ios)\.7z in .*\n)*"
-                r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
-                r"INFO    : Finished installation\n"
-                r"INFO    : Time elapsed: .* second"
-            ),
+                r"INFO    : You are installing the ios version of Qt\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"(?:.*\n)*?"
+                r"INFO    : Patching .*?[/\\]6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
+                r"INFO    : \n"
+                r"INFO    : Autodesktop will now install mac desktop 6\.1\.2 clang_64 as required by ios\n"
+                r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"(?:.*\n)*$"
+            )
         ),
         (
             "install-qt windows desktop 6.2.4 wasm_32".split(),
@@ -1516,18 +1516,14 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
         # Use regex that works for all platforms
         expected_pattern = re.compile(
             r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-            r"INFO    : You are installing the Qt6-WASM version of Qt, which requires that "
-            r"the desktop version of Qt is also installed\. Now installing Qt: desktop 6.8.0 "
-            r"linux_gcc_64\n"
-            r"(?:INFO    : Found extension .*\n)*"
-            r"(?:INFO    : Downloading (?:qt.*|icu)...\n"
-            r"Finished installation of .*\.7z in [\d\.]+\n)*"
-            r"(?:INFO    : Downloading (?:qt.*|icu)...\n"
-            r"Finished installation of .*\.7z in [\d\.]+\n)*"
-            r"(?:INFO    : Patching .*/6\.8\.0/wasm_singlethread/bin/(?:qmake|qtpaths)6?\n)*"
-            r"INFO    : Finished installation\n"
-            r"INFO    : Time elapsed: [\d\.]+ second$",
-            re.MULTILINE,
+            r"INFO    : You are installing the Qt6-WASM version of Qt\n"
+            r"(INFO    : Found extension .*\n)*"
+            r"(INFO    : Downloading (?:qt.*|icu)...\n(?:.*\n)*?)*"
+            r"(INFO    : Patching .*?[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\](?:qmake|qtpaths)(?:6)?\n)*"
+            r"INFO    : \n"
+            r"INFO    : Autodesktop will now install linux desktop 6\.8\.0 linux_gcc_64 as required by Qt6-WASM\n"
+            r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+            r"(?:.*\n)*$"
         )
 
         assert expected_pattern.match(err)

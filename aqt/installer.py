@@ -368,32 +368,6 @@ class Cli:
             should_autoinstall, os_name, target, base_path, _version, arch
         )
 
-        # If autodesktop is enabled and we need a desktop installation, do it first
-        if should_autoinstall and autodesk_arch is not None:
-            # Create new args for desktop installation
-            desktop_args = ["install-qt", effective_os_name, "desktop", qt_version, autodesk_arch]
-
-            # Copy over all relevant flags including modules
-            if modules:
-                desktop_args.extend(["-m"] + modules)
-            if args.base:
-                desktop_args.extend(["--base", args.base])
-            if args.timeout:
-                desktop_args.extend(["--timeout", str(args.timeout)])
-            if args.external:
-                desktop_args.extend(["--external", args.external])
-            if args.keep:
-                desktop_args.append("--keep")
-            if args.archive_dest:
-                desktop_args.extend(["--archive-dest", args.archive_dest])
-            if output_dir:
-                desktop_args.extend(["--outputdir", output_dir])
-
-            # Run desktop installation first
-            desktop_result = self.run(desktop_args)
-            if desktop_result != 0:
-                return desktop_result
-
         # Main installation
         qt_archives: QtArchives = retry_on_bad_connection(
             lambda base_url: QtArchives(
@@ -421,8 +395,39 @@ class Cli:
         if not nopatch:
             Updater.update(target_config, base_path, expect_desktop_archdir)
 
-        self.logger.info("Finished installation")
-        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+        # If autodesktop is enabled and we need a desktop installation, do it first
+        if should_autoinstall and autodesk_arch is not None:
+            is_wasm = arch.startswith("wasm")
+            is_msvc = "msvc" in arch
+            is_win_desktop_msvc_arm64 = (
+                    effective_os_name == "windows" and target == "desktop" and is_msvc and arch.endswith(
+                ("arm64", "arm64_cross_compiled"))
+            )
+            if is_win_desktop_msvc_arm64:
+                qt_type = "MSVC Arm64"
+            elif is_wasm:
+                qt_type = "Qt6-WASM"
+            else:
+                qt_type = target
+
+            # Create new args for desktop installation
+            self.logger.info("")
+            self.logger.info(f"Autodesktop will now install {effective_os_name} desktop "
+                             f"{qt_version} {autodesk_arch} as required by {qt_type}")
+
+            desktop_args = args
+            args.autodesktop = False
+            args.host = effective_os_name
+            args.target = "desktop"
+            args.arch = autodesk_arch
+
+            # Run desktop installation first
+            self.run_install_qt(desktop_args)
+
+        else:
+            self.logger.info("Finished installation")
+            self.logger.info(
+                "Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
         self.show_aqt_version()
@@ -1121,8 +1126,7 @@ class Cli:
         if should_autoinstall:
             # No desktop Qt is installed, but the user has requested installation. Find out what to install.
             self.logger.info(
-                f"You are installing the {qt_type} version of Qt, which requires that the desktop version of Qt "
-                f"is also installed. Now installing Qt: desktop {version} {default_desktop_arch}"
+                f"You are installing the {qt_type} version of Qt"
             )
             return expected_desktop_arch_path.name, default_desktop_arch
         else:
