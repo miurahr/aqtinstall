@@ -1,0 +1,26 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>extensions.qtpdf.681.win64_llvm_mingw</Name>
+  <DisplayName>LLVM-MinGW 17.0.6 x64</DisplayName>
+  <Description>Pre-built Qt PDF LLVM-MinGW 17.0.6 x64.</Description>
+  <Version>6.8.1-0-202411221529</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>extensions.qtpdf.681</Dependencies>
+  <SortingPriority/>
+  <DownloadableArchives>qtpdf-Windows-Windows_11_23H2-Clang-Windows-Windows_11_23H2-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3704556" OS="Any" UncompressedSize="10618590"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/llvm-mingw_64</Argument>
+    <Argument>qtpdf-Windows-Windows_11_23H2-Clang-Windows-Windows_11_23H2-X86_64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>18023296629ce7cc54e69aec77ff6be5c15756cc</SHA1>
+ </PackageUpdate>
+ <SHA1>18023296629ce7cc54e69aec77ff6be5c15756cc</SHA1>
+ <MetadataName>2024-11-22-1531_meta.7z</MetadataName>
+</Updates>

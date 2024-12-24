@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import py7zr
 import pytest
@@ -1280,6 +1280,48 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
     monkeypatch.setattr("aqt.archives.get_hash", lambda *args, **kwargs: hashlib.sha256(bytes(xml, "utf-8")).hexdigest())
     monkeypatch.setattr("aqt.metadata.get_hash", lambda *args, **kwargs: hashlib.sha256(bytes(xml, "utf-8")).hexdigest())
     monkeypatch.setattr("aqt.metadata.getUrl", mock_get_url)
+
+    cli = Cli()
+    cli._setup_settings()
+    assert cli.run(cmd.split()) == 1
+
+    out, err = capsys.readouterr()
+    actual = err[err.index("\n") + 1 :]
+    assert actual == expected, "{0} != {1}".format(actual, expected)
+
+
+@pytest.mark.parametrize(
+    "cmd, xml_files, expected",
+    (
+        (
+            "install-qt windows desktop 6.8.1 win64_llvm_mingw --modules qtwebengine",
+            ["windows-681-update.xml", "qtpdf-681-llvm_mingw.xml", None],
+            "INFO    : Found extension qtpdf\n"
+            "ERROR   : The packages ['qtwebengine'] were not found while parsing XML of package information!\n"
+            "==============================Suggested follow-up:==============================\n"
+            "* Please use 'aqt list-qt windows desktop --modules 6.8.1 <arch>' to show modules available.\n",
+        ),
+    ),
+)
+def test_install_nonexistent_extensions(monkeypatch, capsys, cmd, xml_files: List[Union[str, None]], expected):
+    xml_file_iterator = iter(xml_files)
+    xml_file = None
+    xml = None
+
+    def mock_get_url(url, *args, **kwargs):
+        if not xml_file:
+            raise ArchiveDownloadError(f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found")
+        return xml
+
+    def mock_get_hash(path, *args, **kwargs):
+        nonlocal xml_file
+        nonlocal xml
+        xml_file = next(xml_file_iterator)
+        xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8") if xml_file else ""
+        return hashlib.sha256(bytes(xml, "utf-8")).hexdigest()
+
+    monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
+    monkeypatch.setattr("aqt.archives.get_hash", mock_get_hash)
 
     cli = Cli()
     cli._setup_settings()
