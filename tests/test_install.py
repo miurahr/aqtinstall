@@ -1516,15 +1516,20 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
 
         # Use regex that works for all platforms
         expected_pattern = re.compile(
-            r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+            r"^INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
             r"INFO    : You are installing the Qt6-WASM version of Qt\n"
-            r"(INFO    : Found extension .*\n)*"
-            r"(INFO    : Downloading (?:qt.*|icu)...\n(?:.*\n)*?)*"
-            r"(INFO    : Patching .*?[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\](?:qmake|qtpaths)(?:6)?\n)*"
+            r"(?:INFO    : Found extension .*?\n)*"
+            r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
+            r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
+            r"(?:INFO    : Patching (?:/tmp/[^/]+|[A-Za-z]:[\\/].*?)/6\.8\.0/wasm_singlethread/bin/(?:qmake|qtpaths)(?:6)?\n)*"
             r"INFO    : \n"
             r"INFO    : Autodesktop will now install linux desktop 6\.8\.0 linux_gcc_64 as required by Qt6-WASM\n"
-            r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
-            r"(?:.*\n)*$"
+            r"INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
+            r"(?:INFO    : Found extension .*?\n)*"
+            r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
+            r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
+            r"INFO    : Finished installation\n"
+            r"INFO    : Time elapsed: \d+\.\d+ second\n$"
         )
 
         assert expected_pattern.match(err)
