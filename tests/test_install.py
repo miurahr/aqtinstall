@@ -1295,7 +1295,8 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
     (
         (
             "install-qt windows desktop 6.8.1 win64_llvm_mingw --modules qtwebengine",
-            ["windows-681-update.xml", "qtpdf-681-llvm_mingw.xml", None],
+            {"online/qtsdkrepository/windows_x86/desktop/qt6_681/qt6_681/Updates.xml": "windows-681-update.xml",
+             "online/qtsdkrepository/windows_x86/extensions/qtpdf/681/llvm_mingw/Updates.xml": "qtpdf-681-llvm_mingw.xml"},
             "INFO    : Found extension qtpdf\n"
             "ERROR   : The packages ['qtwebengine'] were not found while parsing XML of package information!\n"
             "==============================Suggested follow-up:==============================\n"
@@ -1303,24 +1304,20 @@ def test_install_nonexistent_archives(monkeypatch, capsys, cmd, xml_file: Option
         ),
     ),
 )
-def test_install_nonexistent_extensions(monkeypatch, capsys, cmd, xml_files: List[Union[str, None]], expected):
-    xml_file_iterator = iter(xml_files)
-    xml_file = None
-    xml = None
-
+def test_install_nonexistent_extensions(monkeypatch, capsys, cmd, xml_files: Dict[str, str], expected):
     def mock_get_url(url, *args, **kwargs):
-        if not xml_file:
-            raise ArchiveDownloadError(f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found")
-        return xml
+        for path, xml_file in xml_files.items():
+            if url.endswith(path):
+                xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
+                return xml
+        raise ArchiveDownloadError(f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found")
 
     def mock_get_hash(path, *args, **kwargs):
-        nonlocal xml_file
-        xml_file = next(xml_file_iterator)
-        if not xml_file:
-            raise ChecksumDownloadFailure(f"Failed to download checksum for the file '{xml_file}'")
-        nonlocal xml
-        xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
-        return hashlib.sha256(bytes(xml, "utf-8")).hexdigest()
+        xml_file = xml_files.get(path)
+        if xml_file:
+            xml = (Path(__file__).parent / "data" / xml_file).read_text("utf-8")
+            return hashlib.sha256(bytes(xml, "utf-8")).hexdigest()
+        raise ChecksumDownloadFailure(f"Failed to download checksum for '{path}'")
 
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.archives.get_hash", mock_get_hash)
