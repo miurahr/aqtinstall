@@ -27,7 +27,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-import patch
+import patch_ng as patch
 
 from aqt.archives import TargetConfig
 from aqt.exceptions import UpdaterError
