@@ -322,6 +322,11 @@ We can find out whether or not that architecture is available for our version of
     win64_mingw81 win64_msvc2019_64
     $ python -m aqt list-qt windows desktop --arch 6.2.0
     win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64 wasm_32
+    $ python -m aqt list-qt windows desktop --arch 6.5.0
+    win64_mingw win64_msvc2019_64 win64_msvc2019_arm64 wasm_singlethread wasm_multithread
+    $ python -m aqt list-qt all_os wasm --arch 6.8.0
+    wasm_singlethread wasm_multithread
+
 
 Not every version of Qt supports WASM. This command shows us that we cannot use WASM with Qt 6.1.3.
 
