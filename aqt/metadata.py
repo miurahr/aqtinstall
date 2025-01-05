@@ -355,6 +355,8 @@ class ArchiveId:
     def all_extensions(self, version: Version) -> List[str]:
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
             return ["", "wasm"]
+        elif self.target == "desktop" and QtRepoProperty.is_in_wasm_range_special_65x_66x(self.host, version):
+            return ["", "wasm_singlethread", "wasm_multithread"]
         elif self.target == "wasm" and QtRepoProperty.is_in_wasm_threaded_range(version):
             return ["wasm_singlethread", "wasm_multithread"]
         elif self.target == "android" and version >= Version("6.0.0"):
@@ -624,6 +626,10 @@ class QtRepoProperty:
             or (host == "linux" and version in SimpleSpec(">=5.13,<6"))
             or version in SimpleSpec(">=5.13.1,<6")
         )
+
+    @staticmethod
+    def is_in_wasm_range_special_65x_66x(host: str, version: Version) -> bool:
+        return version in SimpleSpec(">=6.5.0,<6.7.0")
 
     @staticmethod
     def is_in_wasm_threaded_range(version: Version) -> bool:
