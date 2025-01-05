@@ -6,6 +6,7 @@ import posixpath
 import re
 import subprocess
 import sys
+import tarfile
 import textwrap
 from dataclasses import dataclass
 from datetime import datetime
