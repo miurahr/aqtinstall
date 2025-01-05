@@ -94,31 +94,70 @@ class MockArchive:
     version: str = ""
     arch_dir: str = ""
     should_install: bool = True
+    extract_target: Optional[str] = None
     date: datetime = datetime.now()
 
     def xml_package_update(self) -> str:
-        return textwrap.dedent(
-            f"""\
-             <PackageUpdate>
-              <Name>{self.update_xml_name}</Name>
-              <Version>{self.version}-0-{self.date.strftime("%Y%m%d%H%M")}</Version>
-              <Description>none</Description>
-              <DownloadableArchives>{self.filename_7z}</DownloadableArchives>
-             </PackageUpdate>"""
-        )
+        if self.extract_target:
+            return textwrap.dedent(
+                f"""\
+                 <PackageUpdate>
+                  <Name>{self.update_xml_name}</Name>
+                  <Version>{self.version}-0-{self.date.strftime("%Y%m%d%H%M")}</Version>
+                  <Description>none</Description>
+                  <DownloadableArchives>{self.filename_7z}</DownloadableArchives>
+                  <Operations>
+                   <Operation name="Extract">
+                    <Argument>{self.extract_target}</Argument>
+                    <Argument>{self.filename_7z}</Argument>
+                   </Operation>
+                  </Operations>
+                 </PackageUpdate>"""
+            )
+        else:
+            return textwrap.dedent(
+                f"""\
+                 <PackageUpdate>
+                  <Name>{self.update_xml_name}</Name>
+                  <Version>{self.version}-0-{self.date.strftime("%Y%m%d%H%M")}</Version>
+                  <Description>none</Description>
+                  <DownloadableArchives>{self.filename_7z}</DownloadableArchives>
+                 </PackageUpdate>"""
+            )
 
     def write_compressed_archive(self, dest: Path) -> None:
-        """Make sure all files are created after archive extraction"""
-        with TemporaryDirectory() as temp_dir:
+        def open_writable_archive():
+            if self.filename_7z.endswith(".7z"):
+                return py7zr.SevenZipFile(dest / self.filename_7z, "w")
+            elif self.filename_7z.endswith(".tar.xz"):
+                return tarfile.open(dest / self.filename_7z, "w:xz")
+            # elif self.filename_7z.endswith(".zip"):
+            #     return tarfile.open(dest / "DUMMY-NOT-USED", "w")
+            else:
+                assert False, "Archive type not supported"
+
+        def write_to_archive(arc, src, arcname):
+            if self.filename_7z.endswith(".7z"):
+                arc.writeall(path=src, arcname=arcname)
+            elif self.filename_7z.endswith(".tar.xz"):
+                arc.add(name=src, arcname=arcname)
+            # elif self.filename_7z.endswith(".zip"):
+            #     shutil.make_archive(str(dest / self.filename_7z), "zip", src)
+
+        with TemporaryDirectory() as temp_dir, open_writable_archive() as archive:
+            # if the Updates.xml file uses Operations/Operation[@name='Extract'] elements then the names
+            # of archive members do not include the version and arch_dir path segments, instead they are
+            # supplied by an Argument element which is used when the archive is extracted.
             temp_path = Path(temp_dir)
+            arch_dir = self.arch_dir if not self.extract_target else ""
 
             # Create directories first
             for folder in ("bin", "lib", "mkspecs"):
-                (temp_path / self.arch_dir / folder).mkdir(parents=True, exist_ok=True)
+                (temp_path / arch_dir / folder).mkdir(parents=True, exist_ok=True)
 
             # Write all content files and make executable if in bin/
             for patched_file in self.contents:
-                full_path = temp_path / self.arch_dir / patched_file.filename
+                full_path = temp_path / arch_dir / patched_file.filename
                 if not full_path.parent.exists():
                     full_path.parent.mkdir(parents=True)
                 full_path.write_text(patched_file.unpatched_content, "utf_8")
@@ -126,25 +165,34 @@ class MockArchive:
                     # Make all files in bin executable
                     full_path.chmod(full_path.stat().st_mode | 0o111)
 
-            # Create archive
-            archive_name = "5.9" if self.version == "5.9.0" else self.version
-            with py7zr.SevenZipFile(dest / self.filename_7z, "w") as szf:
-                szf.writeall(temp_path, arcname=archive_name)
+            if self.extract_target:
+                archive_name = "."
+            else:
+                archive_name = "5.9" if self.version == "5.9.0" else self.version
+            write_to_archive(archive, temp_path, arcname=archive_name)
 
 
 def make_mock_geturl_download_archive(
     *,
     standard_archives: List[MockArchive],
     desktop_archives: Optional[List[MockArchive]] = None,
+    extpdf_archives: Optional[List[MockArchive]] = None,
+    extweb_archives: Optional[List[MockArchive]] = None,
     standard_updates_url: str,
     desktop_updates_url: str = "",
+    extpdf_updates_url: str = "",
+    extweb_updates_url: str = "",
 ) -> Tuple[GET_URL_TYPE, DOWNLOAD_ARCHIVE_TYPE]:
     """
     Returns a mock 'getUrl' and a mock 'downloadArchive' function.
     """
     if desktop_archives is None:
         desktop_archives = []
-    for _archive in [*standard_archives, *desktop_archives]:
+    if extpdf_archives is None:
+        extpdf_archives = []
+    if extweb_archives is None:
+        extweb_archives = []
+    for _archive in [*standard_archives, *desktop_archives, *extpdf_archives, *extweb_archives]:
         assert re.match(r".*\.(7z|tar\.xz)$", _archive.filename_7z), "Unsupported file type"
 
     def _generate_package_update_xml(archive: MockArchive) -> str:
@@ -172,6 +220,8 @@ def make_mock_geturl_download_archive(
     desktop_xml = "<Updates>\n{}\n</Updates>".format(
         "\n".join([_generate_package_update_xml(archive) for archive in desktop_archives])
     )
+    extpdf_xml = "<Updates>\n{}\n</Updates>".format("\n".join([archive.xml_package_update() for archive in extpdf_archives]))
+    extweb_xml = "<Updates>\n{}\n</Updates>".format("\n".join([archive.xml_package_update() for archive in extweb_archives]))
     merged_xml = "<Updates>\n{}{}\n</Updates>".format(
         "\n".join([_generate_package_update_xml(archive) for archive in standard_archives]),
         "\n".join([_generate_package_update_xml(archive) for archive in desktop_archives]),
@@ -197,6 +247,8 @@ def make_mock_geturl_download_archive(
         for xml, updates_url in (
             (standard_xml, standard_updates_url),
             (desktop_xml, desktop_updates_url),
+            (extpdf_xml, extpdf_updates_url),
+            (extweb_xml, extweb_updates_url),
         ):
             basename = posixpath.dirname(updates_url)
             if not updates_url:
@@ -215,13 +267,19 @@ def make_mock_geturl_download_archive(
                 elif url.endswith("Updates.xml"):
                     return ext_xml
 
+        """
+        extensions urls may or may not exist.
+        """
+        if "/extensions/" in url:
+            raise ArchiveDownloadError(f"Failed to retrieve file at {url}\nServer response code: 404, reason: Not Found")
+
         assert False, f"No mocked url available for '{url}'"
 
     def mock_download_archive(url: str, out: str, *args):
         """Make a mocked 7z archive at out_filename"""
 
         def locate_archive() -> MockArchive:
-            for archive in [*standard_archives, *desktop_archives]:
+            for archive in [*standard_archives, *desktop_archives, *extpdf_archives, *extweb_archives]:
                 if Path(out).name == archive.filename_7z:
                     return archive
             assert False, "Requested an archive that was not mocked"
@@ -1168,6 +1226,102 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
+        (  # extensions availability: qtpdf and qtwebengine
+            "install-qt windows desktop 6.8.1 win64_msvc2022_64 -m qtwebengine".split(),
+            "windows",
+            "desktop",
+            "6.8.1",
+            {"std": "win64_msvc2022_64", "extpdf": "win64_msvc2022_64", "extweb": "win64_msvc2022_64"},
+            {"std": "msvc2022_64", "extpdf": "msvc2022_64", "extweb": "msvc2022_64"},
+            {
+                "std": "windows_x86/desktop/qt6_681/qt6_681/Updates.xml",
+                "extpdf": "windows_x86/extensions/qtpdf/681/msvc2022_64/Updates.xml",
+                "extweb": "windows_x86/extensions/qtwebengine/681/msvc2022_64/Updates.xml",
+            },
+            {
+                "std": [
+                    plain_qtbase_archive(
+                        "qt.qt6.681.win64_msvc2022_64",
+                        "Windows-Windows_11_23H2-X86_64",
+                        host="Windows-Windows_11_23H2-MSVC2022",
+                    )
+                ],
+                "extpdf": [
+                    MockArchive(
+                        filename_7z="qtpdf-Windows-Windows_11_23H2-MSVC2022-Windows-Windows_11_23H2-X86_64.7z",
+                        update_xml_name="extensions.qtpdf.681.win64_msvc2022_64",
+                        contents=(),
+                        should_install=False,
+                        extract_target="@TargetDir@/6.8.1/msvc2022_64",
+                    ),
+                ],
+                "extweb": [
+                    MockArchive(
+                        filename_7z="qtwebengine-Windows-Windows_11_23H2-MSVC2022-Windows-Windows_11_23H2-X86_64.7z",
+                        update_xml_name="extensions.qtwebengine.681.win64_msvc2022_64",
+                        contents=(
+                            PatchedFile(filename="lib/Qt6WebEngineCore.prl", unpatched_content="... qtwebengine ...\n"),
+                        ),
+                        should_install=False,
+                        extract_target="@TargetDir@/6.8.1/msvc2022_64",
+                    ),
+                ],
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Found extension qtwebengine\n"
+                r"INFO    : Found extension qtpdf\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of "
+                r"qtbase-Windows-Windows_11_23H2-MSVC2022-Windows-Windows_11_23H2-X86_64.7z in .*\n"
+                r"INFO    : Downloading qtwebengine...\n"
+                r"Finished installation of "
+                r"qtwebengine-Windows-Windows_11_23H2-MSVC2022-Windows-Windows_11_23H2-X86_64.7z in .*\n"
+                r"INFO    : Patching .*/6.8.1/msvc2022_64/lib/Qt6WebEngineCore.prl\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (  # extension availability: qtpdf only
+            "install-qt windows desktop 6.8.1 win64_mingw -m qtpdf".split(),
+            "windows",
+            "desktop",
+            "6.8.1",
+            {"std": "win64_mingw", "extpdf": "win64_mingw"},
+            {"std": "mingw_64", "extpdf": "mingw_64"},
+            {
+                "std": "windows_x86/desktop/qt6_681/qt6_681/Updates.xml",
+                "extpdf": "windows_x86/extensions/qtpdf/681/mingw/Updates.xml",
+            },
+            {
+                "std": [
+                    plain_qtbase_archive(
+                        "qt.qt6.681.win64_mingw",
+                        "Windows-Windows_10_22H2-X86_64",
+                        host="Windows-Windows_10_22H2-Mingw",
+                    )
+                ],
+                "extpdf": [
+                    MockArchive(
+                        filename_7z="qtpdf-Windows-Windows_10_22H2-Mingw-Windows-Windows_10_22H2-X86_64.7z",
+                        update_xml_name="extensions.qtpdf.681.win64_mingw",
+                        contents=(),
+                        should_install=False,
+                        extract_target="@TargetDir@/6.8.1/mingw_64",
+                    ),
+                ],
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Found extension qtpdf\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of qtbase-Windows-Windows_10_22H2-Mingw-Windows-Windows_10_22H2-X86_64.7z in .*\n"
+                r"INFO    : Downloading qtpdf...\n"
+                r"Finished installation of qtpdf-Windows-Windows_10_22H2-Mingw-Windows-Windows_10_22H2-X86_64.7z in .*\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
     ),
 )
 def test_install(
@@ -1192,12 +1346,24 @@ def test_install(
     for i in range(len(desktop_archives)):
         desktop_archives[i].version = version
         desktop_archives[i].arch_dir = arch_dir["desk"]
+    extpdf_archives = archives.get("extpdf", [])
+    for i in range(len(extpdf_archives)):
+        extpdf_archives[i].version = version
+        extpdf_archives[i].arch_dir = arch_dir["extpdf"]
+    extweb_archives = archives.get("extweb", [])
+    for i in range(len(extweb_archives)):
+        extweb_archives[i].version = version
+        extweb_archives[i].arch_dir = arch_dir["extweb"]
 
     mock_get_url, mock_download_archive = make_mock_geturl_download_archive(
         standard_archives=std_archives,
         desktop_archives=desktop_archives,
+        extpdf_archives=extpdf_archives,
+        extweb_archives=extweb_archives,
         standard_updates_url=updates_url.get("std", ""),
         desktop_updates_url=updates_url.get("desk", ""),
+        extpdf_updates_url=updates_url.get("extpdf", ""),
+        extweb_updates_url=updates_url.get("extweb", ""),
     )
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
     monkeypatch.setattr("aqt.helper.getUrl", mock_get_url)
