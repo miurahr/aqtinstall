@@ -29,8 +29,8 @@ Some older operating systems may require you to specify Python version 3, like t
 
 To use ``aqt`` to install Qt, you will need to tell ``aqt`` four things:
 
-1. The host operating system (windows, mac, linux, or linux_arm64)
-2. The target SDK (desktop, android, ios, or winrt)
+1. The host operating system (windows, mac, linux, linux_arm64, or all_os for Qt 6.7+)
+2. The target SDK (desktop, android, ios, winrt, or wasm for Qt 6.7+)
 3. The version of Qt you would like to install
 4. The target architecture
 
@@ -41,6 +41,8 @@ In current versions of Qt, mac binaries are universal.
 As of Qt 6.7.0, Linux desktop now supports the arm64 architecture.
 This is implemented as a new host type - ``linux`` is amd64, ``linux_arm64`` is arm64.
 
+As of Qt 6.7.0, the WASM architecture can be installed using ``all_os`` as host and ``wasm`` as target.
+
 To find out what versions of Qt are available, you can use the :ref:`aqt list-qt command <list-qt command>`.
 This command will print all versions of Qt available for Windows Desktop:
 
@@ -50,13 +52,20 @@ This command will print all versions of Qt available for Windows Desktop:
     5.9.0 5.9.1 5.9.2 5.9.3 5.9.4 5.9.5 5.9.6 5.9.7 5.9.8 5.9.9
     5.10.0 5.10.1
     5.11.0 5.11.1 5.11.2 5.11.3
-    5.12.0 5.12.1 5.12.2 5.12.3 5.12.4 5.12.5 5.12.6 5.12.7 5.12.8 5.12.9 5.12.10 5.12.11
+    5.12.0 5.12.1 5.12.2 5.12.3 5.12.4 5.12.5 5.12.6 5.12.7 5.12.8 5.12.9 5.12.10 5.12.11 5.12.12
     5.13.0 5.13.1 5.13.2
     5.14.0 5.14.1 5.14.2
     5.15.0 5.15.1 5.15.2
     6.0.0 6.0.1 6.0.2 6.0.3 6.0.4
-    6.1.0 6.1.1 6.1.2
-    6.2.0
+    6.1.0 6.1.1 6.1.2 6.1.3
+    6.2.0 6.2.1 6.2.2 6.2.3 6.2.4
+    6.3.0 6.3.1 6.3.2
+    6.4.0 6.4.1 6.4.2 6.4.3
+    6.5.0 6.5.1 6.5.2 6.5.3
+    6.6.0 6.6.1 6.6.2 6.6.3
+    6.7.0 6.7.1 6.7.2 6.7.3
+    6.8.0 6.8.1
+    6.9.0
 
 Notice that the version numbers are sorted, grouped by minor version number,
 and separated by a single space-character. The output of all of the 
@@ -70,16 +79,16 @@ so it may or may not be up to date.
 
 .. _Available Qt versions: https://github.com/miurahr/aqtinstall/wiki/Available-Qt-versions
 
-Now that we know what versions of Qt are available, let's choose version 6.2.0.
+Now that we know what versions of Qt are available, let's choose version 6.8.0.
 
 The next thing we need to do is find out what architectures are available for
-Qt 6.2.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list-qt command>` with the
+Qt 6.8.0 for Windows Desktop. To do this, we can use :ref:`aqt list-qt <list-qt command>` with the
 ``--arch`` flag:
 
 .. code-block:: console
 
-    $ aqt list-qt windows desktop --arch 6.2.0
-    win64_mingw81 win64_msvc2019_64 win64_msvc2019_arm64 wasm_32
+    $ aqt list-qt windows desktop --arch 6.8.0
+    win64_llvm_mingw win64_mingw win64_msvc2022_64 win64_msvc2022_arm64_cross_compiled
 
 Notice that this is a very small subset of the architectures listed in the 
 `Available Qt versions`_ wiki page. If we need to use some architecture that
@@ -87,21 +96,21 @@ is not on this list, we can use the `Available Qt versions`_ wiki page to get
 a rough idea of what versions support the architecture we want, and then use
 :ref:`aqt list-qt <list-qt command>` to confirm that the architecture is available.
 
-Let's say that we want to install Qt 6.2.0 with architecture ``win64_mingw81``.
+Let's say that we want to install Qt 6.8.0 with architecture ``win64_mingw``.
 The installation command we need is:
 
 .. code-block:: console
 
-    $ aqt install-qt windows desktop 6.2.0 win64_mingw81
+    $ aqt install-qt windows desktop 6.8.0 win64_mingw
 
-Let's say that we want to install the next version of Qt 6.2 as soon as it is available.
+Let's say that we want to install the next version of Qt 6.8 as soon as it is available.
 We can do this by using a
 `SimpleSpec <https://python-semanticversion.readthedocs.io/en/latest/reference.html#semantic_version.SimpleSpec>`_
 instead of an explicit version:
 
 .. code-block:: console
 
-    $ aqt install-qt windows desktop 6.2 win64_mingw81
+    $ aqt install-qt windows desktop 6.8 win64_mingw
 
 As of Qt 6.7.0, arm64 architecture is now supported for linux desktop.
 It is implemented using both a different host (``linux_arm64``) and architecture (``linux_gcc_arm64``).
@@ -109,6 +118,13 @@ It is implemented using both a different host (``linux_arm64``) and architecture
 .. code-block:: console
 
     $ aqt install-qt linux_arm64 desktop 6.7.0 linux_gcc_arm64
+
+As of Qt 6.7.0, the WASM architecture can be installed using ``all_os`` as host and ``wasm`` as target.
+The available architectures are ``wasm_singlethread`` and ``wasm_multithread``
+
+.. code-block:: console
+
+    $ aqt install-qt all_os wasm 6.7.0 wasm_singlethread
 
 External 7-zip extractor
 ------------------------
@@ -120,14 +136,14 @@ you could use 7-zip_ on a Windows desktop, using this command:
 
 .. code-block:: doscon
 
-    C:\> aqt install-qt windows desktop 6.2.0 gcc_64 --external 7za.exe
+    C:\> aqt install-qt windows desktop 6.8.0 win64_msvc2022_64 --external 7za.exe
 
 On Linux, you can specify p7zip_, a Linux port of 7-zip_, which is often
 installed by default, using this command:
 
 .. code-block:: console
 
-    $ aqt install-qt linux desktop 6.2.0 gcc_64 --external 7z
+    $ aqt install-qt linux desktop 6.8.0 linux_gcc_64 --external 7z
 
 .. _py7zr: https://pypi.org/project/py7zr/
 .. _p7zip: https://p7zip.sourceforge.net/
@@ -138,8 +154,8 @@ Changing the output directory
 
 By default, ``aqt`` will install all of the Qt packages into the current
 working directory, in the subdirectory ``./<Qt version>/<arch>/``.
-For example, if we install Qt 6.2.0 for Windows desktop with arch ``win64_mingw81``,
-it would end up in ``./6.2.0/win64_mingw81``.
+For example, if we install Qt 6.8.0 for Windows desktop with arch ``win64_mingw``,
+it would end up in ``./6.8.0/win64_mingw``.
 
 If you would prefer to install it to another location, you
 will need to use the ``-O`` or ``--outputdir`` flag.
@@ -152,7 +168,7 @@ you may use this command:
 .. code-block:: doscon
 
     C:\> mkdir Qt
-    C:\> aqt install-qt --outputdir c:\Qt windows desktop 6.2.0 win64_mingw81
+    C:\> aqt install-qt --outputdir c:\Qt windows desktop 6.8.0 win64_mingw
 
 
 Installing Modules
@@ -294,7 +310,9 @@ You can do this automatically with the ``--autodesktop`` flag:
 Installing Qt for WASM
 ----------------------
 
-To find out how to install Qt for WASM, we will need to use the ``wasm_32`` architecture.
+To find out how to install Qt for WASM, we will need to use the ``wasm_32`` architecture for Qt versions <= 6.4.*
+For Qt versions 6.5.* and 6.6.*, we will need to use the ``wasm_singlethread`` or ``wasm_multithread`` architectures.
+For Qt version >= 6.7.*, we will need to use the host ``all_os``, the target ``wasm``, and the ``wasm_singlethread`` or ``wasm_multithread`` architectures.
 We can find out whether or not that architecture is available for our version of Qt with the
 ``--arch`` flag.
 
@@ -307,8 +325,9 @@ We can find out whether or not that architecture is available for our version of
 
 Not every version of Qt supports WASM. This command shows us that we cannot use WASM with Qt 6.1.3.
 
-Please note that the WASM architecture for Qt 6.5.0+ changed from ``wasm_32`` to ``wasm_singlethread`` and
-``wasm_multithread``. Always use ``aqt list-qt`` to check what architectures are available for the desired version of Qt.
+Please note that the WASM architecture for Qt 6.5.* and Qt 6.6.* changed from ``wasm_32`` to ``wasm_singlethread`` and
+``wasm_multithread``. For Qt 6.7.* and above, you will also need to use the host ``all_os`` and target ``wasm``.
+Always use ``aqt list-qt`` to check what architectures are available for the desired version of Qt.
 
 We can check the modules available as before:
 
@@ -331,6 +350,8 @@ You can do this automatically with the ``--autodesktop`` flag:
 .. code-block:: console
 
     $ aqt install-qt linux desktop 6.2.0 wasm_32 -m qtcharts qtnetworkauth --autodesktop
+    $ aqt install-qt linux desktop 6.6.0 wasm_singlethread -m qtcharts qtnetworkauth --autodesktop
+    $ aqt install-qt all_os wasm 6.8.0 wasm_multithread -m qtcharts qtnetworkauth --autodesktop
 
 
 Installing Docs
