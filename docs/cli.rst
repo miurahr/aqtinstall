@@ -848,7 +848,7 @@ Example: Print modules available for installation with ``install-example/doc``:
     aqt list-example windows 5.15.2 --modules
     aqt list-doc windows 5.15.2 --modules
 
-Example: Install Web Assembly
+Example: Install Web Assembly for Qt5
 
 .. code-block:: console
 
