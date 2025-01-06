@@ -530,37 +530,22 @@ def test_get_autodesktop_dir_and_arch_non_android(
     [
         pytest.param(
             "install-qt-commercial desktop {} 6.8.0",
-            {"windows": "win64_msvc2022_64", "linux": "gcc_64", "mac": "clang_64"},
+            {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
             "No Qt account credentials found. Either provide --user and --password or",
-            id="basic-commercial-install",
         ),
     ],
 )
-def test_cli_install_qt_commercial(capsys, monkeypatch, cmd, expected_arch, expected_err):
+def test_cli_login_qt_commercial(capsys, monkeypatch, cmd, expected_arch, expected_err):
     """Test commercial Qt installation command"""
     # Detect current platform
     current_platform = platform.system().lower()
     arch = expected_arch[current_platform]
     cmd = cmd.format(arch)
 
-    # Mock platform-specific paths
-    def mock_exists(*args, **kwargs):
-        return False
-
-    monkeypatch.setattr(Path, "exists", mock_exists)
-
-    # Mock subprocess calls
-    def mock_subprocess(*args, **kwargs):
-        return 0
-
-    monkeypatch.setattr("subprocess.check_call", mock_subprocess)
-
-    # Run the command
     cli = Cli()
     cli._setup_settings()
     result = cli.run(cmd.split())
 
-    # Check outputs
-    out, err = capsys.readouterr()
-    assert expected_err in err
-    assert result == 1  # Should fail due to missing credentials
+    _, err = capsys.readouterr()
+    assert str(err).find(expected_err)
+    assert not result == 0

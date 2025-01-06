@@ -130,6 +130,16 @@ class InstallArgParser(CommonInstallArgParser):
     arch: Optional[str]
     qt_version: str
     qt_version_spec: str
+    version: Optional[str]
+    user: Optional[str]
+    password: Optional[str]
+    operation_does_not_exist_error: str
+    overwrite_target_dir: str
+    stop_processes_for_updates: str
+    installation_error_with_cancel: str
+    installation_error_with_ignore: str
+    associate_common_filetypes: str
+    telemetry: str
 
     modules: Optional[List[str]]
     archives: Optional[List[str]]
@@ -660,9 +670,18 @@ class Cli:
         )
         show_list(meta)
 
-    def run_install_qt_commercial(self, args):
+    def run_install_qt_commercial(self, args: InstallArgParser) -> None:
         """Execute commercial Qt installation"""
         self.show_aqt_version()
+
+        if args.base is not None:
+            base = args.base
+        else:
+            base = Settings.baseurl
+        if args.timeout is not None:
+            timeout = args.timeout
+        else:
+            timeout = Settings.response_timeout
 
         target = args.target
         arch = args.arch
@@ -679,6 +698,15 @@ class Cli:
             password=password,
             output_dir=output_dir,
             logger=self.logger,
+            timeout=timeout,
+            base_url=base,
+            operation_does_not_exist_error=args.operation_does_not_exist_error,
+            overwrite_target_dir=args.overwrite_target_dir,
+            stop_processes_for_updates=args.stop_processes_for_updates,
+            installation_error_with_cancel=args.installation_error_with_cancel,
+            installation_error_with_ignore=args.installation_error_with_ignore,
+            associate_common_filetypes=args.associate_common_filetypes,
+            telemetry=args.telemetry,
         )
 
         try:
@@ -697,7 +725,7 @@ class Cli:
         py_build = platform.python_compiler()
         return f"aqtinstall(aqt) v{aqt.__version__} on Python {py_version} [{py_impl} {py_build}]"
 
-    def show_aqt_version(self, args=None):
+    def show_aqt_version(self, args: Optional[list[str]] = None) -> None:
         """Display version information"""
         self.logger.info(self._format_aqt_version())
 
@@ -780,7 +808,7 @@ class Cli:
         )
         self._set_common_options(install_tool_parser)
 
-    def _set_install_qt_commercial_parser(self, install_qt_commercial_parser):
+    def _set_install_qt_commercial_parser(self, install_qt_commercial_parser) -> None:
         install_qt_commercial_parser.set_defaults(func=self.run_install_qt_commercial)
         install_qt_commercial_parser.add_argument(
             "target",
@@ -802,6 +830,48 @@ class Cli:
         install_qt_commercial_parser.add_argument(
             "--password",
             help="Qt account password",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--operation_does_not_exist_error",
+            choices=["Abort", "Ignore"],
+            default="Ignore",
+            help="OperationDoesNotExistError: Abort, Ignore. Default: Ignore",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--overwrite_target_dir",
+            choices=["Yes", "No"],
+            default="No",
+            help="OverwriteTargetDirectory: Yes, No. Default: No",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--stop_processes_for_updates",
+            choices=["Retry", "Ignore", "Cancel"],
+            default="Cancel",
+            help="stopProcessesForUpdates: Retry, Ignore, Cancel. Default: Cancel",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--installation_error_with_cancel",
+            choices=["Retry", "Ignore", "Cancel"],
+            default="Cancel",
+            help="installationErrorWithCancel: Retry, Ignore, Cancel. Default: Cancel",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--installation_error_with_ignore",
+            choices=["Retry", "Ignore"],
+            default="Ignore",
+            help="installationErrorWithIgnore: Retry, Ignore. Default: Ignore",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--associate_common_filetypes",
+            choices=["Yes", "No"],
+            default="Yes",
+            help="AssociateCommonFiletypes: Yes, No. Default: Yes",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--telemetry",
+            choices=["Yes", "No"],
+            default="No",
+            help="telemetry-question: Yes, No. Default: No",
         )
         self._set_common_options(install_qt_commercial_parser)
 
@@ -1012,14 +1082,13 @@ class Cli:
         )
         list_parser.set_defaults(func=self.run_list_tool)
 
-    def _make_common_parsers(self, subparsers: argparse._SubParsersAction):
+    def _make_common_parsers(self, subparsers: argparse._SubParsersAction) -> None:
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
-        #
         version_parser = subparsers.add_parser("version")
         version_parser.set_defaults(func=self.show_aqt_version)
 
-    def _set_common_options(self, subparser):
+    def _set_common_options(self, subparser: argparse.ArgumentParser) -> None:
         subparser.add_argument(
             "-O",
             "--outputdir",
@@ -1300,7 +1369,8 @@ def run_installer(
         listener.stop()
 
 
-def init_worker_sh():
+def init_worker_sh() -> None:
+    """Initialize worker signal handling"""
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
@@ -1312,7 +1382,7 @@ def installer(
     archive_dest: Path,
     settings_ini: str,
     keep: bool,
-):
+) -> None:
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
@@ -1380,135 +1450,210 @@ def installer(
 
 
 class CommercialInstaller:
+    ALLOWED_INSTALLERS = {
+        "windows": "qt-unified-windows-x64-online.exe",
+        "mac": "qt-unified-macOS-x64-online.dmg",
+        "linux": "qt-unified-linux-x64-online.run",
+    }
+
+    ALLOWED_AUTO_ANSWER_OPTIONS = {
+        "OperationDoesNotExistError": frozenset({"Abort", "Ignore"}),
+        "OverwriteTargetDirectory": frozenset({"Yes", "No"}),
+        "stopProcessesForUpdates": frozenset({"Retry", "Ignore", "Cancel"}),
+        "installationErrorWithCancel": frozenset({"Retry", "Ignore", "Cancel"}),
+        "installationErrorWithIgnore": frozenset({"Retry", "Ignore"}),
+        "AssociateCommonFiletypes": frozenset({"Yes", "No"}),
+        "telemetry-question": frozenset({"Yes", "No"}),
+    }
+
     def __init__(
         self,
         target: str,
-        arch: str,
-        version: str,
+        arch: Optional[str],
+        version: Optional[str],
         username: Optional[str] = None,
         password: Optional[str] = None,
         output_dir: Optional[str] = None,
         logger: Optional[Logger] = None,
+        timeout: Optional[float] = None,
+        base_url: str = "https://download.qt.io",
+        operation_does_not_exist_error="Ignore",
+        overwrite_target_dir: str = "Yes",
+        stop_processes_for_updates: str = "Cancel",
+        installation_error_with_cancel: str = "Cancel",
+        installation_error_with_ignore: str = "Ignore",
+        associate_common_filetypes: str = "Yes",
+        telemetry: str = "No",
     ):
         self.target = target
-        self.arch = arch
-        self.version = Version(version)
+        self.arch = arch or ""
+        self.version = Version(version) if version else Version()
         self.username = username
         self.password = password
         self.output_dir = output_dir
         self.logger = logger or getLogger(__name__)
+        self.timeout = int(timeout) if timeout else 3600
+        self.base_url = base_url
 
-        # Map platform names consistently
-        system = platform.system()
-        if system == "Darwin":
-            self.os_name = "mac"
-        elif system == "Linux":
-            self.os_name = "linux"
-        else:
-            self.os_name = "windows"
+        # Store auto-answer options
+        self.operation_does_not_exist_error = operation_does_not_exist_error
+        self.overwrite_target_dir = overwrite_target_dir
+        self.stop_processes_for_updates = stop_processes_for_updates
+        self.installation_error_with_cancel = installation_error_with_cancel
+        self.installation_error_with_ignore = installation_error_with_ignore
+        self.associate_common_filetypes = associate_common_filetypes
+        self.telemetry = telemetry
 
-        self.installer_filename = self._get_installer_filename()
+        # Set OS-specific properties
+        self.os_name = self._get_os_name()
+        self.installer_filename = self.ALLOWED_INSTALLERS[self.os_name]
         self.qt_account = self._get_qt_account_path()
 
-    def _get_installer_filename(self) -> str:
-        """Get OS-specific installer filename"""
-        base = "qt-unified"
-
-        if self.os_name == "windows":
-            return f"{base}-windows-x64-online.exe"
-        elif self.os_name == "mac":
-            return f"{base}-macOS-x64-online.dmg"
+    def _get_os_name(self) -> str:
+        system = platform.system()
+        if system == "Darwin":
+            return "mac"
+        elif system == "Linux":
+            return "linux"
+        elif system == "Windows":
+            return "windows"
         else:
-            return f"{base}-linux-x64-online.run"
+            raise ValueError(f"Unsupported operating system: {system}")
 
     def _get_qt_account_path(self) -> Path:
-        """Get OS-specific qtaccount.ini path"""
         if self.os_name == "windows":
-            return Path(os.environ["APPDATA"]) / "Qt" / "qtaccount.ini"
+            appdata = os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))
+            return Path(appdata) / "Qt" / "qtaccount.ini"
         elif self.os_name == "mac":
             return Path.home() / "Library" / "Application Support" / "Qt" / "qtaccount.ini"
-        else:
+        else:  # Linux
             return Path.home() / ".local" / "share" / "Qt" / "qtaccount.ini"
 
-    def _download_installer(self, target_path: Path):
-        """Download Qt online installer"""
-        url = f"https://download.qt.io/official_releases/online_installers/{self.installer_filename}"
-
+    def _download_installer(self, target_path: Path) -> None:
+        url = f"{self.base_url}/official_releases/online_installers/{self.installer_filename}"
         try:
-            response = requests.get(url, stream=True)
+            response = requests.get(url, stream=True, timeout=self.timeout)
             response.raise_for_status()
 
-            total = response.headers.get("content-length", 0)
-
             with open(target_path, "wb") as f:
-                if total:
-                    desc = f"Downloading {self.installer_filename}"
-                    for chunk in response.iter_content(chunk_size=8192):
-                        f.write(chunk)
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
 
             if self.os_name != "windows":
-                os.chmod(target_path, 0o755)
-
-        except requests.exceptions.RequestException as e:
-            raise ArchiveDownloadError(f"Failed to download installer: {str(e)}")
+                os.chmod(target_path, 0o500)  # Read/execute only for owner
+        except Exception as e:
+            raise RuntimeError(f"Failed to download installer: {e}")
 
     def _get_package_name(self) -> str:
-        """Convert aqt parameters to Qt package name"""
         qt_version = f"{self.version.major}{self.version.minor}{self.version.patch}"
         return f"qt.qt{self.version.major}.{qt_version}.{self.arch}"
 
-    def _get_install_command(self, installer_path: Path) -> list:
-        """Build installation command"""
-        cmd = [str(installer_path)]
+    def _resolve_path(self, installer_path: Path) -> list[str]:
+        """Resolve the installer path to an absolute path."""
+        resolved_path = str(installer_path.resolve(strict=True))
+        return [resolved_path]
 
-        # Authentication
+    def _get_install_command(self, installer_path: Path) -> list[str]:
+        cmd = self._resolve_path(installer_path)
+
         if self.username and self.password:
             cmd.extend(["--email", self.username, "--pw", self.password])
 
-        # Installation directory
         if self.output_dir:
-            cmd.extend(["--root", str(self.output_dir)])
+            output_path = Path(self.output_dir).resolve()
+            output_path.mkdir(parents=True, exist_ok=True)
+            cmd.extend(["--root", str(output_path)])
 
-        # Unattended options
+        auto_answers = [
+            f"{key}={value}"
+            for key, value in {
+                "OperationDoesNotExistError": self.operation_does_not_exist_error,
+                "OverwriteTargetDirectory": self.overwrite_target_dir,
+                "stopProcessesForUpdates": self.stop_processes_for_updates,
+                "installationErrorWithCancel": self.installation_error_with_cancel,
+                "installationErrorWithIgnore": self.installation_error_with_ignore,
+                "AssociateCommonFiletypes": self.associate_common_filetypes,
+                "telemetry-question": self.telemetry,
+            }.items()
+            if value in self.ALLOWED_AUTO_ANSWER_OPTIONS.get(key, set())
+        ]
+
         cmd.extend(
             [
                 "--accept-licenses",
                 "--accept-obligations",
                 "--confirm-command",
-                "--default-answer",
+                "--auto-answer",
+                ",".join(auto_answers),
                 "install",
                 self._get_package_name(),
             ]
         )
-
         return cmd
 
-    def install(self):
-        """Run commercial installation"""
-        # Verify auth
-        if not self.qt_account.exists() and not (self.username and self.password):
-            raise CliInputError(
-                "No Qt account credentials found. Either provide --user and --password "
-                f"or ensure {self.qt_account} exists"
+    def _exec_qt_installer(self, arguments: list[str], working_dir: str) -> None:
+        """Execute Qt installer with validated arguments."""
+        if self.os_name == "windows":
+            command = [self.ALLOWED_INSTALLERS["windows"]]
+            command.extend(arguments)
+            subprocess.run(command, shell=False, check=True, cwd=working_dir)
+        elif self.os_name == "mac":
+            command = [self.ALLOWED_INSTALLERS["mac"]]
+            command.extend(arguments)
+            subprocess.run(command, shell=False, check=True, cwd=working_dir)
+        elif self.os_name == "linux":
+            command = [self.ALLOWED_INSTALLERS["linux"]]
+            command.extend(arguments)
+            subprocess.run(command, shell=False, check=True, cwd=working_dir)
+        else:
+            raise RuntimeError(f"Unsupported operating system: {self.os_name}")
+
+    def install(self) -> None:
+        if (
+            not self.qt_account.exists()
+            and not (self.username and self.password)
+            and os.environ.get("QT_INSTALLER_JWT_TOKEN") == ""
+        ):
+            raise RuntimeError(
+                "No Qt account credentials found. Provide username and password or ensure qtaccount.ini exists."
             )
 
-        # Create temp dir for installer
-        with tempfile.TemporaryDirectory() as temp_dir:
-            installer_path = Path(temp_dir) / self.installer_filename
+        with tempfile.TemporaryDirectory(prefix="qt_install_") as temp_dir:
+            temp_path = Path(temp_dir)
+            os.chmod(temp_dir, 0o700)
 
-            # Download installer
-            self.logger.info(f"Downloading Qt online installer to {installer_path}")
+            installer_path = temp_path / self.installer_filename
+            self.logger.info(f"Downloading Qt installer to {installer_path}")
             self._download_installer(installer_path)
 
-            # Run installation
             self.logger.info("Starting Qt installation")
-            cmd = self._get_install_command(installer_path)
-
-            self.logger.info(f"Running: {cmd}")
 
             try:
-                subprocess.check_call(cmd)
-            except subprocess.CalledProcessError as e:
-                raise CliInputError(f"Qt installation failed with code {e.returncode}")
+                cmd = self._get_install_command(installer_path)
+                safe_cmd = cmd.copy()
+                if "--pw" in safe_cmd:
+                    pw_index = safe_cmd.index("--pw")
+                    if len(safe_cmd) > pw_index + 1:
+                        safe_cmd[pw_index + 1] = "********"
+                if "--email" in safe_cmd:
+                    email_index = safe_cmd.index("--email")
+                    if len(safe_cmd) > email_index + 1:
+                        safe_cmd[email_index + 1] = "********"
+                self.logger.info(f"Running: {' '.join(safe_cmd)}")
 
-        self.logger.info("Qt installation completed successfully")
+                target_path = temp_path / self.ALLOWED_INSTALLERS[self.os_name]
+                if installer_path != target_path:
+                    if target_path.exists():
+                        target_path.unlink()
+                    os.symlink(installer_path, target_path)
+
+                self._exec_qt_installer(cmd[1:], temp_dir)
+
+            except subprocess.CalledProcessError as e:
+                self.logger.error(f"Installation failed with exit code {e.returncode}")
+            except subprocess.TimeoutExpired:
+                self.logger.error("Installation timed out")
+            finally:
+                if installer_path.exists():
+                    installer_path.unlink()
+                self.logger.info("Qt installation completed successfully")
