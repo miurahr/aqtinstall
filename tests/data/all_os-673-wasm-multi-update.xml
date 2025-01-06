@@ -1,0 +1,575 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtcharts, qt.qt6.673.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>709f4a742d683a473392c3ebf0ca7367b4a86f52</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtcharts.wasm_multithread</Name>
+  <DisplayName>Qt Charts for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtcharts, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="780024" OS="Any" UncompressedSize="7427847"/>
+  <SHA1>49aa9f1c48fb6a67dc43f6293903eeff61d3fae2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtdatavis3d, qt.qt6.673.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>db5b92cf1bc75a08bc71307d3090794ae7571b5c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtdatavis3d.wasm_multithread</Name>
+  <DisplayName>Qt Data Visualization for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtdatavis3d, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="602371" OS="Any" UncompressedSize="4683233"/>
+  <SHA1>132dfa2333ae4d44c6c7e05d13d6b6e62ec4281a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtgraphs</Name>
+  <DisplayName>Qt Graphs</DisplayName>
+  <Description>Qt Graphs is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtgraphs, qt.qt6.673.examples.qtgraphs</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ab466cedee8b9c9fef55d2b6c1895a05a6108e86</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtgraphs.wasm_multithread</Name>
+  <DisplayName>Qt Graphs for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtgraphs, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgraphs-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="662219" OS="Any" UncompressedSize="5040477"/>
+  <SHA1>125d30fd5449989b7c9760cf95bdc7b448de460c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtgrpc</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC</DisplayName>
+  <Description>QtGrpc contains the two modules QtProtobuf and QtGrpc:&lt;br&gt;QtProtobuf provides a generator which can be used to generate Qt-based classes from messages defined in .proto files.&lt;br&gt;QtGrpc provides support for generating Qt-based clients and servers based on service description in .proto files, as well as communicating with gRPC services using QtProtobuf messages.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtgrpc, qt.qt6.673.examples.qtgrpc</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>95996afa7a859677d3932583f9566ebe46a71b98</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtgrpc.wasm_multithread</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtgrpc, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgrpc-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="790356" OS="Any" UncompressedSize="12108940"/>
+  <SHA1>b7c893030077cf71ec38e18d2bc13df257ad9b20</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qthttpserver</Name>
+  <DisplayName>Qt HTTP Server</DisplayName>
+  <Description>Qt HTTP Server supports building an HTTP server into an application.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <Dependencies>qt.qt6.673.doc.qthttpserver, qt.qt6.673.examples.qthttpserver, qt.qt6.673.addons.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>4fb85d3a24e15912a79fefeac86d32cb8736d3a4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qthttpserver.wasm_multithread</Name>
+  <DisplayName>Qt HTTP Server for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qthttpserver, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qthttpserver-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="62771" OS="Any" UncompressedSize="313475"/>
+  <SHA1>1f2812b6b936dfe1d9c938e309d24364bdf3af26</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtimageformats</Name>
+  <DisplayName>Qt Image Formats</DisplayName>
+  <Description>The Qt Image Formats  provides optional support for other image file formats. The core Qt Gui library by default supports reading and writing image files of the most common file formats: PNG, JPEG, BMP, GIF and a few more.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtimageformats, qt.qt6.673.examples.qtimageformats</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b66339e00707c3e5b4925e72b32752df740225ae</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtimageformats.wasm_multithread</Name>
+  <DisplayName>Qt ImageFormats for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtimageformats, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="307906" OS="Any" UncompressedSize="1303727"/>
+  <SHA1>101926dcbea97460774757671582aa73f65a97ba</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtlottie, qt.qt6.673.examples.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>66e1f95e66f4cbcf74aabe6abb57cabb53748c56</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtlottie.wasm_multithread</Name>
+  <DisplayName>Qt Lottie Animation for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtlottie, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="174227" OS="Any" UncompressedSize="1172663"/>
+  <SHA1>49b3b55fa515a93f57447acbdc19f0b5550d463d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtmultimedia</Name>
+  <DisplayName>Qt Multimedia</DisplayName>
+  <Description>Qt Multimedia provides a rich set of QML types and C++ classes to handle multimedia content.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtmultimedia, qt.qt6.673.examples.qtmultimedia</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>a32d11ba339e58c78d50e150455ef5325844ddf4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtmultimedia.wasm_multithread</Name>
+  <DisplayName>Qt Multimedia for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtmultimedia, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="893614" OS="Any" UncompressedSize="6103321"/>
+  <SHA1>de60bc21ee5d1fcbbd452a56ba2db794c7632659</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtquick3dphysics</Name>
+  <DisplayName>Qt Quick 3D Physics</DisplayName>
+  <Description>Qt Quick 3D Physics provides a high-level QML module adding physical simulation capabilities to Qt Quick 3D.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.673.doc.qtquick3dphysics, qt.qt6.673.examples.qtquick3dphysics</Dependencies>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>98ff21b24948e3049c338a39c9869e554eb016de</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtquick3dphysics.wasm_multithread</Name>
+  <DisplayName>Qt Quick 3D Physics for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtquick3dphysics, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3dphysics-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1703098" OS="Any" UncompressedSize="11043481"/>
+  <SHA1>9055406bba6dee42290d6ab527c0fa6bd34ea03c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtscxml</Name>
+  <DisplayName>Qt State Machines</DisplayName>
+  <Description>The Qt State Machines package provides API's and execution models that can be used to effectively embed the elements and semantics of statecharts in Qt applications. For advanced use cases the state machines can even be created from State Chart XML (SCXML) files.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtscxml, qt.qt6.673.examples.qtscxml</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>5233e1bd637c9a7145184cada40b9ae6ce508e5e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtscxml.wasm_multithread</Name>
+  <DisplayName>Qt State Machines for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtscxml, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="374965" OS="Any" UncompressedSize="3124319"/>
+  <SHA1>fa7be7d8422d7a43fd7d04cf8765636936f76ed7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtspeech</Name>
+  <DisplayName>Qt Speech</DisplayName>
+  <Description>The Qt Speech module allows using text to speech engines</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.673.doc.qtspeech, qt.qt6.673.examples.qtspeech</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>fe167d5965af95bdf4c3a257b38bd369e2a5158e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtspeech.wasm_multithread</Name>
+  <DisplayName>Qt Speech for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtspeech, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtspeech-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="92263" OS="Any" UncompressedSize="681393"/>
+  <SHA1>5a478fb695861567f62373fcb1a5450eaf684213</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your ownlayouts and styles.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtvirtualkeyboard, qt.qt6.673.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>50a286419ea397836738b1e12d6cf61e3f9e66c0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtvirtualkeyboard.wasm_multithread</Name>
+  <DisplayName>Qt Virtual Keyboard for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtvirtualkeyboard, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2249480" OS="Any" UncompressedSize="7342129"/>
+  <SHA1>de254f88a00aef7848bb20ca4aafe41c804be1b9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebchannel</Name>
+  <DisplayName>Qt WebChannel</DisplayName>
+  <Description>Qt WebChannel enables peer-to-peer communication between a server (QML/C++ application) and a client (HTML/JavaScript or QML application). It is supported out of the box by Qt WebEngine. In addition it can work on all browsers that support WebSockets, enabling Qt WebChannel clients to run in any JavaScript environment (including QML). This requires the implementation of a custom transport based on Qt WebSockets.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtwebchannel, qt.qt6.673.examples.qtwebchannel</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>51b6c88b0753f46f69425fd5c91052f3804e3335</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebchannel.wasm_multithread</Name>
+  <DisplayName>Qt WebChannel for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtwebchannel, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="97908" OS="Any" UncompressedSize="585684"/>
+  <SHA1>cc43524e3cf25de122986ef7b2174c72e32f3043</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebsockets</Name>
+  <DisplayName>Qt WebSockets</DisplayName>
+  <Description>WebSocket is a web-based protocol designed to enable two-way communication between a client application and a remote host. It enables the two entities to send data back and forth if the initial handshake succeeds. WebSocket is the solution for applications that struggle to get real-time data feeds with less network latency and minimum data exchange.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtwebsockets, qt.qt6.673.examples.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>15c9448683c4b8f32061817b8a5115b214a503bf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebsockets.wasm_multithread</Name>
+  <DisplayName>Qt WebSockets for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtwebsockets, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="94611" OS="Any" UncompressedSize="526880"/>
+  <SHA1>fe6cfe432ea8de83fcd075d06e5f94740be2e6c9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebview</Name>
+  <DisplayName>Qt WebView</DisplayName>
+  <Description>Qt WebView provides a way to display web content in a QML application without necessarily including a full web browser stack by using native APIs where it makes sense. This is useful on mobile platforms such as Android, iOS, and UWP (Universal Windows Platform); especially on iOS, where policy dictates that all web content is displayed using the operating system's web view. On Windows, Linux, and macOS, Qt WebView depends on the Qt WebEngine module to render content.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.673.doc.qtwebview, qt.qt6.673.examples.qtwebview</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>2fa390ae74bae0a243f98a21283a6c03269928c5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.addons.qtwebview.wasm_multithread</Name>
+  <DisplayName>Qt WebView for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.addons.qtwebview, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebview-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="68481" OS="Any" UncompressedSize="481857"/>
+  <SHA1>3bf138c456332dc31dc33a3e2339f03ba0f5a88c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qt5compat</Name>
+  <DisplayName>Qt 5 Compatibility Module</DisplayName>
+  <Description>Qt 5 Compatibility Module Prebuilt Components for Qt 6.7.3. Qt 5 Compatibility Module allows to continue using some dedicated functionality which has been removed in Qt 6.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.673.doc.qt5compat, qt.qt6.673.examples.qt5compat, qt.qt6.673.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>16df4f2eec7e4ea961b46fc36656a00a9619b8c4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qt5compat.wasm_multithread</Name>
+  <DisplayName>Qt 5 Compatibility Module for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.qt5compat, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="695534" OS="Any" UncompressedSize="2825073"/>
+  <SHA1>163aee4924c8c31c1937ecbe37e1a7c971edb2af</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtquick3d</Name>
+  <DisplayName>Qt Quick 3D</DisplayName>
+  <Description>Qt Quick 3D provides high-level 3D API for Qt Quick.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>89</SortingPriority>
+  <Dependencies>qt.qt6.673.doc.qtquick3d, qt.qt6.673.examples.qtquick3d, qt.qt6.673.qtshadertools, qt.qt6.673.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>4be42a3ad7b462eea263f34e170b592d26c687de</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtquick3d.wasm_multithread</Name>
+  <DisplayName>Qt Quick 3D for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.qtquick3d, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2171091" OS="Any" UncompressedSize="15006089"/>
+  <SHA1>c80ebca569c653c640b363a99379fa45a657558a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline</DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>0</SortingPriority>
+  <Dependencies>qt.qt6.673.doc.qtquicktimeline, qt.qt6.673.examples.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>02145f373492467c928b7e3cff81083305e3a775</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtquicktimeline.wasm_multithread</Name>
+  <DisplayName>Qt Quick Timeline for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.qtquicktimeline, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="65836" OS="Any" UncompressedSize="482980"/>
+  <SHA1>81493aded4f6ab3a5adc0da94242a2fa6a00149e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtshadertools</Name>
+  <DisplayName>Qt Shader Tools</DisplayName>
+  <Description>Qt Shader conditioning tool Prebuilt Components for Qt 6.7.3.</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>9</SortingPriority>
+  <Dependencies>qt.qt6.673.doc.qtshadertools, qt.qt6.673.examples.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>27866c54d045f34a400803c92ae7456249f1aab4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.qtshadertools.wasm_multithread</Name>
+  <DisplayName>Qt Shader Tools for WebAssembly</DisplayName>
+  <Description/>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <AutoDependOn>qt.qt6.673.qtshadertools, qt.qt6.673.wasm_multithread</AutoDependOn>
+  <Dependencies>qt.qt6.673.wasm_multithread</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1689364" OS="Any" UncompressedSize="14774123"/>
+  <SHA1>5cab8d578e3221d47b7f59f4c84a358b983b65a3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.673.wasm_multithread</Name>
+  <DisplayName>WebAssembly (multi-threaded)</DisplayName>
+  <Description>Qt 6.7.3 Prebuilt Components for WebAssembly (multi-threaded).</Description>
+  <Version>6.7.3-0-202409200836</Version>
+  <ReleaseDate>2024-09-20</ReleaseDate>
+  <Dependencies>qt.qt6.673.patcher</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>700</SortingPriority>
+  <DownloadableArchives>qtbase-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z, qtsvg-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z, qtdeclarative-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z, qttools-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z, qttranslations-Linux-openSUSE_15_5-GCC-Linux-WebAssembly-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="25958570" OS="Any" UncompressedSize="189567910"/>
+  <SHA1>2f41e9d4c6d01cf2d2000daafa2611ec9797b934</SHA1>
+ </PackageUpdate>
+ <SHA1>2972e56b96cdd42af42173c9ed5f1bc449aa5e90</SHA1>
+ <MetadataName>2024-09-20-0847_meta.7z</MetadataName>
+</Updates>
