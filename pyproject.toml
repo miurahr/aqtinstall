@@ -25,7 +25,7 @@ dependencies = [
     "bs4",  # canonical name is beautifulsoup4
     "defusedxml",
     "humanize",
-    "patch>=1.16",
+    "patch-ng",
     "py7zr>=0.22.0",
     "requests>=2.31.0",
     "semantic-version",
