@@ -32,13 +32,16 @@ import signal
 import subprocess
 import sys
 import tarfile
+import tempfile
 import time
 import zipfile
-from logging import getLogger
+from logging import Logger, getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Optional, Tuple, cast
+
+import requests
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
@@ -657,6 +660,33 @@ class Cli:
         )
         show_list(meta)
 
+    def run_install_qt_commercial(self, args):
+        """Execute commercial Qt installation"""
+        self.show_aqt_version()
+
+        target = args.target
+        arch = args.arch
+        version = args.version
+        username = args.user
+        password = args.password
+        output_dir = args.outputdir
+
+        commercial_installer = CommercialInstaller(
+            target=target,
+            arch=arch,
+            version=version,
+            username=username,
+            password=password,
+            output_dir=output_dir,
+            logger=self.logger,
+        )
+
+        try:
+            commercial_installer.install()
+        except Exception as e:
+            self.logger.error(f"Commercial installation failed: {str(e)}")
+            raise
+
     def show_help(self, args=None):
         """Display help message"""
         self.parser.print_help()
@@ -750,6 +780,31 @@ class Cli:
         )
         self._set_common_options(install_tool_parser)
 
+    def _set_install_qt_commercial_parser(self, install_qt_commercial_parser):
+        install_qt_commercial_parser.set_defaults(func=self.run_install_qt_commercial)
+        install_qt_commercial_parser.add_argument(
+            "target",
+            choices=["desktop", "android", "ios"],
+            help="Target platform",
+        )
+        install_qt_commercial_parser.add_argument(
+            "arch",
+            help="Target architecture",
+        )
+        install_qt_commercial_parser.add_argument(
+            "version",
+            help="Qt version",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--user",
+            help="Qt account username",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--password",
+            help="Qt account password",
+        )
+        self._set_common_options(install_qt_commercial_parser)
+
     def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
         self.logger.warning(
             f"The command '{old_name}' is deprecated and marked for removal in a future version of aqt.\n"
@@ -764,6 +819,7 @@ class Cli:
         )
 
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction) -> None:
+        """Creates all command parsers and adds them to the subparsers"""
 
         def make_parser_it(cmd: str, desc: str, set_parser_cmd, formatter_class):
             kwargs = {"formatter_class": formatter_class} if formatter_class else {}
@@ -798,12 +854,20 @@ class Cli:
             if cmd_type != "src":
                 parser.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
 
+        # Create install command parsers
         make_parser_it("install-qt", "Install Qt.", self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("install-tool", "Install tools.", self._set_install_tool_parser, None)
+        make_parser_it(
+            "install-qt-commercial",
+            "Install Qt commercial.",
+            self._set_install_qt_commercial_parser,
+            argparse.RawTextHelpFormatter,
+        )
         make_parser_sde("install-doc", "Install documentation.", self.run_install_doc, False)
         make_parser_sde("install-example", "Install examples.", self.run_install_example, False)
         make_parser_sde("install-src", "Install source.", self.run_install_src, True, is_add_modules=False)
 
+        # Create list command parsers
         self._make_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
@@ -1313,3 +1377,138 @@ def installer(
     qh.flush()
     qh.close()
     logger.removeHandler(qh)
+
+
+class CommercialInstaller:
+    def __init__(
+        self,
+        target: str,
+        arch: str,
+        version: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        output_dir: Optional[str] = None,
+        logger: Optional[Logger] = None,
+    ):
+        self.target = target
+        self.arch = arch
+        self.version = Version(version)
+        self.username = username
+        self.password = password
+        self.output_dir = output_dir
+        self.logger = logger or getLogger(__name__)
+
+        # Map platform names consistently
+        system = platform.system()
+        if system == "Darwin":
+            self.os_name = "mac"
+        elif system == "Linux":
+            self.os_name = "linux"
+        else:
+            self.os_name = "windows"
+
+        self.installer_filename = self._get_installer_filename()
+        self.qt_account = self._get_qt_account_path()
+
+    def _get_installer_filename(self) -> str:
+        """Get OS-specific installer filename"""
+        base = "qt-unified"
+
+        if self.os_name == "windows":
+            return f"{base}-windows-x64-online.exe"
+        elif self.os_name == "mac":
+            return f"{base}-macOS-x64-online.dmg"
+        else:
+            return f"{base}-linux-x64-online.run"
+
+    def _get_qt_account_path(self) -> Path:
+        """Get OS-specific qtaccount.ini path"""
+        if self.os_name == "windows":
+            return Path(os.environ["APPDATA"]) / "Qt" / "qtaccount.ini"
+        elif self.os_name == "mac":
+            return Path.home() / "Library" / "Application Support" / "Qt" / "qtaccount.ini"
+        else:
+            return Path.home() / ".local" / "share" / "Qt" / "qtaccount.ini"
+
+    def _download_installer(self, target_path: Path):
+        """Download Qt online installer"""
+        url = f"https://download.qt.io/official_releases/online_installers/{self.installer_filename}"
+
+        try:
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+
+            total = response.headers.get("content-length", 0)
+
+            with open(target_path, "wb") as f:
+                if total:
+                    desc = f"Downloading {self.installer_filename}"
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+
+            if self.os_name != "windows":
+                os.chmod(target_path, 0o755)
+
+        except requests.exceptions.RequestException as e:
+            raise ArchiveDownloadError(f"Failed to download installer: {str(e)}")
+
+    def _get_package_name(self) -> str:
+        """Convert aqt parameters to Qt package name"""
+        qt_version = f"{self.version.major}{self.version.minor}{self.version.patch}"
+        return f"qt.qt{self.version.major}.{qt_version}.{self.arch}"
+
+    def _get_install_command(self, installer_path: Path) -> list:
+        """Build installation command"""
+        cmd = [str(installer_path)]
+
+        # Authentication
+        if self.username and self.password:
+            cmd.extend(["--email", self.username, "--pw", self.password])
+
+        # Installation directory
+        if self.output_dir:
+            cmd.extend(["--root", str(self.output_dir)])
+
+        # Unattended options
+        cmd.extend(
+            [
+                "--accept-licenses",
+                "--accept-obligations",
+                "--confirm-command",
+                "--default-answer",
+                "install",
+                self._get_package_name(),
+            ]
+        )
+
+        return cmd
+
+    def install(self):
+        """Run commercial installation"""
+        # Verify auth
+        if not self.qt_account.exists() and not (self.username and self.password):
+            raise CliInputError(
+                "No Qt account credentials found. Either provide --user and --password "
+                f"or ensure {self.qt_account} exists"
+            )
+
+        # Create temp dir for installer
+        with tempfile.TemporaryDirectory() as temp_dir:
+            installer_path = Path(temp_dir) / self.installer_filename
+
+            # Download installer
+            self.logger.info(f"Downloading Qt online installer to {installer_path}")
+            self._download_installer(installer_path)
+
+            # Run installation
+            self.logger.info("Starting Qt installation")
+            cmd = self._get_install_command(installer_path)
+
+            self.logger.info(f"Running: {cmd}")
+
+            try:
+                subprocess.check_call(cmd)
+            except subprocess.CalledProcessError as e:
+                raise CliInputError(f"Qt installation failed with code {e.returncode}")
+
+        self.logger.info("Qt installation completed successfully")
