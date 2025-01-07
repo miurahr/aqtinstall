@@ -1593,20 +1593,25 @@ class CommercialInstaller:
 
     def _exec_qt_installer(self, arguments: list[str], working_dir: str) -> None:
         """Execute Qt installer with validated arguments."""
-        if self.os_name == "windows":
-            command = [self.ALLOWED_INSTALLERS["windows"]]
-            command.extend(arguments)
-            subprocess.run(command, shell=False, check=True, cwd=working_dir)
-        elif self.os_name == "mac":
-            command = [self.ALLOWED_INSTALLERS["mac"]]
-            command.extend(arguments)
-            subprocess.run(command, shell=False, check=True, cwd=working_dir)
-        elif self.os_name == "linux":
-            command = [self.ALLOWED_INSTALLERS["linux"]]
-            command.extend(arguments)
-            subprocess.run(command, shell=False, check=True, cwd=working_dir)
-        else:
-            raise RuntimeError(f"Unsupported operating system: {self.os_name}")
+        original_cwd = os.getcwd()
+        os.chdir(working_dir)
+        try:
+            if sys.platform == "win32":
+                os.spawnv(os.P_WAIT, "qt-unified-windows-x64-online.exe", ["qt-unified-windows-x64-online.exe"] + arguments)
+            else:
+                pid = os.fork()
+                if pid == 0:  # Child process
+                    if self.os_name == "mac":
+                        os.execv("qt-unified-macOS-x64-online.dmg", ["qt-unified-macOS-x64-online.dmg"] + arguments)
+                    elif self.os_name == "linux":
+                        os.execv("qt-unified-linux-x64-online.run", ["qt-unified-linux-x64-online.run"] + arguments)
+                    sys.exit(1)
+                else:  # Parent process
+                    _, status = os.waitpid(pid, 0)
+                    if status != 0:
+                        raise RuntimeError(f"Qt installation failed with status {status}")
+        finally:
+            os.chdir(original_cwd)  # Restore original working directory
 
     def install(self) -> None:
         if (
