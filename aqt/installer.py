@@ -1540,7 +1540,7 @@ class CommercialInstaller:
                     f.write(chunk)
 
             if self.os_name != "windows":
-                os.chmod(target_path, 0o500)  # Read/execute only for owner
+                os.chmod(target_path, 0o700)
         except Exception as e:
             raise RuntimeError(f"Failed to download installer: {e}")
 
@@ -1548,70 +1548,58 @@ class CommercialInstaller:
         qt_version = f"{self.version.major}{self.version.minor}{self.version.patch}"
         return f"qt.qt{self.version.major}.{qt_version}.{self.arch}"
 
-    def _resolve_path(self, installer_path: Path) -> list[str]:
-        """Resolve the installer path to an absolute path."""
-        resolved_path = str(installer_path.resolve(strict=True))
-        return [resolved_path]
+    def _exec_qt_installer(self, cmd: list[str], working_dir: str) -> None:
+        """Execute the Qt installer command with proper path handling and security"""
 
     def _get_install_command(self, installer_path: Path) -> list[str]:
-        cmd = self._resolve_path(installer_path)
+        """Build the installation command array"""
+        # Start with installer path (will be replaced with absolute path in _exec_qt_installer)
+        cmd = [str(installer_path)]
 
+        # Add authentication if provided
         if self.username and self.password:
             cmd.extend(["--email", self.username, "--pw", self.password])
 
+        # Add output directory if specified
         if self.output_dir:
             output_path = Path(self.output_dir).resolve()
             output_path.mkdir(parents=True, exist_ok=True)
             cmd.extend(["--root", str(output_path)])
 
-        auto_answers = [
-            f"{key}={value}"
-            for key, value in {
-                "OperationDoesNotExistError": self.operation_does_not_exist_error,
-                "OverwriteTargetDirectory": self.overwrite_target_dir,
-                "stopProcessesForUpdates": self.stop_processes_for_updates,
-                "installationErrorWithCancel": self.installation_error_with_cancel,
-                "installationErrorWithIgnore": self.installation_error_with_ignore,
-                "AssociateCommonFiletypes": self.associate_common_filetypes,
-                "telemetry-question": self.telemetry,
-            }.items()
-            if value in self.ALLOWED_AUTO_ANSWER_OPTIONS.get(key, set())
-        ]
-
+        # Add standard installation options
         cmd.extend(
             [
                 "--accept-licenses",
                 "--accept-obligations",
                 "--confirm-command",
-                "--auto-answer",
-                ",".join(auto_answers),
-                "install",
-                self._get_package_name(),
             ]
         )
-        return cmd
 
-    def _exec_qt_installer(self, arguments: list[str], working_dir: str) -> None:
-        """Execute Qt installer with validated arguments."""
-        original_cwd = os.getcwd()
-        os.chdir(working_dir)
-        try:
-            if sys.platform == "win32":
-                os.spawnv(os.P_WAIT, "qt-unified-windows-x64-online.exe", ["qt-unified-windows-x64-online.exe"] + arguments)
-            else:
-                pid = os.fork()
-                if pid == 0:  # Child process
-                    if self.os_name == "mac":
-                        os.execv("qt-unified-macOS-x64-online.dmg", ["qt-unified-macOS-x64-online.dmg"] + arguments)
-                    elif self.os_name == "linux":
-                        os.execv("qt-unified-linux-x64-online.run", ["qt-unified-linux-x64-online.run"] + arguments)
-                    sys.exit(1)
-                else:  # Parent process
-                    _, status = os.waitpid(pid, 0)
-                    if status != 0:
-                        raise RuntimeError(f"Qt installation failed with status {status}")
-        finally:
-            os.chdir(original_cwd)  # Restore original working directory
+        # Build auto-answer options
+        auto_answers = []
+        auto_answer_map = {
+            "OperationDoesNotExistError": self.operation_does_not_exist_error,
+            "OverwriteTargetDirectory": self.overwrite_target_dir,
+            "stopProcessesForUpdates": self.stop_processes_for_updates,
+            "installationErrorWithCancel": self.installation_error_with_cancel,
+            "installationErrorWithIgnore": self.installation_error_with_ignore,
+            "AssociateCommonFiletypes": self.associate_common_filetypes,
+            "telemetry-question": self.telemetry,
+        }
+
+        for key, value in auto_answer_map.items():
+            if key in self.ALLOWED_AUTO_ANSWER_OPTIONS and value in self.ALLOWED_AUTO_ANSWER_OPTIONS[key]:
+                auto_answers.append(f"{key}={value}")
+
+        if not auto_answers:
+            raise ValueError("No valid auto-answer options provided")
+
+        cmd.extend(["--auto-answer", ",".join(auto_answers)])
+
+        # Add install command and package
+        cmd.extend(["install", self._get_package_name()])
+
+        return cmd
 
     def install(self) -> None:
         if (
@@ -1646,13 +1634,7 @@ class CommercialInstaller:
                         safe_cmd[email_index + 1] = "********"
                 self.logger.info(f"Running: {' '.join(safe_cmd)}")
 
-                target_path = temp_path / self.ALLOWED_INSTALLERS[self.os_name]
-                if installer_path != target_path:
-                    if target_path.exists():
-                        target_path.unlink()
-                    os.symlink(installer_path, target_path)
-
-                self._exec_qt_installer(cmd[1:], temp_dir)
+                subprocess.run(cmd, shell=False, check=True, cwd=temp_dir)
 
             except subprocess.CalledProcessError as e:
                 self.logger.error(f"Installation failed with exit code {e.returncode}")
