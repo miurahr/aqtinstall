@@ -2056,14 +2056,16 @@ def test_installer_passes_base_to_metadatafactory(
         assert expect_out.match(err), err
 
 
+@pytest.mark.enable_socket
 @pytest.mark.parametrize(
     "cmd, arch_dict, details, expected_command",
     [
         (
-            "install-qt-commercial desktop {} 6.8.0 " "--outputdir ./install-qt-commercial " "--user {} --password {}",
+            "install-qt-commercial desktop {} 6.8.0 " "--outputdir /tmp/install-qt-commercial " "--user {} --password {}",
             {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
-            ["./install-qt-commercial", "qt6", "681"],
-            "qt-unified-{}-online.run --email ******** --pw ******** --root {} --accept-licenses --accept-obligations "
+            ["/tmp/install-qt-commercial", "qt6", "680"],
+            "qt-unified-{}-x64-online.run --email ******** --pw ******** --root {} "
+            "--accept-licenses --accept-obligations "
             "--confirm-command "
             "--auto-answer OperationDoesNotExistError=Ignore,OverwriteTargetDirectory=No,"
             "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
@@ -2079,12 +2081,12 @@ def test_install_qt_commercial(
     arch = arch_dict[current_platform]
 
     formatted_cmd = cmd.format(arch, "vofab76634@gholar.com", "WxK43TdWCTmxsrrpnsWbjPfPXVq3mtLK")
-    formatted_expected = expected_command.format(arch, *details, arch)
+    formatted_expected = expected_command.format(current_platform, *details, arch)
 
     cli = Cli()
     cli._setup_settings()
 
     cli.run(formatted_cmd.split())
 
-    [out, _] = capsys.readouterr()
-    assert str(out).find(formatted_expected)
+    out = " ".join(capsys.readouterr())
+    assert str(out).find(formatted_expected) >= 0

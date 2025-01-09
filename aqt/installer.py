@@ -1619,8 +1619,6 @@ class CommercialInstaller:
             self.logger.info(f"Downloading Qt installer to {installer_path}")
             self._download_installer(installer_path)
 
-            self.logger.info("Starting Qt installation")
-
             try:
                 cmd = self._get_install_command(installer_path)
                 safe_cmd = cmd.copy()
