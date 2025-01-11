@@ -125,6 +125,7 @@ class CommonInstallArgParser(BaseArgumentParser):
 class InstallArgParser(CommonInstallArgParser):
     """Install-qt arguments and options"""
 
+    override: Optional[List[str]]
     arch: Optional[str]
     qt_version: str
     qt_version_spec: str
@@ -672,40 +673,40 @@ class Cli:
         """Execute commercial Qt installation"""
         self.show_aqt_version()
 
-        if args.base is not None:
-            base = args.base
+        if args.override:
+            # When override is used, we only need minimal parameters
+            commercial_installer = CommercialInstaller(
+                target="",  # Empty string as placeholder
+                arch="",
+                version=None,
+                logger=self.logger,
+                timeout=args.timeout if args.timeout is not None else Settings.response_timeout,
+                base_url=args.base if args.base is not None else Settings.baseurl,
+                override=args.override,
+            )
         else:
-            base = Settings.baseurl
-        if args.timeout is not None:
-            timeout = args.timeout
-        else:
-            timeout = Settings.response_timeout
+            # Original validation and installer creation
+            if not all([args.target, args.arch, args.version]):
+                raise CliInputError("target, arch, and version are required when not using --override")
 
-        target = args.target
-        arch = args.arch
-        version = args.version
-        username = args.user
-        password = args.password
-        output_dir = args.outputdir
-
-        commercial_installer = CommercialInstaller(
-            target=target,
-            arch=arch,
-            version=version,
-            username=username,
-            password=password,
-            output_dir=output_dir,
-            logger=self.logger,
-            timeout=timeout,
-            base_url=base,
-            operation_does_not_exist_error=args.operation_does_not_exist_error,
-            overwrite_target_dir=args.overwrite_target_dir,
-            stop_processes_for_updates=args.stop_processes_for_updates,
-            installation_error_with_cancel=args.installation_error_with_cancel,
-            installation_error_with_ignore=args.installation_error_with_ignore,
-            associate_common_filetypes=args.associate_common_filetypes,
-            telemetry=args.telemetry,
-        )
+            commercial_installer = CommercialInstaller(
+                target=args.target,
+                arch=args.arch,
+                version=args.version,
+                username=args.user,
+                password=args.password,
+                output_dir=args.outputdir,
+                logger=self.logger,
+                timeout=args.timeout if args.timeout is not None else Settings.response_timeout,
+                base_url=args.base if args.base is not None else Settings.baseurl,
+                operation_does_not_exist_error=args.operation_does_not_exist_error,
+                overwrite_target_dir=args.overwrite_target_dir,
+                stop_processes_for_updates=args.stop_processes_for_updates,
+                installation_error_with_cancel=args.installation_error_with_cancel,
+                installation_error_with_ignore=args.installation_error_with_ignore,
+                associate_common_filetypes=args.associate_common_filetypes,
+                telemetry=args.telemetry,
+            )
 
         try:
             commercial_installer.install()
@@ -808,19 +809,33 @@ class Cli:
 
     def _set_install_qt_commercial_parser(self, install_qt_commercial_parser) -> None:
         install_qt_commercial_parser.set_defaults(func=self.run_install_qt_commercial)
+
+        # Create mutually exclusive group for override vs standard parameters
+        exclusive_group = install_qt_commercial_parser.add_mutually_exclusive_group()
+        exclusive_group.add_argument(
+            "--override",
+            help="Will ignore all other parameters and use everything after this parameter as "
+            "input for the official Qt installer",
+        )
+
+        # Make standard arguments optional when override is used by adding a custom action
+        class ConditionalRequiredAction(argparse.Action):
+            def __call__(self, parser, namespace, values, option_string=None):
+                if not hasattr(namespace, "override") or not namespace.override:
+                    setattr(namespace, self.dest, values)
+
         install_qt_commercial_parser.add_argument(
             "target",
+            nargs="?",
             choices=["desktop", "android", "ios"],
             help="Target platform",
+            action=ConditionalRequiredAction,
         )
         install_qt_commercial_parser.add_argument(
-            "arch",
-            help="Target architecture",
+            "arch", nargs="?", help="Target architecture", action=ConditionalRequiredAction
         )
-        install_qt_commercial_parser.add_argument(
-            "version",
-            help="Qt version",
-        )
+        install_qt_commercial_parser.add_argument("version", nargs="?", help="Qt version", action=ConditionalRequiredAction)
+
         install_qt_commercial_parser.add_argument(
             "--user",
             help="Qt account username",

@@ -46,10 +46,12 @@ class CommercialInstaller:
         installation_error_with_ignore: str = "Ignore",
         associate_common_filetypes: str = "Yes",
         telemetry: str = "No",
+        override: Optional[list[str]] = None,
     ):
+        self.override = override
         self.target = target
         self.arch = arch or ""
-        self.version = Version(version) if version else Version()
+        self.version = Version(version) if version else Version("0.0.0")
         self.username = username
         self.password = password
         self.output_dir = output_dir
@@ -100,6 +102,8 @@ class CommercialInstaller:
             with open(target_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
+            if self.os_name != "windows":
+                os.chmod(target_path, 0o500)
         except Exception as e:
             raise RuntimeError(f"Failed to download installer: {e}")
 
@@ -107,13 +111,14 @@ class CommercialInstaller:
         qt_version = f"{self.version.major}{self.version.minor}{self.version.patch}"
         return f"qt.qt{self.version.major}.{qt_version}.{self.arch}"
 
-    def _exec_qt_installer(self, cmd: list[str], working_dir: str) -> None:
-        """Execute the Qt installer command with proper path handling and security"""
-
     def _get_install_command(self, installer_path: Path) -> list[str]:
         """Build the installation command array"""
         # Start with installer path (will be replaced with absolute path in _exec_qt_installer)
         cmd = [str(installer_path)]
+
+        # When override is specified, only use the installer path and the override parameters
+        if self.override:
+            return cmd + self.override.split()
 
         # Add authentication if provided
         if self.username and self.password:
@@ -190,7 +195,7 @@ class CommercialInstaller:
                         safe_cmd[email_index + 1] = "********"
                 self.logger.info(f"Running: {' '.join(safe_cmd)}")
 
-                subprocess.run([self._installer_filename] + cmd, shell=False, check=True, cwd=temp_dir)
+                subprocess.run(cmd, shell=False, check=True, cwd=temp_dir)
 
             except subprocess.CalledProcessError as e:
                 self.logger.error(f"Installation failed with exit code {e.returncode}")
