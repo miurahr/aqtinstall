@@ -1,0 +1,1496 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.681</Name>
+  <DisplayName>Qt 6.8.1</DisplayName>
+  <Description>Qt 6.8.1 &lt;br>&lt;br>sha1: 41d5d04f71871d94a76a1910ef153139a9746c32</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Script>installscript.qs</Script>
+  <Dependencies>qt.qt6.681.doc, qt.qt6.681.examples, qt.tools.qtcreator</Dependencies>
+  <AutoDependOn/>
+  <Virtual>false</Virtual>
+  <SortingPriority>60801</SortingPriority>
+  <DownloadableArchives>sha1s.txt.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1579" OS="Any" UncompressedSize="2334"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1</Argument>
+    <Argument>sha1s.txt.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>230129f6b30641fe084ee4048faf50ce287c8e85</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.addons</Name>
+  <DisplayName>Additional Libraries</DisplayName>
+  <Description>Additional Libraries for Qt 6.8.1.&lt;br>&lt;br>Most of the additional libraries are available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <SortingPriority>3</SortingPriority>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>bb988e97ce4b1f20951652eb569b4d478a0cd2e5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc</Name>
+  <DisplayName>Qt 6.8.1 Documentation</DisplayName>
+  <Description>Qt 6.8.1 documentation</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Dependencies>qt.tools</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qt5-documentation.zip, qdoc-documentation.zip, qmake-documentation.zip, qtassistant-documentation.zip, qtconcurrent-documentation.zip, qtcmake-documentation.zip, qtcore-documentation.zip, qtdbus-documentation.zip, qtdesigner-documentation.zip, qtdistancefieldgenerator-documentation.zip, qtdoc-documentation.zip, qtgui-documentation.zip, qthelp-documentation.zip, qtlabsplatform-documentation.zip, qtlinguist-documentation.zip, qtnetwork-documentation.zip, qtopengl-documentation.zip, qtplatformintegration-documentation.zip, qtprintsupport-documentation.zip, qtqml-documentation.zip, qtqmlcore-documentation.zip, qtqmlmodels-documentation.zip, qtqmltest-documentation.zip, qtqmlworkerscript-documentation.zip, qtqmlxmllistmodel-documentation.zip, qtquick-documentation.zip, qtquickcontrols-documentation.zip, qtquickdialogs-documentation.zip, qtsql-documentation.zip, qtsvg-documentation.zip, qttestlib-documentation.zip, qtuitools-documentation.zip, qtwidgets-documentation.zip, qtxml-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="110739652" OS="Any" UncompressedSize="223525308"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qt5-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qdoc-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qmake-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtassistant-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtconcurrent-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtcmake-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtcore-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtdbus-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtdesigner-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtdistancefieldgenerator-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtdoc-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtgui-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qthelp-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtlabsplatform-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtlinguist-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtnetwork-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtopengl-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtplatformintegration-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtprintsupport-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtqml-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtqmlcore-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtqmlmodels-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtqmltest-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtqmlworkerscript-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtqmlxmllistmodel-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtquick-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtquickcontrols-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtquickdialogs-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtsql-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtsvg-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qttestlib-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtuitools-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtwidgets-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtxml-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>d666969baea5debc7a6060cd6d80f06c5eb84991</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qt3d</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Qt 3D</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Qt 3D</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qt3d-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="7736772" OS="Any" UncompressedSize="20708126"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qt3d-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>5a9f5bf280bf39e504e17b3c208898cf2eb95ea6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qt5compat</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Qt 5 Compatibility Module</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Qt 5 Compatibility Module</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtcore5compat-documentation.zip, qtgraphicaleffects5compat-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="31482592" OS="Any" UncompressedSize="33897428"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtcore5compat-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtgraphicaleffects5compat-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>75f2ab3e004ad05090b6b99a3be16111b75d9780</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtactiveqt</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Qt 3D</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Qt 3D</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>activeqt-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="368483" OS="Any" UncompressedSize="1329227"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>activeqt-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>59b22118f65472402fa4800f33f6e6af601aba7c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtbluetooth</Name>
+  <DisplayName>Documentation for Qt 6.8.1 GPLv3 components (QtConnectivity/Bluetooth)</DisplayName>
+  <Description>Documentation for Qt 6.8.1 GPLv3 components (QtConnectivity/Bluetooth)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtbluetooth-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="1247991" OS="Any" UncompressedSize="3206016"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtbluetooth-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>ebf058d4935d638127e4bbbb8f0f4223dcc6acfa</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtcharts</Name>
+  <DisplayName>Documentation for Qt 6.8.1 GPLv3 components (QtCharts)</DisplayName>
+  <Description>Documentation for Qt 6.8.1 GPLv3 components (QtCharts)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtcharts-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="9689375" OS="Any" UncompressedSize="14843674"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtcharts-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>b0cca26f7e6c8212ea0798abf7bc5700c7ea39b6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtdatavis3d</Name>
+  <DisplayName>Documentation for Qt 6.8.1 GPLv3 components (QtDataVisualization)</DisplayName>
+  <Description>Documentation for Qt 6.8.1 GPLv3 components (QtDataVisualization)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtdatavis3d-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="3568375" OS="Any" UncompressedSize="7392040"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtdatavis3d-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>24c319fde71f0904e37040e45acf08042f89e832</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtgraphs</Name>
+  <DisplayName>Documentation for Qt 6.8.1 GPLv3 components (QtGraphs)</DisplayName>
+  <Description>Documentation for Qt 6.8.1 GPLv3 components (QtGraphs)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtgraphs-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="4922454" OS="Any" UncompressedSize="10901287"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtgraphs-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>6244d9dbb8eca9b4532cd9f674485b357e207019</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtgrpc</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Qt Protobuf and Qt GRPC</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Qt Protobuf and Qt GRPC</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtprotobuf-documentation.zip, qtgrpc-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="798356" OS="Any" UncompressedSize="1774768"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtprotobuf-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtgrpc-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>04b7bbb77e9a9d63c7ff5f51e90a81c13653f6b6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qthttpserver</Name>
+  <DisplayName>Documentation for Qt 6.8.1 HTTP Server</DisplayName>
+  <Description>Documentation for Qt 6.8.1 HTTP Server </Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qthttpserver-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="389259" OS="Any" UncompressedSize="1114113"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qthttpserver-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>a8b561af935090afdc3f1fc1c49c3f171054b5b6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtimageformats</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Imageformats</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Imageformats</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtimageformats-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="49137" OS="Any" UncompressedSize="141799"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtimageformats-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>2a6859a69b9bd0fe1ce06522546c21a0f4b2c61e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtlanguageserver</Name>
+  <DisplayName>Documentation for Qt 6.8.1 language Server</DisplayName>
+  <Description>Documentation for Qt 6.8.1 language Server</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6d5700e7a06607775529bdbe4aed9585f605a90b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtlocation</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Location</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Location</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtlocation-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="4401511" OS="Any" UncompressedSize="7266846"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtlocation-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>a9d883e540cd8c1aeb1073dbd4bc554d59920f97</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtlottie</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Lottie Animation</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Lottie Animation</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtlottieanimation-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="60128" OS="Any" UncompressedSize="194981"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtlottieanimation-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>c7ae07771950d4fd4420ec477d84769ba169b9f1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtmultimedia</Name>
+  <DisplayName>Documentation for Qt Multimedia</DisplayName>
+  <Description>Documentation for Qt Multimedia</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtmultimedia-documentation.zip, qtspatialaudio-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="6364619" OS="Any" UncompressedSize="9951836"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtmultimedia-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtspatialaudio-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>316d53aabaafcdc7f13a74a835da5f6d5ad15918</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtnetworkauth</Name>
+  <DisplayName>Documentation for Qt Networkauth (Technology Preview)</DisplayName>
+  <Description>Documentation for Qt Networkauth (Technology Preview)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtnetworkauth-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="484731" OS="Any" UncompressedSize="1165952"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtnetworkauth-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>ea2fb8aebea0658e8768baa52d950aa771a04fda</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtnfc</Name>
+  <DisplayName>Documentation for Qt 6.8.1 GPLv3 components (QtConnectivity/NFC)</DisplayName>
+  <Description>Documentation for Qt 6.8.1 GPLv3 components (QtConnectivity/NFC)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtnfc-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="316263" OS="Any" UncompressedSize="878932"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtnfc-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>4a3dae5f2b7e16178ae68227c619eef6d7aec9d6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtpositioning</Name>
+  <DisplayName>Documentation for Qt 6.8.1 GPLv3 components (QtPositioning)</DisplayName>
+  <Description>Documentation for Qt 6.8.1 GPLv3 components (QtPositioning)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtpositioning-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="940367" OS="Any" UncompressedSize="2462768"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtpositioning-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>f242155f0266107a7230a130b49fea5467334342</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtquick3d</Name>
+  <DisplayName>Documentation for Qt 6.8.1 GPLv3 components (QtQuick3D)</DisplayName>
+  <Description>Documentation for Qt 6.8.1 GPLv3 components (QtQuick3D)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquick3d-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="53500897" OS="Any" UncompressedSize="59783428"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtquick3d-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>cf0feeebeafaf5c136f9d6469a6bde6145d51377</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtquick3dphysics</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Quick: 3D Physics</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Quick: 3D Physics </Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquick3dphysics-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="5195770" OS="Any" UncompressedSize="6172250"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtquick3dphysics-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>f8abb51d9e1b31cccf3db13e7e5cfbb944cb47b9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtquickeffectmaker</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Quick Effect Maker</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Quick Effect Maker</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquickeffectmaker-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="947728" OS="Any" UncompressedSize="1106836"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtquickeffectmaker-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>e64d14a958f7a08c2fcff217a11e52ad251c819a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtquicktimeline</Name>
+  <DisplayName>Documentation for Qt Quick Timeline</DisplayName>
+  <Description>Documentation for Qt Quick Timeline</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquicktimeline-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="208865" OS="Any" UncompressedSize="383956"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtquicktimeline-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>38bc6e40ec5b2142762d0630acac07565c2bd015</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtremoteobjects</Name>
+  <DisplayName>Documentation for Qt Remote Objects</DisplayName>
+  <Description>Documentation for Qt Remote Objects</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtremoteobjects-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="683628" OS="Any" UncompressedSize="1548618"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtremoteobjects-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>29afe87d4b13d17cc059a58eda46370cdc51e0d5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtscxml</Name>
+  <DisplayName>Documentation for Qt 6.8.1 SCXML</DisplayName>
+  <Description>Documentation for Qt 6.8.1 SCXML</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtscxml-documentation.zip, qtstatemachine-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="1106537" OS="Any" UncompressedSize="3079139"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtscxml-documentation.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtstatemachine-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>e3f67fb39093dd70f0d8575d2ea651aa6d3a37c2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtsensors</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Sensors</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Sensors</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtsensors-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="2516414" OS="Any" UncompressedSize="4338592"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtsensors-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>c976c83f5f84194504d4ffa29bc7b047365c0359</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtserialbus</Name>
+  <DisplayName>Documentation for Qt 6.8.1 SerialBus</DisplayName>
+  <Description>Documentation for Qt 6.8.1 SerialBus</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtserialbus-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="932750" OS="Any" UncompressedSize="2388812"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtserialbus-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>a59c35c7f8832df43339a1ca72705b9426bf24a6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtserialport</Name>
+  <DisplayName>Documentation for Qt 6.8.1 SerialPort</DisplayName>
+  <Description>Documentation for Qt 6.8.1 SerialPort</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtserialport-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="225300" OS="Any" UncompressedSize="555518"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtserialport-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>41f2d26a57676eb310b865ccec9e39681b4746eb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtshadertools</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Qt Shader Tools</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Qt Shader Tools</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtshadertools-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="233729" OS="Any" UncompressedSize="481179"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtshadertools-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>6cb1495b580c913f11a4d4113de8b21444525316</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtspeech</Name>
+  <DisplayName>Documentation for Qt Speech (Technology Preview)</DisplayName>
+  <Description>Documentation for Qt Speech (Technology Preview)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qttexttospeech-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="456412" OS="Any" UncompressedSize="815540"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qttexttospeech-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>1048d61bdbb686eb272888fbe55471e750dc3a11</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtvirtualkeyboard</Name>
+  <DisplayName>Documentation for Qt 6.8.1 GPLv3 components (QtVirtualKeyboard)</DisplayName>
+  <Description>Documentation for Qt 6.8.1 GPLv3 components (QtVirtualKeyboard)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtvirtualkeyboard-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="1415344" OS="Any" UncompressedSize="3327889"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtvirtualkeyboard-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>236664616105f09c409ab5824cfacaee7c9b559c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtwaylandcompositor</Name>
+  <DisplayName>Documentation for Qt 6.8.1 Qt Wayland Compositor</DisplayName>
+  <Description>Documentation for Qt 6.8.1 Qt Wayland Compositor</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwaylandcompositor-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="2029247" OS="Any" UncompressedSize="4478290"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtwaylandcompositor-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>1ccd280c2eab971dd7d26fcd30c59d8451898eeb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtwebchannel</Name>
+  <DisplayName>Documentation for Qt 6.8.1 WebChannel</DisplayName>
+  <Description>Documentation for Qt 6.8.1 WebChannel</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwebchannel-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="214104" OS="Any" UncompressedSize="446948"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtwebchannel-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>4c331284d1e4d914ba4f8436ecee80f19e845ba0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtwebsockets</Name>
+  <DisplayName>Documentation for Qt 6.8.1 WebSockets</DisplayName>
+  <Description>Documentation for Qt 6.8.1 WebSockets</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwebsockets-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="725542" OS="Any" UncompressedSize="1307732"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtwebsockets-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>37a31936f786d336b12e0f42706cb9725a663b6b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.doc.qtwebview</Name>
+  <DisplayName>Documentation for Qt 6.8.1 WebView</DisplayName>
+  <Description>Documentation for Qt 6.8.1 WebView</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwebview-documentation.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="160915" OS="Any" UncompressedSize="316687"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Docs/Qt-6.8.1</Argument>
+    <Argument>qtwebview-documentation.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>a9fd8d86c279617a82e115b8096fea41e14a381b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples</Name>
+  <DisplayName>Qt 6.8.1 Examples</DisplayName>
+  <Description>Qt 6.8.1 Examples</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Dependencies>qt.tools</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtbase-examples-6.8.1.7z, qtdeclarative-examples-6.8.1.7z, qtdoc-examples-6.8.1.7z, qttools-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="57492596" OS="Any" UncompressedSize="79230206"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtbase-examples-6.8.1.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtdeclarative-examples-6.8.1.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtdoc-examples-6.8.1.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qttools-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>dd8d7caf7d514e0092ea71532a2036a2833164bf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qt3d</Name>
+  <DisplayName>Examples for Qt 6.8.1 3D</DisplayName>
+  <Description>Examples for Qt 6.8.1 3D</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qt3d-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="60347545" OS="Any" UncompressedSize="68132115"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qt3d-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>f0a104d5c8d7e114a269b04cccad0cdbdffa254f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qt5compat</Name>
+  <DisplayName>Examples for Qt 6.8.1 Qt 5 Compatibility Module</DisplayName>
+  <Description>Examples for Qt 6.8.1 Qt 5 Compatibility Module</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qt5compat-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="28062" OS="Any" UncompressedSize="50423"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qt5compat-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>d705fc70f702217c988c58dd3d38d57eba3a01d7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtactiveqt</Name>
+  <DisplayName>Examples for Qt 6.8.1 Active Qt</DisplayName>
+  <Description>Examples for Qt 6.8.1 Active Qt</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtactiveqt-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12095" OS="Any" UncompressedSize="45407"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtactiveqt-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>c973e9e0a29f9b7aa8d9499aa54ea9e75179be88</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtcharts</Name>
+  <DisplayName>Examples for Qt 6.8.1 GPLv3 components (QtCharts)</DisplayName>
+  <Description>Examples for Qt 6.8.1 GPLv3 components (QtCharts)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtcharts-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="163211" OS="Any" UncompressedSize="531436"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtcharts-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>a6b00f0a71e5665aa08dbb81b5ffee7054946e42</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtconnectivity</Name>
+  <DisplayName>Examples for Qt 6.8.1 GPLv3 components (QtConnectivity)</DisplayName>
+  <Description>Examples for Qt 6.8.1 GPLv3 components (QtConnectivity)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtconnectivity-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="403502" OS="Any" UncompressedSize="627775"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtconnectivity-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>695719756df18d19981f36420e5d6d6cc7e04d4d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtdatavis3d</Name>
+  <DisplayName>Examples for Qt 6.8.1 GPLv3 components (QtDataVisualization)</DisplayName>
+  <Description>Examples for Qt 6.8.1 GPLv3 components (QtDataVisualization)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtdatavis3d-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2771612" OS="Any" UncompressedSize="3384611"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtdatavis3d-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>6c23dd9edbe33d2004935528e2597f076277e441</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtgraphs</Name>
+  <DisplayName>Examples for Qt 6.8.1 GPLv3 components (QtGraphs)</DisplayName>
+  <Description>Examples for Qt 6.8.1 GPLv3 components (QtGraphs)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtgraphs-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2669131" OS="Any" UncompressedSize="3446942"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtgraphs-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>041cc8fabf7bbeca269e5c76696447409b08f6c8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtgrpc</Name>
+  <DisplayName>Examples for Qt 6.8.1 Protobuf and Qt 6.8.1 GRPC</DisplayName>
+  <Description>Examples for Qt 6.8.1 Protobuf and Qt 6.8.1 GRPC</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtgrpc-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="105150" OS="Any" UncompressedSize="216040"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtgrpc-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>9e86ebbd4e9a302478131284c3e5eae4f9f85c81</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qthttpserver</Name>
+  <DisplayName>Examples for Qt 6.8.1 HTTP Server</DisplayName>
+  <Description>Examples for Qt 6.8.1 HTTP Server </Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qthttpserver-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="51818" OS="Any" UncompressedSize="89223"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qthttpserver-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>4e38395f66ca38911dfb9c5808ae7d8e0eae7045</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtlocation</Name>
+  <DisplayName>Examples for Qt 6.8.1 Location</DisplayName>
+  <Description>Examples for Qt 6.8.1 Location</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtlocation-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1571476" OS="Any" UncompressedSize="3980459"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtlocation-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>73057d1ee9c95bfe75ca4aca6a2177971324ff34</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtmultimedia</Name>
+  <DisplayName>Examples for Qt Multimedia</DisplayName>
+  <Description>Examples for Qt Multimedia</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtmultimedia-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1648920" OS="Any" UncompressedSize="2531356"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtmultimedia-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>e0d8f272298a8cea25e0ad2351884a379abbb897</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtnetworkauth</Name>
+  <DisplayName>Examples for Qt Networkauth (Technology Preview)</DisplayName>
+  <Description>Examples for Qt Networkauth (Technology Preview)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtnetworkauth-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="41424" OS="Any" UncompressedSize="49149"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtnetworkauth-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>9a5fe97549680570685784e54d5251119bbf2852</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtpositioning</Name>
+  <DisplayName>Examples for Qt 6.8.1 GPLv3 components (QtPositioning)</DisplayName>
+  <Description>Examples for Qt 6.8.1 GPLv3 components (QtPositioning)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtpositioning-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="272524" OS="Any" UncompressedSize="620138"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtpositioning-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>17ebac44cc9fade70884ebdd1f9ca98c600552f1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtquick3d</Name>
+  <DisplayName>Examples for Qt 6.8.1 GPLv3 components (QtQuick3D)</DisplayName>
+  <Description>Examples for Qt 6.8.1 GPLv3 components (QtQuick3D)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquick3d-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="21384249" OS="Any" UncompressedSize="35284577"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtquick3d-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>9ca1f955d70eb6f7393aa27286748285aca07345</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtquick3dphysics</Name>
+  <DisplayName>Examples for Qt 6.8.1 Quick: 3D Physics</DisplayName>
+  <Description>Examples for Qt 6.8.1 Quick: 3D Physics </Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquick3dphysics-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2355905" OS="Any" UncompressedSize="2731415"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtquick3dphysics-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>41ac7fac2539f608740d53bd38a0d071973bb850</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtquickeffectmaker</Name>
+  <DisplayName>Examples for Qt 6.8.1 Quick Effect Maker</DisplayName>
+  <Description>Examples for Qt 6.8.1 Quick Effect Maker</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtquickeffectmaker-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="244792" OS="Any" UncompressedSize="274791"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtquickeffectmaker-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>0802085b796fe628a3dec8e44113d7a65d23f01e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtremoteobjects</Name>
+  <DisplayName>Examples for Qt Remote Objects</DisplayName>
+  <Description>Examples for Qt Remote Objects</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtremoteobjects-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="81668" OS="Any" UncompressedSize="149707"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtremoteobjects-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>8b73b8b06a38bebdd0f816c54acde285ebb8a914</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtscxml</Name>
+  <DisplayName>Examples for Qt 6.8.1 SCXML</DisplayName>
+  <Description>Examples for Qt 6.8.1 SCXML</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtscxml-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="140705" OS="Any" UncompressedSize="298752"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtscxml-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>d5fea2cc1de580e8cb494482bd95a76e671cec47</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtsensors</Name>
+  <DisplayName>Examples for Qt 6.8.1 Sensors</DisplayName>
+  <Description>Examples for Qt 6.8.1 Sensors</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtsensors-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="53517" OS="Any" UncompressedSize="97896"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtsensors-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>80619be3af5400e3aaa77e8795ff7e9c9867e34a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtserialbus</Name>
+  <DisplayName>Examples for Qt SerialBus</DisplayName>
+  <Description>Examples for Qt SerialBus</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtserialbus-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="212314" OS="Any" UncompressedSize="582765"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtserialbus-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>83bb9f6e8133d23f3532094c523b23fcda9ce261</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtserialport</Name>
+  <DisplayName>Examples for Qt SerialPort</DisplayName>
+  <Description>Examples for Qt SerialPort</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtserialport-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="81100" OS="Any" UncompressedSize="139537"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtserialport-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>818cd0225c6d59bc2d3e193446d9a4fe9ca7b786</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtspeech</Name>
+  <DisplayName>Examples for Qt Speech (Technology Preview)</DisplayName>
+  <Description>Examples for Qt Speech (Technology Preview)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtspeech-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="157812" OS="Any" UncompressedSize="195223"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtspeech-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>1d5b06cf3dde72a7f9d7fa19a9b5c465923eabb2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtvirtualkeyboard</Name>
+  <DisplayName>Examples for Qt 6.8.1 GPLv3 components (QtVirtualKeyboard)</DisplayName>
+  <Description>Examples for Qt 6.8.1 GPLv3 components (QtVirtualKeyboard)</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtvirtualkeyboard-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="7104" OS="Any" UncompressedSize="31851"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtvirtualkeyboard-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>02f3d01de7d0f573b994d855fe32f2aff4d5dab8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtwaylandcompositor</Name>
+  <DisplayName>Examples for Qt 6.8.1 Qt Wayland Compositor</DisplayName>
+  <Description>Examples for Qt 6.8.1 Qt Wayland Compositor</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwayland-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="568343" OS="Any" UncompressedSize="906653"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtwayland-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>8361434473240d72c6ac1de7950fac1e1447a795</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtwebchannel</Name>
+  <DisplayName>Examples for Qt 6.8.1 WebChannel</DisplayName>
+  <Description>Examples for Qt 6.8.1 WebChannel</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwebchannel-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="66166" OS="Any" UncompressedSize="122757"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtwebchannel-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>35c012f0936397aacafcd2cce9d54d65b6c196e9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtwebsockets</Name>
+  <DisplayName>Examples for Qt 6.8.1 WebSockets</DisplayName>
+  <Description>Examples for Qt 6.8.1 WebSockets</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwebsockets-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="249014" OS="Any" UncompressedSize="299506"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtwebsockets-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>bbd5e8c03c5de663b8c1bd2585f66a170b0c1a99</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.examples.qtwebview</Name>
+  <DisplayName>Examples for Qt 6.8.1 WebView</DisplayName>
+  <Description>Examples for Qt 6.8.1 WebView</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <Virtual>true</Virtual>
+  <SortingPriority>1</SortingPriority>
+  <DownloadableArchives>qtwebview-examples-6.8.1.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="47350" OS="Any" UncompressedSize="61911"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/Examples/Qt-6.8.1</Argument>
+    <Argument>qtwebview-examples-6.8.1.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>f426b3d728b02d639db1b72f4530b4e329726ffd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.681.src</Name>
+  <DisplayName>Sources</DisplayName>
+  <Description>Qt 6.8.1 Source Components</Description>
+  <Version>6.8.1-0-202411221531</Version>
+  <ReleaseDate>2024-11-22</ReleaseDate>
+  <SortingPriority>100</SortingPriority>
+  <DownloadableArchives>qtdoc-everywhere-src-6.8.1.zip, qtwayland-everywhere-src-6.8.1.zip, qtbase-everywhere-src-6.8.1.zip, qtsvg-everywhere-src-6.8.1.zip, qtdeclarative-everywhere-src-6.8.1.zip, qttools-everywhere-src-6.8.1.zip, qt5compat-everywhere-src-6.8.1.zip, qtshadertools-everywhere-src-6.8.1.zip, qtquick3d-everywhere-src-6.8.1.zip, qtquick3dphysics-everywhere-src-6.8.1.zip, qtquickeffectmaker-everywhere-src-6.8.1.zip, qtquicktimeline-everywhere-src-6.8.1.zip, qttranslations-everywhere-src-6.8.1.zip, qt5-everywhere-src-6.8.1.zip, qt3d-everywhere-src-6.8.1.zip, qtactiveqt-everywhere-src-6.8.1.zip, qtcharts-everywhere-src-6.8.1.zip, qtcoap-everywhere-src-6.8.1.zip, qtconnectivity-everywhere-src-6.8.1.zip, qtdatavis3d-everywhere-src-6.8.1.zip, qtgraphs-everywhere-src-6.8.1.zip, qtgrpc-everywhere-src-6.8.1.zip, qthttpserver-everywhere-src-6.8.1.zip, qtimageformats-everywhere-src-6.8.1.zip, qtlanguageserver-everywhere-src-6.8.1.zip, qtlocation-everywhere-src-6.8.1.zip, qtlottie-everywhere-src-6.8.1.zip, qtmqtt-everywhere-src-6.8.1.zip, qtmultimedia-everywhere-src-6.8.1.zip, qtnetworkauth-everywhere-src-6.8.1.zip, qtopcua-everywhere-src-6.8.1.zip, qtpositioning-everywhere-src-6.8.1.zip, qtremoteobjects-everywhere-src-6.8.1.zip, qtscxml-everywhere-src-6.8.1.zip, qtsensors-everywhere-src-6.8.1.zip, qtserialbus-everywhere-src-6.8.1.zip, qtserialport-everywhere-src-6.8.1.zip, qtspeech-everywhere-src-6.8.1.zip, qtvirtualkeyboard-everywhere-src-6.8.1.zip, qtwebchannel-everywhere-src-6.8.1.zip, qtwebsockets-everywhere-src-6.8.1.zip, qtwebview-everywhere-src-6.8.1.zip</DownloadableArchives>
+  <UpdateFile CompressedSize="576862207" OS="Any" UncompressedSize="1074657023"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtdoc</Argument>
+    <Argument>qtdoc-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtwayland</Argument>
+    <Argument>qtwayland-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtbase</Argument>
+    <Argument>qtbase-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtsvg</Argument>
+    <Argument>qtsvg-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtdeclarative</Argument>
+    <Argument>qtdeclarative-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qttools</Argument>
+    <Argument>qttools-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qt5compat</Argument>
+    <Argument>qt5compat-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtshadertools</Argument>
+    <Argument>qtshadertools-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtquick3d</Argument>
+    <Argument>qtquick3d-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtquick3dphysics</Argument>
+    <Argument>qtquick3dphysics-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtquickeffectmaker</Argument>
+    <Argument>qtquickeffectmaker-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtquicktimeline</Argument>
+    <Argument>qtquicktimeline-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qttranslations</Argument>
+    <Argument>qttranslations-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src</Argument>
+    <Argument>qt5-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qt3d</Argument>
+    <Argument>qt3d-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtactiveqt</Argument>
+    <Argument>qtactiveqt-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtcharts</Argument>
+    <Argument>qtcharts-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtcoap</Argument>
+    <Argument>qtcoap-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtconnectivity</Argument>
+    <Argument>qtconnectivity-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtdatavis3d</Argument>
+    <Argument>qtdatavis3d-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtgraphs</Argument>
+    <Argument>qtgraphs-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtgrpc</Argument>
+    <Argument>qtgrpc-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qthttpserver</Argument>
+    <Argument>qthttpserver-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtimageformats</Argument>
+    <Argument>qtimageformats-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtlanguageserver</Argument>
+    <Argument>qtlanguageserver-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtlocation</Argument>
+    <Argument>qtlocation-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtlottie</Argument>
+    <Argument>qtlottie-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtmqtt</Argument>
+    <Argument>qtmqtt-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtmultimedia</Argument>
+    <Argument>qtmultimedia-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtnetworkauth</Argument>
+    <Argument>qtnetworkauth-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtopcua</Argument>
+    <Argument>qtopcua-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtpositioning</Argument>
+    <Argument>qtpositioning-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtremoteobjects</Argument>
+    <Argument>qtremoteobjects-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtscxml</Argument>
+    <Argument>qtscxml-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtsensors</Argument>
+    <Argument>qtsensors-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtserialbus</Argument>
+    <Argument>qtserialbus-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtserialport</Argument>
+    <Argument>qtserialport-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtspeech</Argument>
+    <Argument>qtspeech-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtvirtualkeyboard</Argument>
+    <Argument>qtvirtualkeyboard-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtwebchannel</Argument>
+    <Argument>qtwebchannel-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtwebsockets</Argument>
+    <Argument>qtwebsockets-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.8.1/Src/qtwebview</Argument>
+    <Argument>qtwebview-everywhere-src-6.8.1.zip</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>0c84c96f1e1a5aecfc92294ec9bf79e45e3039f0</SHA1>
+ </PackageUpdate>
+ <SHA1>13ddd4824d23c22c4ad02409f8c7927ca5120a5a</SHA1>
+ <MetadataName>2024-11-22-1553_meta.7z</MetadataName>
+</Updates>
