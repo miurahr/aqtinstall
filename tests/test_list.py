@@ -208,11 +208,15 @@ def win_5152_sde_xml_file() -> str:
     return (Path(__file__).parent / "data" / "windows-5152-src-doc-example-update.xml").read_text("utf-8")
 
 
-def win_5152_sde_expected(cmd_type: str, query_type: str) -> Set[str]:
+def win_sde_expected(cmd_type: str, query_type: str, expect_out_file: str) -> Set[str]:
     assert cmd_type in ("src", "doc", "examples")
     assert query_type in ("archives", "modules")
-    _json = json.loads((Path(__file__).parent / "data/windows-5152-src-doc-example-expect.json").read_text("utf-8"))
+    _json = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
     return set(_json[cmd_type][query_type])
+
+
+def win_5152_sde_expected(cmd_type: str, query_type: str) -> Set[str]:
+    return win_sde_expected(cmd_type, query_type, "windows-5152-src-doc-example-expect.json")
 
 
 @pytest.mark.parametrize(
@@ -260,19 +264,82 @@ def test_list_src_doc_examples_modules(
 
 
 @pytest.mark.parametrize(
-    "command, expected",
+    "command, updates_file, url, expected",
     (
-        ("list-src windows 5.15.2", win_5152_sde_expected("src", "archives")),
-        ("list-doc windows 5.15.2", win_5152_sde_expected("doc", "archives")),
-        ("list-example windows 5.15.2", win_5152_sde_expected("examples", "archives")),
-        ("list-doc windows 5.15.2 --modules", win_5152_sde_expected("doc", "modules")),
-        ("list-example windows 5.15.2 --modules", win_5152_sde_expected("examples", "modules")),
+        (
+            "list-src windows 5.15.2",
+            "windows-5152-src-doc-example-update.xml",
+            re.compile(".*/windows_x86/desktop/qt5_5152_src_doc_examples/Updates.xml"),
+            win_5152_sde_expected("src", "archives"),
+        ),
+        (
+            "list-doc windows 5.15.2",
+            "windows-5152-src-doc-example-update.xml",
+            re.compile(".*/windows_x86/desktop/qt5_5152_src_doc_examples/Updates.xml"),
+            win_5152_sde_expected("doc", "archives"),
+        ),
+        (
+            "list-example windows 5.15.2",
+            "windows-5152-src-doc-example-update.xml",
+            re.compile(".*/windows_x86/desktop/qt5_5152_src_doc_examples/Updates.xml"),
+            win_5152_sde_expected("examples", "archives"),
+        ),
+        (
+            "list-doc windows 5.15.2 --modules",
+            "windows-5152-src-doc-example-update.xml",
+            re.compile(".*/windows_x86/desktop/qt5_5152_src_doc_examples/Updates.xml"),
+            win_5152_sde_expected("doc", "modules"),
+        ),
+        (
+            "list-example windows 5.15.2 --modules",
+            "windows-5152-src-doc-example-update.xml",
+            re.compile(".*/windows_x86/desktop/qt5_5152_src_doc_examples/Updates.xml"),
+            win_5152_sde_expected("examples", "modules"),
+        ),
+        (
+            "list-src windows 6.8.1",
+            "all_os-681-src-doc-example-update.xml",
+            re.compile(".*/all_os/qt/qt6_681_(?:unix|windows)_line_endings_src/Updates.xml"),
+            win_sde_expected("src", "archives", "all_os-681-src-doc-example-expect.json"),
+        ),
+        (
+            "list-doc windows 6.8.1",
+            "all_os-681-src-doc-example-update.xml",
+            re.compile(".*/all_os/qt/qt6_681_(?:unix|windows)_line_endings_src/Updates.xml"),
+            win_sde_expected("doc", "archives", "all_os-681-src-doc-example-expect.json"),
+        ),
+        (
+            "list-example windows 6.8.1",
+            "all_os-681-src-doc-example-update.xml",
+            re.compile(".*/all_os/qt/qt6_681_(?:unix|windows)_line_endings_src/Updates.xml"),
+            win_sde_expected("examples", "archives", "all_os-681-src-doc-example-expect.json"),
+        ),
+        (
+            "list-src all_os 6.8.1",
+            "all_os-681-src-doc-example-update.xml",
+            re.compile(".*/all_os/qt/qt6_681_(?:unix|windows)_line_endings_src/Updates.xml"),
+            win_sde_expected("src", "archives", "all_os-681-src-doc-example-expect.json"),
+        ),
+        (
+            "list-doc all_os 6.8.1",
+            "all_os-681-src-doc-example-update.xml",
+            re.compile(".*/all_os/qt/qt6_681_(?:unix|windows)_line_endings_src/Updates.xml"),
+            win_sde_expected("doc", "archives", "all_os-681-src-doc-example-expect.json"),
+        ),
+        (
+            "list-example all_os 6.8.1",
+            "all_os-681-src-doc-example-update.xml",
+            re.compile(".*/all_os/qt/qt6_681_(?:unix|windows)_line_endings_src/Updates.xml"),
+            win_sde_expected("examples", "archives", "all_os-681-src-doc-example-expect.json"),
+        ),
     ),
 )
-def test_list_src_doc_examples_cli(monkeypatch, capsys, win_5152_sde_xml_file, command: str, expected: Set[str]):
+def test_list_src_doc_examples_cli(
+    monkeypatch, capsys, command: str, updates_file: str, url: re.Pattern, expected: Set[str]
+):
     def mock_fetch(self, rest_of_url):
-        assert rest_of_url == "online/qtsdkrepository/windows_x86/desktop/qt5_5152_src_doc_examples/Updates.xml"
-        return win_5152_sde_xml_file
+        assert url.match(rest_of_url)
+        return (Path(__file__).parent / "data" / updates_file).read_text("utf-8")
 
     monkeypatch.setattr(MetadataFactory, "fetch_http", mock_fetch)
 
