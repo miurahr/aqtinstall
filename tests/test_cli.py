@@ -14,41 +14,33 @@ from aqt.metadata import MetadataFactory, SimpleSpec, Version
 
 
 def expected_help(actual, prefix=None):
-    if sys.version_info >= (3, 13):
-        expected = (
-            "usage: aqt [-h] [-c CONFIG]\n"
-            "           {install-qt,install-tool,install-qt-commercial,install-doc,install-example,"
-            "install-src,list-qt,list-tool,list-doc,list-example,list-src,help,version}\n"
-            "           ...\n"
-            "\n"
-            "Another unofficial Qt Installer.\n"
-            "aqt helps you install Qt SDK, tools, examples and others\n"
-            "\n"
-            "options:\n"
-            "  -h, --help            show this help message and exit\n"
-            "  -c, --config CONFIG   Configuration ini file.\n"
-        )
-        if prefix is not None:
-            return actual.startswith(prefix + expected)
-        return actual.startswith(expected)
-    else:
-        expected = (
-            "usage: aqt [-h] [-c CONFIG]\n"
-            "           {install-qt,install-tool,install-qt-commercial,install-doc,install-example,"
-            "install-src,list-qt,list-tool,list-doc,list-example,list-src,help,version}\n"
-            "           ...\n"
-            "\n"
-            "Another unofficial Qt Installer.\n"
-            "aqt helps you install Qt SDK, tools, examples and others\n"
-            "\n"
-            "option",
-            "  -h, --help            show this help message and exit\n"
-            "  -c CONFIG, --config CONFIG\n"
-            "                        Configuration ini file.\n",
-        )
-        if prefix is not None:
-            return actual.startswith(prefix + expected[0]) and actual.endswith(expected[1])
-        return actual.startswith(expected[0]) and actual.endswith(expected[1])
+    expected = (
+        "usage: aqt [-h] [-c CONFIG]\n"
+        "           {install-qt,install-tool,install-doc,install-example,install-src,"
+        "list-qt,list-tool,list-doc,list-example,list-src,help,version}\n"
+        "           ...\n"
+        "\n"
+        "Another unofficial Qt Installer.\n"
+        "aqt helps you install Qt SDK, tools, examples and others\n"
+        "\n"
+        "option",
+        "  -h, --help            show this help message and exit\n"
+        "  -c CONFIG, --config CONFIG\n"
+        "                        Configuration ini file.\n"
+        "\n"
+        "subcommands:\n"
+        "  aqt accepts several subcommands:\n"
+        "  install-* subcommands are commands that install components\n"
+        "  list-* subcommands are commands that show available components\n"
+        "\n"
+        "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,"
+        "list-tool,list-doc,list-example,list-src,help,version}\n"
+        "                        Please refer to each help message by using '--help' "
+        "with each subcommand\n",
+    )
+    if prefix is not None:
+        return actual.startswith(prefix + expected[0]) and actual.endswith(expected[1])
+    return actual.startswith(expected[0]) and actual.endswith(expected[1])
 
 
 def test_cli_help(capsys):

@@ -68,7 +68,7 @@ class CommercialInstaller:
 
         # Set OS-specific properties
         self.os_name = self._get_os_name()
-        self.installer_filename = self.ALLOWED_INSTALLERS[self.os_name]
+        self._installer_filename = self.ALLOWED_INSTALLERS[self.os_name]
         self.qt_account = self._get_qt_account_path()
 
     def _get_os_name(self) -> str:
@@ -92,7 +92,7 @@ class CommercialInstaller:
             return Path.home() / ".local" / "share" / "Qt" / "qtaccount.ini"
 
     def _download_installer(self, target_path: Path) -> None:
-        url = f"{self.base_url}/official_releases/online_installers/{self.installer_filename}"
+        url = f"{self.base_url}/official_releases/online_installers/{self._installer_filename}"
         try:
             response = requests.get(url, stream=True, timeout=self.timeout)
             response.raise_for_status()
@@ -100,9 +100,6 @@ class CommercialInstaller:
             with open(target_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
-
-            if self.os_name != "windows":
-                os.chmod(target_path, 0o700)
         except Exception as e:
             raise RuntimeError(f"Failed to download installer: {e}")
 
@@ -175,9 +172,8 @@ class CommercialInstaller:
 
         with tempfile.TemporaryDirectory(prefix="qt_install_") as temp_dir:
             temp_path = Path(temp_dir)
-            os.chmod(temp_dir, 0o700)
 
-            installer_path = temp_path / self.installer_filename
+            installer_path = temp_path / self._installer_filename
             self.logger.info(f"Downloading Qt installer to {installer_path}")
             self._download_installer(installer_path)
 
@@ -194,7 +190,7 @@ class CommercialInstaller:
                         safe_cmd[email_index + 1] = "********"
                 self.logger.info(f"Running: {' '.join(safe_cmd)}")
 
-                subprocess.run(cmd, shell=False, check=True, cwd=temp_dir)
+                subprocess.run([self._installer_filename] + cmd, shell=False, check=True, cwd=temp_dir)
 
             except subprocess.CalledProcessError as e:
                 self.logger.error(f"Installation failed with exit code {e.returncode}")
