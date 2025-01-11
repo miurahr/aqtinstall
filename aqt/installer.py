@@ -814,6 +814,7 @@ class Cli:
         exclusive_group = install_qt_commercial_parser.add_mutually_exclusive_group()
         exclusive_group.add_argument(
             "--override",
+            nargs=argparse.REMAINDER,
             help="Will ignore all other parameters and use everything after this parameter as "
             "input for the official Qt installer",
         )

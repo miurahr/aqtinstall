@@ -118,7 +118,7 @@ class CommercialInstaller:
 
         # When override is specified, only use the installer path and the override parameters
         if self.override:
-            return cmd + self.override.split()
+            return cmd + self.override
 
         # Add authentication if provided
         if self.username and self.password:
