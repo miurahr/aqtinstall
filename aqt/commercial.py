@@ -4,7 +4,6 @@ import subprocess
 import tempfile
 from logging import Logger, getLogger
 from pathlib import Path
-from sys import platform
 from typing import Optional
 
 import requests
