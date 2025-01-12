@@ -42,7 +42,7 @@ class QtPackageManager:
         """Get the cache file path."""
         return self.cache_dir / "packages.json"
 
-    def _save_to_cache(self):
+    def _save_to_cache(self) -> None:
         """Save packages information to cache."""
         cache_data = [{"name": pkg.name, "displayname": pkg.displayname, "version": pkg.version} for pkg in self.packages]
 
@@ -66,7 +66,7 @@ class QtPackageManager:
         except (json.JSONDecodeError, KeyError):
             return False
 
-    def _parse_packages_xml(self, xml_content: str):
+    def _parse_packages_xml(self, xml_content: str) -> None:
         """Parse packages XML content and extract package information using defusedxml."""
         try:
             # Use defusedxml.ElementTree to safely parse the XML content
@@ -222,7 +222,7 @@ class CommercialInstaller:
         self.os_name = CommercialInstaller._get_os_name()
         self._installer_filename = CommercialInstaller._get_qt_installer_name()
         self.qt_account = CommercialInstaller._get_qt_account_path()
-        self.package_manager = None
+        self.package_manager = QtPackageManager(self.arch, self.version, self.target, Settings.qt_installer_cache_path)
 
     @staticmethod
     def get_auto_answers() -> str:
@@ -299,7 +299,6 @@ class CommercialInstaller:
             installer_path = temp_path / self._installer_filename
 
             self.logger.info(f"Downloading Qt installer to {installer_path}")
-            installer_url = f"{self.base_url}/official_releases/online_installers/{self._installer_filename}"
             self.download_installer(installer_path, Settings.qt_installer_timeout)
 
             try:
@@ -308,9 +307,6 @@ class CommercialInstaller:
                     cmd = self.build_command(str(installer_path), override=self.override, no_unattended=self.no_unattended)
                 else:
                     # Initialize package manager and gather packages
-                    self.package_manager = QtPackageManager(
-                        arch=self.arch, version=self.version, target=self.target, temp_dir=str(cache_path)
-                    )
                     self.package_manager.gather_packages(str(installer_path))
 
                     base_cmd = self.build_command(
@@ -366,7 +362,7 @@ class CommercialInstaller:
         return CommercialInstaller._get_qt_local_folder_path() / "qtaccount.ini"
 
     @staticmethod
-    def _get_qt_installer_name() -> Path:
+    def _get_qt_installer_name() -> str:
         installer_dict = {
             "windows": "qt-unified-windows-x64-online.exe",
             "mac": "qt-unified-macOS-x64-online.dmg",

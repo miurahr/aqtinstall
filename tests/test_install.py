@@ -2078,8 +2078,11 @@ def test_install_qt_commercial(
 ) -> None:
     """Test commercial Qt installation command"""
 
+    def mock_run(*args, **kwargs) -> int:
+        return 0
+
     # Use monkeypatch to replace subprocess.run
-    monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: None)
+    monkeypatch.setattr(subprocess, "run", mock_run)
 
     current_platform = sys.platform.lower()
     arch = arch_dict[current_platform]
