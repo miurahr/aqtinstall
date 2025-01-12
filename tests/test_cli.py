@@ -16,7 +16,8 @@ from aqt.metadata import MetadataFactory, SimpleSpec, Version
 def expected_help(actual, prefix=None):
     expected = (
         "usage: aqt [-h] [-c CONFIG]\n"
-        "           {install-qt,install-tool,install-doc,install-example,install-src,"
+        "           {install-qt,install-tool,install-qt-commercial,install-doc,install-example,"
+        "install-src,"
         "list-qt,list-tool,list-doc,list-example,list-src,help,version}\n"
         "           ...\n"
         "\n"
@@ -33,7 +34,8 @@ def expected_help(actual, prefix=None):
         "  install-* subcommands are commands that install components\n"
         "  list-* subcommands are commands that show available components\n"
         "\n"
-        "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,"
+        "  {install-qt,install-tool,install-qt-commercial,install-doc,install-example,"
+        "install-src,list-qt,"
         "list-tool,list-doc,list-example,list-src,help,version}\n"
         "                        Please refer to each help message by using '--help' "
         "with each subcommand\n",
