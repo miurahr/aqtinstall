@@ -131,8 +131,6 @@ class QtPackageManager:
 
     def get_install_command(self, modules: Optional[List[str]], install_path: str) -> List[str]:
         """Generate installation command based on requested modules."""
-        version_str = self._get_version_string()
-
         # If 'all' is in modules, use the -full package
         if modules and "all" in modules:
             package_name = f"{self._get_base_package_name()}.{self.arch}-full"

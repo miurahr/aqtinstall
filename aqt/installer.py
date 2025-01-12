@@ -798,7 +798,7 @@ class Cli:
         )
         self._set_common_options(install_tool_parser)
 
-    def _set_install_qt_commercial_parser(self, install_qt_commercial_parser) -> None:
+    def _set_install_qt_commercial_parser(self, install_qt_commercial_parser: argparse.ArgumentParser) -> None:
         install_qt_commercial_parser.set_defaults(func=self.run_install_qt_commercial)
 
         # Create mutually exclusive group for override vs standard parameters

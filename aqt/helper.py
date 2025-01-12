@@ -344,20 +344,30 @@ class SettingsClass:
         "_lock": Lock(),
     }
 
+    def __init__(self) -> None:
+        self.config: Optional[ConfigParser]
+        self._lock: Lock
+        self._initialize()
+
     def __new__(cls, *p, **k):
         self = object.__new__(cls, *p, **k)
         self.__dict__ = cls._shared_state
         return self
 
-    def __init__(self) -> None:
-        self.config: Optional[ConfigParser]
-        self._lock: Lock
+    def _initialize(self) -> None:
+        """Initialize configuration if not already initialized."""
         if self.config is None:
             with self._lock:
                 if self.config is None:
                     self.config = MyConfigParser()
                     self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
                     self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
+
+    def _get_config(self) -> ConfigParser:
+        """Safe getter for config that ensures it's initialized."""
+        self._initialize()
+        assert self.config is not None  # This helps mypy understand config won't be None
+        return self.config
 
     def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
         if self.config is None:
@@ -475,49 +485,56 @@ class SettingsClass:
 
     # Qt Commercial Installer properties
     @property
-    def qt_installer_timeout(self):
+    def qt_installer_timeout(self) -> int:
         """Timeout for Qt commercial installer operations in seconds."""
-        return self.config.getfloat("qtcommercial", "installer_timeout", fallback=3600)
+        return self._get_config().getint("qtcommercial", "installer_timeout", fallback=3600)
 
     @property
-    def qt_installer_operationdoesnotexisterror(self):
+    def qt_installer_operationdoesnotexisterror(self) -> str:
         """Handle OperationDoesNotExistError in Qt installer."""
-        return self.config.get("qtcommercial", "operation_does_not_exist_error", fallback="Ignore")
+        return self._get_config().get("qtcommercial", "operation_does_not_exist_error", fallback="Ignore")
 
     @property
-    def qt_installer_overwritetargetdirectory(self):
+    def qt_installer_overwritetargetdirectory(self) -> str:
         """Handle overwriting target directory in Qt installer."""
-        return self.config.get("qtcommercial", "overwrite_target_directory", fallback="No")
+        return self._get_config().get("qtcommercial", "overwrite_target_directory", fallback="No")
 
     @property
-    def qt_installer_stopprocessesforupdates(self):
+    def qt_installer_stopprocessesforupdates(self) -> str:
         """Handle stopping processes for updates in Qt installer."""
-        return self.config.get("qtcommercial", "stop_processes_for_updates", fallback="Cancel")
+        return self._get_config().get("qtcommercial", "stop_processes_for_updates", fallback="Cancel")
 
     @property
-    def qt_installer_installationerrorwithcancel(self):
+    def qt_installer_installationerrorwithcancel(self) -> str:
         """Handle installation errors with cancel option in Qt installer."""
-        return self.config.get("qtcommercial", "installation_error_with_cancel", fallback="Cancel")
+        return self._get_config().get("qtcommercial", "installation_error_with_cancel", fallback="Cancel")
 
     @property
-    def qt_installer_installationerrorwithignore(self):
+    def qt_installer_installationerrorwithignore(self) -> str:
         """Handle installation errors with ignore option in Qt installer."""
-        return self.config.get("qtcommercial", "installation_error_with_ignore", fallback="Ignore")
+        return self._get_config().get("qtcommercial", "installation_error_with_ignore", fallback="Ignore")
 
     @property
-    def qt_installer_associatecommonfiletypes(self):
+    def qt_installer_associatecommonfiletypes(self) -> str:
         """Handle file type associations in Qt installer."""
-        return self.config.get("qtcommercial", "associate_common_filetypes", fallback="Yes")
+        return self._get_config().get("qtcommercial", "associate_common_filetypes", fallback="Yes")
 
     @property
-    def qt_installer_telemetry(self):
+    def qt_installer_telemetry(self) -> str:
         """Handle telemetry settings in Qt installer."""
-        return self.config.get("qtcommercial", "telemetry", fallback="No")
+        return self._get_config().get("qtcommercial", "telemetry", fallback="No")
 
     @property
-    def qt_installer_cache_path(self):
+    def qt_installer_cache_path(self) -> str:
         """Path for Qt installer cache."""
-        return self.config.get("qtcommercial", "cache_path", fallback=str(Path.home() / ".cache" / "aqt" / "qtcommercial"))
+        return self._get_config().get(
+            "qtcommercial", "cache_path", fallback=str(Path.home() / ".cache" / "aqt" / "qtcommercial")
+        )
+
+    @property
+    def qt_installer_unattended(self) -> bool:
+        """Control whether to use unattended installation flags."""
+        return self._get_config().getboolean("qtcommercial", "unattended", fallback=True)
 
 
 Settings = SettingsClass()
