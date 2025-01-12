@@ -473,6 +473,52 @@ class SettingsClass:
         """
         return self.config.getint("aqt", "min_module_size", fallback=41)
 
+    # Qt Commercial Installer properties
+    @property
+    def qt_installer_timeout(self):
+        """Timeout for Qt commercial installer operations in seconds."""
+        return self.config.getfloat("qtcommercial", "installer_timeout", fallback=3600)
+
+    @property
+    def qt_installer_operationdoesnotexisterror(self):
+        """Handle OperationDoesNotExistError in Qt installer."""
+        return self.config.get("qtcommercial", "operation_does_not_exist_error", fallback="Ignore")
+
+    @property
+    def qt_installer_overwritetargetdirectory(self):
+        """Handle overwriting target directory in Qt installer."""
+        return self.config.get("qtcommercial", "overwrite_target_directory", fallback="No")
+
+    @property
+    def qt_installer_stopprocessesforupdates(self):
+        """Handle stopping processes for updates in Qt installer."""
+        return self.config.get("qtcommercial", "stop_processes_for_updates", fallback="Cancel")
+
+    @property
+    def qt_installer_installationerrorwithcancel(self):
+        """Handle installation errors with cancel option in Qt installer."""
+        return self.config.get("qtcommercial", "installation_error_with_cancel", fallback="Cancel")
+
+    @property
+    def qt_installer_installationerrorwithignore(self):
+        """Handle installation errors with ignore option in Qt installer."""
+        return self.config.get("qtcommercial", "installation_error_with_ignore", fallback="Ignore")
+
+    @property
+    def qt_installer_associatecommonfiletypes(self):
+        """Handle file type associations in Qt installer."""
+        return self.config.get("qtcommercial", "associate_common_filetypes", fallback="Yes")
+
+    @property
+    def qt_installer_telemetry(self):
+        """Handle telemetry settings in Qt installer."""
+        return self.config.get("qtcommercial", "telemetry", fallback="No")
+
+    @property
+    def qt_installer_cache_path(self):
+        """Path for Qt installer cache."""
+        return self.config.get("qtcommercial", "cache_path", fallback=str(Path.home() / ".cache" / "aqt" / "qtcommercial"))
+
 
 Settings = SettingsClass()
 

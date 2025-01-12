@@ -680,7 +680,6 @@ class Cli:
                 arch="",
                 version=None,
                 logger=self.logger,
-                timeout=args.timeout if args.timeout is not None else Settings.response_timeout,
                 base_url=args.base if args.base is not None else Settings.baseurl,
                 override=args.override,
             )
@@ -697,15 +696,7 @@ class Cli:
                 password=args.password,
                 output_dir=args.outputdir,
                 logger=self.logger,
-                timeout=args.timeout if args.timeout is not None else Settings.response_timeout,
                 base_url=args.base if args.base is not None else Settings.baseurl,
-                operation_does_not_exist_error=args.operation_does_not_exist_error,
-                overwrite_target_dir=args.overwrite_target_dir,
-                stop_processes_for_updates=args.stop_processes_for_updates,
-                installation_error_with_cancel=args.installation_error_with_cancel,
-                installation_error_with_ignore=args.installation_error_with_ignore,
-                associate_common_filetypes=args.associate_common_filetypes,
-                telemetry=args.telemetry,
             )
 
         try:
@@ -846,46 +837,9 @@ class Cli:
             help="Qt account password",
         )
         install_qt_commercial_parser.add_argument(
-            "--operation_does_not_exist_error",
-            choices=["Abort", "Ignore"],
-            default="Ignore",
-            help="OperationDoesNotExistError: Abort, Ignore. Default: Ignore",
-        )
-        install_qt_commercial_parser.add_argument(
-            "--overwrite_target_dir",
-            choices=["Yes", "No"],
-            default="No",
-            help="OverwriteTargetDirectory: Yes, No. Default: No",
-        )
-        install_qt_commercial_parser.add_argument(
-            "--stop_processes_for_updates",
-            choices=["Retry", "Ignore", "Cancel"],
-            default="Cancel",
-            help="stopProcessesForUpdates: Retry, Ignore, Cancel. Default: Cancel",
-        )
-        install_qt_commercial_parser.add_argument(
-            "--installation_error_with_cancel",
-            choices=["Retry", "Ignore", "Cancel"],
-            default="Cancel",
-            help="installationErrorWithCancel: Retry, Ignore, Cancel. Default: Cancel",
-        )
-        install_qt_commercial_parser.add_argument(
-            "--installation_error_with_ignore",
-            choices=["Retry", "Ignore"],
-            default="Ignore",
-            help="installationErrorWithIgnore: Retry, Ignore. Default: Ignore",
-        )
-        install_qt_commercial_parser.add_argument(
-            "--associate_common_filetypes",
-            choices=["Yes", "No"],
-            default="Yes",
-            help="AssociateCommonFiletypes: Yes, No. Default: Yes",
-        )
-        install_qt_commercial_parser.add_argument(
-            "--telemetry",
-            choices=["Yes", "No"],
-            default="No",
-            help="telemetry-question: Yes, No. Default: No",
+            "--modules",
+            nargs="?",
+            help="Add modules",
         )
         self._set_common_options(install_qt_commercial_parser)
 
