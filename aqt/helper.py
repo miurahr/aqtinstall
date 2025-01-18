@@ -29,7 +29,6 @@ from configparser import ConfigParser
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
-from runpy import run_path
 from threading import Lock
 from typing import Any, Callable, Dict, Generator, List, Optional, TextIO, Tuple, Union
 from urllib.parse import urlparse
@@ -627,25 +626,29 @@ def setup_logging(env_key="LOG_CFG"):
     logging.config.fileConfig(Settings.loggingconf)
 
 
-# This is evil
-def run_static_subprocess_dynamically(cmd: list[str] | str, shell: bool, check: bool, cwd: str, timeout: int) -> None:
+def run_static_subprocess_dynamically(path: Path, cmd: List[str], timeout: int) -> None:
     """
-    Writes a hardcoded subprocess.run command into a temporary file and executes it.
+    Executes a subprocess command through a dynamically created Python script.
     """
+    import shlex
+    from runpy import run_path
 
     try:
-        with open("__subprocess_runner.py", "w") as temp_file:
-            temp_file.write(
-                "import subprocess\n"
-                'if __name__ == "__main__":\n'
-                f"    subprocess.run(args={cmd}, shell={shell}, check={check}, cwd='{cwd}', timeout={timeout})\n"
-            )
+        # Don't modify the original command - create the full path properly
+        full_cmd = " ".join(cmd)
+        script_content = f"""import subprocess
+subprocess.run({shlex.quote(full_cmd)}, shell=True, timeout={timeout})"""
 
-        run_path("__subprocess_runner.py")
+        # Create the script path correctly
+        script_path = path.parent / "cmd.py"
+
+        # Write the script
+        script_path.write_text(script_content)
+
+        # Execute the script
+        run_path(str(script_path))
 
     except FileNotFoundError as e:
         print(f"Runner unable to be created or read: {e}")
-
-    finally:
-        if os.path.exists("__subprocess_runner.py"):
-            os.remove("__subprocess_runner.py")
+    except Exception as e:
+        print(f"Error during execution: {e}")

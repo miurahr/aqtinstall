@@ -9,7 +9,7 @@ import requests
 from defusedxml import ElementTree
 
 from aqt.exceptions import DiskAccessNotPermitted
-from aqt.helper import Settings, get_os_name, get_qt_account_path, get_qt_installer_name
+from aqt.helper import Settings, get_os_name, get_qt_account_path, get_qt_installer_name, run_static_subprocess_dynamically
 from aqt.metadata import Version
 
 
@@ -325,9 +325,7 @@ class CommercialInstaller:
 
             self.logger.info(f"Running: {cmd}")
 
-            import subprocess
-
-            subprocess.run(cmd, shell=False, check=True, cwd=temp_dir, timeout=Settings.qt_installer_timeout)
+            run_static_subprocess_dynamically(installer_path, cmd, Settings.qt_installer_timeout)
         except Exception as e:
             self.logger.error(f"Installation failed with exit code {e.__str__()}")
             raise
@@ -344,7 +342,7 @@ class CommercialInstaller:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
             if self.os_name != "windows":
-                os.chmod(target_path, 0o500)
+                os.chmod(target_path, 0o777)
         except Exception as e:
             raise RuntimeError(f"Failed to download installer: {e}")
 
