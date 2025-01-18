@@ -60,8 +60,11 @@ from aqt.helper import (
     Settings,
     downloadBinaryFile,
     get_hash,
+    get_os_name,
+    get_qt_installer_name,
     retry_on_bad_connection,
     retry_on_errors,
+    safely_run_save_output,
     setup_logging,
 )
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
@@ -848,6 +851,86 @@ class Cli:
         )
         self._set_common_options(install_qt_commercial_parser)
 
+    def _make_list_qt_commercial_parser(self, subparsers: argparse._SubParsersAction):
+        """Creates a subparser for listing Qt commercial packages"""
+        list_parser = subparsers.add_parser(
+            "list-qt-commercial",
+            help="List Qt commercial packages using the installer's search command",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="Examples:\n"
+            "$ aqt list-qt-commercial gcc_64          # search for specific archs\n"
+            "$ aqt list-qt-commercial 6.8.1           # search for specific versions\n"
+            "$ aqt list-qt-commercial qtquick3d       # search for specific packages\n"
+            "$ aqt list-qt-commercial gcc_64 6.8.1    # search for multiple terms at once\n",
+        )
+        list_parser.add_argument(
+            "search_terms", nargs=argparse.REMAINDER, help="Search terms to pass directly to the installer search command"
+        )
+        list_parser.set_defaults(func=self.run_list_qt_commercial)
+
+    def run_list_qt_commercial(self, args):
+        """Execute Qt commercial package listing"""
+        self.show_aqt_version()
+
+        if not args.search_terms:
+            self.logger.error("Search terms required. Example: aqt list-qt-commercial 6.8.1")
+            return 1
+
+        # Create temporary directory to download installer
+        import shutil
+        from pathlib import Path
+
+        temp_dir = Settings.qt_installer_temp_path
+        temp_path = Path(temp_dir)
+        if temp_path.exists():
+            shutil.rmtree(temp_dir)
+        temp_path.mkdir(parents=True, exist_ok=True)
+
+        # Get installer based on OS
+        installer_filename = get_qt_installer_name()
+        installer_path = temp_path / installer_filename
+
+        try:
+            # Download installer
+            self.logger.info(f"Downloading Qt installer to {installer_path}")
+            base_url = Settings.baseurl
+            url = f"{base_url}/official_releases/online_installers/{installer_filename}"
+            import requests
+
+            response = requests.get(url, stream=True, timeout=Settings.qt_installer_timeout)
+            response.raise_for_status()
+
+            with open(installer_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+            if get_os_name() != "windows":
+                os.chmod(installer_path, 0o500)
+
+            # Build search command
+            search_terms = " ".join(args.search_terms)
+            cmd = [
+                str(installer_path),
+                "--accept-licenses",
+                "--accept-obligations",
+                "--confirm-command",
+                "search",
+                search_terms,
+            ]
+
+            # Run search and display output
+            output = safely_run_save_output(installer_path, cmd, Settings.qt_installer_timeout)
+            print(output)
+
+        except Exception as e:
+            self.logger.error(f"Failed to list Qt commercial packages: {e}")
+            return 1
+        finally:
+            # Clean up
+            Settings.qt_installer_cleanup()
+
+        return 0
+
     def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
         self.logger.warning(
             f"The command '{old_name}' is deprecated and marked for removal in a future version of aqt.\n"
@@ -912,6 +995,7 @@ class Cli:
 
         # Create list command parsers
         self._make_list_qt_parser(subparsers)
+        self._make_list_qt_commercial_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
         make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")

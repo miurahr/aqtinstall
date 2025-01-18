@@ -678,7 +678,7 @@ def safely_run_save_output(path: Union[str, Path], cmd: List[str], timeout: int)
         # Ensure path is a Path object
         path_obj = Path(path) if isinstance(path, str) else path
         # Create a temporary file to store the output
-        output_file = path_obj / "cmd_output.json"
+        output_file = path_obj.parent / "cmd_output.json"
 
         # Create script that captures output and saves to file
         script_content = f"""
@@ -697,7 +697,7 @@ with open("{output_file}", "w") as f:
     json.dump(output, f)
 """
 
-        script_path = path_obj / "cmd.py"
+        script_path = path_obj.parent / "cmd.py"
         script_path.write_text(script_content)
 
         # Execute the script
