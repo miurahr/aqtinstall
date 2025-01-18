@@ -2079,6 +2079,17 @@ class CompletedProcess:
             "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
             "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
         ),
+        (
+            "install-qt-commercial desktop {} 6.8.1 " "--outputdir ./install-qt-commercial " "--user {} --password {}",
+            {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
+            ["./install-qt-commercial", "qt6", "681"],
+            "qt-unified-{}-x64-online.run --email ******** --pw ******** --root {} "
+            "--accept-licenses --accept-obligations "
+            "--confirm-command "
+            "--auto-answer OperationDoesNotExistError=Ignore,OverwriteTargetDirectory=Yes,"
+            "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
+            "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
+        ),
     ],
 )
 def test_install_qt_commercial(
@@ -2110,3 +2121,37 @@ def test_install_qt_commercial(
     except AttributeError:
         out = " ".join(capsys.readouterr())
         assert str(out).find(formatted_expected) >= 0
+
+    def modify_qt_config(content):
+        """
+        Takes content of INI file as string and returns modified content
+        """
+        lines = content.splitlines()
+        in_qt_commercial = False
+        modified = []
+
+        for line in lines:
+            # Check if we're entering qtcommercial section
+            if line.strip() == "[qtcommercial]":
+                in_qt_commercial = True
+
+            # If in qtcommercial section, look for the target line
+            if in_qt_commercial and "overwrite_target_directory : No" in line:
+                line = "overwrite_target_directory : Yes"
+            elif in_qt_commercial and "overwrite_target_directory : Yes" in line:
+                line = "overwrite_target_directory : No"
+
+            modified.append(line)
+
+        return "\n".join(modified)
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(script_dir, "../aqt/settings.ini")
+
+    with open(config_path, "r") as f:
+        content = f.read()
+
+    modified_content = modify_qt_config(content)
+
+    with open(config_path, "w") as f:
+        f.write(modified_content)
