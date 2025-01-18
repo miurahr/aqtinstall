@@ -18,7 +18,7 @@ def expected_help(actual, prefix=None):
         "usage: aqt [-h] [-c CONFIG]\n"
         "           {install-qt,install-tool,install-qt-commercial,install-doc,install-example,"
         "install-src,"
-        "list-qt,list-tool,list-doc,list-example,list-src,help,version}\n"
+        "list-qt,list-qt-commercial,list-tool,list-doc,list-example,list-src,help,version}\n"
         "           ...\n"
         "\n"
         "Another unofficial Qt Installer.\n"
@@ -35,7 +35,7 @@ def expected_help(actual, prefix=None):
         "  list-* subcommands are commands that show available components\n"
         "\n"
         "  {install-qt,install-tool,install-qt-commercial,install-doc,install-example,"
-        "install-src,list-qt,"
+        "install-src,list-qt,list-qt-commercial,"
         "list-tool,list-doc,list-example,list-src,help,version}\n"
         "                        Please refer to each help message by using '--help' "
         "with each subcommand\n",

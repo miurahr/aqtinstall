@@ -855,7 +855,6 @@ class Cli:
         """Creates a subparser for listing Qt commercial packages"""
         list_parser = subparsers.add_parser(
             "list-qt-commercial",
-            help="List Qt commercial packages using the installer's search command",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
             "$ aqt list-qt-commercial gcc_64          # search for specific archs\n"
