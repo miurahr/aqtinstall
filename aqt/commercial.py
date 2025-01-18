@@ -9,7 +9,7 @@ import requests
 from defusedxml import ElementTree
 
 from aqt.exceptions import DiskAccessNotPermitted
-from aqt.helper import Settings, get_os_name, get_qt_account_path, get_qt_installer_name, run_static_subprocess_dynamically
+from aqt.helper import Settings, get_os_name, get_qt_account_path, get_qt_installer_name, safely_run, safely_run_save_output
 from aqt.metadata import Version
 
 
@@ -108,22 +108,23 @@ class QtPackageManager:
             "search",
             base_package,
         ]
-        import subprocess
 
         try:
-
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            output = safely_run_save_output(installer_path, cmd, Settings.qt_installer_timeout)
 
             # Extract the XML portion from the output
-            xml_start = result.stdout.find("<availablepackages>")
-            xml_end = result.stdout.find("</availablepackages>") + len("</availablepackages>")
+            xml_start = output.find("<availablepackages>")
+            xml_end = output.find("</availablepackages>") + len("</availablepackages>")
 
             if xml_start != -1 and xml_end != -1:
-                xml_content = result.stdout[xml_start:xml_end]
+                xml_content = output[xml_start:xml_end]
                 self._parse_packages_xml(xml_content)
                 self._save_to_cache()
             else:
                 raise RuntimeError("Failed to find package information in installer output")
+
+        except Exception as e:
+            raise RuntimeError(f"Failed to get package information: {e}")
 
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"Failed to gather packages: {e}")
@@ -325,7 +326,7 @@ class CommercialInstaller:
 
             self.logger.info(f"Running: {cmd}")
 
-            run_static_subprocess_dynamically(installer_path, cmd, Settings.qt_installer_timeout)
+            safely_run(installer_path, cmd, Settings.qt_installer_timeout)
         except Exception as e:
             self.logger.error(f"Installation failed with exit code {e.__str__()}")
             raise
@@ -342,7 +343,7 @@ class CommercialInstaller:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
             if self.os_name != "windows":
-                os.chmod(target_path, 0o777)
+                os.chmod(target_path, 0o500)
         except Exception as e:
             raise RuntimeError(f"Failed to download installer: {e}")
 

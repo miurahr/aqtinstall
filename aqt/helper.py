@@ -626,7 +626,7 @@ def setup_logging(env_key="LOG_CFG"):
     logging.config.fileConfig(Settings.loggingconf)
 
 
-def run_static_subprocess_dynamically(path: Path, cmd: List[str], timeout: int) -> None:
+def safely_run(path: Path, cmd: List[str], timeout: int) -> None:
     """
     Executes a subprocess command through a dynamically created Python script.
     """
@@ -652,3 +652,59 @@ subprocess.run({shlex.quote(full_cmd)}, shell=True, timeout={timeout})"""
         print(f"Runner unable to be created or read: {e}")
     except Exception as e:
         print(f"Error during execution: {e}")
+
+
+def safely_run_save_output(path: Path, cmd: List[str], timeout: int) -> str:
+    """
+    Executes a command through a dynamic script and returns its output.
+    Similar to subprocess.run with capture_output=True.
+    """
+    import json
+    import shlex
+
+    try:
+        full_cmd = " ".join(cmd)
+        # Create a temporary file to store the output
+        output_file = path / "cmd_output.json"
+
+        # Create script that captures output and saves to file
+        script_content = f"""
+import subprocess
+import json
+
+try:
+    result = subprocess.run({shlex.quote(full_cmd)}, shell=True, capture_output=True, text=True, timeout={timeout})
+    output = {{"stdout": result.stdout, "stderr": result.stderr, "returncode": result.returncode}}
+except subprocess.CalledProcessError as e:
+    output = {{"stdout": e.stdout, "stderr": e.stderr, "returncode": e.returncode}}
+except Exception as e:
+    output = {{"stdout": "", "stderr": str(e), "returncode": -1}}
+
+with open("{output_file}", "w") as f:
+    json.dump(output, f)
+"""
+
+        script_path = path / "cmd.py"
+        script_path.write_text(script_content)
+
+        # Execute the script
+        from runpy import run_path
+
+        run_path(str(script_path))
+
+        # Read the output
+        with open(output_file) as f:
+            result = json.load(f)
+
+        # Clean up temporary files
+        script_path.unlink(missing_ok=True)
+        output_file.unlink(missing_ok=True)
+
+        # Handle errors similar to subprocess.run(check=True)
+        if result["returncode"] != 0:
+            raise RuntimeError(f"Command failed with exit code {result['returncode']}\nStderr: {result['stderr']}")
+
+        return result["stdout"]
+
+    except Exception as e:
+        raise RuntimeError(f"Failed to execute command: {e}")
