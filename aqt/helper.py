@@ -664,18 +664,21 @@ subprocess.run({shlex.quote(full_cmd)}, shell=True, timeout={timeout})"""
         print(f"Error during execution: {e}")
 
 
-def safely_run_save_output(path: Path, cmd: List[str], timeout: int) -> str:
+def safely_run_save_output(path: Union[str, Path], cmd: List[str], timeout: int) -> str:
     """
     Executes a command through a dynamic script and returns its output.
     Similar to subprocess.run with capture_output=True.
     """
     import json
     import shlex
+    from pathlib import Path
 
     try:
         full_cmd = " ".join(cmd)
+        # Ensure path is a Path object
+        path_obj = Path(path) if isinstance(path, str) else path
         # Create a temporary file to store the output
-        output_file = path / "cmd_output.json"
+        output_file = path_obj / "cmd_output.json"
 
         # Create script that captures output and saves to file
         script_content = f"""
@@ -694,7 +697,7 @@ with open("{output_file}", "w") as f:
     json.dump(output, f)
 """
 
-        script_path = path / "cmd.py"
+        script_path = path_obj / "cmd.py"
         script_path.write_text(script_content)
 
         # Execute the script

@@ -2056,6 +2056,14 @@ def test_installer_passes_base_to_metadatafactory(
         assert expect_out.match(err), err
 
 
+class CompletedProcess:
+    def __init__(self, args, returncode, stdout, stderr):
+        self.args = args
+        self.returncode = returncode
+        self.stdout = stdout
+        self.stderr = stderr
+
+
 @pytest.mark.enable_socket
 @pytest.mark.parametrize(
     "cmd, arch_dict, details, expected_command",
