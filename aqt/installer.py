@@ -820,7 +820,7 @@ class Cli:
 
         # Make standard arguments optional when override is used by adding a custom action
         class ConditionalRequiredAction(argparse.Action):
-            def __call__(self, parser, namespace, values, option_string=None):
+            def __call__(self, parser, namespace, values, option_string=None) -> None:
                 if not hasattr(namespace, "override") or not namespace.override:
                     setattr(namespace, self.dest, values)
 
@@ -851,7 +851,7 @@ class Cli:
         )
         self._set_common_options(install_qt_commercial_parser)
 
-    def _make_list_qt_commercial_parser(self, subparsers: argparse._SubParsersAction):
+    def _make_list_qt_commercial_parser(self, subparsers: argparse._SubParsersAction) -> None:
         """Creates a subparser for listing Qt commercial packages"""
         list_parser = subparsers.add_parser(
             "list-qt-commercial",
@@ -864,18 +864,16 @@ class Cli:
             "$ aqt list-qt-commercial gcc_64 6.8.1    # search for multiple terms at once\n",
         )
         list_parser.add_argument(
-            "search_terms",
-            nargs=argparse.REMAINDER,
+            "-s",
+            "--search",
             help="Optional search terms to pass to the installer search command. If not provided, lists all packages",
+            default="*",
         )
         list_parser.set_defaults(func=self.run_list_qt_commercial)
 
-    def run_list_qt_commercial(self, args):
+    def run_list_qt_commercial(self, args) -> None:
         """Execute Qt commercial package listing"""
         self.show_aqt_version()
-
-        # Default to empty search if no terms provided
-        search_terms = " ".join(args.search_terms) if args.search_terms else "*"
 
         # Create temporary directory to download installer
         import shutil
@@ -909,14 +907,13 @@ class Cli:
                 os.chmod(installer_path, 0o500)
 
             # Build search command
-            # Use search_terms from above
             cmd = [
                 str(installer_path),
                 "--accept-licenses",
                 "--accept-obligations",
                 "--confirm-command",
                 "search",
-                search_terms,
+                args.search,
             ]
 
             # Run search and display output

@@ -453,12 +453,6 @@ class SettingsClass:
             with open(self.configfile, "r") as f:
                 self.config.read_file(f)
 
-    def _get_config(self) -> ConfigParser:
-        """Safe getter for config that ensures it's initialized."""
-        self._initialize()
-        assert self.config is not None  # This helps mypy understand config won't be None
-        return self.config
-
     @property
     def qt_installer_cache_path(self) -> str:
         """Path for Qt installer cache."""
@@ -664,7 +658,7 @@ subprocess.run({shlex.quote(full_cmd)}, shell=True, timeout={timeout})"""
         print(f"Error during execution: {e}")
 
 
-def safely_run_save_output(path: Union[str, Path], cmd: List[str], timeout: int) -> str:
+def safely_run_save_output(path: Union[str, Path], cmd: List[str], timeout: int) -> Any:
     """
     Executes a command through a dynamic script and returns its output.
     Similar to subprocess.run with capture_output=True.

@@ -126,9 +126,6 @@ class QtPackageManager:
         except Exception as e:
             raise RuntimeError(f"Failed to get package information: {e}")
 
-        except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"Failed to gather packages: {e}")
-
     def get_install_command(self, modules: Optional[List[str]], temp_dir: str) -> List[str]:
         """Generate installation command based on requested modules."""
         package_name = f"{self._get_base_package_name()}.{self.arch}"
