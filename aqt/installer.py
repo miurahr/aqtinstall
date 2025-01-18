@@ -857,13 +857,16 @@ class Cli:
             "list-qt-commercial",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="Examples:\n"
+            "$ aqt list-qt-commercial                 # list all available packages\n"
             "$ aqt list-qt-commercial gcc_64          # search for specific archs\n"
             "$ aqt list-qt-commercial 6.8.1           # search for specific versions\n"
             "$ aqt list-qt-commercial qtquick3d       # search for specific packages\n"
             "$ aqt list-qt-commercial gcc_64 6.8.1    # search for multiple terms at once\n",
         )
         list_parser.add_argument(
-            "search_terms", nargs=argparse.REMAINDER, help="Search terms to pass directly to the installer search command"
+            "search_terms",
+            nargs=argparse.REMAINDER,
+            help="Optional search terms to pass to the installer search command. If not provided, lists all packages",
         )
         list_parser.set_defaults(func=self.run_list_qt_commercial)
 
@@ -871,9 +874,8 @@ class Cli:
         """Execute Qt commercial package listing"""
         self.show_aqt_version()
 
-        if not args.search_terms:
-            self.logger.error("Search terms required. Example: aqt list-qt-commercial 6.8.1")
-            return 1
+        # Default to empty search if no terms provided
+        search_terms = " ".join(args.search_terms) if args.search_terms else "*"
 
         # Create temporary directory to download installer
         import shutil
@@ -907,7 +909,7 @@ class Cli:
                 os.chmod(installer_path, 0o500)
 
             # Build search command
-            search_terms = " ".join(args.search_terms)
+            # Use search_terms from above
             cmd = [
                 str(installer_path),
                 "--accept-licenses",
