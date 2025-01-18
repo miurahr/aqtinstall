@@ -864,10 +864,9 @@ class Cli:
             "$ aqt list-qt-commercial gcc_64 6.8.1    # search for multiple terms at once\n",
         )
         list_parser.add_argument(
-            "-s",
-            "--search",
+            "search_terms",
+            nargs="*",
             help="Optional search terms to pass to the installer search command. If not provided, lists all packages",
-            default="*",
         )
         list_parser.set_defaults(func=self.run_list_qt_commercial)
 
@@ -913,7 +912,7 @@ class Cli:
                 "--accept-obligations",
                 "--confirm-command",
                 "search",
-                args.search,
+                "" if not args.search_terms else " ".join(args.search_terms),
             ]
 
             # Run search and display output
