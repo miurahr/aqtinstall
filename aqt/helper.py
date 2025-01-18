@@ -55,7 +55,7 @@ def get_os_name() -> str:
         return "mac"
     if system == "linux":
         return "linux"
-    if system == "windows":
+    if system in ("windows", "win32"):  # Accept both windows and win32
         return "windows"
     raise ValueError(f"Unsupported operating system: {system}")
 
