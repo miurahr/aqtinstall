@@ -2057,11 +2057,11 @@ def test_installer_passes_base_to_metadatafactory(
 
 
 class CompletedProcess:
-    def __init__(self, args, returncode, stdout, stderr):
+    def __init__(self, args, returncode):
         self.args = args
         self.returncode = returncode
-        self.stdout = stdout
-        self.stderr = stderr
+        self.stdout = None
+        self.stderr = None
 
 
 @pytest.mark.enable_socket
