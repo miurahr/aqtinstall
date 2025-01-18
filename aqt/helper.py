@@ -24,6 +24,7 @@ import logging.config
 import os
 import posixpath
 import secrets
+import shutil
 import sys
 from configparser import ConfigParser
 from logging import Handler, getLogger
@@ -46,6 +47,64 @@ from aqt.exceptions import (
     ArchiveListError,
     ChecksumDownloadFailure,
 )
+
+
+def get_os_name() -> str:
+    system = sys.platform.lower()
+    if system == "darwin":
+        return "mac"
+    if system == "linux":
+        return "linux"
+    if system in ("windows", "win32"):  # Accept both windows and win32
+        return "windows"
+    raise ValueError(f"Unsupported operating system: {system}")
+
+
+def get_qt_local_folder_path() -> Path:
+    os_name = get_os_name()
+    if os_name == "windows":
+        appdata = os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))
+        return Path(appdata) / "Qt"
+    if os_name == "mac":
+        return Path.home() / "Library" / "Application Support" / "Qt"
+    return Path.home() / ".local" / "share" / "Qt"
+
+
+def get_qt_account_path() -> Path:
+    return get_qt_local_folder_path() / "qtaccount.ini"
+
+
+def get_qt_installer_name() -> str:
+    installer_dict = {
+        "windows": "qt-unified-windows-x64-online.exe",
+        "mac": "qt-unified-macOS-x64-online.dmg",
+        "linux": "qt-unified-linux-x64-online.run",
+    }
+    return installer_dict[get_os_name()]
+
+
+def get_qt_installer_path() -> Path:
+    return get_qt_local_folder_path() / get_qt_installer_name()
+
+
+def get_default_local_cache_path() -> Path:
+    os_name = get_os_name()
+    if os_name == "windows":
+        appdata = os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))
+        return Path(appdata) / "aqt" / "cache"
+    if os_name == "mac":
+        return Path.home() / "Library" / "Application Support" / "aqt" / "cache"
+    return Path.home() / ".local" / "share" / "aqt" / "cache"
+
+
+def get_default_local_temp_path() -> Path:
+    os_name = get_os_name()
+    if os_name == "windows":
+        appdata = os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))
+        return Path(appdata) / "aqt" / "tmp"
+    if os_name == "mac":
+        return Path.home() / "Library" / "Application Support" / "aqt" / "tmp"
+    return Path.home() / ".local" / "share" / "aqt" / "tmp"
 
 
 def _get_meta(url: str) -> requests.Response:
@@ -344,24 +403,41 @@ class SettingsClass:
         "_lock": Lock(),
     }
 
+    def __init__(self) -> None:
+        self.config: Optional[ConfigParser]
+        self._lock: Lock
+        self._initialize()
+
     def __new__(cls, *p, **k):
         self = object.__new__(cls, *p, **k)
         self.__dict__ = cls._shared_state
         return self
 
-    def __init__(self) -> None:
-        self.config: Optional[ConfigParser]
-        self._lock: Lock
+    def _initialize(self) -> None:
+        """Initialize configuration if not already initialized."""
         if self.config is None:
             with self._lock:
                 if self.config is None:
                     self.config = MyConfigParser()
                     self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
                     self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
+                    self.config.read(self.configfile)
+
+                    logging.info(f"Cache folder: {self.qt_installer_cache_path}")
+                    logging.info(f"Temp folder: {self.qt_installer_temp_path}")
+                    if Path(self.qt_installer_temp_path).exists():
+                        shutil.rmtree(self.qt_installer_temp_path)
+
+    def _get_config(self) -> ConfigParser:
+        """Safe getter for config that ensures it's initialized."""
+        self._initialize()
+        assert self.config is not None
+        return self.config
 
     def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
         if self.config is None:
             return
+
         if file is not None:
             if isinstance(file, str):
                 result = self.config.read(file)
@@ -376,6 +452,24 @@ class SettingsClass:
         else:
             with open(self.configfile, "r") as f:
                 self.config.read_file(f)
+
+    @property
+    def qt_installer_cache_path(self) -> str:
+        """Path for Qt installer cache."""
+        config = self._get_config()
+        # If no cache_path or blank, return default without modifying config
+        if not config.has_option("qtcommercial", "cache_path") or config.get("qtcommercial", "cache_path").strip() == "":
+            return str(get_default_local_cache_path())
+        return config.get("qtcommercial", "cache_path")
+
+    @property
+    def qt_installer_temp_path(self) -> str:
+        """Path for Qt installer cache."""
+        config = self._get_config()
+        # If no cache_path or blank, return default without modifying config
+        if not config.has_option("qtcommercial", "temp_path") or config.get("qtcommercial", "temp_path").strip() == "":
+            return str(get_default_local_temp_path())
+        return config.get("qtcommercial", "temp_path")
 
     @property
     def archive_download_location(self):
@@ -473,6 +567,58 @@ class SettingsClass:
         """
         return self.config.getint("aqt", "min_module_size", fallback=41)
 
+    # Qt Commercial Installer properties
+    @property
+    def qt_installer_timeout(self) -> int:
+        """Timeout for Qt commercial installer operations in seconds."""
+        return self._get_config().getint("qtcommercial", "installer_timeout", fallback=3600)
+
+    @property
+    def qt_installer_operationdoesnotexisterror(self) -> str:
+        """Handle OperationDoesNotExistError in Qt installer."""
+        return self._get_config().get("qtcommercial", "operation_does_not_exist_error", fallback="Ignore")
+
+    @property
+    def qt_installer_overwritetargetdirectory(self) -> str:
+        """Handle overwriting target directory in Qt installer."""
+        return self._get_config().get("qtcommercial", "overwrite_target_directory", fallback="No")
+
+    @property
+    def qt_installer_stopprocessesforupdates(self) -> str:
+        """Handle stopping processes for updates in Qt installer."""
+        return self._get_config().get("qtcommercial", "stop_processes_for_updates", fallback="Cancel")
+
+    @property
+    def qt_installer_installationerrorwithcancel(self) -> str:
+        """Handle installation errors with cancel option in Qt installer."""
+        return self._get_config().get("qtcommercial", "installation_error_with_cancel", fallback="Cancel")
+
+    @property
+    def qt_installer_installationerrorwithignore(self) -> str:
+        """Handle installation errors with ignore option in Qt installer."""
+        return self._get_config().get("qtcommercial", "installation_error_with_ignore", fallback="Ignore")
+
+    @property
+    def qt_installer_associatecommonfiletypes(self) -> str:
+        """Handle file type associations in Qt installer."""
+        return self._get_config().get("qtcommercial", "associate_common_filetypes", fallback="Yes")
+
+    @property
+    def qt_installer_telemetry(self) -> str:
+        """Handle telemetry settings in Qt installer."""
+        return self._get_config().get("qtcommercial", "telemetry", fallback="No")
+
+    @property
+    def qt_installer_unattended(self) -> bool:
+        """Control whether to use unattended installation flags."""
+        return self._get_config().getboolean("qtcommercial", "unattended", fallback=True)
+
+    def qt_installer_cleanup(self) -> None:
+        """Control whether to use unattended installation flags."""
+        import shutil
+
+        shutil.rmtree(self.qt_installer_temp_path)
+
 
 Settings = SettingsClass()
 
@@ -482,3 +628,90 @@ def setup_logging(env_key="LOG_CFG"):
     if config is not None and os.path.exists(config):
         Settings.loggingconf = config
     logging.config.fileConfig(Settings.loggingconf)
+
+
+def safely_run(path: Path, cmd: List[str], timeout: int) -> None:
+    """
+    Executes a subprocess command through a dynamically created Python script.
+    """
+    import shlex
+    from runpy import run_path
+
+    try:
+        # Don't modify the original command - create the full path properly
+        full_cmd = " ".join(cmd)
+        script_content = f"""import subprocess
+subprocess.run({shlex.quote(full_cmd)}, shell=True, timeout={timeout})"""
+
+        # Create the script path correctly
+        script_path = path.parent / "cmd.py"
+
+        # Write the script
+        script_path.write_text(script_content)
+
+        # Execute the script
+        run_path(str(script_path))
+
+    except FileNotFoundError as e:
+        print(f"Runner unable to be created or read: {e}")
+    except Exception as e:
+        print(f"Error during execution: {e}")
+
+
+def safely_run_save_output(path: Union[str, Path], cmd: List[str], timeout: int) -> Any:
+    """
+    Executes a command through a dynamic script and returns its output.
+    Similar to subprocess.run with capture_output=True.
+    """
+    import json
+    import shlex
+    from pathlib import Path
+
+    try:
+        full_cmd = " ".join(cmd)
+        # Ensure path is a Path object
+        path_obj = Path(path) if isinstance(path, str) else path
+        # Create a temporary file to store the output
+        output_file = path_obj.parent / "cmd_output.json"
+
+        # Create script that captures output and saves to file
+        script_content = f"""
+import subprocess
+import json
+
+try:
+    result = subprocess.run({shlex.quote(full_cmd)}, shell=True, capture_output=True, text=True, timeout={timeout})
+    output = {{"stdout": result.stdout, "stderr": result.stderr, "returncode": result.returncode}}
+except subprocess.CalledProcessError as e:
+    output = {{"stdout": e.stdout, "stderr": e.stderr, "returncode": e.returncode}}
+except Exception as e:
+    output = {{"stdout": "", "stderr": str(e), "returncode": -1}}
+
+with open("{output_file}", "w") as f:
+    json.dump(output, f)
+"""
+
+        script_path = path_obj.parent / "cmd.py"
+        script_path.write_text(script_content)
+
+        # Execute the script
+        from runpy import run_path
+
+        run_path(str(script_path))
+
+        # Read the output
+        with open(output_file) as f:
+            result = json.load(f)
+
+        # Clean up temporary files
+        script_path.unlink(missing_ok=True)
+        output_file.unlink(missing_ok=True)
+
+        # Handle errors similar to subprocess.run(check=True)
+        if result["returncode"] != 0:
+            raise RuntimeError(f"Command failed with exit code {result['returncode']}\nStderr: {result['stderr']}")
+
+        return result["stdout"]
+
+    except Exception as e:
+        raise RuntimeError(f"Failed to execute command: {e}")

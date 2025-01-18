@@ -18,3 +18,4 @@ Qt/
 .eggs
 qtaccount.ini
 .pytest_cache
+.run/
