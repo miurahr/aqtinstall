@@ -702,6 +702,7 @@ class Cli:
 
         try:
             commercial_installer.install()
+            Settings.qt_installer_cleanup()
         except DiskAccessNotPermitted:
             # Let DiskAccessNotPermitted propagate up without additional logging
             raise

@@ -24,6 +24,7 @@ import logging.config
 import os
 import posixpath
 import secrets
+import shutil
 import sys
 from configparser import ConfigParser
 from logging import Handler, getLogger
@@ -423,6 +424,9 @@ class SettingsClass:
                     self.config.read(self.configfile)
 
                     logging.info(f"Cache folder: {self.qt_installer_cache_path}")
+                    logging.info(f"Temp folder: {self.qt_installer_temp_path}")
+                    if Path(self.qt_installer_temp_path).exists():
+                        shutil.rmtree(self.qt_installer_temp_path)
 
     def _get_config(self) -> ConfigParser:
         """Safe getter for config that ensures it's initialized."""
@@ -614,6 +618,12 @@ class SettingsClass:
     def qt_installer_unattended(self) -> bool:
         """Control whether to use unattended installation flags."""
         return self._get_config().getboolean("qtcommercial", "unattended", fallback=True)
+
+    def qt_installer_cleanup(self) -> None:
+        """Control whether to use unattended installation flags."""
+        import shutil
+
+        shutil.rmtree(self.qt_installer_temp_path)
 
 
 Settings = SettingsClass()
