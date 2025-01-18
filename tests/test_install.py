@@ -11,7 +11,6 @@ import textwrap
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from subprocess import CompletedProcess
 from tempfile import TemporaryDirectory
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
@@ -2079,11 +2078,13 @@ def test_install_qt_commercial(
 ) -> None:
     """Test commercial Qt installation command"""
 
-    def mock_run(*args, **kwargs) -> CompletedProcess:
-        return None
+    # Mock subprocess.run instead of run_static_subprocess_dynamically
+    def mock_subprocess_run(*args, **kwargs):
+        # This will be called instead of the real subprocess.run
+        return CompletedProcess(args=args[0], returncode=0)
 
-    # Use monkeypatch to replace subprocess.run
-    monkeypatch.setattr(subprocess, "run", mock_run)
+    # Patch subprocess.run directly
+    monkeypatch.setattr("subprocess.run", mock_subprocess_run)
 
     current_platform = sys.platform.lower()
     arch = arch_dict[current_platform]

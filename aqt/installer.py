@@ -674,7 +674,6 @@ class Cli:
         self.show_aqt_version()
 
         if args.override:
-            # When override is used, we only need minimal parameters
             commercial_installer = CommercialInstaller(
                 target="",  # Empty string as placeholder
                 arch="",
@@ -682,11 +681,11 @@ class Cli:
                 logger=self.logger,
                 base_url=args.base if args.base is not None else Settings.baseurl,
                 override=args.override,
+                no_unattended=not Settings.qt_installer_unattended,
             )
         else:
-            # Original validation and installer creation
             if not all([args.target, args.arch, args.version]):
-                raise CliInputError("target, arch, and version are required when not using --override")
+                raise CliInputError("target, arch, and version are required")
 
             commercial_installer = CommercialInstaller(
                 target=args.target,
@@ -697,10 +696,15 @@ class Cli:
                 output_dir=args.outputdir,
                 logger=self.logger,
                 base_url=args.base if args.base is not None else Settings.baseurl,
+                no_unattended=not Settings.qt_installer_unattended,
+                modules=args.modules,
             )
 
         try:
             commercial_installer.install()
+        except DiskAccessNotPermitted:
+            # Let DiskAccessNotPermitted propagate up without additional logging
+            raise
         except Exception as e:
             self.logger.error(f"Commercial installation failed: {str(e)}")
             raise
@@ -838,7 +842,7 @@ class Cli:
         )
         install_qt_commercial_parser.add_argument(
             "--modules",
-            nargs="?",
+            nargs="*",
             help="Add modules",
         )
         self._set_common_options(install_qt_commercial_parser)
