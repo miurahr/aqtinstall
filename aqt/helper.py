@@ -24,7 +24,9 @@ import logging.config
 import os
 import posixpath
 import secrets
+import shlex
 import shutil
+import subprocess
 import sys
 from configparser import ConfigParser
 from logging import Handler, getLogger
@@ -630,88 +632,16 @@ def setup_logging(env_key="LOG_CFG"):
     logging.config.fileConfig(Settings.loggingconf)
 
 
-def safely_run(path: Path, cmd: List[str], timeout: int) -> None:
-    """
-    Executes a subprocess command through a dynamically created Python script.
-    """
-    import shlex
-    from runpy import run_path
-
+def safely_run(cmd: List[str], timeout: int) -> None:
     try:
-        # Don't modify the original command - create the full path properly
-        full_cmd = " ".join(cmd)
-        script_content = f"""import subprocess
-subprocess.run({shlex.quote(full_cmd)}, shell=True, timeout={timeout})"""
-
-        # Create the script path correctly
-        script_path = path.parent / "cmd.py"
-
-        # Write the script
-        script_path.write_text(script_content)
-
-        # Execute the script
-        run_path(str(script_path))
-
-    except FileNotFoundError as e:
-        print(f"Runner unable to be created or read: {e}")
-    except Exception as e:
-        print(f"Error during execution: {e}")
+        subprocess.run(cmd, shell=False, timeout=timeout)
+    except Exception:
+        raise
 
 
-def safely_run_save_output(path: Union[str, Path], cmd: List[str], timeout: int) -> Any:
-    """
-    Executes a command through a dynamic script and returns its output.
-    Similar to subprocess.run with capture_output=True.
-    """
-    import json
-    import shlex
-    from pathlib import Path
-
+def safely_run_save_output(cmd: List[str], timeout: int) -> Any:
     try:
-        full_cmd = " ".join(cmd)
-        # Ensure path is a Path object
-        path_obj = Path(path) if isinstance(path, str) else path
-        # Create a temporary file to store the output
-        output_file = path_obj.parent / "cmd_output.json"
-
-        # Create script that captures output and saves to file
-        script_content = f"""
-import subprocess
-import json
-
-try:
-    result = subprocess.run({shlex.quote(full_cmd)}, shell=True, capture_output=True, text=True, timeout={timeout})
-    output = {{"stdout": result.stdout, "stderr": result.stderr, "returncode": result.returncode}}
-except subprocess.CalledProcessError as e:
-    output = {{"stdout": e.stdout, "stderr": e.stderr, "returncode": e.returncode}}
-except Exception as e:
-    output = {{"stdout": "", "stderr": str(e), "returncode": -1}}
-
-with open("{output_file}", "w") as f:
-    json.dump(output, f)
-"""
-
-        script_path = path_obj.parent / "cmd.py"
-        script_path.write_text(script_content)
-
-        # Execute the script
-        from runpy import run_path
-
-        run_path(str(script_path))
-
-        # Read the output
-        with open(output_file) as f:
-            result = json.load(f)
-
-        # Clean up temporary files
-        script_path.unlink(missing_ok=True)
-        output_file.unlink(missing_ok=True)
-
-        # Handle errors similar to subprocess.run(check=True)
-        if result["returncode"] != 0:
-            raise RuntimeError(f"Command failed with exit code {result['returncode']}\nStderr: {result['stderr']}")
-
-        return result["stdout"]
-
-    except Exception as e:
-        raise RuntimeError(f"Failed to execute command: {e}")
+        result = subprocess.run(cmd, shell=False, capture_output=True, text=True, timeout=timeout)
+        return result
+    except Exception:
+        raise

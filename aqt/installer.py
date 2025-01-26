@@ -916,7 +916,7 @@ class Cli:
             ]
 
             # Run search and display output
-            output = safely_run_save_output(installer_path, cmd, Settings.qt_installer_timeout)
+            output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
             print(output)
 
         except Exception as e:

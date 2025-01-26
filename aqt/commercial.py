@@ -110,7 +110,7 @@ class QtPackageManager:
         ]
 
         try:
-            output = safely_run_save_output(installer_path, cmd, Settings.qt_installer_timeout)
+            output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
             # Extract the XML portion from the output
             xml_start = output.find("<availablepackages>")
@@ -323,7 +323,7 @@ class CommercialInstaller:
 
             self.logger.info(f"Running: {cmd}")
 
-            safely_run(installer_path, cmd, Settings.qt_installer_timeout)
+            safely_run(cmd, Settings.qt_installer_timeout)
         except Exception as e:
             self.logger.error(f"Installation failed with exit code {e.__str__()}")
             raise
