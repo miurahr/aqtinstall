@@ -112,19 +112,25 @@ class QtPackageManager:
         try:
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
+            # Handle both string and CompletedProcess outputs
+            output_text = output.stdout if hasattr(output, "stdout") else str(output)
+
             # Extract the XML portion from the output
-            xml_start = output.find("<availablepackages>")
-            xml_end = output.find("</availablepackages>") + len("</availablepackages>")
+            xml_start = output_text.find("<availablepackages>")
+            xml_end = output_text.find("</availablepackages>") + len("</availablepackages>")
 
             if xml_start != -1 and xml_end != -1:
-                xml_content = output[xml_start:xml_end]
+                xml_content = output_text[xml_start:xml_end]
                 self._parse_packages_xml(xml_content)
                 self._save_to_cache()
             else:
+                # Log the actual output for debugging
+                logger = getLogger("aqt.helper")
+                logger.debug(f"Installer output: {output_text}")
                 raise RuntimeError("Failed to find package information in installer output")
 
         except Exception as e:
-            raise RuntimeError(f"Failed to get package information: {e}")
+            raise RuntimeError(f"Failed to get package information: {str(e)}")
 
     def get_install_command(self, modules: Optional[List[str]], temp_dir: str) -> List[str]:
         """Generate installation command based on requested modules."""
