@@ -19,3 +19,4 @@ Qt/
 qtaccount.ini
 .pytest_cache
 .run/
+.python-version

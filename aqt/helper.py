@@ -24,7 +24,6 @@ import logging.config
 import os
 import posixpath
 import secrets
-import shlex
 import shutil
 import subprocess
 import sys
