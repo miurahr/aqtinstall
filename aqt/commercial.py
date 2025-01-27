@@ -21,12 +21,14 @@ class QtPackageInfo:
 
 
 class QtPackageManager:
-    def __init__(self, arch: str, version: Version, target: str):
+    def __init__(self, arch: str, version: Version, target: str, username: str = None, password: str = None):
         self.arch = arch
         self.version = version
         self.target = target
         self.cache_dir = self._get_cache_dir()
         self.packages: List[QtPackageInfo] = []
+        self.username = username
+        self.password = password
 
     def _get_cache_dir(self) -> Path:
         """Create and return cache directory path."""
@@ -108,6 +110,9 @@ class QtPackageManager:
             "search",
             base_package,
         ]
+
+        if self.username and self.password:
+            cmd.extend(["--email", self.username, "--pw", self.password])
 
         try:
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
@@ -203,7 +208,7 @@ class CommercialInstaller:
         self.os_name = get_os_name()
         self._installer_filename = get_qt_installer_name()
         self.qt_account = get_qt_account_path()
-        self.package_manager = QtPackageManager(self.arch, self.version, self.target)
+        self.package_manager = QtPackageManager(self.arch, self.version, self.target, self.username, self.password)
 
     @staticmethod
     def get_auto_answers() -> str:
