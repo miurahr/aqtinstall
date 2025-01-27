@@ -917,7 +917,16 @@ class Cli:
 
             # Run search and display output
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
-            print(output)
+
+            # Process and print the output properly
+            if output.stdout:
+                # Print the actual output with proper newlines
+                print(output.stdout)
+
+                # If there are any errors, print them as warnings
+                if output.stderr:
+                    for line in output.stderr.splitlines():
+                        self.logger.warning(line)
 
         except Exception as e:
             self.logger.error(f"Failed to list Qt commercial packages: {e}")
