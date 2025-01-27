@@ -21,7 +21,9 @@ class QtPackageInfo:
 
 
 class QtPackageManager:
-    def __init__(self, arch: str, version: Version, target: str, username: str = None, password: str = None):
+    def __init__(
+        self, arch: str, version: Version, target: str, username: Optional[str] = None, password: Optional[str] = None
+    ):
         self.arch = arch
         self.version = version
         self.target = target

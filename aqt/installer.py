@@ -930,12 +930,9 @@ class Cli:
 
         except Exception as e:
             self.logger.error(f"Failed to list Qt commercial packages: {e}")
-            return 1
         finally:
             # Clean up
             Settings.qt_installer_cleanup()
-
-        return 0
 
     def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
         self.logger.warning(
