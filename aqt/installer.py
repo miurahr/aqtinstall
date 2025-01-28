@@ -42,6 +42,7 @@ from typing import List, Optional, Tuple, cast
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
+from aqt.commercial import CommercialInstaller
 from aqt.exceptions import (
     AqtException,
     ArchiveChecksumError,
@@ -59,8 +60,11 @@ from aqt.helper import (
     Settings,
     downloadBinaryFile,
     get_hash,
+    get_os_name,
+    get_qt_installer_name,
     retry_on_bad_connection,
     retry_on_errors,
+    safely_run_save_output,
     setup_logging,
 )
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
@@ -124,9 +128,20 @@ class CommonInstallArgParser(BaseArgumentParser):
 class InstallArgParser(CommonInstallArgParser):
     """Install-qt arguments and options"""
 
+    override: Optional[List[str]]
     arch: Optional[str]
     qt_version: str
     qt_version_spec: str
+    version: Optional[str]
+    user: Optional[str]
+    password: Optional[str]
+    operation_does_not_exist_error: str
+    overwrite_target_dir: str
+    stop_processes_for_updates: str
+    installation_error_with_cancel: str
+    installation_error_with_ignore: str
+    associate_common_filetypes: str
+    telemetry: str
 
     modules: Optional[List[str]]
     archives: Optional[List[str]]
@@ -657,6 +672,47 @@ class Cli:
         )
         show_list(meta)
 
+    def run_install_qt_commercial(self, args: InstallArgParser) -> None:
+        """Execute commercial Qt installation"""
+        self.show_aqt_version()
+
+        if args.override:
+            commercial_installer = CommercialInstaller(
+                target="",  # Empty string as placeholder
+                arch="",
+                version=None,
+                logger=self.logger,
+                base_url=args.base if args.base is not None else Settings.baseurl,
+                override=args.override,
+                no_unattended=not Settings.qt_installer_unattended,
+            )
+        else:
+            if not all([args.target, args.arch, args.version]):
+                raise CliInputError("target, arch, and version are required")
+
+            commercial_installer = CommercialInstaller(
+                target=args.target,
+                arch=args.arch,
+                version=args.version,
+                username=args.user,
+                password=args.password,
+                output_dir=args.outputdir,
+                logger=self.logger,
+                base_url=args.base if args.base is not None else Settings.baseurl,
+                no_unattended=not Settings.qt_installer_unattended,
+                modules=args.modules,
+            )
+
+        try:
+            commercial_installer.install()
+            Settings.qt_installer_cleanup()
+        except DiskAccessNotPermitted:
+            # Let DiskAccessNotPermitted propagate up without additional logging
+            raise
+        except Exception as e:
+            self.logger.error(f"Commercial installation failed: {str(e)}")
+            raise
+
     def show_help(self, args=None):
         """Display help message"""
         self.parser.print_help()
@@ -667,7 +723,7 @@ class Cli:
         py_build = platform.python_compiler()
         return f"aqtinstall(aqt) v{aqt.__version__} on Python {py_version} [{py_impl} {py_build}]"
 
-    def show_aqt_version(self, args=None):
+    def show_aqt_version(self, args: Optional[list[str]] = None) -> None:
         """Display version information"""
         self.logger.info(self._format_aqt_version())
 
@@ -750,6 +806,134 @@ class Cli:
         )
         self._set_common_options(install_tool_parser)
 
+    def _set_install_qt_commercial_parser(self, install_qt_commercial_parser: argparse.ArgumentParser) -> None:
+        install_qt_commercial_parser.set_defaults(func=self.run_install_qt_commercial)
+
+        # Create mutually exclusive group for override vs standard parameters
+        exclusive_group = install_qt_commercial_parser.add_mutually_exclusive_group()
+        exclusive_group.add_argument(
+            "--override",
+            nargs=argparse.REMAINDER,
+            help="Will ignore all other parameters and use everything after this parameter as "
+            "input for the official Qt installer",
+        )
+
+        # Make standard arguments optional when override is used by adding a custom action
+        class ConditionalRequiredAction(argparse.Action):
+            def __call__(self, parser, namespace, values, option_string=None) -> None:
+                if not hasattr(namespace, "override") or not namespace.override:
+                    setattr(namespace, self.dest, values)
+
+        install_qt_commercial_parser.add_argument(
+            "target",
+            nargs="?",
+            choices=["desktop", "android", "ios"],
+            help="Target platform",
+            action=ConditionalRequiredAction,
+        )
+        install_qt_commercial_parser.add_argument(
+            "arch", nargs="?", help="Target architecture", action=ConditionalRequiredAction
+        )
+        install_qt_commercial_parser.add_argument("version", nargs="?", help="Qt version", action=ConditionalRequiredAction)
+
+        install_qt_commercial_parser.add_argument(
+            "--user",
+            help="Qt account username",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--password",
+            help="Qt account password",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--modules",
+            nargs="*",
+            help="Add modules",
+        )
+        self._set_common_options(install_qt_commercial_parser)
+
+    def _make_list_qt_commercial_parser(self, subparsers: argparse._SubParsersAction) -> None:
+        """Creates a subparser for listing Qt commercial packages"""
+        list_parser = subparsers.add_parser(
+            "list-qt-commercial",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="Examples:\n"
+            "$ aqt list-qt-commercial                 # list all available packages\n"
+            "$ aqt list-qt-commercial gcc_64          # search for specific archs\n"
+            "$ aqt list-qt-commercial 6.8.1           # search for specific versions\n"
+            "$ aqt list-qt-commercial qtquick3d       # search for specific packages\n"
+            "$ aqt list-qt-commercial gcc_64 6.8.1    # search for multiple terms at once\n",
+        )
+        list_parser.add_argument(
+            "search_terms",
+            nargs="*",
+            help="Optional search terms to pass to the installer search command. If not provided, lists all packages",
+        )
+        list_parser.set_defaults(func=self.run_list_qt_commercial)
+
+    def run_list_qt_commercial(self, args) -> None:
+        """Execute Qt commercial package listing"""
+        self.show_aqt_version()
+
+        # Create temporary directory to download installer
+        import shutil
+        from pathlib import Path
+
+        temp_dir = Settings.qt_installer_temp_path
+        temp_path = Path(temp_dir)
+        if temp_path.exists():
+            shutil.rmtree(temp_dir)
+        temp_path.mkdir(parents=True, exist_ok=True)
+
+        # Get installer based on OS
+        installer_filename = get_qt_installer_name()
+        installer_path = temp_path / installer_filename
+
+        try:
+            # Download installer
+            self.logger.info(f"Downloading Qt installer to {installer_path}")
+            base_url = Settings.baseurl
+            url = f"{base_url}/official_releases/online_installers/{installer_filename}"
+            import requests
+
+            response = requests.get(url, stream=True, timeout=Settings.qt_installer_timeout)
+            response.raise_for_status()
+
+            with open(installer_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+            if get_os_name() != "windows":
+                os.chmod(installer_path, 0o500)
+
+            # Build search command
+            cmd = [
+                str(installer_path),
+                "--accept-licenses",
+                "--accept-obligations",
+                "--confirm-command",
+                "search",
+                "" if not args.search_terms else " ".join(args.search_terms),
+            ]
+
+            # Run search and display output
+            output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
+
+            # Process and print the output properly
+            if output.stdout:
+                # Print the actual output with proper newlines
+                print(output.stdout)
+
+                # If there are any errors, print them as warnings
+                if output.stderr:
+                    for line in output.stderr.splitlines():
+                        self.logger.warning(line)
+
+        except Exception as e:
+            self.logger.error(f"Failed to list Qt commercial packages: {e}")
+        finally:
+            # Clean up
+            Settings.qt_installer_cleanup()
+
     def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
         self.logger.warning(
             f"The command '{old_name}' is deprecated and marked for removal in a future version of aqt.\n"
@@ -764,6 +948,7 @@ class Cli:
         )
 
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction) -> None:
+        """Creates all command parsers and adds them to the subparsers"""
 
         def make_parser_it(cmd: str, desc: str, set_parser_cmd, formatter_class):
             kwargs = {"formatter_class": formatter_class} if formatter_class else {}
@@ -798,13 +983,22 @@ class Cli:
             if cmd_type != "src":
                 parser.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
 
+        # Create install command parsers
         make_parser_it("install-qt", "Install Qt.", self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("install-tool", "Install tools.", self._set_install_tool_parser, None)
+        make_parser_it(
+            "install-qt-commercial",
+            "Install Qt commercial.",
+            self._set_install_qt_commercial_parser,
+            argparse.RawTextHelpFormatter,
+        )
         make_parser_sde("install-doc", "Install documentation.", self.run_install_doc, False)
         make_parser_sde("install-example", "Install examples.", self.run_install_example, False)
         make_parser_sde("install-src", "Install source.", self.run_install_src, True, is_add_modules=False)
 
+        # Create list command parsers
         self._make_list_qt_parser(subparsers)
+        self._make_list_qt_commercial_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
         make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
@@ -948,14 +1142,13 @@ class Cli:
         )
         list_parser.set_defaults(func=self.run_list_tool)
 
-    def _make_common_parsers(self, subparsers: argparse._SubParsersAction):
+    def _make_common_parsers(self, subparsers: argparse._SubParsersAction) -> None:
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
-        #
         version_parser = subparsers.add_parser("version")
         version_parser.set_defaults(func=self.show_aqt_version)
 
-    def _set_common_options(self, subparser):
+    def _set_common_options(self, subparser: argparse.ArgumentParser) -> None:
         subparser.add_argument(
             "-O",
             "--outputdir",
@@ -1236,7 +1429,8 @@ def run_installer(
         listener.stop()
 
 
-def init_worker_sh():
+def init_worker_sh() -> None:
+    """Initialize worker signal handling"""
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
@@ -1248,7 +1442,7 @@ def installer(
     archive_dest: Path,
     settings_ini: str,
     keep: bool,
-):
+) -> None:
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()

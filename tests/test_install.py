@@ -1676,30 +1676,30 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
 
         assert result == 0
 
-        # Check output format
-        out, err = capsys.readouterr()
-        sys.stdout.write(out)
-        sys.stderr.write(err)
+    # Check output format
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
 
-        # Use regex that works for all platforms
-        expected_pattern = re.compile(
-            r"^INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
-            r"INFO    : You are installing the Qt6-WASM version of Qt\n"
-            r"(?:INFO    : Found extension .*?\n)*"
-            r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
-            r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
-            r"(?:INFO    : Patching (?:/tmp/[^/]+|[A-Za-z]:[\\/].*?)/6\.8\.0/wasm_singlethread/bin/(?:qmake|qtpaths)(?:6)?\n)*"
-            r"INFO    : \n"
-            r"INFO    : Autodesktop will now install linux desktop 6\.8\.0 linux_gcc_64 as required by Qt6-WASM\n"
-            r"INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
-            r"(?:INFO    : Found extension .*?\n)*"
-            r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
-            r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
-            r"INFO    : Finished installation\n"
-            r"INFO    : Time elapsed: \d+\.\d+ second\n$"
-        )
+    # Use regex that works for all platforms
+    expected_pattern = re.compile(
+        r"^INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
+        r"INFO    : You are installing the Qt6-WASM version of Qt\n"
+        r"(?:INFO    : Found extension .*?\n)*"
+        r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
+        r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
+        r"(?:INFO    : Patching (?:/tmp/[^/]+|[A-Za-z]:[\\/].*?)/6\.8\.0/wasm_singlethread/bin/(?:qmake|qtpaths)(?:6)?\n)*"
+        r"INFO    : \n"
+        r"INFO    : Autodesktop will now install linux desktop 6\.8\.0 linux_gcc_64 as required by Qt6-WASM\n"
+        r"INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
+        r"(?:INFO    : Found extension .*?\n)*"
+        r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
+        r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
+        r"INFO    : Finished installation\n"
+        r"INFO    : Time elapsed: \d+\.\d+ second\n$"
+    )
 
-        assert expected_pattern.match(err)
+    assert expected_pattern.match(err)
 
 
 @pytest.mark.parametrize(
@@ -2054,3 +2054,104 @@ def test_installer_passes_base_to_metadatafactory(
         sys.stderr.write(err)
 
         assert expect_out.match(err), err
+
+
+class CompletedProcess:
+    def __init__(self, args, returncode):
+        self.args = args
+        self.returncode = returncode
+        self.stdout = None
+        self.stderr = None
+
+
+@pytest.mark.enable_socket
+@pytest.mark.parametrize(
+    "cmd, arch_dict, details, expected_command",
+    [
+        (
+            "install-qt-commercial desktop {} 6.8.0 " "--outputdir ./install-qt-commercial " "--user {} --password {}",
+            {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
+            ["./install-qt-commercial", "qt6", "680"],
+            "qt-unified-{}-x64-online.run --email ******** --pw ******** --root {} "
+            "--accept-licenses --accept-obligations "
+            "--confirm-command "
+            "--auto-answer OperationDoesNotExistError=Ignore,OverwriteTargetDirectory=No,"
+            "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
+            "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
+        ),
+        (
+            "install-qt-commercial desktop {} 6.8.1 " "--outputdir ./install-qt-commercial " "--user {} --password {}",
+            {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
+            ["./install-qt-commercial", "qt6", "681"],
+            "qt-unified-{}-x64-online.run --email ******** --pw ******** --root {} "
+            "--accept-licenses --accept-obligations "
+            "--confirm-command "
+            "--auto-answer OperationDoesNotExistError=Ignore,OverwriteTargetDirectory=Yes,"
+            "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
+            "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
+        ),
+    ],
+)
+def test_install_qt_commercial(
+    capsys, monkeypatch, cmd: str, arch_dict: dict[str, str], details: list[str], expected_command: str
+) -> None:
+    """Test commercial Qt installation command"""
+
+    # Mock subprocess.run instead of run_static_subprocess_dynamically
+    def mock_subprocess_run(*args, **kwargs):
+        # This will be called instead of the real subprocess.run
+        return CompletedProcess(args=args[0], returncode=0)
+
+    # Patch subprocess.run directly
+    monkeypatch.setattr("subprocess.run", mock_subprocess_run)
+
+    current_platform = sys.platform.lower()
+    arch = arch_dict[current_platform]
+
+    abs_out = Path(details[0]).absolute()
+
+    formatted_cmd = cmd.format(arch, "vofab76634@gholar.com", "WxK43TdWCTmxsrrpnsWbjPfPXVq3mtLK")
+    formatted_expected = expected_command.format(current_platform, abs_out, *details[1:], arch)
+
+    cli = Cli()
+    cli._setup_settings()
+
+    try:
+        cli.run(formatted_cmd.split())
+    except AttributeError:
+        out = " ".join(capsys.readouterr())
+        assert str(out).find(formatted_expected) >= 0
+
+    def modify_qt_config(content):
+        """
+        Takes content of INI file as string and returns modified content
+        """
+        lines = content.splitlines()
+        in_qt_commercial = False
+        modified = []
+
+        for line in lines:
+            # Check if we're entering qtcommercial section
+            if line.strip() == "[qtcommercial]":
+                in_qt_commercial = True
+
+            # If in qtcommercial section, look for the target line
+            if in_qt_commercial and "overwrite_target_directory : No" in line:
+                line = "overwrite_target_directory : Yes"
+            elif in_qt_commercial and "overwrite_target_directory : Yes" in line:
+                line = "overwrite_target_directory : No"
+
+            modified.append(line)
+
+        return "\n".join(modified)
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(script_dir, "../aqt/settings.ini")
+
+    with open(config_path, "r") as f:
+        content = f.read()
+
+    modified_content = modify_qt_config(content)
+
+    with open(config_path, "w") as f:
+        f.write(modified_content)

@@ -1,3 +1,4 @@
+import platform
 import re
 import sys
 from pathlib import Path
@@ -15,8 +16,9 @@ from aqt.metadata import MetadataFactory, SimpleSpec, Version
 def expected_help(actual, prefix=None):
     expected = (
         "usage: aqt [-h] [-c CONFIG]\n"
-        "           {install-qt,install-tool,install-doc,install-example,install-src,"
-        "list-qt,list-tool,list-doc,list-example,list-src,help,version}\n"
+        "           {install-qt,install-tool,install-qt-commercial,install-doc,install-example,"
+        "install-src,"
+        "list-qt,list-qt-commercial,list-tool,list-doc,list-example,list-src,help,version}\n"
         "           ...\n"
         "\n"
         "Another unofficial Qt Installer.\n"
@@ -32,7 +34,8 @@ def expected_help(actual, prefix=None):
         "  install-* subcommands are commands that install components\n"
         "  list-* subcommands are commands that show available components\n"
         "\n"
-        "  {install-qt,install-tool,install-doc,install-example,install-src,list-qt,"
+        "  {install-qt,install-tool,install-qt-commercial,install-doc,install-example,"
+        "install-src,list-qt,list-qt-commercial,"
         "list-tool,list-doc,list-example,list-src,help,version}\n"
         "                        Please refer to each help message by using '--help' "
         "with each subcommand\n",
@@ -520,3 +523,29 @@ def test_get_autodesktop_dir_and_arch_non_android(
             ), "Expected autodesktop install message."
         elif expect["instruct"]:
             assert any("You can install" in line for line in err_lines), "Expected install instruction message."
+
+
+@pytest.mark.parametrize(
+    "cmd, expected_arch, expected_err",
+    [
+        pytest.param(
+            "install-qt-commercial desktop {} 6.8.0",
+            {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
+            "No Qt account credentials found. Either provide --user and --password or",
+        ),
+    ],
+)
+def test_cli_login_qt_commercial(capsys, monkeypatch, cmd, expected_arch, expected_err):
+    """Test commercial Qt installation command"""
+    # Detect current platform
+    current_platform = platform.system().lower()
+    arch = expected_arch[current_platform]
+    cmd = cmd.format(arch)
+
+    cli = Cli()
+    cli._setup_settings()
+    result = cli.run(cmd.split())
+
+    _, err = capsys.readouterr()
+    assert str(err).find(expected_err)
+    assert not result == 0
