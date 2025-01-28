@@ -336,8 +336,13 @@ class ArchiveId:
                     ext="_" + extension if extension else "",
                 )
             else:
-                base = f"qt{version.major}_{qt_version_no_dots}"
-                return f"{base}/{base}"
+                # traditional structure, still used by sde.
+                return "{category}{major}_{ver}{ext}".format(
+                    category=self.category,
+                    major=qt_version_no_dots[0],
+                    ver=qt_version_no_dots,
+                    ext="_" + extension if extension else "",
+                )
         elif version >= Version("6.5.0") and self.target == "wasm":
             # Qt 6.5-6.7 WASM uses direct wasm_[single|multi]thread folder
             if extension:
