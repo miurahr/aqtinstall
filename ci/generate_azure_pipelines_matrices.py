@@ -3,7 +3,6 @@ This sets variables for a matrix of QT versions to test downloading against with
 """
 import collections
 import json
-import secrets as random
 import re
 from itertools import product
 from typing import Dict, Optional
@@ -46,7 +45,8 @@ class BuildJob:
         is_autodesktop: bool = False,
         tool_options: Optional[Dict[str, str]] = None,
         check_output_cmd: Optional[str] = None,
-        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit@3.1.29", # did not change for safety, created func self.emsdk_version()
+        emsdk_version: str = "sdk-fastcomp-1.38.27-64bit@3.1.29",
+        # did not change for safety, created func self.emsdk_version()
         autodesk_arch_folder: Optional[str] = None,
     ):
         self.command = command
@@ -167,13 +167,13 @@ for qt_version in qt_versions:
         BuildJob("install-qt", qt_version, "mac", "desktop", "clang_64", "macos")
     )
 mac_build_jobs.append(BuildJob(
-            "install-qt",
-            "6.2.0",
-            "mac",
-            "desktop",
-            "clang_64",
-            "macos",
-            module="qtcharts qtnetworkauth", ))
+    "install-qt",
+    "6.2.0",
+    "mac",
+    "desktop",
+    "clang_64",
+    "macos",
+    module="qtcharts qtnetworkauth", ))
 
 # Windows Desktop
 for qt_version in qt_versions:
@@ -211,7 +211,7 @@ windows_build_jobs.extend(
 # Extra modules test
 linux_build_jobs.extend(
     [
-       BuildJob(
+        BuildJob(
             # Archives stored as .7z
             "install-src", "6.1.0", "linux", "desktop", "gcc_64", "gcc_64", subarchives="qtlottie",
             # Fail the job if this path does not exist:
@@ -235,10 +235,12 @@ linux_build_jobs.extend(
             "install-example", "6.1.3", "linux", "desktop", "gcc_64", "gcc_64",
             subarchives="qtdoc", module="qtcharts",
             # Fail the job if these paths do not exist:
-            check_output_cmd="ls -lh ./Examples/Qt-6.1.3/charts/ ./Examples/Qt-6.1.3/demos/ ./Examples/Qt-6.1.3/tutorials/",
+            check_output_cmd="ls -lh ./Examples/Qt-6.1.3/charts/ ./Examples/Qt-6.1.3/demos/ "
+                             "./Examples/Qt-6.1.3/tutorials/",
         ),
         # test for list commands
-        BuildJob('list-qt', '6.1.0', 'linux', 'desktop', 'gcc_64', '', spec=">6.0,<6.1.1", list_options={'HAS_WASM': "False"}),
+        BuildJob('list-qt', '6.1.0', 'linux', 'desktop', 'gcc_64', '', spec=">6.0,<6.1.1",
+                 list_options={'HAS_WASM': "False"}),
         BuildJob('list-qt', '6.1.0', 'linux', 'android', 'android_armv7', '', spec=">6.0,<6.1.1", list_options={}),
     ]
 )
@@ -271,7 +273,8 @@ windows_build_jobs.append(
 # WASM post 6.7.x
 linux_build_jobs.append(
     BuildJob("install-qt", "6.7.3", "all_os", "wasm", "wasm_multithread", "wasm_multithread",
-             is_autodesktop=True, emsdk_version=f"sdk-{BuildJob.emsdk_version_for_qt("6.7.3")}-64bit", autodesk_arch_folder="gcc_64")
+             is_autodesktop=True, emsdk_version=f"sdk-{BuildJob.emsdk_version_for_qt("6.7.3")}-64bit",
+             autodesk_arch_folder="gcc_64")
 )
 for job_queue, host, desk_arch, target, qt_version in (
     (linux_build_jobs, "all_os", "linux_gcc_64", "wasm", qt_versions[0]),
@@ -281,7 +284,8 @@ for job_queue, host, desk_arch, target, qt_version in (
     for wasm_arch in ("wasm_singlethread", "wasm_multithread"):
         job_queue.append(
             BuildJob("install-qt", qt_version, host, target, wasm_arch, wasm_arch,
-                     is_autodesktop=True, emsdk_version=f"sdk-{BuildJob.emsdk_version_for_qt(qt_version)}-64bit", autodesk_arch_folder=desk_arch)
+                     is_autodesktop=True, emsdk_version=f"sdk-{BuildJob.emsdk_version_for_qt(qt_version)}-64bit",
+                     autodesk_arch_folder=desk_arch)
         )
 
 # mobile SDK
@@ -335,6 +339,20 @@ mac_build_jobs.append(
     BuildJob("install-tool", "", "mac", "desktop", "", "", tool_options=tool_options_mac)
 )
 
+# Commercial
+windows_build_jobs.append(
+    BuildJob("install-qt-commercial", qt_version="6.8.1", target="desktop", arch="win64_msvc2022_64",
+             archdir="win64_msvc2022_64", module="qtquick3d")
+)
+linux_build_jobs.append(
+    BuildJob("install-qt-commercial", qt_version="6.8.1", target="desktop", arch="linux_gcc_64",
+             archdir="linux_gcc_64", module="qtquick3d")
+)
+mac_build_jobs.append(
+    BuildJob("install-qt-commercial", qt_version="6.8.1", target="desktop", arch="clang_64",
+             archdir="clang_64", module="qtquick3d")
+)
+
 matrices = {}
 
 for platform_build_job in all_platform_build_jobs:
@@ -375,8 +393,8 @@ for platform_build_job in all_platform_build_jobs:
                 ("OUTPUT_DIR", build_job.output_dir if build_job.output_dir else ""),
                 ("QT_BINDIR", build_job.qt_bindir()),
                 ("WIN_QT_BINDIR", build_job.win_qt_bindir()),
-                ("EMSDK_VERSION", (build_job.emsdk_version+"@main").split('@')[0]),
-                ("EMSDK_TAG",  (build_job.emsdk_version+"@main").split('@')[1]),
+                ("EMSDK_VERSION", (build_job.emsdk_version + "@main").split('@')[0]),
+                ("EMSDK_TAG", (build_job.emsdk_version + "@main").split('@')[1]),
                 ("WIN_AUTODESK_QT_BINDIR", build_job.win_autodesk_qt_bindir()),
                 ("TOOL1_ARGS", build_job.tool_options.get("TOOL1_ARGS", "")),
                 ("LIST_TOOL1_CMD", build_job.tool_options.get("LIST_TOOL1_CMD", "")),

@@ -1,496 +1,503 @@
+env:
+  AQT_TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+  AQT_TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
 steps:
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: $(PYTHON_VERSION)
-      architecture: 'x64'
-  - powershell: |
-      pip install -e .
-    displayName: install package
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: $(PYTHON_VERSION)
+    architecture: 'x64'
+- powershell: |
+    pip install -e .
+  displayName: install package
 
-  # Install linux dependencies
-  - bash: |
-      sudo apt-get update
-      sudo apt-get install -y libgl1-mesa-dev libxkbcommon-x11-0
-      if [[ "$(SUBCOMMAND)" == "install-tool" ]]; then
-        sudo apt-get install -y libxcb-{icccm4,image0,keysyms1,randr0,render-util0,shape0,sync1,xfixes0,xinerama0,xkb1}
+# Install linux dependencies
+- bash: |
+    sudo apt-get update
+    sudo apt-get install -y libgl1-mesa-dev libxkbcommon-x11-0
+    if [[ "$(SUBCOMMAND)" == "install-tool" || "$(SUBCOMMAND)" == "install-qt-commercial" ]]; then
+      sudo apt-get install -y libxcb-{icccm4,image0,keysyms1,randr0,render-util0,shape0,sync1,xfixes0,xinerama0,xkb1}
+    fi
+  condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'))
+  displayName: install test dependency for Linux
+
+# Run Aqt
+##----------------------------------------------------
+## we insert sleep in random 1sec < duration < 60sec to reduce
+## download server load.
+- bash: |
+    set -ex
+    number=$RANDOM
+    let "number %= 60" || true
+    let "number += 1"
+    sleep $number
+    mkdir Qt
+    cd Qt
+    if [[ "$(SUBCOMMAND)" == "install-qt-commercial" ]]; then
+      opt+=" --user $(AQT_TEST_EMAIL) --password $(AQT_TEST_PASSWORD)"
+      python -m aqt install-qt-commercial $opt $(TARGET) $(ARCH) $(QT_VERSION) --m $(MODULE)
+    fi
+    if [[ "$(SUBCOMMAND)" == "install-qt" ]]; then
+      opt=""
+      if [[ "$(QT_BASE_MIRROR)" != "" ]]; then
+        opt+=" -b $(QT_BASE_MIRROR)"
       fi
-    condition: and(eq(variables['TARGET'], 'desktop'), eq(variables['Agent.OS'], 'Linux'))
-    displayName: install test dependency for Linux
-
-  # Run Aqt
-  ##----------------------------------------------------
-  ## we insert sleep in random 1sec < duration < 60sec to reduce
-  ## download server load.
-  - bash: |
-      set -ex
-      number=$RANDOM
-      let "number %= 60" || true
-      let "number += 1"
-      sleep $number
-      mkdir Qt
-      cd Qt
-      if [[ "$(SUBCOMMAND)" == "install-qt" ]]; then
-        opt=""
-        if [[ "$(QT_BASE_MIRROR)" != "" ]]; then
-          opt+=" -b $(QT_BASE_MIRROR)"
-        fi
-        if [[ "$(MODULE)" != "" ]]; then
-          opt+=" -m $(MODULE)"
-        fi
-        if [[ "$(OUTPUT_DIR)" != "" ]]; then
-          opt+=" --outputdir $(OUTPUT_DIR)"
-          sudo mkdir -p "$(OUTPUT_DIR)"
-          sudo chown $(whoami) "$(OUTPUT_DIR)"
-        fi
-        if [[ "$(SUBARCHIVES)" != "" ]]; then
-          opt+=" --archives $(SUBARCHIVES)"
-        fi
-        if [[ "$(IS_AUTODESKTOP)" == "True" ]]; then
-          opt+=" --autodesktop"
-        elif [[ "$(TARGET)" == "android" || "$(TARGET)" == "ios" ]]; then
-          if [[ "$(HOST)" == "windows" ]]; then
-            python -m aqt install-qt $(HOST) desktop $(QT_VERSION) mingw81_64 --archives qtbase
-          else
-            # qtdeclarative contains `qmlimportscanner`: necessary for ios builds, Qt6+
-            python -m aqt install-qt $(HOST) desktop $(QT_VERSION) --archives qtbase qtdeclarative
-          fi
-        fi
-        if [[ "$(SPEC)" == "" ]]; then
-          python -m aqt install-qt $(HOST) $(TARGET) $(QT_VERSION) $(ARCH) $opt
+      if [[ "$(MODULE)" != "" ]]; then
+        opt+=" -m $(MODULE)"
+      fi
+      if [[ "$(OUTPUT_DIR)" != "" ]]; then
+        opt+=" --outputdir $(OUTPUT_DIR)"
+        sudo mkdir -p "$(OUTPUT_DIR)"
+        sudo chown $(whoami) "$(OUTPUT_DIR)"
+      fi
+      if [[ "$(SUBARCHIVES)" != "" ]]; then
+        opt+=" --archives $(SUBARCHIVES)"
+      fi
+      if [[ "$(IS_AUTODESKTOP)" == "True" ]]; then
+        opt+=" --autodesktop"
+      elif [[ "$(TARGET)" == "android" || "$(TARGET)" == "ios" ]]; then
+        if [[ "$(HOST)" == "windows" ]]; then
+          python -m aqt install-qt $(HOST) desktop $(QT_VERSION) mingw81_64 --archives qtbase
         else
-          python -m aqt install-qt $(HOST) $(TARGET) "$(SPEC)" $(ARCH) $opt
-        fi
-        if [[ "$(OUTPUT_DIR)" != "" ]]; then
-          # Use 'strings' to read binary
-          echo "Verify patched value of qt_prfxpath"
-          [[ "$(strings $(QT_BINDIR)/qmake | grep qt_prfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
-          echo "Verify patched value of qt_epfxpath"
-          [[ "$(strings $(QT_BINDIR)/qmake | grep qt_epfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
-          echo "Verify patched value of qt_hpfxpath"
-          [[ "$(strings $(QT_BINDIR)/qmake | grep qt_hpfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
-
-          # Use 'qmake -query' to check paths
-          echo "Hide qt.conf so it doesn't interfere with test"
-          mv $(QT_BINDIR)/qt.conf $(QT_BINDIR)/_qt.conf
-          #export PATH=$(QT_BINDIR):$PATH
-          echo "Require that qt_epfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
-          [[ $($(QT_BINDIR)/qmake -query QT_INSTALL_PREFIX) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
-          echo "Require that qt_prfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
-          [[ $($(QT_BINDIR)/qmake -query QT_INSTALL_PREFIX/dev) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
-          echo "Require that qt_hpfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
-          [[ $($(QT_BINDIR)/qmake -query QT_HOST_PREFIX) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+          # qtdeclarative contains `qmlimportscanner`: necessary for ios builds, Qt6+
+          python -m aqt install-qt $(HOST) desktop $(QT_VERSION) --archives qtbase qtdeclarative
         fi
       fi
-      if [[ "$(SUBCOMMAND)" == "list" ]]; then
-        aqt list-qt $(HOST)                                                     # print all targets for host
-        aqt list-tool $(HOST) $(TARGET)                                         # print all tools for host/target
-        aqt list-tool $(HOST) $(TARGET) qt3dstudio_runtime_240                  # print all tool variant names for qt3dstudio
-        aqt list-tool $(HOST) $(TARGET) qt3dstudio_runtime_240 --long           # print tool variant names, versions, release dates
-        if [[ "$(TARGET)" == "desktop" ]]; then
-          aqt list-tool $(HOST) $(TARGET) tools_qtcreator                       # print all tool variant names for qtcreator
-          aqt list-tool $(HOST) $(TARGET) tools_qtcreator -l                    # print tool variant names, versions, release dates
+      if [[ "$(SPEC)" == "" ]]; then
+        python -m aqt install-qt $(HOST) $(TARGET) $(QT_VERSION) $(ARCH) $opt
+      else
+        python -m aqt install-qt $(HOST) $(TARGET) "$(SPEC)" $(ARCH) $opt
+      fi
+      if [[ "$(OUTPUT_DIR)" != "" ]]; then
+        # Use 'strings' to read binary
+        echo "Verify patched value of qt_prfxpath"
+        [[ "$(strings $(QT_BINDIR)/qmake | grep qt_prfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+        echo "Verify patched value of qt_epfxpath"
+        [[ "$(strings $(QT_BINDIR)/qmake | grep qt_epfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+        echo "Verify patched value of qt_hpfxpath"
+        [[ "$(strings $(QT_BINDIR)/qmake | grep qt_hpfxpath | cut -d '=' -f 2)" == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+    
+        # Use 'qmake -query' to check paths
+        echo "Hide qt.conf so it doesn't interfere with test"
+        mv $(QT_BINDIR)/qt.conf $(QT_BINDIR)/_qt.conf
+        #export PATH=$(QT_BINDIR):$PATH
+        echo "Require that qt_epfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
+        [[ $($(QT_BINDIR)/qmake -query QT_INSTALL_PREFIX) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+        echo "Require that qt_prfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
+        [[ $($(QT_BINDIR)/qmake -query QT_INSTALL_PREFIX/dev) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+        echo "Require that qt_hpfxpath was set to '$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)'"
+        [[ $($(QT_BINDIR)/qmake -query QT_HOST_PREFIX) == "$(OUTPUT_DIR)/$(QT_VERSION)/$(ARCHDIR)" ]]
+      fi
+    fi
+    if [[ "$(SUBCOMMAND)" == "list" ]]; then
+      aqt list-qt $(HOST)                                                     # print all targets for host
+      aqt list-tool $(HOST) $(TARGET)                                         # print all tools for host/target
+      aqt list-tool $(HOST) $(TARGET) qt3dstudio_runtime_240                  # print all tool variant names for qt3dstudio
+      aqt list-tool $(HOST) $(TARGET) qt3dstudio_runtime_240 --long           # print tool variant names, versions, release dates
+      if [[ "$(TARGET)" == "desktop" ]]; then
+        aqt list-tool $(HOST) $(TARGET) tools_qtcreator                       # print all tool variant names for qtcreator
+        aqt list-tool $(HOST) $(TARGET) tools_qtcreator -l                    # print tool variant names, versions, release dates
+      fi
+      aqt list-qt $(HOST) $(TARGET)                                           # print all versions of Qt
+      aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)"                          # print all versions of Qt in SimpleSpec
+      ver=$(aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --latest-version)  # latest Qt in SimpleSpec
+      [ $ver == $(QT_VERSION) ]                                               # latest version in SPEC must be QT_VERSION
+      aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --modules latest $(ARCH) # print modules for latest in SimpleSpec
+      aqt list-qt $(HOST) $(TARGET) --modules $(QT_VERSION) $(ARCH)           # print modules for version/host/target/arch
+      aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION)                      # print architectures for version/host/target
+      if [[ "$(TARGET)" == "desktop" ]]; then
+        if [[ "$(HAS_WASM)" == "True" ]]; then                                # fail if 'wasm_32' is not in the list
+          aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION) | grep -w -q "wasm_32"
+        else                                                                  # fail if 'wasm_32' is in the list
+          ! aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION) | grep -w -q "wasm_32"
         fi
-        aqt list-qt $(HOST) $(TARGET)                                           # print all versions of Qt
-        aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)"                          # print all versions of Qt in SimpleSpec
-        ver=$(aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --latest-version)  # latest Qt in SimpleSpec
-        [ $ver == $(QT_VERSION) ]                                               # latest version in SPEC must be QT_VERSION
-        aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --modules latest $(ARCH) # print modules for latest in SimpleSpec
-        aqt list-qt $(HOST) $(TARGET) --modules $(QT_VERSION) $(ARCH)           # print modules for version/host/target/arch
-        aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION)                      # print architectures for version/host/target
-        if [[ "$(TARGET)" == "desktop" ]]; then
-          if [[ "$(HAS_WASM)" == "True" ]]; then                                # fail if 'wasm_32' is not in the list
-            aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION) | grep -w -q "wasm_32"
-          else                                                                  # fail if 'wasm_32' is in the list
-            ! aqt list-qt $(HOST) $(TARGET) --arch $(QT_VERSION) | grep -w -q "wasm_32"
-          fi
-        
-          # Extra check for Qt 6.5.0 WASM:
-          for host in mac linux windows; do
-            export WASM_ARCHES=$(aqt list-qt $host desktop --arch 6.5.0)
-            echo $WASM_ARCHES | grep -w -q "wasm_singlethread"                  # fail if 'wasm_singlethread' is not in the list
-            echo $WASM_ARCHES | grep -w -q "wasm_multithread"                   # fail if 'wasm_multithread' is not in the list
-          done
-        fi
-        aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --arch latest
-
-        # list-src/doc/example
-        aqt list-src $(HOST) $(QT_VERSION)                                      # print source archives available for host/desktop/version
-        aqt list-doc $(HOST) $(QT_VERSION)                                      # print docs archives available for host/desktop/version
-        aqt list-doc $(HOST) $(QT_VERSION) --modules                            # print docs modules available for host/desktop/version
-        aqt list-example $(HOST) $(QT_VERSION)                                  # print example archives available for host/desktop/version
-        aqt list-example $(HOST) $(QT_VERSION) --modules                        # print example modules available for host/desktop/version
+    
+        # Extra check for Qt 6.5.0 WASM:
+        for host in mac linux windows; do
+          export WASM_ARCHES=$(aqt list-qt $host desktop --arch 6.5.0)
+          echo $WASM_ARCHES | grep -w -q "wasm_singlethread"                  # fail if 'wasm_singlethread' is not in the list
+          echo $WASM_ARCHES | grep -w -q "wasm_multithread"                   # fail if 'wasm_multithread' is not in the list
+        done
       fi
-      if [[ "$(SUBCOMMAND)" == "install-src" ]]; then
-        python -m aqt $(SUBCOMMAND) $(HOST) $(QT_VERSION) --archives $(SUBARCHIVES)
-        $(CHECK_OUTPUT_CMD)
+      aqt list-qt $(HOST) $(TARGET) --spec "$(SPEC)" --arch latest
+    
+      # list-src/doc/example
+      aqt list-src $(HOST) $(QT_VERSION)                                      # print source archives available for host/desktop/version
+      aqt list-doc $(HOST) $(QT_VERSION)                                      # print docs archives available for host/desktop/version
+      aqt list-doc $(HOST) $(QT_VERSION) --modules                            # print docs modules available for host/desktop/version
+      aqt list-example $(HOST) $(QT_VERSION)                                  # print example archives available for host/desktop/version
+      aqt list-example $(HOST) $(QT_VERSION) --modules                        # print example modules available for host/desktop/version
+    fi
+    if [[ "$(SUBCOMMAND)" == "install-src" ]]; then
+      python -m aqt $(SUBCOMMAND) $(HOST) $(QT_VERSION) --archives $(SUBARCHIVES)
+      $(CHECK_OUTPUT_CMD)
+    fi
+    if [[ "$(SUBCOMMAND)" =~ ^install-(doc|example)$ ]]; then
+      opt=""
+      if [[ "$(MODULE)" != "" ]]; then
+        opt+=" -m $(MODULE)"
       fi
-      if [[ "$(SUBCOMMAND)" =~ ^install-(doc|example)$ ]]; then
-        opt=""
-        if [[ "$(MODULE)" != "" ]]; then
-          opt+=" -m $(MODULE)"
-        fi
-        python -m aqt $(SUBCOMMAND) $(HOST) $(QT_VERSION) --archives $(SUBARCHIVES) $opt
-        $(CHECK_OUTPUT_CMD)
+      python -m aqt $(SUBCOMMAND) $(HOST) $(QT_VERSION) --archives $(SUBARCHIVES) $opt
+      $(CHECK_OUTPUT_CMD)
+    fi
+    if [[ "$(SUBCOMMAND)" == "install-tool" ]]; then
+      opt=""
+      if [[ "$(OUTPUT_DIR)" != "" ]]; then
+        opt+=" --outputdir $(OUTPUT_DIR)"
+        sudo mkdir -p "$(OUTPUT_DIR)"
+        sudo chown $(whoami) "$(OUTPUT_DIR)"
       fi
-      if [[ "$(SUBCOMMAND)" == "install-tool" ]]; then
-        opt=""
-        if [[ "$(OUTPUT_DIR)" != "" ]]; then
-          opt+=" --outputdir $(OUTPUT_DIR)"
-          sudo mkdir -p "$(OUTPUT_DIR)"
-          sudo chown $(whoami) "$(OUTPUT_DIR)"
-        fi
-        python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(TOOL1_ARGS) $opt
-        $(LIST_TOOL1_CMD)
-        echo "Testing $(TOOL1_ARGS) with '$(TEST_TOOL1_CMD)'"
-        $(TEST_TOOL1_CMD)
-        python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(TOOL2_ARGS) $opt
-        $(LIST_TOOL2_CMD)
-        echo "Testing $(TOOL2_ARGS) with '$(TEST_TOOL2_CMD)'"
-        $(TEST_TOOL2_CMD)
-      fi
-    workingDirectory: $(Build.BinariesDirectory)
-    env:
-      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
-    displayName: Run Aqt
+      python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(TOOL1_ARGS) $opt
+      $(LIST_TOOL1_CMD)
+      echo "Testing $(TOOL1_ARGS) with '$(TEST_TOOL1_CMD)'"
+      $(TEST_TOOL1_CMD)
+      python -m aqt $(SUBCOMMAND) $(HOST) $(TARGET) $(TOOL2_ARGS) $opt
+      $(LIST_TOOL2_CMD)
+      echo "Testing $(TOOL2_ARGS) with '$(TEST_TOOL2_CMD)'"
+      $(TEST_TOOL2_CMD)
+    fi
+  workingDirectory: $(Build.BinariesDirectory)
+  env:
+    AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
+  displayName: Run Aqt
 
-  ##----------------------------------------------------
-  # for Android target
-  - bash: |
-      set -ex
-      if [[ "$(Agent.OS)" == "Linux" ]]; then
-        wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
-        unzip android-ndk-r21e-linux-x86_64.zip
-      fi
-      if [[ "$(Agent.OS)" == "Darwin" ]]; then
-        wget https://dl.google.com/android/repository/android-ndk-r21e-darwin-x86_64.zip
-        unzip android-ndk-r21e-darwin-x86_64.zip
-      fi
-      export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r21e
-      mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
-      export PATH=$(QT_BINDIR):$PATH
-      qmake $(Build.BinariesDirectory)/tests/accelbubble
-      make
-    condition: |
-      and(
-        eq(variables['TARGET'], 'android'),
-        or(
-          eq(variables['Agent.OS'], 'Linux'),
-          eq(variables['Agent.OS'], 'Darwin')
-        ),
-        ne(variables['SUBCOMMAND'], 'list-qt'),
-        ne(variables['SUBCOMMAND'], 'install-tool')
-      )
-    displayName: Build accelbubble example application to test for android
+##----------------------------------------------------
+# for Android target
+- bash: |
+    set -ex
+    if [[ "$(Agent.OS)" == "Linux" ]]; then
+      wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
+      unzip android-ndk-r21e-linux-x86_64.zip
+    fi
+    if [[ "$(Agent.OS)" == "Darwin" ]]; then
+      wget https://dl.google.com/android/repository/android-ndk-r21e-darwin-x86_64.zip
+      unzip android-ndk-r21e-darwin-x86_64.zip
+    fi
+    export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r21e
+    mkdir $(Build.BinariesDirectory)/tests
+    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
+    export PATH=$(QT_BINDIR):$PATH
+    qmake $(Build.BinariesDirectory)/tests/accelbubble
+    make
+  condition: |
+    and(
+      eq(variables['TARGET'], 'android'),
+      or(
+        eq(variables['Agent.OS'], 'Linux'),
+        eq(variables['Agent.OS'], 'Darwin')
+      ),
+      ne(variables['SUBCOMMAND'], 'list-qt'),
+      ne(variables['SUBCOMMAND'], 'install-tool')
+    )
+  displayName: Build accelbubble example application to test for android
 
-  ##----------------------------------------------------
-  # for iOS target
-  - bash: |
-      set -ex
-      mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
-      export PATH=$(QT_BINDIR):$PATH
-      qmake $(Build.BinariesDirectory)/tests/accelbubble
-      make
-    condition: |
-        and(eq(variables['TARGET'], 'ios'), 
-            ne(variables['SUBCOMMAND'], 'list'), 
-            ne(variables['SUBCOMMAND'], 'install-tool'))
-    displayName: Build accelbubble example application to test for ios
+##----------------------------------------------------
+# for iOS target
+- bash: |
+    set -ex
+    mkdir $(Build.BinariesDirectory)/tests
+    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
+    export PATH=$(QT_BINDIR):$PATH
+    qmake $(Build.BinariesDirectory)/tests/accelbubble
+    make
+  condition: |
+    and(eq(variables['TARGET'], 'ios'), 
+        ne(variables['SUBCOMMAND'], 'list'), 
+        ne(variables['SUBCOMMAND'], 'install-tool'))
+  displayName: Build accelbubble example application to test for ios
 
-  ##----------------------------------------------------
-  # Cache Powershell Modules in $MODULES_FOLDER
-  - task: Cache@2
-    inputs:
-      key: '"pwsh modules" | "$(startYear)" | "$(startMonth)"'
-      path: $(MODULES_FOLDER)
-      cacheHitVar: PSModules_IsCached
-    condition: |
-        and(eq(variables['Agent.OS'], 'Windows_NT'), 
-            eq(variables['SUBCOMMAND'], 'install-qt'))
-    displayName: Cache Powershell Modules
-  # On cache miss: Download Powershell Modules to $MODULES_FOLDER
-  - powershell: |
-      Install-PackageProvider NuGet -Force
-      Import-PackageProvider NuGet -Force
-      Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-      md -p $(MODULES_FOLDER)   # mkdir
-      Save-Module -Name Pscx -AllowPrerelease -Path $(MODULES_FOLDER)
-    condition: |
-        and(eq(variables['Agent.OS'], 'Windows_NT'), 
-            eq(variables['SUBCOMMAND'], 'install-qt'),
-            ne(variables.PSModules_IsCached, 'true'))
-    displayName: Download Powershell Modules for Windows on cache miss
+##----------------------------------------------------
+# Cache Powershell Modules in $MODULES_FOLDER
+- task: Cache@2
+  inputs:
+    key: '"pwsh modules" | "$(startYear)" | "$(startMonth)"'
+    path: $(MODULES_FOLDER)
+    cacheHitVar: PSModules_IsCached
+  condition: |
+    and(eq(variables['Agent.OS'], 'Windows_NT'), 
+        eq(variables['SUBCOMMAND'], 'install-qt'))
+  displayName: Cache Powershell Modules
+# On cache miss: Download Powershell Modules to $MODULES_FOLDER
+- powershell: |
+    Install-PackageProvider NuGet -Force
+    Import-PackageProvider NuGet -Force
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+    md -p $(MODULES_FOLDER)   # mkdir
+    Save-Module -Name Pscx -AllowPrerelease -Path $(MODULES_FOLDER)
+  condition: |
+    and(eq(variables['Agent.OS'], 'Windows_NT'), 
+        eq(variables['SUBCOMMAND'], 'install-qt'),
+        ne(variables.PSModules_IsCached, 'true'))
+  displayName: Download Powershell Modules for Windows on cache miss
 
-  ##----------------------------------------------------
-  # determine Windows build system
-  - powershell: |
-      if ('$(ARCH)' -like '*msvc*') {
-        Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MSVC'
-      }
-      if ('$(ARCH)' -like '*mingw*') {
-        Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MINGW'
-      }
-      if ('$(ARCH)' -like 'win64_msvc*') {
-        Write-Host '##vso[task.setvariable variable=ARCHITECTURE]amd64'
-      } else {
-        Write-Host '##vso[task.setvariable variable=ARCHITECTURE]x86'
-      }
-      if ('$(ARCH)' -like '*msvc*') {
-        Write-Host '##vso[task.setvariable variable=VSVER]2022'
-      }
-      cd $(WIN_QT_BINDIR)
-      unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
-    condition: |
-        and(eq(variables['Agent.OS'], 'Windows_NT'), 
-            eq(variables['SUBCOMMAND'], 'install-qt'))
-    displayName: Detect toolchain for Windows and update PATH
+##----------------------------------------------------
+# determine Windows build system
+- powershell: |
+    if ('$(ARCH)' -like '*msvc*') {
+      Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MSVC'
+    }
+    if ('$(ARCH)' -like '*mingw*') {
+      Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MINGW'
+    }
+    if ('$(ARCH)' -like 'win64_msvc*') {
+      Write-Host '##vso[task.setvariable variable=ARCHITECTURE]amd64'
+    } else {
+      Write-Host '##vso[task.setvariable variable=ARCHITECTURE]x86'
+    }
+    if ('$(ARCH)' -like '*msvc*') {
+      Write-Host '##vso[task.setvariable variable=VSVER]2022'
+    }
+    cd $(WIN_QT_BINDIR)
+    unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
+  condition: |
+    and(eq(variables['Agent.OS'], 'Windows_NT'), 
+        eq(variables['SUBCOMMAND'], 'install-qt'))
+  displayName: Detect toolchain for Windows and update PATH
 
-  # When no modules
-  - script: |
-      set -ex
-      mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/helloworld.7z)
-      export PATH=$(QT_BINDIR):$PATH
-      qmake $(Build.BinariesDirectory)/tests/helloworld
-      make
-    condition: |
-        and(
-          eq( variables['TARGET'], 'desktop' ),
-          not( startsWith( variables['ARCH'], 'wasm_' ) ),
-          or(
-            eq(variables['Agent.OS'], 'Linux'),
-            eq(variables['Agent.OS'], 'Darwin')
-          ),
-          eq(variables['MODULE'], ''),
-          eq(variables['SUBCOMMAND'], 'install-qt')
-        )
-    displayName: Build test with qmake for Linux and macOS w/o extra module
-  # Update the MSVC build step to use the new compiler flags
-  - powershell: |
-      if ( $env:TOOLCHAIN -eq 'MSVC' ) {
-        # Load modules from cache  
-        $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
-        Write-Host $Env:PSModulePath
-        Import-Module "Pscx"
-        Import-Module "VSSetup"
-
-        Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-        $env:Path += ";$(WIN_QT_BINDIR)"
-        mkdir $(Build.BinariesDirectory)\tests
-        cd $(Build.BinariesDirectory)\tests
-        7z x $(Build.SourcesDirectory)\ci\helloworld.7z
-        cd ..
-        qmake $(Build.BinariesDirectory)\tests\helloworld
-        jom
-      } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
-        python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
-          --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop $(MINGW_TOOL_NAME) qt.tools.$(MINGW_VARIANT)
-        if ($?) {
-          Write-Host 'Successfully installed tools_mingw'
-        } else {
-          throw 'Failed to install tools_mingw'
-        }
-        Set-Item -Path Env:Path -Value ("$(Build.BinariesDirectory)\Qt\Tools\$(MINGW_FOLDER)\bin;$(WIN_QT_BINDIR);" + $Env:Path)
-        Write-Host "Path == " + $env:Path
-        mkdir $(Build.BinariesDirectory)\tests
-        cd $(Build.BinariesDirectory)\tests
-        7z x $(Build.SourcesDirectory)\ci\helloworld.7z
-        cd ..
-        qmake $(Build.BinariesDirectory)\tests\helloworld
-        mingw32-make
-      }
-    condition: |
-      and(
-        eq(variables['Agent.OS'], 'Windows_NT'),
-        eq(variables['MODULE'], ''),
-        eq(variables['SUBCOMMAND'], 'install-qt')
-      )
-    displayName: build test with qmake w/o extra module
-    env:
-      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
-
-# When --archives non-empty
-  - script: |
-        set -ex
-        rm -rf $(Build.BinariesDirectory)/tests
-        mkdir $(Build.BinariesDirectory)/tests
-        (cd $(Build.BinariesDirectory)/tests && 7zr x $(Build.SourcesDirectory)/ci/helloworld_qttools.7z)
-        export PATH=$(QT_BINDIR):$PATH
-        qmake -d $(Build.BinariesDirectory)/tests/helloworld_qttools
-        make
-    condition: |
-        and(
-          eq( variables['TARGET'], 'desktop' ),
-          not( startsWith( variables['ARCH'], 'wasm_' ) ),
-          or(
-            eq(variables['Agent.OS'], 'Linux'),
-            eq(variables['Agent.OS'], 'Darwin')
-          ),
-          contains(variables['SUBARCHIVES'], 'qttools'),
-          eq(variables['SUBCOMMAND'], 'install-qt')
-        )
-    displayName: build test with qmake for Linux and macOS with specific Qt modules (QT += uitools)
-  - powershell: |
-        if ( $env:TOOLCHAIN -eq 'MSVC' ) {
-          # Load modules from cache
-          $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
-          Write-Host $Env:PSModulePath
-          Import-Module "Pscx"
-          Import-Module "VSSetup"
-
-          Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
-          $env:Path += ";$(WIN_QT_BINDIR)"
-          try { rm -r -fo $(Build.BinariesDirectory)\tests } catch { $Error.Clear() }
-          mkdir $(Build.BinariesDirectory)\tests
-          cd $(Build.BinariesDirectory)\tests
-          7z x $(Build.SourcesDirectory)\ci\helloworld_qttools.7z
-          qmake -d $(Build.BinariesDirectory)\tests\helloworld_qttools
-          nmake
-        } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
-          Set-Item -Path Env:Path -Value ("$(Build.BinariesDirectory)\Qt\Tools\$(MINGW_FOLDER)\bin;$(WIN_QT_BINDIR);" + $Env:Path)
-          Write-Host "Path == " + $env:Path
-          if (![bool] (Get-Command -ErrorAction Ignore -Type Application mingw32-make)) {
-            python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
-               --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop $(MINGW_TOOL_NAME) qt.tools.$(MINGW_VARIANT)
-            if ($?) {
-              Write-Host 'Successfully installed tools_mingw'
-            } else {
-              throw 'Failed to install tools_mingw'
-            }
-          }
-          try { rm -r -fo $(Build.BinariesDirectory)\tests } catch { $Error.Clear() }
-          mkdir $(Build.BinariesDirectory)\tests
-          cd $(Build.BinariesDirectory)\tests
-          7z x $(Build.SourcesDirectory)\ci\helloworld_qttools.7z
-          qmake -d $(Build.BinariesDirectory)\tests\helloworld_qttools
-          mingw32-make
-        }
-    condition: |
-        and(
-          eq( variables['Agent.OS'], 'Windows_NT'),
-          contains(variables['SUBARCHIVES'], 'qttools'),
-          eq(variables['SUBCOMMAND'], 'install-qt')
-        )
-    displayName: build test with qmake with specific Qt modules (QT += uitools)
-    env:
-      AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
-      LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
-
-  - powershell: |
+# When no modules
+- script: |
+    set -ex
+    mkdir $(Build.BinariesDirectory)/tests
+    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/helloworld.7z)
+    export PATH=$(QT_BINDIR):$PATH
+    qmake $(Build.BinariesDirectory)/tests/helloworld
+    make
+  condition: |
+    and(
+      eq( variables['TARGET'], 'desktop' ),
+      not( startsWith( variables['ARCH'], 'wasm_' ) ),
+      or(
+        eq(variables['Agent.OS'], 'Linux'),
+        eq(variables['Agent.OS'], 'Darwin')
+      ),
+      eq(variables['MODULE'], ''),
+      eq(variables['SUBCOMMAND'], 'install-qt')
+    )
+  displayName: Build test with qmake for Linux and macOS w/o extra module
+# Update the MSVC build step to use the new compiler flags
+- powershell: |
+    if ( $env:TOOLCHAIN -eq 'MSVC' ) {
       # Load modules from cache  
       $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
       Write-Host $Env:PSModulePath
       Import-Module "Pscx"
       Import-Module "VSSetup"
-
+    
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       $env:Path += ";$(WIN_QT_BINDIR)"
-      echo Add Qt to PATH: $env:PATH
-      mkdir $(Build.BinariesDirectory)/tests
-      cd $(Build.BinariesDirectory)/tests
-      7z x $(Build.SourcesDirectory)/ci/redditclient.7z
-      cd ..
-      qmake $(Build.BinariesDirectory)\tests\redditclient
-      nmake
-    condition: |
-      and(
-        eq(variables['Agent.OS'], 'Windows_NT'),
-        eq(variables['TOOLCHAIN'], 'MSVC'),
-        ne(variables['MODULE'], ''),
-        ne(variables['VSVER'], '2022')
-      )
-    displayName: build test with qmake with MSVC with extra module
-  - bash: |
-      set -ex
-      mkdir $(Build.BinariesDirectory)/tests
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
-      if [[ "6" -eq "${QT_VERSION:0:1}" ]]; then
-        (cd $(Build.BinariesDirectory)/tests/redditclient;patch -i redditclient_6.diff -p1)
-      fi
-      export PATH=$(QT_BINDIR):$PATH
-      qmake $(Build.BinariesDirectory)/tests/redditclient
-      make
-    condition: |
-      and(
-        eq( variables['TARGET'], 'desktop'),
-        or(
-          eq(variables['Agent.OS'], 'Linux'),
-          eq(variables['Agent.OS'], 'Darwin')
-        ),
-        ne(variables['MODULE'], ''),
-        eq(variables['SUBCOMMAND'], 'install-qt')
-      )
-    displayName: Build test with qmake for Linux and macOS with extra module
-
-  ##----------------------------------------------------
-  # wasm_32/single/multithread on linux and mac
-  - script: |
-      set -uex
-      git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
-      cd emsdk
-      ./emsdk install $(EMSDK_VERSION)
-      ./emsdk activate --embedded $(EMSDK_VERSION)
-      source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
-      mkdir $(Build.BinariesDirectory)/tests
-      if [[ $(QT_VERSION) = 6* ]]; then
-        OPENGLWINDOW_7Z="openglwindow_qt6.7z"
-      else
-        OPENGLWINDOW_7Z="openglwindow.7z"
-      fi
-      (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/$OPENGLWINDOW_7Z)
-      export PATH=$(QT_BINDIR):$PATH
-      qmake $(Build.BinariesDirectory)/tests/openglwindow
-      make
-    workingDirectory: $(Build.BinariesDirectory)
-    condition: |
-      and(
-        startsWith( variables['ARCH'], 'wasm_' ),
-        or(
-          eq(variables['Agent.OS'], 'Linux'),
-          eq(variables['Agent.OS'], 'Darwin')
-        )
-      )
-    displayName: 'Build WebAssembler sample project on mac/linux'
-
-  # wasm_32/single/multithread on Windows cmd.exe
-  - powershell: |
-      git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
-      cd emsdk
-      .\emsdk install $(EMSDK_VERSION)
-      .\emsdk activate --embedded $(EMSDK_VERSION)
-      .\emsdk_env.bat
       mkdir $(Build.BinariesDirectory)\tests
       cd $(Build.BinariesDirectory)\tests
-      $env:Path += ";$(WIN_QT_BINDIR)"
-      echo "Add Qt/qmake to PATH at $(WIN_QT_BINDIR):" 
-      echo "$env:Path"
-      if ('$(QT_VERSION)' -like '6*') {
-        7z x $(Build.SourcesDirectory)\ci\openglwindow_qt6.7z
-        echo "Inlined qmake.bat command is: $(WIN_AUTODESK_QT_BINDIR)\qmake -qtconf $(WIN_QT_BINDIR)\target_qt.conf $(Build.BinariesDirectory)\tests\openglwindow"
-        $(WIN_AUTODESK_QT_BINDIR)\qmake.exe -qtconf "$(WIN_QT_BINDIR)\target_qt.conf" $(Build.BinariesDirectory)\tests\openglwindow
+      7z x $(Build.SourcesDirectory)\ci\helloworld.7z
+      cd ..
+      qmake $(Build.BinariesDirectory)\tests\helloworld
+      jom
+    } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
+      python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
+        --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop $(MINGW_TOOL_NAME) qt.tools.$(MINGW_VARIANT)
+      if ($?) {
+        Write-Host 'Successfully installed tools_mingw'
       } else {
-        7z x $(Build.SourcesDirectory)\ci\openglwindow.7z
-        echo "Qt5: run qmake.exe"
-        qmake $(Build.BinariesDirectory)\tests\openglwindow
+        throw 'Failed to install tools_mingw'
       }
-      if ($false -eq $?) {
-        Write-Error "qmake failed."
-        Write-Host "##vso[task.logissue type=error]qmake failed."
-        exit(1)
+      Set-Item -Path Env:Path -Value ("$(Build.BinariesDirectory)\Qt\Tools\$(MINGW_FOLDER)\bin;$(WIN_QT_BINDIR);" + $Env:Path)
+      Write-Host "Path == " + $env:Path
+      mkdir $(Build.BinariesDirectory)\tests
+      cd $(Build.BinariesDirectory)\tests
+      7z x $(Build.SourcesDirectory)\ci\helloworld.7z
+      cd ..
+      qmake $(Build.BinariesDirectory)\tests\helloworld
+      mingw32-make
+    }
+  condition: |
+    and(
+      eq(variables['Agent.OS'], 'Windows_NT'),
+      eq(variables['MODULE'], ''),
+      eq(variables['SUBCOMMAND'], 'install-qt')
+    )
+  displayName: build test with qmake w/o extra module
+  env:
+    AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
+
+# When --archives non-empty
+- script: |
+    set -ex
+    rm -rf $(Build.BinariesDirectory)/tests
+    mkdir $(Build.BinariesDirectory)/tests
+    (cd $(Build.BinariesDirectory)/tests && 7zr x $(Build.SourcesDirectory)/ci/helloworld_qttools.7z)
+    export PATH=$(QT_BINDIR):$PATH
+    qmake -d $(Build.BinariesDirectory)/tests/helloworld_qttools
+    make
+  condition: |
+    and(
+      eq( variables['TARGET'], 'desktop' ),
+      not( startsWith( variables['ARCH'], 'wasm_' ) ),
+      or(
+        eq(variables['Agent.OS'], 'Linux'),
+        eq(variables['Agent.OS'], 'Darwin')
+      ),
+      contains(variables['SUBARCHIVES'], 'qttools'),
+      eq(variables['SUBCOMMAND'], 'install-qt')
+    )
+  displayName: build test with qmake for Linux and macOS with specific Qt modules (QT += uitools)
+- powershell: |
+    if ( $env:TOOLCHAIN -eq 'MSVC' ) {
+      # Load modules from cache
+      $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
+      Write-Host $Env:PSModulePath
+      Import-Module "Pscx"
+      Import-Module "VSSetup"
+    
+      Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
+      $env:Path += ";$(WIN_QT_BINDIR)"
+      try { rm -r -fo $(Build.BinariesDirectory)\tests } catch { $Error.Clear() }
+      mkdir $(Build.BinariesDirectory)\tests
+      cd $(Build.BinariesDirectory)\tests
+      7z x $(Build.SourcesDirectory)\ci\helloworld_qttools.7z
+      qmake -d $(Build.BinariesDirectory)\tests\helloworld_qttools
+      nmake
+    } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
+      Set-Item -Path Env:Path -Value ("$(Build.BinariesDirectory)\Qt\Tools\$(MINGW_FOLDER)\bin;$(WIN_QT_BINDIR);" + $Env:Path)
+      Write-Host "Path == " + $env:Path
+      if (![bool] (Get-Command -ErrorAction Ignore -Type Application mingw32-make)) {
+        python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
+           --outputdir $(Build.BinariesDirectory)/Qt $(HOST) desktop $(MINGW_TOOL_NAME) qt.tools.$(MINGW_VARIANT)
+        if ($?) {
+          Write-Host 'Successfully installed tools_mingw'
+        } else {
+          throw 'Failed to install tools_mingw'
+        }
       }
-      make
-      if ($false -eq $?) {
-        Write-Error "make failed."
-        Write-Host "##vso[task.logissue type=error]nmake failed."
-        exit(1)
-      }
-    workingDirectory: $(Build.BinariesDirectory)
-    condition: |
-      and(
-        startsWith( variables['ARCH'], 'wasm_' ),
-        eq( variables['Agent.OS'], 'Windows_NT' )
+      try { rm -r -fo $(Build.BinariesDirectory)\tests } catch { $Error.Clear() }
+      mkdir $(Build.BinariesDirectory)\tests
+      cd $(Build.BinariesDirectory)\tests
+      7z x $(Build.SourcesDirectory)\ci\helloworld_qttools.7z
+      qmake -d $(Build.BinariesDirectory)\tests\helloworld_qttools
+      mingw32-make
+    }
+  condition: |
+    and(
+      eq( variables['Agent.OS'], 'Windows_NT'),
+      contains(variables['SUBARCHIVES'], 'qttools'),
+      eq(variables['SUBCOMMAND'], 'install-qt')
+    )
+  displayName: build test with qmake with specific Qt modules (QT += uitools)
+  env:
+    AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
+    LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
+
+- powershell: |
+    # Load modules from cache  
+    $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
+    Write-Host $Env:PSModulePath
+    Import-Module "Pscx"
+    Import-Module "VSSetup"
+    
+    Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
+    $env:Path += ";$(WIN_QT_BINDIR)"
+    echo Add Qt to PATH: $env:PATH
+    mkdir $(Build.BinariesDirectory)/tests
+    cd $(Build.BinariesDirectory)/tests
+    7z x $(Build.SourcesDirectory)/ci/redditclient.7z
+    cd ..
+    qmake $(Build.BinariesDirectory)\tests\redditclient
+    nmake
+  condition: |
+    and(
+      eq(variables['Agent.OS'], 'Windows_NT'),
+      eq(variables['TOOLCHAIN'], 'MSVC'),
+      ne(variables['MODULE'], ''),
+      ne(variables['VSVER'], '2022')
+    )
+  displayName: build test with qmake with MSVC with extra module
+- bash: |
+    set -ex
+    mkdir $(Build.BinariesDirectory)/tests
+    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
+    if [[ "6" -eq "${QT_VERSION:0:1}" ]]; then
+      (cd $(Build.BinariesDirectory)/tests/redditclient;patch -i redditclient_6.diff -p1)
+    fi
+    export PATH=$(QT_BINDIR):$PATH
+    qmake $(Build.BinariesDirectory)/tests/redditclient
+    make
+  condition: |
+    and(
+      eq( variables['TARGET'], 'desktop'),
+      or(
+        eq(variables['Agent.OS'], 'Linux'),
+        eq(variables['Agent.OS'], 'Darwin')
+      ),
+      ne(variables['MODULE'], ''),
+      eq(variables['SUBCOMMAND'], 'install-qt')
+    )
+  displayName: Build test with qmake for Linux and macOS with extra module
+
+##----------------------------------------------------
+# wasm_32/single/multithread on linux and mac
+- script: |
+    set -uex
+    git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
+    cd emsdk
+    ./emsdk install $(EMSDK_VERSION)
+    ./emsdk activate --embedded $(EMSDK_VERSION)
+    source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
+    mkdir $(Build.BinariesDirectory)/tests
+    if [[ $(QT_VERSION) = 6* ]]; then
+      OPENGLWINDOW_7Z="openglwindow_qt6.7z"
+    else
+      OPENGLWINDOW_7Z="openglwindow.7z"
+    fi
+    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/$OPENGLWINDOW_7Z)
+    export PATH=$(QT_BINDIR):$PATH
+    qmake $(Build.BinariesDirectory)/tests/openglwindow
+    make
+  workingDirectory: $(Build.BinariesDirectory)
+  condition: |
+    and(
+      startsWith( variables['ARCH'], 'wasm_' ),
+      or(
+        eq(variables['Agent.OS'], 'Linux'),
+        eq(variables['Agent.OS'], 'Darwin')
       )
-    displayName: 'Build WebAssembler sample project on windows'
+    )
+  displayName: 'Build WebAssembler sample project on mac/linux'
+
+# wasm_32/single/multithread on Windows cmd.exe
+- powershell: |
+    git clone --depth=1 --branch=$(EMSDK_TAG) https://github.com/emscripten-core/emsdk.git
+    cd emsdk
+    .\emsdk install $(EMSDK_VERSION)
+    .\emsdk activate --embedded $(EMSDK_VERSION)
+    .\emsdk_env.bat
+    mkdir $(Build.BinariesDirectory)\tests
+    cd $(Build.BinariesDirectory)\tests
+    $env:Path += ";$(WIN_QT_BINDIR)"
+    echo "Add Qt/qmake to PATH at $(WIN_QT_BINDIR):" 
+    echo "$env:Path"
+    if ('$(QT_VERSION)' -like '6*') {
+      7z x $(Build.SourcesDirectory)\ci\openglwindow_qt6.7z
+      echo "Inlined qmake.bat command is: $(WIN_AUTODESK_QT_BINDIR)\qmake -qtconf $(WIN_QT_BINDIR)\target_qt.conf $(Build.BinariesDirectory)\tests\openglwindow"
+      $(WIN_AUTODESK_QT_BINDIR)\qmake.exe -qtconf "$(WIN_QT_BINDIR)\target_qt.conf" $(Build.BinariesDirectory)\tests\openglwindow
+    } else {
+      7z x $(Build.SourcesDirectory)\ci\openglwindow.7z
+      echo "Qt5: run qmake.exe"
+      qmake $(Build.BinariesDirectory)\tests\openglwindow
+    }
+    if ($false -eq $?) {
+      Write-Error "qmake failed."
+      Write-Host "##vso[task.logissue type=error]qmake failed."
+      exit(1)
+    }
+    make
+    if ($false -eq $?) {
+      Write-Error "make failed."
+      Write-Host "##vso[task.logissue type=error]nmake failed."
+      exit(1)
+    }
+  workingDirectory: $(Build.BinariesDirectory)
+  condition: |
+    and(
+      startsWith( variables['ARCH'], 'wasm_' ),
+      eq( variables['Agent.OS'], 'Windows_NT' )
+    )
+  displayName: 'Build WebAssembler sample project on windows'

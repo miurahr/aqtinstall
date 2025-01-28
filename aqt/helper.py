@@ -644,3 +644,26 @@ def safely_run_save_output(cmd: List[str], timeout: int) -> Any:
         return result
     except Exception:
         raise
+
+
+def extract_auth(args: List[str]) -> Tuple[str | None, str | None, List[str] | None]:
+    username = None
+    password = None
+    i = 0
+    while i < len(args):
+        if args[i] == "--email":
+            if i + 1 < len(args):
+                username = args[i + 1]
+                del args[i : i + 2]
+            else:
+                del args[i]
+            continue
+        elif args[i] == "--pw":
+            if i + 1 < len(args):
+                password = args[i + 1]
+                del args[i : i + 2]
+            else:
+                del args[i]
+            continue
+        i += 1
+    return username, password, args
