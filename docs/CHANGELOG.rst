@@ -13,6 +13,24 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.2.0`_ (29, January, 2025)
+=============================
+
+Fixed
+-----
+- fix source/doc/examples with qtsdkrepo changes (#857)
+- fix WASM and update document (#846, #876)
+- fix list-src,doc,examples for >= 6.8.0 (#880)
+
+Added
+-----
+- Add support for commercal version of Qt (#878)
+
+Changed
+-------
+- Improve type definitions and stylees (#864, #869)
+- Migrate dependency to patch_ng from patch (#875)
+
 `v3.1.21`_ (20, December 2024)
 ==============================
 
@@ -445,7 +463,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.21...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.2.0...HEAD
+.. _v3.2.0: https://github.com/miurahr/aqtinstall/compare/v3.1.21...v3.2.0
 .. _v3.1.21: https://github.com/miurahr/aqtinstall/compare/v3.1.20...v3.1.21
 .. _v3.1.20: https://github.com/miurahr/aqtinstall/compare/v3.1.19...v3.1.20
 .. _v3.1.19: https://github.com/miurahr/aqtinstall/compare/v3.1.18...v3.1.19
