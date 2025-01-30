@@ -59,6 +59,7 @@ from aqt.helper import (
     MyQueueListener,
     Settings,
     downloadBinaryFile,
+    extract_auth,
     get_hash,
     get_os_name,
     get_qt_installer_name,
@@ -676,42 +677,43 @@ class Cli:
         """Execute commercial Qt installation"""
         self.show_aqt_version()
 
-        if args.override:
-            commercial_installer = CommercialInstaller(
-                target="",  # Empty string as placeholder
-                arch="",
-                version=None,
-                logger=self.logger,
-                base_url=args.base if args.base is not None else Settings.baseurl,
-                override=args.override,
-                no_unattended=not Settings.qt_installer_unattended,
-            )
-        else:
-            if not all([args.target, args.arch, args.version]):
-                raise CliInputError("target, arch, and version are required")
-
-            commercial_installer = CommercialInstaller(
-                target=args.target,
-                arch=args.arch,
-                version=args.version,
-                username=args.user,
-                password=args.password,
-                output_dir=args.outputdir,
-                logger=self.logger,
-                base_url=args.base if args.base is not None else Settings.baseurl,
-                no_unattended=not Settings.qt_installer_unattended,
-                modules=args.modules,
-            )
-
         try:
+            if args.override:
+                username, password, override_args = extract_auth(args.override)
+                commercial_installer = CommercialInstaller(
+                    target="",  # Empty string as placeholder
+                    arch="",
+                    version=None,
+                    logger=self.logger,
+                    base_url=args.base if args.base is not None else Settings.baseurl,
+                    override=override_args,
+                    no_unattended=not Settings.qt_installer_unattended,
+                    username=username or args.user,
+                    password=password or args.password,
+                )
+            else:
+                if not all([args.target, args.arch, args.version]):
+                    raise CliInputError("target, arch, and version are required")
+
+                commercial_installer = CommercialInstaller(
+                    target=args.target,
+                    arch=args.arch,
+                    version=args.version,
+                    username=args.user,
+                    password=args.password,
+                    output_dir=args.outputdir,
+                    logger=self.logger,
+                    base_url=args.base if args.base is not None else Settings.baseurl,
+                    no_unattended=not Settings.qt_installer_unattended,
+                    modules=args.modules,
+                )
+
             commercial_installer.install()
             Settings.qt_installer_cleanup()
-        except DiskAccessNotPermitted:
-            # Let DiskAccessNotPermitted propagate up without additional logging
-            raise
         except Exception as e:
-            self.logger.error(f"Commercial installation failed: {str(e)}")
-            raise
+            self.logger.error(f"Error installing commercial installer {str(e)}")
+        finally:
+            self.logger.info("Done")
 
     def show_help(self, args=None):
         """Display help message"""
@@ -851,30 +853,31 @@ class Cli:
         )
         self._set_common_options(install_qt_commercial_parser)
 
-    def _make_list_qt_commercial_parser(self, subparsers: argparse._SubParsersAction) -> None:
-        """Creates a subparser for listing Qt commercial packages"""
-        list_parser = subparsers.add_parser(
-            "list-qt-commercial",
-            formatter_class=argparse.RawDescriptionHelpFormatter,
-            epilog="Examples:\n"
-            "$ aqt list-qt-commercial                 # list all available packages\n"
-            "$ aqt list-qt-commercial gcc_64          # search for specific archs\n"
-            "$ aqt list-qt-commercial 6.8.1           # search for specific versions\n"
-            "$ aqt list-qt-commercial qtquick3d       # search for specific packages\n"
-            "$ aqt list-qt-commercial gcc_64 6.8.1    # search for multiple terms at once\n",
+    def _set_list_qt_commercial_parser(self, list_qt_commercial_parser: argparse.ArgumentParser) -> None:
+        """Configure parser for list-qt-commercial command with flexible argument handling."""
+        list_qt_commercial_parser.set_defaults(func=self.run_list_qt_commercial)
+
+        list_qt_commercial_parser.add_argument(
+            "--user",
+            help="Qt account username",
         )
-        list_parser.add_argument(
+        list_qt_commercial_parser.add_argument(
+            "--password",
+            help="Qt account password",
+        )
+
+        # Capture all remaining arguments as search terms
+        list_qt_commercial_parser.add_argument(
             "search_terms",
-            nargs="*",
-            help="Optional search terms to pass to the installer search command. If not provided, lists all packages",
+            nargs="*",  # Zero or more arguments
+            help="Search terms (all non-option arguments are treated as search terms)",
         )
-        list_parser.set_defaults(func=self.run_list_qt_commercial)
 
     def run_list_qt_commercial(self, args) -> None:
-        """Execute Qt commercial package listing"""
+        """Execute Qt commercial package listing."""
         self.show_aqt_version()
 
-        # Create temporary directory to download installer
+        # Create temporary directory for installer
         import shutil
         from pathlib import Path
 
@@ -893,6 +896,7 @@ class Cli:
             self.logger.info(f"Downloading Qt installer to {installer_path}")
             base_url = Settings.baseurl
             url = f"{base_url}/official_releases/online_installers/{installer_filename}"
+
             import requests
 
             response = requests.get(url, stream=True, timeout=Settings.qt_installer_timeout)
@@ -905,25 +909,23 @@ class Cli:
             if get_os_name() != "windows":
                 os.chmod(installer_path, 0o500)
 
-            # Build search command
-            cmd = [
-                str(installer_path),
-                "--accept-licenses",
-                "--accept-obligations",
-                "--confirm-command",
-                "search",
-                "" if not args.search_terms else " ".join(args.search_terms),
-            ]
+            # Build command
+            cmd = [str(installer_path), "--accept-licenses", "--accept-obligations", "--confirm-command"]
 
-            # Run search and display output
+            if args.user and args.password:
+                cmd.extend(["--email", args.user, "--pw", args.password])
+
+            cmd.append("search")
+
+            # Add all search terms if present
+            if args.search_terms:
+                cmd.extend(args.search_terms)
+
+            # Run search
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
-            # Process and print the output properly
             if output.stdout:
-                # Print the actual output with proper newlines
-                print(output.stdout)
-
-                # If there are any errors, print them as warnings
+                self.logger.info(output.stdout)
                 if output.stderr:
                     for line in output.stderr.splitlines():
                         self.logger.warning(line)
@@ -931,7 +933,6 @@ class Cli:
         except Exception as e:
             self.logger.error(f"Failed to list Qt commercial packages: {e}")
         finally:
-            # Clean up
             Settings.qt_installer_cleanup()
 
     def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
@@ -992,13 +993,18 @@ class Cli:
             self._set_install_qt_commercial_parser,
             argparse.RawTextHelpFormatter,
         )
+        make_parser_it(
+            "list-qt-commercial",
+            "Search packages using Qt commercial",
+            self._set_list_qt_commercial_parser,
+            None,
+        )
         make_parser_sde("install-doc", "Install documentation.", self.run_install_doc, False)
         make_parser_sde("install-example", "Install examples.", self.run_install_example, False)
         make_parser_sde("install-src", "Install source.", self.run_install_src, True, is_add_modules=False)
 
         # Create list command parsers
         self._make_list_qt_parser(subparsers)
-        self._make_list_qt_commercial_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
         make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
@@ -1018,11 +1024,16 @@ class Cli:
             '$ aqt list-qt mac desktop --spec "5.9" --latest-version          # print latest Qt 5.9\n'
             "$ aqt list-qt mac desktop --modules 5.12.0 clang_64              # print modules for 5.12.0\n"
             "$ aqt list-qt mac desktop --spec 5.9 --modules latest clang_64   # print modules for latest 5.9\n"
-            "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for 5.9.9/mac/desktop\n"
-            "$ aqt list-qt mac desktop --arch latest                          # print architectures for the latest Qt 5\n"
-            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
-            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n"
-            "$ aqt list-qt all_os wasm --arch 6.8.1                           # print architectures for Qt WASM 6.8.1\n",
+            "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for "
+            "5.9.9/mac/desktop\n"
+            "$ aqt list-qt mac desktop --arch latest                          # print architectures for the "
+            "latest Qt 5\n"
+            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt "
+            "installation\n"
+            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info "
+            "module\n"
+            "$ aqt list-qt all_os wasm --arch 6.8.1                           # print architectures for Qt WASM "
+            "6.8.1\n",
         )
         list_parser.add_argument(
             "host",
