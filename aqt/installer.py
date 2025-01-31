@@ -28,6 +28,7 @@ import multiprocessing
 import os
 import platform
 import posixpath
+import re
 import signal
 import subprocess
 import sys
@@ -124,6 +125,7 @@ class CommonInstallArgParser(BaseArgumentParser):
     internal: bool
     keep: bool
     archive_dest: Optional[str]
+    dry_run: bool
 
 
 class InstallArgParser(CommonInstallArgParser):
@@ -338,6 +340,7 @@ class Cli:
         arch: str = self._set_arch(args.arch, os_name, target, qt_version_or_spec)
         keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
+        dry_run: bool = args.dry_run
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -406,47 +409,50 @@ class Cli:
 
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-            run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+            run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=dry_run)
 
-        if not nopatch:
-            Updater.update(target_config, base_path, expect_desktop_archdir)
+            if dry_run:
+                return
 
-        # If autodesktop is enabled and we need a desktop installation, do it first
-        if should_autoinstall and autodesk_arch is not None:
-            is_wasm = arch.startswith("wasm")
-            is_msvc = "msvc" in arch
-            is_win_desktop_msvc_arm64 = (
-                effective_os_name == "windows"
-                and target == "desktop"
-                and is_msvc
-                and arch.endswith(("arm64", "arm64_cross_compiled"))
-            )
-            if is_win_desktop_msvc_arm64:
-                qt_type = "MSVC Arm64"
-            elif is_wasm:
-                qt_type = "Qt6-WASM"
+            if not nopatch:
+                Updater.update(target_config, base_path, expect_desktop_archdir)
+
+            # If autodesktop is enabled and we need a desktop installation, do it first
+            if should_autoinstall and autodesk_arch is not None:
+                is_wasm = arch.startswith("wasm")
+                is_msvc = "msvc" in arch
+                is_win_desktop_msvc_arm64 = (
+                    effective_os_name == "windows"
+                    and target == "desktop"
+                    and is_msvc
+                    and arch.endswith(("arm64", "arm64_cross_compiled"))
+                )
+                if is_win_desktop_msvc_arm64:
+                    qt_type = "MSVC Arm64"
+                elif is_wasm:
+                    qt_type = "Qt6-WASM"
+                else:
+                    qt_type = target
+
+                # Create new args for desktop installation
+                self.logger.info("")
+                self.logger.info(
+                    f"Autodesktop will now install {effective_os_name} desktop "
+                    f"{qt_version} {autodesk_arch} as required by {qt_type}"
+                )
+
+                desktop_args = args
+                args.autodesktop = False
+                args.host = effective_os_name
+                args.target = "desktop"
+                args.arch = autodesk_arch
+
+                # Run desktop installation first
+                self.run_install_qt(desktop_args)
+
             else:
-                qt_type = target
-
-            # Create new args for desktop installation
-            self.logger.info("")
-            self.logger.info(
-                f"Autodesktop will now install {effective_os_name} desktop "
-                f"{qt_version} {autodesk_arch} as required by {qt_type}"
-            )
-
-            desktop_args = args
-            args.autodesktop = False
-            args.host = effective_os_name
-            args.target = "desktop"
-            args.arch = autodesk_arch
-
-            # Run desktop installation first
-            self.run_install_qt(desktop_args)
-
-        else:
-            self.logger.info("Finished installation")
-            self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+                self.logger.info("Finished installation")
+                self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
         self.show_aqt_version()
@@ -499,7 +505,9 @@ class Cli:
         )
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-            run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+            run_installer(
+                srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=args.dry_run
+            )
         self.logger.info("Finished installation")
 
     def run_install_src(self, args):
@@ -586,7 +594,7 @@ class Cli:
             )
             with TemporaryDirectory() as temp_dir:
                 _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-                run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+                run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=args.dry_run)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -1193,6 +1201,11 @@ class Cli:
             default=None,
             help="Set the destination path for downloaded archives (temp directory by default).",
         )
+        subparser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Print what would be downloaded and installed without actually doing it",
+        )
 
     def _set_module_options(self, subparser):
         subparser.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
@@ -1365,7 +1378,28 @@ def run_installer(
     sevenzip: Optional[str],
     keep: bool,
     archive_dest: Path,
+    dry_run: bool = False,
 ):
+
+    if dry_run:
+        logger = getLogger("aqt.installer")
+        logger.info("DRY RUN: Would download and install the following:")
+        for arc in archives:
+            line_parts = [f"  - {arc.name}: {arc.archive_path}"]
+
+            if hasattr(arc, "package_desc") and arc.package_desc:
+                size_match = re.search(r"Size: ([^,]+)", arc.package_desc)
+                if size_match:
+                    line_parts.append(f" ({size_match.group(1)})")
+
+            if arc.archive_install_path and arc.archive_install_path.strip():
+                line_parts.append(f" -> {arc.archive_install_path}")
+
+            logger.info("".join(line_parts))
+
+        logger.info(f"Total packages: {len(archives)}")
+        return
+
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
