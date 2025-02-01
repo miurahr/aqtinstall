@@ -373,7 +373,7 @@ def test_install_qt_commercial(
                 TEST_PASSWORD,
                 "6.8.1",
             ],
-            "Downloading",
+            "INFO    : [0] Arguments",
         ),
         (
             [
@@ -386,7 +386,7 @@ def test_install_qt_commercial(
                 "--pw",
                 TEST_PASSWORD,
             ],
-            "installing",
+            "INFO    : Qt installation completed successfully",
         ),
     ],
 )

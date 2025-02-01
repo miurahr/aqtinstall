@@ -1,6 +1,6 @@
 env:
-  AQT_TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
-  AQT_TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+  AQT_TEST_EMAIL: ${{ secrets.AQT_TEST_EMAIL }}
+  AQT_TEST_PASSWORD: ${{ secrets.AQT_TEST_PASSWORD }}
 steps:
 - task: UsePythonVersion@0
   inputs:
@@ -132,7 +132,7 @@ steps:
       $(CHECK_OUTPUT_CMD)
     fi
     if [[ "$(SUBCOMMAND)" =~ ^install-(doc|example)$ ]]; then
-      opt=""
+      opt="" 
       if [[ "$(MODULE)" != "" ]]; then
         opt+=" -m $(MODULE)"
       fi
