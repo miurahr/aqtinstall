@@ -33,7 +33,7 @@ steps:
     mkdir Qt
     cd Qt
     if [[ "$(SUBCOMMAND)" == "install-qt-commercial" ]]; then
-      opt+=" --user $(AQT_TEST_EMAIL) --password $(AQT_TEST_PASSWORD)"
+      opt+=" --email $(AQT_TEST_EMAIL) --pw $(AQT_TEST_PASSWORD)"
       python -m aqt install-qt-commercial $opt $(TARGET) $(ARCH) $(QT_VERSION) --m $(MODULE)
     fi
     if [[ "$(SUBCOMMAND)" == "install-qt" ]]; then

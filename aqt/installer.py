@@ -136,8 +136,8 @@ class InstallArgParser(CommonInstallArgParser):
     qt_version: str
     qt_version_spec: str
     version: Optional[str]
-    user: Optional[str]
-    password: Optional[str]
+    email: Optional[str]
+    pw: Optional[str]
     operation_does_not_exist_error: str
     overwrite_target_dir: str
     stop_processes_for_updates: str
@@ -696,8 +696,8 @@ class Cli:
                     base_url=args.base if args.base is not None else Settings.baseurl,
                     override=override_args,
                     no_unattended=not Settings.qt_installer_unattended,
-                    username=username or args.user,
-                    password=password or args.password,
+                    username=username or args.email,
+                    password=password or args.pw,
                 )
             else:
                 if not all([args.target, args.arch, args.version]):
@@ -707,8 +707,8 @@ class Cli:
                     target=args.target,
                     arch=args.arch,
                     version=args.version,
-                    username=args.user,
-                    password=args.password,
+                    username=args.email,
+                    password=args.pw,
                     output_dir=args.outputdir,
                     logger=self.logger,
                     base_url=args.base if args.base is not None else Settings.baseurl,
@@ -847,11 +847,11 @@ class Cli:
         install_qt_commercial_parser.add_argument("version", nargs="?", help="Qt version", action=ConditionalRequiredAction)
 
         install_qt_commercial_parser.add_argument(
-            "--user",
-            help="Qt account username",
+            "--email",
+            help="Qt account email",
         )
         install_qt_commercial_parser.add_argument(
-            "--password",
+            "--pw",
             help="Qt account password",
         )
         install_qt_commercial_parser.add_argument(
@@ -866,11 +866,11 @@ class Cli:
         list_qt_commercial_parser.set_defaults(func=self.run_list_qt_commercial)
 
         list_qt_commercial_parser.add_argument(
-            "--user",
-            help="Qt account username",
+            "--email",
+            help="Qt account email",
         )
         list_qt_commercial_parser.add_argument(
-            "--password",
+            "--pw",
             help="Qt account password",
         )
 
@@ -920,8 +920,8 @@ class Cli:
             # Build command
             cmd = [str(installer_path), "--accept-licenses", "--accept-obligations", "--confirm-command"]
 
-            if args.user and args.password:
-                cmd.extend(["--email", args.user, "--pw", args.password])
+            if args.email and args.pw:
+                cmd.extend(["--email", args.email, "--pw", args.pw])
 
             cmd.append("search")
 

@@ -1,9 +1,11 @@
+import logging
 import os
 import shutil
 import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, List, Optional
+from unittest.mock import MagicMock
 
 import pytest
 import requests
@@ -97,7 +99,7 @@ def test_cli_login_qt_commercial(capsys, monkeypatch, cmd, expected_arch, expect
     cli.run(cmd.split())
 
     out, err = capsys.readouterr()
-    assert expected_err in err or expected_arch in out
+    assert expected_err in err or expected_err in out
 
 
 def test_package_manager_init():
@@ -250,7 +252,7 @@ def test_get_install_command(monkeypatch, modules: Optional[List[str]], expected
     "cmd, arch_dict, details, expected_command",
     [
         (
-            "install-qt-commercial desktop {} 6.8.1 " "--outputdir ./install-qt-commercial --user {} --password {}",
+            "install-qt-commercial desktop {} 6.8.1 " "--outputdir ./install-qt-commercial --email {} --pw {}",
             {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
             ["./install-qt-commercial", "qt6", "681"],
             "qt-unified-{}-x64-online.run --email ******** --pw ******** --root {} "
@@ -261,7 +263,7 @@ def test_get_install_command(monkeypatch, modules: Optional[List[str]], expected
             "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
         ),
         (
-            "install-qt-commercial desktop {} 6.8.1 --outputdir ./install-qt-commercial --user {} --password {}",
+            "install-qt-commercial desktop {} 6.8.1 --outputdir ./install-qt-commercial --email {} --pw {}",
             {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
             ["./install-qt-commercial", "qt6", "681"],
             "qt-unified-{}-x64-online.run --email ******** --pw ******** --root {} "
@@ -309,8 +311,8 @@ def test_install_qt_commercial(
 
     # Create a new command with the temp directory
     new_cmd = (
-        f"install-qt-commercial desktop {arch} 6.8.{str(details[2])[-1]} --outputdir {abs_out} --user {email} "
-        f"--password {password}"
+        f"install-qt-commercial desktop {arch} 6.8.{str(details[2])[-1]} --outputdir {abs_out} --email {email} "
+        f"--pw {password}"
     )
 
     # This should raise DiskAccessNotPermitted only for the first test (680)
@@ -360,45 +362,71 @@ def test_install_qt_commercial(
     shutil.rmtree(abs_out)
 
 
-@pytest.mark.enable_socket
-@pytest.mark.parametrize(
-    "args, expected_ret",
-    [
-        (
-            [
-                "list-qt-commercial",
-                "--user",
-                TEST_EMAIL,
-                "--password",
-                TEST_PASSWORD,
-                "6.8.1",
-            ],
-            "INFO    : [0] Arguments",
-        ),
-        (
-            [
-                "install-qt-commercial",
-                "--override",
-                "search",
-                "6.8.0",
-                "--email",
-                TEST_EMAIL,
-                "--pw",
-                TEST_PASSWORD,
-            ],
-            "INFO    : Qt installation completed successfully",
-        ),
-    ],
-)
-def test_list_qt_commercial(capsys, args, expected_ret):
-    """Test error handling in list-qt-commercial command"""
+def create_mock_process(stdout):
+    mock = MagicMock()
+    mock.stdout = stdout
+    mock.returncode = 0
+    return mock
+
+
+def test_commercial_commands(monkeypatch, caplog):
+    caplog.set_level(logging.INFO)
+
+    # Mock filesystem operations
+    def mock_mkdir(*args, **kwargs):
+        return None
+
+    monkeypatch.setattr(Path, "mkdir", mock_mkdir)
+    monkeypatch.setattr(Path, "exists", lambda x: False)
+
+    # Mock subprocess run to return our predefined output
+    sample_output = "Name: qt6.8.1-full"
+
+    def mock_safely_run_save_output(cmd, timeout):
+        return create_mock_process(sample_output)
+
+    def mock_safely_run(cmd, timeout):
+        return None
+
+    monkeypatch.setattr("aqt.helper.safely_run_save_output", mock_safely_run_save_output)
+    monkeypatch.setattr("aqt.helper.safely_run", mock_safely_run)
+
+    # Mock requests for installer download
+    def mock_get(*args, **kwargs):
+        mock_response = MagicMock()
+        mock_response.raise_for_status = lambda: None
+        mock_response.iter_content = lambda chunk_size: [b"mock data"]
+        return mock_response
+
+    monkeypatch.setattr("requests.get", mock_get)
+
+    # Mock file operations
+    mock_open = MagicMock()
+    monkeypatch.setattr("builtins.open", mock_open)
+
+    # Test list-qt-commercial command
+    from aqt.installer import Cli
+
     cli = Cli()
-    cli._setup_settings()
-    cli.run(args)
+    list_args = cli.parser.parse_args(["list-qt-commercial", "--email", TEST_EMAIL, "--pw", TEST_PASSWORD, "6.8.1"])
+    cli.run(list_args)
 
-    out, err = capsys.readouterr()
+    # Verify key outputs in logs
+    assert any("aqtinstall(aqt)" in record.message for record in caplog.records)
+    assert any("Downloading Qt installer" in record.message for record in caplog.records)
 
-    assert expected_ret in err or expected_ret in out
+    # Clear logs for next test
+    caplog.clear()
+
+    # Test install-qt-commercial command
+    install_args = cli.parser.parse_args(
+        ["install-qt-commercial", "--override", "search", "6.8.0", "--email", TEST_EMAIL, "--pw", TEST_PASSWORD]
+    )
+    cli.run(install_args)
+
+    # Verify key outputs in logs
+    assert any("Qt installation completed successfully" in record.message for record in caplog.records)
+    assert any("Done" in record.message for record in caplog.records)
 
 
 @pytest.mark.parametrize(
