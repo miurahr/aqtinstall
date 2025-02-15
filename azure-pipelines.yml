@@ -9,7 +9,7 @@ jobs:
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.12'
+        versionSpec: '3.13'
         addToPath: true
     - bash: python ci/generate_azure_pipelines_matrices.py
       name: mtrx
