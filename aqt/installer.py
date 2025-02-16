@@ -719,7 +719,7 @@ class Cli:
             commercial_installer.install()
             Settings.qt_installer_cleanup()
         except Exception as e:
-            self.logger.error(f"Error installing commercial installer {str(e)}")
+            self.logger.error(f"Error installing official installer {str(e)}")
         finally:
             self.logger.info("Done")
 
@@ -863,7 +863,7 @@ class Cli:
         self._set_common_options(install_qt_commercial_parser)
 
     def _set_list_qt_commercial_parser(self, list_qt_commercial_parser: argparse.ArgumentParser) -> None:
-        """Configure parser for list-qt-commercial command with flexible argument handling."""
+        """Configure parser for list-qt-official command with flexible argument handling."""
         list_qt_commercial_parser.set_defaults(func=self.run_list_qt_commercial)
 
         list_qt_commercial_parser.add_argument(
@@ -940,7 +940,7 @@ class Cli:
                         self.logger.warning(line)
 
         except Exception as e:
-            self.logger.error(f"Failed to list Qt commercial packages: {e}")
+            self.logger.error(f"Failed to list Qt official packages: {e}")
         finally:
             Settings.qt_installer_cleanup()
 
@@ -997,14 +997,14 @@ class Cli:
         make_parser_it("install-qt", "Install Qt.", self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("install-tool", "Install tools.", self._set_install_tool_parser, None)
         make_parser_it(
-            "install-qt-commercial",
-            "Install Qt commercial.",
+            "install-qt-official",
+            "Install Qt with official installer.",
             self._set_install_qt_commercial_parser,
             argparse.RawTextHelpFormatter,
         )
         make_parser_it(
-            "list-qt-commercial",
-            "Search packages using Qt commercial",
+            "list-qt-official",
+            "Search packages using Qt official installer.",
             self._set_list_qt_commercial_parser,
             argparse.RawTextHelpFormatter,
         )
