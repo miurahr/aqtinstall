@@ -10,6 +10,7 @@ Contents:
    getting_started
    cli
    configuration
+   commercial
    appendix
    CONTRIBUTE
    CODE_OF_CONDUCT
@@ -24,4 +25,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
