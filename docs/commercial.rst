@@ -21,7 +21,7 @@ Qt Commercial Installation Commands
 
 ``install-qt-official``
 ------------------------
-Install Qt commercial packages using the official Qt installer.
+Install Qt packages using the official Qt installer.
 
 .. code-block:: bash
 
@@ -94,7 +94,7 @@ Options
 
 ``list-qt-official``
 ---------------------
-Search available Qt commercial packages.
+Search available Qt packages using the official Qt installer.
 
 .. code-block:: bash
 
