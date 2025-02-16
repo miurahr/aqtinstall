@@ -855,6 +855,7 @@ class Cli:
             help="Qt account password",
         )
         install_qt_commercial_parser.add_argument(
+            "-m",
             "--modules",
             nargs="*",
             help="Add modules",
@@ -1005,7 +1006,7 @@ class Cli:
             "list-qt-commercial",
             "Search packages using Qt commercial",
             self._set_list_qt_commercial_parser,
-            None,
+            argparse.RawTextHelpFormatter,
         )
         make_parser_sde("install-doc", "Install documentation.", self.run_install_doc, False)
         make_parser_sde("install-example", "Install examples.", self.run_install_example, False)

@@ -408,7 +408,8 @@ def test_commercial_commands(monkeypatch, caplog):
     from aqt.installer import Cli
 
     cli = Cli()
-    list_args = cli.parser.parse_args(["list-qt-commercial", "--email", TEST_EMAIL, "--pw", TEST_PASSWORD, "6.8.1"])
+    cli._setup_settings()
+    list_args = ["list-qt-commercial", "--email", str(TEST_EMAIL), "--pw", str(TEST_PASSWORD), "6.8.1"]
     cli.run(list_args)
 
     # Verify key outputs in logs
@@ -419,9 +420,16 @@ def test_commercial_commands(monkeypatch, caplog):
     caplog.clear()
 
     # Test install-qt-commercial command
-    install_args = cli.parser.parse_args(
-        ["install-qt-commercial", "--override", "search", "6.8.0", "--email", TEST_EMAIL, "--pw", TEST_PASSWORD]
-    )
+    install_args = [
+        "install-qt-commercial",
+        "--override",
+        "search",
+        "6.8.0",
+        "--email",
+        str(TEST_EMAIL),
+        "--pw",
+        str(TEST_PASSWORD),
+    ]
     cli.run(install_args)
 
     # Verify key outputs in logs
