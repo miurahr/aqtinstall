@@ -248,7 +248,7 @@ steps:
       Write-Host '##vso[task.setvariable variable=VSVER]2022'
     }
     cd $(WIN_QT_BINDIR)
-    unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
+    unzip $(Build.SourcesDirectory)\ci\jom_1_1_4.zip
   condition: |
     and(eq(variables['Agent.OS'], 'Windows_NT'), 
         eq(variables['SUBCOMMAND'], 'install-qt'))
