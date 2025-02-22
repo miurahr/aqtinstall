@@ -9,7 +9,15 @@ import requests
 from defusedxml import ElementTree
 
 from aqt.exceptions import DiskAccessNotPermitted
-from aqt.helper import Settings, get_os_name, get_qt_account_path, get_qt_installer_name, safely_run, safely_run_save_output
+from aqt.helper import (
+    Settings,
+    extract_auth,
+    get_os_name,
+    get_qt_account_path,
+    get_qt_installer_name,
+    safely_run,
+    safely_run_save_output,
+)
 from aqt.metadata import Version
 
 
@@ -103,18 +111,13 @@ class QtPackageManager:
         version_str = self._get_version_string()
         base_package = f"qt.qt{self.version.major}.{version_str}"
 
-        cmd = [
-            installer_path,
-            "--accept-licenses",
-            "--accept-obligations",
-            "--confirm-command",
-            "--default-answer",
-            "search",
-            base_package,
-        ]
+        cmd = [installer_path, "--accept-licenses", "--accept-obligations", "--confirm-command", "--default-answer"]
 
         if self.username and self.password:
             cmd.extend(["--email", self.username, "--pw", self.password])
+
+        cmd.append("search")
+        cmd.append(base_package)
 
         try:
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
@@ -190,7 +193,7 @@ class CommercialInstaller:
         output_dir: Optional[str] = None,
         logger: Optional[Logger] = None,
         base_url: str = "https://download.qt.io",
-        override: Optional[list[str]] = None,
+        override: Optional[List[str]] = None,
         modules: Optional[List[str]] = None,
         no_unattended: bool = False,
     ):
@@ -198,13 +201,20 @@ class CommercialInstaller:
         self.target = target
         self.arch = arch or ""
         self.version = Version(version) if version else Version("0.0.0")
-        self.username = username
-        self.password = password
         self.output_dir = output_dir
         self.logger = logger or getLogger(__name__)
         self.base_url = base_url
         self.modules = modules
         self.no_unattended = no_unattended
+
+        # Extract credentials from override if present
+        if override:
+            extracted_username, extracted_password, self.override = extract_auth(override)
+            self.username = extracted_username or username
+            self.password = extracted_password or password
+        else:
+            self.username = username
+            self.password = password
 
         # Set OS-specific properties
         self.os_name = get_os_name()
@@ -247,14 +257,14 @@ class CommercialInstaller:
         if not no_unattended:
             cmd.extend(["--accept-licenses", "--accept-obligations", "--confirm-command"])
 
+        # Add authentication if provided
+        if username and password:
+            cmd.extend(["--email", username, "--pw", password])
+
         if override:
             # When using override, still include unattended flags unless disabled
             cmd.extend(override)
             return cmd
-
-        # Add authentication if provided
-        if username and password:
-            cmd.extend(["--email", username, "--pw", password])
 
         # Add output directory if specified
         if output_dir:
@@ -271,36 +281,34 @@ class CommercialInstaller:
         """Run the Qt installation process."""
         if (
             not self.qt_account.exists()
-            and not (self.username and self.password)
+            and (not self.username or not self.password)
             and not os.environ.get("QT_INSTALLER_JWT_TOKEN")
         ):
             raise RuntimeError(
                 "No Qt account credentials found. Provide username and password or ensure qtaccount.ini exists."
             )
 
-        # Check output directory if specified
-        if self.output_dir:
-            output_path = Path(self.output_dir) / str(self.version)
-            if output_path.exists():
-                if Settings.qt_installer_overwritetargetdirectory.lower() == "yes":
-                    self.logger.warning(f"Target directory {output_path} exists - removing as overwrite is enabled")
-                    try:
-                        import shutil
-
-                        shutil.rmtree(output_path)
-                    except (OSError, PermissionError) as e:
-                        raise DiskAccessNotPermitted(f"Failed to remove existing target directory {output_path}: {str(e)}")
-                else:
-                    msg = (
-                        f"Target directory {output_path} already exists. "
-                        "Set overwrite_target_directory='Yes' in settings.ini to overwrite, or select another directory."
-                    )
-                    raise DiskAccessNotPermitted(msg)
-
         # Setup cache directory
         cache_path = Path(Settings.qt_installer_cache_path)
         cache_path.mkdir(parents=True, exist_ok=True)
 
+        # Setup output directory and validate access
+        output_dir = Path(self.output_dir) if self.output_dir else Path(os.getcwd()) / "Qt"
+        version_dir = output_dir / str(self.version)
+        qt_base_dir = output_dir
+
+        if qt_base_dir.exists():
+            if Settings.qt_installer_overwritetargetdirectory.lower() == "yes":
+                self.logger.warning(f"Target directory {qt_base_dir} exists - removing as overwrite is enabled")
+                try:
+                    import shutil
+
+                    if version_dir.exists():
+                        shutil.rmtree(version_dir)
+                except (OSError, PermissionError) as e:
+                    raise DiskAccessNotPermitted(f"Failed to remove existing version directory {version_dir}: {str(e)}")
+
+        # Setup temp directory
         import shutil
 
         temp_dir = Settings.qt_installer_temp_path
@@ -316,7 +324,16 @@ class CommercialInstaller:
         try:
             cmd = []
             if self.override:
-                cmd = self.build_command(str(installer_path), override=self.override, no_unattended=self.no_unattended)
+                if not self.username or not self.password:
+                    self.username, self.password, self.override = extract_auth(self.override)
+
+                cmd = self.build_command(
+                    str(installer_path),
+                    override=self.override,
+                    no_unattended=self.no_unattended,
+                    username=self.username,
+                    password=self.password,
+                )
             else:
                 # Initialize package manager and gather packages
                 self.package_manager.gather_packages(str(installer_path))
@@ -325,20 +342,18 @@ class CommercialInstaller:
                     str(installer_path.absolute()),
                     username=self.username,
                     password=self.password,
-                    output_dir=self.output_dir,
+                    output_dir=str(qt_base_dir.absolute()),
                     no_unattended=self.no_unattended,
                 )
 
-                cmd = [
-                    *base_cmd,
-                    *self.package_manager.get_install_command(self.modules, temp_dir),
-                ]
+                install_cmd = self.package_manager.get_install_command(self.modules, temp_dir)
+                cmd = [*base_cmd, *install_cmd]
 
             self.logger.info(f"Running: {cmd}")
-
             safely_run(cmd, Settings.qt_installer_timeout)
+
         except Exception as e:
-            self.logger.error(f"Installation failed with exit code {e.__str__()}")
+            self.logger.error(f"Installation failed: {str(e)}")
             raise
         finally:
             self.logger.info("Qt installation completed successfully")

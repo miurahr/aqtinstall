@@ -3,18 +3,21 @@ name: Check tox tests
 on:
   push:
     branches:
-      - master
-      - releases/*
+    - master
+    - releases/*
   pull_request:
     types:
-      - opened
-      - synchronize
-      - reopened
+    - opened
+    - synchronize
+    - reopened
 
 jobs:
   check_document:
     name: Check packaging 📦
     runs-on: ubuntu-22.04
+    env:
+      AQT_TEST_EMAIL: ${{ secrets.AQT_TEST_EMAIL }}
+      AQT_TEST_PASSWORD: ${{ secrets.AQT_TEST_PASSWORD }}
     steps:
     - uses: actions/checkout@v4
       with:

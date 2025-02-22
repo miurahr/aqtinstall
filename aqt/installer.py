@@ -28,6 +28,7 @@ import multiprocessing
 import os
 import platform
 import posixpath
+import re
 import signal
 import subprocess
 import sys
@@ -59,6 +60,7 @@ from aqt.helper import (
     MyQueueListener,
     Settings,
     downloadBinaryFile,
+    extract_auth,
     get_hash,
     get_os_name,
     get_qt_installer_name,
@@ -123,6 +125,7 @@ class CommonInstallArgParser(BaseArgumentParser):
     internal: bool
     keep: bool
     archive_dest: Optional[str]
+    dry_run: bool
 
 
 class InstallArgParser(CommonInstallArgParser):
@@ -133,8 +136,8 @@ class InstallArgParser(CommonInstallArgParser):
     qt_version: str
     qt_version_spec: str
     version: Optional[str]
-    user: Optional[str]
-    password: Optional[str]
+    email: Optional[str]
+    pw: Optional[str]
     operation_does_not_exist_error: str
     overwrite_target_dir: str
     stop_processes_for_updates: str
@@ -337,6 +340,7 @@ class Cli:
         arch: str = self._set_arch(args.arch, os_name, target, qt_version_or_spec)
         keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
+        dry_run: bool = args.dry_run
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -405,47 +409,50 @@ class Cli:
 
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-            run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+            run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=dry_run)
 
-        if not nopatch:
-            Updater.update(target_config, base_path, expect_desktop_archdir)
+            if dry_run:
+                return
 
-        # If autodesktop is enabled and we need a desktop installation, do it first
-        if should_autoinstall and autodesk_arch is not None:
-            is_wasm = arch.startswith("wasm")
-            is_msvc = "msvc" in arch
-            is_win_desktop_msvc_arm64 = (
-                effective_os_name == "windows"
-                and target == "desktop"
-                and is_msvc
-                and arch.endswith(("arm64", "arm64_cross_compiled"))
-            )
-            if is_win_desktop_msvc_arm64:
-                qt_type = "MSVC Arm64"
-            elif is_wasm:
-                qt_type = "Qt6-WASM"
+            if not nopatch:
+                Updater.update(target_config, base_path, expect_desktop_archdir)
+
+            # If autodesktop is enabled and we need a desktop installation, do it first
+            if should_autoinstall and autodesk_arch is not None:
+                is_wasm = arch.startswith("wasm")
+                is_msvc = "msvc" in arch
+                is_win_desktop_msvc_arm64 = (
+                    effective_os_name == "windows"
+                    and target == "desktop"
+                    and is_msvc
+                    and arch.endswith(("arm64", "arm64_cross_compiled"))
+                )
+                if is_win_desktop_msvc_arm64:
+                    qt_type = "MSVC Arm64"
+                elif is_wasm:
+                    qt_type = "Qt6-WASM"
+                else:
+                    qt_type = target
+
+                # Create new args for desktop installation
+                self.logger.info("")
+                self.logger.info(
+                    f"Autodesktop will now install {effective_os_name} desktop "
+                    f"{qt_version} {autodesk_arch} as required by {qt_type}"
+                )
+
+                desktop_args = args
+                args.autodesktop = False
+                args.host = effective_os_name
+                args.target = "desktop"
+                args.arch = autodesk_arch
+
+                # Run desktop installation first
+                self.run_install_qt(desktop_args)
+
             else:
-                qt_type = target
-
-            # Create new args for desktop installation
-            self.logger.info("")
-            self.logger.info(
-                f"Autodesktop will now install {effective_os_name} desktop "
-                f"{qt_version} {autodesk_arch} as required by {qt_type}"
-            )
-
-            desktop_args = args
-            args.autodesktop = False
-            args.host = effective_os_name
-            args.target = "desktop"
-            args.arch = autodesk_arch
-
-            # Run desktop installation first
-            self.run_install_qt(desktop_args)
-
-        else:
-            self.logger.info("Finished installation")
-            self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+                self.logger.info("Finished installation")
+                self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
         self.show_aqt_version()
@@ -498,7 +505,9 @@ class Cli:
         )
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-            run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+            run_installer(
+                srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=args.dry_run
+            )
         self.logger.info("Finished installation")
 
     def run_install_src(self, args):
@@ -585,7 +594,7 @@ class Cli:
             )
             with TemporaryDirectory() as temp_dir:
                 _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-                run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+                run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=args.dry_run)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -676,42 +685,43 @@ class Cli:
         """Execute commercial Qt installation"""
         self.show_aqt_version()
 
-        if args.override:
-            commercial_installer = CommercialInstaller(
-                target="",  # Empty string as placeholder
-                arch="",
-                version=None,
-                logger=self.logger,
-                base_url=args.base if args.base is not None else Settings.baseurl,
-                override=args.override,
-                no_unattended=not Settings.qt_installer_unattended,
-            )
-        else:
-            if not all([args.target, args.arch, args.version]):
-                raise CliInputError("target, arch, and version are required")
-
-            commercial_installer = CommercialInstaller(
-                target=args.target,
-                arch=args.arch,
-                version=args.version,
-                username=args.user,
-                password=args.password,
-                output_dir=args.outputdir,
-                logger=self.logger,
-                base_url=args.base if args.base is not None else Settings.baseurl,
-                no_unattended=not Settings.qt_installer_unattended,
-                modules=args.modules,
-            )
-
         try:
+            if args.override:
+                username, password, override_args = extract_auth(args.override)
+                commercial_installer = CommercialInstaller(
+                    target="",  # Empty string as placeholder
+                    arch="",
+                    version=None,
+                    logger=self.logger,
+                    base_url=args.base if args.base is not None else Settings.baseurl,
+                    override=override_args,
+                    no_unattended=not Settings.qt_installer_unattended,
+                    username=username or args.email,
+                    password=password or args.pw,
+                )
+            else:
+                if not all([args.target, args.arch, args.version]):
+                    raise CliInputError("target, arch, and version are required")
+
+                commercial_installer = CommercialInstaller(
+                    target=args.target,
+                    arch=args.arch,
+                    version=args.version,
+                    username=args.email,
+                    password=args.pw,
+                    output_dir=args.outputdir,
+                    logger=self.logger,
+                    base_url=args.base if args.base is not None else Settings.baseurl,
+                    no_unattended=not Settings.qt_installer_unattended,
+                    modules=args.modules,
+                )
+
             commercial_installer.install()
             Settings.qt_installer_cleanup()
-        except DiskAccessNotPermitted:
-            # Let DiskAccessNotPermitted propagate up without additional logging
-            raise
         except Exception as e:
-            self.logger.error(f"Commercial installation failed: {str(e)}")
-            raise
+            self.logger.error(f"Error installing official installer {str(e)}")
+        finally:
+            self.logger.info("Done")
 
     def show_help(self, args=None):
         """Display help message"""
@@ -837,44 +847,46 @@ class Cli:
         install_qt_commercial_parser.add_argument("version", nargs="?", help="Qt version", action=ConditionalRequiredAction)
 
         install_qt_commercial_parser.add_argument(
-            "--user",
-            help="Qt account username",
+            "--email",
+            help="Qt account email",
         )
         install_qt_commercial_parser.add_argument(
-            "--password",
+            "--pw",
             help="Qt account password",
         )
         install_qt_commercial_parser.add_argument(
+            "-m",
             "--modules",
             nargs="*",
             help="Add modules",
         )
         self._set_common_options(install_qt_commercial_parser)
 
-    def _make_list_qt_commercial_parser(self, subparsers: argparse._SubParsersAction) -> None:
-        """Creates a subparser for listing Qt commercial packages"""
-        list_parser = subparsers.add_parser(
-            "list-qt-commercial",
-            formatter_class=argparse.RawDescriptionHelpFormatter,
-            epilog="Examples:\n"
-            "$ aqt list-qt-commercial                 # list all available packages\n"
-            "$ aqt list-qt-commercial gcc_64          # search for specific archs\n"
-            "$ aqt list-qt-commercial 6.8.1           # search for specific versions\n"
-            "$ aqt list-qt-commercial qtquick3d       # search for specific packages\n"
-            "$ aqt list-qt-commercial gcc_64 6.8.1    # search for multiple terms at once\n",
+    def _set_list_qt_commercial_parser(self, list_qt_commercial_parser: argparse.ArgumentParser) -> None:
+        """Configure parser for list-qt-official command with flexible argument handling."""
+        list_qt_commercial_parser.set_defaults(func=self.run_list_qt_commercial)
+
+        list_qt_commercial_parser.add_argument(
+            "--email",
+            help="Qt account email",
         )
-        list_parser.add_argument(
+        list_qt_commercial_parser.add_argument(
+            "--pw",
+            help="Qt account password",
+        )
+
+        # Capture all remaining arguments as search terms
+        list_qt_commercial_parser.add_argument(
             "search_terms",
-            nargs="*",
-            help="Optional search terms to pass to the installer search command. If not provided, lists all packages",
+            nargs="*",  # Zero or more arguments
+            help="Search terms (all non-option arguments are treated as search terms)",
         )
-        list_parser.set_defaults(func=self.run_list_qt_commercial)
 
     def run_list_qt_commercial(self, args) -> None:
-        """Execute Qt commercial package listing"""
+        """Execute Qt commercial package listing."""
         self.show_aqt_version()
 
-        # Create temporary directory to download installer
+        # Create temporary directory for installer
         import shutil
         from pathlib import Path
 
@@ -893,6 +905,7 @@ class Cli:
             self.logger.info(f"Downloading Qt installer to {installer_path}")
             base_url = Settings.baseurl
             url = f"{base_url}/official_releases/online_installers/{installer_filename}"
+
             import requests
 
             response = requests.get(url, stream=True, timeout=Settings.qt_installer_timeout)
@@ -905,33 +918,30 @@ class Cli:
             if get_os_name() != "windows":
                 os.chmod(installer_path, 0o500)
 
-            # Build search command
-            cmd = [
-                str(installer_path),
-                "--accept-licenses",
-                "--accept-obligations",
-                "--confirm-command",
-                "search",
-                "" if not args.search_terms else " ".join(args.search_terms),
-            ]
+            # Build command
+            cmd = [str(installer_path), "--accept-licenses", "--accept-obligations", "--confirm-command"]
 
-            # Run search and display output
+            if args.email and args.pw:
+                cmd.extend(["--email", args.email, "--pw", args.pw])
+
+            cmd.append("search")
+
+            # Add all search terms if present
+            if args.search_terms:
+                cmd.extend(args.search_terms)
+
+            # Run search
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
-            # Process and print the output properly
             if output.stdout:
-                # Print the actual output with proper newlines
-                print(output.stdout)
-
-                # If there are any errors, print them as warnings
+                self.logger.info(output.stdout)
                 if output.stderr:
                     for line in output.stderr.splitlines():
                         self.logger.warning(line)
 
         except Exception as e:
-            self.logger.error(f"Failed to list Qt commercial packages: {e}")
+            self.logger.error(f"Failed to list Qt official packages: {e}")
         finally:
-            # Clean up
             Settings.qt_installer_cleanup()
 
     def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
@@ -987,9 +997,15 @@ class Cli:
         make_parser_it("install-qt", "Install Qt.", self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("install-tool", "Install tools.", self._set_install_tool_parser, None)
         make_parser_it(
-            "install-qt-commercial",
-            "Install Qt commercial.",
+            "install-qt-official",
+            "Install Qt with official installer.",
             self._set_install_qt_commercial_parser,
+            argparse.RawTextHelpFormatter,
+        )
+        make_parser_it(
+            "list-qt-official",
+            "Search packages using Qt official installer.",
+            self._set_list_qt_commercial_parser,
             argparse.RawTextHelpFormatter,
         )
         make_parser_sde("install-doc", "Install documentation.", self.run_install_doc, False)
@@ -998,7 +1014,6 @@ class Cli:
 
         # Create list command parsers
         self._make_list_qt_parser(subparsers)
-        self._make_list_qt_commercial_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
         make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
@@ -1018,11 +1033,16 @@ class Cli:
             '$ aqt list-qt mac desktop --spec "5.9" --latest-version          # print latest Qt 5.9\n'
             "$ aqt list-qt mac desktop --modules 5.12.0 clang_64              # print modules for 5.12.0\n"
             "$ aqt list-qt mac desktop --spec 5.9 --modules latest clang_64   # print modules for latest 5.9\n"
-            "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for 5.9.9/mac/desktop\n"
-            "$ aqt list-qt mac desktop --arch latest                          # print architectures for the latest Qt 5\n"
-            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
-            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n"
-            "$ aqt list-qt all_os wasm --arch 6.8.1                           # print architectures for Qt WASM 6.8.1\n",
+            "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for "
+            "5.9.9/mac/desktop\n"
+            "$ aqt list-qt mac desktop --arch latest                          # print architectures for the "
+            "latest Qt 5\n"
+            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt "
+            "installation\n"
+            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info "
+            "module\n"
+            "$ aqt list-qt all_os wasm --arch 6.8.1                           # print architectures for Qt WASM "
+            "6.8.1\n",
         )
         list_parser.add_argument(
             "host",
@@ -1181,6 +1201,11 @@ class Cli:
             type=str,
             default=None,
             help="Set the destination path for downloaded archives (temp directory by default).",
+        )
+        subparser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Print what would be downloaded and installed without actually doing it",
         )
 
     def _set_module_options(self, subparser):
@@ -1354,7 +1379,28 @@ def run_installer(
     sevenzip: Optional[str],
     keep: bool,
     archive_dest: Path,
+    dry_run: bool = False,
 ):
+
+    if dry_run:
+        logger = getLogger("aqt.installer")
+        logger.info("DRY RUN: Would download and install the following:")
+        for arc in archives:
+            line_parts = [f"  - {arc.name}: {arc.archive_path}"]
+
+            if hasattr(arc, "package_desc") and arc.package_desc:
+                size_match = re.search(r"Size: ([^,]+)", arc.package_desc)
+                if size_match:
+                    line_parts.append(f" ({size_match.group(1)})")
+
+            if arc.archive_install_path and arc.archive_install_path.strip():
+                line_parts.append(f" -> {arc.archive_install_path}")
+
+            logger.info("".join(line_parts))
+
+        logger.info(f"Total packages: {len(archives)}")
+        return
+
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()

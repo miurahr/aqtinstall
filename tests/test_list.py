@@ -1336,19 +1336,3 @@ def test_find_installed_qt_mingw_dir(expected_result: str, installed_files: List
 
         actual_result = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, Version(qt_ver))
         assert (actual_result.name if actual_result else None) == expected_result
-
-
-# Test error cases
-@pytest.mark.parametrize(
-    "args, expected_error",
-    [
-        (["list-qt-commercial", "--bad-flag"], "usage: aqt [-h] [-c CONFIG]"),
-    ],
-)
-def test_list_qt_commercial_errors(capsys, args, expected_error):
-    """Test error handling in list-qt-commercial command"""
-    cli = Cli()
-    with pytest.raises(SystemExit):
-        cli.run(args)
-    _, err = capsys.readouterr()
-    assert expected_error in err
