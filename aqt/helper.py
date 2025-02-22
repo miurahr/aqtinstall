@@ -459,18 +459,18 @@ class SettingsClass:
         """Path for Qt installer cache."""
         config = self._get_config()
         # If no cache_path or blank, return default without modifying config
-        if not config.has_option("qtcommercial", "cache_path") or config.get("qtcommercial", "cache_path").strip() == "":
+        if not config.has_option("qtofficial", "cache_path") or config.get("qtofficial", "cache_path").strip() == "":
             return str(get_default_local_cache_path())
-        return config.get("qtcommercial", "cache_path")
+        return config.get("qtofficial", "cache_path")
 
     @property
     def qt_installer_temp_path(self) -> str:
         """Path for Qt installer cache."""
         config = self._get_config()
         # If no cache_path or blank, return default without modifying config
-        if not config.has_option("qtcommercial", "temp_path") or config.get("qtcommercial", "temp_path").strip() == "":
+        if not config.has_option("qtofficial", "temp_path") or config.get("qtofficial", "temp_path").strip() == "":
             return str(get_default_local_temp_path())
-        return config.get("qtcommercial", "temp_path")
+        return config.get("qtofficial", "temp_path")
 
     @property
     def archive_download_location(self):
@@ -572,47 +572,47 @@ class SettingsClass:
     @property
     def qt_installer_timeout(self) -> int:
         """Timeout for Qt commercial installer operations in seconds."""
-        return self._get_config().getint("qtcommercial", "installer_timeout", fallback=3600)
+        return self._get_config().getint("qtofficial", "installer_timeout", fallback=3600)
 
     @property
     def qt_installer_operationdoesnotexisterror(self) -> str:
         """Handle OperationDoesNotExistError in Qt installer."""
-        return self._get_config().get("qtcommercial", "operation_does_not_exist_error", fallback="Ignore")
+        return self._get_config().get("qtofficial", "operation_does_not_exist_error", fallback="Ignore")
 
     @property
     def qt_installer_overwritetargetdirectory(self) -> str:
         """Handle overwriting target directory in Qt installer."""
-        return self._get_config().get("qtcommercial", "overwrite_target_directory", fallback="No")
+        return self._get_config().get("qtofficial", "overwrite_target_directory", fallback="No")
 
     @property
     def qt_installer_stopprocessesforupdates(self) -> str:
         """Handle stopping processes for updates in Qt installer."""
-        return self._get_config().get("qtcommercial", "stop_processes_for_updates", fallback="Cancel")
+        return self._get_config().get("qtofficial", "stop_processes_for_updates", fallback="Cancel")
 
     @property
     def qt_installer_installationerrorwithcancel(self) -> str:
         """Handle installation errors with cancel option in Qt installer."""
-        return self._get_config().get("qtcommercial", "installation_error_with_cancel", fallback="Cancel")
+        return self._get_config().get("qtofficial", "installation_error_with_cancel", fallback="Cancel")
 
     @property
     def qt_installer_installationerrorwithignore(self) -> str:
         """Handle installation errors with ignore option in Qt installer."""
-        return self._get_config().get("qtcommercial", "installation_error_with_ignore", fallback="Ignore")
+        return self._get_config().get("qtofficial", "installation_error_with_ignore", fallback="Ignore")
 
     @property
     def qt_installer_associatecommonfiletypes(self) -> str:
         """Handle file type associations in Qt installer."""
-        return self._get_config().get("qtcommercial", "associate_common_filetypes", fallback="Yes")
+        return self._get_config().get("qtofficial", "associate_common_filetypes", fallback="Yes")
 
     @property
     def qt_installer_telemetry(self) -> str:
         """Handle telemetry settings in Qt installer."""
-        return self._get_config().get("qtcommercial", "telemetry", fallback="No")
+        return self._get_config().get("qtofficial", "telemetry", fallback="No")
 
     @property
     def qt_installer_unattended(self) -> bool:
         """Control whether to use unattended installation flags."""
-        return self._get_config().getboolean("qtcommercial", "unattended", fallback=True)
+        return self._get_config().getboolean("qtofficial", "unattended", fallback=True)
 
     def qt_installer_cleanup(self) -> None:
         """Control whether to use unattended installation flags."""
@@ -644,3 +644,26 @@ def safely_run_save_output(cmd: List[str], timeout: int) -> Any:
         return result
     except Exception:
         raise
+
+
+def extract_auth(args: List[str]) -> Tuple[str | None, str | None, List[str] | None]:
+    username = None
+    password = None
+    i = 0
+    while i < len(args):
+        if args[i] == "--email":
+            if i + 1 < len(args):
+                username = args[i + 1]
+                del args[i : i + 2]
+            else:
+                del args[i]
+            continue
+        elif args[i] == "--pw":
+            if i + 1 < len(args):
+                password = args[i + 1]
+                del args[i : i + 2]
+            else:
+                del args[i]
+            continue
+        i += 1
+    return username, password, args
