@@ -244,7 +244,9 @@ steps:
       Write-Host '##vso[task.setvariable variable=VSVER]2022'
     }
     cd $(WIN_QT_BINDIR)
-    unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
+    Invoke-WebRequest -Uri https://download.qt.io/official_releases/jom/jom.zip -OutFile jom.zip
+    md5sum -c md5sum.txt
+    unzip jom.zip
   condition: |
     and(eq(variables['Agent.OS'], 'Windows_NT'), 
         eq(variables['SUBCOMMAND'], 'install-qt'))
