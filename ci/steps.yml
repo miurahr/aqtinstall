@@ -1,6 +1,3 @@
-env:
-  AQT_TEST_EMAIL: ${{ secrets.AQT_TEST_EMAIL }}
-  AQT_TEST_PASSWORD: ${{ secrets.AQT_TEST_PASSWORD }}
 steps:
 - task: UsePythonVersion@0
   inputs:
@@ -157,6 +154,8 @@ steps:
     fi
   workingDirectory: $(Build.BinariesDirectory)
   env:
+    AQT_TEST_EMAIL: ${{ secrets.AQT_TEST_EMAIL }}
+    AQT_TEST_PASSWORD: ${{ secrets.AQT_TEST_PASSWORD }}
     AQT_CONFIG: $(Build.SourcesDirectory)/ci/settings.ini
     LOG_CFG: $(Build.SourcesDirectory)/ci/logging.ini
   displayName: Run Aqt
