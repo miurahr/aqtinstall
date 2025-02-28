@@ -174,10 +174,8 @@ steps:
       unzip android-ndk-r21e-darwin-x86_64.zip
     fi
     export ANDROID_NDK_ROOT=$(Build.SourcesDirectory)/android-ndk-r21e
-    mkdir $(Build.BinariesDirectory)/tests
-    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
     export PATH=$(QT_BINDIR):$PATH
-    qmake $(Build.BinariesDirectory)/tests/accelbubble
+    qmake $(Build.SourcesDirectory)/ci/accelbubble
     make
   condition: |
     and(
@@ -195,10 +193,8 @@ steps:
 # for iOS target
 - bash: |
     set -ex
-    mkdir $(Build.BinariesDirectory)/tests
-    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/accelbubble.7z)
     export PATH=$(QT_BINDIR):$PATH
-    qmake $(Build.BinariesDirectory)/tests/accelbubble
+    qmake $(Build.SourcesDirectory)/ci/accelbubble
     make
   condition: |
     and(eq(variables['TARGET'], 'ios'), 
@@ -257,10 +253,8 @@ steps:
 # When no modules
 - script: |
     set -ex
-    mkdir $(Build.BinariesDirectory)/tests
-    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/helloworld.7z)
     export PATH=$(QT_BINDIR):$PATH
-    qmake $(Build.BinariesDirectory)/tests/helloworld
+    qmake $(Build.SourcesDirectory)/ci/helloworld
     make
   condition: |
     and(
@@ -285,11 +279,7 @@ steps:
     
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       $env:Path += ";$(WIN_QT_BINDIR)"
-      mkdir $(Build.BinariesDirectory)\tests
-      cd $(Build.BinariesDirectory)\tests
-      7z x $(Build.SourcesDirectory)\ci\helloworld.7z
-      cd ..
-      qmake $(Build.BinariesDirectory)\tests\helloworld
+      qmake $(Build.SourcesDirectory)/ci/helloworld
       jom
     } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
       python -m aqt install-tool $(if (($QT_BASE_MIRROR + "") -ne "") { "-b $QT_BASE_MIRROR" } else {""}) `
@@ -301,11 +291,7 @@ steps:
       }
       Set-Item -Path Env:Path -Value ("$(Build.BinariesDirectory)\Qt\Tools\$(MINGW_FOLDER)\bin;$(WIN_QT_BINDIR);" + $Env:Path)
       Write-Host "Path == " + $env:Path
-      mkdir $(Build.BinariesDirectory)\tests
-      cd $(Build.BinariesDirectory)\tests
-      7z x $(Build.SourcesDirectory)\ci\helloworld.7z
-      cd ..
-      qmake $(Build.BinariesDirectory)\tests\helloworld
+      qmake $(Build.SourcesDirectory)\ci\helloworld
       mingw32-make
     }
   condition: |
@@ -322,11 +308,8 @@ steps:
 # When --archives non-empty
 - script: |
     set -ex
-    rm -rf $(Build.BinariesDirectory)/tests
-    mkdir $(Build.BinariesDirectory)/tests
-    (cd $(Build.BinariesDirectory)/tests && 7zr x $(Build.SourcesDirectory)/ci/helloworld_qttools.7z)
     export PATH=$(QT_BINDIR):$PATH
-    qmake -d $(Build.BinariesDirectory)/tests/helloworld_qttools
+    qmake $(Build.SourcesDirectory)/ci/helloworld_qttools
     make
   condition: |
     and(
@@ -350,11 +333,7 @@ steps:
     
       Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
       $env:Path += ";$(WIN_QT_BINDIR)"
-      try { rm -r -fo $(Build.BinariesDirectory)\tests } catch { $Error.Clear() }
-      mkdir $(Build.BinariesDirectory)\tests
-      cd $(Build.BinariesDirectory)\tests
-      7z x $(Build.SourcesDirectory)\ci\helloworld_qttools.7z
-      qmake -d $(Build.BinariesDirectory)\tests\helloworld_qttools
+      qmake $(Build.SourcesDirectory)\ci\helloworld_qttools
       nmake
     } elseif ( $env:TOOLCHAIN -eq 'MINGW' ) {
       Set-Item -Path Env:Path -Value ("$(Build.BinariesDirectory)\Qt\Tools\$(MINGW_FOLDER)\bin;$(WIN_QT_BINDIR);" + $Env:Path)
@@ -368,11 +347,7 @@ steps:
           throw 'Failed to install tools_mingw'
         }
       }
-      try { rm -r -fo $(Build.BinariesDirectory)\tests } catch { $Error.Clear() }
-      mkdir $(Build.BinariesDirectory)\tests
-      cd $(Build.BinariesDirectory)\tests
-      7z x $(Build.SourcesDirectory)\ci\helloworld_qttools.7z
-      qmake -d $(Build.BinariesDirectory)\tests\helloworld_qttools
+      qmake $(Build.SourcesDirectory)\ci\helloworld_qttools
       mingw32-make
     }
   condition: |
@@ -396,11 +371,7 @@ steps:
     Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
     $env:Path += ";$(WIN_QT_BINDIR)"
     echo Add Qt to PATH: $env:PATH
-    mkdir $(Build.BinariesDirectory)/tests
-    cd $(Build.BinariesDirectory)/tests
-    7z x $(Build.SourcesDirectory)/ci/redditclient.7z
-    cd ..
-    qmake $(Build.BinariesDirectory)\tests\redditclient
+    qmake $(Build.SourcesDirectory)/ci/redditclient
     nmake
   condition: |
     and(
@@ -412,13 +383,12 @@ steps:
   displayName: build test with qmake with MSVC with extra module
 - bash: |
     set -ex
-    mkdir $(Build.BinariesDirectory)/tests
-    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/redditclient.7z)
-    if [[ "6" -eq "${QT_VERSION:0:1}" ]]; then
-      (cd $(Build.BinariesDirectory)/tests/redditclient;patch -i redditclient_6.diff -p1)
-    fi
     export PATH=$(QT_BINDIR):$PATH
-    qmake $(Build.BinariesDirectory)/tests/redditclient
+    if [[ "6" -eq "${QT_VERSION:0:1}" ]]; then
+      qmake $(Build.SourcesDirectory)/ci/redditclient
+    else
+      qmake $(Build.SourcesDirectory)/ci/redditclient_qt5
+    fi
     make
   condition: |
     and(
@@ -441,15 +411,12 @@ steps:
     ./emsdk install $(EMSDK_VERSION)
     ./emsdk activate --embedded $(EMSDK_VERSION)
     source $(Build.BinariesDirectory)/emsdk/emsdk_env.sh
-    mkdir $(Build.BinariesDirectory)/tests
-    if [[ $(QT_VERSION) = 6* ]]; then
-      OPENGLWINDOW_7Z="openglwindow_qt6.7z"
-    else
-      OPENGLWINDOW_7Z="openglwindow.7z"
-    fi
-    (cd $(Build.BinariesDirectory)/tests; 7zr x $(Build.SourcesDirectory)/ci/$OPENGLWINDOW_7Z)
     export PATH=$(QT_BINDIR):$PATH
-    qmake $(Build.BinariesDirectory)/tests/openglwindow
+    if [[ $(QT_VERSION) = 6* ]]; then
+      qmake $(Build.SourcesDirectory)/ci/openglwindow
+    else
+      qmake $(Build.SourcesDirectory)/ci/openglwindow_qt5
+    fi
     make
   workingDirectory: $(Build.BinariesDirectory)
   condition: |
@@ -475,13 +442,11 @@ steps:
     echo "Add Qt/qmake to PATH at $(WIN_QT_BINDIR):" 
     echo "$env:Path"
     if ('$(QT_VERSION)' -like '6*') {
-      7z x $(Build.SourcesDirectory)\ci\openglwindow_qt6.7z
       echo "Inlined qmake.bat command is: $(WIN_AUTODESK_QT_BINDIR)\qmake -qtconf $(WIN_QT_BINDIR)\target_qt.conf $(Build.BinariesDirectory)\tests\openglwindow"
-      $(WIN_AUTODESK_QT_BINDIR)\qmake.exe -qtconf "$(WIN_QT_BINDIR)\target_qt.conf" $(Build.BinariesDirectory)\tests\openglwindow
+      $(WIN_AUTODESK_QT_BINDIR)\qmake.exe -qtconf "$(WIN_QT_BINDIR)\target_qt.conf" $(Build.SourcesDirectory)\ci\openglwindow
     } else {
-      7z x $(Build.SourcesDirectory)\ci\openglwindow.7z
       echo "Qt5: run qmake.exe"
-      qmake $(Build.BinariesDirectory)\tests\openglwindow
+      qmake $(Build.SourcesDirectory)\ci\openglwindow_qt5
     }
     if ($false -eq $?) {
       Write-Error "qmake failed."
