@@ -30,7 +30,7 @@ steps:
     mkdir Qt
     cd Qt
     if [[ "$(SUBCOMMAND)" == "install-qt-official" ]]; then
-      opt+=" --email $(AQT_TEST_EMAIL) --pw $(AQT_TEST_PASSWORD)"
+      opt+=" --email ${AQT_TEST_EMAIL} --pw ${AQT_TEST_PASSWORD}"
       python -m aqt install-qt-official $opt $(TARGET) $(ARCH) $(QT_VERSION) --m $(MODULE)
     fi
     if [[ "$(SUBCOMMAND)" == "install-qt" ]]; then
