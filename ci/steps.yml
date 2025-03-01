@@ -250,7 +250,7 @@ steps:
       Write-Host '##vso[task.setvariable variable=VSVER]2019'
     }
     if ('$(ARCH)' -like '"*_arm64') {
-      Write-Host '##vso[task.setvariable variable=ARCHITECTURE]arm64'
+      Write-Host '##vso[task.setvariable variable=ARCHITECTURE]amd64_arm64'
     }
     cd $(WIN_QT_BINDIR)
     unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
