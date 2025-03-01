@@ -182,12 +182,12 @@ windows_build_jobs.extend(
     [
         BuildJob(
             "install-qt",
-            "6.5.3",
+            "6.8.1",
             "windows",
             "desktop",
-            "win64_msvc2019_arm64",
-            "msvc2019_arm64",
-            is_autodesktop=True,  # Should install win64_msvc2019_arm64 in parallel
+            "win64_msvc2022_arm64_cross_compiled",
+            "msvc2022_arm64",
+            is_autodesktop=True,
         ),
         BuildJob(
             "install-qt",
