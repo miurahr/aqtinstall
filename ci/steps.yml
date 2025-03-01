@@ -243,12 +243,15 @@ steps:
       Write-Host '##vso[task.setvariable variable=VSVER]2022'
     }
     cd $(WIN_QT_BINDIR)
-    Invoke-WebRequest -Uri https://download.qt.io/official_releases/jom/jom.zip -OutFile jom.zip
-    md5sum -c md5sum.txt
-    unzip jom.zip
+    
+    Invoke-WebRequest -Uri "https://download.qt.io/official_releases/jom/" + $env:JOM -OutFile $env:JOM
+    md5sum -c jom-md5sums.txt
+    unzip $env:JOM
   condition: |
     and(eq(variables['Agent.OS'], 'Windows_NT'), 
         eq(variables['SUBCOMMAND'], 'install-qt'))
+  env:
+    JOM: jom_1_1_3.zip
   displayName: Detect toolchain for Windows and update PATH
 
 # When no modules
