@@ -243,8 +243,14 @@ steps:
     } else {
       Write-Host '##vso[task.setvariable variable=ARCHITECTURE]x86'
     }
-    if ('$(ARCH)' -like '*msvc*') {
+    if ('$(ARCH)' -like '*msvc2022*') {
       Write-Host '##vso[task.setvariable variable=VSVER]2022'
+    }
+    if ('$(ARCH)' -like '*msvc2019*') {
+      Write-Host '##vso[task.setvariable variable=VSVER]2019'
+    }
+    if ('$(ARCH)' -like '"*_arm64') {
+      Write-Host '##vso[task.setvariable variable=ARCHITECTURE]arm64'
     }
     cd $(WIN_QT_BINDIR)
     unzip $(Build.SourcesDirectory)\ci\jom_1_1_3.zip
