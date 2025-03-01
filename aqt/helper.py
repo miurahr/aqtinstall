@@ -78,7 +78,7 @@ def get_qt_account_path() -> Path:
 def get_qt_installer_name() -> str:
     installer_dict = {
         "windows": "qt-unified-windows-x64-online.exe",
-        "mac": "qt-unified-macOS-x64-online.dmg",
+        "mac": "qt-unified-mac-x64-online.dmg",
         "linux": "qt-unified-linux-x64-online.run",
     }
     return installer_dict[get_os_name()]
