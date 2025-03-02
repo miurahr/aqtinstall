@@ -35,6 +35,7 @@ from aqt.helper import (
     get_os_name,
     get_qt_account_path,
     get_qt_installer_name,
+    prepare_installer,
     safely_run,
     safely_run_save_output,
 )
@@ -340,7 +341,8 @@ class CommercialInstaller:
 
         self.logger.info(f"Downloading Qt installer to {installer_path}")
         timeout = (Settings.connection_timeout, Settings.response_timeout)
-        download_installer(self.base_url, self._installer_filename, self.os_name, installer_path, timeout)
+        download_installer(self.base_url, self._installer_filename, installer_path, timeout)
+        installer_path = prepare_installer(installer_path, self.os_name)
 
         try:
             if self.override:

@@ -65,6 +65,7 @@ from aqt.helper import (
     get_hash,
     get_os_name,
     get_qt_installer_name,
+    prepare_installer,
     retry_on_bad_connection,
     retry_on_errors,
     safely_run_save_output,
@@ -905,7 +906,8 @@ class Cli:
             # Download installer
             self.logger.info(f"Downloading Qt installer to {installer_path}")
             timeout = (Settings.connection_timeout, Settings.response_timeout)
-            download_installer(Settings.baseurl, installer_filename, get_os_name(), installer_path, timeout)
+            download_installer(Settings.baseurl, installer_filename, installer_path, timeout)
+            installer_path = prepare_installer(installer_path, get_os_name())
 
             # Build command
             cmd = [str(installer_path), "--accept-licenses", "--accept-obligations", "--confirm-command"]

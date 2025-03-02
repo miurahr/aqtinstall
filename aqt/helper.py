@@ -27,6 +27,7 @@ import secrets
 import shutil
 import subprocess
 import sys
+import uuid
 from configparser import ConfigParser
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
@@ -669,15 +670,37 @@ def extract_auth(args: List[str]) -> Tuple[str | None, str | None, List[str] | N
     return username, password, args
 
 
-def download_installer(
-    base_url: str, installer_filename: str, os_name: str, target_path: Path, timeout: Tuple[float, float]
-) -> None:
+def download_installer(base_url: str, installer_filename: str, target_path: Path, timeout: Tuple[float, float]) -> None:
     base_path = f"official_releases/online_installers/{installer_filename}"
     url = f"{base_url}/{base_path}"
     try:
         hash = get_hash(base_path, Settings.hash_algorithm, timeout)
         downloadBinaryFile(url, target_path, Settings.hash_algorithm, hash, timeout=timeout)
-        if os_name != "windows":
-            os.chmod(target_path, 0o500)
     except Exception as e:
         raise RuntimeError(f"Failed to download installer: {e}")
+
+
+def prepare_installer(installer_path: Path, os_name: str) -> Path:
+    """
+    Prepares the installer for execution. This may involve setting the correct permissions or
+    extracting the installer if it's packaged. Returns the path to the installer executable.
+    """
+    if os_name == "linux":
+        os.chmod(installer_path, 0o500)
+        return installer_path
+    elif os_name == "mac":
+        volume_path = Path(f"/Volumes/{str(uuid.uuid4())}")
+        subprocess.run(
+            ["hdiutil", "attach", str(installer_path), "-mountpoint", str(volume_path)],
+            stdout=subprocess.DEVNULL,
+            check=True,
+        )
+        try:
+            src_app_name = next(volume_path.glob("*.app")).name
+            dst_app_path = installer_path.with_suffix(".app")
+            shutil.copytree(volume_path / src_app_name, dst_app_path)
+        finally:
+            subprocess.run(["hdiutil", "detach", str(volume_path), "-force"], stdout=subprocess.DEVNULL, check=True)
+        return dst_app_path / "Contents" / "MacOS" / Path(src_app_name).stem
+    else:
+        return installer_path
