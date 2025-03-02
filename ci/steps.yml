@@ -234,7 +234,9 @@ steps:
     if ('$(ARCH)' -like '*mingw*') {
       Write-Host '##vso[task.setvariable variable=TOOLCHAIN]MINGW'
     }
-    if ('$(ARCH)' -like 'win64_msvc*') {
+    if ('$(ARCH)' -like 'win64_msvc*_arm64*') {
+      Write-Host '##vso[task.setvariable variable=ARCHITECTURE]amd64_arm64'
+    } elseif ('$(ARCH)' -like 'win64_msvc*') {
       Write-Host '##vso[task.setvariable variable=ARCHITECTURE]amd64'
     } else {
       Write-Host '##vso[task.setvariable variable=ARCHITECTURE]x86'
