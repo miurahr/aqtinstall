@@ -245,12 +245,11 @@ steps:
     cd $(WIN_QT_BINDIR)
     $jomurl = 'https://download.qt.io/official_releases/jom/' + $env:JOM
     Invoke-WebRequest -Uri $jomurl -OutFile $env:JOM
-    if ((Get-FileHash $env:JOM -Algorithm MD5).Hash -eq $env:MD5) {
-      unzip $env:JOM
-    } else {
-      Write-Host "##[error]Invalid MD5 hash for a downloaded $env:JOM ... aborting" 
+    if ((Get-FileHash $env:JOM -Algorithm MD5).Hash -ne $env:MD5) {
+      Write-Host "##vso[task.logissue type=error]Invalid MD5 hash for a downloaded $env:JOM ... aborting" 
       exit 1
     }
+    unzip $env:JOM
   condition: |
     and(eq(variables['Agent.OS'], 'Windows_NT'), 
         eq(variables['SUBCOMMAND'], 'install-qt'))
@@ -465,7 +464,7 @@ steps:
     make
     if ($false -eq $?) {
       Write-Error "make failed."
-      Write-Host "##vso[task.logissue type=error]nmake failed."
+      Write-Host "##vso[task.logissue type=error]make failed."
       exit(1)
     }
   workingDirectory: $(Build.BinariesDirectory)
