@@ -218,7 +218,6 @@ class CommercialInstaller:
 
         # Set OS-specific properties
         self.os_name = get_os_name()
-        self._installer_filename = get_qt_installer_name()
         self.qt_account = get_qt_account_path()
         self.package_manager = QtPackageManager(self.arch, self.version, self.target, self.username, self.password)
 
@@ -277,6 +276,43 @@ class CommercialInstaller:
 
         return cmd
 
+    @staticmethod
+    def download_installer(logger: Logger, temp_path: Path, base_url: str) -> Path:
+        installer_filename = get_qt_installer_name()
+        installer_path = temp_path / installer_filename
+
+        logger.info(f"Downloading Qt installer to {installer_path}")
+        url = f"{base_url}/official_releases/online_installers/{installer_filename}"
+
+        response = requests.get(url, stream=True, timeout=Settings.qt_installer_timeout)
+        response.raise_for_status()
+
+        with open(installer_path, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+        if get_os_name() == "mac":
+            import shutil
+            import subprocess
+            import uuid
+
+            logger.info("Extracting disk image")
+            volume_path = Path(f"/Volumes/{str(uuid.uuid4())}")
+            subprocess.run(
+                ["hdiutil", "attach", str(installer_path), "-mountpoint", str(volume_path)],
+                stdout=subprocess.DEVNULL,
+                check=True,
+            )
+            app_name = next(volume_path.glob("*.app")).name
+            executable_name = Path(app_name).stem
+            shutil.copytree(volume_path / app_name, temp_path / app_name)
+            subprocess.run(["hdiutil", "detach", str(volume_path), "-force"], stdout=subprocess.DEVNULL, check=True)
+            installer_path = temp_path / app_name / "Contents" / "MacOS" / executable_name
+        elif get_os_name() != "windows":
+            installer_path.chmod(0o500)
+
+        return installer_path
+
     def install(self) -> None:
         """Run the Qt installation process."""
         if (
@@ -316,12 +352,11 @@ class CommercialInstaller:
         if temp_path.exists():
             shutil.rmtree(temp_dir)
         temp_path.mkdir(parents=True, exist_ok=True)
-        installer_path = temp_path / self._installer_filename
-
-        self.logger.info(f"Downloading Qt installer to {installer_path}")
-        self.download_installer(installer_path, Settings.qt_installer_timeout)
 
         try:
+            # Download installer
+            installer_path = self.download_installer(self.logger, temp_path, self.base_url)
+
             cmd = []
             if self.override:
                 if not self.username or not self.password:
@@ -357,20 +392,6 @@ class CommercialInstaller:
             raise
         finally:
             self.logger.info("Qt installation completed successfully")
-
-    def download_installer(self, target_path: Path, timeout: int) -> None:
-        url = f"{self.base_url}/official_releases/online_installers/{self._installer_filename}"
-        try:
-            response = requests.get(url, stream=True, timeout=timeout)
-            response.raise_for_status()
-
-            with open(target_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            if self.os_name != "windows":
-                os.chmod(target_path, 0o500)
-        except Exception as e:
-            raise RuntimeError(f"Failed to download installer: {e}")
 
     def _get_package_name(self) -> str:
         qt_version = f"{self.version.major}{self.version.minor}{self.version.patch}"

@@ -896,27 +896,9 @@ class Cli:
             shutil.rmtree(temp_dir)
         temp_path.mkdir(parents=True, exist_ok=True)
 
-        # Get installer based on OS
-        installer_filename = get_qt_installer_name()
-        installer_path = temp_path / installer_filename
-
         try:
             # Download installer
-            self.logger.info(f"Downloading Qt installer to {installer_path}")
-            base_url = Settings.baseurl
-            url = f"{base_url}/official_releases/online_installers/{installer_filename}"
-
-            import requests
-
-            response = requests.get(url, stream=True, timeout=Settings.qt_installer_timeout)
-            response.raise_for_status()
-
-            with open(installer_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-
-            if get_os_name() != "windows":
-                os.chmod(installer_path, 0o500)
+            installer_path = CommercialInstaller.download_installer(self.logger, temp_path, Settings.baseurl)
 
             # Build command
             cmd = [str(installer_path), "--accept-licenses", "--accept-obligations", "--confirm-command"]

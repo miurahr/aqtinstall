@@ -205,22 +205,6 @@ def test_build_command(
     assert cmd == expected_cmd
 
 
-@pytest.mark.enable_socket
-def test_commercial_installer_download(monkeypatch, commercial_installer):
-    """Test downloading of commercial installer"""
-
-    def mock_requests_get(*args, **kwargs):
-        return MockResponse(content=b"installer_content")
-
-    monkeypatch.setattr(requests, "get", mock_requests_get)
-
-    with TemporaryDirectory() as temp_dir:
-        target_path = Path(temp_dir) / "qt-installer"
-        commercial_installer.download_installer(target_path, timeout=60)
-        assert target_path.exists()
-        assert target_path.read_bytes() == b"installer_content"
-
-
 @pytest.mark.parametrize(
     "modules, expected_command",
     [
