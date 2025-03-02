@@ -248,6 +248,7 @@ steps:
     if ((Get-FileHash $env:JOM -Algorithm MD5).Hash -eq $env:MD5) {
       unzip $env:JOM
     } else {
+      Write-Host "##[error]Invalid MD5 hash for a downloaded $env:JOM ... aborting" 
       exit 1
     }
   condition: |
