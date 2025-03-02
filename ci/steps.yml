@@ -244,11 +244,12 @@ steps:
     }
     cd $(WIN_QT_BINDIR)
     $jomurl = 'https://download.qt.io/official_releases/jom/' + $env:JOM
-    $md5sum = $env:MD5 + '  ' + $env:JOM
     Invoke-WebRequest -Uri $jomurl -OutFile $env:JOM
-    Set-Content -Encoding utf8 -Path md5sums.txt -Value $md5sum
-    md5sum -c md5sums.txt
-    unzip $env:JOM
+    if ((Get-FileHash $env:JOM -Algorithm MD5).Hash -eq $env:MD5) {
+      unzip $env:JOM
+    } else {
+      exit 1
+    }
   condition: |
     and(eq(variables['Agent.OS'], 'Windows_NT'), 
         eq(variables['SUBCOMMAND'], 'install-qt'))
