@@ -669,7 +669,9 @@ def extract_auth(args: List[str]) -> Tuple[str | None, str | None, List[str] | N
     return username, password, args
 
 
-def download_installer(base_url: str, installer_filename:str, os_name:str, target_path: Path, timeout: Tuple[float, float]) -> None:
+def download_installer(
+    base_url: str, installer_filename: str, os_name: str, target_path: Path, timeout: Tuple[float, float]
+) -> None:
     base_path = f"official_releases/online_installers/{installer_filename}"
     url = f"{base_url}/{base_path}"
     try:
