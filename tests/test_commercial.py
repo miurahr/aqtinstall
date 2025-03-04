@@ -10,7 +10,7 @@ import requests
 
 from aqt.commercial import CommercialInstaller, QtPackageInfo, QtPackageManager
 from aqt.exceptions import DiskAccessNotPermitted
-from aqt.helper import Settings, get_qt_account_path
+from aqt.helper import Settings, download_installer, get_qt_account_path
 from aqt.installer import Cli
 from aqt.metadata import Version
 from tests.test_helper import mocked_requests_get
@@ -219,7 +219,10 @@ def test_commercial_installer_download_sha256(tmp_path, monkeypatch, commercial_
     monkeypatch.setattr(requests.Session, "get", mocked_requests_get)
 
     target_path = tmp_path / "qt-installer"
-    commercial_installer.download_installer(target_path, timeout=Settings.qt_installer_timeout)
+
+    timeout = (Settings.connection_timeout, Settings.response_timeout)
+    download_installer(commercial_installer.base_url, commercial_installer._installer_filename,
+                       commercial_installer.os_name, target_path, timeout)
     assert target_path.exists()
 
 
@@ -284,7 +287,7 @@ def test_install_qt_commercial(
         return CompletedProcess(args=args[0], returncode=0)
 
     def mock_get_default_local_cache_path(*args, **kwargs):
-        return tmp_path.joinpath('cache')
+        return tmp_path.joinpath("cache")
 
     monkeypatch.setattr("aqt.commercial.safely_run", mock_safely_run)
     monkeypatch.setattr("aqt.helper.get_default_local_cache_path", mock_get_default_local_cache_path)

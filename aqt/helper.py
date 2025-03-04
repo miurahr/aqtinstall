@@ -667,3 +667,15 @@ def extract_auth(args: List[str]) -> Tuple[str | None, str | None, List[str] | N
             continue
         i += 1
     return username, password, args
+
+
+def download_installer(base_url: str, installer_filename:str, os_name:str, target_path: Path, timeout: Tuple[float, float]) -> None:
+    base_path = f"official_releases/online_installers/{installer_filename}"
+    url = f"{base_url}/{base_path}"
+    try:
+        hash = get_hash(base_path, Settings.hash_algorithm, timeout)
+        downloadBinaryFile(url, target_path, Settings.hash_algorithm, hash, timeout=timeout)
+        if os_name != "windows":
+            os.chmod(target_path, 0o500)
+    except Exception as e:
+        raise RuntimeError(f"Failed to download installer: {e}")

@@ -23,16 +23,15 @@ import os
 from dataclasses import dataclass
 from logging import Logger, getLogger
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from defusedxml import ElementTree
 
 from aqt.exceptions import DiskAccessNotPermitted
 from aqt.helper import (
     Settings,
-    downloadBinaryFile,
+    download_installer,
     extract_auth,
-    get_hash,
     get_os_name,
     get_qt_account_path,
     get_qt_installer_name,
@@ -298,17 +297,6 @@ class CommercialInstaller:
 
         return cmd
 
-    def download_installer(self, target_path: Path, timeout: Tuple[float, float]) -> None:
-        base_path = f"official_releases/online_installers/{self._installer_filename}"
-        url = f"{self.base_url}/{base_path}"
-        try:
-            hash = get_hash(base_path, Settings.hash_algorithm, timeout)
-            downloadBinaryFile(url, target_path, Settings.hash_algorithm, hash, timeout=timeout)
-            if self.os_name != "windows":
-                os.chmod(target_path, 0o500)
-        except Exception as e:
-            raise RuntimeError(f"Failed to download installer: {e}")
-
     def install(self) -> None:
         """Run the Qt installation process."""
         if (
@@ -351,7 +339,8 @@ class CommercialInstaller:
         installer_path = temp_path / self._installer_filename
 
         self.logger.info(f"Downloading Qt installer to {installer_path}")
-        self.download_installer(installer_path, Settings.qt_installer_timeout)
+        timeout = (Settings.connection_timeout, Settings.response_timeout)
+        download_installer(self.base_url, self._installer_filename, self.os_name, installer_path, timeout)
 
         try:
             if self.override:
