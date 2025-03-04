@@ -2,8 +2,8 @@ import os
 import shutil
 import sys
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Dict, List, Optional
+from urllib.parse import urlparse
 
 import pytest
 import requests
@@ -13,6 +13,7 @@ from aqt.exceptions import DiskAccessNotPermitted
 from aqt.helper import Settings, get_qt_account_path
 from aqt.installer import Cli
 from aqt.metadata import Version
+from tests.test_helper import mocked_requests_get
 
 
 class CompletedProcess:
@@ -205,20 +206,21 @@ def test_build_command(
     assert cmd == expected_cmd
 
 
-@pytest.mark.enable_socket
-def test_commercial_installer_download(monkeypatch, commercial_installer):
+def test_commercial_installer_download_sha256(tmp_path, monkeypatch, commercial_installer):
     """Test downloading of commercial installer"""
 
-    def mock_requests_get(*args, **kwargs):
-        return MockResponse(content=b"installer_content")
+    def mock_getUrl(url, *args, **kwargs):
+        hash_filename = str(urlparse(url).path.split("/")[-1])
+        assert hash_filename.endswith(".sha256")
+        filename = hash_filename[: -len(".sha256")]
+        return f"07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd {filename}"
 
-    monkeypatch.setattr(requests, "get", mock_requests_get)
+    monkeypatch.setattr("aqt.helper.getUrl", mock_getUrl)
+    monkeypatch.setattr(requests.Session, "get", mocked_requests_get)
 
-    with TemporaryDirectory() as temp_dir:
-        target_path = Path(temp_dir) / "qt-installer"
-        commercial_installer.download_installer(target_path, timeout=60)
-        assert target_path.exists()
-        assert target_path.read_bytes() == b"installer_content"
+    target_path = tmp_path / "qt-installer"
+    commercial_installer.download_installer(target_path, timeout=Settings.qt_installer_timeout)
+    assert target_path.exists()
 
 
 @pytest.mark.parametrize(
@@ -274,14 +276,18 @@ def test_get_install_command(monkeypatch, modules: Optional[List[str]], expected
     ],
 )
 def test_install_qt_commercial(
-    capsys, monkeypatch, cmd: str, arch_dict: dict[str, str], details: list[str], expected_command: str
+    capsys, tmp_path, monkeypatch, cmd: str, arch_dict: dict[str, str], details: list[str], expected_command: str
 ) -> None:
     """Test commercial Qt installation command"""
 
     def mock_safely_run(*args, **kwargs):
         return CompletedProcess(args=args[0], returncode=0)
 
+    def mock_get_default_local_cache_path(*args, **kwargs):
+        return tmp_path.joinpath('cache')
+
     monkeypatch.setattr("aqt.commercial.safely_run", mock_safely_run)
+    monkeypatch.setattr("aqt.helper.get_default_local_cache_path", mock_get_default_local_cache_path)
 
     current_platform = sys.platform.lower()
     arch = arch_dict[current_platform]

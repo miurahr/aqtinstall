@@ -1,17 +1,38 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2025 Alexandre Poumaroux, Hiroshi Miura
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import json
 import os
 from dataclasses import dataclass
 from logging import Logger, getLogger
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
-import requests
 from defusedxml import ElementTree
 
 from aqt.exceptions import DiskAccessNotPermitted
 from aqt.helper import (
     Settings,
+    downloadBinaryFile,
     extract_auth,
+    get_hash,
     get_os_name,
     get_qt_account_path,
     get_qt_installer_name,
@@ -277,6 +298,17 @@ class CommercialInstaller:
 
         return cmd
 
+    def download_installer(self, target_path: Path, timeout: Tuple[float, float]) -> None:
+        base_path = f"official_releases/online_installers/{self._installer_filename}"
+        url = f"{self.base_url}/{base_path}"
+        try:
+            hash = get_hash(base_path, Settings.hash_algorithm, timeout)
+            downloadBinaryFile(url, target_path, Settings.hash_algorithm, hash, timeout=timeout)
+            if self.os_name != "windows":
+                os.chmod(target_path, 0o500)
+        except Exception as e:
+            raise RuntimeError(f"Failed to download installer: {e}")
+
     def install(self) -> None:
         """Run the Qt installation process."""
         if (
@@ -322,12 +354,11 @@ class CommercialInstaller:
         self.download_installer(installer_path, Settings.qt_installer_timeout)
 
         try:
-            cmd = []
             if self.override:
                 if not self.username or not self.password:
                     self.username, self.password, self.override = extract_auth(self.override)
 
-                cmd = self.build_command(
+                cmd: list[str] = self.build_command(
                     str(installer_path),
                     override=self.override,
                     no_unattended=self.no_unattended,
@@ -357,20 +388,6 @@ class CommercialInstaller:
             raise
         finally:
             self.logger.info("Qt installation completed successfully")
-
-    def download_installer(self, target_path: Path, timeout: int) -> None:
-        url = f"{self.base_url}/official_releases/online_installers/{self._installer_filename}"
-        try:
-            response = requests.get(url, stream=True, timeout=timeout)
-            response.raise_for_status()
-
-            with open(target_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            if self.os_name != "windows":
-                os.chmod(target_path, 0o500)
-        except Exception as e:
-            raise RuntimeError(f"Failed to download installer: {e}")
 
     def _get_package_name(self) -> str:
         qt_version = f"{self.version.major}{self.version.minor}{self.version.patch}"
