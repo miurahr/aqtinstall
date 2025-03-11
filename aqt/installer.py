@@ -905,7 +905,7 @@ class Cli:
             # Download installer
             self.logger.info(f"Downloading Qt installer to {installer_path}")
             timeout = (Settings.connection_timeout, Settings.response_timeout)
-            download_installer(Settings.baseurl, installer_filename, get_os_name(), temp_path, timeout)
+            download_installer(Settings.baseurl, installer_filename, get_os_name(), installer_path, timeout)
 
             # Build command
             cmd = [str(installer_path), "--accept-licenses", "--accept-obligations", "--confirm-command"]
