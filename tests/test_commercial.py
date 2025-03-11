@@ -221,13 +221,7 @@ def test_commercial_installer_download_sha256(tmp_path, monkeypatch, commercial_
     target_path = tmp_path / "qt-installer"
 
     timeout = (Settings.connection_timeout, Settings.response_timeout)
-    download_installer(
-        commercial_installer.base_url,
-        commercial_installer._installer_filename,
-        commercial_installer.os_name,
-        target_path,
-        timeout,
-    )
+    download_installer(commercial_installer.base_url, commercial_installer._installer_filename,target_path, timeout)
     assert target_path.exists()
 
 
