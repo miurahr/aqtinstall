@@ -139,7 +139,8 @@ def test_helper_downloadBinary_sha256(tmp_path, monkeypatch):
 
     expected = binascii.unhexlify("07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd")
     out = tmp_path.joinpath("text.xml")
-    helper.downloadBinaryFile("http://example.com/test.xml", out, "sha256", expected, 60)
+    timeout = (Settings.connection_timeout, Settings.response_timeout)
+    helper.downloadBinaryFile("http://example.com/test.xml", out, "sha256", expected, timeout)
 
 
 @pytest.mark.parametrize(

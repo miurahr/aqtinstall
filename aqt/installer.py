@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2024 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2025 Hiroshi Miura <miurahr@linux.com>
 # Copyright (C) 2020, Aurélien Gâteau
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -59,6 +59,7 @@ from aqt.exceptions import (
 from aqt.helper import (
     MyQueueListener,
     Settings,
+    download_installer,
     downloadBinaryFile,
     extract_auth,
     get_hash,
@@ -903,20 +904,8 @@ class Cli:
         try:
             # Download installer
             self.logger.info(f"Downloading Qt installer to {installer_path}")
-            base_url = Settings.baseurl
-            url = f"{base_url}/official_releases/online_installers/{installer_filename}"
-
-            import requests
-
-            response = requests.get(url, stream=True, timeout=Settings.qt_installer_timeout)
-            response.raise_for_status()
-
-            with open(installer_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-
-            if get_os_name() != "windows":
-                os.chmod(installer_path, 0o500)
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
+            download_installer(Settings.baseurl, installer_filename, get_os_name(), installer_path, timeout)
 
             # Build command
             cmd = [str(installer_path), "--accept-licenses", "--accept-obligations", "--confirm-command"]
