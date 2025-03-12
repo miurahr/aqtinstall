@@ -58,7 +58,7 @@ Requirements
     3.9
 
 - Recommended Python version:
-    3.12 (frequently tested on)
+    3.13 (frequently tested on)
 
 - Dependencies:
     requests
