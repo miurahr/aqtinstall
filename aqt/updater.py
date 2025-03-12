@@ -251,6 +251,7 @@ class Updater:
 
     def patch_target_qt_conf(self, base_dir: str, qt_version: str, arch_dir: str, os_name: str, desktop_arch_dir: str):
         target_qt_conf = self.prefix / "bin" / "target_qt.conf"
+        self.logger.info(f"Patching {target_qt_conf}")
         new_hostprefix = f"HostPrefix=../../{desktop_arch_dir}"
         new_targetprefix = "Prefix={}".format(str(Path(base_dir).joinpath(qt_version, arch_dir, "target")))
         new_hostdata = "HostData=../{}".format(arch_dir)
