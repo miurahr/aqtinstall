@@ -10,7 +10,7 @@ Contents:
    getting_started
    cli
    configuration
-   commercial
+   official
    appendix
    CONTRIBUTE
    CODE_OF_CONDUCT
