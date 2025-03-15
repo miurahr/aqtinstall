@@ -3,7 +3,7 @@ Qt Commercial Installation Commands
 =================================
 
 .. important::
-   * **You can use this for commnercial and also open-source Qt versions**
+   * **You can use this for commercial and also open-source Qt versions**
    * **You can only install for the OS running the CLI**
    * **All commands require authentication, even for open-source.** The authentication process:
 
