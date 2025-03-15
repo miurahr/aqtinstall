@@ -1,4 +1,4 @@
-.. _official-ref:
+.. _official:
 
 Official Qt Installer
 =====================
