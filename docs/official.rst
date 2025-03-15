@@ -1,9 +1,10 @@
-=================================
-Qt Commercial Installation Commands
-=================================
+.. _official-ref:
+
+Official Qt Installer
+=====================
 
 .. important::
-   * **You can use this for commercial and also open-source Qt versions**
+   * **You can use this for commercial and open-source Qt versions**
    * **You can only install for the OS running the CLI**
    * **All commands require authentication, even for open-source.** The authentication process:
 
@@ -52,13 +53,13 @@ Options
       Description: Qt 6.8.1 Linux x86_64 Essential Libraries, Headers, and Tools
       Version: 6.8.1
       Components: qt.qt6.681.linux_gcc_64
-      ========================================
+       
       Name: qt6.8.1-essentials-dev
       Display name: Qt 6.8.1 Linux x86_64 Essential Components (dev)
       Description: Qt 6.8.1 Linux x86_64 Essential Libraries, Headers, and Tools (dev)
       Version: 6.8.1
       Required aliases: qt6.8.1-essentials
-      ========================================
+       
       Name: qt6.8.1-full
       Display name: Qt 6.8.1 Linux x86_64 All Components with Sources
       Description: Qt 6.8.1 Linux x86_64 All Libraries, Headers, Tools, and Sources
@@ -66,22 +67,20 @@ Options
       Components: qt.qt6.681.src,extensions.qtwebengine.681.src
       Required aliases: qt6.8.1-essentials,qt6.8.1-addons,qt6.8.1-extensions
       Optional components: extensions.qtinsighttracker.681.src
-      ========================================
+       
       Name: qt6.8.1-full-dbg
       Display name: Qt 6.8.1 Linux x86_64 All Components with Sources and Debug Information Files
       Description: Qt 6.8.1 Linux x86_64 All Libraries, Headers, Tools, Sources, and Debug Information Files (dev)
       Version: 6.8.1
       Components: qt.qt6.681.debug_info.linux_gcc_64,qt.qt6.681.debug_info,extensions.qtwebengine.681.debug_information
       Required aliases: qt6.8.1-full-dev
-      Optional components:
-      Optional aliases:
-      ========================================
+       
       Name: qt6.8.1-full-dev
       Display name: Qt 6.8.1 Linux x86_64 All Components with Sources (dev)
       Description: Qt 6.8.1 Linux x86_64 All Libraries, Headers, Tools, and Sources (dev)
       Version: 6.8.1
       Required aliases: qt6.8.1-full
-      ========================================
+ 
       Name: qt6.8.1-sdk
       Display name: Qt 6.8.1 Linux x86_64 SDK
       Description: Qt 6.8.1 Linux x86_64 SDK Tools (Qt Creator, Ninja, and CMake)
