@@ -20,7 +20,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
           architecture: x64
       - name: Setup reviewdog
         run: |
@@ -43,7 +43,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
           architecture: x64
       - name: Install dependencies
         run: |
