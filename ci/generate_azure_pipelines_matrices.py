@@ -182,12 +182,12 @@ windows_build_jobs.extend(
     [
         BuildJob(
             "install-qt",
-            "6.5.3",
+            "6.8.1",
             "windows",
             "desktop",
-            "win64_msvc2019_arm64",
-            "msvc2019_arm64",
-            is_autodesktop=True,  # Should install win64_msvc2019_arm64 in parallel
+            "win64_msvc2022_arm64_cross_compiled",
+            "msvc2022_arm64",
+            is_autodesktop=True,
         ),
         BuildJob(
             "install-qt",
@@ -341,16 +341,16 @@ mac_build_jobs.append(
 
 # Commercial
 windows_build_jobs.append(
-    BuildJob("install-qt-official", qt_version="6.8.1", target="desktop", arch="win64_msvc2022_64",
-             archdir="win64_msvc2022_64", module="qtquick3d")
+    BuildJob("install-qt-official", "6.8.1", "windows", "desktop", "win64_msvc2022_64",
+             "win64_msvc2022_64", module="qtquick3d")
 )
 linux_build_jobs.append(
-    BuildJob("install-qt-official", qt_version="6.8.1", target="desktop", arch="linux_gcc_64",
-             archdir="linux_gcc_64", module="qtquick3d")
+    BuildJob("install-qt-official", "6.8.1", "linux", "desktop", "linux_gcc_64",
+             "linux_gcc_64", module="qtquick3d")
 )
 mac_build_jobs.append(
-    BuildJob("install-qt-official", qt_version="6.8.1", target="desktop", arch="clang_64",
-             archdir="clang_64", module="qtquick3d")
+    BuildJob("install-qt-official", "6.8.1", "mac", "desktop", "clang_64", "clang_64",
+             module="qtquick3d")
 )
 
 matrices = {}
