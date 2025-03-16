@@ -13,6 +13,28 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.2.1`_ (16, March, 2025)
+===========================
+
+Fixed
+-----
+- variable become undefined when extension not exist or connection error (#868)
+- Fix missing log statement for taget_qt.conf (#901)
+- Fix error running official installer on macOS (#898)
+- Fix CI when testing ARM64 cross compilation job (#897)
+- Commercial fixes, CI tests (#883)
+
+Added
+-----
+- Commercial command document (#886)
+
+Changed
+-------
+- Use latest jom for test (892)
+- Check hash when downloading jom for test (#899)
+- Official installer to check hash when download (#900)
+- CI: publish with OIDC (#888)
+
 `v3.2.0`_ (29, January, 2025)
 =============================
 
@@ -463,7 +485,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.2.0...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.2.1...HEAD
+.. _v3.2.1: https://github.com/miurahr/aqtinstall/compare/v3.2.0...v3.2.1
 .. _v3.2.0: https://github.com/miurahr/aqtinstall/compare/v3.1.21...v3.2.0
 .. _v3.1.21: https://github.com/miurahr/aqtinstall/compare/v3.1.20...v3.1.21
 .. _v3.1.20: https://github.com/miurahr/aqtinstall/compare/v3.1.19...v3.1.20
