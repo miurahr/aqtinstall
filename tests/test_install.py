@@ -777,6 +777,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-windows-android_armv7.7z in .*\n"
                 r"INFO    : Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]qmake.bat\n"
+                r"INFO    : Patching .*6\.1\.0[/\\]android_armv7[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -958,6 +959,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"Finished installation of qtbase-MacOS-MacOS_12-Clang-Android-Android_ANY-ARM64\.7z in .*\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qtpaths\n"
+                r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1028,6 +1030,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"Finished installation of qtbase-linux-android_arm64_v8a.7z in .*\n"
                 r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
                 r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]qtpaths\n"
+                r"INFO    : Patching .*6\.3\.0[/\\]android_arm64_v8a[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1088,6 +1091,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtbase...\n"
                 r"Finished installation of qtbase-mac-ios.7z in .*\n"
                 r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
+                r"INFO    : Patching .*6\.1\.2[/\\]ios[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1150,6 +1154,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtbase...\n"
                 r"(?:.*\n)*?"
                 r"INFO    : Patching .*?[/\\]6\.1\.2[/\\]ios[/\\]bin[/\\]qmake\n"
+                r"INFO    : Patching .*?[/\\]6\.1\.2[/\\]ios[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : \n"
                 r"INFO    : Autodesktop will now install mac desktop 6\.1\.2 clang_64 as required by ios\n"
                 r"INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
@@ -1223,6 +1228,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"Finished installation of qtbase-windows-wasm_32\.7z in .*\n"
                 r"INFO    : Patching .*6\.2\.4[/\\]wasm_32[/\\]bin[/\\]qmake.bat\n"
                 r"INFO    : Patching .*6\.2\.4[/\\]wasm_32[/\\]bin[/\\]qtpaths.bat\n"
+                r"INFO    : Patching .*6\.2\.4[/\\]wasm_32[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1688,7 +1694,7 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
         r"(?:INFO    : Found extension .*?\n)*"
         r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
         r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
-        r"(?:INFO    : Patching (?:/tmp/[^/]+|[A-Za-z]:[\\/].*?)/6\.8\.0/wasm_singlethread/bin/(?:qmake|qtpaths)(?:6)?\n)*"
+        r"(?:INFO    : Patching (?:/tmp/[^/]+|[A-Za-z]:[\\/].*?)/6\.8\.0/wasm_singlethread/bin/(?:qmake(?:6)?|qtpaths(?:6)?|target_qt\.conf)\n)*"
         r"INFO    : \n"
         r"INFO    : Autodesktop will now install linux desktop 6\.8\.0 linux_gcc_64 as required by Qt6-WASM\n"
         r"INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
