@@ -371,13 +371,13 @@ class CommercialInstaller:
                 install_cmd = self.package_manager.get_install_command(self.modules, temp_dir)
                 cmd = [*base_cmd, *install_cmd]
 
+            log_cmd = cmd.copy()
+            for i in range(len(log_cmd) - 1):
+                if log_cmd[i] == "--email" or log_cmd[i] == "--pw":
+                    log_cmd[i + 1] = "***"
+            self.logger.info(f"Running: {log_cmd}")
+
             safely_run(cmd, Settings.qt_installer_timeout)
-
-            for i in range(len(cmd) - 1):
-                if cmd[i] == "--email" or cmd[i] == "--pw":
-                    cmd[i + 1] = "***"
-
-            self.logger.info(f"Running: {cmd}")
 
         except Exception as e:
             self.logger.error(f"Installation failed: {str(e)}")
