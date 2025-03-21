@@ -44,50 +44,6 @@ Options
   * If none are inputed, the package ``qtX.Y.Z-essentials`` is downloaded (default Qt install, includes ``qtcreator``...)
   * If ``all`` is inputed, the package ``qtX.Y.Z-full`` is downloaded (includes everything)
 
-.. dropdown:: Click to see all the special packages (for Linux Qt 6.8.1)
-
-   .. code-block:: text
-
-      Name: qt6.8.1-essentials
-      Display name: Qt 6.8.1 Linux x86_64 Essential Components
-      Description: Qt 6.8.1 Linux x86_64 Essential Libraries, Headers, and Tools
-      Version: 6.8.1
-      Components: qt.qt6.681.linux_gcc_64
-       
-      Name: qt6.8.1-essentials-dev
-      Display name: Qt 6.8.1 Linux x86_64 Essential Components (dev)
-      Description: Qt 6.8.1 Linux x86_64 Essential Libraries, Headers, and Tools (dev)
-      Version: 6.8.1
-      Required aliases: qt6.8.1-essentials
-       
-      Name: qt6.8.1-full
-      Display name: Qt 6.8.1 Linux x86_64 All Components with Sources
-      Description: Qt 6.8.1 Linux x86_64 All Libraries, Headers, Tools, and Sources
-      Version: 6.8.1
-      Components: qt.qt6.681.src,extensions.qtwebengine.681.src
-      Required aliases: qt6.8.1-essentials,qt6.8.1-addons,qt6.8.1-extensions
-      Optional components: extensions.qtinsighttracker.681.src
-       
-      Name: qt6.8.1-full-dbg
-      Display name: Qt 6.8.1 Linux x86_64 All Components with Sources and Debug Information Files
-      Description: Qt 6.8.1 Linux x86_64 All Libraries, Headers, Tools, Sources, and Debug Information Files (dev)
-      Version: 6.8.1
-      Components: qt.qt6.681.debug_info.linux_gcc_64,qt.qt6.681.debug_info,extensions.qtwebengine.681.debug_information
-      Required aliases: qt6.8.1-full-dev
-       
-      Name: qt6.8.1-full-dev
-      Display name: Qt 6.8.1 Linux x86_64 All Components with Sources (dev)
-      Description: Qt 6.8.1 Linux x86_64 All Libraries, Headers, Tools, and Sources (dev)
-      Version: 6.8.1
-      Required aliases: qt6.8.1-full
- 
-      Name: qt6.8.1-sdk
-      Display name: Qt 6.8.1 Linux x86_64 SDK
-      Description: Qt 6.8.1 Linux x86_64 SDK Tools (Qt Creator, Ninja, and CMake)
-      Version: 6.8.1
-      Components: qt.tools.qtcreator_gui,qt.tools.cmake,qt.tools.ninja
-      Required aliases: qt6.8.1-full-dev,qt6.8.1-full-dbg
-
 - ``--outputdir <path>`` - Installation directory (default: current directory)
 - ``--override <args...>`` - Pass all remaining arguments directly to the Qt installer CLI
 
@@ -106,7 +62,7 @@ Options
 - ``search_terms`` - Terms to search for in package names (grabs all that is not other options)
 
 Override Mode
-------------
+----------------------
 ``install-qt-official`` supports an override mode that passes all arguments after ``--override`` directly to the Qt installer CLI, and will ignore all the other params except ``--email`` and ``--pw`` if given prior to it
 
 .. code-block:: bash
@@ -122,7 +78,7 @@ When using override mode:
 * `More info here <https://doc.qt.io/qt-6/get-and-install-qt-cli.html>`_
 
 Examples
---------
+--------------
 .. code-block:: bash
 
    # Standard installation
@@ -138,7 +94,7 @@ Examples
    aqt install-qt-official --override install qt.qt6.680.gcc_64 --email user@example.com --pw pass
 
 Advanced configs
---------------
+--------------------------
 The file located in ``./aqt/settings.ini`` can be edited in the ``[qtofficial]`` part to fine tune the official installer (`more details here <https://doc.qt.io/qt-6/get-and-install-qt-cli.html#message-identifiers-for-auto-answer>`_):
 
 .. code-block:: ini

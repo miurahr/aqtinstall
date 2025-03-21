@@ -60,6 +60,7 @@ class QtPackageManager:
         self.packages: List[QtPackageInfo] = []
         self.username = username
         self.password = password
+        self.logger = getLogger("aqt.commercial")
 
     def _get_cache_dir(self) -> Path:
         """Create and return cache directory path."""
@@ -141,6 +142,7 @@ class QtPackageManager:
         cmd.append(base_package)
 
         try:
+            self.logger.info(f"Running: {cmd}")
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
             # Handle both string and CompletedProcess outputs
@@ -156,8 +158,7 @@ class QtPackageManager:
                 self._save_to_cache()
             else:
                 # Log the actual output for debugging
-                logger = getLogger("aqt.helper")
-                logger.debug(f"Installer output: {output_text}")
+                self.logger.debug(f"Installer output: {output_text}")
                 raise RuntimeError("Failed to find package information in installer output")
 
         except Exception as e:
@@ -371,7 +372,12 @@ class CommercialInstaller:
                 install_cmd = self.package_manager.get_install_command(self.modules, temp_dir)
                 cmd = [*base_cmd, *install_cmd]
 
-            self.logger.info(f"Running: {cmd}")
+            log_cmd = cmd.copy()
+            for i in range(len(log_cmd) - 1):
+                if log_cmd[i] == "--email" or log_cmd[i] == "--pw":
+                    log_cmd[i + 1] = "***"
+            self.logger.info(f"Running: {log_cmd}")
+
             safely_run(cmd, Settings.qt_installer_timeout)
 
         except Exception as e:

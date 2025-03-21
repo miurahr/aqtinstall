@@ -275,6 +275,17 @@ def test_get_install_command(monkeypatch, modules: Optional[List[str]], expected
             "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
             "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
         ),
+        (
+            "install-qt linux desktop 6.8.1 {} --outputdir ./install-qt-flag --use-official-installer {} {}",
+            {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
+            ["./install-qt-official", "qt6", "681"],
+            "qt-unified-{}-x64-online.run --email ******** --pw ******** --root {} "
+            "--accept-licenses --accept-obligations "
+            "--confirm-command "
+            "--auto-answer OperationDoesNotExistError=Ignore,OverwriteTargetDirectory=Yes,"
+            "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
+            "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
+        ),
     ],
 )
 def test_install_qt_commercial(
