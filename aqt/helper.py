@@ -22,6 +22,7 @@ import binascii
 import hashlib
 import logging.config
 import os
+import platform
 import posixpath
 import secrets
 import shutil
@@ -40,6 +41,7 @@ from xml.etree.ElementTree import Element
 import humanize
 import requests
 import requests.adapters
+from bs4 import BeautifulSoup
 from defusedxml import ElementTree
 
 from aqt.exceptions import (
@@ -62,6 +64,23 @@ def get_os_name() -> str:
     raise ValueError(f"Unsupported operating system: {system}")
 
 
+def get_os_arch():
+    """
+    Returns a simplified os-arch string for the current system
+    """
+    os_name = get_os_name()
+
+    machine = platform.machine().lower()
+    if machine in ["x86_64", "amd64"]:
+        arch = "x64"
+    elif machine in ["arm64", "aarch64"]:
+        arch = "arm64"
+    else:
+        arch = "x64"  # Default to x64 for unknown architectures
+
+    return f"{os_name}-{arch}"
+
+
 def get_qt_local_folder_path() -> Path:
     os_name = get_os_name()
     if os_name == "windows":
@@ -76,13 +95,64 @@ def get_qt_account_path() -> Path:
     return get_qt_local_folder_path() / "qtaccount.ini"
 
 
+def get_qt_installers():
+    """
+    Extracts Qt installer information from, mapping OS types
+    and architectures to their respective installer filenames without assuming
+    specific filename prefixes.
+
+    Returns:
+        dict: Mapping of OS identifiers to installer filenames with appropriate aliases
+    """
+    url = "https://download.qt.io/official_releases/online_installers/"
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        installers = {}
+
+        os_types = ["windows", "linux", "mac"]
+
+        for link in soup.find_all("a"):
+            # href = link.get('href', '')
+            filename = link.text.strip()
+
+            # Skip parent directory and non-installer files
+            if "Parent Directory" in filename or not any(ext in filename.lower() for ext in [".exe", ".dmg", ".run"]):
+                continue
+
+            # Check for OS types in the filename
+            for os_type in os_types:
+                if os_type.lower() in filename.lower():
+                    # Found an OS match, now look for architecture
+                    if "arm64" in filename.lower():
+                        installers[f"{os_type}-arm64"] = filename
+                    elif "x64" in filename.lower():
+                        installers[f"{os_type}-x64"] = filename
+                        # Also add generic OS entry for x64 variants of Windows and Linux
+                        if os_type in ["windows", "linux"]:
+                            installers[os_type] = filename
+                    else:
+                        # Handle case with no explicit architecture
+                        # Most likely for macOS which might just say "mac" without arch
+                        installers[os_type] = filename
+
+        return installers
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching installer data: {e}")
+        return {}
+    except Exception as e:
+        print(f"Unexpected error processing installer data: {e}")
+        return {}
+
+
 def get_qt_installer_name() -> str:
-    installer_dict = {
-        "windows": "qt-unified-windows-x64-online.exe",
-        "mac": "qt-unified-mac-x64-online.dmg",
-        "linux": "qt-unified-linux-x64-online.run",
-    }
-    return installer_dict[get_os_name()]
+    installer_dict = get_qt_installers()
+    return installer_dict[get_os_arch()]
 
 
 def get_qt_installer_path() -> Path:
