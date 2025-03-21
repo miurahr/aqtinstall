@@ -717,7 +717,7 @@ def safely_run_save_output(cmd: List[str], timeout: int) -> Any:
         raise
 
 
-def extract_auth(args: List[str]) -> Tuple[str | None, str | None, List[str] | None]:
+def extract_auth(args: List[str]) -> Tuple[Union[str, None], Union[str, None], Union[List[str], None]]:
     username = None
     password = None
     i = 0
