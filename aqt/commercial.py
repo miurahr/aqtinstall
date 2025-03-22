@@ -218,6 +218,7 @@ class CommercialInstaller:
         override: Optional[List[str]] = None,
         modules: Optional[List[str]] = None,
         no_unattended: bool = False,
+        dry_run: bool = False,
     ):
         self.override = override
         self.target = target
@@ -228,6 +229,7 @@ class CommercialInstaller:
         self.base_url = base_url
         self.modules = modules
         self.no_unattended = no_unattended
+        self.dry_run = dry_run
 
         # Extract credentials from override if present
         if override:
@@ -331,13 +333,12 @@ class CommercialInstaller:
                     raise DiskAccessNotPermitted(f"Failed to remove existing version directory {version_dir}: {str(e)}")
 
         # Setup temp directory
-        import shutil
-
         temp_dir = Settings.qt_installer_temp_path
         temp_path = Path(temp_dir)
-        if temp_path.exists():
-            shutil.rmtree(temp_dir)
-        temp_path.mkdir(parents=True, exist_ok=True)
+        if not temp_path.exists():
+            temp_path.mkdir(parents=True, exist_ok=True)
+        else:
+            Settings.qt_installer_cleanup()
         installer_path = temp_path / self._installer_filename
 
         self.logger.info(f"Downloading Qt installer to {installer_path}")
@@ -376,9 +377,12 @@ class CommercialInstaller:
             for i in range(len(log_cmd) - 1):
                 if log_cmd[i] == "--email" or log_cmd[i] == "--pw":
                     log_cmd[i + 1] = "***"
-            self.logger.info(f"Running: {log_cmd}")
 
-            safely_run(cmd, Settings.qt_installer_timeout)
+            if not self.dry_run:
+                self.logger.info(f"Running: {log_cmd}")
+                safely_run(cmd, Settings.qt_installer_timeout)
+            else:
+                self.logger.info(f"Would run: {log_cmd}")
 
         except Exception as e:
             self.logger.error(f"Installation failed: {str(e)}")

@@ -393,7 +393,7 @@ class Cli:
             password = None
             if len(args.use_official_installer) == 2:
                 email, password = args.use_official_installer
-                self.logger.info(f"Using credentials provided with --use-official-installer")
+                self.logger.info("Using credentials provided with --use-official-installer")
 
             # Optional parameters
             commercial_args.email = email or getattr(args, "email", None)
@@ -401,12 +401,11 @@ class Cli:
             commercial_args.outputdir = args.outputdir
             commercial_args.modules = args.modules
             commercial_args.base = getattr(args, "base", None)
+            commercial_args.dry_run = getattr(args, "dry_run", False)
 
-            # TODO Add those, and remove from ignored
-            commercial_args.override = None
-            commercial_args.dry_run = None
+            if hasattr(args, "override"):
+                commercial_args = args
 
-            # Log ignored options
             ignored_options = []
             if getattr(args, "noarchives", False):
                 ignored_options.append("--noarchives")
@@ -420,10 +419,6 @@ class Cli:
                 ignored_options.append("--keep")
             if getattr(args, "archive_dest", False):
                 ignored_options.append("--archive_dest")
-            if getattr(args, "dry_run", False):
-                ignored_options.append("--dry_run")
-            if getattr(args, "override", False):
-                ignored_options.append("--override")
 
             if ignored_options:
                 self.logger.warning("Options ignored because you requested the official installer:")
@@ -764,6 +759,7 @@ class Cli:
                     no_unattended=not Settings.qt_installer_unattended,
                     username=username or args.email,
                     password=password or args.pw,
+                    dry_run=args.dry_run,
                 )
             else:
                 if not all([args.target, args.arch, args.version]):
@@ -780,6 +776,7 @@ class Cli:
                     base_url=args.base if args.base is not None else Settings.baseurl,
                     no_unattended=not Settings.qt_installer_unattended,
                     modules=args.modules,
+                    dry_run=args.dry_run,
                 )
 
             commercial_installer.install()
@@ -963,14 +960,12 @@ class Cli:
         self.show_aqt_version()
 
         # Create temporary directory for installer
-        import shutil
-        from pathlib import Path
-
         temp_dir = Settings.qt_installer_temp_path
         temp_path = Path(temp_dir)
-        if temp_path.exists():
-            shutil.rmtree(temp_dir)
-        temp_path.mkdir(parents=True, exist_ok=True)
+        if not temp_path.exists():
+            temp_path.mkdir(parents=True, exist_ok=True)
+        else:
+            Settings.qt_installer_cleanup()
 
         # Get installer based on OS
         installer_filename = get_qt_installer_name()
@@ -1025,7 +1020,7 @@ class Cli:
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction) -> None:
         """Creates all command parsers and adds them to the subparsers"""
 
-        def make_parser_it(cmd: str, desc: str, set_parser_cmd, formatter_class) -> None:
+        def make_parser_it(cmd: str, desc: str, set_parser_cmd, formatter_class):
             kwargs = {"formatter_class": formatter_class} if formatter_class else {}
             p = subparsers.add_parser(cmd, description=desc, **kwargs)
             set_parser_cmd(p)

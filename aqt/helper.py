@@ -64,7 +64,7 @@ def get_os_name() -> str:
     raise ValueError(f"Unsupported operating system: {system}")
 
 
-def get_os_arch():
+def get_os_arch() -> str:
     """
     Returns a simplified os-arch string for the current system
     """
@@ -95,16 +95,14 @@ def get_qt_account_path() -> Path:
     return get_qt_local_folder_path() / "qtaccount.ini"
 
 
-def get_qt_installers():
+def get_qt_installers() -> dict[str, str]:
     """
-    Extracts Qt installer information from, mapping OS types
-    and architectures to their respective installer filenames without assuming
-    specific filename prefixes.
-
+    Extracts Qt installer information from download.qt.io,
+    mapping OS types and architectures to their respective installer filenames
     Returns:
         dict: Mapping of OS identifiers to installer filenames with appropriate aliases
     """
-    url = "https://download.qt.io/official_releases/online_installers/"
+    url = f"{Settings.baseurl}/official_releases/online_installers/"
 
     try:
         response = requests.get(url)
@@ -497,8 +495,13 @@ class SettingsClass:
 
                     logging.info(f"Cache folder: {self.qt_installer_cache_path}")
                     logging.info(f"Temp folder: {self.qt_installer_temp_path}")
-                    if Path(self.qt_installer_temp_path).exists():
-                        shutil.rmtree(self.qt_installer_temp_path)
+
+                    temp_dir = self.qt_installer_temp_path
+                    temp_path = Path(temp_dir)
+                    if not temp_path.exists():
+                        temp_path.mkdir(parents=True, exist_ok=True)
+                    else:
+                        self.qt_installer_cleanup()
 
     def _get_config(self) -> ConfigParser:
         """Safe getter for config that ensures it's initialized."""
@@ -686,10 +689,12 @@ class SettingsClass:
         return self._get_config().getboolean("qtofficial", "unattended", fallback=True)
 
     def qt_installer_cleanup(self) -> None:
-        """Control whether to use unattended installation flags."""
-        import shutil
-
-        shutil.rmtree(self.qt_installer_temp_path)
+        """Clean tmp folder."""
+        for item in Path(self.qt_installer_temp_path).iterdir():
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
 
 
 Settings = SettingsClass()
