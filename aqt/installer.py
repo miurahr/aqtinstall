@@ -402,9 +402,7 @@ class Cli:
             commercial_args.modules = args.modules
             commercial_args.base = getattr(args, "base", None)
             commercial_args.dry_run = getattr(args, "dry_run", False)
-
-            if hasattr(args, "override"):
-                commercial_args = args
+            commercial_args.override = None
 
             ignored_options = []
             if getattr(args, "noarchives", False):
