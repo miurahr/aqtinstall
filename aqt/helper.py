@@ -97,15 +97,15 @@ def get_qt_account_path() -> Path:
 
 def get_qt_installers() -> dict[str, str]:
     """
-    Extracts Qt installer information from download.qt.io,
-    mapping OS types and architectures to their respective installer filenames
+    Extracts Qt installer information from {Settings.baseurl}/official_releases/online_installers/
+    Maps OS types and architectures to their respective installer filenames
     Returns:
         dict: Mapping of OS identifiers to installer filenames with appropriate aliases
     """
     url = f"{Settings.baseurl}/official_releases/online_installers/"
 
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=Settings.response_timeout)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, "html.parser")
@@ -115,14 +115,11 @@ def get_qt_installers() -> dict[str, str]:
         os_types = ["windows", "linux", "mac"]
 
         for link in soup.find_all("a"):
-            # href = link.get('href', '')
             filename = link.text.strip()
 
-            # Skip parent directory and non-installer files
             if "Parent Directory" in filename or not any(ext in filename.lower() for ext in [".exe", ".dmg", ".run"]):
                 continue
 
-            # Check for OS types in the filename
             for os_type in os_types:
                 if os_type.lower() in filename.lower():
                     # Found an OS match, now look for architecture
