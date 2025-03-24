@@ -499,6 +499,7 @@ install-qt command
         [--archives <archive> [<archive>...]]
         [--autodesktop]
         [--noarchives]
+        [--use-official-installer [<email> <password>]]
         <host> <target> (<Qt version> | <spec>) [<arch>]
 
 Install Qt library, with specified version and target.
@@ -565,6 +566,18 @@ There are various combinations to accept according to Qt version.
     [Advanced] Specify not to install all base packages.
     This is advanced option and you should use it with ``--modules`` option.
     This allow you to add modules to existent Qt installation.
+
+.. option:: --use-official-installer [email password]
+
+    Use the official Qt installer instead of the AQT approach. This option ignores 
+    the ``--host`` parameter and forces installation for the current OS due to Qt 
+    restrictions. 
+
+    If you are already signed in and have a valid ``qtaccount.ini`` for the current 
+    user, you can use this option without parameters. Otherwise, you must provide 
+    an email and password to authenticate.
+
+    See :ref:`the official installer section<official>` for more details.
 
 See `common options`_.
 
