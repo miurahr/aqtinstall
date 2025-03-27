@@ -499,6 +499,8 @@ install-qt command
         [--archives <archive> [<archive>...]]
         [--autodesktop]
         [--noarchives]
+        [--dry-run]
+        [--use-official-installer [<email> <password>]]
         <host> <target> (<Qt version> | <spec>) [<arch>]
 
 Install Qt library, with specified version and target.
@@ -565,6 +567,22 @@ There are various combinations to accept according to Qt version.
     [Advanced] Specify not to install all base packages.
     This is advanced option and you should use it with ``--modules`` option.
     This allow you to add modules to existent Qt installation.
+
+.. option:: --dry-run
+
+    Perform a simulation of the installation process without making any changes. 
+
+.. option:: --use-official-installer [email password]
+
+    Use the official Qt installer instead of the AQT approach. This option ignores 
+    the ``--host`` parameter and forces installation for the current OS due to Qt 
+    restrictions. 
+
+    If you are already signed in and have a valid ``qtaccount.ini`` for the current 
+    user, you can use this option without parameters. Otherwise, you must provide 
+    an email and password to authenticate.
+
+    See :ref:`the official installer section<official>` for more details.
 
 See `common options`_.
 
@@ -862,6 +880,13 @@ Example: Install different versions of Qt6 for Web Assembly (WASM)
     aqt install-qt linux desktop 6.2.4 wasm_32 --autodesktop
     aqt install-qt linux desktop 6.5.0 wasm_singlethread --autodesktop
     aqt install-qt all_os wasm 6.8.0 wasm_multithread --autodesktop
+
+
+Example: Install commercial version 6.5.5 of Qt6 on Windows
+
+.. code-block:: console
+
+    aqt install-qt windows desktop 6.5.5 win64_msvc2019_64 --use-official-installer 'email@gmail.com' 'password'
 
 
 Example: List available versions of Qt on Linux
