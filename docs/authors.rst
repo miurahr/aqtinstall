@@ -16,6 +16,7 @@ All contributors, listed alphabetically, are:
 
 * Adrian Eddy (fix the case of Android 6.7.0)
 * Alberto Mardegan(ignore_hash option)
+* Alexandre @Kidev Poumaroux (official installer option, WASM fixes for Qt6.7.x)
 * Andrew Wason (support arm64)
 * Andrei Yankovich (tools ifw installation)
 * Aurélien Gâteau (patching to qmake)
