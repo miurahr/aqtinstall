@@ -25,8 +25,8 @@ dependencies = [
     "bs4",  # canonical name is beautifulsoup4
     "defusedxml",
     "humanize",
-    "patch>=1.16",
-    "py7zr>=1.0.0-rc1",
+    "patch-ng",
+    "py7zr>=0.22.0",
     "requests>=2.31.0",
     "semantic-version",
     "texttable",
@@ -68,6 +68,8 @@ check = [
     "readme-renderer",
     "pygments",
     "packaging",
+    "pylint",
+    "types-requests",
 ]
 docs = [
     "sphinx>=7.0",
@@ -109,9 +111,12 @@ source = ["aqt", "tests"]
 show_missing = true
 exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", "def __repr__"]
 
+[tool.pylint]
+max-line-length = 125
+
 [tool.black]
 line-length = 125
-target-version = ['py312']
+target-version = ['py313']
 
 [tool.isort]
 line_length = 125
@@ -189,14 +194,14 @@ commands =
     python -m pytest -vv
 
 [testenv:check]
-basepython = python3.12
+basepython = python3.13
 extras = check
 commands =
     check-manifest {toxinidir}
     flake8 aqt tests
 
 [testenv:mypy]
-basepython = python3.12
+basepython = python3.13
 extras = check
 commands = mypy aqt
 deps =
@@ -205,27 +210,27 @@ deps =
     types-psutil
 
 [testenv:docs]
-basepython = python3.12
+basepython = python3.13
 extras = docs
 commands =
     sphinx-build {posargs:-E} -W -b html docs build/docs
     sphinx-build -W -b linkcheck docs build/docs
 
 [testenv:mprof]
-basepython = python3.12
+basepython = python3.13
 extras = debug
 commands =
-    mprof run --multiprocess python -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
+    mprof run --multiprocess python -m aqt install-qt -O /tmp -d /tmp linux desktop 6.8.1
     mprof plot --output memory-profile.png
 deps =
     memory_profiler
     matplotlib
 
 [testenv:fil]
-basepython = python3.12
+basepython = python3.13
 extras = debug
 commands =
-    fil-profile run -m aqt install-qt -O /tmp -d /tmp linux desktop 6.2.1
+    fil-profile run -m aqt install-qt -O /tmp -d /tmp linux desktop 6.8.1
 deps =
     filprofiler
 
@@ -241,6 +246,6 @@ python =
     3.9: py39
     3.10: py310
     3.11: py311
-    3.12: py312, docs, check, mypy
-    3.13-dev: py313
+    3.12: py312
+    3.13: py313
 """

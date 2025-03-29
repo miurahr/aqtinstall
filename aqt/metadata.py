@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import itertools
 import operator
+import os
 import posixpath
 import re
 import secrets as random
@@ -37,7 +38,14 @@ from semantic_version import SimpleSpec as SemanticSimpleSpec
 from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
-from aqt.exceptions import ArchiveConnectionError, ArchiveDownloadError, ArchiveListError, CliInputError, EmptyMetadata
+from aqt.exceptions import (
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    ChecksumDownloadFailure,
+    CliInputError,
+    EmptyMetadata,
+)
 from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
 
 
@@ -72,7 +80,7 @@ class Version(SemanticVersion):
         prerelease=None,
         build=None,
         partial=False,
-    ):
+    ) -> None:
         if version_string is None:
             super(Version, self).__init__(
                 version_string=None,
@@ -178,22 +186,58 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
     and patch gets all the rest.
     As of May 2021, the version strings at https://download.qt.io/online/qtsdkrepository
     conform to this pattern; they are not guaranteed to do so in the future.
+    As of December 2024, it can handle version strings like 6_7_3 as well.
     """
-    if not qt_ver or any(not ch.isdigit() for ch in qt_ver):
+    if not qt_ver:
         return None
+
+    # Handle versions with underscores (new format)
+    if "_" in qt_ver:
+        parts = qt_ver.split("_")
+        if not (2 <= len(parts) <= 3):
+            return None
+
+        try:
+            version_parts = [int(p) for p in parts]
+        except ValueError:
+            return None
+
+        major, minor = version_parts[:2]
+        patch = version_parts[2] if len(version_parts) > 2 else 0
+
+        if is_preview:
+            minor_patch_combined = int(f"{minor}{patch}") if patch > 0 else minor
+            return Version(
+                major=major,
+                minor=minor_patch_combined,
+                patch=0,
+                prerelease=("preview",),
+            )
+
+        return Version(
+            major=major,
+            minor=minor,
+            patch=patch,
+        )
+
+    # Handle traditional format (continuous digits)
+    if not qt_ver.isdigit():
+        return None
+
     if is_preview:
         return Version(
-            major=int(qt_ver[:1]),
+            major=int(qt_ver[0]),
             minor=int(qt_ver[1:]),
             patch=0,
             prerelease=("preview",),
         )
     elif len(qt_ver) >= 4:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:]))
+        return Version(major=int(qt_ver[0]), minor=int(qt_ver[1:3]), patch=int(qt_ver[3:]))
     elif len(qt_ver) == 3:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=int(qt_ver[2:]))
+        return Version(major=int(qt_ver[0]), minor=int(qt_ver[1]), patch=int(qt_ver[2]))
     elif len(qt_ver) == 2:
-        return Version(major=int(qt_ver[:1]), minor=int(qt_ver[1:2]), patch=0)
+        return Version(major=int(qt_ver[0]), minor=int(qt_ver[1]), patch=0)
+
     raise ValueError("Invalid version string '{}'".format(qt_ver))
 
 
@@ -206,10 +250,15 @@ class ArchiveId:
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
-        "all_os": ["qt"],
+        "all_os": ["wasm", "qt"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
-    ALL_EXTENSIONS = {"", "wasm", "src_doc_examples", *EXTENSIONS_REQUIRED_ANDROID_QT6}
+    ALL_EXTENSIONS = {
+        "",
+        "wasm",
+        "src_doc_examples",
+        *EXTENSIONS_REQUIRED_ANDROID_QT6,
+    }
 
     def __init__(self, category: str, host: str, target: str):
         if category not in ArchiveId.CATEGORIES:
@@ -231,38 +280,90 @@ class ArchiveId:
     def is_tools(self) -> bool:
         return self.category == "tools"
 
-    def to_url(self) -> str:
-        return "online/qtsdkrepository/{os}{arch}/{target}/".format(
+    def to_os_arch(self) -> str:
+        if self.host == "all_os":
+            return "all_os"
+        return "{os}{arch}".format(
             os=self.host,
             arch=(
                 "_x86"
                 if self.host == "windows"
                 else ("" if self.host in ("linux_arm64", "all_os", "windows_arm64") else "_x64")
             ),
+        )
+
+    def to_extension_folder(self, module, version, arch) -> str:
+        extarch = arch
+        if self.host == "windows":
+            extarch = arch.replace("win64_", "", 1)
+        elif self.host == "linux":
+            extarch = "x86_64"
+        elif self.host == "linux_arm64":
+            extarch = "arm64"
+
+        return "online/qtsdkrepository/{osarch}/extensions/{ext}/{ver}/{extarch}/".format(
+            osarch=self.to_os_arch(),
+            ext=module,
+            ver=version,
+            extarch=extarch,
+        )
+
+    def to_extension_url(self) -> str:
+        return "online/qtsdkrepository/{osarch}/extensions/".format(
+            osarch=self.to_os_arch(),
+        )
+
+    def to_url(self) -> str:
+        return "online/qtsdkrepository/{osarch}/{target}/".format(
+            osarch=self.to_os_arch(),
             target=self.target,
         )
 
     def to_folder(self, version: Version, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
         if version >= Version("6.8.0"):
-            return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
-                category=self.category,
-                major=qt_version_no_dots[0],
-                ver=qt_version_no_dots,
-                ext="_" + extension if extension else "",
-            )
-        else:
-            return "{category}{major}_{ver}{ext}".format(
-                category=self.category,
-                major=qt_version_no_dots[0],
-                ver=qt_version_no_dots,
-                ext="_" + extension if extension else "",
-            )
+            if self.target == "wasm":
+                # Qt 6.8+ WASM uses a split folder structure
+                folder = f"qt{version.major}_{qt_version_no_dots}"
+                if extension:
+                    folder = f"{folder}/{folder}_{extension}"
+                return folder
+            elif not ((self.host == "all_os") and (self.target == "qt")):
+                # Non-WASM, non-all_os/qt case
+                return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
+                    category=self.category,
+                    major=qt_version_no_dots[0],
+                    ver=qt_version_no_dots,
+                    ext="_" + extension if extension else "",
+                )
+            else:
+                # traditional structure, still used by sde.
+                return "{category}{major}_{ver}{ext}".format(
+                    category=self.category,
+                    major=qt_version_no_dots[0],
+                    ver=qt_version_no_dots,
+                    ext="_" + extension if extension else "",
+                )
+        elif version >= Version("6.5.0") and self.target == "wasm":
+            # Qt 6.5-6.7 WASM uses direct wasm_[single|multi]thread folder
+            if extension:
+                return f"qt{version.major}_{qt_version_no_dots}_{extension}"
+            return f"qt{version.major}_{qt_version_no_dots}"
+
+        # Pre-6.8 structure for non-WASM or pre-6.5 structure
+        return "{category}{major}_{ver}{ext}".format(
+            category=self.category,
+            major=qt_version_no_dots[0],
+            ver=qt_version_no_dots,
+            ext="_" + extension if extension else "",
+        )
 
     def all_extensions(self, version: Version) -> List[str]:
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
             return ["", "wasm"]
-        elif self.target == "desktop" and QtRepoProperty.is_in_wasm_threaded_range(version):
+        elif self.target == "desktop" and QtRepoProperty.is_in_wasm_range_special_65x_66x(self.host, version):
             return ["", "wasm_singlethread", "wasm_multithread"]
+        elif self.target == "wasm" and QtRepoProperty.is_in_wasm_threaded_range(version):
+            return ["wasm_singlethread", "wasm_multithread"]
         elif self.target == "android" and version >= Version("6.0.0"):
             return list(ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6)
         else:
@@ -387,14 +488,22 @@ class QtRepoProperty:
 
     @staticmethod
     def get_arch_dir_name(host: str, arch: str, version: Version) -> str:
+        """
+        Determines the architecture directory name based on host, architecture and version.
+        Special handling is done for mingw, MSVC and various platform-specific cases.
+        """
         if arch.startswith("win64_mingw"):
             return arch[6:] + "_64"
+        elif arch.startswith("win64_llvm"):
+            return "llvm-" + arch[11:] + "_64"
         elif arch.startswith("win32_mingw"):
             return arch[6:] + "_32"
         elif arch.startswith("win"):
             m = re.match(r"win\d{2}_(?P<msvc>msvc\d{4})_(?P<winrt>winrt_x\d{2})", arch)
             if m:
                 return f"{m.group('winrt')}_{m.group('msvc')}"
+            elif arch.endswith("_cross_compiled"):
+                return arch[6:-15]
             else:
                 return arch[6:]
         elif host == "mac" and arch == "clang_64":
@@ -412,8 +521,10 @@ class QtRepoProperty:
 
     @staticmethod
     def default_win_msvc_desktop_arch_dir(_version: Version) -> str:
-        """_version is unused, but we expect it to matter for future releases"""
-        return "msvc2019_64"
+        if _version >= Version("6.8.0"):
+            return "msvc2022_64"
+        else:
+            return "msvc2019_64"
 
     @staticmethod
     def default_mac_desktop_arch_dir(version: Version) -> str:
@@ -522,8 +633,28 @@ class QtRepoProperty:
         )
 
     @staticmethod
+    def is_in_wasm_range_special_65x_66x(host: str, version: Version) -> bool:
+        return version in SimpleSpec(">=6.5.0,<6.7.0")
+
+    @staticmethod
     def is_in_wasm_threaded_range(version: Version) -> bool:
         return version in SimpleSpec(">=6.5.0")
+
+    @staticmethod
+    def known_extensions(version: Version) -> List[str]:
+        if version >= Version("6.8.0"):
+            return ["qtpdf", "qtwebengine"]
+        return []
+
+    @staticmethod
+    def sde_ext(version: Version) -> str:
+        if version >= Version("6.8.0"):
+            if os.linesep == "\r\n":
+                return "windows_line_endings_src"
+            else:
+                return "unix_line_endings_src"
+        else:
+            return "src_doc_examples"
 
 
 class MetadataFactory:
@@ -660,6 +791,10 @@ class MetadataFactory:
 
     def fetch_latest_version(self, ext: str) -> Optional[Version]:
         return self.fetch_versions(ext).latest()
+
+    def fetch_extensions(self) -> List[str]:
+        html_doc = self.fetch_http(self.archive_id.to_extension_url(), False)
+        return list(self.iterate_folders(html_doc, self.base_url))
 
     def fetch_tools(self) -> List[str]:
         html_doc = self.fetch_http(self.archive_id.to_url(), False)
@@ -818,6 +953,14 @@ class MetadataFactory:
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
         )
 
+    def _fetch_extension_metadata(self, url: str, predicate: Optional[Callable[[Element], bool]] = None):
+        rest_of_url = posixpath.join(url, "Updates.xml")
+        xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
+        return xml_to_modules(
+            xml,
+            predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
+        )
+
     def fetch_modules(self, version: Version, arch: str) -> List[str]:
         """Returns list of modules"""
         extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
@@ -843,6 +986,19 @@ class MetadataFactory:
             module, _arch = to_module_arch(name)
             if _arch == arch:
                 modules.add(cast(str, module))
+
+        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
+        for ext in QtRepoProperty.known_extensions(version):
+            try:
+                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))
+                for key, value in ext_meta.items():
+                    ext_match = ext_pattern.match(key)
+                    if ext_match is not None:
+                        module = ext_match.group("module")
+                        if module is not None:
+                            modules.add(ext)
+            except (ChecksumDownloadFailure, ArchiveDownloadError):
+                pass
         return sorted(modules)
 
     @staticmethod
@@ -857,6 +1013,8 @@ class MetadataFactory:
         extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590(\.addons)?\.(?P<module>[^.]+)\.gcc_64$")
+        #          qt.qt6.680.addons.qtwebsockets.win64_msvc2022_64
+        #          qt.qt6.680.debug_info.win64_msvc2022_64
         pattern = re.compile(
             r"^(preview\.)?qt\.(qt"
             + str(version.major)
@@ -879,6 +1037,20 @@ class MetadataFactory:
                 if module is not None:
                     m[module] = value
 
+        # Examples: extensions.qtwebengine.680.debug_information
+        #           extensions.qtwebengine.680.win64_msvc2022_64
+        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
+        for ext in QtRepoProperty.known_extensions(version):
+            try:
+                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))
+                for key, value in ext_meta.items():
+                    ext_match = ext_pattern.match(key)
+                    if ext_match is not None:
+                        module = ext_match.group("module")
+                        if module is not None:
+                            m[module] = value
+            except (ChecksumDownloadFailure, ArchiveDownloadError):
+                pass
         return ModuleData(m)
 
     def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
@@ -888,7 +1060,9 @@ class MetadataFactory:
             "qt",
         ), "Internal misuse of fetch_modules_sde"
         qt_ver_str = self._get_qt_version_str(version)
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, "src_doc_examples"))
+        modules_meta = self._fetch_module_metadata(
+            self.archive_id.to_folder(version, qt_ver_str, QtRepoProperty.sde_ext(version))
+        )
         # pattern: Match all names "qt.qt5.12345.doc.(\w+)
         pattern = re.compile(r"^qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\." + cmd_type + r"\.(.+)$")
 
@@ -908,7 +1082,11 @@ class MetadataFactory:
         return self.fetch_archives(version, cmd_type, [], is_sde=True)
 
     def fetch_archives(self, version: Version, arch: str, modules: List[str], is_sde: bool = False) -> List[str]:
-        extension = "src_doc_examples" if is_sde else QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+        extension = (
+            QtRepoProperty.sde_ext(version)
+            if is_sde
+            else QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+        )
         qt_version_str = self._get_qt_version_str(version)
         nonempty = MetadataFactory._has_nonempty_downloads
 

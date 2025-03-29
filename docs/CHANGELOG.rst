@@ -13,9 +13,95 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.2.1`_ (16, March, 2025)
+===========================
+
+Fixed
+-----
+- variable become undefined when extension not exist or connection error (#868)
+- Fix missing log statement for taget_qt.conf (#901)
+- Fix error running official installer on macOS (#898)
+- Fix CI when testing ARM64 cross compilation job (#897)
+- Commercial fixes, CI tests (#883)
+
+Added
+-----
+- Commercial command document (#886)
+
+Changed
+-------
+- Use latest jom for test (892)
+- Check hash when downloading jom for test (#899)
+- Official installer to check hash when download (#900)
+- CI: publish with OIDC (#888)
+
+`v3.2.0`_ (29, January, 2025)
+=============================
+
+Fixed
+-----
+- fix source/doc/examples with qtsdkrepo changes (#857)
+- fix WASM and update document (#846, #876)
+- fix list-src,doc,examples for >= 6.8.0 (#880)
+
+Added
+-----
+- Add support for commercal version of Qt (#878)
+
+Changed
+-------
+- Improve type definitions and stylees (#864, #869)
+- Migrate dependency to patch_ng from patch (#875)
+
+`v3.1.21`_ (20, December 2024)
+==============================
+
+Fixed
+-----
+* Handle cases where extensions don't exist(#852)
+* Fix computation of archive location for android install(#854)
+* Wrong dependency version for py7zr
+
+Added
+-----
+* Patch additional Qt scripts (#853)
+* readme: badge of Codacy code quality dashboard. (#856)
+
+Removed
+-------
+* CI: wiki creation workflow
+
+`v3.1.20`_ (11, December 2024)
+==============================
+
+Fixed
+-----
+* search for modules in extensions directory (#838)
+
+`v3.1.19`_ (1, December 2024)
+=============================
+
+Added
+-----
+* Support Python 3.13 (#821)
+
+Fixed
+-----
+* Support Qt 6.8.1, fix the installation failures (#840, #841)
+* Fix for arch win64_msvc2022_arm64_cross_compiled (#832)
+* Fix for error when installing win64_llvm_mingw for Qt6.7 and 6.8 (#826)
+
+Changed
+-------
+* Test target version to 6.5.x, 6.6.x, 6.7.x and 6.8.0 (#822)
+* CI: change target macos-14 (#827)
+* Update document to have appendix to explain special cases (#830)
+
 Deleted
 -------
+* Drop old syntax (#823)
 * Qt version/architecture/modules checking (#748, #807, #812)
+* Drop support for Python 3.8
 
 `v3.1.18`_ (3, August 2024)
 ===========================
@@ -399,7 +485,12 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.1.18...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.2.1...HEAD
+.. _v3.2.1: https://github.com/miurahr/aqtinstall/compare/v3.2.0...v3.2.1
+.. _v3.2.0: https://github.com/miurahr/aqtinstall/compare/v3.1.21...v3.2.0
+.. _v3.1.21: https://github.com/miurahr/aqtinstall/compare/v3.1.20...v3.1.21
+.. _v3.1.20: https://github.com/miurahr/aqtinstall/compare/v3.1.19...v3.1.20
+.. _v3.1.19: https://github.com/miurahr/aqtinstall/compare/v3.1.18...v3.1.19
 .. _v3.1.18: https://github.com/miurahr/aqtinstall/compare/v3.1.17...v3.1.18
 .. _v3.1.17: https://github.com/miurahr/aqtinstall/compare/v3.1.16...v3.1.17
 .. _v3.1.16: https://github.com/miurahr/aqtinstall/compare/v3.1.15...v3.1.16

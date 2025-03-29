@@ -54,11 +54,11 @@ List available versions of Qt, targets, modules, and architectures.
 
 .. describe:: host
 
-    linux, linux_arm64, windows or mac
+    linux, linux_arm64, windows, mac or all_os for Qt 6.7+
 
 .. describe:: target
 
-    desktop, winrt, ios or android.
+    desktop, winrt, ios, android or wasm for Qt 6.7+
     When omitted, the command prints all the targets available for a host OS.
     Note that winrt is only available on Windows, and ios is only available on Mac OS.
 
@@ -84,7 +84,7 @@ List available versions of Qt, targets, modules, and architectures.
     This flag lists all the modules available for Qt 5.X.Y with a host/target/architecture
     combination, or the latest version of Qt if ``latest`` is specified.
     You can list available architectures by using ``aqt list-qt`` with the
-    ``--arch`` flag described below.
+    ``--arch`` flag described below. As of Qt 6.7 this also lists extensions.
 
 .. option:: --long-modules (<Qt version> | latest) <architecture>
 
@@ -96,37 +96,41 @@ List available versions of Qt, targets, modules, and architectures.
 .. code-block:: console
 
     $ python -m aqt list-qt windows desktop --long-modules latest win64_mingw
-
-       Module Name                         Display Name                       Release Date   Download Size   Installed Size
-    =======================================================================================================================
-    debug_info          Desktop MinGW 11.2.0 64-bit debug information files   2022-07-07     1.0G            6.4G
-    qt3d                Qt 3D for MinGW 11.2.0 64-bit                         2022-07-07     2.8M            21.3M
-    qt5compat           Qt 5 Compatibility Module for MinGW 11.2.0 64-bit     2022-07-07     679.3K          2.5M
-    qtactiveqt          Qt 3D for MinGW 11.2.0 64-bit                         2022-07-07     5.9M            32.6M
-    qtcharts            Qt Charts for MinGW 11.2.0 64-bit                     2022-07-07     713.0K          7.5M
-    qtconnectivity      Qt Connectivity for MinGW 11.2.0 64-bit               2022-07-07     227.5K          1.5M
-    qtdatavis3d         Qt Data Visualization for MinGW 11.2.0 64-bit         2022-07-07     565.7K          4.3M
-    qthttpserver        Qt HTTP Server for MinGW 11.2.0 64-bit                2022-07-07     73.2K           372.6K
-    qtimageformats      Qt Image Formats for MinGW 11.2.0 64-bit              2022-07-07     184.6K          705.5K
-    qtlanguageserver    Qt language Server for MinGW 11.2.0 64-bit            2022-07-07     300.1K          1.8M
-    qtlottie            Qt Lottie Animation for MinGW 11.2.0 64-bit           2022-07-07     131.7K          704.0K
-    qtmultimedia        Qt Multimedia for MinGW 11.2.0 64-bit                 2022-07-07     9.7M            79.2M
-    qtnetworkauth       Qt Network Authorization for MinGW 11.2.0 64-bit      2022-07-07     85.5K           507.6K
-    qtpositioning       Qt Positioning for MinGW 11.2.0 64-bit                2022-07-07     347.2K          2.2M
-    qtquick3d           Qt Quick 3D for MinGW 11.2.0 64-bit                   2022-07-07     13.0M           75.4M
-    qtquick3dphysics    Quick: 3D Physics for MinGW 11.2.0 64-bit             2022-07-07     35.5M           203.9M
-    qtquicktimeline     Qt Quick Timeline for MinGW 11.2.0 64-bit             2022-07-07     54.6K           301.4K
-    qtremoteobjects     Qt Remote Objects for MinGW 11.2.0 64-bit             2022-07-07     424.4K          2.0M
-    qtscxml             Qt State Machine for MinGW 11.2.0 64-bit              2022-07-07     448.5K          2.9M
-    qtsensors           Qt Sensors for MinGW 11.2.0 64-bit                    2022-07-07     175.7K          2.0M
-    qtserialbus         Qt SerialBus for MinGW 11.2.0 64-bit                  2022-07-07     208.8K          1.2M
-    qtserialport        Qt SerialPort for MinGW 11.2.0 64-bit                 2022-07-07     58.3K           255.3K
-    qtshadertools       Qt Shader Tools for MinGW 11.2.0 64-bit               2022-07-07     1.2M            4.1M
-    qtspeech            Qt Speech for MinGW 11.2.0 64-bit                     2022-07-07     81.8K           427.9K
-    qtvirtualkeyboard   Qt Virtual Keyboard for MinGW 11.2.0 64-bit           2022-07-07     2.1M            6.0M
-    qtwebchannel        Qt WebChannel for MinGW 11.2.0 64-bit                 2022-07-07     114.0K          500.3K
-    qtwebsockets        Qt WebSockets for MinGW 11.2.0 64-bit                 2022-07-07     96.3K           509.6K
-    qtwebview           Qt WebView for MinGW 11.2.0 64-bit                    2022-07-07     64.2K           470.7K
+       Module Name                          Display Name                       Release Date   Download Size   Installed Size
+    ========================================================================================================================
+    debug_info           Desktop MinGW 13.1.0 64-bit debug information files   2024-12-12     912.6M          5.7G          
+    qt3d                 Qt 3D for MinGW 13.1.0 64-bit                         2024-12-12     3.4M            26.5M         
+    qt5compat            Qt 5 Compatibility Module for MinGW 13.1.0 64-bit     2024-12-12     768.6K          3.2M          
+    qtactiveqt           Active Qt for MinGW 13.1.0 64-bit                     2024-12-12     6.4M            35.1M         
+    qtcharts             Qt Charts for MinGW 13.1.0 64-bit                     2024-12-12     836.5K          8.7M          
+    qtconnectivity       Qt Connectivity for MinGW 13.1.0 64-bit               2024-12-12     259.2K          1.8M          
+    qtdatavis3d          Qt Data Visualization for MinGW 13.1.0 64-bit         2024-12-12     636.4K          5.0M          
+    qtgraphs             Qt Graphs for MinGW 13.1.0 64-bit                     2024-12-12     843.2K          6.9M          
+    qtgrpc               Qt Protobuf and Qt GRPC for MinGW 13.1.0 64-bit       2024-12-12     4.1M            34.7M         
+    qthttpserver         Qt HTTP Server for MinGW 13.1.0 64-bit                2024-12-12     106.0K          563.2K        
+    qtimageformats       Qt Image Formats for MinGW 13.1.0 64-bit              2024-12-12     427.2K          1.5M          
+    qtlanguageserver     Qt language Server for MinGW 13.1.0 64-bit            2024-12-12     7.7M            56.1M         
+    qtlocation           Qt Location for MinGW 13.1.0 64-bit                   2024-12-12     718.1K          5.9M          
+    qtlottie             Qt Lottie Animation for MinGW 13.1.0 64-bit           2024-12-12     161.2K          951.5K        
+    qtmultimedia         Qt Multimedia for MinGW 13.1.0 64-bit                 2024-12-12     18.0M           107.6M        
+    qtnetworkauth        Qt Network Authorization for MinGW 13.1.0 64-bit      2024-12-12     128.4K          811.7K        
+    qtpdf                MinGW 13.1.0 x64                                      2024-12-12     4.0M            11.1M         
+    qtpositioning        Qt Positioning for MinGW 13.1.0 64-bit                2024-12-12     414.3K          2.8M          
+    qtquick3d            Qt Quick 3D for MinGW 13.1.0 64-bit                   2024-12-12     18.0M           102.1M        
+    qtquick3dphysics     Qt Quick 3D Physics for MinGW 13.1.0 64-bit           2024-12-12     35.0M           198.8M        
+    qtquickeffectmaker   Qt Quick Effect Maker for MinGW 13.1.0 64-bit         2024-12-12     3.8M            5.0M          
+    qtquicktimeline      Qt Quick Timeline for MinGW 13.1.0 64-bit             2024-12-12     91.7K           646.7K        
+    qtremoteobjects      Qt Remote Objects for MinGW 13.1.0 64-bit             2024-12-12     486.9K          2.3M          
+    qtscxml              Qt State Machine for MinGW 13.1.0 64-bit              2024-12-12     539.5K          3.6M          
+    qtsensors            Qt Sensors for MinGW 13.1.0 64-bit                    2024-12-12     206.8K          2.3M          
+    qtserialbus          Qt SerialBus for MinGW 13.1.0 64-bit                  2024-12-12     300.7K          1.8M          
+    qtserialport         Qt SerialPort for MinGW 13.1.0 64-bit                 2024-12-12     76.3K           377.8K        
+    qtshadertools        Qt Shader Tools for MinGW 13.1.0 64-bit               2024-12-12     1.5M            5.4M          
+    qtspeech             Qt Speech for MinGW 13.1.0 64-bit                     2024-12-12     124.7K          686.3K        
+    qtvirtualkeyboard    Qt Virtual Keyboard for MinGW 13.1.0 64-bit           2024-12-12     2.2M            7.1M          
+    qtwebchannel         Qt WebChannel for MinGW 13.1.0 64-bit                 2024-12-12     139.8K          722.6K        
+    qtwebsockets         Qt WebSockets for MinGW 13.1.0 64-bit                 2024-12-12     117.9K          679.9K        
+    qtwebview            Qt WebView for MinGW 13.1.0 64-bit                    2024-12-12     84.8K           687.8K 
 
 
 .. option:: --arch (<Qt version> | latest)
@@ -506,7 +510,7 @@ There are various combinations to accept according to Qt version.
 
 .. describe:: target
 
-    desktop, ios, winrt, or android. The type of device for which you are developing Qt programs.
+    desktop, ios, winrt, android, or wasm. The type of device for which you are developing Qt programs.
     If your target is ios, please be aware that versions of Qt older than 6.2.4 are expected to be
     non-functional with current versions of XCode (applies to any XCode greater than or equal to 13).
 
@@ -544,6 +548,8 @@ There are various combinations to accept according to Qt version.
    * win64_msvc2022_arm64 for windows_arm64 desktop
 
    * android_armv7, android_arm64_v8a, android_x86, android_x86_64 for android
+
+   * wasm_singlethread or wasm_multithread for wasm
 
     Use the :ref:`List-Qt Command` to list available architectures.
 
@@ -778,16 +784,6 @@ You should use the :ref:`List-Tool command` to display what tools and tool varia
 
 See `common options`_.
 
-
-Legacy subcommands
-------------------
-
-The subcommands ``install``, ``tool``, ``src``, ``doc``, and ``examples`` have
-been deprecated in favor of the newer ``install-*`` commands, but they remain
-in aqt in case you still need to use them. Documentation for these older
-commands is still available at https://aqtinstall.readthedocs.io/en/v1.2.4/
-
-
 Command examples
 ================
 
@@ -852,18 +848,20 @@ Example: Print modules available for installation with ``install-example/doc``:
     aqt list-example windows 5.15.2 --modules
     aqt list-doc windows 5.15.2 --modules
 
-Example: Install Web Assembly
+Example: Install Web Assembly for Qt5
 
 .. code-block:: console
 
     aqt install-qt linux desktop 5.15.0 wasm_32
 
 
-Example: Install Qt6 for Web Assembly
+Example: Install different versions of Qt6 for Web Assembly (WASM)
 
 .. code-block:: console
 
     aqt install-qt linux desktop 6.2.4 wasm_32 --autodesktop
+    aqt install-qt linux desktop 6.5.0 wasm_singlethread --autodesktop
+    aqt install-qt all_os wasm 6.8.0 wasm_multithread --autodesktop
 
 
 Example: List available versions of Qt on Linux

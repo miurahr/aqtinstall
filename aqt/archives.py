@@ -21,8 +21,9 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import posixpath
 from dataclasses import dataclass, field
+from itertools import islice, zip_longest
 from logging import getLogger
-from typing import Dict, Iterable, List, Optional, Set, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 from xml.etree.ElementTree import Element  # noqa
 
 from defusedxml import ElementTree
@@ -30,6 +31,12 @@ from defusedxml import ElementTree
 from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit
 from aqt.metadata import QtRepoProperty, Version
+
+
+@dataclass
+class UpdateXmls:
+    target_folder: str
+    xml_text: str
 
 
 @dataclass
@@ -46,6 +53,7 @@ class QtPackage:
     base_url: str
     archive_path: str
     archive: str
+    archive_install_path: str
     package_desc: str
     pkg_update_name: str
     version: Optional[Version] = field(default=None)
@@ -128,12 +136,13 @@ class PackageUpdate:
     dependencies: Iterable[str]
     auto_dependon: Iterable[str]
     downloadable_archives: Iterable[str]
+    archive_install_paths: Iterable[str]
     default: bool
     virtual: bool
     base: str
 
     def __post_init__(self):
-        for iter_of_str in self.dependencies, self.auto_dependon, self.downloadable_archives:
+        for iter_of_str in self.dependencies, self.auto_dependon, self.downloadable_archives, self.archive_install_paths:
             assert isinstance(iter_of_str, Iterable) and not isinstance(iter_of_str, str)
         for _str in self.name, self.display_name, self.description, self.release_date, self.full_version, self.base:
             assert isinstance(_str, str)
@@ -164,7 +173,7 @@ class PackageUpdate:
 class Updates:
     package_updates: List[PackageUpdate]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.package_updates = []
 
     def extend(self, other):
@@ -177,6 +186,7 @@ class Updates:
         except ElementTree.ParseError as perror:
             raise ArchiveListError(f"Downloaded metadata is corrupted. {perror}") from perror
         updates = Updates()
+        extract_xpath = "Operations/Operation[@name='Extract']/Argument"
         for packageupdate in update_xml.iter("PackageUpdate"):
             pkg_name = updates._get_text(packageupdate.find("Name"))
             display_name = updates._get_text(packageupdate.find("DisplayName"))
@@ -186,8 +196,20 @@ class Updates:
             dependencies = updates._get_list(packageupdate.find("Dependencies"))
             auto_dependon = updates._get_list(packageupdate.find("AutoDependOn"))
             archives = updates._get_list(packageupdate.find("DownloadableArchives"))
+            archive_install_paths = updates._get_list(None)
             default = updates._get_boolean(packageupdate.find("Default"))
             virtual = updates._get_boolean(packageupdate.find("Virtual"))
+            if packageupdate.find(extract_xpath) is not None:
+                arc_args = map(
+                    lambda x: x.text,
+                    islice(packageupdate.iterfind(extract_xpath), 1, None, 2),
+                )
+                archives = ssplit(", ".join(arc_args))
+                path_args = map(
+                    lambda x: x.text.replace("@TargetDir@/", "", 1),
+                    islice(packageupdate.iterfind(extract_xpath), 0, None, 2),
+                )
+                archive_install_paths = ssplit(", ".join(path_args))
             updates.package_updates.append(
                 PackageUpdate(
                     pkg_name,
@@ -198,6 +220,7 @@ class Updates:
                     dependencies,
                     auto_dependon,
                     archives,
+                    archive_install_paths,
                     default,
                     virtual,
                     base,
@@ -258,10 +281,7 @@ class Updates:
             return []
 
     def _get_boolean(self, item) -> bool:
-        if "true" == item:
-            return True
-        else:
-            return False
+        return bool("true" == item)
 
 
 class QtArchives:
@@ -345,19 +365,33 @@ class QtArchives:
         return f"{module}.{self.arch}"
 
     def _target_packages(self) -> ModuleToPackage:
+        """Build mapping between module names and their possible package names"""
         if self.all_extra:
             return ModuleToPackage({})
+
         base_package = {self._base_module_name(): list(self._base_package_names())}
         target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
+
         for module in self.mod_list:
             suffix = self._module_name_suffix(module)
+            prefix = "qt.qt{}.{}.".format(self.version.major, self._version_str())
+            basic_prefix = "qt.{}.".format(self._version_str())
+
+            # All possible package name formats
             package_names = [
-                f"qt.qt{self.version.major}.{self._version_str()}.{suffix}",
-                f"qt.{self._version_str()}.{suffix}",
+                f"{prefix}{suffix}",
+                f"{basic_prefix}{suffix}",
+                f"{prefix}addons.{suffix}",
+                f"{basic_prefix}addons.{suffix}",
+                f"extensions.{module}.{self._version_str()}.{self.arch}",
+                f"{prefix}{module}.{self.arch}",  # Qt6.8+ format
+                f"{basic_prefix}{module}.{self.arch}",  # Qt6.8+ format
+                f"{prefix}addons.{module}.{self.arch}",  # Qt6.8+ addons format
+                f"{basic_prefix}addons.{module}.{self.arch}",  # Qt6.8+ addons format
             ]
-            if not module.startswith("addons."):
-                package_names.append(f"qt.qt{self.version.major}.{self._version_str()}.addons.{suffix}")
-            target_packages.add(module, package_names)
+
+            target_packages.add(module, list(set(package_names)))  # Remove duplicates
+
         return target_packages
 
     def _get_archives(self):
@@ -370,23 +404,11 @@ class QtArchives:
             name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
         self._get_archives_base(name, self._target_packages())
 
-    def _append_depends_tool(self, arch, tool_name):
-        os_target_folder = posixpath.join(
-            "online/qtsdkrepository",
-            self.os_name + ("_x86" if self.os_name == "windows" else ("" if self.os_name == "linux_arm64" else "_x64")),
-            self.target,
-            tool_name,
-        )
-        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
-        update_xml_text = self._download_update_xml(update_xml_url)
-        update_xml = Updates.fromstring(self.base, update_xml_text)
-        self._append_tool_update(os_target_folder, update_xml, arch, None)
-
     def _get_archives_base(self, name, target_packages):
         os_name = self.os_name
         if self.target == "android" and self.version >= Version("6.7.0"):
             os_name = "all_os"
-        if self.os_name == "windows":
+        elif self.os_name == "windows":
             os_name += "_x86"
         elif os_name != "linux_arm64" and os_name != "all_os" and os_name != "windows_arm64":
             os_name += "_x64"
@@ -399,23 +421,56 @@ class QtArchives:
         )
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
         update_xml_text = self._download_update_xml(update_xml_url)
-        self._parse_update_xml(os_target_folder, update_xml_text, target_packages)
+        update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
 
-    def _download_update_xml(self, update_xml_path):
+        if self.version >= Version("6.8.0"):
+            arch = self.arch
+            if self.os_name == "windows":
+                arch = self.arch.replace("win64_", "", 1)
+            elif self.os_name == "linux":
+                arch = "x86_64"
+            elif self.os_name == "linux_arm64":
+                arch = "arm64"
+            for ext in ["qtwebengine", "qtpdf"]:
+                extensions_target_folder = posixpath.join(
+                    "online/qtsdkrepository", os_name, "extensions", ext, self._version_str(), arch
+                )
+                extensions_xml_url = posixpath.join(extensions_target_folder, "Updates.xml")
+                # The extension may or may not exist for this version and arch.
+                try:
+                    extensions_xml_text = self._download_update_xml(extensions_xml_url, True)
+                except ArchiveDownloadError:
+                    # In case _download_update_xml failed to get the url because of no extension.
+                    pass
+                else:
+                    if extensions_xml_text:
+                        self.logger.info("Found extension {}".format(ext))
+                        update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
+
+        self._parse_update_xmls(update_xmls, target_packages)
+
+    def _download_update_xml(self, update_xml_path: str, silent: bool = False) -> Optional[str]:
         """Hook for unit test."""
         if not Settings.ignore_hash:
             try:
-                xml_hash = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout)
+                xml_hash: Optional[bytes] = get_hash(update_xml_path, Settings.hash_algorithm, self.timeout)
             except ChecksumDownloadFailure:
-                self.logger.warning(
-                    "Failed to download checksum for the file 'Updates.xml'. This may happen on unofficial mirrors."
-                )
-                xml_hash = None
+                if silent:
+                    return None
+                else:
+                    self.logger.warning(
+                        "Failed to download checksum for the file '{}'. This may happen on unofficial mirrors.".format(
+                            update_xml_path
+                        )
+                    )
+                    xml_hash = None
         else:
             xml_hash = None
         return getUrl(posixpath.join(self.base, update_xml_path), self.timeout, xml_hash)
 
-    def _parse_update_xml(self, os_target_folder, update_xml_text, target_packages: Optional[ModuleToPackage]):
+    def _parse_update_xml(
+        self, os_target_folder: str, update_xml_text: str, target_packages: Optional[ModuleToPackage]
+    ) -> None:
         if not target_packages:
             target_packages = ModuleToPackage({})
         update_xml = Updates.fromstring(self.base, update_xml_text)
@@ -429,7 +484,9 @@ class QtArchives:
                 target_packages.remove_module_for_package(packageupdate.name)
             should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(packageupdate.name)
 
-            for archive in packageupdate.downloadable_archives:
+            for archive, archive_install_path in zip_longest(
+                packageupdate.downloadable_archives, packageupdate.archive_install_paths, fillvalue=""
+            ):
                 archive_name = archive.split("-", maxsplit=1)[0]
                 if should_filter_archives and self.subarchives is not None and archive_name not in self.subarchives:
                     continue
@@ -447,10 +504,17 @@ class QtArchives:
                         base_url=base_url,
                         archive_path=archive_path,
                         archive=archive,
+                        archive_install_path=archive_install_path,
                         package_desc=packageupdate.description,
                         pkg_update_name=packageupdate.name,  # For testing purposes
                     )
                 )
+
+    def _parse_update_xmls(self, update_xmls: list[UpdateXmls], target_packages: Optional[ModuleToPackage]) -> None:
+        if not target_packages:
+            target_packages = ModuleToPackage({})
+        for update_xml in update_xmls:
+            self._parse_update_xml(update_xml.target_folder, update_xml.xml_text, target_packages)
         # if we have located every requested package, then target_packages will be empty
         if not self.all_extra and len(target_packages) > 0:
             message = f"The packages {target_packages} were not found while parsing XML of package information!"
@@ -468,10 +532,11 @@ class QtArchives:
             raise NoPackageFound(message, suggested_action=self.help_msg())
         package_desc = packageupdate.description
         downloadable_archives = packageupdate.downloadable_archives
+        archive_install_paths = packageupdate.archive_install_paths
         if not downloadable_archives:
             message = f"The package '{self.arch}' contains no downloadable archives!"
             raise NoPackageFound(message)
-        for archive in downloadable_archives:
+        for archive, archive_install_path in zip_longest(downloadable_archives, archive_install_paths, fillvalue=""):
             archive_path = posixpath.join(
                 # online/qtsdkrepository/linux_x64/desktop/tools_ifw/
                 os_target_folder,
@@ -486,6 +551,7 @@ class QtArchives:
                     base_url=self.base,
                     archive_path=archive_path,
                     archive=archive,
+                    archive_install_path=archive_install_path,
                     package_desc=package_desc,
                     pkg_update_name=name,  # Redundant
                 )
@@ -558,7 +624,7 @@ class SrcDocExamplesArchives(QtArchives):
         )
 
     def _arch_ext(self) -> str:
-        return "_src_doc_examples"
+        return "_" + QtRepoProperty.sde_ext(self.version)
 
     def _base_module_name(self) -> str:
         """
@@ -635,7 +701,7 @@ class ToolArchives(QtArchives):
     def _get_archives(self):
         self._get_archives_base(self.tool_name, None)
 
-    def _parse_update_xml(self, os_target_folder, update_xml_text, *ignored):
+    def _parse_update_xml(self, os_target_folder: str, update_xml_text: str, *ignored: Any) -> None:
         update_xml = Updates.fromstring(self.base, update_xml_text)
         self._append_tool_update(os_target_folder, update_xml, self.arch, self.tool_version_str)
 

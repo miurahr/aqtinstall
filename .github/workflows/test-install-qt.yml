@@ -15,21 +15,26 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
-        py: ["3.12"]
+        py: ["3.13"]
         qtver: [6.5.3, 6.6.3]
         artifact: [standard]
         include:
           - os: windows-latest
-            py: "3.12"
+            py: "3.13"
             qtver: 6.6.3
             artifact: binary
           - os: windows-latest
-            py: "3.12"
+            py: "3.13"
             qtver: 6.7.3
             artifact: standard
           - os: ubuntu-latest
-            py: "3.12"
+            py: "3.13"
             qtver: 6.8.0
+            artifact: standard
+          - os: ubuntu-latest
+            py: "3.13"
+            # 6.8.1 introduces Operations elements in Updates.xml
+            qtver: 6.8.1
             artifact: standard
     steps:
       - uses: actions/checkout@v4
@@ -94,7 +99,7 @@ jobs:
               args = ["windows", "desktop", qtver, "win64_mingw"]
             else:
               args = ["windows", "desktop", qtver, "win64_msvc2019_64"]
-          elif platform == "macOS-latest":
+          elif platform.startswith("macOS"):
             args = ["mac", "desktop", qtver, "clang_64"]
           elif qtver.startswith('6.8'):
             args = ["linux", "desktop", qtver, "linux_gcc_64"]

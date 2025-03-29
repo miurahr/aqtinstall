@@ -10,8 +10,8 @@ on:
       - v*
 
 jobs:
-  build-n-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI
+  build:
+    name: Build package
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎️
@@ -20,16 +20,34 @@ jobs:
           fetch-depth: 50
       - name: Fetch release tag
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-      - name: Set up Python 3.12🐍
+      - name: Set up Python 3.13🐍
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
       - name: Install build and twine
         run: python -m pip install build twine --user
       - name: Build release assets
         run: python -m build ./
       - name: twine check
         run: python -m twine check dist/*
+      - name: upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dists
+          path: dist/
+
+  publish:
+    name: publish Python 🐍 distributions 📦 to PyPI
+    runs-on: ubuntu-22.04
+    needs: build
+    permissions:
+      id-token: write
+    steps:
+      - name: download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dists
+          path: dist/
       - name: Publish distribution 📦 to Test PyPI when releases branch
         if: ${{ startsWith(github.event.ref, 'refs/heads/releases') }}
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -39,5 +57,3 @@ jobs:
       - name: Publish distribution 📦 to PyPI
         if: ${{ startsWith(github.event.ref, 'refs/tags') }}
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.pypi_password }}

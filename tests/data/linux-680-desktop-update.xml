@@ -1,0 +1,1784 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt3d</Name>
+  <DisplayName>Qt 3D</DisplayName>
+  <Description>Qt 3D Prebuilt Components for Qt 6.8.0. Qt 3D provides functionality for near-realtime simulation systems with support for 2D and 3D rendering in both Qt C++ and Qt Quick applications.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qt3d, qt.qt6.680.examples.qt3d</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>18aa13171fec57b488c08c4c03ab569c01f214af</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt3d.debug_information</Name>
+  <DisplayName>Qt 3D debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qt3d</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qt3d, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7d0e1cb7e9ba7c2915c09a541034ffb37a6fa666</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt3d.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt 3D Module debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qt3d</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qt3d, qt.qt6.680.addons.qt3d.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qt3d-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="108932342" OS="Any" UncompressedSize="532022224"/>
+  <SHA1>5162331940be62c4f5be937a8b4c3fc27ef286ae</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt3d.linux_gcc_64</Name>
+  <DisplayName>Qt 3D Module for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qt3d, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt3d-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3150228" OS="Any" UncompressedSize="18421339"/>
+  <SHA1>5eeda281881a1274fa7d19d2d98314db69b08023</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt5compat</Name>
+  <DisplayName>Qt 5 Compatibility Module</DisplayName>
+  <Description>Qt 5 Compatibility Module Prebuilt Components for Qt 6.8.0. Qt 5 Compatibility Module allows to continue using some dedicated functionality which has been removed in Qt 6.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qt5compat, qt.qt6.680.examples.qt5compat, qt.qt6.680.addons.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>c1b75832f8f842dedc2b73767b6d7072d8b74396</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt5compat.debug_information</Name>
+  <DisplayName>Qt 5 Compatibility Module debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qt5compat</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qt5compat, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7ff9405885c6191538594b1fe751494f121198f8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt5compat.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt 5 Compatibility Module debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qt5compat</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qt5compat, qt.qt6.680.addons.qt5compat.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qt5compat-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="5161662" OS="Any" UncompressedSize="27177088"/>
+  <SHA1>9b48d06c9164092e484f934e44965cc5f9908648</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt5compat.linux_gcc_64</Name>
+  <DisplayName>Qt 5 Compatibility Module for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qt5compat, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="439183" OS="Any" UncompressedSize="1917513"/>
+  <SHA1>d514df7cd036b67c6c6c8118c588a77d05aa938d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtcharts, qt.qt6.680.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8bcd873c5f028ba53db92730edbac531a5042ac8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtcharts.debug_information</Name>
+  <DisplayName>Qt Charts debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtcharts</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtcharts, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>52ca77cf32dfcf42cc701416d50aa0f27a0265c1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtcharts.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Charts debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtcharts</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtcharts, qt.qt6.680.addons.qtcharts.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtcharts-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="17533770" OS="Any" UncompressedSize="88723544"/>
+  <SHA1>065dd3cf82fb2547339487be6e515b9a3b14af31</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtcharts.linux_gcc_64</Name>
+  <DisplayName>Qt Charts for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtcharts, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="718457" OS="Any" UncompressedSize="4829780"/>
+  <SHA1>477e5b54c5d4465790187a7a1ddf8ad864015ec9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtconnectivity</Name>
+  <DisplayName>Qt Connectivity</DisplayName>
+  <Description>This component includes two Qt modules. The two modules provide access to Bluetooth and NFC hardware.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtbluetooth, qt.qt6.680.doc.qtnfc, qt.qt6.680.examples.qtconnectivity</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>cfc76bb9a369f2700ff1489295fdbebc79569865</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtconnectivity.debug_information</Name>
+  <DisplayName>Qt Connectivity debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtconnectivity</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtconnectivity, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7268afbeb9d91719f1adcede3eb75405cfb716f3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtconnectivity.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Connectivity debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtconnectivity</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtconnectivity, qt.qt6.680.addons.qtconnectivity.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtconnectivity-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12597045" OS="Any" UncompressedSize="61166056"/>
+  <SHA1>6694a95b49e9e42195d4263a0f1076c3b1ca30be</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtconnectivity.linux_gcc_64</Name>
+  <DisplayName>Qt Connectivity for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtconnectivity, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtconnectivity-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="490330" OS="Any" UncompressedSize="2271844"/>
+  <SHA1>cb870abe604132c2be88ddcb53ad17de9b2e8780</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtdatavis3d, qt.qt6.680.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>cfa18bb9da85374eaf07db79f6486dd1df5fdb29</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtdatavis3d.debug_information</Name>
+  <DisplayName>Qt Data Visualization debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtdatavis3d</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtdatavis3d, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>062b3843db206b55742561c89d71dde2198e8ec7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtdatavis3d.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Data Visualization debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtdatavis3d</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtdatavis3d, qt.qt6.680.addons.qtdatavis3d.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtdatavis3d-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="9976505" OS="Any" UncompressedSize="48552760"/>
+  <SHA1>5f0a0a91cf3e3335b594c739305886b3dc2a5fe3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtdatavis3d.linux_gcc_64</Name>
+  <DisplayName>Qt Data Visualization for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtdatavis3d, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="575170" OS="Any" UncompressedSize="3448526"/>
+  <SHA1>af1b2badb5e5bae73bcc8e6552975aaadcf12f72</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgraphs</Name>
+  <DisplayName>Qt Graphs</DisplayName>
+  <Description>Qt Graphs is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtgraphs, qt.qt6.680.examples.qtgraphs</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>0c3d753b4f25e3178fe501a9a959f11c857320f9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgraphs.debug_information</Name>
+  <DisplayName>Qt Graphs debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtgraphs</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtgraphs, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b8c823196c7c90d0d2730f53630dedcb47039f3e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgraphs.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Graphs debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtgraphs</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtgraphs, qt.qt6.680.addons.qtgraphs.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtgraphs-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="16132376" OS="Any" UncompressedSize="72203712"/>
+  <SHA1>0382e35a157eea61a3b934ba0ef2f1784b9c955d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgraphs.linux_gcc_64</Name>
+  <DisplayName>Qt Graphs for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtgraphs, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgraphs-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="729234" OS="Any" UncompressedSize="4358288"/>
+  <SHA1>3c3f6851c21535be3a3cc985e80e5100accb3e00</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgrpc</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC</DisplayName>
+  <Description>QtGrpc contains the two modules QtProtobuf and QtGrpc:&lt;br&gt;QtProtobuf provides a generator which can be used to generate Qt-based classes from messages defined in .proto files.&lt;br&gt;QtGrpc provides support for generating Qt-based clients and servers based on service description in .proto files, as well as communicating with gRPC services using QtProtobuf messages.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtgrpc, qt.qt6.680.examples.qtgrpc</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>558297a0354e56524457cf0fea49ef7072113dcc</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgrpc.debug_information</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtgrpc</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtgrpc, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>2cfa04b3226c542d35e0765800154bfcfe3337e3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgrpc.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtgrpc</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtgrpc, qt.qt6.680.addons.qtgrpc.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtgrpc-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="23442388" OS="Any" UncompressedSize="130769432"/>
+  <SHA1>5f119bc7efbad6f0f022d7a9ccd4eb0150d33497</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgrpc.linux_gcc_64</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtgrpc, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgrpc-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1256283" OS="Any" UncompressedSize="9121254"/>
+  <SHA1>fff4ebdc1c00e439d2a49152c7c4d576e6352ead</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qthttpserver</Name>
+  <DisplayName>Qt HTTP Server</DisplayName>
+  <Description>Qt HTTP Server supports building an HTTP server into an application.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <Dependencies>qt.qt6.680.doc.qthttpserver, qt.qt6.680.examples.qthttpserver, qt.qt6.680.addons.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>945ea63ff992830fb09d7c6576cd0aeab564e366</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qthttpserver.debug_information</Name>
+  <DisplayName>Qt HTTP Server debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qthttpserver</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qthttpserver, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>32d961a865e2463d5f395e9165c0dd375882b44c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qthttpserver.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt HTTP Server debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qthttpserver</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qthttpserver, qt.qt6.680.addons.qthttpserver.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qthttpserver-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1681764" OS="Any" UncompressedSize="7385768"/>
+  <SHA1>07946ab4c0df6afe7ddd4f1ac7455dd7f144b28c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qthttpserver.linux_gcc_64</Name>
+  <DisplayName>Qt HTTP Server for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qthttpserver, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qthttpserver-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="81034" OS="Any" UncompressedSize="352257"/>
+  <SHA1>5b4a77e106068e9f468b5f0bf36f095308b4971b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtimageformats</Name>
+  <DisplayName>Qt Image Formats</DisplayName>
+  <Description>The Qt Image Formats  provides optional support for other image file formats. The core Qt Gui library by default supports reading and writing image files of the most common file formats: PNG, JPEG, BMP, GIF and a few more.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtimageformats, qt.qt6.680.examples.qtimageformats</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>401920adf2b4fbb5a7179e8ce8bab2fb0c56d965</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtimageformats.debug_information</Name>
+  <DisplayName>Qt Image Formats debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtimageformats</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtimageformats, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>384ae3953bf765ce593b11aae782511f61b6ed4d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtimageformats.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Image Formats debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtimageformats</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtimageformats, qt.qt6.680.addons.qtimageformats.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtimageformats-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2390765" OS="Any" UncompressedSize="11996104"/>
+  <SHA1>842f3c0dc0e375c63d546bd41b72605dfc1e84a6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtimageformats.linux_gcc_64</Name>
+  <DisplayName>Qt Image Formats for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtimageformats, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="388048" OS="Any" UncompressedSize="1355884"/>
+  <SHA1>86468d664c708d5bf2d23605b59b29da98dd8ab1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlanguageserver</Name>
+  <DisplayName>Qt Language Server</DisplayName>
+  <Description>An implementation of the language server protocol, including JsonRPC.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtlanguageserver, qt.qt6.680.examples.qtlanguageserver</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ab52d8e175c87cbbf5d02a28248ee571a669e148</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlanguageserver.linux_gcc_64</Name>
+  <DisplayName>Qt Language Server for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtlanguageserver, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlanguageserver-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="10050635" OS="Any" UncompressedSize="107710280"/>
+  <SHA1>d1b6896c0ecee1d18827dd38f98bf89e0b2b6300</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlocation</Name>
+  <DisplayName>Qt Location (TP)</DisplayName>
+  <Description>Qt Location (TP).&lt;br&gt;&lt;br&gt;The release of Qt Location with Qt 6.8.0 is a Technology Preview.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtlocation, qt.qt6.680.examples.qtlocation</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>5ae97812cd76265730c1871cee3f8b5d7df41d1c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlocation.debug_information</Name>
+  <DisplayName>Qt Location debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtlocation</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtlocation, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8acc2b451e8a0c6f15e8a4b450e6d1f47327e750</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlocation.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Location debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtlocation</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtlocation, qt.qt6.680.addons.qtlocation.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtlocation-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="18454914" OS="Any" UncompressedSize="84257360"/>
+  <SHA1>5f62f04f9af2bb4f660bd775935891369a3d8144</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlocation.linux_gcc_64</Name>
+  <DisplayName>Qt Location for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtlocation, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlocation-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="617993" OS="Any" UncompressedSize="3579281"/>
+  <SHA1>5bd155f77933ca3b0323543e5bef550dc0527ab0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtlottie, qt.qt6.680.examples.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8532e4f6214bf560b8f538a21c415d498d9f7661</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlottie.debug_information</Name>
+  <DisplayName>Qt Lottie Animation debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtlottie</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtlottie, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7973e017ee247a898dd78b6bd56978f19a0d76dc</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlottie.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Lottie Animation debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtlottie</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtlottie, qt.qt6.680.addons.qtlottie.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtlottie-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4026543" OS="Any" UncompressedSize="19899664"/>
+  <SHA1>502cc85ee00b3fd23c1ca30357afc4c35f288743</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlottie.linux_gcc_64</Name>
+  <DisplayName>Qt Lottie Animation for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtlottie, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="133711" OS="Any" UncompressedSize="599358"/>
+  <SHA1>c85262e658e3b97bfff0f1b2fc27042b1aea2459</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtmultimedia</Name>
+  <DisplayName>Qt Multimedia</DisplayName>
+  <Description>Qt Multimedia provides a rich set of QML types and C++ classes to handle multimedia content.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtmultimedia, qt.qt6.680.examples.qtmultimedia</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>c314d68051e48466047709fb1c5f89ae9e090881</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtmultimedia.debug_information</Name>
+  <DisplayName>Qt Multimedia debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtmultimedia</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtmultimedia, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>c606c79a49cc4e18a299eb213d4afefc593f73d6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtmultimedia.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Multimedia debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtmultimedia</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtmultimedia, qt.qt6.680.addons.qtmultimedia.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtmultimedia-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="29744076" OS="Any" UncompressedSize="136779560"/>
+  <SHA1>e89c378f5bdcc63e5f4643e23c976668390257ab</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtmultimedia.linux_gcc_64</Name>
+  <DisplayName>Qt Multimedia for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtmultimedia, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="25831959" OS="Any" UncompressedSize="192583495"/>
+  <SHA1>f46494bf16153026b2d8bee4fc45a890a7ed74cf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtnetworkauth</Name>
+  <DisplayName>Qt Network Authorization</DisplayName>
+  <Description>Qt Network Authorization provides a set of APIs that enable Qt applications to obtain limited access to online accounts and HTTP services without exposing users' passwords.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtnetworkauth, qt.qt6.680.examples.qtnetworkauth</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ef78d3730ab315ddbbc543cde0cc423bf4a9a9b2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtnetworkauth.debug_information</Name>
+  <DisplayName>Qt Network Authorization debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtnetworkauth</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtnetworkauth, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>2513f635df3f0ae562ab63f4bcede71156a131ae</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtnetworkauth.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Network Authorization debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtnetworkauth</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtnetworkauth, qt.qt6.680.addons.qtnetworkauth.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtnetworkauth-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1673144" OS="Any" UncompressedSize="7554008"/>
+  <SHA1>3195d9a29cb38f9e147bcd8eb8695e3750b85661</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtnetworkauth.linux_gcc_64</Name>
+  <DisplayName>Qt Network Authorization for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtnetworkauth, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="81644" OS="Any" UncompressedSize="386959"/>
+  <SHA1>916e9ae31f9d55343989527244a750048cf87d97</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtpositioning</Name>
+  <DisplayName>Qt Positioning</DisplayName>
+  <Description>The Qt Positioning API provides positioning information via QML and C++ interfaces.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtpositioning, qt.qt6.680.examples.qtpositioning</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>e629cf014f5e96f6003ec03824037c9863cbd43d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtpositioning.debug_information</Name>
+  <DisplayName>Qt Positioning debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtpositioning</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtpositioning, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6d4ca373afd7bd9f9b9b2ee207e7684ddcceb437</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtpositioning.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Positioning debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtpositioning</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtpositioning, qt.qt6.680.addons.qtpositioning.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtpositioning-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="8124690" OS="Any" UncompressedSize="38340936"/>
+  <SHA1>bb0344368b768d732b1a7688b2ac8cdf91b011d9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtpositioning.linux_gcc_64</Name>
+  <DisplayName>Qt Positioning for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtpositioning, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpositioning-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="367203" OS="Any" UncompressedSize="2031012"/>
+  <SHA1>9e5c597ed9d8664d92786a3ed122f9d779d7a1ab</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3d</Name>
+  <DisplayName>Qt Quick 3D</DisplayName>
+  <Description>Qt Quick 3D provides high-level 3D API for Qt Quick.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtquick3d, qt.qt6.680.examples.qtquick3d, qt.qt6.680.addons.qtshadertools, qt.qt6.680.addons.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ba129eb02d4f5eb87746f06e73caf2bd4958e296</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3d.debug_information</Name>
+  <DisplayName>Qt Quick 3D debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtquick3d</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtquick3d, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>862e2d0fb69793201ed066e8f1b64e3d49a5bfad</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3d.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Quick 3D debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtquick3d</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtquick3d, qt.qt6.680.addons.qtquick3d.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtquick3d-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="94670427" OS="Any" UncompressedSize="453346392"/>
+  <SHA1>0c5dde69cbf844f9f1b8f116617bd03500f7d340</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3d.linux_gcc_64</Name>
+  <DisplayName>Qt Quick 3D for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtquick3d, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="20595539" OS="Any" UncompressedSize="184314862"/>
+  <SHA1>21283228f4e4fde041ecae46083c67fb82507ebf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3dphysics</Name>
+  <DisplayName>Qt Quick 3D Physics</DisplayName>
+  <Description>Qt Quick 3D Physics provides a high-level QML module adding physical simulation capabilities to Qt Quick 3D.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtquick3dphysics, qt.qt6.680.examples.qtquick3dphysics</Dependencies>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>da248f7f1690ba762854bd8309417adf52cf0593</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3dphysics.debug_information</Name>
+  <DisplayName>Quick 3D Physics debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtquick3dphysics</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtquick3dphysics, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b05c94ab4654683e84e8f0dc67f7a98617a3c70b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3dphysics.debug_information.linux_gcc_64</Name>
+  <DisplayName>Quick 3D Physics debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtquick3dphysics</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtquick3dphysics, qt.qt6.680.addons.qtquick3dphysics.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtquick3dphysics-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="27872396" OS="Any" UncompressedSize="139089224"/>
+  <SHA1>e2857298d3857c0c1c844eaea90415f9b436c47b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3dphysics.linux_gcc_64</Name>
+  <DisplayName>Qt Quick 3D Physics for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtquick3dphysics, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3dphysics-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="42658736" OS="Any" UncompressedSize="390138787"/>
+  <SHA1>e0846eac68f7bb9c248fd9c5bf9ecd9eed97a2a6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquickeffectmaker</Name>
+  <DisplayName>Qt Quick Effect Maker</DisplayName>
+  <Description>Qt Quick Effect Maker (QQEM) for creating and editing custom shader effects.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtquickeffectmaker, qt.qt6.680.examples.qtquickeffectmaker</Dependencies>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>55e8cda7109e7157d0612d990590367cef781e79</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquickeffectmaker.debug_information</Name>
+  <DisplayName>Qt Effect Makers debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtquickeffectmaker</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtquickeffectmaker, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b12944f96c735c0c84aadccbbeef34f433982d2c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquickeffectmaker.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Effect Makers debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtquickeffectmaker</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtquickeffectmaker, qt.qt6.680.addons.qtquickeffectmaker.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtquickeffectmaker-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4967885" OS="Any" UncompressedSize="22147168"/>
+  <SHA1>ab403c5e73c7b3e046161d81a3400752d9246256</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquickeffectmaker.linux_gcc_64</Name>
+  <DisplayName>Qt Quick Effect Maker for 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtquickeffectmaker, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquickeffectmaker-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3898713" OS="Any" UncompressedSize="5041623"/>
+  <SHA1>51253cfb07c0420ea90a1f40a6da1680a3cc91a8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline</DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtquicktimeline, qt.qt6.680.examples.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>9045dbfbcaf57806632092d6c8a673d88a22d4fe</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquicktimeline.debug_information</Name>
+  <DisplayName>Qt Quick Timeline debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtquicktimeline</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtquicktimeline, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>d601f487e29cf73f0479cba22c01b9bb417d242a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquicktimeline.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Quick Timeline debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtquicktimeline</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtquicktimeline, qt.qt6.680.addons.qtquicktimeline.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtquicktimeline-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3376523" OS="Any" UncompressedSize="14820664"/>
+  <SHA1>e0051073306ceaef6f0ce71c37052198b5a25da7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquicktimeline.linux_gcc_64</Name>
+  <DisplayName>Qt Quick Timeline for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtquicktimeline, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="69660" OS="Any" UncompressedSize="459647"/>
+  <SHA1>2d3dfd9b9c77449dc341c2e8135047a7b4a1129c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtremoteobjects</Name>
+  <DisplayName>Qt Remote Objects</DisplayName>
+  <Description>Qt Remote Objects is an add-on library that provides an easy way to share Qt APIs between processes/devices.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtremoteobjects, qt.qt6.680.examples.qtremoteobjects</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>1990617b32eeeb0867da0807d93c8ebc8377caec</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtremoteobjects.debug_information</Name>
+  <DisplayName>Qt Remote Objects debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtremoteobjects</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtremoteobjects, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>66a97aad51358e0e028970f331fcf8fcaecd2539</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtremoteobjects.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Remote Objects debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtremoteobjects</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtremoteobjects, qt.qt6.680.addons.qtremoteobjects.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtremoteobjects-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="7470882" OS="Any" UncompressedSize="37843784"/>
+  <SHA1>b7a8e599a9550b227b85a2ac0b1d045e34554b77</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtremoteobjects.linux_gcc_64</Name>
+  <DisplayName>Qt Remote Objects for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtremoteobjects, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtremoteobjects-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="428763" OS="Any" UncompressedSize="1909270"/>
+  <SHA1>7c250ff6019122c7ccc03bc48cb14b5e3731a8f8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtscxml</Name>
+  <DisplayName>Qt State Machines</DisplayName>
+  <Description>The Qt State Machines package provides API's and execution models that can be used to effectively embed the elements and semantics of statecharts in Qt applications. For advanced use cases the state machines can even be created from State Chart XML (SCXML) files.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtscxml, qt.qt6.680.examples.qtscxml</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>d72a4fdaf5fdd62a010a88337e78af12bd23294b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtscxml.debug_information</Name>
+  <DisplayName>Qt State Machine debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtscxml</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtscxml, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f9585028f3a300f02104e94479fe29f6f8748517</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtscxml.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt State Machine debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtscxml</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtscxml, qt.qt6.680.addons.qtscxml.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtscxml-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="11070033" OS="Any" UncompressedSize="52616848"/>
+  <SHA1>4aa951b3c977da70894cfa66c9d1ef95474eccd0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtscxml.linux_gcc_64</Name>
+  <DisplayName>Qt State Machine for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtscxml, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="452473" OS="Any" UncompressedSize="2460668"/>
+  <SHA1>eac6a93237a15e8e4d9df8d6534ad9cf584b6c26</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtsensors</Name>
+  <DisplayName>Qt Sensors</DisplayName>
+  <Description>Qt Sensors provides classes for reading sensor data.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtsensors, qt.qt6.680.examples.qtsensors</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>755fb0cfccbc3d0c54ddd4f61b94c8869d49eab7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtsensors.debug_information</Name>
+  <DisplayName>Qt Sensors debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtsensors</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtsensors, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>7d16e154315e92e43c81e32e180f49d33d8a4e87</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtsensors.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Sensors debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtsensors</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtsensors, qt.qt6.680.addons.qtsensors.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtsensors-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4670561" OS="Any" UncompressedSize="26871208"/>
+  <SHA1>8502c0ac402e40657a20aff3072be7ea812c7171</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtsensors.linux_gcc_64</Name>
+  <DisplayName>Qt Sensors for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtsensors, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtsensors-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="172558" OS="Any" UncompressedSize="1302387"/>
+  <SHA1>af3a9be35c446be18940c07475ee11a82dc2de84</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialbus</Name>
+  <DisplayName>Qt Serial Bus</DisplayName>
+  <Description>The Qt Serial Bus API provides classes and functions to access the various industrial serial buses and protocols, such as CAN, ModBus, and others.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtserialbus, qt.qt6.680.examples.qtserialbus</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f353c4a5c950dc326741d97133469ece29b16ac7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialbus.debug_information</Name>
+  <DisplayName>Qt Serial Bus debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtserialbus</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtserialbus, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>e59bb723228b3e9709bb672b49cc1477644c064b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialbus.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Serial Bus debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtserialbus</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtserialbus, qt.qt6.680.addons.qtserialbus.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtserialbus-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="5567799" OS="Any" UncompressedSize="26585608"/>
+  <SHA1>35866f86f9e1dfc4cfc709328fc79ba9a857ef20</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialbus.linux_gcc_64</Name>
+  <DisplayName>Qt SerialBus for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtserialbus, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialbus-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="256442" OS="Any" UncompressedSize="1256416"/>
+  <SHA1>8978497e5001b527afa165b7c2acaa456da99fca</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialport</Name>
+  <DisplayName>Qt Serial Port</DisplayName>
+  <Description>Qt Serial Port provides the basic functionality, which includes configuring, I/O operations, getting and setting the control signals of the RS-232 pinouts.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtserialport, qt.qt6.680.examples.qtserialport</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>4519459b3eab4786d9cb21f673d8070fb1bef7ae</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialport.debug_information</Name>
+  <DisplayName>Qt Serial Port debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtserialport</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtserialport, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>09686af7878a89bb9d419bf09996dcafa9899cac</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialport.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Serial Port debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtserialport</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtserialport, qt.qt6.680.addons.qtserialport.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtserialport-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="824633" OS="Any" UncompressedSize="3636040"/>
+  <SHA1>816a95f8e3432875ef1d824c31cb7f5fd7094e29</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialport.linux_gcc_64</Name>
+  <DisplayName>Qt SerialPort for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtserialport, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialport-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="51801" OS="Any" UncompressedSize="224530"/>
+  <SHA1>2e6a4c11e408889cecdd819d2e6eec6b8fdbbe92</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtshadertools</Name>
+  <DisplayName>Qt Shader Tools</DisplayName>
+  <Description>Qt Shader conditioning tool Prebuilt Components for Qt 6.8.0.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtshadertools, qt.qt6.680.examples.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>fee977dab181e3a6b496b880eaef18c39fc94f39</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtshadertools.debug_information</Name>
+  <DisplayName>Qt Shader Tools debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtshadertools</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtshadertools, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>07741f8a0d9312b0cee2afff80eb52e66177517c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtshadertools.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Shader Tools debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtshadertools</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtshadertools, qt.qt6.680.addons.qtshadertools.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtshadertools-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="17874023" OS="Any" UncompressedSize="98432720"/>
+  <SHA1>2713b5335d49ff91f7e8171a2c8effa3a017b6cd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtshadertools.linux_gcc_64</Name>
+  <DisplayName>Qt Shader Tools for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtshadertools, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1539504" OS="Any" UncompressedSize="5497624"/>
+  <SHA1>c60d5f0ebe3fed5ee1783728d7cf0f09759c73fe</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtspeech</Name>
+  <DisplayName>Qt Speech</DisplayName>
+  <Description>The Qt Speech module allows using text to speech engines</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtspeech, qt.qt6.680.examples.qtspeech</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b656d438d96703dbf0bf91da35f7d8dcab73325f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtspeech.debug_information</Name>
+  <DisplayName>Qt Speech debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtspeech</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtspeech, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>220396d65b3ebae9be0153679b6d7be2ebf4fc6f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtspeech.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Speech debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtspeech</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtspeech, qt.qt6.680.addons.qtspeech.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtspeech-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2219358" OS="Any" UncompressedSize="10582832"/>
+  <SHA1>3cdfa107c5a6cca4bdcfae134f4d2bbcb16fb4ac</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtspeech.linux_gcc_64</Name>
+  <DisplayName>Qt Speech for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtspeech, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtspeech-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="94451" OS="Any" UncompressedSize="535905"/>
+  <SHA1>25819b869f2d38c9cf70bbc591d1a16abd680e7f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your ownlayouts and styles.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtvirtualkeyboard, qt.qt6.680.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ff8097790969568f7cc424d37f447a512ebd42de</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtvirtualkeyboard.debug_information</Name>
+  <DisplayName>Qt Virtual Keyboard debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtvirtualkeyboard, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b1af1d67225cbce180e3c2a71d295f56d8a2aaa4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtvirtualkeyboard.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Virtual Keyboard debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtvirtualkeyboard, qt.qt6.680.addons.qtvirtualkeyboard.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtvirtualkeyboard-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="11054441" OS="Any" UncompressedSize="62245496"/>
+  <SHA1>e75a02c3ffb98141061c58a7256b1ad09c3a03cd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtvirtualkeyboard.linux_gcc_64</Name>
+  <DisplayName>Qt Virtual Keyboard for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtvirtualkeyboard, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2218069" OS="Any" UncompressedSize="6188726"/>
+  <SHA1>3fbb1142c9f1654e3fc38194cd28e9d47c4b076f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebchannel</Name>
+  <DisplayName>Qt WebChannel</DisplayName>
+  <Description>Qt WebChannel enables peer-to-peer communication between a server (QML/C++ application) and a client (HTML/JavaScript or QML application). It is supported out of the box by Qt WebEngine. In addition it can work on all browsers that support WebSockets, enabling Qt WebChannel clients to run in any JavaScript environment (including QML). This requires the implementation of a custom transport based on Qt WebSockets.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtwebchannel, qt.qt6.680.examples.qtwebchannel</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>99b830056095593cc7ebf096e066768eafda10d8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebchannel.debug_information</Name>
+  <DisplayName>Qt WebChannel debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtwebchannel</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtwebchannel, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>98e75697fb0dc00079285676c17933aff13146a0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebchannel.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt WebChannel debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtwebchannel</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtwebchannel, qt.qt6.680.addons.qtwebchannel.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtwebchannel-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1632742" OS="Any" UncompressedSize="7569240"/>
+  <SHA1>2f79ee27dc188a619ae9a8d2786cc5ae84aa8f48</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebchannel.linux_gcc_64</Name>
+  <DisplayName>Qt WebChannel for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtwebchannel, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="111393" OS="Any" UncompressedSize="503564"/>
+  <SHA1>3c366eca38fb84e6fcb18cd9c8001a74d0b8dc04</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebsockets</Name>
+  <DisplayName>Qt WebSockets</DisplayName>
+  <Description>WebSocket is a web-based protocol designed to enable two-way communication between a client application and a remote host. It enables the two entities to send data back and forth if the initial handshake succeeds. WebSocket is the solution for applications that struggle to get real-time data feeds with less network latency and minimum data exchange.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtwebsockets, qt.qt6.680.examples.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>87f34e6d8705931fd98e5c5b66872ce5016501e7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebsockets.debug_information</Name>
+  <DisplayName>Qt WebSockets debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtwebsockets</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtwebsockets, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>2b8a23795f23666403faa82a40843141039b904b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebsockets.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt WebSockets debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtwebsockets</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtwebsockets, qt.qt6.680.addons.qtwebsockets.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtwebsockets-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2084851" OS="Any" UncompressedSize="9311760"/>
+  <SHA1>1e5061711df8e1cd5f06fcac8352557786faf6ab</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebsockets.linux_gcc_64</Name>
+  <DisplayName>Qt WebSockets for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtwebsockets, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="93665" OS="Any" UncompressedSize="457901"/>
+  <SHA1>6c763b6dffd388aa032546b7470977778ea6a052</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebview</Name>
+  <DisplayName>Qt WebView</DisplayName>
+  <Description>Qt WebView provides a way to display web content in a QML application without necessarily including a full web browser stack by using native APIs where it makes sense. This is useful on mobile platforms such as Android, iOS, and UWP (Universal Windows Platform); especially on iOS, where policy dictates that all web content is displayed using the operating system's web view. On Windows, Linux, and macOS, Qt WebView depends on the Qt WebEngine module to render content.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtwebview, qt.qt6.680.examples.qtwebview</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f7b20fef0d506d60f89de27273c15a09c809e7fe</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebview.debug_information</Name>
+  <DisplayName>Qt WebView debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtwebview</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtwebview, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>db3ddd6ca5a85c98cc624e33ee798c12e932f70f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebview.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt WebView debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.addons.qtwebview</Dependencies>
+  <AutoDependOn>qt.qt6.680.addons.qtwebview, qt.qt6.680.addons.qtwebview.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtwebview-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1931674" OS="Any" UncompressedSize="8753368"/>
+  <SHA1>40a3e36e07661242f7a72d435b13460fda0cae3f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebview.linux_gcc_64</Name>
+  <DisplayName>Qt WebView for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtwebview, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebview-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="71216" OS="Any" UncompressedSize="501511"/>
+  <SHA1>5eeaa5a9a4e9872f117180e829895554ee9f5311</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.debug_info</Name>
+  <DisplayName>Qt Debug Information Files</DisplayName>
+  <Description>Qt 6.8.0 debug information files. Requires selection of target binary like gcc or MSVC.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>5b2e10fdf1e8fac2175a60a99ab2bb24308020be</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.debug_info.linux_gcc_64</Name>
+  <DisplayName>Desktop 64 Debug Information Files</DisplayName>
+  <Description>Qt 6.8.0 Desktop 64 Debug Information Files</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.debug_info, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z, qtsvg-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z, qtdeclarative-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z, qttools-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="806199251" OS="Any" UncompressedSize="3952808216"/>
+  <SHA1>450d0c077b850d68c959e7eb67e872071b011ee3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.linux_gcc_64</Name>
+  <DisplayName>Desktop</DisplayName>
+  <Description>Qt 6.8.0 Prebuilt Components for Desktop 64</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt6.680.doc, qt.qt6.680.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>700</SortingPriority>
+  <DownloadableArchives>qtbase-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z, qtsvg-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z, qtdeclarative-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z, qttools-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z, qttranslations-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z, qtwayland-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z, icu-linux-Rhel8.6-x86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="198145797" OS="Any" UncompressedSize="1559868512"/>
+  <SHA1>8b1040e37ed565aced9b41eb5106492027b9311e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.qtwaylandcompositor</Name>
+  <DisplayName>Qt Wayland Compositor</DisplayName>
+  <Description>The Qt Wayland Compositor is a module for building a display server using the Wayland protocol in C++ or QML.&lt;br&gt;&lt;br&gt;This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030750</Version>
+  <Dependencies>qt.qt6.680.doc.qtwaylandcompositor, qt.qt6.680.examples.qtwaylandcompositor</Dependencies>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>20</SortingPriority>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>211b0af2eb31dc9c7b3b2533519da14c0564fc9a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.qtwaylandcompositor.debug_information</Name>
+  <DisplayName>Qt Wayland debug information</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.qtwaylandcompositor</Dependencies>
+  <AutoDependOn>qt.qt6.680.qtwaylandcompositor, qt.qt6.680.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b0f1958cf7203b183ad809aad07f71da00a8b002</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.qtwaylandcompositor.debug_information.linux_gcc_64</Name>
+  <DisplayName>Qt Wayland debug information for GCC 64-bit</DisplayName>
+  <Description/>
+  <Version>6.8.0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.qtwaylandcompositor</Dependencies>
+  <AutoDependOn>qt.qt6.680.qtwaylandcompositor, qt.qt6.680.qtwaylandcompositor.debug_information, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtwayland-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="29927329" OS="Any" UncompressedSize="150677992"/>
+  <SHA1>6981b807666128fa622e0235b0e2a0933a1c46f1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.qtwaylandcompositor.linux_gcc_64</Name>
+  <DisplayName>Qt Wayland Compositor for Linux 64</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030750</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.qtwaylandcompositor, qt.qt6.680.linux_gcc_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.linux_gcc_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwayland-compositor-Linux-RHEL_8_8-GCC-Linux-RHEL_8_8-X86_64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="657299" OS="Any" UncompressedSize="4802514"/>
+  <SHA1>a0bebad07b81bfe8ed8473826dfdc21a5c9864a6</SHA1>
+ </PackageUpdate>
+ <SHA1>7352410d99150a33587be2e83878b61c26be8fb9</SHA1>
+ <MetadataName>2024-10-03-0816_meta.7z</MetadataName>
+</Updates>

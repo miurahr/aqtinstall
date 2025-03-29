@@ -1,0 +1,19 @@
+runner:
+  flake8:
+    name: flake8
+    cmd: flake8 aqt tests
+    format: flake8
+    level: error
+
+  mypy:
+    name: mypy
+    cmd: mypy --strict --show-column-numbers -p aqt
+    errorformat:
+      - "%f:%l:%c: %m"
+    level: error
+
+  pylint:
+    name: pylint
+    cmd: pylint **/*.py -j 0
+    errorformat:
+      - "%f:%l:%c: %t%n: %m"

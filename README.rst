@@ -4,6 +4,7 @@ Another Qt installer(aqt)
 - Release: |pypi|
 - Documentation: |docs|
 - Test status: |gha| and Coverage: |coveralls|
+- Code Quality: |codacy|
 - Project maturity |Package health|
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
@@ -17,7 +18,8 @@ Another Qt installer(aqt)
 .. |Package health| image:: https://snyk.io/advisor/python/aqtinstall/badge.svg
   :target: https://snyk.io/advisor/python/aqtinstall
   :alt: aqtinstall
-
+.. |codacy| image:: https://app.codacy.com/project/badge/Grade/188accbe7f8f406abf61b888773bf5e3
+  :target: https://app.codacy.com/gh/miurahr/aqtinstall/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
 
 
 This is a utility alternative to the official graphical Qt installer, for using in CI environment
@@ -56,7 +58,7 @@ Requirements
     3.9
 
 - Recommended Python version:
-    3.12 (frequently tested on)
+    3.13 (frequently tested on)
 
 - Dependencies:
     requests

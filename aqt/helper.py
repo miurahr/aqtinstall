@@ -19,17 +19,21 @@
 # IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import binascii
-import configparser
 import hashlib
 import logging.config
 import os
+import platform
 import posixpath
 import secrets
+import shutil
+import subprocess
 import sys
-import threading
+import uuid
+from configparser import ConfigParser
 from logging import Handler, getLogger
 from logging.handlers import QueueListener
 from pathlib import Path
+from threading import Lock
 from typing import Any, Callable, Dict, Generator, List, Optional, TextIO, Tuple, Union
 from urllib.parse import urlparse
 from xml.etree.ElementTree import Element
@@ -37,6 +41,7 @@ from xml.etree.ElementTree import Element
 import humanize
 import requests
 import requests.adapters
+from bs4 import BeautifulSoup
 from defusedxml import ElementTree
 
 from aqt.exceptions import (
@@ -46,6 +51,127 @@ from aqt.exceptions import (
     ArchiveListError,
     ChecksumDownloadFailure,
 )
+
+
+def get_os_name() -> str:
+    system = sys.platform.lower()
+    if system == "darwin":
+        return "mac"
+    if system == "linux":
+        return "linux"
+    if system in ("windows", "win32"):  # Accept both windows and win32
+        return "windows"
+    raise ValueError(f"Unsupported operating system: {system}")
+
+
+def get_os_arch() -> str:
+    """
+    Returns a simplified os-arch string for the current system
+    """
+    os_name = get_os_name()
+
+    machine = platform.machine().lower()
+    if machine in ["x86_64", "amd64"]:
+        arch = "x64"
+    elif machine in ["arm64", "aarch64"]:
+        arch = "arm64"
+    else:
+        arch = "x64"  # Default to x64 for unknown architectures
+
+    return f"{os_name}-{arch}"
+
+
+def get_qt_local_folder_path() -> Path:
+    os_name = get_os_name()
+    if os_name == "windows":
+        appdata = os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))
+        return Path(appdata) / "Qt"
+    if os_name == "mac":
+        return Path.home() / "Library" / "Application Support" / "Qt"
+    return Path.home() / ".local" / "share" / "Qt"
+
+
+def get_qt_account_path() -> Path:
+    return get_qt_local_folder_path() / "qtaccount.ini"
+
+
+def get_qt_installers() -> dict[str, str]:
+    """
+    Extracts Qt installer information from {Settings.baseurl}/official_releases/online_installers/
+    Maps OS types and architectures to their respective installer filenames
+    Returns:
+        dict: Mapping of OS identifiers to installer filenames with appropriate aliases
+    """
+    url = f"{Settings.baseurl}/official_releases/online_installers/"
+
+    try:
+        response = requests.get(url, timeout=Settings.response_timeout)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        installers = {}
+
+        os_types = ["windows", "linux", "mac"]
+
+        for link in soup.find_all("a"):
+            filename = link.text.strip()
+
+            if "Parent Directory" in filename or not any(ext in filename.lower() for ext in [".exe", ".dmg", ".run"]):
+                continue
+
+            for os_type in os_types:
+                if os_type.lower() in filename.lower():
+                    # Found an OS match, now look for architecture
+                    if "arm64" in filename.lower():
+                        installers[f"{os_type}-arm64"] = filename
+                    elif "x64" in filename.lower():
+                        installers[f"{os_type}-x64"] = filename
+                        # Also add generic OS entry for x64 variants of Windows and Linux
+                        if os_type in ["windows", "linux"]:
+                            installers[os_type] = filename
+                    else:
+                        # Handle case with no explicit architecture
+                        # Most likely for macOS which might just say "mac" without arch
+                        installers[os_type] = filename
+
+        return installers
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching installer data: {e}")
+        return {}
+    except Exception as e:
+        print(f"Unexpected error processing installer data: {e}")
+        return {}
+
+
+def get_qt_installer_name() -> str:
+    installer_dict = get_qt_installers()
+    return installer_dict[get_os_arch()]
+
+
+def get_qt_installer_path() -> Path:
+    return get_qt_local_folder_path() / get_qt_installer_name()
+
+
+def get_default_local_cache_path() -> Path:
+    os_name = get_os_name()
+    if os_name == "windows":
+        appdata = os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))
+        return Path(appdata) / "aqt" / "cache"
+    if os_name == "mac":
+        return Path.home() / "Library" / "Application Support" / "aqt" / "cache"
+    return Path.home() / ".local" / "share" / "aqt" / "cache"
+
+
+def get_default_local_temp_path() -> Path:
+    os_name = get_os_name()
+    if os_name == "windows":
+        appdata = os.environ.get("APPDATA", str(Path.home() / "AppData" / "Roaming"))
+        return Path(appdata) / "aqt" / "tmp"
+    if os_name == "mac":
+        return Path.home() / "Library" / "Application Support" / "aqt" / "tmp"
+    return Path.home() / ".local" / "share" / "aqt" / "tmp"
 
 
 def _get_meta(url: str) -> requests.Response:
@@ -143,6 +269,8 @@ def downloadBinaryFile(url: str, out: Path, hash_algo: str, exp: Optional[bytes]
                         fd.write(chunk)
                         hash.update(chunk)
                     fd.flush()
+            except requests.exceptions.ReadTimeout as e:
+                raise ArchiveConnectionError(f"Read timeout: {e.args}") from e
             except Exception as e:
                 raise ArchiveDownloadError(f"Download of {filename} has error: {e}") from e
             if exp is not None and hash.digest() != exp:
@@ -257,7 +385,7 @@ def altlink(url: str, alt: str) -> str:
 
 
 class MyQueueListener(QueueListener):
-    def __init__(self, queue):
+    def __init__(self, queue) -> None:
         handlers: List[Handler] = []
         super().__init__(queue, *handlers)
 
@@ -309,7 +437,7 @@ def xml_to_modules(
     return packages
 
 
-class MyConfigParser(configparser.ConfigParser):
+class MyConfigParser(ConfigParser):
     def getlist(self, section: str, option: str, fallback: List[str] = []) -> List[str]:
         value = self.get(section, option, fallback=None)
         if value is None:
@@ -339,23 +467,49 @@ class SettingsClass:
         "config": None,
         "configfile": None,
         "loggingconf": None,
-        "_lock": threading.Lock(),
+        "_lock": Lock(),
     }
+
+    def __init__(self) -> None:
+        self.config: Optional[ConfigParser]
+        self._lock: Lock
+        self._initialize()
 
     def __new__(cls, *p, **k):
         self = object.__new__(cls, *p, **k)
         self.__dict__ = cls._shared_state
         return self
 
-    def __init__(self):
+    def _initialize(self) -> None:
+        """Initialize configuration if not already initialized."""
         if self.config is None:
             with self._lock:
                 if self.config is None:
                     self.config = MyConfigParser()
                     self.configfile = os.path.join(os.path.dirname(__file__), "settings.ini")
                     self.loggingconf = os.path.join(os.path.dirname(__file__), "logging.ini")
+                    self.config.read(self.configfile)
+
+                    logging.info(f"Cache folder: {self.qt_installer_cache_path}")
+                    logging.info(f"Temp folder: {self.qt_installer_temp_path}")
+
+                    temp_dir = self.qt_installer_temp_path
+                    temp_path = Path(temp_dir)
+                    if not temp_path.exists():
+                        temp_path.mkdir(parents=True, exist_ok=True)
+                    else:
+                        self.qt_installer_cleanup()
+
+    def _get_config(self) -> ConfigParser:
+        """Safe getter for config that ensures it's initialized."""
+        self._initialize()
+        assert self.config is not None
+        return self.config
 
     def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
+        if self.config is None:
+            return
+
         if file is not None:
             if isinstance(file, str):
                 result = self.config.read(file)
@@ -370,6 +524,24 @@ class SettingsClass:
         else:
             with open(self.configfile, "r") as f:
                 self.config.read_file(f)
+
+    @property
+    def qt_installer_cache_path(self) -> str:
+        """Path for Qt installer cache."""
+        config = self._get_config()
+        # If no cache_path or blank, return default without modifying config
+        if not config.has_option("qtofficial", "cache_path") or config.get("qtofficial", "cache_path").strip() == "":
+            return str(get_default_local_cache_path())
+        return config.get("qtofficial", "cache_path")
+
+    @property
+    def qt_installer_temp_path(self) -> str:
+        """Path for Qt installer cache."""
+        config = self._get_config()
+        # If no cache_path or blank, return default without modifying config
+        if not config.has_option("qtofficial", "temp_path") or config.get("qtofficial", "temp_path").strip() == "":
+            return str(get_default_local_temp_path())
+        return config.get("qtofficial", "temp_path")
 
     @property
     def archive_download_location(self):
@@ -467,6 +639,60 @@ class SettingsClass:
         """
         return self.config.getint("aqt", "min_module_size", fallback=41)
 
+    # Qt Commercial Installer properties
+    @property
+    def qt_installer_timeout(self) -> int:
+        """Timeout for Qt commercial installer operations in seconds."""
+        return self._get_config().getint("qtofficial", "installer_timeout", fallback=3600)
+
+    @property
+    def qt_installer_operationdoesnotexisterror(self) -> str:
+        """Handle OperationDoesNotExistError in Qt installer."""
+        return self._get_config().get("qtofficial", "operation_does_not_exist_error", fallback="Ignore")
+
+    @property
+    def qt_installer_overwritetargetdirectory(self) -> str:
+        """Handle overwriting target directory in Qt installer."""
+        return self._get_config().get("qtofficial", "overwrite_target_directory", fallback="No")
+
+    @property
+    def qt_installer_stopprocessesforupdates(self) -> str:
+        """Handle stopping processes for updates in Qt installer."""
+        return self._get_config().get("qtofficial", "stop_processes_for_updates", fallback="Cancel")
+
+    @property
+    def qt_installer_installationerrorwithcancel(self) -> str:
+        """Handle installation errors with cancel option in Qt installer."""
+        return self._get_config().get("qtofficial", "installation_error_with_cancel", fallback="Cancel")
+
+    @property
+    def qt_installer_installationerrorwithignore(self) -> str:
+        """Handle installation errors with ignore option in Qt installer."""
+        return self._get_config().get("qtofficial", "installation_error_with_ignore", fallback="Ignore")
+
+    @property
+    def qt_installer_associatecommonfiletypes(self) -> str:
+        """Handle file type associations in Qt installer."""
+        return self._get_config().get("qtofficial", "associate_common_filetypes", fallback="Yes")
+
+    @property
+    def qt_installer_telemetry(self) -> str:
+        """Handle telemetry settings in Qt installer."""
+        return self._get_config().get("qtofficial", "telemetry", fallback="No")
+
+    @property
+    def qt_installer_unattended(self) -> bool:
+        """Control whether to use unattended installation flags."""
+        return self._get_config().getboolean("qtofficial", "unattended", fallback=True)
+
+    def qt_installer_cleanup(self) -> None:
+        """Clean tmp folder."""
+        for item in Path(self.qt_installer_temp_path).iterdir():
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
+
 
 Settings = SettingsClass()
 
@@ -476,3 +702,77 @@ def setup_logging(env_key="LOG_CFG"):
     if config is not None and os.path.exists(config):
         Settings.loggingconf = config
     logging.config.fileConfig(Settings.loggingconf)
+
+
+def safely_run(cmd: List[str], timeout: int) -> None:
+    try:
+        subprocess.run(cmd, shell=False, timeout=timeout)
+    except Exception:
+        raise
+
+
+def safely_run_save_output(cmd: List[str], timeout: int) -> Any:
+    try:
+        result = subprocess.run(cmd, shell=False, capture_output=True, text=True, timeout=timeout)
+        return result
+    except Exception:
+        raise
+
+
+def extract_auth(args: List[str]) -> Tuple[Union[str, None], Union[str, None], Union[List[str], None]]:
+    username = None
+    password = None
+    i = 0
+    while i < len(args):
+        if args[i] == "--email":
+            if i + 1 < len(args):
+                username = args[i + 1]
+                del args[i : i + 2]
+            else:
+                del args[i]
+            continue
+        elif args[i] == "--pw":
+            if i + 1 < len(args):
+                password = args[i + 1]
+                del args[i : i + 2]
+            else:
+                del args[i]
+            continue
+        i += 1
+    return username, password, args
+
+
+def download_installer(base_url: str, installer_filename: str, target_path: Path, timeout: Tuple[float, float]) -> None:
+    base_path = f"official_releases/online_installers/{installer_filename}"
+    url = f"{base_url}/{base_path}"
+    try:
+        hash = get_hash(base_path, Settings.hash_algorithm, timeout)
+        downloadBinaryFile(url, target_path, Settings.hash_algorithm, hash, timeout=timeout)
+    except Exception as e:
+        raise RuntimeError(f"Failed to download installer: {e}")
+
+
+def prepare_installer(installer_path: Path, os_name: str) -> Path:
+    """
+    Prepares the installer for execution. This may involve setting the correct permissions or
+    extracting the installer if it's packaged. Returns the path to the installer executable.
+    """
+    if os_name == "linux":
+        os.chmod(installer_path, 0o500)
+        return installer_path
+    elif os_name == "mac":
+        volume_path = Path(f"/Volumes/{str(uuid.uuid4())}")
+        subprocess.run(
+            ["hdiutil", "attach", str(installer_path), "-mountpoint", str(volume_path)],
+            stdout=subprocess.DEVNULL,
+            check=True,
+        )
+        try:
+            src_app_name = next(volume_path.glob("*.app")).name
+            dst_app_path = installer_path.with_suffix(".app")
+            shutil.copytree(volume_path / src_app_name, dst_app_path)
+        finally:
+            subprocess.run(["hdiutil", "detach", str(volume_path), "-force"], stdout=subprocess.DEVNULL, check=True)
+        return dst_app_path / "Contents" / "MacOS" / Path(src_app_name).stem
+    else:
+        return installer_path

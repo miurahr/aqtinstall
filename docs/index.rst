@@ -10,6 +10,8 @@ Contents:
    getting_started
    cli
    configuration
+   official
+   appendix
    CONTRIBUTE
    CODE_OF_CONDUCT
    SECURITY
@@ -23,4 +25,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

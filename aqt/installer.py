@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2021 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2025 Hiroshi Miura <miurahr@linux.com>
 # Copyright (C) 2020, Aurélien Gâteau
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -28,6 +28,7 @@ import multiprocessing
 import os
 import platform
 import posixpath
+import re
 import signal
 import subprocess
 import sys
@@ -41,7 +42,8 @@ from tempfile import TemporaryDirectory
 from typing import List, Optional, Tuple, cast
 
 import aqt
-from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, TargetConfig, ToolArchives
+from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
+from aqt.commercial import CommercialInstaller
 from aqt.exceptions import (
     AqtException,
     ArchiveChecksumError,
@@ -57,10 +59,16 @@ from aqt.exceptions import (
 from aqt.helper import (
     MyQueueListener,
     Settings,
+    download_installer,
     downloadBinaryFile,
+    extract_auth,
     get_hash,
+    get_os_name,
+    get_qt_installer_name,
+    prepare_installer,
     retry_on_bad_connection,
     retry_on_errors,
+    safely_run_save_output,
     setup_logging,
 )
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
@@ -109,7 +117,6 @@ class ListToolArgumentParser(ListArgumentParser):
 class CommonInstallArgParser(BaseArgumentParser):
     """Install-*/install common arguments"""
 
-    is_legacy: bool
     target: str
     host: str
 
@@ -120,14 +127,26 @@ class CommonInstallArgParser(BaseArgumentParser):
     internal: bool
     keep: bool
     archive_dest: Optional[str]
+    dry_run: bool
 
 
 class InstallArgParser(CommonInstallArgParser):
     """Install-qt arguments and options"""
 
+    override: Optional[List[str]]
     arch: Optional[str]
     qt_version: str
     qt_version_spec: str
+    version: Optional[str]
+    email: Optional[str]
+    pw: Optional[str]
+    operation_does_not_exist_error: str
+    overwrite_target_dir: str
+    stop_processes_for_updates: str
+    installation_error_with_cancel: str
+    installation_error_with_ignore: str
+    associate_common_filetypes: str
+    telemetry: str
 
     modules: Optional[List[str]]
     archives: Optional[List[str]]
@@ -150,7 +169,7 @@ class Cli:
 
     UNHANDLED_EXCEPTION_CODE = 254
 
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(
             prog="aqt",
             description="Another unofficial Qt Installer.\naqt helps you install Qt SDK, tools, examples and others\n",
@@ -167,8 +186,7 @@ class Cli:
             title="subcommands",
             description="aqt accepts several subcommands:\n"
             "install-* subcommands are commands that install components\n"
-            "list-* subcommands are commands that show available components\n\n"
-            "commands {install|tool|src|examples|doc} are deprecated and marked for removal\n",
+            "list-* subcommands are commands that show available components\n",
             help="Please refer to each help message by using '--help' with each subcommand",
         )
         self._make_all_parsers(subparsers)
@@ -317,14 +335,14 @@ class Cli:
         """Run install subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
-        if args.is_legacy:
-            self._warn_on_deprecated_command("install", "install-qt")
         target: str = args.target
         os_name: str = args.host
+        effective_os_name: str = Cli._get_effective_os_name(os_name)
         qt_version_or_spec: str = getattr(args, "qt_version", getattr(args, "qt_version_spec", ""))
         arch: str = self._set_arch(args.arch, os_name, target, qt_version_or_spec)
         keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
+        dry_run: bool = args.dry_run
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -350,6 +368,62 @@ class Cli:
         else:
             qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
+
+        if hasattr(args, "use_official_installer") and args.use_official_installer is not None:
+
+            if len(args.use_official_installer) not in [0, 2]:
+                raise CliInputError(
+                    "When providing arguments to --use-official-installer, exactly 2 arguments are required: "
+                    "--use-official-installer email password"
+                )
+
+            self.logger.info("Using official Qt installer")
+
+            commercial_args = InstallArgParser()
+
+            # Core parameters required by install-qt-official
+            commercial_args.target = args.target
+            commercial_args.arch = self._set_arch(
+                args.arch, args.host, args.target, getattr(args, "qt_version", getattr(args, "qt_version_spec", ""))
+            )
+
+            commercial_args.version = qt_version
+
+            email = None
+            password = None
+            if len(args.use_official_installer) == 2:
+                email, password = args.use_official_installer
+                self.logger.info("Using credentials provided with --use-official-installer")
+
+            # Optional parameters
+            commercial_args.email = email or getattr(args, "email", None)
+            commercial_args.pw = password or getattr(args, "pw", None)
+            commercial_args.outputdir = args.outputdir
+            commercial_args.modules = args.modules
+            commercial_args.base = getattr(args, "base", None)
+            commercial_args.dry_run = getattr(args, "dry_run", False)
+            commercial_args.override = None
+
+            ignored_options = []
+            if getattr(args, "noarchives", False):
+                ignored_options.append("--noarchives")
+            if getattr(args, "autodesktop", False):
+                ignored_options.append("--autodesktop")
+            if getattr(args, "archives", None):
+                ignored_options.append("--archives")
+            if getattr(args, "timeout", False):
+                ignored_options.append("--timeout")
+            if getattr(args, "keep", False):
+                ignored_options.append("--keep")
+            if getattr(args, "archive_dest", False):
+                ignored_options.append("--archive_dest")
+
+            if ignored_options:
+                self.logger.warning("Options ignored because you requested the official installer:")
+                self.logger.warning(", ".join(ignored_options))
+
+            return self.run_install_qt_commercial(commercial_args, print_version=False)
+
         archives = args.archives
         if args.noarchives:
             if modules is None:
@@ -364,23 +438,14 @@ class Cli:
         _version = Version(qt_version)
         base_path = Path(base_dir)
 
+        # Determine if 'all' extra modules should be included
+        all_extra = True if modules is not None and "all" in modules else False
+
         expect_desktop_archdir, autodesk_arch = self._get_autodesktop_dir_and_arch(
             should_autoinstall, os_name, target, base_path, _version, arch
         )
 
-        def get_auto_desktop_archives() -> List[QtPackage]:
-            def to_archives(baseurl: str) -> QtArchives:
-                return QtArchives(os_name, "desktop", qt_version, cast(str, autodesk_arch), base=baseurl, timeout=timeout)
-
-            if autodesk_arch is not None:
-                return cast(QtArchives, retry_on_bad_connection(to_archives, base)).archives
-            else:
-                return []
-
-        auto_desktop_archives: List[QtPackage] = get_auto_desktop_archives()
-
-        all_extra = True if modules is not None and "all" in modules else False
-
+        # Main installation
         qt_archives: QtArchives = retry_on_bad_connection(
             lambda base_url: QtArchives(
                 os_name,
@@ -396,28 +461,60 @@ class Cli:
             ),
             base,
         )
-        qt_archives.archives.extend(auto_desktop_archives)
+
         target_config = qt_archives.get_target_config()
+        target_config.os_name = effective_os_name
+
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-            run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+            run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=dry_run)
 
-        if not nopatch:
-            Updater.update(target_config, base_path, expect_desktop_archdir)
-            if autodesk_arch is not None:
-                d_target_config = TargetConfig(str(_version), "desktop", autodesk_arch, os_name)
-                Updater.update(d_target_config, base_path, expect_desktop_archdir)
-        self.logger.info("Finished installation")
-        self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
+            if dry_run:
+                return
+
+            if not nopatch:
+                Updater.update(target_config, base_path, expect_desktop_archdir)
+
+            # If autodesktop is enabled and we need a desktop installation, do it first
+            if should_autoinstall and autodesk_arch is not None:
+                is_wasm = arch.startswith("wasm")
+                is_msvc = "msvc" in arch
+                is_win_desktop_msvc_arm64 = (
+                    effective_os_name == "windows"
+                    and target == "desktop"
+                    and is_msvc
+                    and arch.endswith(("arm64", "arm64_cross_compiled"))
+                )
+                if is_win_desktop_msvc_arm64:
+                    qt_type = "MSVC Arm64"
+                elif is_wasm:
+                    qt_type = "Qt6-WASM"
+                else:
+                    qt_type = target
+
+                # Create new args for desktop installation
+                self.logger.info("")
+                self.logger.info(
+                    f"Autodesktop will now install {effective_os_name} desktop "
+                    f"{qt_version} {autodesk_arch} as required by {qt_type}"
+                )
+
+                desktop_args = args
+                args.autodesktop = False
+                args.host = effective_os_name
+                args.target = "desktop"
+                args.arch = autodesk_arch
+
+                # Run desktop installation first
+                self.run_install_qt(desktop_args)
+
+            else:
+                self.logger.info("Finished installation")
+                self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
         self.show_aqt_version()
-        if args.is_legacy:
-            if cmd_name is None:
-                self._warn_on_deprecated_command(old_name=flavor, new_name=f"install-{flavor}")
-            else:
-                self._warn_on_deprecated_command(old_name=cmd_name, new_name=f"install-{cmd_name}")
-        elif getattr(args, "target", None) is not None:
+        if getattr(args, "target", None) is not None:
             self._warn_on_deprecated_parameter("target", args.target)
         target = "desktop"  # The only valid target for src/doc/examples is "desktop"
         os_name = args.host
@@ -466,7 +563,9 @@ class Cli:
         )
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-            run_installer(srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+            run_installer(
+                srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=args.dry_run
+            )
         self.logger.info("Finished installation")
 
     def run_install_src(self, args):
@@ -504,11 +603,9 @@ class Cli:
         """Run tool subcommand"""
         start_time = time.perf_counter()
         self.show_aqt_version()
-        if args.is_legacy:
-            self._warn_on_deprecated_command("tool", "install-tool")
         tool_name = args.tool_name  # such as tools_openssl_x64
         os_name = args.host  # windows, linux and mac
-        target = "desktop" if args.is_legacy else args.target  # desktop, android and ios
+        target = args.target  # desktop, android and ios
         output_dir = args.outputdir
         if output_dir is None:
             base_dir = os.getcwd()
@@ -555,7 +652,7 @@ class Cli:
             )
             with TemporaryDirectory() as temp_dir:
                 _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-                run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest)
+                run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=args.dry_run)
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -642,6 +739,51 @@ class Cli:
         )
         show_list(meta)
 
+    def run_install_qt_commercial(self, args: InstallArgParser, print_version: Optional[bool] = True) -> None:
+        """Execute commercial Qt installation"""
+        if print_version:
+            self.show_aqt_version()
+
+        try:
+            if args.override:
+                username, password, override_args = extract_auth(args.override)
+                commercial_installer = CommercialInstaller(
+                    target="",  # Empty string as placeholder
+                    arch="",
+                    version=None,
+                    logger=self.logger,
+                    base_url=args.base if args.base is not None else Settings.baseurl,
+                    override=override_args,
+                    no_unattended=not Settings.qt_installer_unattended,
+                    username=username or args.email,
+                    password=password or args.pw,
+                    dry_run=args.dry_run,
+                )
+            else:
+                if not all([args.target, args.arch, args.version]):
+                    raise CliInputError("target, arch, and version are required")
+
+                commercial_installer = CommercialInstaller(
+                    target=args.target,
+                    arch=args.arch,
+                    version=args.version,
+                    username=args.email,
+                    password=args.pw,
+                    output_dir=args.outputdir,
+                    logger=self.logger,
+                    base_url=args.base if args.base is not None else Settings.baseurl,
+                    no_unattended=not Settings.qt_installer_unattended,
+                    modules=args.modules,
+                    dry_run=args.dry_run,
+                )
+
+            commercial_installer.install()
+            Settings.qt_installer_cleanup()
+        except Exception as e:
+            self.logger.error(f"Error installing official installer: {str(e)}")
+        finally:
+            self.logger.info("Done")
+
     def show_help(self, args=None):
         """Display help message"""
         self.parser.print_help()
@@ -652,14 +794,27 @@ class Cli:
         py_build = platform.python_compiler()
         return f"aqtinstall(aqt) v{aqt.__version__} on Python {py_version} [{py_impl} {py_build}]"
 
-    def show_aqt_version(self, args=None):
+    def show_aqt_version(self, args: Optional[list[str]] = None) -> None:
         """Display version information"""
         self.logger.info(self._format_aqt_version())
 
-    def _set_install_qt_parser(self, install_qt_parser, *, is_legacy: bool):
-        install_qt_parser.set_defaults(func=self.run_install_qt, is_legacy=is_legacy)
-        self._set_common_arguments(install_qt_parser, is_legacy=is_legacy)
-        self._set_common_options(install_qt_parser)
+    def _set_install_qt_parser(self, install_qt_parser):
+        install_qt_parser.set_defaults(func=self.run_install_qt)
+        install_qt_parser.add_argument(
+            "host",
+            choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"],
+            help="host os name",
+        )
+        install_qt_parser.add_argument(
+            "target",
+            choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
+            help="Target SDK",
+        )
+        install_qt_parser.add_argument(
+            "qt_version_spec",
+            metavar="(VERSION | SPECIFICATION)",
+            help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+        )
         install_qt_parser.add_argument(
             "arch",
             nargs="?",
@@ -679,8 +834,10 @@ class Cli:
             "\n                      win64_msvc2017_winrt_armv7"
             "\nandroid:              Qt 5.14:          android (optional)"
             "\n                      Qt 5.13 or below: android_x86_64, android_arm64_v8a"
-            "\n                                        android_x86, android_armv7",
+            "\n                                        android_x86, android_armv7"
+            "\nall_os/wasm:          wasm_singlethread, wasm_multithread",
         )
+        self._set_common_options(install_qt_parser)
         self._set_module_options(install_qt_parser)
         self._set_archive_options(install_qt_parser)
         install_qt_parser.add_argument(
@@ -695,24 +852,33 @@ class Cli:
             "required. When enabled, this option installs the required desktop version automatically. "
             "It has no effect when the desktop installation is not required.",
         )
-
-    def _set_install_tool_parser(self, install_tool_parser, *, is_legacy: bool):
-        install_tool_parser.set_defaults(func=self.run_install_tool, is_legacy=is_legacy)
-        install_tool_parser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+        install_qt_parser.add_argument(
+            "--use-official-installer",
+            nargs="*",
+            default=None,
+            metavar=("EMAIL", "PASSWORD"),
+            help="Use the official Qt installer for installation instead of the aqt downloader. "
+            "Can be used without arguments or with email and password: --use-official-installer email password. "
+            "This redirects to install-qt-official. "
+            "Arguments not compatible with the official installer will be ignored.",
         )
-        if not is_legacy:
-            install_tool_parser.add_argument(
-                "target",
-                default=None,
-                choices=["desktop", "winrt", "android", "ios"],
-                help="Target SDK.",
-            )
-        install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
-        if is_legacy:
-            install_tool_parser.add_argument("version", help="Version of tool variant")
 
-        tool_variant_opts = {} if is_legacy else {"nargs": "?", "default": None}
+    def _set_install_tool_parser(self, install_tool_parser):
+        install_tool_parser.set_defaults(func=self.run_install_tool)
+        install_tool_parser.add_argument(
+            "host",
+            choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"],
+            help="host os name",
+        )
+        install_tool_parser.add_argument(
+            "target",
+            default=None,
+            choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
+            help="Target SDK.",
+        )
+        install_tool_parser.add_argument("tool_name", help="Name of tool such as tools_ifw, tools_mingw")
+
+        tool_variant_opts = {"nargs": "?", "default": None}
         install_tool_parser.add_argument(
             "tool_variant",
             **tool_variant_opts,
@@ -720,6 +886,121 @@ class Cli:
             "Please use 'aqt list-tool' to list acceptable values for this parameter.",
         )
         self._set_common_options(install_tool_parser)
+
+    def _set_install_qt_commercial_parser(self, install_qt_commercial_parser: argparse.ArgumentParser) -> None:
+        install_qt_commercial_parser.set_defaults(func=self.run_install_qt_commercial)
+
+        # Create mutually exclusive group for override vs standard parameters
+        exclusive_group = install_qt_commercial_parser.add_mutually_exclusive_group()
+        exclusive_group.add_argument(
+            "--override",
+            nargs=argparse.REMAINDER,
+            help="Will ignore all other parameters and use everything after this parameter as "
+            "input for the official Qt installer",
+        )
+
+        # Make standard arguments optional when override is used by adding a custom action
+        class ConditionalRequiredAction(argparse.Action):
+            def __call__(self, parser, namespace, values, option_string=None) -> None:
+                if not hasattr(namespace, "override") or not namespace.override:
+                    setattr(namespace, self.dest, values)
+
+        install_qt_commercial_parser.add_argument(
+            "target",
+            nargs="?",
+            choices=["desktop", "android", "ios"],
+            help="Target platform",
+            action=ConditionalRequiredAction,
+        )
+        install_qt_commercial_parser.add_argument(
+            "arch", nargs="?", help="Target architecture", action=ConditionalRequiredAction
+        )
+        install_qt_commercial_parser.add_argument("version", nargs="?", help="Qt version", action=ConditionalRequiredAction)
+
+        install_qt_commercial_parser.add_argument(
+            "--email",
+            help="Qt account email",
+        )
+        install_qt_commercial_parser.add_argument(
+            "--pw",
+            help="Qt account password",
+        )
+        install_qt_commercial_parser.add_argument(
+            "-m",
+            "--modules",
+            nargs="*",
+            help="Add modules",
+        )
+        self._set_common_options(install_qt_commercial_parser)
+
+    def _set_list_qt_commercial_parser(self, list_qt_commercial_parser: argparse.ArgumentParser) -> None:
+        """Configure parser for list-qt-official command with flexible argument handling."""
+        list_qt_commercial_parser.set_defaults(func=self.run_list_qt_commercial)
+
+        list_qt_commercial_parser.add_argument(
+            "--email",
+            help="Qt account email",
+        )
+        list_qt_commercial_parser.add_argument(
+            "--pw",
+            help="Qt account password",
+        )
+
+        # Capture all remaining arguments as search terms
+        list_qt_commercial_parser.add_argument(
+            "search_terms",
+            nargs="*",  # Zero or more arguments
+            help="Search terms (all non-option arguments are treated as search terms)",
+        )
+
+    def run_list_qt_commercial(self, args) -> None:
+        """Execute Qt commercial package listing."""
+        self.show_aqt_version()
+
+        # Create temporary directory for installer
+        temp_dir = Settings.qt_installer_temp_path
+        temp_path = Path(temp_dir)
+        if not temp_path.exists():
+            temp_path.mkdir(parents=True, exist_ok=True)
+        else:
+            Settings.qt_installer_cleanup()
+
+        # Get installer based on OS
+        installer_filename = get_qt_installer_name()
+        installer_path = temp_path / installer_filename
+
+        try:
+            # Download installer
+            self.logger.info(f"Downloading Qt installer to {installer_path}")
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
+            download_installer(Settings.baseurl, installer_filename, installer_path, timeout)
+            installer_path = prepare_installer(installer_path, get_os_name())
+
+            # Build command
+            cmd = [str(installer_path), "--accept-licenses", "--accept-obligations", "--confirm-command"]
+
+            if args.email and args.pw:
+                cmd.extend(["--email", args.email, "--pw", args.pw])
+
+            cmd.append("search")
+
+            # Add all search terms if present
+            if args.search_terms:
+                cmd.extend(args.search_terms)
+
+            # Run search
+            output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
+
+            if output.stdout:
+                self.logger.info(output.stdout)
+                if output.stderr:
+                    for line in output.stderr.splitlines():
+                        self.logger.warning(line)
+
+        except Exception as e:
+            self.logger.error(f"Failed to list Qt official packages: {e}")
+        finally:
+            Settings.qt_installer_cleanup()
 
     def _warn_on_deprecated_command(self, old_name: str, new_name: str) -> None:
         self.logger.warning(
@@ -735,19 +1016,17 @@ class Cli:
         )
 
     def _make_all_parsers(self, subparsers: argparse._SubParsersAction) -> None:
-        deprecated_msg = "This command is deprecated and marked for removal in a future version of aqt."
+        """Creates all command parsers and adds them to the subparsers"""
 
-        def make_parser_it(cmd: str, desc: str, is_legacy: bool, set_parser_cmd, formatter_class):
-            description = f"{desc} {deprecated_msg}" if is_legacy else desc
+        def make_parser_it(cmd: str, desc: str, set_parser_cmd, formatter_class):
             kwargs = {"formatter_class": formatter_class} if formatter_class else {}
-            p = subparsers.add_parser(cmd, description=description, **kwargs)
-            set_parser_cmd(p, is_legacy=is_legacy)
+            p = subparsers.add_parser(cmd, description=desc, **kwargs)
+            set_parser_cmd(p)
 
-        def make_parser_sde(cmd: str, desc: str, is_legacy: bool, action, is_add_kde: bool, is_add_modules: bool = True):
-            description = f"{desc} {deprecated_msg}" if is_legacy else desc
-            parser = subparsers.add_parser(cmd, description=description)
-            parser.set_defaults(func=action, is_legacy=is_legacy)
-            self._set_common_arguments(parser, is_legacy=is_legacy, is_target_deprecated=True)
+        def make_parser_sde(cmd: str, desc: str, action, is_add_kde: bool, is_add_modules: bool = True):
+            parser = subparsers.add_parser(cmd, description=desc)
+            parser.set_defaults(func=action)
+            self._set_common_arguments(parser, is_target_deprecated=True)
             self._set_common_options(parser)
             if is_add_modules:
                 self._set_module_options(parser)
@@ -758,7 +1037,9 @@ class Cli:
         def make_parser_list_sde(cmd: str, desc: str, cmd_type: str):
             parser = subparsers.add_parser(cmd, description=desc)
             parser.add_argument(
-                "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+                "host",
+                choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"],
+                help="host os name",
             )
             parser.add_argument(
                 "qt_version_spec",
@@ -770,23 +1051,31 @@ class Cli:
             if cmd_type != "src":
                 parser.add_argument("-m", "--modules", action="store_true", help="Print list of available modules")
 
-        make_parser_it("install-qt", "Install Qt.", False, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
-        make_parser_it("install-tool", "Install tools.", False, self._set_install_tool_parser, None)
-        make_parser_sde("install-doc", "Install documentation.", False, self.run_install_doc, False)
-        make_parser_sde("install-example", "Install examples.", False, self.run_install_example, False)
-        make_parser_sde("install-src", "Install source.", False, self.run_install_src, True, is_add_modules=False)
+        # Create install command parsers
+        make_parser_it("install-qt", "Install Qt.", self._set_install_qt_parser, argparse.RawTextHelpFormatter)
+        make_parser_it("install-tool", "Install tools.", self._set_install_tool_parser, None)
+        make_parser_it(
+            "install-qt-official",
+            "Install Qt with official installer.",
+            self._set_install_qt_commercial_parser,
+            argparse.RawTextHelpFormatter,
+        )
+        make_parser_it(
+            "list-qt-official",
+            "Search packages using Qt official installer.",
+            self._set_list_qt_commercial_parser,
+            argparse.RawTextHelpFormatter,
+        )
+        make_parser_sde("install-doc", "Install documentation.", self.run_install_doc, False)
+        make_parser_sde("install-example", "Install examples.", self.run_install_example, False)
+        make_parser_sde("install-src", "Install source.", self.run_install_src, True, is_add_modules=False)
 
+        # Create list command parsers
         self._make_list_qt_parser(subparsers)
         self._make_list_tool_parser(subparsers)
         make_parser_list_sde("list-doc", "List documentation archives available (use with install-doc)", "doc")
         make_parser_list_sde("list-example", "List example archives available (use with install-example)", "examples")
         make_parser_list_sde("list-src", "List source archives available (use with install-src)", "src")
-
-        make_parser_it("install", "Install Qt.", True, self._set_install_qt_parser, argparse.RawTextHelpFormatter)
-        make_parser_it("tool", "Install tools.", True, self._set_install_tool_parser, None)
-        make_parser_sde("doc", "Install documentation.", True, self.run_install_doc, False)
-        make_parser_sde("examples", "Install examples.", True, self.run_install_example, False)
-        make_parser_sde("src", "Install source.", True, self.run_install_src, True)
 
         self._make_common_parsers(subparsers)
 
@@ -802,19 +1091,27 @@ class Cli:
             '$ aqt list-qt mac desktop --spec "5.9" --latest-version          # print latest Qt 5.9\n'
             "$ aqt list-qt mac desktop --modules 5.12.0 clang_64              # print modules for 5.12.0\n"
             "$ aqt list-qt mac desktop --spec 5.9 --modules latest clang_64   # print modules for latest 5.9\n"
-            "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for 5.9.9/mac/desktop\n"
-            "$ aqt list-qt mac desktop --arch latest                          # print architectures for the latest Qt 5\n"
-            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt installation\n"
-            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info module\n",
+            "$ aqt list-qt mac desktop --arch 5.9.9                           # print architectures for "
+            "5.9.9/mac/desktop\n"
+            "$ aqt list-qt mac desktop --arch latest                          # print architectures for the "
+            "latest Qt 5\n"
+            "$ aqt list-qt mac desktop --archives 5.9.0 clang_64              # list archives in base Qt "
+            "installation\n"
+            "$ aqt list-qt mac desktop --archives 5.14.0 clang_64 debug_info  # list archives in debug_info "
+            "module\n"
+            "$ aqt list-qt all_os wasm --arch 6.8.1                           # print architectures for Qt WASM "
+            "6.8.1\n",
         )
         list_parser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host",
+            choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"],
+            help="host os name",
         )
         list_parser.add_argument(
             "target",
             nargs="?",
             default=None,
-            choices=["desktop", "winrt", "android", "ios"],
+            choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
         list_parser.add_argument(
@@ -894,13 +1191,15 @@ class Cli:
             "$ aqt list-tool mac desktop ifw --long        # print tool variant names with metadata for QtIFW\n",
         )
         list_parser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host",
+            choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"],
+            help="host os name",
         )
         list_parser.add_argument(
             "target",
             nargs="?",
             default=None,
-            choices=["desktop", "winrt", "android", "ios"],
+            choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
             help="Target SDK. When omitted, this prints all the targets available for a host OS.",
         )
         list_parser.add_argument(
@@ -921,14 +1220,13 @@ class Cli:
         )
         list_parser.set_defaults(func=self.run_list_tool)
 
-    def _make_common_parsers(self, subparsers: argparse._SubParsersAction):
+    def _make_common_parsers(self, subparsers: argparse._SubParsersAction) -> None:
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
-        #
         version_parser = subparsers.add_parser("version")
         version_parser.set_defaults(func=self.show_aqt_version)
 
-    def _set_common_options(self, subparser):
+    def _set_common_options(self, subparser: argparse.ArgumentParser) -> None:
         subparser.add_argument(
             "-O",
             "--outputdir",
@@ -962,6 +1260,11 @@ class Cli:
             default=None,
             help="Set the destination path for downloaded archives (temp directory by default).",
         )
+        subparser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Print what would be downloaded and installed without actually doing it",
+        )
 
     def _set_module_options(self, subparser):
         subparser.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
@@ -974,33 +1277,34 @@ class Cli:
             "(Default: all archives).",
         )
 
-    def _set_common_arguments(self, subparser, *, is_legacy: bool, is_target_deprecated: bool = False):
+    def _set_common_arguments(self, subparser, *, is_target_deprecated: bool = False):
         """
-        Legacy commands require that the version comes before host and target.
-        Non-legacy commands require that the host and target are before the version.
         install-src/doc/example commands do not require a "target" argument anymore, as of 11/22/2021
         """
-        if is_legacy:
-            subparser.add_argument("qt_version", help='Qt version in the format of "5.X.Y"')
         subparser.add_argument(
-            "host", choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64"], help="host os name"
+            "host",
+            choices=["linux", "linux_arm64", "mac", "windows", "windows_arm64", "all_os"],
+            help="host os name",
         )
         if is_target_deprecated:
             subparser.add_argument(
                 "target",
-                choices=["desktop", "winrt", "android", "ios"],
+                choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
                 nargs="?",
                 help="Ignored. This parameter is deprecated and marked for removal in a future release. "
                 "It is present here for backwards compatibility.",
             )
         else:
-            subparser.add_argument("target", choices=["desktop", "winrt", "android", "ios"], help="target sdk")
-        if not is_legacy:
             subparser.add_argument(
-                "qt_version_spec",
-                metavar="(VERSION | SPECIFICATION)",
-                help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+                "target",
+                choices=["desktop", "winrt", "android", "ios", "wasm", "qt"],
+                help="target sdk",
             )
+        subparser.add_argument(
+            "qt_version_spec",
+            metavar="(VERSION | SPECIFICATION)",
+            help='Qt version in the format of "5.X.Y" or SimpleSpec like "5.X" or "<6.X"',
+        )
 
     def _setup_settings(self, args=None):
         # setup logging
@@ -1019,7 +1323,11 @@ class Cli:
 
     @staticmethod
     def _validate_version_str(
-        version_str: Optional[str], *, allow_latest: bool = False, allow_empty: bool = False, allow_minus: bool = False
+        version_str: Optional[str],
+        *,
+        allow_latest: bool = False,
+        allow_empty: bool = False,
+        allow_minus: bool = False,
     ) -> None:
         """
         Raise CliInputError if the version is not an acceptable Version.
@@ -1045,17 +1353,28 @@ class Cli:
             raise CliInputError(f"Invalid version: '{version_str}'! Please use the form '5.X.Y'.") from e
 
     def _get_autodesktop_dir_and_arch(
-        self, should_autoinstall: bool, host: str, target: str, base_path: Path, version: Version, arch: str
+        self,
+        should_autoinstall: bool,
+        host: str,
+        target: str,
+        base_path: Path,
+        version: Version,
+        arch: str,
     ) -> Tuple[Optional[str], Optional[str]]:
         """Returns expected_desktop_arch_dir, desktop_arch_to_install"""
         is_wasm = arch.startswith("wasm")
         is_msvc = "msvc" in arch
-        is_win_desktop_msvc_arm64 = host == "windows" and target == "desktop" and is_msvc and arch.endswith("arm64")
+        is_win_desktop_msvc_arm64 = (
+            host == "windows" and target == "desktop" and is_msvc and arch.endswith(("arm64", "arm64_cross_compiled"))
+        )
         if version < Version("6.0.0") or (
-            target not in ["ios", "android"] and not is_wasm and not is_win_desktop_msvc_arm64
+            target not in ["ios", "android", "wasm"] and not is_wasm and not is_win_desktop_msvc_arm64
         ):
             # We only need to worry about the desktop directory for Qt6 mobile or wasm installs.
             return None, None
+
+        # For WASM installations on all_os, we need to choose a default desktop host
+        host = Cli._get_effective_os_name(host)
 
         installed_desktop_arch_dir = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, version, is_msvc=is_msvc)
         if installed_desktop_arch_dir:
@@ -1063,7 +1382,16 @@ class Cli:
             self.logger.info(f"Found installed {host}-desktop Qt at {installed_desktop_arch_dir}")
             return installed_desktop_arch_dir.name, None
 
-        default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(version, is_msvc)
+        try:
+            default_desktop_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(
+                version, is_msvc
+            )
+        except ValueError as e:
+            if "Target 'desktop' is invalid" in str(e):
+                # Special case for all_os host which doesn't support desktop target
+                return None, None
+            raise
+
         desktop_arch_dir = QtRepoProperty.get_arch_dir_name(host, default_desktop_arch, version)
         expected_desktop_arch_path = base_path / dir_for_version(version) / desktop_arch_dir
 
@@ -1073,12 +1401,10 @@ class Cli:
             qt_type = "Qt6-WASM"
         else:
             qt_type = target
+
         if should_autoinstall:
             # No desktop Qt is installed, but the user has requested installation. Find out what to install.
-            self.logger.info(
-                f"You are installing the {qt_type} version of Qt, which requires that the desktop version of Qt "
-                f"is also installed. Now installing Qt: desktop {version} {default_desktop_arch}"
-            )
+            self.logger.info(f"You are installing the {qt_type} version of Qt")
             return expected_desktop_arch_path.name, default_desktop_arch
         else:
             self.logger.warning(
@@ -1088,13 +1414,51 @@ class Cli:
             )
             return expected_desktop_arch_path.name, None
 
+    @staticmethod
+    def _get_effective_os_name(host: str) -> str:
+        if host != "all_os":
+            return host
+        elif sys.platform.startswith("linux"):
+            return "linux"
+        elif sys.platform == "darwin":
+            return "mac"
+        else:
+            return "windows"
+
 
 def is_64bit() -> bool:
     """check if running platform is 64bit python."""
     return sys.maxsize > 1 << 32
 
 
-def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[str], keep: bool, archive_dest: Path):
+def run_installer(
+    archives: List[QtPackage],
+    base_dir: str,
+    sevenzip: Optional[str],
+    keep: bool,
+    archive_dest: Path,
+    dry_run: bool = False,
+):
+
+    if dry_run:
+        logger = getLogger("aqt.installer")
+        logger.info("DRY RUN: Would download and install the following:")
+        for arc in archives:
+            line_parts = [f"  - {arc.name}: {arc.archive_path}"]
+
+            if hasattr(arc, "package_desc") and arc.package_desc:
+                size_match = re.search(r"Size: ([^,]+)", arc.package_desc)
+                if size_match:
+                    line_parts.append(f" ({size_match.group(1)})")
+
+            if arc.archive_install_path and arc.archive_install_path.strip():
+                line_parts.append(f" -> {arc.archive_install_path}")
+
+            logger.info("".join(line_parts))
+
+        logger.info(f"Total packages: {len(archives)}")
+        return
+
     queue = multiprocessing.Manager().Queue(-1)
     listener = MyQueueListener(queue)
     listener.start()
@@ -1131,7 +1495,10 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
         if e.errno == errno.ENOSPC:
             raise OutOfDiskSpace(
                 "Insufficient disk space to complete installation.",
-                suggested_action=["Check available disk space.", "Check size requirements for installation."],
+                suggested_action=[
+                    "Check available disk space.",
+                    "Check size requirements for installation.",
+                ],
             ) from e
         else:
             raise
@@ -1148,7 +1515,10 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
             docs_url = "https://aqtinstall.readthedocs.io/en/stable/configuration.html#configuration"
             raise OutOfMemory(
                 "Out of memory when downloading and extracting archives in parallel.",
-                suggested_action=[f"Please reduce your 'concurrency' setting (see {docs_url})", alt_extractor_msg],
+                suggested_action=[
+                    f"Please reduce your 'concurrency' setting (see {docs_url})",
+                    alt_extractor_msg,
+                ],
             ) from e
         raise OutOfMemory(
             "Out of memory when downloading and extracting archives.",
@@ -1163,7 +1533,8 @@ def run_installer(archives: List[QtPackage], base_dir: str, sevenzip: Optional[s
         listener.stop()
 
 
-def init_worker_sh():
+def init_worker_sh() -> None:
+    """Initialize worker signal handling"""
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
@@ -1175,7 +1546,7 @@ def installer(
     archive_dest: Path,
     settings_ini: str,
     keep: bool,
-):
+) -> None:
     """
     Installer function to download archive files and extract it.
     It is called through multiprocessing.Pool()
@@ -1183,6 +1554,7 @@ def installer(
     name = qt_package.name
     base_url = qt_package.base_url
     archive: Path = archive_dest / qt_package.archive
+    base_dir = posixpath.join(base_dir, qt_package.archive_install_path)
     start_time = time.perf_counter()
     Settings.load_settings(file=settings_ini)
     # setup queue logger

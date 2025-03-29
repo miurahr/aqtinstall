@@ -27,7 +27,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-import patch
+import patch_ng as patch
 
 from aqt.archives import TargetConfig
 from aqt.exceptions import UpdaterError
@@ -47,7 +47,7 @@ def unpatched_paths() -> List[str]:
 
 
 class Updater:
-    def __init__(self, prefix: Path, logger):
+    def __init__(self, prefix: Path, logger) -> None:
         self.logger = logger
         self.prefix = prefix
         self.qmake_path: Optional[Path] = None
@@ -184,13 +184,22 @@ class Updater:
                 newpath=bytes(str(self.prefix), "UTF-8"),
             )
 
-    def patch_qmake_script(self, base_dir, qt_version: str, os_name: str, desktop_arch_dir: str):
+    def patch_qt_scripts(self, base_dir, version_dir: str, os_name: str, desktop_arch_dir: str, version: Version):
         sep = "\\" if os_name == "windows" else "/"
-        patched = sep.join([base_dir, qt_version, desktop_arch_dir, "bin"])
-        qmake_path = self.prefix / "bin" / ("qmake.bat" if os_name == "windows" else "qmake")
-        self.logger.info(f"Patching {qmake_path}")
-        for unpatched in unpatched_paths():
-            self._patch_textfile(qmake_path, f"{unpatched}bin", patched, is_executable=True)
+        patched = sep.join([base_dir, version_dir, desktop_arch_dir, "bin"])
+
+        def patch_script(script_name):
+            script_path = self.prefix / "bin" / (script_name + ".bat" if os_name == "windows" else script_name)
+            self.logger.info(f"Patching {script_path}")
+            for unpatched in unpatched_paths():
+                self._patch_textfile(script_path, f"{unpatched}bin", patched, is_executable=True)
+
+        patch_script("qmake")
+        if version >= Version("6.2.2"):
+            patch_script("qtpaths")
+        if version >= Version("6.5.0"):
+            patch_script("qmake6")
+            patch_script("qtpaths6")
 
     def patch_qtcore(self, target):
         """patch to QtCore"""
@@ -228,7 +237,7 @@ class Updater:
             f.write("echo Remember to call vcvarsall.bat to complete environment setup!\n")
 
     def set_license(self, base_dir: str, qt_version: str, arch_dir: str):
-        """Update qtconfig.pri as OpenSource"""
+        """Update qconfig.pri as OpenSource"""
         with open(os.path.join(base_dir, qt_version, arch_dir, "mkspecs", "qconfig.pri"), "r+") as f:
             lines = f.readlines()
             f.seek(0)
@@ -242,6 +251,7 @@ class Updater:
 
     def patch_target_qt_conf(self, base_dir: str, qt_version: str, arch_dir: str, os_name: str, desktop_arch_dir: str):
         target_qt_conf = self.prefix / "bin" / "target_qt.conf"
+        self.logger.info(f"Patching {target_qt_conf}")
         new_hostprefix = f"HostPrefix=../../{desktop_arch_dir}"
         new_targetprefix = "Prefix={}".format(str(Path(base_dir).joinpath(qt_version, arch_dir, "target")))
         new_hostdata = "HostData=../{}".format(arch_dir)
@@ -299,6 +309,7 @@ class Updater:
                 "android_x86",
                 "android_armv7",
                 "win64_msvc2019_arm64",
+                "win64_msvc2022_arm64_cross_compiled",
             ]:  # desktop version
                 updater.make_qtconf(base_dir, version_dir, arch_dir)
                 updater.patch_qmake()
@@ -326,7 +337,7 @@ class Updater:
                     meta = MetadataFactory(ArchiveId("qt", os_name, "desktop"))
                     desktop_arch_dir = meta.fetch_default_desktop_arch(version, is_msvc="msvc" in target.arch)
 
-                updater.patch_qmake_script(base_dir, version_dir, target.os_name, desktop_arch_dir)
+                updater.patch_qt_scripts(base_dir, version_dir, target.os_name, desktop_arch_dir, version)
                 updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name, desktop_arch_dir)
                 updater.patch_qdevice_file(base_dir, version_dir, arch_dir, target.os_name)
         except IOError as e:

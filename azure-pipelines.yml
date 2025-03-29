@@ -9,7 +9,7 @@ jobs:
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.12'
+        versionSpec: '3.13'
         addToPath: true
     - bash: python ci/generate_azure_pipelines_matrices.py
       name: mtrx
@@ -22,14 +22,14 @@ jobs:
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.mac'] ]
   steps:
-    - script: brew install p7zip
-      displayName: Install 7zip
-    - template: ci/steps.yml
+  - script: brew install p7zip
+    displayName: Install 7zip
+  - template: ci/steps.yml
 
 - job: Windows
   dependsOn: MatricesGenerator
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.windows'] ]
   variables:
@@ -37,7 +37,7 @@ jobs:
     startYear: $[format('{0:yyyy}', pipeline.startTime)]
     startMonth: $[format('{0:MM}', pipeline.startTime)]
   steps:
-    - template: ci/steps.yml
+  - template: ci/steps.yml
 
 - job: Linux
   dependsOn: MatricesGenerator
@@ -46,7 +46,7 @@ jobs:
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.linux'] ]
   steps:
-    - template: ci/steps.yml
+  - template: ci/steps.yml
 
 #- job: Linux_ARM64
 #  dependsOn: MatricesGenerator
