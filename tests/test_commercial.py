@@ -3,17 +3,15 @@ import shutil
 import sys
 from pathlib import Path
 from typing import Dict, List, Optional
-from urllib.parse import urlparse
 
 import pytest
 import requests
 
 from aqt.commercial import CommercialInstaller, QtPackageInfo, QtPackageManager
 from aqt.exceptions import DiskAccessNotPermitted
-from aqt.helper import Settings, download_installer, get_qt_account_path
+from aqt.helper import Settings, download_installer, get_os_name, get_qt_account_path, get_qt_installer_name
 from aqt.installer import Cli
 from aqt.metadata import Version
-from tests.test_helper import mocked_requests_get
 
 
 class CompletedProcess:
@@ -49,15 +47,6 @@ class MockResponse:
 
     def iter_content(self, chunk_size=None):
         yield self.content
-
-
-@pytest.fixture
-def mock_settings(monkeypatch):
-    """Setup test settings"""
-    # Instead of trying to set properties directly, we should mock the property getter
-    monkeypatch.setattr(Settings, "qt_installer_timeout", property(lambda self: 60))
-    monkeypatch.setattr(Settings, "qt_installer_cache_path", property(lambda self: str(Path.home() / ".qt" / "cache")))
-    monkeypatch.setattr(Settings, "qt_installer_temp_path", property(lambda self: str(Path.home() / ".qt" / "temp")))
 
 
 @pytest.fixture
@@ -206,23 +195,34 @@ def test_build_command(
     assert cmd == expected_cmd
 
 
-def test_commercial_installer_download_sha256(tmp_path, monkeypatch, commercial_installer):
-    """Test downloading of commercial installer"""
+@pytest.mark.enable_socket
+@pytest.mark.parametrize(
+    "os, osarch, expected_suffix",
+    [
+        pytest.param("windows", "windows", ".exe"),
+        pytest.param("windows", "windows-x64", ".exe"),
+        pytest.param("windows", "windows-arm64", ".exe"),
+        pytest.param("linux", "linux", ".run"),
+        pytest.param("linux", "linux-x64", ".run"),
+        pytest.param("linux", "linux-arm64", ".run"),
+        pytest.param("mac", "mac-x64", ".dmg"),
+    ],
+)
+def test_commercial_installer_names(monkeypatch, os, osarch, expected_suffix):
+    """Test installer names finder"""
 
-    def mock_getUrl(url, *args, **kwargs):
-        hash_filename = str(urlparse(url).path.split("/")[-1])
-        assert hash_filename.endswith(".sha256")
-        filename = hash_filename[: -len(".sha256")]
-        return f"07b3ef4606b712923a14816b1cfe9649687e617d030fc50f948920d784c0b1cd {filename}"
+    monkeypatch.setattr("aqt.helper.get_os_arch", lambda: osarch)
 
-    monkeypatch.setattr("aqt.helper.getUrl", mock_getUrl)
-    monkeypatch.setattr(requests.Session, "get", mocked_requests_get)
+    installer_name = get_qt_installer_name()
 
-    target_path = tmp_path / "qt-installer"
+    assert installer_name.endswith(expected_suffix)
 
-    timeout = (Settings.connection_timeout, Settings.response_timeout)
-    download_installer(commercial_installer.base_url, commercial_installer._installer_filename, target_path, timeout)
-    assert target_path.exists()
+    if os == get_os_name() and osarch in ["windows", "linux", "mac-x64"]:
+        target_path = Settings.qt_installer_temp_path / Path(installer_name)
+        base_url = Settings.baseurl
+        timeout = (Settings.connection_timeout, Settings.response_timeout)
+        download_installer(base_url, installer_name, target_path, timeout)
+        assert True
 
 
 @pytest.mark.parametrize(
@@ -275,6 +275,17 @@ def test_get_install_command(monkeypatch, modules: Optional[List[str]], expected
             "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
             "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
         ),
+        (
+            "install-qt linux desktop 6.8.1 {} --outputdir ./install-qt-flag --use-official-installer {} {}",
+            {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
+            ["./install-qt-official", "qt6", "681"],
+            "{} --email ******** --pw ******** --root {} "
+            "--accept-licenses --accept-obligations "
+            "--confirm-command "
+            "--auto-answer OperationDoesNotExistError=Ignore,OverwriteTargetDirectory=Yes,"
+            "stopProcessesForUpdates=Cancel,installationErrorWithCancel=Cancel,installationErrorWithIgnore=Ignore,"
+            "AssociateCommonFiletypes=Yes,telemetry-question=No install qt.{}.{}.{}",
+        ),
     ],
 )
 def test_install_qt_commercial(
@@ -301,7 +312,10 @@ def test_install_qt_commercial(
     password = TEST_PASSWORD
 
     formatted_cmd = cmd.format(arch, email, password)
-    formatted_expected = expected_command.format(current_platform, abs_out, *details[1:], arch)
+    if expected_command.startswith("install-qt-official"):
+        formatted_expected = expected_command.format(current_platform, abs_out, *details[1:], arch)
+    else:
+        formatted_expected = expected_command.format(get_qt_installer_name(), abs_out, *details[1:], arch)
 
     cli = Cli()
     cli._setup_settings()
@@ -330,7 +344,7 @@ def test_install_qt_commercial(
     else:
         cli.run(new_cmd.split())
 
-    def modify_qt_config(content):
+    def modify_qt_config(content, endwith):
         """
         Takes content of INI file as string and returns modified content
         """
@@ -339,12 +353,12 @@ def test_install_qt_commercial(
         modified = []
 
         for line in lines:
-            # Check if we're entering qtofficial section
             if line.strip() == "[qtofficial]":
                 in_qt_commercial = True
 
-            # If in qtofficial section, look for the target line
-            if in_qt_commercial and "overwrite_target_directory : No" in line:
+            if endwith is not None and endwith in ["Yes", "No"] and "overwrite_target_directory : " in line:
+                line = f"overwrite_target_directory : {endwith}"
+            elif in_qt_commercial and "overwrite_target_directory : No" in line:
                 line = "overwrite_target_directory : Yes"
             elif in_qt_commercial and "overwrite_target_directory : Yes" in line:
                 line = "overwrite_target_directory : No"
@@ -359,7 +373,10 @@ def test_install_qt_commercial(
     with open(config_path, "r") as f:
         content = f.read()
 
-    modified_content = modify_qt_config(content)
+    if expected_command.startswith("install-qt-official"):
+        modified_content = modify_qt_config(content, None)
+    else:
+        modified_content = modify_qt_config(content, "No")
 
     with open(config_path, "w") as f:
         f.write(modified_content)

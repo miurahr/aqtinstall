@@ -368,6 +368,62 @@ class Cli:
         else:
             qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
+
+        if hasattr(args, "use_official_installer") and args.use_official_installer is not None:
+
+            if len(args.use_official_installer) not in [0, 2]:
+                raise CliInputError(
+                    "When providing arguments to --use-official-installer, exactly 2 arguments are required: "
+                    "--use-official-installer email password"
+                )
+
+            self.logger.info("Using official Qt installer")
+
+            commercial_args = InstallArgParser()
+
+            # Core parameters required by install-qt-official
+            commercial_args.target = args.target
+            commercial_args.arch = self._set_arch(
+                args.arch, args.host, args.target, getattr(args, "qt_version", getattr(args, "qt_version_spec", ""))
+            )
+
+            commercial_args.version = qt_version
+
+            email = None
+            password = None
+            if len(args.use_official_installer) == 2:
+                email, password = args.use_official_installer
+                self.logger.info("Using credentials provided with --use-official-installer")
+
+            # Optional parameters
+            commercial_args.email = email or getattr(args, "email", None)
+            commercial_args.pw = password or getattr(args, "pw", None)
+            commercial_args.outputdir = args.outputdir
+            commercial_args.modules = args.modules
+            commercial_args.base = getattr(args, "base", None)
+            commercial_args.dry_run = getattr(args, "dry_run", False)
+            commercial_args.override = None
+
+            ignored_options = []
+            if getattr(args, "noarchives", False):
+                ignored_options.append("--noarchives")
+            if getattr(args, "autodesktop", False):
+                ignored_options.append("--autodesktop")
+            if getattr(args, "archives", None):
+                ignored_options.append("--archives")
+            if getattr(args, "timeout", False):
+                ignored_options.append("--timeout")
+            if getattr(args, "keep", False):
+                ignored_options.append("--keep")
+            if getattr(args, "archive_dest", False):
+                ignored_options.append("--archive_dest")
+
+            if ignored_options:
+                self.logger.warning("Options ignored because you requested the official installer:")
+                self.logger.warning(", ".join(ignored_options))
+
+            return self.run_install_qt_commercial(commercial_args, print_version=False)
+
         archives = args.archives
         if args.noarchives:
             if modules is None:
@@ -683,9 +739,10 @@ class Cli:
         )
         show_list(meta)
 
-    def run_install_qt_commercial(self, args: InstallArgParser) -> None:
+    def run_install_qt_commercial(self, args: InstallArgParser, print_version: Optional[bool] = True) -> None:
         """Execute commercial Qt installation"""
-        self.show_aqt_version()
+        if print_version:
+            self.show_aqt_version()
 
         try:
             if args.override:
@@ -700,6 +757,7 @@ class Cli:
                     no_unattended=not Settings.qt_installer_unattended,
                     username=username or args.email,
                     password=password or args.pw,
+                    dry_run=args.dry_run,
                 )
             else:
                 if not all([args.target, args.arch, args.version]):
@@ -716,12 +774,13 @@ class Cli:
                     base_url=args.base if args.base is not None else Settings.baseurl,
                     no_unattended=not Settings.qt_installer_unattended,
                     modules=args.modules,
+                    dry_run=args.dry_run,
                 )
 
             commercial_installer.install()
             Settings.qt_installer_cleanup()
         except Exception as e:
-            self.logger.error(f"Error installing official installer {str(e)}")
+            self.logger.error(f"Error installing official installer: {str(e)}")
         finally:
             self.logger.info("Done")
 
@@ -792,6 +851,16 @@ class Cli:
             help="For Qt6 android, ios, wasm, and msvc_arm64 installations, an additional desktop Qt installation is "
             "required. When enabled, this option installs the required desktop version automatically. "
             "It has no effect when the desktop installation is not required.",
+        )
+        install_qt_parser.add_argument(
+            "--use-official-installer",
+            nargs="*",
+            default=None,
+            metavar=("EMAIL", "PASSWORD"),
+            help="Use the official Qt installer for installation instead of the aqt downloader. "
+            "Can be used without arguments or with email and password: --use-official-installer email password. "
+            "This redirects to install-qt-official. "
+            "Arguments not compatible with the official installer will be ignored.",
         )
 
     def _set_install_tool_parser(self, install_tool_parser):
@@ -889,14 +958,12 @@ class Cli:
         self.show_aqt_version()
 
         # Create temporary directory for installer
-        import shutil
-        from pathlib import Path
-
         temp_dir = Settings.qt_installer_temp_path
         temp_path = Path(temp_dir)
-        if temp_path.exists():
-            shutil.rmtree(temp_dir)
-        temp_path.mkdir(parents=True, exist_ok=True)
+        if not temp_path.exists():
+            temp_path.mkdir(parents=True, exist_ok=True)
+        else:
+            Settings.qt_installer_cleanup()
 
         # Get installer based on OS
         installer_filename = get_qt_installer_name()
