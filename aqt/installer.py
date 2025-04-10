@@ -369,6 +369,9 @@ class Cli:
             qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
 
+        if qt_version != qt_version_or_spec:
+            arch = self._set_arch(args.arch, os_name, target, qt_version)
+
         if hasattr(args, "use_official_installer") and args.use_official_installer is not None:
 
             if len(args.use_official_installer) not in [0, 2]:
@@ -818,10 +821,11 @@ class Cli:
         install_qt_parser.add_argument(
             "arch",
             nargs="?",
-            help="\ntarget linux/desktop: gcc_64, wasm_32"
+            help="\ntarget linux/desktop: linux_gcc_64, gcc_64, wasm_32"
             "\ntarget mac/desktop:   clang_64, wasm_32"
             "\ntarget mac/ios:       ios"
-            "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
+            "\nwindows/desktop:      win64_msvc2022_64"
+            "\n                      win64_msvc2019_64, win32_msvc2019"
             "\n                      win64_msvc2017_64, win32_msvc2017"
             "\n                      win64_msvc2015_64, win32_msvc2015"
             "\n                      win64_mingw81, win32_mingw81"

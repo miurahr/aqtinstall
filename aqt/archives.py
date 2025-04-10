@@ -517,7 +517,10 @@ class QtArchives:
             self._parse_update_xml(update_xml.target_folder, update_xml.xml_text, target_packages)
         # if we have located every requested package, then target_packages will be empty
         if not self.all_extra and len(target_packages) > 0:
-            message = f"The packages {target_packages} were not found while parsing XML of package information!"
+            message = f"The packages {target_packages} were not found while parsing XML of package information! {
+                self.target} {
+                self.arch} {
+                self.version}"
             raise NoPackageFound(message, suggested_action=self.help_msg(list(target_packages.get_modules())))
 
     def _append_tool_update(self, os_target_folder, update_xml, target, tool_version_str):
