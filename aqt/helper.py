@@ -149,6 +149,7 @@ def get_qt_installer_name() -> str:
     installer_dict = get_qt_installers()
     
     # If mac-arm64 is missing but mac-x64 exists, use that
+    os_arch = get_os_arch()
     if os_arch == "mac-arm64" and os_arch not in installer_dict:
         fallback = "mac-x64"
         if fallback in installer_dict:
