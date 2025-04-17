@@ -463,8 +463,10 @@ are described here:
 .. option:: --UNSAFE-ignore-hash
 
     UNSAFE, use at your own risk.
-    Equivalent to ``INSECURE_NOT_FOR_PRODUCTION_ignore_hash: True`` in ``aqt/settings.ini`` from the CLI.
-    It does not edit the config file and affects only the current session. It prints warnings.
+    This disables the hash check of downloaded files from your mirror against the official hashes.
+    Equivalent to setting ``INSECURE_NOT_FOR_PRODUCTION_ignore_hash: True`` in ``aqt/settings.ini`` when using the CLI.
+    It does not edit the configuration file and only affects the current session. It will print warnings.
+    Useful if the Qt official mirror is down and you trust a third-party mirror.
 
 
 .. _install archives flag:
