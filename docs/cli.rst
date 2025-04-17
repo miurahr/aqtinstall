@@ -47,7 +47,8 @@ list-qt command
                  --long-modules (<Qt version> | latest) <architecture> |
                  --arch         (<Qt version> | latest) |
                  --archives     (<Qt version> | latest) architecture [modules...]
-                 --latest-version]
+                 --latest-version
+                 --use-official-installer [<email> <password>]]
                 <host> [<target>]
 
 List available versions of Qt, targets, modules, and architectures.
@@ -162,6 +163,17 @@ List available versions of Qt, targets, modules, and architectures.
 
     Print only the newest version available
     May be combined with the ``--spec`` flag.
+
+.. option:: --use-official-installer [email password]
+
+    Use the official Qt installer instead of the AQT approach. This option simply 
+    forwards your search terms to the official Qt installer. 
+
+    If you are already signed in and have a valid ``qtaccount.ini`` for the current 
+    user, you can use this option without parameters. Otherwise, you must provide 
+    an email and password to authenticate.
+
+    See :ref:`the official installer section<official>` for more details.
 
 
 .. _list-src command:
