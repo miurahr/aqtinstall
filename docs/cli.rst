@@ -460,6 +460,11 @@ are described here:
 
         aqt install-* <host> <target> <Qt version> <arch> -m all
 
+.. option:: --UNSAFE-ignore-hash
+
+    Equivalent to `INSECURE_NOT_FOR_PRODUCTION_ignore_hash: True` in `aqt/settings.ini` from the CLI.
+    It does not edit the config file and affects only the current session. It prints warnings.
+
 
 .. _install archives flag:
 .. option:: --archives <list of archives>
