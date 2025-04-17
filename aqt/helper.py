@@ -147,13 +147,16 @@ def get_qt_installers() -> dict[str, str]:
 
 def get_qt_installer_name() -> str:
     installer_dict = get_qt_installers()
-    
-    # If mac-arm64 is missing but mac-x64 exists, use that
     os_arch = get_os_arch()
+    
     if os_arch == "mac-arm64" and os_arch not in installer_dict:
         fallback = "mac-x64"
         if fallback in installer_dict:
+            print("Warning: Falling back to mac-x64 installer for mac-arm64 platform.")
             return installer_dict[fallback]
+
+    if os_arch not in installer_dict:
+        raise RuntimeError(f"No installer found for platform: {os_arch}")
             
     return installer_dict[get_os_arch()]
 
