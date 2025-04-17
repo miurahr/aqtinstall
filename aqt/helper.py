@@ -467,12 +467,14 @@ class SettingsClass:
         "config": None,
         "configfile": None,
         "loggingconf": None,
+        "_ignore_hash_override": None,
         "_lock": Lock(),
     }
 
     def __init__(self) -> None:
         self.config: Optional[ConfigParser]
         self._lock: Lock
+        self._ignore_hash_override: Optional[bool] = None
         self._initialize()
 
     def __new__(cls, *p, **k):
@@ -505,6 +507,10 @@ class SettingsClass:
         self._initialize()
         assert self.config is not None
         return self.config
+
+    def set_ignore_hash_for_session(self, value: bool) -> None:
+        """Override the INSECURE_NOT_FOR_PRODUCTION_ignore_hash setting for the current session without modifying config."""
+        self._ignore_hash_override = value
 
     def load_settings(self, file: Optional[Union[str, TextIO]] = None) -> None:
         if self.config is None:
@@ -604,6 +610,8 @@ class SettingsClass:
 
     @property
     def ignore_hash(self):
+        if self._ignore_hash_override is not None:
+            return self._ignore_hash_override
         return self.config.getboolean("requests", "INSECURE_NOT_FOR_PRODUCTION_ignore_hash", fallback=False)
 
     @property

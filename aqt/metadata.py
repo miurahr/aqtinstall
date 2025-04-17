@@ -237,6 +237,8 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
         return Version(major=int(qt_ver[0]), minor=int(qt_ver[1]), patch=int(qt_ver[2]))
     elif len(qt_ver) == 2:
         return Version(major=int(qt_ver[0]), minor=int(qt_ver[1]), patch=0)
+    elif len(qt_ver) == 1:
+        return Version(major=int(qt_ver[0]), minor=0, patch=0)
 
     raise ValueError("Invalid version string '{}'".format(qt_ver))
 
@@ -250,7 +252,7 @@ class ArchiveId:
         "mac": ["android", "desktop", "ios"],
         "linux": ["android", "desktop"],
         "linux_arm64": ["desktop"],
-        "all_os": ["wasm", "qt"],
+        "all_os": ["wasm", "qt", "android"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
     ALL_EXTENSIONS = {
@@ -787,6 +789,7 @@ class MetadataFactory:
         )
         versions = sorted([ver for ver, ext in versions_extensions if ver is not None and filter_by(ver, ext)])
         grouped = cast(Iterable[Tuple[int, Iterable[Version]]], itertools.groupby(versions, lambda version: version.minor))
+
         return Versions(grouped)
 
     def fetch_latest_version(self, ext: str) -> Optional[Version]:

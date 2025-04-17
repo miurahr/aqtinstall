@@ -1269,6 +1269,11 @@ class Cli:
             action="store_true",
             help="Print what would be downloaded and installed without actually doing it",
         )
+        subparser.add_argument(
+            "--UNSAFE-ignore-hash",
+            action="store_true",
+            help="UNSAFE: Skip hash verification of downloaded files. Use at your own risk.",
+        )
 
     def _set_module_options(self, subparser):
         subparser.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
@@ -1324,6 +1329,22 @@ class Cli:
                 self.logger.debug("Load configuration from {}".format(config))
             else:
                 Settings.load_settings()
+
+        # Set ignore_hash to True if --UNSAFE-ignore-hash flag was passed
+        if args is not None and hasattr(args, "UNSAFE_ignore_hash") and args.UNSAFE_ignore_hash:
+            self.logger.warning(
+                "************************************************************************************************"
+            )
+            self.logger.warning(
+                "Hash verification is disabled. This is UNSAFE and may allow malicious files to be downloaded."
+            )
+            self.logger.warning(
+                "If your install mirror hosts malicious files, you won't be able to know. Use at your own risk."
+            )
+            self.logger.warning(
+                "************************************************************************************************"
+            )
+            Settings.set_ignore_hash_for_session(True)
 
     @staticmethod
     def _validate_version_str(
