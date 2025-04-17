@@ -464,7 +464,7 @@ are described here:
 
     UNSAFE, use at your own risk.
     This disables the hash check of downloaded files from your mirror against the official hashes.
-    Equivalent to setting ``INSECURE_NOT_FOR_PRODUCTION_ignore_hash: True`` in ``aqt/settings.ini`` when using the CLI.
+    Equivalent to setting ``INSECURE_NOT_FOR_PRODUCTION_ignore_hash: True`` in ``aqt/settings.ini``.
     It does not edit the configuration file and only affects the current session. It will print warnings.
     Useful if the Qt official mirror is down and you trust a third-party mirror.
 
