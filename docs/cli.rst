@@ -462,7 +462,8 @@ are described here:
 
 .. option:: --UNSAFE-ignore-hash
 
-    Equivalent to `INSECURE_NOT_FOR_PRODUCTION_ignore_hash: True` in `aqt/settings.ini` from the CLI.
+    UNSAFE, use at your own risk.
+    Equivalent to ``INSECURE_NOT_FOR_PRODUCTION_ignore_hash: True`` in ``aqt/settings.ini`` from the CLI.
     It does not edit the config file and affects only the current session. It prints warnings.
 
 
