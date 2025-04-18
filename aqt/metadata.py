@@ -237,8 +237,6 @@ def get_semantic_version(qt_ver: str, is_preview: bool) -> Optional[Version]:
         return Version(major=int(qt_ver[0]), minor=int(qt_ver[1]), patch=int(qt_ver[2]))
     elif len(qt_ver) == 2:
         return Version(major=int(qt_ver[0]), minor=int(qt_ver[1]), patch=0)
-    elif len(qt_ver) == 1:
-        return Version(major=int(qt_ver[0]), minor=0, patch=0)
 
     raise ValueError("Invalid version string '{}'".format(qt_ver))
 
@@ -915,9 +913,32 @@ class MetadataFactory:
 
     def get_versions_extensions(self, html_doc: str, category: str) -> Iterator[Tuple[Optional[Version], str]]:
         def folder_to_version_extension(folder: str) -> Tuple[Optional[Version], str]:
-            components = folder.split("_", maxsplit=2)
-            ext = "" if len(components) < 3 else components[2]
-            ver = "" if len(components) < 2 else components[1]
+
+            ext = ""
+            ver = ""
+
+            # Special case for Qt6.7 unique format
+            if folder.startswith("qt6_7_"):
+                # Split the input into version and extension parts
+                # For qt6_7_3_arm64_v8a, we want to extract "6_7_3" and "arm64_v8a"
+                # Should not be more than qt6_7_3_backup (extension should not have _, but you know...)
+
+                # Remove the "qt" prefix first
+                remainder = folder[2:]
+
+                # Split the first 3 parts for the version (6_7_3)
+                version_parts = remainder.split("_", 3)[:3]
+                ver = "_".join(version_parts)
+
+                # Everything after version is the extension
+                if len(remainder.split("_", 3)) > 3:
+                    ext = remainder.split("_", 3)[3]
+                else:
+                    ext = ""
+            else:
+                components = folder.split("_", maxsplit=2)
+                ext = "" if len(components) < 3 else components[2]
+                ver = "" if len(components) < 2 else components[1]
             return (
                 get_semantic_version(qt_ver=ver, is_preview="preview" in ext),
                 ext,
