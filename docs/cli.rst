@@ -47,8 +47,8 @@ list-qt command
                  --long-modules (<Qt version> | latest) <architecture> |
                  --arch         (<Qt version> | latest) |
                  --archives     (<Qt version> | latest) architecture [modules...]
-                 --latest-version
-                 --use-official-installer [<email> <password>]]
+                 --latest-version]
+                [--use-official-installer [<email> <password>]]
                 <host> [<target>]
 
 List available versions of Qt, targets, modules, and architectures.
@@ -168,6 +168,10 @@ List available versions of Qt, targets, modules, and architectures.
 
     Use the official Qt installer instead of the AQT approach. This option simply 
     forwards your search terms to the official Qt installer. 
+    Will use current OS as ``host`` (but the ``host`` value passed must still be provided and valid). 
+    Will use target as research term, along with eventual arch, using the following regex: 
+    ``^.*{re.escape(version_str)}\.{re.escape(target_str)}.*$``. 
+    It will list all the arguments ignored. 
 
     If you are already signed in and have a valid ``qtaccount.ini`` for the current 
     user, you can use this option without parameters. Otherwise, you must provide 
@@ -907,6 +911,13 @@ Example: Install commercial version 6.5.5 of Qt6 on Windows
 .. code-block:: console
 
     aqt install-qt windows desktop 6.5.5 win64_msvc2019_64 --use-official-installer 'email@gmail.com' 'password'
+
+
+Example: List commercial packages of Android for version 6.8.3 of Qt6 on current OS
+
+.. code-block:: console
+
+    aqt list-qt linux android --arch 6.8.3 --use-official-installer 'email@gmail.com' 'password'
 
 
 Example: List available versions of Qt on Linux
