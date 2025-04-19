@@ -1016,7 +1016,7 @@ class Cli:
             help="Search terms (all non-option arguments are treated as search terms)",
         )
 
-    def run_list_qt_commercial(self, args: ListArgumentParser, print_version: bool = True) -> None:
+    def run_list_qt_commercial(self, args: ListArgumentParser, print_version: Optional[bool] = True) -> None:
         """Execute Qt commercial package listing."""
         if print_version:
             self.show_aqt_version()
