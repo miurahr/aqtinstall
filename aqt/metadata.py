@@ -782,7 +782,7 @@ class MetadataFactory:
         def match_any_ext(ver: Version) -> bool:
             return (
                 self.archive_id.host == "all_os"
-                and self.archive_id.target in {"wasm", "android"}
+                and self.archive_id.target in ArchiveId.TARGETS_FOR_HOST["all_os"]
                 and ver in SimpleSpec("6.7.*")
             )
 
