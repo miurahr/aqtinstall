@@ -779,13 +779,20 @@ class MetadataFactory:
         return arches
 
     def fetch_versions(self, extension: str = "") -> Versions:
+        def match_any_ext(ver: Version) -> bool:
+            return (
+                self.archive_id.host == "all_os"
+                and self.archive_id.target in {"wasm", "android"}
+                and ver in SimpleSpec("6.7.*")
+            )
+
         def filter_by(ver: Version, ext: str) -> bool:
-            return (self.spec is None or ver in self.spec) and ext == extension
+            return (self.spec is None or ver in self.spec) and (ext == extension or match_any_ext(ver))
 
         versions_extensions = self.get_versions_extensions(
             self.fetch_http(self.archive_id.to_url(), False), self.archive_id.category
         )
-        versions = sorted([ver for ver, ext in versions_extensions if ver is not None and filter_by(ver, ext)])
+        versions = sorted({ver for ver, ext in versions_extensions if ver is not None and filter_by(ver, ext)})
         grouped = cast(Iterable[Tuple[int, Iterable[Version]]], itertools.groupby(versions, lambda version: version.minor))
 
         return Versions(grouped)
