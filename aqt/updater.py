@@ -185,11 +185,11 @@ class Updater:
             )
 
     def patch_qt_scripts(self, base_dir, version_dir: str, os_name: str, desktop_arch_dir: str, version: Version):
-        sep = "\\" if os_name == "windows" else "/"
+        sep = "\\" if os_name.startswith("windows") else "/"
         patched = sep.join([base_dir, version_dir, desktop_arch_dir, "bin"])
 
         def patch_script(script_name):
-            script_path = self.prefix / "bin" / (script_name + ".bat" if os_name == "windows" else script_name)
+            script_path = self.prefix / "bin" / (script_name + ".bat" if os_name.startswith("windows") else script_name)
             self.logger.info(f"Patching {script_path}")
             for unpatched in unpatched_paths():
                 self._patch_textfile(script_path, f"{unpatched}bin", patched, is_executable=True)
@@ -209,7 +209,7 @@ class Updater:
         elif target.os_name == "linux":
             lib_dir = self.prefix.joinpath("lib")
             components = ["libQt5Core.so"]
-        elif target.os_name == "windows":
+        elif target.os_name.startswith("windows"):
             lib_dir = self.prefix.joinpath("bin")
             components = ["Qt5Cored.dll", "Qt5Core.dll"]
         else:
@@ -255,7 +255,7 @@ class Updater:
         new_hostprefix = f"HostPrefix=../../{desktop_arch_dir}"
         new_targetprefix = "Prefix={}".format(str(Path(base_dir).joinpath(qt_version, arch_dir, "target")))
         new_hostdata = "HostData=../{}".format(arch_dir)
-        new_host_lib_execs = "./bin" if os_name == "windows" else "./libexec"
+        new_host_lib_execs = "./bin" if os_name.startswith("windows") else "./libexec"
         old_host_lib_execs = re.compile(r"^HostLibraryExecutables=[^\n]*$", flags=re.MULTILINE)
 
         self._patch_textfile(target_qt_conf, old_host_lib_execs, f"HostLibraryExecutables={new_host_lib_execs}")
@@ -321,7 +321,7 @@ class Updater:
                     updater.patch_pkgconfig("/Users/qt/work/install", target.os_name)
                     updater.patch_libtool("/Users/qt/work/install/lib", target.os_name)
                     updater.patch_prl("/Users/qt/work/install/lib")
-                elif target.os_name == "windows":
+                elif target.os_name.startswith("windows"):
                     updater.patch_pkgconfig("c:/Users/qt/work/install", target.os_name)
                     updater.patch_prl("c:/Users/qt/work/install/lib")
                     updater.make_qtenv2(base_dir, version_dir, arch_dir)
