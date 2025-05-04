@@ -105,6 +105,9 @@ class ListArgumentParser(BaseArgumentParser):
     qt_version_spec: str
     spec: str
     target: str
+    email: Optional[str]
+    pw: Optional[str]
+    search_terms: Optional[str]
 
 
 class ListToolArgumentParser(ListArgumentParser):
@@ -368,6 +371,9 @@ class Cli:
         else:
             qt_version = args.qt_version
             Cli._validate_version_str(qt_version)
+
+        if qt_version != qt_version_or_spec:
+            arch = self._set_arch(args.arch, os_name, target, qt_version)
 
         if hasattr(args, "use_official_installer") and args.use_official_installer is not None:
 
@@ -659,6 +665,62 @@ class Cli:
     def run_list_qt(self, args: ListArgumentParser):
         """Print versions of Qt, extensions, modules, architectures"""
 
+        if hasattr(args, "use_official_installer") and args.use_official_installer is not None:
+
+            if len(args.use_official_installer) not in [0, 2]:
+                raise CliInputError(
+                    "When providing arguments to --use-official-installer, exactly 2 arguments are required: "
+                    "--use-official-installer email password"
+                )
+
+            self.logger.info("Using official Qt installer for search")
+
+            commercial_search_args = ListArgumentParser()
+
+            email = None
+            password = None
+            if len(args.use_official_installer) == 2:
+                email, password = args.use_official_installer
+                self.logger.info("Using credentials provided with --use-official-installer")
+
+            commercial_search_args.email = email or getattr(args, "email", None)
+            commercial_search_args.pw = password or getattr(args, "pw", None)
+
+            target_str = ""
+            version_str = ""
+            if hasattr(args, "target") and args.target is not None:
+                target_str = args.target
+            if hasattr(args, "arch") and args.arch is not None:
+                try:
+                    version = Version(args.arch)
+                    version_str = f"{version.major}{version.minor}{version.patch}"
+                except Exception as e:
+                    self.logger.warning(f"{e}. Ignoring 'arch' value")
+
+            commercial_search_args.search_terms = [rf"^.*{re.escape(version_str)}\.{re.escape(target_str)}.*$"]
+
+            ignored_options = []
+            if getattr(args, "extensions", False):
+                ignored_options.append("--extensions")
+            if getattr(args, "extension", False):
+                ignored_options.append("--extension")
+            if getattr(args, "modules", None):
+                ignored_options.append("--modules")
+            if getattr(args, "long_modules", False):
+                ignored_options.append("--long_modules")
+            if getattr(args, "spec", False):
+                ignored_options.append("--spec")
+            if getattr(args, "archives", False):
+                ignored_options.append("--archives")
+            if getattr(args, "latest-version", False):
+                ignored_options.append("--latest-version")
+
+            if ignored_options:
+                self.logger.warning("Options ignored because you requested the official installer:")
+                self.logger.warning(", ".join(ignored_options))
+
+            return self.run_list_qt_commercial(commercial_search_args, print_version=False)
+
         if args.extensions:
             self._warn_on_deprecated_parameter("extensions", args.extensions)
             self.logger.warning(
@@ -818,10 +880,11 @@ class Cli:
         install_qt_parser.add_argument(
             "arch",
             nargs="?",
-            help="\ntarget linux/desktop: gcc_64, wasm_32"
+            help="\ntarget linux/desktop: linux_gcc_64, gcc_64, wasm_32"
             "\ntarget mac/desktop:   clang_64, wasm_32"
             "\ntarget mac/ios:       ios"
-            "\nwindows/desktop:      win64_msvc2019_64, win32_msvc2019"
+            "\nwindows/desktop:      win64_msvc2022_64"
+            "\n                      win64_msvc2019_64, win32_msvc2019"
             "\n                      win64_msvc2017_64, win32_msvc2017"
             "\n                      win64_msvc2015_64, win32_msvc2015"
             "\n                      win64_mingw81, win32_mingw81"
@@ -953,9 +1016,10 @@ class Cli:
             help="Search terms (all non-option arguments are treated as search terms)",
         )
 
-    def run_list_qt_commercial(self, args) -> None:
+    def run_list_qt_commercial(self, args: ListArgumentParser, print_version: Optional[bool] = True) -> None:
         """Execute Qt commercial package listing."""
-        self.show_aqt_version()
+        if print_version:
+            self.show_aqt_version()
 
         # Create temporary directory for installer
         temp_dir = Settings.qt_installer_temp_path
@@ -1126,6 +1190,16 @@ class Cli:
             help="Filter output so that only versions that match the specification are printed. "
             'IE: `aqt list-qt windows desktop --spec "5.12"` prints all versions beginning with 5.12',
         )
+        list_parser.add_argument(
+            "--use-official-installer",
+            nargs="*",
+            default=None,
+            metavar=("EMAIL", "PASSWORD"),
+            help="Use the official Qt installer for research instead of the aqt researcher. "
+            "Can be used without arguments or with email and password: --use-official-installer email password. "
+            "This redirects to list-qt-official. "
+            "Arguments not compatible with the official installer will be ignored.",
+        )
         output_modifier_exclusive_group = list_parser.add_mutually_exclusive_group()
         output_modifier_exclusive_group.add_argument(
             "--modules",
@@ -1265,6 +1339,11 @@ class Cli:
             action="store_true",
             help="Print what would be downloaded and installed without actually doing it",
         )
+        subparser.add_argument(
+            "--UNSAFE-ignore-hash",
+            action="store_true",
+            help="UNSAFE: Skip hash verification of downloaded files. Use at your own risk.",
+        )
 
     def _set_module_options(self, subparser):
         subparser.add_argument("-m", "--modules", nargs="*", help="Specify extra modules to install")
@@ -1320,6 +1399,22 @@ class Cli:
                 self.logger.debug("Load configuration from {}".format(config))
             else:
                 Settings.load_settings()
+
+        # Set ignore_hash to True if --UNSAFE-ignore-hash flag was passed
+        if args is not None and hasattr(args, "UNSAFE_ignore_hash") and args.UNSAFE_ignore_hash:
+            self.logger.warning(
+                "************************************************************************************************"
+            )
+            self.logger.warning(
+                "Hash verification is disabled. This is UNSAFE and may allow malicious files to be downloaded."
+            )
+            self.logger.warning(
+                "If your install mirror hosts malicious files, you won't be able to know. Use at your own risk."
+            )
+            self.logger.warning(
+                "************************************************************************************************"
+            )
+            Settings.set_ignore_hash_for_session(True)
 
     @staticmethod
     def _validate_version_str(
