@@ -17,8 +17,9 @@ Official Qt Installer
      This file is automatically created when you use the ``MaintenanceTool`` binary and log in using the GUI. It is also created the first time you use the CLI or any mean to authenticate. You can simply copy the file from your PC to the CI server, it will work across platforms. Just treat it as a password. Refer to `this page <https://doc.qt.io/qt-6/get-and-install-qt-cli.html#providing-login-information>`_ for more details.
 
      * It will also check the value of the environment variable ``QT_INSTALLER_JWT_TOKEN`` and use the token if provided.
-     * If neither are present, you will need to provide ``--email <email> --pw <password>``.
-       Note that if ``--email`` and ``--pw`` are provided, they will supersede the ``qtaccount.ini`` and the JWT token account.
+     * If neither are present, you will need to provide ``--email <email> --pw <password>``.  
+       The Qt official installer will generate a ``qtaccount.ini`` file in the relevant folder for your OS (see above for its location) if there is not one already present. That file contains your Qt JSON Web Token (JWT), and must be treated as a password.  
+       Note that if ``--email`` and ``--pw`` are provided, they will supersede the ``qtaccount.ini`` and the JWT provided in the environment.  
 
 ``install-qt-official``
 ------------------------
