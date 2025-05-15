@@ -48,6 +48,7 @@ list-qt command
                  --arch         (<Qt version> | latest) |
                  --archives     (<Qt version> | latest) architecture [modules...]
                  --latest-version]
+                [--use-official-installer [<email> <password>]]
                 <host> [<target>]
 
 List available versions of Qt, targets, modules, and architectures.
@@ -162,6 +163,21 @@ List available versions of Qt, targets, modules, and architectures.
 
     Print only the newest version available
     May be combined with the ``--spec`` flag.
+
+.. option:: --use-official-installer [email password]
+
+    Use the official Qt installer instead of the AQT approach. This option simply 
+    forwards your search terms to the official Qt installer. 
+    Will use current OS as ``host`` (but the ``host`` value passed must still be provided and valid). 
+    Will use target as research term, along with eventual arch, using the following regex: 
+    ``^.*{re.escape(version_str)}\.{re.escape(target_str)}.*$``. 
+    It will list all the arguments ignored. 
+
+    If you are already signed in and have a valid ``qtaccount.ini`` for the current 
+    user, you can use this option without parameters. Otherwise, you must provide 
+    an email and password to authenticate.
+
+    See :ref:`the official installer section<official>` for more details.
 
 
 .. _list-src command:
@@ -448,6 +464,14 @@ are described here:
 
         aqt install-* <host> <target> <Qt version> <arch> -m all
 
+.. option:: --UNSAFE-ignore-hash
+
+    UNSAFE, use at your own risk.
+    This disables the hash check of downloaded files from your mirror against the official hashes.
+    Equivalent to setting ``INSECURE_NOT_FOR_PRODUCTION_ignore_hash: True`` in ``aqt/settings.ini``.
+    It does not edit the configuration file and only affects the current session. It will print warnings.
+    Useful if the Qt official mirror is down and you trust a third-party mirror.
+
 
 .. _install archives flag:
 .. option:: --archives <list of archives>
@@ -499,6 +523,8 @@ install-qt command
         [--archives <archive> [<archive>...]]
         [--autodesktop]
         [--noarchives]
+        [--dry-run]
+        [--use-official-installer [<email> <password>]]
         <host> <target> (<Qt version> | <spec>) [<arch>]
 
 Install Qt library, with specified version and target.
@@ -565,6 +591,22 @@ There are various combinations to accept according to Qt version.
     [Advanced] Specify not to install all base packages.
     This is advanced option and you should use it with ``--modules`` option.
     This allow you to add modules to existent Qt installation.
+
+.. option:: --dry-run
+
+    Perform a simulation of the installation process without making any changes. 
+
+.. option:: --use-official-installer [email password]
+
+    Use the official Qt installer instead of the AQT approach. This option ignores 
+    the ``--host`` parameter and forces installation for the current OS due to Qt 
+    restrictions. 
+
+    If you are already signed in and have a valid ``qtaccount.ini`` for the current 
+    user, you can use this option without parameters. Otherwise, you must provide 
+    an email and password to authenticate.
+
+    See :ref:`the official installer section<official>` for more details.
 
 See `common options`_.
 
@@ -862,6 +904,20 @@ Example: Install different versions of Qt6 for Web Assembly (WASM)
     aqt install-qt linux desktop 6.2.4 wasm_32 --autodesktop
     aqt install-qt linux desktop 6.5.0 wasm_singlethread --autodesktop
     aqt install-qt all_os wasm 6.8.0 wasm_multithread --autodesktop
+
+
+Example: Install commercial version 6.5.5 of Qt6 on Windows
+
+.. code-block:: console
+
+    aqt install-qt windows desktop 6.5.5 win64_msvc2019_64 --use-official-installer 'email@gmail.com' 'password'
+
+
+Example: List commercial packages of Android for version 6.8.3 of Qt6 on current OS
+
+.. code-block:: console
+
+    aqt list-qt linux android --arch 6.8.3 --use-official-installer 'email@gmail.com' 'password'
 
 
 Example: List available versions of Qt on Linux
