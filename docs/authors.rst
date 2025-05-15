@@ -12,11 +12,15 @@ Original qli-installer is written by Linus Jahn
 Significant contributions for improvements of version 2.0 and 2.1 by David Dalcino
 David also leads many developments and reviews effort after 2.0.
 
+Significant contributions have been made by @tsteven4 for implementing support for tracking changing folder hierarchies,
+and by Alexandre @Kidev Poumaroux for developing the official installer option integration.
+
+
 All contributors, listed alphabetically, are:
 
 * Adrian Eddy (fix the case of Android 6.7.0)
 * Alberto Mardegan(ignore_hash option)
-* Alexandre @Kidev Poumaroux (official installer option, WASM fixes for Qt6.7.x)
+* Alexandre @Kidev Poumaroux (official installer option, WASM fixes for Qt6.7.x, manuals)
 * Andrew Wason (support arm64)
 * Andrei Yankovich (tools ifw installation)
 * Aurélien Gâteau (patching to qmake)
@@ -29,7 +33,7 @@ All contributors, listed alphabetically, are:
 * Felix Barz (Android, Explicit extra module installation)
 * Gamso (improve parsing of update.xml)
 * iakov (improve wasm test cases)
-* J.D. Purcell (patch Qt scripts)
+* J.D. Purcell (patch Qt scripts, fix for list-qt)
 * Julien Marrec (mypy, type hints)
 * Kyle Altendorf (7z binary path search)
 * @lebarsfa (ignore_hash/hash_algorithm options)
@@ -46,7 +50,8 @@ All contributors, listed alphabetically, are:
 * @Steveice10 (MacOS binary build)
 * Sztergbaum Roman (Version database)
 * Thomas Grainger (CLI entry point)
-* @tsteven4 (fix patching, support for Qt 6.8.x)
+* @tsteven4 (fix patching, support for Qt 6.8.x, and windows_arm64)
+* @xavier2k6 (Update ci/test conditions)
 * Vadim Peretokin (Version database)
 * Vladyslav Hnatiuk (Version database)
 * @ypnos (Documents)
