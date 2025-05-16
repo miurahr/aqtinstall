@@ -33,7 +33,7 @@ All contributors, listed alphabetically, are:
 * Felix Barz (Android, Explicit extra module installation)
 * Gamso (improve parsing of update.xml)
 * iakov (improve wasm test cases)
-* J.D. Purcell (patch Qt scripts, fix for list-qt)
+* J.D. Purcell (patch Qt scripts, fix list-qt)
 * Julien Marrec (mypy, type hints)
 * Kyle Altendorf (7z binary path search)
 * @lebarsfa (ignore_hash/hash_algorithm options)
