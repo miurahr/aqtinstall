@@ -13,6 +13,20 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Fixed
+-----
+- Fix arch guessing error when version not fully qualified, fix list-qt android, add --UNSAFE-ignore-hash, add --use-official-installer to list-qt (#909)
+- Add --use-official-installer, fix official installer download after update 4.9 (#906)
+
+Added
+-----
+- update host windows_arm64 files as we do with windows (#914)
+
+Changed
+-------
+- Documentation: Add --use-official-installer, --dry-run, --UNSAFE-ignore-hash, examples (#907)
+
+
 `v3.2.1`_ (16, March, 2025)
 ===========================
 
@@ -46,7 +60,7 @@ Fixed
 
 Added
 -----
-- Add support for commercal version of Qt (#878)
+- Add support for commercial version of Qt (#878)
 
 Changed
 -------
