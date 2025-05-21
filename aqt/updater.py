@@ -188,18 +188,39 @@ class Updater:
         sep = "\\" if os_name.startswith("windows") else "/"
         patched = sep.join([base_dir, version_dir, desktop_arch_dir, "bin"])
 
-        def patch_script(script_name):
-            script_path = self.prefix / "bin" / (script_name + ".bat" if os_name.startswith("windows") else script_name)
-            self.logger.info(f"Patching {script_path}")
-            for unpatched in unpatched_paths():
-                self._patch_textfile(script_path, f"{unpatched}bin", patched, is_executable=True)
+        def patch_script(script_dir_name, script_glob):
+            script_dir = self.prefix / script_dir_name
 
-        patch_script("qmake")
+            script_names = sorted(script_dir.glob(script_glob))  # order matters in unit tests
+            if len(script_names) == 0:
+                self.logger.debug(f"Skipped patching scripts {script_dir / script_glob}")
+                return
+
+            for script_name in script_names:
+                script_path = script_dir / script_name
+                self.logger.info(f"Patching {script_path}")
+                for unpatched in unpatched_paths():
+                    self._patch_textfile(script_path, f"{unpatched}bin", patched, is_executable=True)
+
+        patch_script("bin", "qmake")
+        for dir_name in ["bin", "libexec"]:
+            patch_script(dir_name, "*.py")
+            patch_script(dir_name, "*.bat" if os_name.startswith("windows") else "*.sh")
         if version >= Version("6.2.2"):
-            patch_script("qtpaths")
+            patch_script("bin", "qtpaths")
         if version >= Version("6.5.0"):
-            patch_script("qmake6")
-            patch_script("qtpaths6")
+            patch_script("bin", "qmake6")
+            patch_script("bin", "qtpaths6")
+            patch_script("bin", "qt-cmake")
+            patch_script("bin", "qt-cmake-private")
+            patch_script("bin", "qt-configure-module")
+            patch_script("libexec", "qt-cmake-private")
+            patch_script("libexec", "qt-cmake-standalone-test")
+            patch_script("libexec", "qt-internal-configure-tests")
+        if version >= Version("6.6.0"):
+            patch_script("bin", "qt-cmake-create")
+        if version >= Version("6.8.0"):
+            patch_script("libexec", "qt-internal-configure-examples")
 
     def patch_qtcore(self, target):
         """patch to QtCore"""
