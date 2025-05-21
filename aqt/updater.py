@@ -190,12 +190,10 @@ class Updater:
 
         def patch_script(script_dir_name, script_glob):
             script_dir = self.prefix / script_dir_name
-
             script_names = sorted(script_dir.glob(script_glob))  # order matters in unit tests
             if len(script_names) == 0:
                 self.logger.debug(f"Skipped patching scripts {script_dir / script_glob}")
                 return
-
             for script_name in script_names:
                 script_path = script_dir / script_name
                 self.logger.info(f"Patching {script_path}")
