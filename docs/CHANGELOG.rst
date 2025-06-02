@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v3.3.0`_ (2, June, 2025)
+=========================
+
 Fixed
 -----
 - Fix arch guessing error when version not fully qualified, fix list-qt android, add --UNSAFE-ignore-hash, add --use-official-installer to list-qt (#909)
@@ -499,7 +502,8 @@ Security
 * Check Update.xml file with SHA256 hash (#493)
 
 
-.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.2.1...HEAD
+.. _Unreleased: https://github.com/miurahr/aqtinstall/compare/v3.3.0...HEAD
+.. _v3.3.0: https://github.com/miurahr/aqtinstall/compare/v3.2.1...v3.3.0
 .. _v3.2.1: https://github.com/miurahr/aqtinstall/compare/v3.2.0...v3.2.1
 .. _v3.2.0: https://github.com/miurahr/aqtinstall/compare/v3.1.21...v3.2.0
 .. _v3.1.21: https://github.com/miurahr/aqtinstall/compare/v3.1.20...v3.1.21
