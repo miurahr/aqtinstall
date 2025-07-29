@@ -23,15 +23,14 @@ jobs:
           python-version: '3.13'
           architecture: x64
       - name: Setup reviewdog
-        run: |
-          /usr/bin/sh ci/reviewdog_install.sh -b ./bin/ v0.20.3
+        uses: reviewdog/action-setup@e04ffabe3898a0af8d0fb1af00c188831c4b5893 # v1.3.2
       - name: Install dependencies
         run: |
           pip install -U pip tox wheel setuptools coveralls coverage[toml]
           pip install .[check]
       - name: run reviewdog
         run: |
-          ./bin/reviewdog -runners=flake8,mypy -reporter=github-pr-review -conf=.reviewdog.yml
+          reviewdog -runners=flake8,mypy -reporter=github-pr-review -conf=.reviewdog.yml
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
