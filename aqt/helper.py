@@ -147,7 +147,14 @@ def get_qt_installers() -> dict[str, str]:
 
 def get_qt_installer_name() -> str:
     installer_dict = get_qt_installers()
-    return installer_dict[get_os_arch()]
+    os_arch = get_os_arch()
+
+    # For the official commercial installer, no mac-arm64 installer is available
+    # and mac-x64 must be used instead (universal binary).
+    if (os_arch == "mac-arm64" and "mac-arm64" not in installer_dict and "mac-x64" in installer_dict):
+        return installer_dict["mac-x64"]
+
+    return installer_dict[os_arch]
 
 
 def get_qt_installer_path() -> Path:
