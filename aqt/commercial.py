@@ -20,6 +20,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import json
 import os
+import re
 from dataclasses import dataclass
 from logging import Logger, getLogger
 from pathlib import Path
@@ -371,6 +372,12 @@ class CommercialInstaller:
                 )
 
                 install_cmd = self.package_manager.get_install_command(self.modules, temp_dir)
+                if re.match(r".*mac-x64.*", self._installer_filename):
+                    for cmd_arg in install_cmd:
+                        # Replace .arm64 with empty string for the x86 mac installer on arm
+                        if cmd_arg.endswith(".arm64"):
+                            cmd_arg = cmd_arg.replace(".arm64", ".clang_644")
+
                 cmd = [*base_cmd, *install_cmd]
 
             log_cmd = cmd.copy()
