@@ -137,7 +137,7 @@ def get_qt_installers() -> dict[str, str]:
 
             # macOS arm64 special case, as no official arm64 installer exists
             # it should not override the arm64 installer if it appears later
-            if installers["mac-x64"] and not installers["mac-arm64"]:
+            if installers.get("mac-x64") and not installers.get("mac-arm64"):
                 installers["mac-arm64"] = installers["mac-x64"]
 
         return installers
