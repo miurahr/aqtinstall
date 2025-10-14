@@ -295,6 +295,8 @@ class ArchiveId:
     def to_extension_folder(self, module, version, arch) -> str:
         extarch = arch
         if self.host == "windows":
+            extarch = arch.replace("win64_", "", 1).replace("_cross_compiled", "", 1)
+        elif self.host == "windows_arm64":
             extarch = arch.replace("win64_", "", 1)
         elif self.host == "linux":
             extarch = "x86_64"

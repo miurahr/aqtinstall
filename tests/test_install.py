@@ -1329,6 +1329,183 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Time elapsed: .* second"
             ),
         ),
+        (  # extensions availability: qtpdf and qtwebengine
+            "install-qt windows desktop 6.10.0 win64_msvc2022_arm64_cross_compiled -m qtwebengine".split(),
+            "windows",
+            "desktop",
+            "6.10.0",
+            {"std": "win64_msvc2022_arm64_cross_compiled", "extpdf": "win64_msvc2022_arm64_cross_compiled", "extweb": "win64_msvc2022_arm64_cross_compiled"},
+            {"std": "msvc2022_arm64", "extpdf": "msvc2022_arm64", "extweb": "msvc2022_arm64"},
+            {
+                "std": "windows_x86/desktop/qt6_6100/qt6_6100/Updates.xml",
+                "extpdf": "windows_x86/extensions/qtpdf/6100/msvc2022_arm64/Updates.xml",
+                "extweb": "windows_x86/extensions/qtwebengine/6100/msvc2022_arm64/Updates.xml",
+            },
+            {
+                "std": [
+                    MockArchive(
+                        filename_7z="qtbase-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z",
+                        update_xml_name="qt.qt6.6100.win64_msvc2022_arm64_cross_compiled",
+                        contents=(
+                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
+                            PatchedFile(
+                                filename="mkspecs/qconfig.pri",
+                                unpatched_content="... blah blah blah ...\n"
+                                "QT_EDITION = Not OpenSource\n"
+                                "QT_LICHECK = Not Empty\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "QT_EDITION = OpenSource\n"
+                                "QT_LICHECK =\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.10.0\\msvc2022_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qtpaths.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.10.0\\msvc2022_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qmake6.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.10.0\\msvc2022_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/qtpaths6.bat",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/Users/qt/work/install/bin\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}\\6.10.0\\msvc2022_64\\bin\n"
+                                "... blah blah blah ...\n",
+                            ),
+                            PatchedFile(
+                                filename="bin/target_qt.conf",
+                                unpatched_content="... blah blah blah ...\n"
+                                "HostPrefix=../../\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "HostPrefix=../../msvc2022_64\n"
+                                "... blah blah blah ...\n",
+                            ),
+                        ),
+                    ),
+                ],
+                "extpdf": [
+                    MockArchive(
+                        filename_7z="qtpdf-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z",
+                        update_xml_name="extensions.qtpdf.6100.win64_msvc2022_arm64_cross_compiled",
+                        contents=(),
+                        should_install=False,
+                        extract_target="@TargetDir@/6.10.0/msvc2022_arm64",
+                    ),
+                ],
+                "extweb": [
+                    MockArchive(
+                        filename_7z="qtwebengine-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z",
+                        update_xml_name="extensions.qtwebengine.6100.win64_msvc2022_arm64_cross_compiled",
+                        contents=(
+                            PatchedFile(filename="lib/Qt6WebEngineCore.prl", unpatched_content="... qtwebengine ...\n"),
+                        ),
+                        should_install=False,
+                        extract_target="@TargetDir@/6.10.0/msvc2022_arm64",
+                    ),
+                ],
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"WARNING : You are installing the MSVC Arm64 version of Qt, which requires that the desktop version of "
+                r"Qt is also installed. You can install it with the following command:\n"
+                r"          `aqt install-qt windows desktop 6\.10\.0 win64_msvc2022_64`\n"
+                r"INFO    : Found extension qtwebengine\n"
+                r"INFO    : Found extension qtpdf\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of "
+                r"qtbase-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z in .*\n"
+                r"INFO    : Downloading qtwebengine...\n"
+                r"Finished installation of "
+                r"qtwebengine-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z in .*\n"
+                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qmake.bat\n"
+                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qtpaths.bat\n"
+                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qmake6.bat\n"
+                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qtpaths6.bat\n"
+                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/target_qt.conf\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
+        (  # extensions availability: qtpdf and qtwebengine
+            "install-qt windows_arm64 desktop 6.10.0 win64_msvc2022_arm64 -m qtwebengine".split(),
+            "windows_arm64",
+            "desktop",
+            "6.10.0",
+            {"std": "win64_msvc2022_arm64", "extpdf": "win64_msvc2022_arm64", "extweb": "win64_msvc2022_arm64"},
+            {"std": "msvc2022_arm64", "extpdf": "msvc2022_arm64", "extweb": "msvc2022_arm64"},
+            {
+                "std": "windows_arm64/desktop/qt6_6100/qt6_6100/Updates.xml",
+                "extpdf": "windows_arm64/extensions/qtpdf/6100/msvc2022_arm64/Updates.xml",
+                "extweb": "windows_arm64/extensions/qtwebengine/6100/msvc2022_arm64/Updates.xml",
+            },
+            {
+                "std": [
+                    plain_qtbase_archive(
+                        "qt.qt6.6100.win64_msvc2022_arm64",
+                        "Windows-Windows_11_23H2-AARCH64",
+                        host="Windows-Windows_11_23H2-MSVC2022",
+                    )
+                ],
+                "extpdf": [
+                    MockArchive(
+                        filename_7z="qtpdf-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z",
+                        update_xml_name="extensions.qtpdf.6100.win64_msvc2022_arm64",
+                        contents=(),
+                        should_install=False,
+                        extract_target="@TargetDir@/6.10.0/msvc2022_arm64",
+                    ),
+                ],
+                "extweb": [
+                    MockArchive(
+                        filename_7z="qtwebengine-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z",
+                        update_xml_name="extensions.qtwebengine.6100.win64_msvc2022_arm64",
+                        contents=(
+                            PatchedFile(filename="lib/Qt6WebEngineCore.prl", unpatched_content="... qtwebengine ...\n"),
+                        ),
+                        should_install=False,
+                        extract_target="@TargetDir@/6.10.0/msvc2022_arm64",
+                    ),
+                ],
+            },
+            re.compile(
+                r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
+                r"INFO    : Found extension qtwebengine\n"
+                r"INFO    : Found extension qtpdf\n"
+                r"INFO    : Downloading qtbase...\n"
+                r"Finished installation of "
+                r"qtbase-Windows-Windows_11_23H2-MSVC2022-Windows-Windows_11_23H2-AARCH64.7z in .*\n"
+                r"INFO    : Downloading qtwebengine...\n"
+                r"Finished installation of "
+                r"qtwebengine-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z in .*\n"
+                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/lib/Qt6WebEngineCore.prl\n"
+                r"INFO    : Finished installation\n"
+                r"INFO    : Time elapsed: .* second"
+            ),
+        ),
     ),
 )
 def test_install(

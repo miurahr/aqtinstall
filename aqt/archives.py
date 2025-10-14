@@ -426,6 +426,8 @@ class QtArchives:
         if self.version >= Version("6.8.0"):
             arch = self.arch
             if self.os_name == "windows":
+                arch = self.arch.replace("win64_", "", 1).replace("_cross_compiled", "", 1)
+            if self.os_name == "windows_arm64":
                 arch = self.arch.replace("win64_", "", 1)
             elif self.os_name == "linux":
                 arch = "x86_64"
