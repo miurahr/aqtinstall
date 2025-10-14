@@ -292,7 +292,7 @@ class ArchiveId:
             ),
         )
 
-    def to_extension_folder(self, module, version, arch) -> str:
+    def to_extension_folder(self, module: str, version: Version, version_str: str, arch: str) -> str:
         extarch = arch
         if self.host == "windows":
             extarch = arch.replace("win64_", "", 1).replace("_cross_compiled", "", 1)
@@ -302,11 +302,14 @@ class ArchiveId:
             extarch = "x86_64"
         elif self.host == "linux_arm64":
             extarch = "arm64"
+        elif self.host == "all_os":
+            if arch.startswith("android"):
+                extarch = "qt{}_{}_{}".format(version.major, version_str, arch.replace("android_", "", 1))
 
         return "online/qtsdkrepository/{osarch}/extensions/{ext}/{ver}/{extarch}/".format(
             osarch=self.to_os_arch(),
             ext=module,
-            ver=version,
+            ver=version_str,
             extarch=extarch,
         )
 
@@ -1023,7 +1026,7 @@ class MetadataFactory:
         ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
         for ext in QtRepoProperty.known_extensions(version):
             try:
-                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))
+                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch))
                 for key, value in ext_meta.items():
                     ext_match = ext_pattern.match(key)
                     if ext_match is not None:
@@ -1075,7 +1078,7 @@ class MetadataFactory:
         ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
         for ext in QtRepoProperty.known_extensions(version):
             try:
-                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, qt_ver_str, arch))
+                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch))
                 for key, value in ext_meta.items():
                     ext_match = ext_pattern.match(key)
                     if ext_match is not None:

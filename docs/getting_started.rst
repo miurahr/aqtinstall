@@ -43,6 +43,8 @@ This is implemented as a new host type - ``linux`` is amd64, ``linux_arm64`` is 
 
 As of Qt 6.7.0, the WASM architecture can be installed using ``all_os`` as host and ``wasm`` as target.
 
+As of Qt 6.7.0, the android architecture can be installed using ``all_os`` as host and ``android`` as target.
+
 To find out what versions of Qt are available, you can use the :ref:`aqt list-qt command <list-qt command>`.
 This command will print all versions of Qt available for Windows Desktop:
 
@@ -125,6 +127,13 @@ The available architectures are ``wasm_singlethread`` and ``wasm_multithread``
 .. code-block:: console
 
     $ aqt install-qt all_os wasm 6.7.0 wasm_singlethread
+
+As of Qt 6.7.0, the android architecture can be installed using ``all_os`` as host and ``android`` as target.
+The available architectures are ``android_x86'', ``android_armv7``, ``android_x86_64`` and ``android_arm64_v8a``
+
+.. code-block:: console
+
+    $ aqt install-qt all_os android 6.7.0 android_armv7
 
 External 7-zip extractor
 ------------------------

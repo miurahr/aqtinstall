@@ -433,6 +433,9 @@ class QtArchives:
                 arch = "x86_64"
             elif self.os_name == "linux_arm64":
                 arch = "arm64"
+            elif self.os_name == "all_os":
+                if arch.startswith("android"):
+                    arch = "qt{}_{}_{}".format(self.version.major, self._version_str(), arch.replace("android_", "", 1))
             for ext in ["qtwebengine", "qtpdf"]:
                 extensions_target_folder = posixpath.join(
                     "online/qtsdkrepository", os_name, "extensions", ext, self._version_str(), arch
