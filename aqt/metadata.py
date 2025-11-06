@@ -788,7 +788,7 @@ class MetadataFactory:
             return (
                 self.archive_id.host == "all_os"
                 and self.archive_id.target in ArchiveId.TARGETS_FOR_HOST["all_os"]
-                and ver in SimpleSpec("6.7.*")
+                and ver >= Version("6.7.0")
             )
 
         def filter_by(ver: Version, ext: str) -> bool:
