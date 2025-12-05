@@ -19,12 +19,12 @@ jobs:
       AQT_TEST_EMAIL: ${{ secrets.AQT_TEST_EMAIL }}
       AQT_TEST_PASSWORD: ${{ secrets.AQT_TEST_PASSWORD }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 20
         fetch-tags: true
     - name: Set up Python 3.13
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.13'
     - name: Install tools
@@ -41,7 +41,7 @@ jobs:
       run: coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - uses: actions/setup-java@v4
+    - uses: actions/setup-java@v5
       if: ( github.event_name == 'push' ) && ( github.ref == 'refs/heads/master' )
       with:
         distribution: 'temurin'
