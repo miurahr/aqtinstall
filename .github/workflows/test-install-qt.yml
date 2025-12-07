@@ -37,12 +37,12 @@ jobs:
             qtver: 6.8.1
             artifact: standard
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 20
           fetch-tags: true
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.py }}
       - name: Build and install
@@ -187,7 +187,7 @@ jobs:
             print('QT_INATALL_PREFIX {}\nExpected path {}'.format(result, expected_path))
         shell: python
         working-directory: ${{ github.workspace }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: matrix.artifact == 'binary'
         with:
           name: aqt-${{ matrix.os }}-standalone

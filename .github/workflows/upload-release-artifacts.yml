@@ -27,12 +27,12 @@ jobs:
       run:
         shell: ${{ startsWith(matrix.system.os, 'windows-') && 'pwsh' || 'bash' }} {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 20
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.py }}
           architecture: ${{ matrix.system.arch }}
@@ -47,7 +47,7 @@ jobs:
           ${{ startsWith(matrix.system.os, 'windows-') && 'Remove-Item venv -Recurse -Force' || 'rm -rf venv' }}
 
       - name: Upload to Release
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 #v2.11.2
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 #v2.11.3
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/${{ matrix.system.output_file }}
@@ -56,7 +56,7 @@ jobs:
           overwrite: true
         if: matrix.system.primary_artifact!='' && startsWith(github.ref, 'refs/tags/v')
       - name: Upload to Release for all architectures
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 #v2.11.2
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 #v2.11.3
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/${{ matrix.system.output_file }}
@@ -65,7 +65,7 @@ jobs:
           overwrite: true
         if: matrix.system.secondary_artifact!='' && startsWith(github.ref, 'refs/tags/v')
       - name: Update continuous build
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 #v2.11.2
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 #v2.11.3
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           overwrite: true
@@ -75,7 +75,7 @@ jobs:
           asset_name: ${{ matrix.system.primary_artifact }}
         if: matrix.system.primary_artifact!='' && startsWith(github.ref, 'refs/tags/v')
       - name: Update continuous build for all architectures
-        uses: svenstaro/upload-release-action@81c65b7cd4de9b2570615ce3aad67a41de5b1a13 #v2.11.2
+        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 #v2.11.3
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           overwrite: true
