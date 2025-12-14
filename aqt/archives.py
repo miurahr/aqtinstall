@@ -402,57 +402,98 @@ class QtArchives:
             )
         else:
             name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
-        self._get_archives_base(name, self._target_packages())
+        self._get_archives_base(name)
 
-    def _get_archives_base(self, name, target_packages):
-        os_name = self.os_name
-        if self.target == "android" and self.version >= Version("6.7.0"):
-            os_name = "all_os"
-        elif self.os_name == "windows":
-            os_name += "_x86"
-        elif os_name != "linux_arm64" and os_name != "all_os" and os_name != "windows_arm64":
-            os_name += "_x64"
-        os_target_folder = posixpath.join(
-            "online/qtsdkrepository",
-            os_name,
-            self.target,
-            # tools_ifw/
-            name,
-        )
+    def _get_archives_base(self, name):
+        os_segment = self._resolve_os_segment()
+        os_target_folder = self._main_repo_folder(os_segment, name)
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
         update_xml_text = self._download_update_xml(update_xml_url)
         update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
 
+        # Qt 6.8+ introduces separate extension repositories.
         if self.version >= Version("6.8.0"):
-            arch = self.arch
-            if self.os_name == "windows":
-                arch = self.arch.replace("win64_", "", 1).replace("_cross_compiled", "", 1)
-            if self.os_name == "windows_arm64":
-                arch = self.arch.replace("win64_", "", 1)
-            elif self.os_name == "linux":
-                arch = "x86_64"
-            elif self.os_name == "linux_arm64":
-                arch = "arm64"
-            elif self.os_name == "all_os":
-                if arch.startswith("android"):
-                    arch = "qt{}_{}_{}".format(self.version.major, self._version_str(), arch.replace("android_", "", 1))
-            for ext in ["qtwebengine", "qtpdf"]:
-                extensions_target_folder = posixpath.join(
-                    "online/qtsdkrepository", os_name, "extensions", ext, self._version_str(), arch
-                )
-                extensions_xml_url = posixpath.join(extensions_target_folder, "Updates.xml")
-                # The extension may or may not exist for this version and arch.
-                try:
-                    extensions_xml_text = self._download_update_xml(extensions_xml_url, True)
-                except ArchiveDownloadError:
-                    # In case _download_update_xml failed to get the url because of no extension.
-                    pass
-                else:
-                    if extensions_xml_text:
-                        self.logger.info("Found extension {}".format(ext))
-                        update_xmls.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
+            update_xmls.extend(self._collect_extension_update_xmls(os_segment))
 
-        self._parse_update_xmls(update_xmls, target_packages)
+        self._parse_update_xmls(update_xmls, self._target_packages())
+
+    def _resolve_os_segment(self) -> str:
+        """Return the OS segment used in the repository path.
+
+        Keeps current behavior but centralizes the decision for future changes.
+        Examples:
+         - windows -> windows_x86
+         - linux -> linux_x64
+         - linux_arm64 -> linux_arm64
+         - windows_arm64 -> windows_arm64
+         - android target (>= 6.7) -> all_os
+        """
+        os_name = self.os_name
+        if self.target == "android" and self.version >= Version("6.7.0"):
+            return "all_os"
+        if os_name == "windows":
+            return f"{os_name}_x86"
+        if os_name not in {"linux_arm64", "all_os", "windows_arm64"}:
+            return f"{os_name}_x64"
+        return os_name
+
+    def _main_repo_folder(self, os_segment: str, name: str) -> str:
+        """Build the main repository folder path for Updates.xml."""
+        return posixpath.join("online/qtsdkrepository", os_segment, self.target, name)
+
+    def _compute_extension_arch(self, os_segment: str) -> Optional[str]:
+        """Normalize the arch segment for extension repositories (Qt >= 6.8).
+
+        Returns None for versions where extensions are not used.
+        """
+        if self.version < Version("6.8.0"):
+            return None
+        arch = self.arch
+        # windows -> strip win64_ and _cross_compiled
+        if self.os_name == "windows":
+            arch = arch.replace("win64_", "", 1).replace("_cross_compiled", "", 1)
+        # windows_arm64 -> strip win64_
+        elif self.os_name == "windows_arm64":
+            arch = arch.replace("win64_", "", 1)
+        # linux -> x86_64
+        elif self.os_name == "linux":
+            arch = "x86_64"
+        # linux_arm64 -> arm64
+        elif self.os_name == "linux_arm64":
+            arch = "arm64"
+        # all_os + android -> qt{major}_{version}_{abi}
+        elif self.os_name == "all_os":
+            if arch.startswith("android"):
+                arch = "qt{}_{}_{}".format(self.version.major, self._version_str(), arch.replace("android_", "", 1))
+        return arch
+
+    def _collect_extension_update_xmls(self, os_segment: str) -> List[UpdateXmls]:
+        """Collect UpdateXmls entries for known extensions for Qt >= 6.8.
+
+        This function is resilient to missing extensions and can be easily
+        extended by adding new names to the extensions list.
+        """
+        results: List[UpdateXmls] = []
+        arch = self._compute_extension_arch(os_segment)
+        if arch is None:
+            return results
+        # Known extension repositories (can be expanded in the future)
+        extensions = ["qtwebengine", "qtpdf"]
+        for ext in extensions:
+            extensions_target_folder = posixpath.join(
+                "online/qtsdkrepository", os_segment, "extensions", ext, self._version_str(), arch
+            )
+            extensions_xml_url = posixpath.join(extensions_target_folder, "Updates.xml")
+            try:
+                extensions_xml_text = self._download_update_xml(extensions_xml_url, True)
+            except ArchiveDownloadError:
+                # In case _download_update_xml failed to get the url because of no extension.
+                continue
+            else:
+                if extensions_xml_text:
+                    self.logger.info("Found extension {}".format(ext))
+                    results.append(UpdateXmls(extensions_target_folder, extensions_xml_text))
+        return results
 
     def _download_update_xml(self, update_xml_path: str, silent: bool = False) -> Optional[str]:
         """Hook for unit test."""
@@ -650,7 +691,7 @@ class SrcDocExamplesArchives(QtArchives):
 
     def _get_archives(self):
         name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
-        self._get_archives_base(name, self._target_packages())
+        self._get_archives_base(name)
 
     def help_msg(self, missing_modules: Optional[List[str]] = None) -> List[str]:
         _missing_modules: List[str] = missing_modules or []
@@ -704,7 +745,12 @@ class ToolArchives(QtArchives):
         raise ArchiveListError(msg, suggested_action=[help_msg]) from e
 
     def _get_archives(self):
-        self._get_archives_base(self.tool_name, None)
+        os_segment = self._resolve_os_segment()
+        os_target_folder = self._main_repo_folder(os_segment, self.tool_name)
+        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
+        update_xml_text = self._download_update_xml(update_xml_url)
+        update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
+        self._parse_update_xmls(update_xmls, None)
 
     def _parse_update_xml(self, os_target_folder: str, update_xml_text: str, *ignored: Any) -> None:
         update_xml = Updates.fromstring(self.base, update_xml_text)
