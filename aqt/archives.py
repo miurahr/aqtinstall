@@ -404,19 +404,6 @@ class QtArchives:
             name = f"qt{self.version.major}_{self._version_str()}{self._arch_ext()}"
         self._get_archives_base(name)
 
-    def _get_archives_base(self, name):
-        os_segment = self._resolve_os_segment()
-        os_target_folder = self._main_repo_folder(os_segment, name)
-        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
-        update_xml_text = self._download_update_xml(update_xml_url)
-        update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
-
-        # Qt 6.8+ introduces separate extension repositories.
-        if self.version >= Version("6.8.0"):
-            update_xmls.extend(self._collect_extension_update_xmls(os_segment))
-
-        self._parse_update_xmls(update_xmls, self._target_packages())
-
     def _resolve_os_segment(self) -> str:
         """Return the OS segment used in the repository path.
 
@@ -440,6 +427,19 @@ class QtArchives:
     def _main_repo_folder(self, os_segment: str, name: str) -> str:
         """Build the main repository folder path for Updates.xml."""
         return posixpath.join("online/qtsdkrepository", os_segment, self.target, name)
+
+    def _get_archives_base(self, name):
+        os_segment = self._resolve_os_segment()
+        os_target_folder = self._main_repo_folder(os_segment, name)
+        update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
+        update_xml_text = self._download_update_xml(update_xml_url)
+        update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
+
+        # Qt 6.8+ introduces separate extension repositories.
+        if self.version >= Version("6.8.0"):
+            update_xmls.extend(self._collect_extension_update_xmls(os_segment))
+
+        self._parse_update_xmls(update_xmls, self._target_packages())
 
     def _compute_extension_arch(self, os_segment: str) -> Optional[str]:
         """Normalize the arch segment for extension repositories (Qt >= 6.8).
