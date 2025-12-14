@@ -1334,7 +1334,8 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             "windows",
             "desktop",
             "6.10.0",
-            {"std": "win64_msvc2022_arm64_cross_compiled", "extpdf": "win64_msvc2022_arm64_cross_compiled", "extweb": "win64_msvc2022_arm64_cross_compiled"},
+            {"std": "win64_msvc2022_arm64_cross_compiled", "extpdf": "win64_msvc2022_arm64_cross_compiled",
+                "extweb": "win64_msvc2022_arm64_cross_compiled"},
             {"std": "msvc2022_arm64", "extpdf": "msvc2022_arm64", "extweb": "msvc2022_arm64"},
             {
                 "std": "windows_x86/desktop/qt6_6100/qt6_6100/Updates.xml",

@@ -1026,7 +1026,9 @@ class MetadataFactory:
         ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
         for ext in QtRepoProperty.known_extensions(version):
             try:
-                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch))
+                ext_meta = self._fetch_extension_metadata(
+                    self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch)
+                )
                 for key, value in ext_meta.items():
                     ext_match = ext_pattern.match(key)
                     if ext_match is not None:
@@ -1078,7 +1080,9 @@ class MetadataFactory:
         ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
         for ext in QtRepoProperty.known_extensions(version):
             try:
-                ext_meta = self._fetch_extension_metadata(self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch))
+                ext_meta = self._fetch_extension_metadata(
+                    self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch)
+                )
                 for key, value in ext_meta.items():
                     ext_match = ext_pattern.match(key)
                     if ext_match is not None:
