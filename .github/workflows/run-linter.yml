@@ -12,9 +12,7 @@ on:
 jobs:
   linter:
     name: Linter
-    runs-on: ubuntu-24.04
-    permissions:
-      pull-requests: write
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - name: Setup python
@@ -22,21 +20,16 @@ jobs:
         with:
           python-version: '3.13'
           architecture: x64
-      - name: Setup reviewdog
-        uses: reviewdog/action-setup@d8a7baabd7f3e8544ee4dbde3ee41d0011c3a93f # v1.5.0
       - name: Install dependencies
         run: |
           pip install -U pip tox wheel setuptools coveralls coverage[toml]
-          pip install .[check]
-      - name: run reviewdog
+      - name: lint check
         run: |
-          reviewdog -runners=check,mypy -reporter=github-pr-review -conf=.reviewdog.yml
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tox -e check
 
   docs:
     name: Document checks
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - name: Setup python
