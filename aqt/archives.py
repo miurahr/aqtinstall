@@ -754,9 +754,16 @@ class ToolArchives(QtArchives):
 
     def _main_repo_folder(self, os_segment: str, name: str) -> str:
         """Build the main repository folder path for Updates.xml."""
-        if name == "tools_ifw" and self.tool_version_str != "tools_ifw47":
-            return posixpath.join("online/qtsdkrepository", os_segment, "ifw", self.tool_version_str)
-        return posixpath.join("online/qtsdkrepository", os_segment, self.target, name)
+        # For IFW, newer variants (e.g., tools_ifw410) live under 'ifw/<variant>',
+        # while legacy 'tools_ifw47' and unspecified version fall back to the
+        # generic desktop path '.../desktop/tools_ifw'. Ensure we don't join None.
+        if name == "tools_ifw" and self.tool_version_str and self.tool_version_str != "tools_ifw47":
+            os_target_folder = posixpath.join("online/qtsdkrepository", os_segment, "ifw", self.tool_version_str)
+            self._debug_repo_choice = "ifw"
+        else:
+            os_target_folder = posixpath.join("online/qtsdkrepository", os_segment, self.target, name)
+            self._debug_repo_choice = "desktop"
+        return os_target_folder
 
     def _parse_update_xml(self, os_target_folder: str, update_xml_text: str, *ignored: Any) -> None:
         update_xml = Updates.fromstring(self.base, update_xml_text)

@@ -27,6 +27,15 @@ def _stub_download_xml(self, *args, **kwargs):
             None,
             "online/qtsdkrepository/linux_x64/desktop/tools_ninja",
         ),
+        # tools_ifw without specifying a variant should use the legacy path
+        (
+            "mac",
+            "desktop",
+            "tools_ifw",
+            None,
+            "online/qtsdkrepository/mac_x64/desktop/tools_ifw",
+        ),
+        # new locations: tools_ifw48 tools_ifw49 tools_ifw410
         (
             "linux",
             "desktop",
@@ -34,6 +43,7 @@ def _stub_download_xml(self, *args, **kwargs):
             "tools_ifw410",
             "online/qtsdkrepository/linux_x64/ifw/tools_ifw410",
         ),
+        # legacy locations: tools_ifw47
         (
             "linux",
             "desktop",
@@ -49,7 +59,6 @@ def test_tool_archives_repo_folder(monkeypatch, os_name, target, tool_name, tool
 
     def _capture_parse(self, os_target_folder, update_xml_text, *ignored):
         captured["folder"] = os_target_folder
-        # Do nothing else; skip actual parsing for this test.
         return None
 
     # Avoid any network/file IO and ensure our capture is invoked
