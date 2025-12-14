@@ -752,6 +752,12 @@ class ToolArchives(QtArchives):
         update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
         self._parse_update_xmls(update_xmls, None)
 
+    def _main_repo_folder(self, os_segment: str, name: str) -> str:
+        """Build the main repository folder path for Updates.xml."""
+        if name == "tools_ifw" and self.tool_version_str != "tools_ifw47":
+            return posixpath.join("online/qtsdkrepository", os_segment, "ifw", self.tool_version_str)
+        return posixpath.join("online/qtsdkrepository", os_segment, self.target, name)
+
     def _parse_update_xml(self, os_target_folder: str, update_xml_text: str, *ignored: Any) -> None:
         update_xml = Updates.fromstring(self.base, update_xml_text)
         self._append_tool_update(os_target_folder, update_xml, self.arch, self.tool_version_str)
