@@ -176,76 +176,66 @@ markers = [
     "remote_data: mark a test with remote data.",
 ]
 
+
 [tool.tox]
-legacy_tox_ini = """
-[tox]
-envlist = check, docs, py{39,310,311,312,313}, mprof, fil, mypy
-isolated_build = True
+requires = ["tox>=4.19"]
+envlist = [
+    "mypy",
+    "check",
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13",
+    "3.14",
+    "docs",
+    "mprof",
+    "mypy",
+    "fil"
+]
+isolated_build = true
 
-[testenv]
-passenv =
-    GITHUB*
-    APPVEYOR*
-    TRAVIS*
-    COVERALLS_*
-    PYTEST_ADDOPTS
-extras = test, check, docs
-commands =
-    python -m pytest -vv
+[tool.tox.env_run_base]
+description = "Run test under {base_python}"
+passenv = [
+    "GITHUB_*",
+    "PYTEST_ADDOPTS",
+    "COVERALLS_*",
+]
+extras = ["test", "check", "docs"]
+commands = [["python", "-m", "pytest", "-vv"]]
 
-[testenv:check]
-basepython = python3.13
-extras = check
-commands =
-    check-manifest {toxinidir}
-    flake8 aqt tests
+[tool.tox.env.check]
+extras = ["check"]
+commands = [["check-manifest", "{toxinidir}"], ["flake8", "aqt", "tests"]]
 
-[testenv:mypy]
-basepython = python3.13
-extras = check
-commands = mypy aqt
-deps =
-    types-requests
-    types-beautifulsoup4
-    types-psutil
+[tool.tox.env.mypy]
+extras = ["check"]
+deps = ["types-request", "types-beautifulsoup4", "types-psutil"]
+commands = [["mypy", "--html-report", "build/mypy", "aqt"]]
 
-[testenv:docs]
-basepython = python3.13
-extras = docs
-commands =
-    sphinx-build {posargs:-E} -W -b html docs build/docs
-    sphinx-build -W -b linkcheck docs build/docs
+[tool.tox.env.docs]
+extras = ["docs"]
+commands = [
+    ["sphinx-build", "{posargs:-E}", "-b", "html", "docs", "build/docs"],
+    ["sphinx-build", "-W", "-b", "linkcheck", "docs", "build/docs"]
+]
 
-[testenv:mprof]
-basepython = python3.13
-extras = debug
-commands =
-    mprof run --multiprocess python -m aqt install-qt -O /tmp -d /tmp linux desktop 6.8.1
-    mprof plot --output memory-profile.png
-deps =
-    memory_profiler
-    matplotlib
+[tool.tox.env.mprof]
+extras = ["test", "debug"]
+commands = [
+    ["mprof", "run", "--multiprocess", "python", "-m", "aqt", "install-qt", "-O", "/tmp", "-d", "/tmp", "linux", "desktop", "6.8.1"],
+    ["mprof", "plot", "--output", "memory-profile.png"]
+]
+deps = ["memory_profiler", "matplotlib"]
 
-[testenv:fil]
-basepython = python3.13
-extras = debug
-commands =
-    fil-profile run -m aqt install-qt -O /tmp -d /tmp linux desktop 6.8.1
-deps =
-    filprofiler
+[tool.tox.env.fil]
+extras = ["debug"]
+commands = [
+    ["fil-profile", "run", "-m", "aqt", "install-qt", "-O", "/tmp", "-d", "/tmp", "linux", "desktop", "6.8.1"]
+]
+deps = ["filprofiler"]
 
-[testenv:coveralls]
-deps =
-    coveralls
+[tool.tox.env.coveralls]
+deps = ["coveralls"]
 skip_install = true
-commands =
-    coveralls []
-
-[gh-actions]
-python =
-    3.9: py39
-    3.10: py310
-    3.11: py311
-    3.12: py312
-    3.13: py313
-"""
+commands = [["coveralls", "[]"]]
