@@ -14,7 +14,7 @@ on:
 jobs:
   check_document:
     name: Check packaging 📦
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       AQT_TEST_EMAIL: ${{ secrets.AQT_TEST_EMAIL }}
       AQT_TEST_PASSWORD: ${{ secrets.AQT_TEST_PASSWORD }}
@@ -41,14 +41,3 @@ jobs:
       run: coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - uses: actions/setup-java@v5
-      if: ( github.event_name == 'push' ) && ( github.ref == 'refs/heads/master' )
-      with:
-        distribution: 'temurin'
-        java-version: '21'
-    - name: Send coverage to codacy
-      if: ( github.event_name == 'push' ) && ( github.ref == 'refs/heads/master' )
-      run: |
-        java -jar ci/codacy-coverage-reporter.jar report -l Python -t ${PROJECT_TOKEN} -r cobertura.xml
-      env:
-        PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
