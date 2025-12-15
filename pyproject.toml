@@ -210,7 +210,7 @@ commands = [["check-manifest", "{toxinidir}"], ["flake8", "aqt", "tests"]]
 
 [tool.tox.env.mypy]
 extras = ["check"]
-deps = ["types-request", "types-beautifulsoup4", "types-psutil"]
+deps = ["lxml", "types-requests", "types-beautifulsoup4", "types-psutil"]
 commands = [["mypy", "--html-report", "build/mypy", "aqt"]]
 
 [tool.tox.env.docs]
