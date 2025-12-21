@@ -31,7 +31,6 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 2
-          fetch-tags: true
       - name: Ensure nearest tag is present
         id: expandFetchDepth
         shell: bash
