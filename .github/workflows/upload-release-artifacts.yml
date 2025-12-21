@@ -34,6 +34,7 @@ jobs:
           fetch-tags: true
       - name: Ensure nearest tag is present
         id: expandFetchDepth
+        shell: bash
         run: |
           while ! git describe --tags --abbrev=0 >/dev/null 2>&1; do
             CUR_DEPTH=$(git rev-list --count HEAD)
