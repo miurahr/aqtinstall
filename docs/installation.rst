@@ -8,7 +8,7 @@ Installation
 Requirements
 ------------
 
-- Minimum Python version:  3.9
+- Minimum Python version:  3.10
 
 - Recommended Python version:  3.13
 

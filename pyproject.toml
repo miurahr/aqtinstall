@@ -20,7 +20,7 @@ classifiers = [
     "Topic :: Software Development",
     "Topic :: Software Development :: Libraries",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "bs4",  # canonical name is beautifulsoup4
     "defusedxml",
