@@ -27,10 +27,29 @@ jobs:
       run:
         shell: ${{ startsWith(matrix.system.os, 'windows-') && 'pwsh' || 'bash' }} {0}
     steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 20
-      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+      - name: Ensure nearest tag is present
+        id: expandFetchDepth
+        shell: bash
+        run: |
+          while ! git describe --tags --abbrev=0 >/dev/null 2>&1; do
+            CUR_DEPTH=$(git rev-list --count HEAD)
+            NEW_DEPTH=$(( CUR_DEPTH * 2 ))
+            if [ "$NEW_DEPTH" -gt 512 ]; then
+              echo "Reachable tag not found within 512 commits. Attempting unshallow fetch..."
+              git fetch --unshallow --tags origin "$GITHUB_REF" || true
+              if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
+                echo "Error: No tags found in the history of this branch."
+                exit 1
+              fi
+              break
+            fi
+            echo "Fetching additional $NEW_DEPTH commits ..."
+            git fetch --depth=$NEW_DEPTH --tags origin "$GITHUB_REF"
+          done
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          echo "Nearest tag found: $LATEST_TAG"
       - name: Set up Python
         uses: actions/setup-python@v6
         with:

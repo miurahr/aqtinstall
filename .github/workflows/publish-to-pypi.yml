@@ -1,4 +1,3 @@
-name: Publish Python 🐍 distributions 📦 to PyPI
 
 on:
   push:
@@ -12,14 +11,30 @@ on:
 jobs:
   build:
     name: Build package
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 50
-      - name: Fetch release tag
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: Ensure nearest tag is present
+        id: expandFetchDepth
+        run: |
+          while ! git describe --tags --abbrev=0 >/dev/null 2>&1; do
+            CUR_DEPTH=$(git rev-list --count HEAD)
+            NEW_DEPTH=$(( CUR_DEPTH * 2 ))
+            if [ "$NEW_DEPTH" -gt 512 ]; then
+              echo "Reachable tag not found within 512 commits. Attempting unshallow fetch..."
+              git fetch --unshallow --tags origin "$GITHUB_REF" || true
+              if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
+                echo "Error: No tags found in the history of this branch."
+                exit 1
+              fi
+              break
+            fi
+            echo "Fetching additional $NEW_DEPTH commits ..."
+            git fetch --depth=$NEW_DEPTH --tags origin "$GITHUB_REF"
+          done
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          echo "Nearest tag found: $LATEST_TAG"
       - name: Set up Python 3.13🐍
         uses: actions/setup-python@v6
         with:
@@ -38,8 +53,9 @@ jobs:
 
   publish:
     name: publish Python 🐍 distributions 📦 to PyPI
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs: build
+    environment: pypi
     permissions:
       id-token: write
     steps:
@@ -48,12 +64,11 @@ jobs:
         with:
           name: dists
           path: dist/
-      - name: Publish distribution 📦 to Test PyPI when releases branch
+      - name: Publish distribution 📦 to Test PyPI
         if: ${{ startsWith(github.event.ref, 'refs/heads/releases') }}
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e  # release/v1.13.0
         with:
-          password: ${{ secrets.testpypi_password }}
-          repository_url: https://test.pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
       - name: Publish distribution 📦 to PyPI
-        if: ${{ startsWith(github.event.ref, 'refs/tags') }}
-        uses: pypa/gh-action-pypi-publish@release/v1
+        if: startsWith(github.event.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # release/v1.13.0
