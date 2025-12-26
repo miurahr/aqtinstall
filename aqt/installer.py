@@ -1694,7 +1694,7 @@ def installer(
     else:
         command_args = [command, "x", "-aoa", "-bd", "-y", "-o{}".format(base_dir), str(archive)]
         try:
-            proc = subprocess.run(command_args, stdout=subprocess.PIPE, check=True)
+            proc = subprocess.run(command_args, capture_output=True, check=True, text=True)
             logger.debug(proc.stdout)
         except subprocess.CalledProcessError as cpe:
             msg = "\n".join(filter(None, [f"Extraction error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
