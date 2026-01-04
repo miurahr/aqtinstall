@@ -11,6 +11,7 @@ import textwrap
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import py7zr
