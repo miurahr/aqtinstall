@@ -11,7 +11,6 @@ import textwrap
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import py7zr
@@ -1515,6 +1514,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
 def test_install(
     monkeypatch,
     capsys,
+    tmp_path,
     cmd: List[str],
     host: str,
     target: str,
@@ -1561,35 +1561,35 @@ def test_install(
         lambda *args: [{"windows": "win64_mingw1234", "linux": "gcc_64", "mac": "clang_64"}[host]],
     )
 
-    with TemporaryDirectory() as output_dir:
-        cli = Cli()
-        cli._setup_settings()
+    output_dir = str(tmp_path)
+    cli = Cli()
+    cli._setup_settings()
 
-        assert 0 == cli.run(cmd + ["--outputdir", output_dir])
+    assert 0 == cli.run(cmd + ["--outputdir", output_dir])
 
-        out, err = capsys.readouterr()
-        sys.stdout.write(out)
-        sys.stderr.write(err)
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
 
-        assert expect_out.match(err)
+    assert expect_out.match(err)
 
-        for key in arch_dir.keys():
-            installed_path = Path(output_dir) / version / arch_dir[key]
-            if version == "5.9.0":
-                installed_path = Path(output_dir) / "5.9" / arch_dir[key]
-            assert installed_path.is_dir()
-            for archive in archives[key]:
-                if not archive.should_install:
-                    continue
-                for patched_file in archive.contents:
-                    file_path = installed_path / patched_file.filename
-                    assert file_path.is_file()
-                    if file_path.name == "qmake":
-                        assert os.access(file_path, os.X_OK), "qmake file must be executable"
+    for key in arch_dir.keys():
+        installed_path = Path(output_dir) / version / arch_dir[key]
+        if version == "5.9.0":
+            installed_path = Path(output_dir) / "5.9" / arch_dir[key]
+        assert installed_path.is_dir()
+        for archive in archives[key]:
+            if not archive.should_install:
+                continue
+            for patched_file in archive.contents:
+                file_path = installed_path / patched_file.filename
+                assert file_path.is_file()
+                if file_path.name == "qmake":
+                    assert os.access(file_path, os.X_OK), "qmake file must be executable"
 
-                    expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
-                    actual_content = file_path.read_text(encoding="utf_8")
-                    assert actual_content == expect_content
+                expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
+                actual_content = file_path.read_text(encoding="utf_8")
+                assert actual_content == expect_content
 
 
 @pytest.mark.parametrize(
@@ -1598,7 +1598,7 @@ def test_install(
         ("6.8.0", "680", "wasm_singlethread"),
     ],
 )
-def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version, wasm_arch):
+def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, tmp_path, version, str_version, wasm_arch):
     """Test installing Qt 6.8 WASM with autodesktop, which requires special handling for addons"""
 
     # WASM archives
@@ -1841,27 +1841,27 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", mock_download_archive)
 
     # Run the installation
-    with TemporaryDirectory() as output_dir:
-        cli = Cli()
-        cli._setup_settings()
+    output_dir = str(tmp_path)
+    cli = Cli()
+    cli._setup_settings()
 
-        result = cli.run(
-            [
-                "install-qt",
-                "all_os",
-                "wasm",
-                version,
-                wasm_arch,
-                "-m",
-                "qtcharts",
-                "qtquick3d",
-                "--autodesktop",
-                "--outputdir",
-                output_dir,
-            ]
-        )
+    result = cli.run(
+        [
+            "install-qt",
+            "all_os",
+            "wasm",
+            version,
+            wasm_arch,
+            "-m",
+            "qtcharts",
+            "qtquick3d",
+            "--autodesktop",
+            "--outputdir",
+            output_dir,
+        ]
+    )
 
-        assert result == 0
+    assert result == 0
 
     # Check output format
     out, err = capsys.readouterr()
@@ -2090,7 +2090,7 @@ def test_install_pool_exception(monkeypatch, capsys, exception, settings_file, e
     assert err.rstrip().endswith(expect_end_msg)
 
 
-def test_install_installer_archive_extraction_err(monkeypatch):
+def test_install_installer_archive_extraction_err(monkeypatch, tmp_path):
     def mock_extractor_that_fails(*args, **kwargs):
         raise subprocess.CalledProcessError(returncode=1, cmd="some command", output="out", stderr="err")
 
@@ -2098,8 +2098,8 @@ def test_install_installer_archive_extraction_err(monkeypatch):
     monkeypatch.setattr("aqt.installer.downloadBinaryFile", lambda *args: None)
     monkeypatch.setattr("aqt.installer.subprocess.run", mock_extractor_that_fails)
 
-    with pytest.raises(ArchiveExtractionError) as err, TemporaryDirectory() as temp_dir:
-        with open(Path(temp_dir) / "archive", "w"):
+    with pytest.raises(ArchiveExtractionError) as err:
+        with open(tmp_path / "archive", "w"):
             pass
         installer(
             qt_package=QtPackage(
@@ -2111,10 +2111,10 @@ def test_install_installer_archive_extraction_err(monkeypatch):
                 "package_desc",
                 "pkg_update_name",
             ),
-            base_dir=temp_dir,
+            base_dir=str(tmp_path),
             command="some_nonexistent_7z_extractor",
             queue=MockMultiprocessingManager.Queue(),
-            archive_dest=Path(temp_dir),
+            archive_dest=tmp_path,
             settings_ini=Settings.configfile,
             keep=False,
         )
@@ -2187,6 +2187,7 @@ def test_install_installer_archive_extraction_err(monkeypatch):
 def test_installer_passes_base_to_metadatafactory(
     monkeypatch,
     capsys,
+    tmp_path,
     cmd: List[str],
     host: str,
     target: str,
@@ -2231,14 +2232,14 @@ def test_installer_passes_base_to_metadatafactory(
 
     monkeypatch.setattr("aqt.metadata.getUrl", mock_get_url)
 
-    with TemporaryDirectory() as output_dir:
-        cli = Cli()
-        cli._setup_settings()
+    output_dir = str(tmp_path)
+    cli = Cli()
+    cli._setup_settings()
 
-        assert 0 == cli.run(cmd + ["--base", base_url, "--outputdir", output_dir])
+    assert 0 == cli.run(cmd + ["--base", base_url, "--outputdir", output_dir])
 
-        out, err = capsys.readouterr()
-        sys.stdout.write(out)
-        sys.stderr.write(err)
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
 
-        assert expect_out.match(err), err
+    assert expect_out.match(err), err
