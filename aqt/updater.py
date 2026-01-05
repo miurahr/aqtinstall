@@ -192,7 +192,9 @@ class Updater:
             script_path = self.prefix / "bin" / (script_name + ".bat" if os_name.startswith("windows") else script_name)
             if not os.path.isfile(script_path):
                 # Qt 6.10.1 msvc2022_arm64 prepends "host-"
-                script_path = self.prefix / "bin" / ("host-" + script_name + ".bat" if os_name.startswith("windows") else script_name)
+                script_path = (
+                    self.prefix / "bin" / ("host-" + script_name + ".bat" if os_name.startswith("windows") else script_name)
+                )
             self.logger.info(f"Patching {script_path}")
             for unpatched in unpatched_paths():
                 self._patch_textfile(script_path, f"{unpatched}bin", patched, is_executable=True)
