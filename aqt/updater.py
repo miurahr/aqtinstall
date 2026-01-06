@@ -300,7 +300,6 @@ class Updater:
         try:
             prefix = base_path / version_dir / arch_dir
             updater = Updater(prefix, logger)
-            updater.set_license(base_dir, version_dir, arch_dir)
             if target.arch not in [
                 "ios",
                 "android",
@@ -328,10 +327,13 @@ class Updater:
                     updater.patch_pkgconfig("c:/Users/qt/work/install", target.os_name)
                     updater.patch_prl("c:/Users/qt/work/install/lib")
                     updater.make_qtenv2(base_dir, version_dir, arch_dir)
+                if version < Version("6.0.0"):
+                    updater.set_license(base_dir, version_dir, arch_dir)
                 if version < Version("5.14.0"):
                     updater.patch_qtcore(target)
             elif version in SimpleSpec(">=5.0,<6.0"):
                 updater.patch_qmake()
+                updater.set_license(base_dir, version_dir, arch_dir)
             else:  # qt6 mobile, wasm, or msvc-arm64
                 if installed_desktop_arch_dir is not None:
                     desktop_arch_dir = installed_desktop_arch_dir
