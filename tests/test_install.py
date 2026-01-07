@@ -402,6 +402,17 @@ def plain_qtbase_archive(update_xml_name: str, arch: str, host: str = "windows",
     )
 
 
+def plain_qt6base_archive(
+    update_xml_name: str, arch: str, host: str = "windows", should_install: bool = True
+) -> MockArchive:
+    return MockArchive(
+        filename_7z=f"qtbase-{host}-{arch}.7z",
+        update_xml_name=update_xml_name,
+        contents=(),
+        should_install=should_install,
+    )
+
+
 def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datetime.now()) -> MockArchive:
     return MockArchive(
         filename_7z=f"{tool_name}-{host}-{variant}.7z",
@@ -661,7 +672,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             {"std": "windows_x86/desktop/qt6_620/Updates.xml"},
             {
                 "std": [
-                    plain_qtbase_archive("qt.qt6.620.win64_mingw73", "win64_mingw73", should_install=False),
+                    plain_qt6base_archive("qt.qt6.620.win64_mingw73", "win64_mingw73", should_install=False),
                     qtpositioning_module("6.2.0", "win64_mingw73"),
                 ]
             },
@@ -683,7 +694,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             {"std": "windows_x86/desktop/qt6_610/Updates.xml"},
             {
                 "std": [
-                    plain_qtbase_archive("qt.qt6.610.win64_mingw81", "win64_mingw81"),
+                    plain_qt6base_archive("qt.qt6.610.win64_mingw81", "win64_mingw81"),
                     qtcharts_module("6.1.0", "win64_mingw81"),
                 ]
             },
@@ -707,7 +718,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             {"std": "windows_x86/desktop/qt6_610/Updates.xml"},
             {
                 "std": [
-                    plain_qtbase_archive("qt.qt6.610.win64_mingw81", "win64_mingw81"),
+                    plain_qt6base_archive("qt.qt6.610.win64_mingw81", "win64_mingw81"),
                     qtcharts_module("6.1.0", "win64_mingw81"),
                 ]
             },
@@ -860,7 +871,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         ),
                     ),
                 ],
-                "desk": [plain_qtbase_archive("qt.qt6.652.win64_msvc2019_64", "win64_msvc2019_64", host="windows")],
+                "desk": [plain_qt6base_archive("qt.qt6.652.win64_msvc2019_64", "win64_msvc2019_64", host="windows")],
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
@@ -1146,7 +1157,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         ),
                     ),
                 ],
-                "desk": [plain_qtbase_archive("qt.qt6.612.clang_64", "clang_64", host="mac")],
+                "desk": [plain_qt6base_archive("qt.qt6.612.clang_64", "clang_64", host="mac")],
             },
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
@@ -1247,7 +1258,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             {
                 "std": [
-                    plain_qtbase_archive(
+                    plain_qt6base_archive(
                         "qt.qt6.681.win64_msvc2022_64",
                         "Windows-Windows_11_23H2-X86_64",
                         host="Windows-Windows_11_23H2-MSVC2022",
@@ -1302,7 +1313,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             {
                 "std": [
-                    plain_qtbase_archive(
+                    plain_qt6base_archive(
                         "qt.qt6.681.win64_mingw",
                         "Windows-Windows_10_22H2-X86_64",
                         host="Windows-Windows_10_22H2-Mingw",
@@ -1351,18 +1362,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z",
                         update_xml_name="qt.qt6.6100.win64_msvc2022_arm64_cross_compiled",
                         contents=(
-                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                            PatchedFile(
-                                filename="mkspecs/qconfig.pri",
-                                unpatched_content="... blah blah blah ...\n"
-                                "QT_EDITION = Not OpenSource\n"
-                                "QT_LICHECK = Not Empty\n"
-                                "... blah blah blah ...\n",
-                                patched_content="... blah blah blah ...\n"
-                                "QT_EDITION = OpenSource\n"
-                                "QT_LICHECK =\n"
-                                "... blah blah blah ...\n",
-                            ),
+                            # Qt 6 non-desktop should patch qmake script and target_qt.conf
                             PatchedFile(
                                 filename="bin/qmake.bat",
                                 unpatched_content="... blah blah blah ...\n"
@@ -1468,7 +1468,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             },
             {
                 "std": [
-                    plain_qtbase_archive(
+                    plain_qt6base_archive(
                         "qt.qt6.6100.win64_msvc2022_arm64",
                         "Windows-Windows_11_23H2-AARCH64",
                         host="Windows-Windows_11_23H2-MSVC2022",
@@ -1632,7 +1632,7 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
     desk_archives_by_host = {
         "linux": (
             [
-                plain_qtbase_archive(f"qt.qt6.{str_version}.linux_gcc_64", "linux_gcc_64", host="linux"),
+                plain_qt6base_archive(f"qt.qt6.{str_version}.linux_gcc_64", "linux_gcc_64", host="linux"),
                 MockArchive(
                     filename_7z="qtcharts-linux-gcc_64.7z",
                     update_xml_name=f"qt.qt6.{str_version}.qtcharts.gcc_64",
@@ -1665,7 +1665,7 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
         ),
         "darwin": (
             [
-                plain_qtbase_archive(f"qt.qt6.{str_version}.clang_64", "clang_64", host="mac"),
+                plain_qt6base_archive(f"qt.qt6.{str_version}.clang_64", "clang_64", host="mac"),
                 MockArchive(
                     filename_7z="qtcharts-mac-clang_64.7z",
                     update_xml_name=f"qt.qt6.{str_version}.qtcharts.clang_64",
@@ -1698,7 +1698,7 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
         ),
         "win32": (
             [
-                plain_qtbase_archive(f"qt.qt6.{str_version}.win64_mingw", "win64_mingw", host="windows"),
+                plain_qt6base_archive(f"qt.qt6.{str_version}.win64_mingw", "win64_mingw", host="windows"),
                 MockArchive(
                     filename_7z="qtcharts-windows-win64_mingw.7z",
                     update_xml_name=f"qt.qt6.{str_version}.qtcharts.win64_mingw",
@@ -2073,7 +2073,7 @@ def test_install_pool_exception(monkeypatch, capsys, exception, settings_file, e
 
     host, target, ver, arch = "windows", "desktop", "6.1.0", "win64_mingw81"
     updates_url = "windows_x86/desktop/qt6_610/Updates.xml"
-    archives = [plain_qtbase_archive("qt.qt6.610.win64_mingw81", "win64_mingw81")]
+    archives = [plain_qt6base_archive("qt.qt6.610.win64_mingw81", "win64_mingw81")]
 
     cmd = ["install-qt", host, target, ver, arch]
     mock_get_url, mock_download_archive = make_mock_geturl_download_archive(
@@ -2172,7 +2172,7 @@ def test_install_installer_archive_extraction_err(monkeypatch):
             "gcc_arm64",
             "https://www.alt.qt.mirror.com",
             "linux_arm64/desktop/qt6_670/Updates.xml",
-            [plain_qtbase_archive("qt.qt6.670.linux_gcc_arm64", "linux_gcc_arm64", host="linux_arm64")],
+            [plain_qt6base_archive("qt.qt6.670.linux_gcc_arm64", "linux_gcc_arm64", host="linux_arm64")],
             re.compile(
                 r"^INFO    : aqtinstall\(aqt\) v.* on Python 3.*\n"
                 r"INFO    : Resolved spec '6\.7' to 6\.7\.0\n"
