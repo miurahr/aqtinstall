@@ -746,18 +746,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-windows-android_armv7.7z",
                         update_xml_name="qt.qt6.610.android_armv7",
                         contents=(
-                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                            PatchedFile(
-                                filename="mkspecs/qconfig.pri",
-                                unpatched_content="... blah blah blah ...\n"
-                                "QT_EDITION = Not OpenSource\n"
-                                "QT_LICHECK = Not Empty\n"
-                                "... blah blah blah ...\n",
-                                patched_content="... blah blah blah ...\n"
-                                "QT_EDITION = OpenSource\n"
-                                "QT_LICHECK =\n"
-                                "... blah blah blah ...\n",
-                            ),
+                            # Qt 6 non-desktop should patch qmake script and target_qt.conf
                             PatchedFile(
                                 filename="bin/target_qt.conf",
                                 unpatched_content="Prefix=/Users/qt/work/install/target\n"
@@ -811,18 +800,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-windows-win64_msvc2019_arm64.7z",
                         update_xml_name="qt.qt6.652.win64_msvc2019_arm64",
                         contents=(
-                            # Qt 6 msvc-arm64 should patch qconfig.pri, qmake script and target_qt.conf
-                            PatchedFile(
-                                filename="mkspecs/qconfig.pri",
-                                unpatched_content="... blah blah blah ...\n"
-                                "QT_EDITION = Not OpenSource\n"
-                                "QT_LICHECK = Not Empty\n"
-                                "... blah blah blah ...\n",
-                                patched_content="... blah blah blah ...\n"
-                                "QT_EDITION = OpenSource\n"
-                                "QT_LICHECK =\n"
-                                "... blah blah blah ...\n",
-                            ),
+                            # Qt 6 msvc-arm64 should patch qmake script and target_qt.conf
                             PatchedFile(
                                 filename="bin/target_qt.conf",
                                 unpatched_content="Prefix=/Users/qt/work/install/target\n"
@@ -901,18 +879,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-MacOS-MacOS_12-Clang-Android-Android_ANY-ARM64.7z",
                         update_xml_name="qt.qt6.641.android_arm64_v8a",
                         contents=(
-                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                            PatchedFile(
-                                filename="mkspecs/qconfig.pri",
-                                unpatched_content="... blah blah blah ...\n"
-                                "QT_EDITION = Not OpenSource\n"
-                                "QT_LICHECK = Not Empty\n"
-                                "... blah blah blah ...\n",
-                                patched_content="... blah blah blah ...\n"
-                                "QT_EDITION = OpenSource\n"
-                                "QT_LICHECK =\n"
-                                "... blah blah blah ...\n",
-                            ),
+                            # Qt 6 non-desktop should patch qmake script and target_qt.conf
                             PatchedFile(
                                 filename="mkspecs/qdevice.pri",
                                 unpatched_content="blah blah blah...\n"
@@ -989,18 +956,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-linux-android_arm64_v8a.7z",
                         update_xml_name="qt.qt6.630.android_arm64_v8a",
                         contents=(
-                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                            PatchedFile(
-                                filename="mkspecs/qconfig.pri",
-                                unpatched_content="... blah blah blah ...\n"
-                                "QT_EDITION = Not OpenSource\n"
-                                "QT_LICHECK = Not Empty\n"
-                                "... blah blah blah ...\n",
-                                patched_content="... blah blah blah ...\n"
-                                "QT_EDITION = OpenSource\n"
-                                "QT_LICHECK =\n"
-                                "... blah blah blah ...\n",
-                            ),
+                            # Qt 6 non-desktop should patch qmake script and target_qt.conf
                             PatchedFile(
                                 filename="bin/target_qt.conf",
                                 unpatched_content="Prefix=/home/qt/work/install/target\n"
@@ -1060,18 +1016,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-mac-ios.7z",
                         update_xml_name="qt.qt6.612.ios",
                         contents=(
-                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                            PatchedFile(
-                                filename="mkspecs/qconfig.pri",
-                                unpatched_content="... blah blah blah ...\n"
-                                "QT_EDITION = Not OpenSource\n"
-                                "QT_LICHECK = Not Empty\n"
-                                "... blah blah blah ...\n",
-                                patched_content="... blah blah blah ...\n"
-                                "QT_EDITION = OpenSource\n"
-                                "QT_LICHECK =\n"
-                                "... blah blah blah ...\n",
-                            ),
+                            # Qt 6 non-desktop should patch qmake script and target_qt.conf
                             PatchedFile(
                                 filename="bin/target_qt.conf",
                                 unpatched_content="Prefix=/Users/qt/work/install/target\n"
@@ -1126,17 +1071,6 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         update_xml_name="qt.qt6.612.ios",
                         contents=(
                             PatchedFile(
-                                filename="mkspecs/qconfig.pri",
-                                unpatched_content="... blah blah blah ...\n"
-                                "QT_EDITION = Not OpenSource\n"
-                                "QT_LICHECK = Not Empty\n"
-                                "... blah blah blah ...\n",
-                                patched_content="... blah blah blah ...\n"
-                                "QT_EDITION = OpenSource\n"
-                                "QT_LICHECK =\n"
-                                "... blah blah blah ...\n",
-                            ),
-                            PatchedFile(
                                 filename="bin/target_qt.conf",
                                 unpatched_content="Prefix=/Users/qt/work/install/target\n"
                                 "HostPrefix=../../\n"
@@ -1187,18 +1121,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                         filename_7z="qtbase-windows-wasm_32.7z",
                         update_xml_name="qt.qt6.624.wasm_32",
                         contents=(
-                            # Qt 6 non-desktop should patch qconfig.pri, qmake script and target_qt.conf
-                            PatchedFile(
-                                filename="mkspecs/qconfig.pri",
-                                unpatched_content="... blah blah blah ...\n"
-                                "QT_EDITION = Not OpenSource\n"
-                                "QT_LICHECK = Not Empty\n"
-                                "... blah blah blah ...\n",
-                                patched_content="... blah blah blah ...\n"
-                                "QT_EDITION = OpenSource\n"
-                                "QT_LICHECK =\n"
-                                "... blah blah blah ...\n",
-                            ),
+                            # Qt 6 non-desktop should patch qmake script and target_qt.conf
                             PatchedFile(
                                 filename="bin/target_qt.conf",
                                 unpatched_content="Prefix=/Users/qt/work/install/target\n"
