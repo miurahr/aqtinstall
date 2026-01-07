@@ -23,7 +23,7 @@ def setup_settings():
             re.compile(
                 r"Updater caused an IO error: .*No such file or directory: "
                 # '.*' wildcard used to match path separators on windows/*nix
-                r".*5\.15\.2.*winrt_x86_msvc2019.*mkspecs.*qconfig.pri.*"
+                r".*5\.15\.2.*winrt_x86_msvc2019.*bin.*qt.conf.*"
             ),
         ),
         (
@@ -31,23 +31,7 @@ def setup_settings():
             re.compile(
                 r"Updater caused an IO error: .*No such file or directory: "
                 # '.*' wildcard used to match path separators on windows/*nix
-                r".*5\.15\.2.*msvc2019_64.*mkspecs.*qconfig.pri.*"
-            ),
-        ),
-        (
-            TargetConfig("6.1.2", "desktop", "clang_64", "mac"),
-            re.compile(
-                r"Updater caused an IO error: .*No such file or directory: "
-                # '.*' wildcard used to match path separators on windows/*nix
-                r".*6\.1\.2.*macos.*mkspecs.*qconfig.pri.*"
-            ),
-        ),
-        (
-            TargetConfig("6.1.1", "desktop", "clang_64", "mac"),
-            re.compile(
-                r"Updater caused an IO error: .*No such file or directory: "
-                # '.*' wildcard used to match path separators on windows/*nix
-                r".*6\.1\.1.*clang_64.*mkspecs.*qconfig.pri.*"
+                r".*5\.15\.2.*msvc2019_64.*bin.*qt.conf.*"
             ),
         ),
     ),
