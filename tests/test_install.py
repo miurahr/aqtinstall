@@ -1608,7 +1608,6 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
         platform_dir, platform_arch, desktop_arch_dir = "mac_x64", "clang_64", "macos"
     else:
         platform_dir, platform_arch, desktop_arch_dir = "windows_x86", "win64_mingw", "mingw_64"
-    print(f"extract {extract_target}")
 
     def mock_get_url(url: str, *args, **kwargs) -> str:
         wasm_base = f"all_os/wasm/qt6_{str_version}/qt6_{str_version}_{wasm_arch}"
@@ -1662,10 +1661,7 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
                         break
 
                 # Set the appropriate path prefix
-                if extract_target:
-                    prefix = ""
-                else:
-                    prefix = f"{version}/{arch_dir}/"
+                prefix = "" if extract_target else f"{version}/{arch_dir}/"
 
                 basic_files = {
                     f"{prefix}mkspecs/qconfig.pri": "QT_EDITION = OpenSource\nQT_LICHECK =\n",
