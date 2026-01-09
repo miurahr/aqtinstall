@@ -1593,20 +1593,22 @@ def test_install(
 
 
 @pytest.mark.parametrize(
-    "version, str_version, wasm_arch",
+    "version, str_version, wasm_arch, extract_target",
     [
-        ("6.8.0", "680", "wasm_singlethread"),
+        ("6.8.0", "680", "wasm_singlethread", False),
+        ("6.10.1", "6101", "wasm_singlethread", True),
     ],
 )
-def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version, wasm_arch):
+def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version, wasm_arch, extract_target):
     """Test installing Qt 6.8 WASM with autodesktop, which requires special handling for addons"""
 
     if sys.platform.startswith("linux"):
-        platform_dir = "linux_x64"
+        platform_dir, platform_arch, desktop_arch_dir = "linux_x64", "linux_gcc_64", "gcc_64"
     elif sys.platform == "darwin":
-        platform_dir = "mac_x64"
+        platform_dir, platform_arch, desktop_arch_dir = "mac_x64", "clang_64", "macos"
     else:
-        platform_dir = "windows_x86"
+        platform_dir, platform_arch, desktop_arch_dir = "windows_x86", "win64_mingw", "mingw_64"
+    print(f"extract {extract_target}")
 
     def mock_get_url(url: str, *args, **kwargs) -> str:
         wasm_base = f"all_os/wasm/qt6_{str_version}/qt6_{str_version}_{wasm_arch}"
@@ -1617,14 +1619,14 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
             if any(base.endswith(path) for path in [f"{wasm_base}/Updates.xml", f"{desktop_base}/Updates.xml"]):
                 # For main Updates.xml files, read the appropriate file and generate its hash
                 if "wasm" in base:
-                    xml = (Path(__file__).parent / "data" / "all_os-680-wasm-single-update.xml").read_text()
+                    xml = (Path(__file__).parent / "data" / f"all_os-{str_version}-wasm-single-update.xml").read_text()
                 else:
                     if platform_dir == "linux_x64":
-                        xml = (Path(__file__).parent / "data" / "linux-680-desktop-update.xml").read_text()
+                        xml = (Path(__file__).parent / "data" / f"linux-{str_version}-desktop-update.xml").read_text()
                     elif platform_dir == "mac_x64":
-                        xml = (Path(__file__).parent / "data" / "mac-680-desktop-update.xml").read_text()
+                        xml = (Path(__file__).parent / "data" / f"mac-{str_version}-desktop-update.xml").read_text()
                     else:
-                        xml = (Path(__file__).parent / "data" / "windows-680-desktop-update.xml").read_text()
+                        xml = (Path(__file__).parent / "data" / f"windows-{str_version}-desktop-update.xml").read_text()
                 return f"{hashlib.sha256(bytes(xml, 'utf-8')).hexdigest()} Updates.xml"
             return f"{hashlib.sha256(b'mock').hexdigest()} {url.split('/')[-1][:-7]}"
 
@@ -1637,14 +1639,14 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
 
         # Handle main Updates.xml files
         if url.endswith(f"{wasm_base}/Updates.xml"):
-            return (Path(__file__).parent / "data" / "all_os-680-wasm-single-update.xml").read_text()
+            return (Path(__file__).parent / "data" / f"all_os-{str_version}-wasm-single-update.xml").read_text()
         elif url.endswith(f"{desktop_base}/Updates.xml"):
             if platform_dir == "linux_x64":
-                return (Path(__file__).parent / "data" / "linux-680-desktop-update.xml").read_text()
+                return (Path(__file__).parent / "data" / f"linux-{str_version}-desktop-update.xml").read_text()
             elif platform_dir == "mac_x64":
-                return (Path(__file__).parent / "data" / "mac-680-desktop-update.xml").read_text()
+                return (Path(__file__).parent / "data" / f"mac-{str_version}-desktop-update.xml").read_text()
             else:
-                return (Path(__file__).parent / "data" / "windows-680-desktop-update.xml").read_text()
+                return (Path(__file__).parent / "data" / f"windows-{str_version}-desktop-update.xml").read_text()
 
         assert False, f"No mocked url available for '{url}'"
 
@@ -1656,35 +1658,33 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
                 arch_dir = wasm_arch
                 for desk_indicator in ["gcc_64", "clang_64", "mingw"]:
                     if desk_indicator in url:
-                        if "linux" in url.lower():
-                            arch_dir = "gcc_64"
-                        elif "mac" in url.lower():
-                            arch_dir = "macos"
-                        else:
-                            arch_dir = "mingw_64"
+                        arch_dir = desktop_arch_dir
                         break
 
                 # Set the appropriate path prefix
-                prefix = f"6.8.0/{arch_dir}"
+                if extract_target:
+                    prefix = ""
+                else:
+                    prefix = f"{version}/{arch_dir}/"
 
                 basic_files = {
-                    f"{prefix}/mkspecs/qconfig.pri": "QT_EDITION = OpenSource\nQT_LICHECK =\n",
+                    f"{prefix}mkspecs/qconfig.pri": "QT_EDITION = OpenSource\nQT_LICHECK =\n",
                 }
                 if arch_dir == wasm_arch:
                     extension = ".bat" if platform_dir == "windows_x86" else ""
                     basic_files.update(
                         {
-                            f"{prefix}/bin/target_qt.conf": "Prefix=...\n",  # Basic config
-                            f"{prefix}/bin/qmake{extension}": "echo Mock qmake{extension}\n",
-                            f"{prefix}/bin/qmake6{extension}": "echo Mock qmake6{extension}\n",
-                            f"{prefix}/bin/qtpaths{extension}": "echo Mock qtpaths{extension}\n",
-                            f"{prefix}/bin/qtpaths6{extension}": "echo Mock qtpaths6{extension}\n",
+                            f"{prefix}bin/target_qt.conf": "Prefix=...\n",  # Basic config
+                            f"{prefix}bin/qmake{extension}": "echo Mock qmake{extension}\n",
+                            f"{prefix}bin/qmake6{extension}": "echo Mock qmake6{extension}\n",
+                            f"{prefix}bin/qtpaths{extension}": "echo Mock qtpaths{extension}\n",
+                            f"{prefix}bin/qtpaths6{extension}": "echo Mock qtpaths6{extension}\n",
                         }
                     )
                 else:
                     basic_files.update(
                         {
-                            f"{prefix}/bin/dummy": "",  # dummy to get bin directory created
+                            f"{prefix}bin/dummy": "",  # dummy to get bin directory created
                         }
                     )
 
@@ -1722,25 +1722,22 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
         assert result == 0
 
     # Check output format
+    # pytest option --capture=tee-sys can be used to also display to console even when test passes.
     out, err = capsys.readouterr()
     sys.stdout.write(out)
     sys.stderr.write(err)
-    # with open("stderr.log", "w") as f:
-    #    f.write(err)
-    # with open("stdout.log", "w") as f:
-    #    f.write(out)
 
     # Use regex that works for all platforms
     expected_pattern = re.compile(
         r"^INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
         r"INFO    : You are installing the Qt6-WASM version of Qt\n"
         r"(?:INFO    : Found extension .*?\n)*"
-        r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
+        r"(?:INFO    : Downloading qt[^\n]*\n"
         r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
-        r"(?:INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]"
+        rf"(?:INFO    : Patching .*[/\\]{re.escape(version)}[/\\]wasm_singlethread[/\\]bin[/\\]"
         r"(?:qmake(?:6)?(?:\.bat)?|qtpaths(?:6)?(?:\.bat)?|target_qt\.conf)\n)*"
         r"INFO    : \n"
-        r"INFO    : Autodesktop will now install (?:linux|mac|windows) desktop 6\.8\.0 (?:linux_gcc_64|clang_64|win64_mingw) as required by Qt6-WASM\n"
+        rf"INFO    : Autodesktop will now install (?:linux|mac|windows) desktop {re.escape(version)} {platform_arch} as required by Qt6-WASM\n"
         r"INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
         r"(?:INFO    : Found extension .*?\n)*"
         r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*|MinGW[^\n]*|d3dcompiler[^\n]*|opengl32sw[^\n]*)\n"
