@@ -1679,10 +1679,6 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
                             f"{prefix}/bin/qmake6{extension}": "echo Mock qmake6{extension}\n",
                             f"{prefix}/bin/qtpaths{extension}": "echo Mock qtpaths{extension}\n",
                             f"{prefix}/bin/qtpaths6{extension}": "echo Mock qtpaths6{extension}\n",
-                            # f"{prefix}/bin/host-qmake{extension}": f"echo Mock host-qmake{extension}\n",
-                            # f"{prefix}/bin/host-qmake6{extension}": f"echo Mock host-qmake6{extension}\n",
-                            # f"{prefix}/bin/host-qtpaths{extension}": f"echo Mock host-qtpaths{extension}\n",
-                            # f"{prefix}/bin/host-qtpaths6{extension}": f"echo Mock host-qtpaths6{extension}\n",
                         }
                     )
                 else:
@@ -1742,7 +1738,7 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
         r"(?:INFO    : Downloading (?:qt[^\n]*|icu[^\n]*)\n"
         r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
         r"(?:INFO    : Patching .*[/\\]6\.8\.0[/\\]wasm_singlethread[/\\]bin[/\\]"
-        r"(?:(?:host-)?qmake(?:6)?(?:\.bat)?|(?:host-)?qtpaths(?:6)?(?:\.bat)?|target_qt\.conf)\n)*"
+        r"(?:qmake(?:6)?(?:\.bat)?|qtpaths(?:6)?(?:\.bat)?|target_qt\.conf)\n)*"
         r"INFO    : \n"
         r"INFO    : Autodesktop will now install (?:linux|mac|windows) desktop 6\.8\.0 (?:linux_gcc_64|clang_64|win64_mingw) as required by Qt6-WASM\n"
         r"INFO    : aqtinstall\(aqt\) v.*? on Python 3.*?\n"
