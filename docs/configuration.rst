@@ -94,7 +94,7 @@ archive_download_location:
 min_module_size:
     This is the minimum decompressed size, in bytes, of the modules that aqt is permitted to list.
     The authors of aqt have discovered that the Qt repository contains a few mysteriously
-    "empty" modules, including the examples modules for `qtlottie` and `qtquicktimeline`.
+    "empty" modules, including the examples modules for *qtlottie* and *qtquicktimeline*.
     These modules consist of a single archive that contains empty directories,
     and they are exactly 40 bytes when uncompressed.
     The authors feel that it is not useful for ``aqt list-*`` to list these empty modules.
