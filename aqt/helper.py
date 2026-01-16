@@ -444,7 +444,12 @@ def xml_to_modules(
 
 class MyConfigParser(ConfigParser):
     def getlist(self, section: str, option: str, fallback: List[str] = []) -> List[str]:
-        value = self.get(section, option, fallback=None)
+        value = os.environ.get('AQT_' + section.upper() + '_' + option.upper())
+        if value:
+            value = value.replace(',', '\n')
+        else:
+            value = self.get(section, option, fallback=None)
+
         if value is None:
             return fallback
         try:
