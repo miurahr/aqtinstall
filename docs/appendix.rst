@@ -22,7 +22,7 @@ blacklisting of proxy urls.
 Zero trust network
 ------------------
 
-The `Zero trust network` is popular administration concept in a enterprise local network.
+The *Zero trust network* is popular administration concept in a enterprise local network.
 Enterprise administrator force employers to install network traffic redirector agent in PC and tablet.
 All the traffic are forwarded to cloud service that decrypt SSL communication and checks all the
 employers communications. Security vendor emphasis it as "SECURE" by zero trust for employers privacy.
