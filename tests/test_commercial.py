@@ -2,10 +2,9 @@ import os
 import shutil
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import pytest
-import requests
 
 from aqt.commercial import CommercialInstaller, QtPackageInfo, QtPackageManager
 from aqt.exceptions import DiskAccessNotPermitted
@@ -31,22 +30,6 @@ MOCK_XML_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 
 TEST_EMAIL = os.getenv("AQT_TEST_EMAIL")
 TEST_PASSWORD = os.getenv("AQT_TEST_PASSWORD")
-
-
-class MockResponse:
-    def __init__(self, status_code: int = 200, content: bytes = b"", text: str = "", headers: Dict = None):
-        self.status_code = status_code
-        self.content = content
-        self.text = text
-        self.headers = headers or {}
-        self.ok = status_code == 200
-
-    def raise_for_status(self):
-        if not self.ok:
-            raise requests.HTTPError(f"HTTP Error: {self.status_code}")
-
-    def iter_content(self, chunk_size=None):
-        yield self.content
 
 
 @pytest.fixture
