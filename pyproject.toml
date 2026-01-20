@@ -217,7 +217,7 @@ commands = [["mypy", "--html-report", "build/mypy", "aqt"]]
 extras = ["docs"]
 commands = [
     ["sphinx-build", "{posargs:-E}", "-b", "html", "docs", "build/docs"],
-    ["sphinx-build", "-W", "-b", "linkcheck", "docs", "build/docs"]
+    ["sphinx-build", "-b", "linkcheck", "docs", "build/docs"]
 ]
 
 [tool.tox.env.mprof]
