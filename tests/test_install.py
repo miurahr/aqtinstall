@@ -100,8 +100,7 @@ class MockArchive:
 
     def xml_package_update(self) -> str:
         if self.extract_target:
-            return textwrap.dedent(
-                f"""\
+            return textwrap.dedent(f"""\
                  <PackageUpdate>
                   <Name>{self.update_xml_name}</Name>
                   <Version>{self.version}-0-{self.date.strftime("%Y%m%d%H%M")}</Version>
@@ -113,18 +112,15 @@ class MockArchive:
                     <Argument>{self.filename_7z}</Argument>
                    </Operation>
                   </Operations>
-                 </PackageUpdate>"""
-            )
+                 </PackageUpdate>""")
         else:
-            return textwrap.dedent(
-                f"""\
+            return textwrap.dedent(f"""\
                  <PackageUpdate>
                   <Name>{self.update_xml_name}</Name>
                   <Version>{self.version}-0-{self.date.strftime("%Y%m%d%H%M")}</Version>
                   <Description>none</Description>
                   <DownloadableArchives>{self.filename_7z}</DownloadableArchives>
-                 </PackageUpdate>"""
-            )
+                 </PackageUpdate>""")
 
     def write_compressed_archive(self, dest: Path) -> None:
         def open_writable_archive():
@@ -204,16 +200,14 @@ def make_mock_geturl_download_archive(
             and not archive.update_xml_name.endswith(("_64", "_arm64", "_32", "wasm_singlethread"))
         )
 
-        return textwrap.dedent(
-            f"""\
+        return textwrap.dedent(f"""\
             <PackageUpdate>
              <Name>{archive.update_xml_name}</Name>
              <Version>{archive.version}-0-{archive.date.strftime("%Y%m%d%H%M")}</Version>
              <Description>{getattr(archive, 'package_desc', 'none')}</Description>
              <DownloadableArchives>{archive.filename_7z}</DownloadableArchives>
              {f'<Dependencies>qt.qt6.680.gcc_64</Dependencies>' if is_qt68_addon else ''}
-            </PackageUpdate>"""
-        )
+            </PackageUpdate>""")
 
     standard_xml = "<Updates>\n{}\n</Updates>".format(
         "\n".join([_generate_package_update_xml(archive) for archive in standard_archives])
@@ -322,8 +316,7 @@ def qtcharts_module(ver: str, arch: str) -> MockArchive:
         contents=(
             PatchedFile(
                 filename="modules/Charts.json",
-                unpatched_content=textwrap.dedent(
-                    f"""\
+                unpatched_content=textwrap.dedent(f"""\
                     {{
                         "module_name": "Charts",
                         "version": "{ver}",
@@ -335,8 +328,7 @@ def qtcharts_module(ver: str, arch: str) -> MockArchive:
                             "target_system": "{os_name.title()}"
                         }}
                     }}
-                    """
-                ),
+                    """),
                 patched_content=None,  # it doesn't get patched
             ),
         ),
@@ -360,8 +352,7 @@ def qtpositioning_module(ver: str, arch: str) -> MockArchive:
         contents=(
             PatchedFile(
                 filename="modules/Positioning.json",
-                unpatched_content=textwrap.dedent(
-                    f"""\
+                unpatched_content=textwrap.dedent(f"""\
                     {{
                         "module_name": "Positioning",
                         "version": "{ver}",
@@ -373,8 +364,7 @@ def qtpositioning_module(ver: str, arch: str) -> MockArchive:
                             "target_system": "{os_name.title()}"
                         }}
                     }}
-                    """
-                ),
+                    """),
                 patched_content=None,  # it doesn't get patched
             ),
         ),
