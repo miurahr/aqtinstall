@@ -107,7 +107,7 @@ class ListArgumentParser(BaseArgumentParser):
     target: str
     email: Optional[str]
     pw: Optional[str]
-    search_terms: Optional[str]
+    search_term: Optional[str]
 
 
 class ListToolArgumentParser(ListArgumentParser):
@@ -686,18 +686,18 @@ class Cli:
             commercial_search_args.email = email or getattr(args, "email", None)
             commercial_search_args.pw = password or getattr(args, "pw", None)
 
-            target_str = ""
-            version_str = ""
+            search_target_str = ""
+            search_version_str = ""
             if hasattr(args, "target") and args.target is not None:
-                target_str = args.target
+                search_target_str = args.target
             if hasattr(args, "arch") and args.arch is not None:
                 try:
                     version = Version(args.arch)
-                    version_str = f"{version.major}{version.minor}{version.patch}"
+                    search_version_str = f"{version.major}{version.minor}{version.patch}"
                 except Exception as e:
                     self.logger.warning(f"{e}. Ignoring 'arch' value")
 
-            commercial_search_args.search_terms = [rf"^.*{re.escape(version_str)}\.{re.escape(target_str)}.*$"]
+            commercial_search_args.search_term = rf"^.*{re.escape(search_version_str)}\.{re.escape(search_target_str)}.*$"
 
             ignored_options = []
             if getattr(args, "extensions", False):
@@ -1011,9 +1011,9 @@ class Cli:
 
         # Capture all remaining arguments as search terms
         list_qt_commercial_parser.add_argument(
-            "search_terms",
-            nargs="*",  # Zero or more arguments
-            help="Search terms (all non-option arguments are treated as search terms)",
+            "search_term",
+            nargs="?",  # Zero or one arguments
+            help="Search term",
         )
 
     def run_list_qt_commercial(self, args: ListArgumentParser, print_version: Optional[bool] = True) -> None:
@@ -1049,8 +1049,8 @@ class Cli:
             cmd.append("search")
 
             # Add all search terms if present
-            if args.search_terms:
-                cmd.extend(args.search_terms)
+            if args.search_term:
+                cmd.append(args.search_term)
 
             # Run search
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
