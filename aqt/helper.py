@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2019-2021 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2026 Hiroshi Miura <miurahr@linux.com>
+#               2021-2023 David Dalcino
+#               2023 Alberto Mardegan
+#               2025 Alexandre 'Kidev' Poumaroux
+#               2025 Arnaud de Mouhy
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
