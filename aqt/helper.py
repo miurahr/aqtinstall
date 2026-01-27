@@ -439,8 +439,19 @@ def xml_to_modules(
 
 
 class MyConfigParser(ConfigParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.acceptable_env_keys = [
+            "MIRRORS_TRUSTED_MIRRORS",
+            "MIRRORS_BLACKLIST",
+            "MIRRORS_FALLBACKS",
+        ]
+
     def getlist(self, section: str, option: str, fallback: List[str] = []) -> List[str]:
-        value = self.get(section, option, fallback=None)
+        value = self.getenv(section, option)
+        if value is None:
+            value = self.get(section, option, fallback=None)
+
         if value is None:
             return fallback
         try:
@@ -455,6 +466,14 @@ class MyConfigParser(ConfigParser):
         except Exception:
             result = fallback
         return result
+
+    def getenv(self, section, option):
+        key = section.upper() + "_" + option.upper()
+        if key in self.acceptable_env_keys:
+            value = os.environ.get("AQT_" + key)
+            if value is None:
+                return None
+            return value.replace(",", "\n")
 
 
 class SettingsClass:
