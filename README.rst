@@ -18,8 +18,6 @@ Another Qt installer(aqt)
 .. |Package health| image:: https://snyk.io/advisor/python/aqtinstall/badge.svg
   :target: https://snyk.io/advisor/python/aqtinstall
   :alt: aqtinstall
-.. |codacy| image:: https://app.codacy.com/project/badge/Grade/188accbe7f8f406abf61b888773bf5e3
-  :target: https://app.codacy.com/gh/miurahr/aqtinstall/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade
 
 
 This is a utility alternative to the official graphical Qt installer, for using in CI environment
