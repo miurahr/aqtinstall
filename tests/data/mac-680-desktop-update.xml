@@ -1,0 +1,862 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt3d</Name>
+  <DisplayName>Qt 3D</DisplayName>
+  <Description>Qt 3D Prebuilt Components for Qt 6.8.0. Qt 3D provides functionality for near-realtime simulation systems with support for 2D and 3D rendering in both Qt C++ and Qt Quick applications.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qt3d, qt.qt6.680.examples.qt3d</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>335c8be9be5b9a9aafbedf1e3c05949c6066d107</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt3d.clang_64</Name>
+  <DisplayName>Qt 3D Module for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qt3d, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qt3d-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="79276809" OS="Any" UncompressedSize="510991212"/>
+  <SHA1>569715d44243fbe40a2a6ae7d2fb5fa7f280f757</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt5compat</Name>
+  <DisplayName>Qt 5 Compatibility Module</DisplayName>
+  <Description>Qt 5 Compatibility Module Prebuilt Components for Qt 6.8.0. Qt 5 Compatibility Module allows to continue using some dedicated functionality which has been removed in Qt 6.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qt5compat, qt.qt6.680.examples.qt5compat, qt.qt6.680.addons.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>466d350b34668d22ef858296a501d39f7edf158c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qt5compat.clang_64</Name>
+  <DisplayName>Qt 5 Compatibility Module for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qt5compat, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="5372804" OS="Any" UncompressedSize="34577702"/>
+  <SHA1>1cc8be29528ee41464d5917f317d307a64432569</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtcharts, qt.qt6.680.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>4ca8b5dc973ce63ffc726aa0f1c08e98e15a6dc6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtcharts.clang_64</Name>
+  <DisplayName>Qt Charts for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtcharts, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="14523144" OS="Any" UncompressedSize="91635051"/>
+  <SHA1>8f0ddc38e0a3aea909b330a1a8bd335484667271</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtconnectivity</Name>
+  <DisplayName>Qt Connectivity</DisplayName>
+  <Description>This component includes two Qt modules. The two modules provide access to Bluetooth and NFC hardware.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtbluetooth, qt.qt6.680.doc.qtnfc, qt.qt6.680.examples.qtconnectivity</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>3ec47006fee06875050128b4e53c984f2896946e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtconnectivity.clang_64</Name>
+  <DisplayName>Qt Connectivity for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtconnectivity, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtconnectivity-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="5115205" OS="Any" UncompressedSize="28803082"/>
+  <SHA1>3ac4f8e68738d55781def4b33bb3a95fd050110a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtdatavis3d, qt.qt6.680.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>d449d5f0f3fafa07f92b503dff3d2bf9e8581490</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtdatavis3d.clang_64</Name>
+  <DisplayName>Qt Data Visualization for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtdatavis3d, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="8026067" OS="Any" UncompressedSize="48432702"/>
+  <SHA1>34916133d2a2f8471835d12b1efe21fbb184520e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgraphs</Name>
+  <DisplayName>Qt Graphs</DisplayName>
+  <Description>Qt Graphs is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtgraphs, qt.qt6.680.examples.qtgraphs</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>d8483fb59113c18af460a87c1ef1a728edfd7593</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgraphs.clang_64</Name>
+  <DisplayName>Qt Graphs for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtgraphs, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtgraphs-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="15482248" OS="Any" UncompressedSize="93951378"/>
+  <SHA1>0cacf96007ee987290dcae08a3d0a90af6344517</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgrpc</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC</DisplayName>
+  <Description>QtGrpc contains the two modules QtProtobuf and QtGrpc:&lt;br>QtProtobuf provides a generator which can be used to generate Qt-based classes from messages defined in .proto files.&lt;br>QtGrpc provides support for generating Qt-based clients and servers based on service description in .proto files, as well as communicating with gRPC services using QtProtobuf messages.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtgrpc, qt.qt6.680.examples.qtgrpc</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>83d85f609a8e83c7bb67e6c789f0941a4b653f79</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtgrpc.clang_64</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtgrpc, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtgrpc-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="28112273" OS="Any" UncompressedSize="208955312"/>
+  <SHA1>1b925e5f7184902175ab41fc3d16214bea61905a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qthttpserver</Name>
+  <DisplayName>Qt HTTP Server</DisplayName>
+  <Description>Qt HTTP Server supports building an HTTP server into an application.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <Dependencies>qt.qt6.680.doc.qthttpserver, qt.qt6.680.examples.qthttpserver, qt.qt6.680.addons.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>1ed808332b30fa34aa45fc39ad3fec3e4ec5230d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qthttpserver.clang_64</Name>
+  <DisplayName>Qt HTTP Server for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qthttpserver, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qthttpserver-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1380632" OS="Any" UncompressedSize="8406247"/>
+  <SHA1>e00dfdec15eee8720e051fff340fb8839dca0f97</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtimageformats</Name>
+  <DisplayName>Qt Image Formats</DisplayName>
+  <Description>The Qt Image Formats  provides optional support for other image file formats. The core Qt Gui library by default supports reading and writing image files of the most common file formats: PNG, JPEG, BMP, GIF and a few more.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtimageformats, qt.qt6.680.examples.qtimageformats</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>56e488c8972c11e45177a4ceea0b6bc015ec0fe3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtimageformats.clang_64</Name>
+  <DisplayName>Qt Image Formats for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtimageformats, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3480745" OS="Any" UncompressedSize="23393204"/>
+  <SHA1>0bad558a86e7798792c31cdb3361f01656897d10</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlanguageserver</Name>
+  <DisplayName>Qt Language Server</DisplayName>
+  <Description>An implementation of the language server protocol, including JsonRPC.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtlanguageserver, qt.qt6.680.examples.qtlanguageserver</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>9250f77071bd19d3ef645c120752dad240ac7161</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlanguageserver.clang_64</Name>
+  <DisplayName>Qt language Server for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtlanguageserver, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtlanguageserver-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="11783450" OS="Any" UncompressedSize="102115418"/>
+  <SHA1>bbfeaab07378a43a9fde8cbb546e9a2da0ce3ee7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlocation</Name>
+  <DisplayName>Qt Location (TP)</DisplayName>
+  <Description>Qt Location (TP).&lt;br>&lt;br>The release of Qt Location with Qt 6.8.0 is a Technology Preview.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtlocation, qt.qt6.680.examples.qtlocation</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>3d9faa176399174ff256157748c10a7bf42359bb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlocation.clang_64</Name>
+  <DisplayName>Qt Location</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtlocation, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtlocation-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="13774742" OS="Any" UncompressedSize="83323399"/>
+  <SHA1>bb3885ae35d10a8e820a7badfce228a5e904b41f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtlottie, qt.qt6.680.examples.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b4d5ea1d2446babb4165e43eea4119b252e3a6d3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtlottie.clang_64</Name>
+  <DisplayName>Qt Lottie Animation for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtlottie, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2782131" OS="Any" UncompressedSize="17884132"/>
+  <SHA1>08c5f90fa7635417be4d9263eb846702b7395acf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtmultimedia</Name>
+  <DisplayName>Qt Multimedia</DisplayName>
+  <Description>Qt Multimedia provides a rich set of QML types and C++ classes to handle multimedia content.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtmultimedia, qt.qt6.680.examples.qtmultimedia</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>cdde36980a85c997aed13e77fa747fc5462cc63c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtmultimedia.clang_64</Name>
+  <DisplayName>Qt Multimedia for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtmultimedia, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="43983733" OS="Any" UncompressedSize="268968219"/>
+  <SHA1>41ee0496cc6f3e3aa8619ee4d66b28a0694874b1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtnetworkauth</Name>
+  <DisplayName>Qt Network Authorization</DisplayName>
+  <Description>Qt Network Authorization provides a set of APIs that enable Qt applications to obtain limited access to online accounts and HTTP services without exposing users' passwords.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtnetworkauth, qt.qt6.680.examples.qtnetworkauth</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>0636f8915f746fe7617e58fa2bff78e7f184c97c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtnetworkauth.clang_64</Name>
+  <DisplayName>Qt Network Authorization for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtnetworkauth, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1368610" OS="Any" UncompressedSize="8274145"/>
+  <SHA1>18f7d2293b6e5a762f34c54a7f92a3a8b66dc235</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtpositioning</Name>
+  <DisplayName>Qt Positioning</DisplayName>
+  <Description>The Qt Positioning API provides positioning information via QML and C++ interfaces.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtpositioning, qt.qt6.680.examples.qtpositioning</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>c9ec2fe2b023a6468ba14630b791d371867f7e82</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtpositioning.clang_64</Name>
+  <DisplayName>Qt Positioning for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtpositioning, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtpositioning-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="7810722" OS="Any" UncompressedSize="50668911"/>
+  <SHA1>92b79ee0ad1ba403efc73a25b3b2c3b8e62b1b7f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3d</Name>
+  <DisplayName>Qt Quick 3D</DisplayName>
+  <Description>Qt Quick 3D provides high-level 3D API for Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtquick3d, qt.qt6.680.examples.qtquick3d, qt.qt6.680.addons.qtshadertools, qt.qt6.680.addons.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6e7078aa3eeda215db2fdd81259eeb794a927884</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3d.clang_64</Name>
+  <DisplayName>Qt Quick 3D for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtquick3d, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="101215418" OS="Any" UncompressedSize="641271240"/>
+  <SHA1>e6ed79061a42bd9cb1136b490f4daec5d3749e4f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3dphysics</Name>
+  <DisplayName>Qt Quick 3D Physics</DisplayName>
+  <Description>Qt Quick 3D Physics provides a high-level QML module adding physical simulation capabilities to Qt Quick 3D.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtquick3dphysics, qt.qt6.680.examples.qtquick3dphysics</Dependencies>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6da46ba5b07557548dc5066346493679267b2014</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquick3dphysics.clang_64</Name>
+  <DisplayName>Qt Quick 3D Physics for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtquick3dphysics, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3dphysics-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="61182315" OS="Any" UncompressedSize="389062720"/>
+  <SHA1>a90dbc2490404bcfd3b97e251377a5cbf480e77b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquickeffectmaker</Name>
+  <DisplayName>Qt Quick Effect Maker</DisplayName>
+  <Description>Qt Quick Effect Maker (QQEM) for creating and editing custom shader effects.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtquickeffectmaker, qt.qt6.680.examples.qtquickeffectmaker</Dependencies>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>c9a0ab7fdb01ac6f712f67bbfafa0186aeb36354</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquickeffectmaker.clang_64</Name>
+  <DisplayName>Qt Quick Effect Maker</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtquickeffectmaker, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtquickeffectmaker-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12354759" OS="Any" UncompressedSize="54667833"/>
+  <SHA1>e4b50345dcb8b812f068e81b6fd58d9bb22ad7f6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline</DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtquicktimeline, qt.qt6.680.examples.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>69a281ff307fb864c25ff4a57462d4dd2478a57e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtquicktimeline.clang_64</Name>
+  <DisplayName>Qt Quick Timeline for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtquicktimeline, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2325378" OS="Any" UncompressedSize="18773056"/>
+  <SHA1>aab08ff1424d8ce4c3703b0ebdeddf5d84a56f7a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtremoteobjects</Name>
+  <DisplayName>Qt Remote Objects</DisplayName>
+  <Description>Qt Remote Objects is an add-on library that provides an easy way to share Qt APIs between processes/devices.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtremoteobjects, qt.qt6.680.examples.qtremoteobjects</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>55866bf2f544ca92c895681df5fe6a96d756d574</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtremoteobjects.clang_64</Name>
+  <DisplayName>Qt Remote Objects for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtremoteobjects, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtremoteobjects-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="7522213" OS="Any" UncompressedSize="43124122"/>
+  <SHA1>9cf7511f5e53ab30b4d1456a30b34fa603cacf48</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtscxml</Name>
+  <DisplayName>Qt State Machines</DisplayName>
+  <Description>The Qt State Machines package provides API's and execution models that can be used to effectively embed the elements and semantics of statecharts in Qt applications. For advanced use cases the state machines can even be created from State Chart XML (SCXML) files.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtscxml, qt.qt6.680.examples.qtscxml</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>0586d4445f583137cbbb17ea1332684e158e25c9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtscxml.clang_64</Name>
+  <DisplayName>Qt State Machine for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtscxml, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="10254248" OS="Any" UncompressedSize="68388407"/>
+  <SHA1>ff1e013baa9f481bed59511cd274b6532a21b7b1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtsensors</Name>
+  <DisplayName>Qt Sensors</DisplayName>
+  <Description>Qt Sensors provides classes for reading sensor data.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtsensors, qt.qt6.680.examples.qtsensors</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>9d3c99b2674b6179877cc1e10a34a7886e70c7e0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtsensors.clang_64</Name>
+  <DisplayName>Qt Sensors for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtsensors, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtsensors-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2558434" OS="Any" UncompressedSize="19028296"/>
+  <SHA1>26ca3485c7a4c26d47ea49df4a1b3db16c52a31e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialbus</Name>
+  <DisplayName>Qt Serial Bus</DisplayName>
+  <Description>The Qt Serial Bus API provides classes and functions to access the various industrial serial buses and protocols, such as CAN, ModBus, and others.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtserialbus, qt.qt6.680.examples.qtserialbus</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>de4e6ee47fb903fe16e4e54a1a7bcc28a0b99d5d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialbus.clang_64</Name>
+  <DisplayName>Qt SerialBus for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtserialbus, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialbus-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4170913" OS="Any" UncompressedSize="26929970"/>
+  <SHA1>f6a630b77bb231dce7b46a38eb48414e781a462f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialport</Name>
+  <DisplayName>Qt Serial Port</DisplayName>
+  <Description>Qt Serial Port provides the basic functionality, which includes configuring, I/O operations, getting and setting the control signals of the RS-232 pinouts.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtserialport, qt.qt6.680.examples.qtserialport</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>c43b641d21f5b046f9419d90a18a4897c50e5ff4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtserialport.clang_64</Name>
+  <DisplayName>Qt SerialPort for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtserialport, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialport-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="670094" OS="Any" UncompressedSize="4202924"/>
+  <SHA1>4dd29ffe80d4fabfc519340b9a4212f06bd62222</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtshadertools</Name>
+  <DisplayName>Qt Shader Tools</DisplayName>
+  <Description>Qt Shader conditioning tool Prebuilt Components for Qt 6.8.0.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtshadertools, qt.qt6.680.examples.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>66ef342121e480d14bf3001a5e46eebbf1764132</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtshadertools.clang_64</Name>
+  <DisplayName>Qt Shader Tools for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtshadertools, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="21626834" OS="Any" UncompressedSize="138471698"/>
+  <SHA1>18cba7133496b23cefdb90d3e41e72b3f3c59bf2</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtspeech</Name>
+  <DisplayName>Qt Speech</DisplayName>
+  <Description>The Qt Speech module allows using text to speech engines</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.680.doc.qtspeech, qt.qt6.680.examples.qtspeech</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>20c44486509987279523b4d6428ca9f8b892e8f7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtspeech.clang_64</Name>
+  <DisplayName>Qt Speech for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtspeech, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtspeech-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2315774" OS="Any" UncompressedSize="16166334"/>
+  <SHA1>5e40c218a3880e60e5ea80cd49ae061dd00a3e8d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your ownlayouts and styles.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtvirtualkeyboard, qt.qt6.680.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6347d1fdb3705f8e6133e9d58a6de7d95c8d9cde</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtvirtualkeyboard.clang_64</Name>
+  <DisplayName>Qt Virtual Keyboard for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtvirtualkeyboard, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="10829957" OS="Any" UncompressedSize="71042688"/>
+  <SHA1>030746ce925cbe0a302d20f4bd8fc7bfbb398f1b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebchannel</Name>
+  <DisplayName>Qt WebChannel</DisplayName>
+  <Description>Qt WebChannel enables peer-to-peer communication between a server (QML/C++ application) and a client (HTML/JavaScript or QML application). It is supported out of the box by Qt WebEngine. In addition it can work on all browsers that support WebSockets, enabling Qt WebChannel clients to run in any JavaScript environment (including QML). This requires the implementation of a custom transport based on Qt WebSockets.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtwebchannel, qt.qt6.680.examples.qtwebchannel</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6cac8c4ba9284a1e950cf104c46781d740519aaf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebchannel.clang_64</Name>
+  <DisplayName>Qt WebChannel for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtwebchannel, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1904783" OS="Any" UncompressedSize="13203562"/>
+  <SHA1>8e93fbadf9e320cc1509708b0659577ae14d5840</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebsockets</Name>
+  <DisplayName>Qt WebSockets</DisplayName>
+  <Description>WebSocket is a web-based protocol designed to enable two-way communication between a client application and a remote host. It enables the two entities to send data back and forth if the initial handshake succeeds. WebSocket is the solution for applications that struggle to get real-time data feeds with less network latency and minimum data exchange.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtwebsockets, qt.qt6.680.examples.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ee50d2dfa4e01561194741f3f7880679825275b7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebsockets.clang_64</Name>
+  <DisplayName>Qt WebSockets for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtwebsockets, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1668475" OS="Any" UncompressedSize="10435140"/>
+  <SHA1>db61229c28ffe959855f830d1edb5cd7f2b30a5c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebview</Name>
+  <DisplayName>Qt WebView</DisplayName>
+  <Description>Qt WebView provides a way to display web content in a QML application without necessarily including a full web browser stack by using native APIs where it makes sense. This is useful on mobile platforms such as Android, iOS, and UWP (Universal Windows Platform); especially on iOS, where policy dictates that all web content is displayed using the operating system's web view. On Windows, Linux, and macOS, Qt WebView depends on the Qt WebEngine module to render content.</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.680.doc.qtwebview, qt.qt6.680.examples.qtwebview</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>27eeeb6c2c6a96571d252ed819753769140f6e84</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.addons.qtwebview.clang_64</Name>
+  <DisplayName>Qt WebView for macOS</DisplayName>
+  <Description/>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <AutoDependOn>qt.qt6.680.addons.qtwebview, qt.qt6.680.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.680.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebview-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2788564" OS="Any" UncompressedSize="20683968"/>
+  <SHA1>048e58ca7414b2a4ee2484567fe656f6d0ba55db</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.680.clang_64</Name>
+  <DisplayName>Desktop</DisplayName>
+  <Description>Qt 6.8.0 Prebuilt Components for macOS (Universal, x86_64/arm64)</Description>
+  <Version>6.8.0-0-202410030748</Version>
+  <ReleaseDate>2024-10-03</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt6.680.doc, qt.qt6.680.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>700</SortingPriority>
+  <DownloadableArchives>qtbase-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z, qtdeclarative-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z, qtsvg-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z, qttools-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z, qttranslations-MacOS-MacOS_14-Clang-MacOS-MacOS_14-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="795853544" OS="Any" UncompressedSize="5191282611"/>
+  <SHA1>229eefbff0a7b3075e057b76cbab8883814029a8</SHA1>
+ </PackageUpdate>
+ <SHA1>b525d6d48d1394464ec7cbb409cd9f8b9ed1ddb0</SHA1>
+ <MetadataName>2024-10-03-0904_meta.7z</MetadataName>
+</Updates>
