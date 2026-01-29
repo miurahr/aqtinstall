@@ -256,8 +256,8 @@ steps:
     and(eq(variables['Agent.OS'], 'Windows_NT'), 
         eq(variables['SUBCOMMAND'], 'install-qt'))
   env:
-    JOM: jom_1_1_4.zip
-    MD5: 4cd0e6fb721e063b24232bc9ecb6d130
+    JOM: jom_1_1_5.zip
+    MD5: ad5ca9c7b109e28575c0f83eb244e564
   displayName: Detect toolchain for Windows and update PATH
 
 # When no modules
