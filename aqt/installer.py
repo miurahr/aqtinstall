@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2025 Hiroshi Miura <miurahr@linux.com>
-# Copyright (C) 2020, Aurélien Gâteau
+#               2019-2026 Hiroshi Miura <miurahr@linux.com>
+#               2020, Aurélien Gâteau
+#               2023 Alberto Mardegan
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
