@@ -253,6 +253,7 @@ class ArchiveId:
         "all_os": ["wasm", "qt", "android"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
+    EXTENSIONS_WIN_X64_QT6_11 = {"llvm_mingw", "mingw", "msvc2022_64", "msvc2022_arm64_cross_compiled"}
     ALL_EXTENSIONS = {
         "",
         "wasm",
@@ -334,6 +335,8 @@ class ArchiveId:
             return f"{folderForVersion}/{folderForVersionAndExtension}"
 
     def all_extensions(self, version: Version) -> List[str]:
+        if self.host == "windows" and version >= Version("6.11.0"):
+            return list(ArchiveId.EXTENSIONS_WIN_X64_QT6_11)
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
             return ["", "wasm"]
         elif self.target == "desktop" and QtRepoProperty.is_in_wasm_range_special_65x_66x(self.host, version):
@@ -507,16 +510,20 @@ class QtRepoProperty:
         return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
 
     @staticmethod
-    def extension_for_arch(architecture: str, is_version_ge_6: bool) -> str:
+    def extension_for_arch(architecture: str, version: Version) -> str:
         if architecture == "wasm_32":
             return "wasm"
         elif architecture == "wasm_singlethread":
             return "wasm_singlethread"
         elif architecture == "wasm_multithread":
             return "wasm_multithread"
-        elif architecture.startswith("android_") and is_version_ge_6:
+        elif architecture.startswith("android_") and version >= Version("6.0.0"):
             ext = architecture[len("android_") :]
             if ext in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6:
+                return ext
+        elif architecture.startswith("win64_") and version >= Version("6.11.0"):
+            ext = architecture[len("win64_") :]
+            if ext in ArchiveId.EXTENSIONS_WIN_X64_QT6_11:
                 return ext
         return ""
 
@@ -526,7 +533,9 @@ class QtRepoProperty:
 
         # ext_ge_6: the extension if the version is greater than or equal to 6.0.0
         # ext_lt_6: the extension if the version is less than 6.0.0
-        ext_lt_6, ext_ge_6 = [QtRepoProperty.extension_for_arch(arch, is_ge_6) for is_ge_6 in (False, True)]
+        ext_lt_6, ext_ge_6 = [
+            QtRepoProperty.extension_for_arch(arch, version) for version in (Version("5.15.0"), Version("6.0.0"))
+        ]
         if ext_lt_6 == ext_ge_6:
             return [ext_lt_6]
         return [ext_lt_6, ext_ge_6]
@@ -832,7 +841,7 @@ class MetadataFactory:
         """
         assert qt_ver
         if qt_ver == "latest":
-            ext = QtRepoProperty.extension_for_arch(arch, True) if arch else ""
+            ext = QtRepoProperty.extension_for_arch(arch, Version("6.0.0")) if arch else ""
             latest_version = self.fetch_latest_version(ext)
             if not latest_version:
                 msg = "There is no latest version of Qt with the criteria '{}'".format(self.describe_filters())
@@ -970,7 +979,7 @@ class MetadataFactory:
 
     def fetch_modules(self, version: Version, arch: str) -> List[str]:
         """Returns list of modules"""
-        extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+        extension = QtRepoProperty.extension_for_arch(arch, version)
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
@@ -1019,7 +1028,7 @@ class MetadataFactory:
 
     def fetch_long_modules(self, version: Version, arch: str) -> ModuleData:
         """Returns long listing of modules"""
-        extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+        extension = QtRepoProperty.extension_for_arch(arch, version)
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590(\.addons)?\.(?P<module>[^.]+)\.gcc_64$")
         #          qt.qt6.680.addons.qtwebsockets.win64_msvc2022_64
@@ -1093,11 +1102,7 @@ class MetadataFactory:
         return self.fetch_archives(version, cmd_type, [], is_sde=True)
 
     def fetch_archives(self, version: Version, arch: str, modules: List[str], is_sde: bool = False) -> List[str]:
-        extension = (
-            QtRepoProperty.sde_ext(version)
-            if is_sde
-            else QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
-        )
+        extension = QtRepoProperty.sde_ext(version) if is_sde else QtRepoProperty.extension_for_arch(arch, version)
         qt_version_str = self._get_qt_version_str(version)
         nonempty = MetadataFactory._has_nonempty_downloads
 
