@@ -325,42 +325,13 @@ class ArchiveId:
         )
 
     def to_folder(self, version: Version, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
-        if version >= Version("6.8.0"):
-            if self.target == "wasm":
-                # Qt 6.8+ WASM uses a split folder structure
-                folder = f"qt{version.major}_{qt_version_no_dots}"
-                if extension:
-                    folder = f"{folder}/{folder}_{extension}"
-                return folder
-            elif not ((self.host == "all_os") and (self.target == "qt")):
-                # Non-WASM, non-all_os/qt case
-                return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
-                    category=self.category,
-                    major=qt_version_no_dots[0],
-                    ver=qt_version_no_dots,
-                    ext="_" + extension if extension else "",
-                )
-            else:
-                # traditional structure, still used by sde.
-                return "{category}{major}_{ver}{ext}".format(
-                    category=self.category,
-                    major=qt_version_no_dots[0],
-                    ver=qt_version_no_dots,
-                    ext="_" + extension if extension else "",
-                )
-        elif version >= Version("6.5.0") and self.target == "wasm":
-            # Qt 6.5-6.7 WASM uses direct wasm_[single|multi]thread folder
-            if extension:
-                return f"qt{version.major}_{qt_version_no_dots}_{extension}"
-            return f"qt{version.major}_{qt_version_no_dots}"
-
-        # Pre-6.8 structure for non-WASM or pre-6.5 structure
-        return "{category}{major}_{ver}{ext}".format(
-            category=self.category,
-            major=qt_version_no_dots[0],
-            ver=qt_version_no_dots,
-            ext="_" + extension if extension else "",
-        )
+        folderForVersion = f"{self.category}{version.major}_{qt_version_no_dots}"
+        folderForVersionAndExtension = f"{folderForVersion}_{extension}" if extension else folderForVersion
+        # Split folder structure was introduced in 6.8 for everything except src/doc/examples
+        if version < Version("6.8.0") or (self.host == "all_os" and self.target == "qt"):
+            return folderForVersionAndExtension
+        else:
+            return f"{folderForVersion}/{folderForVersionAndExtension}"
 
     def all_extensions(self, version: Version) -> List[str]:
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
