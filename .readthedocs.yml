@@ -15,12 +15,29 @@ python:
            - docs
 
 build:
-  os: ubuntu-22.04
+  os: ubuntu-24.04
   tools:
     python: "3.13"
   jobs:
     post_checkout:
-      - git fetch --depth 1000
+      - |
+        while ! git describe --tags --abbrev=0 >/dev/null 2>&1; do
+          CUR_DEPTH=$(git rev-list --count HEAD)
+          NEW_DEPTH=$(( CUR_DEPTH * 2 ))
+          if [ "$NEW_DEPTH" -gt 512 ]; then
+            echo "Reachable tag not found within 512 commits. Attempting unshallow fetch..."
+            git fetch --unshallow --tags origin "$GITHUB_REF" || true
+            if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
+              echo "Error: No tags found in the history of this branch."
+              exit 1
+            fi
+            break
+          fi
+          echo "Fetching additional $NEW_DEPTH commits ..."
+          git fetch --depth=$NEW_DEPTH --tags origin "$GITHUB_REF"
+        done
+        LATEST_TAG=$(git describe --tags --abbrev=0)
+        echo "Nearest tag found: $LATEST_TAG"
     pre_install:
       - git update-index --assume-unchanged docs/conf.py
-      - pip install setuptools==62.4.0 setuptools_scm[toml]==6.4.2
+      - pip install .[docs]
