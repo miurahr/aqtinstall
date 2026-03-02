@@ -1,0 +1,2126 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qt3d</Name>
+  <DisplayName>Qt 3D</DisplayName>
+  <Description>Qt 3D Prebuilt Components for Qt 6.10.1. Qt 3D provides functionality for near-realtime simulation systems with support for 2D and 3D rendering in both Qt C++ and Qt Quick applications.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qt3d, qt.qt6.6101.examples.qt3d</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8ef4fb2d18fd08d6e420268050285c769a4b56d7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qt3d.clang_64</Name>
+  <DisplayName>Qt 3D module for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qt3d, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="5107959" OS="Any" UncompressedSize="33303866"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qt3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>9f9be92d1621467c950b81f8a1c5937fd013f7fd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qt3d.debug_information</Name>
+  <DisplayName>Qt 3D debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qt3d</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qt3d, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f9a90580bc68d97b3209543695b3f690e98503f8</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qt3d.debug_information.clang_64</Name>
+  <DisplayName>Qt 3D module debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qt3d</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qt3d, qt.qt6.6101.addons.qt3d.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qt3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="75793744" OS="Any" UncompressedSize="483556628"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qt3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>f9115049d569b6ab1f0603e7983c9650810ec7eb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qt5compat</Name>
+  <DisplayName>Qt 5 Compatibility module</DisplayName>
+  <Description>Qt 5 Compatibility module Prebuilt Components for Qt 6.10.1. Qt 5 Compatibility module allows to continue using some dedicated functionality which has been removed in Qt 6.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.6101.doc.qt5compat, qt.qt6.6101.examples.qt5compat, qt.qt6.6101.addons.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>1cd785c936761f63e663baaaa0c4c81950bfd48b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qt5compat.clang_64</Name>
+  <DisplayName>Qt 5 Compatibility module for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qt5compat, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qt5compat-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="974878" OS="Any" UncompressedSize="5507113"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qt5compat-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>8e079a0d4dde31927f0c98772866da20ba0cbe5c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qt5compat.debug_information</Name>
+  <DisplayName>Qt 5 Compatibility module debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qt5compat</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qt5compat, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>99e1995cb9fad8cdb2ebdbf58549915910eeb051</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qt5compat.debug_information.clang_64</Name>
+  <DisplayName>Qt 5 Compatibility module debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qt5compat</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qt5compat, qt.qt6.6101.addons.qt5compat.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qt5compat-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="5287835" OS="Any" UncompressedSize="37205849"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qt5compat-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>5272f0eba28e9780c137a6b2915708a0fac47dff</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtcharts</Name>
+  <DisplayName>Qt Charts</DisplayName>
+  <Description>The Qt Charts API lets you easily create interactive and dynamic 2D charts using C++ and/or Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.&lt;br>&lt;br></Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtcharts, qt.qt6.6101.examples.qtcharts</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b91b215fb9eb5df87204411090e6be3e15d985fe</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtcharts.clang_64</Name>
+  <DisplayName>Qt Charts for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtcharts, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtcharts-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1056230" OS="Any" UncompressedSize="7403994"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtcharts-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>045dc67321b6c95a9fca105392b3ee4bedb1e46c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtcharts.debug_information</Name>
+  <DisplayName>Qt Charts debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtcharts</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtcharts, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f040df013be6736f08f1824dd3c92536d677f718</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtcharts.debug_information.clang_64</Name>
+  <DisplayName>Qt Charts debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtcharts</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtcharts, qt.qt6.6101.addons.qtcharts.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtcharts-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="13876391" OS="Any" UncompressedSize="85844139"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtcharts-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>86cdb961921aa13f11e3ec7ec8683e57983db3b9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtconnectivity</Name>
+  <DisplayName>Qt Connectivity</DisplayName>
+  <Description>This component includes two Qt modules. The two modules provide access to Bluetooth and NFC hardware.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtbluetooth, qt.qt6.6101.doc.qtnfc, qt.qt6.6101.examples.qtconnectivity</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>05972502d0e9f103bb809b2cb8afc62bd45a955e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtconnectivity.clang_64</Name>
+  <DisplayName>Qt Connectivity for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtconnectivity, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtconnectivity-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="517795" OS="Any" UncompressedSize="2735203"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtconnectivity-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>25e7636e92d23cab874c87b5a8e3fbc37dd057e3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtconnectivity.debug_information</Name>
+  <DisplayName>Qt Connectivity debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtconnectivity</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtconnectivity, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>e3e74847c76f885943540d9a1b78465fe8a15179</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtconnectivity.debug_information.clang_64</Name>
+  <DisplayName>Qt Connectivity debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtconnectivity</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtconnectivity, qt.qt6.6101.addons.qtconnectivity.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtconnectivity-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4798852" OS="Any" UncompressedSize="27150714"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtconnectivity-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>d09ee599cc0d9deceea2834f48d03695a3ef39dc</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtdatavis3d</Name>
+  <DisplayName>Qt Data Visualization</DisplayName>
+  <Description>Qt Data Visualization is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.&lt;br>&lt;br></Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtdatavis3d, qt.qt6.6101.examples.qtdatavis3d</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8b367b5ca21dd2e474f8154b9ef613e73f74faeb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtdatavis3d.clang_64</Name>
+  <DisplayName>Qt Data Visualization for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtdatavis3d, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtdatavis3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="826920" OS="Any" UncompressedSize="5452189"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtdatavis3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>645c196c944b493607ded8157be59471bc35a4ec</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtdatavis3d.debug_information</Name>
+  <DisplayName>Qt Data Visualization debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtdatavis3d</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtdatavis3d, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ef63145bb95768532340ee517b576ab2984d6aae</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtdatavis3d.debug_information.clang_64</Name>
+  <DisplayName>Qt Data Visualization debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtdatavis3d</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtdatavis3d, qt.qt6.6101.addons.qtdatavis3d.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtdatavis3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="7520833" OS="Any" UncompressedSize="44549594"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtdatavis3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>304e83d4970ef886c3b13248b4e502bca2772010</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtgraphs</Name>
+  <DisplayName>Qt Graphs</DisplayName>
+  <Description>Qt Graphs is a module which provides a way to visualize data in 3D. There are C++ classes and QML types for displaying bar graphs, scatter graphs, surface graphs and ways of manipulating the 3D scene. In addition, the graphs are fully customizable with different themes.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtgraphs, qt.qt6.6101.examples.qtgraphs</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>af0a7e741f61246ddd1d318d74cd8ad352253a5a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtgraphs.clang_64</Name>
+  <DisplayName>Qt Graphs for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtgraphs, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgraphs-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1211449" OS="Any" UncompressedSize="7825875"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtgraphs-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>0235e4bec0d083271c34a757304aa87ba3c1f828</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtgraphs.debug_information</Name>
+  <DisplayName>Qt Graphs debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtgraphs</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtgraphs, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8ad79793dec743c447fe951828df05afcde361c5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtgraphs.debug_information.clang_64</Name>
+  <DisplayName>Qt Graphs debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtgraphs</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtgraphs, qt.qt6.6101.addons.qtgraphs.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtgraphs-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="17218055" OS="Any" UncompressedSize="104426279"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtgraphs-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>36d9b3b0af16fa977ff1a66e1b0d9dfcfa52340f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtgrpc</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC</DisplayName>
+  <Description>QtGrpc contains the two modules QtProtobuf and QtGrpc:&lt;br>QtProtobuf provides a generator which can be used to generate Qt-based classes from messages defined in .proto files.&lt;br>QtGrpc provides support for generating Qt-based clients and servers based on service description in .proto files, as well as communicating with gRPC services using QtProtobuf messages.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtgrpc, qt.qt6.6101.examples.qtgrpc</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>a84a1fe0d0887b1fe26c813a7d411f53749cf87a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtgrpc.clang_64</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtgrpc, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtgrpc-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2222076" OS="Any" UncompressedSize="21618153"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtgrpc-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>e735079dfe481b580b70fd7a54ef273e5379dfa0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtgrpc.debug_information</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtgrpc</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtgrpc, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>d48a912da8d9360518eafbdbcb31f892637ebf72</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtgrpc.debug_information.clang_64</Name>
+  <DisplayName>Qt Protobuf and Qt GRPC debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtgrpc</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtgrpc, qt.qt6.6101.addons.qtgrpc.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtgrpc-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="25224523" OS="Any" UncompressedSize="182080702"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtgrpc-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>86168d8115f991a222af190845529218b25c6a68</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qthttpserver</Name>
+  <DisplayName>Qt HTTP Server</DisplayName>
+  <Description>Qt HTTP Server supports building an HTTP server into an application.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <Dependencies>qt.qt6.6101.doc.qthttpserver, qt.qt6.6101.examples.qthttpserver, qt.qt6.6101.addons.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>21ae462640b26435919c96d97c79c07de01ca2da</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qthttpserver.clang_64</Name>
+  <DisplayName>Qt HTTP Server for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qthttpserver, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qthttpserver-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="134845" OS="Any" UncompressedSize="716069"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qthttpserver-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>c30048b22a87c9f558c88a5a5229af191a18fabf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qthttpserver.debug_information</Name>
+  <DisplayName>Qt HTTP Server debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qthttpserver</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qthttpserver, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>737c30498cd4edb5590c26fd4c58b8e387076dfd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qthttpserver.debug_information.clang_64</Name>
+  <DisplayName>Qt HTTP Server debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qthttpserver</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qthttpserver, qt.qt6.6101.addons.qthttpserver.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qthttpserver-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1546273" OS="Any" UncompressedSize="9235104"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qthttpserver-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>b85077959d6c695f4388ec4537cecbfa5c049611</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtimageformats</Name>
+  <DisplayName>Qt Image Formats</DisplayName>
+  <Description>The Qt Image Formats  provides optional support for other image file formats. The core Qt Gui library by default supports reading and writing image files of the most common file formats: PNG, JPEG, BMP, GIF and a few more.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtimageformats</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>5cab2ceff92469b7e6732950922e17e07c98a66a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtimageformats.clang_64</Name>
+  <DisplayName>Qt Image Formats for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtimageformats, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtimageformats-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="758839" OS="Any" UncompressedSize="3563046"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtimageformats-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>c18f2708dced323b2d910a8dba931735a0875321</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtimageformats.debug_information</Name>
+  <DisplayName>Qt Image Formats debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtimageformats</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtimageformats, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ad9b667e329fdf093568f1b4b5efca4bd2eb7da5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtimageformats.debug_information.clang_64</Name>
+  <DisplayName>Qt Image Formats debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtimageformats</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtimageformats, qt.qt6.6101.addons.qtimageformats.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtimageformats-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="3095711" OS="Any" UncompressedSize="21322191"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtimageformats-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>daff0f0d5adf2432319aad460bb93f24e8cf8b3b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlanguageserver</Name>
+  <DisplayName>Qt Language Server</DisplayName>
+  <Description>An implementation of the language server protocol, including JsonRPC.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtlanguageserver</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ad43feaa4e3ec3f815b58a120611d28efe03a25c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlanguageserver.clang_64</Name>
+  <DisplayName>Qt language Server for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtlanguageserver, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtlanguageserver-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="12378899" OS="Any" UncompressedSize="106455218"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtlanguageserver-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>039c93de781e3d63bf3f152ebc5ef98a2103fb99</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlocation</Name>
+  <DisplayName>Qt Location (TP)</DisplayName>
+  <Description>Qt Location (TP).&lt;br>&lt;br>The release of Qt Location with Qt 6.10.1 is a Technology Preview.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtlocation, qt.qt6.6101.examples.qtlocation</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>69b3801d25ec6f712c8de12240847d64709a55e1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlocation.clang_64</Name>
+  <DisplayName>Qt Location</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtlocation, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlocation-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="893691" OS="Any" UncompressedSize="5919743"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtlocation-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>5cd2f71bdb93f1c1078543ead7f07231d1e8d662</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlocation.debug_information</Name>
+  <DisplayName>Qt Location debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtlocation</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtlocation, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>a1967e3a0547ee43a3bfe7d0aa4f9de6e8ed2153</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlocation.debug_information.clang_64</Name>
+  <DisplayName>Qt Location debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtlocation</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtlocation, qt.qt6.6101.addons.qtlocation.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtlocation-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="13519001" OS="Any" UncompressedSize="80584348"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtlocation-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>b5d255f071f2680af35502e077b589f169407d16</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlottie</Name>
+  <DisplayName>Qt Lottie Animation</DisplayName>
+  <Description>Qt Lottie Animation provides a QML API for rendering graphics and animations that are exported in JSON format by the Bodymovin plugin for Adobe After Effects.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtlottie</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>bbd3c5a6922397a25f3935bd6175f072d04087bf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlottie.clang_64</Name>
+  <DisplayName>Qt Lottie Animation for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtlottie, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtlottie-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="309813" OS="Any" UncompressedSize="2635291"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtlottie-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>321919613f367b3c7f2c8380dfa75dfa29b19fff</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlottie.debug_information</Name>
+  <DisplayName>Qt Lottie Animation debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtlottie</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtlottie, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>0ef7bcd70c46799771d539622af55881f33113b4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtlottie.debug_information.clang_64</Name>
+  <DisplayName>Qt Lottie Animation debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtlottie</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtlottie, qt.qt6.6101.addons.qtlottie.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtlottie-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="5800740" OS="Any" UncompressedSize="42243409"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtlottie-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>a2b6ac451e1bf945af26829ee1672b90733c6fc9</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtmultimedia</Name>
+  <DisplayName>Qt Multimedia</DisplayName>
+  <Description>Qt Multimedia provides a rich set of QML types and C++ classes to handle multimedia content.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtmultimedia, qt.qt6.6101.examples.qtmultimedia</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>74ff5a06b2f7bdd29007c804079b9df975047aa0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtmultimedia.clang_64</Name>
+  <DisplayName>Qt Multimedia for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtmultimedia, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtmultimedia-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="53483960" OS="Any" UncompressedSize="368692103"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtmultimedia-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>39385601b8b3ad8197cf51f43e69f79e44838a3d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtmultimedia.debug_information</Name>
+  <DisplayName>Qt Multimedia debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtmultimedia</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtmultimedia, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b7aa6a3b9040e2262c58ae29b5c76063675bbbee</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtmultimedia.debug_information.clang_64</Name>
+  <DisplayName>Qt Multimedia debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtmultimedia</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtmultimedia, qt.qt6.6101.addons.qtmultimedia.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtmultimedia-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="24276999" OS="Any" UncompressedSize="148076345"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtmultimedia-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>af4cdb3ad83d0db359f441ac467c8b4b9ddfc327</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtnetworkauth</Name>
+  <DisplayName>Qt Network Authorization</DisplayName>
+  <Description>Qt Network Authorization provides a set of APIs that enable Qt applications to obtain limited access to online accounts and HTTP services without exposing users' passwords.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtnetworkauth, qt.qt6.6101.examples.qtnetworkauth</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f959e6f3cee021b3fae77ad202c4aec2005617cb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtnetworkauth.clang_64</Name>
+  <DisplayName>Qt Network Authorization for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtnetworkauth, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtnetworkauth-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="163209" OS="Any" UncompressedSize="915803"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtnetworkauth-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>567152b9ae3a40f02d46703a02fc1cd0b1b0ac4b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtnetworkauth.debug_information</Name>
+  <DisplayName>Qt Network Authorization debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtnetworkauth</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtnetworkauth, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f6a14bd2e37f8557b7aff810cb4b554480ad9aeb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtnetworkauth.debug_information.clang_64</Name>
+  <DisplayName>Qt Network Authorization debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtnetworkauth</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtnetworkauth, qt.qt6.6101.addons.qtnetworkauth.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtnetworkauth-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1624499" OS="Any" UncompressedSize="9657752"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtnetworkauth-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>9f4a9ecf070458f587112496c388abbd2c264294</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtpositioning</Name>
+  <DisplayName>Qt Positioning</DisplayName>
+  <Description>The Qt Positioning API provides positioning information via QML and C++ interfaces.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtpositioning, qt.qt6.6101.examples.qtpositioning</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>46c01b622a293d24f3f041e48d1b5e1b0b5888ed</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtpositioning.clang_64</Name>
+  <DisplayName>Qt Positioning for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtpositioning, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtpositioning-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="560184" OS="Any" UncompressedSize="3707273"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtpositioning-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>21b3d44c2634de97fa4c808b387f75fd4e3940c5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtpositioning.debug_information</Name>
+  <DisplayName>Qt Positioning debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtpositioning</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtpositioning, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>e7368f527ba6f1be53eac30e264129ebd202e826</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtpositioning.debug_information.clang_64</Name>
+  <DisplayName>Qt Positioning debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtpositioning</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtpositioning, qt.qt6.6101.addons.qtpositioning.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtpositioning-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="7921183" OS="Any" UncompressedSize="48873105"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtpositioning-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>9f57e3c57935e5bfc30ed35245f042690b824501</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquick3d</Name>
+  <DisplayName>Qt Quick 3D</DisplayName>
+  <Description>Qt Quick 3D provides high-level 3D API for Qt Quick.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.6101.doc.qtquick3d, qt.qt6.6101.examples.qtquick3d, qt.qt6.6101.addons.qtshadertools, qt.qt6.6101.addons.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ba85f33bbf55846ccc9be70db81a01809c82cedf</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquick3d.clang_64</Name>
+  <DisplayName>Qt Quick 3D for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtquick3d, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="21997028" OS="Any" UncompressedSize="137615186"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtquick3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>f501d8df58e188cd56480bef553461fb741ee5f6</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquick3d.debug_information</Name>
+  <DisplayName>Qt Quick 3D debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtquick3d</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtquick3d, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>46b0db45b42bb85d47f54319f9b31993a325e608</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquick3d.debug_information.clang_64</Name>
+  <DisplayName>Qt Quick 3D debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtquick3d</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtquick3d, qt.qt6.6101.addons.qtquick3d.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtquick3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="89643581" OS="Any" UncompressedSize="557760167"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtquick3d-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>8c2740cf152cf6cb74499c54e09fc47ed24dacb4</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquick3dphysics</Name>
+  <DisplayName>Qt Quick 3D Physics</DisplayName>
+  <Description>Qt Quick 3D Physics provides a high-level QML module adding physical simulation capabilities to Qt Quick 3D.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.6101.doc.qtquick3dphysics, qt.qt6.6101.examples.qtquick3dphysics</Dependencies>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>794f658f734af635f71078c85b4e79df0aba4e18</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquick3dphysics.clang_64</Name>
+  <DisplayName>Qt Quick 3D Physics for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtquick3dphysics, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquick3dphysics-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="41825082" OS="Any" UncompressedSize="281363255"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtquick3dphysics-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>dcfc83575d50107ac4eda764b1424b2d8d443db0</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquick3dphysics.debug_information</Name>
+  <DisplayName>Quick 3D Physics debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtquick3dphysics</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtquick3dphysics, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>5b166fe7cfbb34e493a7905261ab81abbfa3c3b3</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquick3dphysics.debug_information.clang_64</Name>
+  <DisplayName>Quick 3D Physics debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtquick3dphysics</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtquick3dphysics, qt.qt6.6101.addons.qtquick3dphysics.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtquick3dphysics-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="19474278" OS="Any" UncompressedSize="107513209"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtquick3dphysics-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>348794a82b0c584b89af8b5805f33cff0168a803</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquickeffectmaker</Name>
+  <DisplayName>Qt Quick Effect Maker</DisplayName>
+  <Description>Qt Quick Effect Maker (QQEM) for creating and editing custom shader effects.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtquickeffectmaker, qt.qt6.6101.examples.qtquickeffectmaker</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>9d46765b2a0ebd3c060e16b922683265d91d6ebc</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquickeffectmaker.clang_64</Name>
+  <DisplayName>Qt Quick Effect Maker</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtquickeffectmaker, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority/>
+  <DownloadableArchives>qtquickeffectmaker-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4145541" OS="Any" UncompressedSize="7245351"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtquickeffectmaker-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>5cf55fcf7dd904567bacc71a3f1b11ad78226b55</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquickeffectmaker.debug_information</Name>
+  <DisplayName>Qt Effect Makers debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtquickeffectmaker</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtquickeffectmaker, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>5a33cbe7d7f62e74405ca0d71b42eecaa329cc26</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquickeffectmaker.debug_information.clang_64</Name>
+  <DisplayName>Qt Effect Makers debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtquickeffectmaker</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtquickeffectmaker, qt.qt6.6101.addons.qtquickeffectmaker.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtquickeffectmaker-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4318082" OS="Any" UncompressedSize="24768701"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtquickeffectmaker-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>dffcae1cb9066dcbe9dd53e76e4d030006f29daa</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquicktimeline</Name>
+  <DisplayName>Qt Quick Timeline</DisplayName>
+  <Description>The Qt Quick Timeline module enables keyframe-based animations and parameterization. It takes a tooling-friendly approach, and is therefore directly supported by Qt Design Studio and Qt Quick Designer that contain a timeline editor for creating keyframe based animations.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.6101.doc.qtquicktimeline</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>0a4babdd0420e796663f1d24a49fe6af089eb903</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquicktimeline.clang_64</Name>
+  <DisplayName>Qt Quick Timeline for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtquicktimeline, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtquicktimeline-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="107152" OS="Any" UncompressedSize="1196728"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtquicktimeline-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>2c4059678256897c6780c739c6c6981e9762984b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquicktimeline.debug_information</Name>
+  <DisplayName>Qt Quick Timeline debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtquicktimeline</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtquicktimeline, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8384fd952f66261a19e4ba5bc0be40c8a22eabdb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtquicktimeline.debug_information.clang_64</Name>
+  <DisplayName>Qt Quick Timeline debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtquicktimeline</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtquicktimeline, qt.qt6.6101.addons.qtquicktimeline.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtquicktimeline-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2370950" OS="Any" UncompressedSize="18720916"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtquicktimeline-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>ebb1e2559e9d984b9f24075cc2a033f04d6862a5</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtremoteobjects</Name>
+  <DisplayName>Qt Remote Objects</DisplayName>
+  <Description>Qt Remote Objects is an add-on library that provides an easy way to share Qt APIs between processes/devices.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtremoteobjects, qt.qt6.6101.examples.qtremoteobjects</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>caac7723e2abe4d3cf99126db53880a5ac75db16</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtremoteobjects.clang_64</Name>
+  <DisplayName>Qt Remote Objects for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtremoteobjects, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtremoteobjects-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="663688" OS="Any" UncompressedSize="3867121"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtremoteobjects-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>5ff6560ae5573ccf8eb38f3020d4deb2474e1658</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtremoteobjects.debug_information</Name>
+  <DisplayName>Qt Remote Objects debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtremoteobjects</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtremoteobjects, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>92eeb388bebd810b1e063b48fd7e27bbee6ff6bd</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtremoteobjects.debug_information.clang_64</Name>
+  <DisplayName>Qt Remote Objects debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtremoteobjects</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtremoteobjects, qt.qt6.6101.addons.qtremoteobjects.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtremoteobjects-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="8115015" OS="Any" UncompressedSize="46553979"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtremoteobjects-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>5e10dbd1f729ee745af1a2d7b920d80bbcc6e257</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtscxml</Name>
+  <DisplayName>Qt State Machines</DisplayName>
+  <Description>The Qt State Machines package provides API's and execution models that can be used to effectively embed the elements and semantics of statecharts in Qt applications. For advanced use cases the state machines can even be created from State Chart XML (SCXML) files.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtscxml, qt.qt6.6101.examples.qtscxml</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>beb13de8c459bc6f9c785ecc39ddf09a63846e30</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtscxml.clang_64</Name>
+  <DisplayName>Qt State Machine for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtscxml, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtscxml-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="692110" OS="Any" UncompressedSize="4966998"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtscxml-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>798237ef4c576360798bfc951d9bc0514a323912</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtscxml.debug_information</Name>
+  <DisplayName>Qt State Machine debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtscxml</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtscxml, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f5c4aaeeb7d1735e747d714b16b492732a2c7bcb</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtscxml.debug_information.clang_64</Name>
+  <DisplayName>Qt State Machine debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtscxml</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtscxml, qt.qt6.6101.addons.qtscxml.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtscxml-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="9890990" OS="Any" UncompressedSize="65837455"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtscxml-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>0be5d6e932a550491e29405dde92a10523bce64d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtsensors</Name>
+  <DisplayName>Qt Sensors</DisplayName>
+  <Description>Qt Sensors provides classes for reading sensor data.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtsensors, qt.qt6.6101.examples.qtsensors</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b7ce6a1e54a7314823464ec8a626cc59aed7a6ee</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtsensors.clang_64</Name>
+  <DisplayName>Qt Sensors for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtsensors, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtsensors-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="237199" OS="Any" UncompressedSize="2174364"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtsensors-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>f8740b375612da5738976584c92e879608227a34</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtsensors.debug_information</Name>
+  <DisplayName>Qt Sensors debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtsensors</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtsensors, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>16e939756a18b167c4d195b86ad71f34dd368559</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtsensors.debug_information.clang_64</Name>
+  <DisplayName>Qt Sensors debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtsensors</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtsensors, qt.qt6.6101.addons.qtsensors.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtsensors-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2489182" OS="Any" UncompressedSize="17990805"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtsensors-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>56dba5189799ee51a524601a9587bcce3ec2d419</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtserialbus</Name>
+  <DisplayName>Qt Serial Bus</DisplayName>
+  <Description>The Qt Serial Bus API provides classes and functions to access the various industrial serial buses and protocols, such as CAN, ModBus, and others.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtserialbus, qt.qt6.6101.examples.qtserialbus</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>fd3f98f642ffd0ad7b986f4667bfe3e2a56a5a35</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtserialbus.clang_64</Name>
+  <DisplayName>Qt SerialBus for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtserialbus, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialbus-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="361257" OS="Any" UncompressedSize="2481589"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtserialbus-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>33ecab745272cc7698238db0d877f1aa3df7677a</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtserialbus.debug_information</Name>
+  <DisplayName>Qt Serial Bus debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtserialbus</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtserialbus, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f930475e1b814fead71a7a7abe659d93f5ccd85b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtserialbus.debug_information.clang_64</Name>
+  <DisplayName>Qt Serial Bus debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtserialbus</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtserialbus, qt.qt6.6101.addons.qtserialbus.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtserialbus-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="4085398" OS="Any" UncompressedSize="26262912"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtserialbus-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>2cf83cf5d99a68f6fedc11d9ba4e9d724cf1dda7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtserialport</Name>
+  <DisplayName>Qt Serial Port</DisplayName>
+  <Description>Qt Serial Port provides the basic functionality, which includes configuring, I/O operations, getting and setting the control signals of the RS-232 pinouts.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtserialport, qt.qt6.6101.examples.qtserialport</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>73046661c0842c9790539a62fd43cc2a9c737478</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtserialport.clang_64</Name>
+  <DisplayName>Qt SerialPort for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtserialport, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtserialport-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="79781" OS="Any" UncompressedSize="488176"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtserialport-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>99a3b90b4241ad8793c527b32e1e6a8409af8e0d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtserialport.debug_information</Name>
+  <DisplayName>Qt Serial Port debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtserialport</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtserialport, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>3b87fe86c1f0fb90a75df62fa6f21ef800dddd66</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtserialport.debug_information.clang_64</Name>
+  <DisplayName>Qt Serial Port debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtserialport</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtserialport, qt.qt6.6101.addons.qtserialport.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtserialport-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="636916" OS="Any" UncompressedSize="3933713"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtserialport-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>6234cb98d6e19db82f52ba2a631e46d6f90d9c90</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtshadertools</Name>
+  <DisplayName>Qt Shader Tools</DisplayName>
+  <Description>Qt Shader conditioning tool Prebuilt Components for Qt 6.10.1.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.6101.doc.qtshadertools</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>53a0e848c5c4fafaa411d80b955663c7e07b107c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtshadertools.clang_64</Name>
+  <DisplayName>Qt Shader Tools for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtshadertools, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtshadertools-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2340371" OS="Any" UncompressedSize="10089836"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtshadertools-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>65bfea813c486f633a2c20dd83069ea7a72c0b9e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtshadertools.debug_information</Name>
+  <DisplayName>Qt Shader Tools debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtshadertools</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtshadertools, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>b37441b7922549538134439050f3bdbe958603ac</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtshadertools.debug_information.clang_64</Name>
+  <DisplayName>Qt Shader Tools debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtshadertools</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtshadertools, qt.qt6.6101.addons.qtshadertools.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtshadertools-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="19283702" OS="Any" UncompressedSize="124420966"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtshadertools-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>443ab787aeda789bcce5b1116eb07445c9683153</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtspeech</Name>
+  <DisplayName>Qt Speech</DisplayName>
+  <Description>The Qt Speech module allows using text to speech engines</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Dependencies>qt.qt6.6101.doc.qtspeech, qt.qt6.6101.examples.qtspeech</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>69a37e1af27ff4132fa9e1b1532588ed3570b85b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtspeech.clang_64</Name>
+  <DisplayName>Qt Speech for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtspeech, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtspeech-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="146087" OS="Any" UncompressedSize="1282097"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtspeech-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>c694727eaad30dde8b84a69dec361a709827bce1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtspeech.debug_information</Name>
+  <DisplayName>Qt Speech debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtspeech</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtspeech, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>dc8bc93f407efad1980c97f88b40e082eef67f8c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtspeech.debug_information.clang_64</Name>
+  <DisplayName>Qt Speech debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtspeech</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtspeech, qt.qt6.6101.addons.qtspeech.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtspeech-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2052455" OS="Any" UncompressedSize="13758102"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtspeech-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>733f64556fad6bd9ac8883c16ddc6ea05f87580c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtvirtualkeyboard</Name>
+  <DisplayName>Qt Virtual Keyboard</DisplayName>
+  <Description>The Qt Virtual Keyboard is a Qt Quick virtual keyboard that you can plug in to your platform or application. You can extend it with your ownlayouts and styles.&lt;br>&lt;br>This component is available under commercial licenses from The Qt Company, or under GPL v3. For open source use, please note the additional requirements compared to LGPL v3.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtvirtualkeyboard, qt.qt6.6101.examples.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>f957af0d8565acb2a95148384926496e6c047d1d</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtvirtualkeyboard.clang_64</Name>
+  <DisplayName>Qt Virtual Keyboard for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtvirtualkeyboard, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtvirtualkeyboard-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="2584779" OS="Any" UncompressedSize="13453285"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtvirtualkeyboard-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>be920984dd959eff9af4f49e0d845990a6fb68ef</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtvirtualkeyboard.debug_information</Name>
+  <DisplayName>Qt Virtual Keyboard debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtvirtualkeyboard, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>34eccf0a665ac44f2d560df8bb5740278b7f284c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtvirtualkeyboard.debug_information.clang_64</Name>
+  <DisplayName>Qt Virtual Keyboard debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtvirtualkeyboard</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtvirtualkeyboard, qt.qt6.6101.addons.qtvirtualkeyboard.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtvirtualkeyboard-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="9254908" OS="Any" UncompressedSize="66910434"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtvirtualkeyboard-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>9c12888584e639f7697c2815bc4a91c180b1268b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebchannel</Name>
+  <DisplayName>Qt WebChannel</DisplayName>
+  <Description>Qt WebChannel enables peer-to-peer communication between a server (QML/C++ application) and a client (HTML/JavaScript or QML application). It is supported out of the box by Qt WebEngine. In addition it can work on all browsers that support WebSockets, enabling Qt WebChannel clients to run in any JavaScript environment (including QML). This requires the implementation of a custom transport based on Qt WebSockets.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtwebchannel, qt.qt6.6101.examples.qtwebchannel</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>6fb665ca357de511feebb697a38f44d7228777ee</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebchannel.clang_64</Name>
+  <DisplayName>Qt WebChannel for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebchannel, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebchannel-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="171651" OS="Any" UncompressedSize="1170716"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtwebchannel-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>51a6edd55a8c2c11b025184684dc86610637ecda</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebchannel.debug_information</Name>
+  <DisplayName>Qt WebChannel debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtwebchannel</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebchannel, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>3ae32a7786410955be2c8c44305b66c5b741f17f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebchannel.debug_information.clang_64</Name>
+  <DisplayName>Qt WebChannel debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtwebchannel</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebchannel, qt.qt6.6101.addons.qtwebchannel.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtwebchannel-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1832269" OS="Any" UncompressedSize="12504890"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtwebchannel-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>078c10cf6b1d0554b02aa0a26d6561f7cd32f6c1</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebsockets</Name>
+  <DisplayName>Qt WebSockets</DisplayName>
+  <Description>WebSocket is a web-based protocol designed to enable two-way communication between a client application and a remote host. It enables the two entities to send data back and forth if the initial handshake succeeds. WebSocket is the solution for applications that struggle to get real-time data feeds with less network latency and minimum data exchange.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtwebsockets, qt.qt6.6101.examples.qtwebsockets</Dependencies>
+  <AutoDependOn/>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>10026ca3270cebb22bbb8c3a0ce04857c66d1d10</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebsockets.clang_64</Name>
+  <DisplayName>Qt WebSockets for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebsockets, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebsockets-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="153039" OS="Any" UncompressedSize="993700"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtwebsockets-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>ce87f6c1f4ab3b7145992250f06506293bdebe6f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebsockets.debug_information</Name>
+  <DisplayName>Qt WebSockets debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtwebsockets</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebsockets, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>d291101470d0400a656fcf60f6122d531a94c89e</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebsockets.debug_information.clang_64</Name>
+  <DisplayName>Qt WebSockets debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtwebsockets</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebsockets, qt.qt6.6101.addons.qtwebsockets.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtwebsockets-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1670550" OS="Any" UncompressedSize="10418238"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtwebsockets-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>8a2db9e6c61b3753511fc4235f207524d4cad1ca</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebview</Name>
+  <DisplayName>Qt WebView</DisplayName>
+  <Description>Qt WebView provides a way to display web content in a QML application without necessarily including a full web browser stack by using native APIs where it makes sense. This is useful on mobile platforms such as Android, iOS, and UWP (Universal Windows Platform); especially on iOS, where policy dictates that all web content is displayed using the operating system's web view. On Windows, Linux, and macOS, Qt WebView depends on the Qt WebEngine module to render content.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.doc.qtwebview, qt.qt6.6101.examples.qtwebview</Dependencies>
+  <AutoDependOn/>
+  <Script>installscript.qs</Script>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>ddce6c012118cd1e92ab7ec04e73a9c7a4b3610f</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebview.clang_64</Name>
+  <DisplayName>Qt WebView for macOS</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebview, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <Script>installscript.qs</Script>
+  <SortingPriority/>
+  <DownloadableArchives>qtwebview-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="116619" OS="Any" UncompressedSize="1481277"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtwebview-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>3261090704e1a3760f9e37042216e37422eb3d1b</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebview.debug_information</Name>
+  <DisplayName>Qt WebView debug information</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtwebview</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebview, qt.qt6.6101.debug_info</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>8b11d4a4e44ca59f859a704f0e5d3269a85a050c</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.addons.qtwebview.debug_information.clang_64</Name>
+  <DisplayName>Qt WebView debug information for Clang 64-bit</DisplayName>
+  <Description/>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <SortingPriority/>
+  <Dependencies>qt.qt6.6101.addons.qtwebview</Dependencies>
+  <AutoDependOn>qt.qt6.6101.addons.qtwebview, qt.qt6.6101.addons.qtwebview.debug_information, qt.qt6.6101.clang_64</AutoDependOn>
+  <Virtual>true</Virtual>
+  <DownloadableArchives>qtwebview-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="1890649" OS="Any" UncompressedSize="13590976"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtwebview-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>e3991c7ae0c9834a9c0f9b7e88ce8c2e4a21d855</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.clang_64</Name>
+  <DisplayName>Desktop</DisplayName>
+  <Description>Qt 6.10.1 Prebuilt Components for macOS (Universal, x86_64/arm64)</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Dependencies>qt.tools.qtcreator, qt.qt6.6101.doc, qt.qt6.6101.examples</Dependencies>
+  <AutoDependOn/>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <SortingPriority>700</SortingPriority>
+  <DownloadableArchives>qtbase-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z, qtdeclarative-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z, qtsvg-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z, qttools-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z, qttranslations-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="197433261" OS="Any" UncompressedSize="1385060013"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtbase-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtdeclarative-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtsvg-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qttools-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qttranslations-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>2f8ffed10b64bd7a8ec147b6be75a299541765ee</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.debug_info</Name>
+  <DisplayName>Qt Debug Information Files</DisplayName>
+  <Description>Qt 6.10.1 debug information files. Requires selection of target binary like gcc or MSVC.</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <Default>false</Default>
+  <Script>installscript.qs</Script>
+  <AutoDependOn/>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives/>
+  <UpdateFile CompressedSize="0" OS="Any" UncompressedSize="0"/>
+  <SHA1>9b788128c549a699bad848bc1f8f5482bf1356f7</SHA1>
+ </PackageUpdate>
+ <PackageUpdate>
+  <Name>qt.qt6.6101.debug_info.clang_64</Name>
+  <DisplayName>Desktop Clang 64-bit Debug Information Files</DisplayName>
+  <Description>Qt 6.10.1 Desktop Clang 64-bit Debug Information Files</Description>
+  <Version>6.10.1-0-202511161842</Version>
+  <ReleaseDate>2025-11-16</ReleaseDate>
+  <AutoDependOn>qt.qt6.6101.debug_info, qt.qt6.6101.clang_64</AutoDependOn>
+  <Dependencies>qt.qt6.6101.clang_64</Dependencies>
+  <Virtual>true</Virtual>
+  <SortingPriority>2</SortingPriority>
+  <DownloadableArchives>qtbase-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z, qtsvg-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z, qtdeclarative-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z, qttools-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="609639176" OS="Any" UncompressedSize="3905348939"/>
+  <Operations>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtbase-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtsvg-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qtdeclarative-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+   <Operation name="Extract">
+    <Argument>@TargetDir@/6.10.1/macos</Argument>
+    <Argument>qttools-MacOS-MacOS_15-Clang-MacOS-MacOS_15-X86_64-ARM64-debug-symbols.7z</Argument>
+   </Operation>
+  </Operations>
+  <SHA1>243fa01e3d7bb52c7b501159496c90cef6d9752a</SHA1>
+ </PackageUpdate>
+ <SHA1>748fd4b3ed142db47609b17f71709216c0e96e68</SHA1>
+ <MetadataName>2025-11-16-1931_meta.7z</MetadataName>
+</Updates>
