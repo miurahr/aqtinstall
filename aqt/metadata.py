@@ -527,18 +527,25 @@ class QtRepoProperty:
                 return ext
         return ""
 
+    # Legacy folder structure - all arches in one folder
+    ANDROID_SHARED_FOLDER_VER = Version("5.15.2")
+    # Modern folder structure - separate folder for each arch
+    ANDROID_SPLIT_FOLDER_VER = Version("6.0.0")
+
     @staticmethod
     def possible_extensions_for_arch(arch: str) -> List[str]:
         """Assumes no knowledge of the Qt version"""
 
-        # ext_ge_6: the extension if the version is greater than or equal to 6.0.0
-        # ext_lt_6: the extension if the version is less than 6.0.0
-        ext_lt_6, ext_ge_6 = [
-            QtRepoProperty.extension_for_arch(arch, version) for version in (Version("5.15.0"), Version("6.0.0"))
+        ext_legacy, ext_modern = [
+            QtRepoProperty.extension_for_arch(arch, version)
+            for version in (
+                QtRepoProperty.ANDROID_SHARED_FOLDER_VER,
+                QtRepoProperty.ANDROID_SPLIT_FOLDER_VER,
+            )
         ]
-        if ext_lt_6 == ext_ge_6:
-            return [ext_lt_6]
-        return [ext_lt_6, ext_ge_6]
+        if ext_legacy == ext_modern:
+            return [ext_legacy]
+        return [ext_legacy, ext_modern]
 
     # Architecture, as reported in Updates.xml
     MINGW_ARCH_PATTERN = re.compile(r"^win(?P<bits>\d+)_mingw(?P<version>\d+)?$")
@@ -841,7 +848,7 @@ class MetadataFactory:
         """
         assert qt_ver
         if qt_ver == "latest":
-            ext = QtRepoProperty.extension_for_arch(arch, Version("6.0.0")) if arch else ""
+            ext = QtRepoProperty.extension_for_arch(arch, QtRepoProperty.ANDROID_SPLIT_FOLDER_VER) if arch else ""
             latest_version = self.fetch_latest_version(ext)
             if not latest_version:
                 msg = "There is no latest version of Qt with the criteria '{}'".format(self.describe_filters())
