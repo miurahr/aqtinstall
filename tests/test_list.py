@@ -50,7 +50,7 @@ Settings.load_settings()
     ),
 )
 def test_list_extension_for_arch(arch: str, version: Version, expect: str):
-    ext = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+    ext = QtRepoProperty.extension_for_arch(arch, version)
     assert ext == expect
 
 

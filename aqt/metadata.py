@@ -253,6 +253,7 @@ class ArchiveId:
         "all_os": ["wasm", "qt", "android"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
+    EXTENSIONS_WIN_X64_QT6_11 = {"llvm_mingw", "mingw", "msvc2022_64", "msvc2022_arm64_cross_compiled"}
     ALL_EXTENSIONS = {
         "",
         "wasm",
@@ -325,44 +326,17 @@ class ArchiveId:
         )
 
     def to_folder(self, version: Version, qt_version_no_dots: str, extension: Optional[str] = None) -> str:
-        if version >= Version("6.8.0"):
-            if self.target == "wasm":
-                # Qt 6.8+ WASM uses a split folder structure
-                folder = f"qt{version.major}_{qt_version_no_dots}"
-                if extension:
-                    folder = f"{folder}/{folder}_{extension}"
-                return folder
-            elif not ((self.host == "all_os") and (self.target == "qt")):
-                # Non-WASM, non-all_os/qt case
-                return "{category}{major}_{ver}/{category}{major}_{ver}{ext}".format(
-                    category=self.category,
-                    major=qt_version_no_dots[0],
-                    ver=qt_version_no_dots,
-                    ext="_" + extension if extension else "",
-                )
-            else:
-                # traditional structure, still used by sde.
-                return "{category}{major}_{ver}{ext}".format(
-                    category=self.category,
-                    major=qt_version_no_dots[0],
-                    ver=qt_version_no_dots,
-                    ext="_" + extension if extension else "",
-                )
-        elif version >= Version("6.5.0") and self.target == "wasm":
-            # Qt 6.5-6.7 WASM uses direct wasm_[single|multi]thread folder
-            if extension:
-                return f"qt{version.major}_{qt_version_no_dots}_{extension}"
-            return f"qt{version.major}_{qt_version_no_dots}"
-
-        # Pre-6.8 structure for non-WASM or pre-6.5 structure
-        return "{category}{major}_{ver}{ext}".format(
-            category=self.category,
-            major=qt_version_no_dots[0],
-            ver=qt_version_no_dots,
-            ext="_" + extension if extension else "",
-        )
+        folderForVersion = f"{self.category}{version.major}_{qt_version_no_dots}"
+        folderForVersionAndExtension = f"{folderForVersion}_{extension}" if extension else folderForVersion
+        # Split folder structure was introduced in 6.8 for everything except src/doc/examples
+        if version < Version("6.8.0") or (self.host == "all_os" and self.target == "qt"):
+            return folderForVersionAndExtension
+        else:
+            return f"{folderForVersion}/{folderForVersionAndExtension}"
 
     def all_extensions(self, version: Version) -> List[str]:
+        if self.host == "windows" and version >= Version("6.11.0"):
+            return list(ArchiveId.EXTENSIONS_WIN_X64_QT6_11)
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
             return ["", "wasm"]
         elif self.target == "desktop" and QtRepoProperty.is_in_wasm_range_special_65x_66x(self.host, version):
@@ -536,29 +510,42 @@ class QtRepoProperty:
         return "macos" if version in SimpleSpec(">=6.1.2") else "clang_64"
 
     @staticmethod
-    def extension_for_arch(architecture: str, is_version_ge_6: bool) -> str:
+    def extension_for_arch(architecture: str, version: Version) -> str:
         if architecture == "wasm_32":
             return "wasm"
         elif architecture == "wasm_singlethread":
             return "wasm_singlethread"
         elif architecture == "wasm_multithread":
             return "wasm_multithread"
-        elif architecture.startswith("android_") and is_version_ge_6:
+        elif architecture.startswith("android_") and version >= Version("6.0.0"):
             ext = architecture[len("android_") :]
             if ext in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6:
                 return ext
+        elif architecture.startswith("win64_") and version >= Version("6.11.0"):
+            ext = architecture[len("win64_") :]
+            if ext in ArchiveId.EXTENSIONS_WIN_X64_QT6_11:
+                return ext
         return ""
+
+    # Legacy folder structure - all arches in one folder
+    ANDROID_SHARED_FOLDER_VER = Version("5.15.2")
+    # Modern folder structure - separate folder for each arch
+    ANDROID_SPLIT_FOLDER_VER = Version("6.0.0")
 
     @staticmethod
     def possible_extensions_for_arch(arch: str) -> List[str]:
         """Assumes no knowledge of the Qt version"""
 
-        # ext_ge_6: the extension if the version is greater than or equal to 6.0.0
-        # ext_lt_6: the extension if the version is less than 6.0.0
-        ext_lt_6, ext_ge_6 = [QtRepoProperty.extension_for_arch(arch, is_ge_6) for is_ge_6 in (False, True)]
-        if ext_lt_6 == ext_ge_6:
-            return [ext_lt_6]
-        return [ext_lt_6, ext_ge_6]
+        ext_legacy, ext_modern = [
+            QtRepoProperty.extension_for_arch(arch, version)
+            for version in (
+                QtRepoProperty.ANDROID_SHARED_FOLDER_VER,
+                QtRepoProperty.ANDROID_SPLIT_FOLDER_VER,
+            )
+        ]
+        if ext_legacy == ext_modern:
+            return [ext_legacy]
+        return [ext_legacy, ext_modern]
 
     # Architecture, as reported in Updates.xml
     MINGW_ARCH_PATTERN = re.compile(r"^win(?P<bits>\d+)_mingw(?P<version>\d+)?$")
@@ -861,7 +848,7 @@ class MetadataFactory:
         """
         assert qt_ver
         if qt_ver == "latest":
-            ext = QtRepoProperty.extension_for_arch(arch, True) if arch else ""
+            ext = QtRepoProperty.extension_for_arch(arch, QtRepoProperty.ANDROID_SPLIT_FOLDER_VER) if arch else ""
             latest_version = self.fetch_latest_version(ext)
             if not latest_version:
                 msg = "There is no latest version of Qt with the criteria '{}'".format(self.describe_filters())
@@ -999,7 +986,7 @@ class MetadataFactory:
 
     def fetch_modules(self, version: Version, arch: str) -> List[str]:
         """Returns list of modules"""
-        extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+        extension = QtRepoProperty.extension_for_arch(arch, version)
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
@@ -1048,7 +1035,7 @@ class MetadataFactory:
 
     def fetch_long_modules(self, version: Version, arch: str) -> ModuleData:
         """Returns long listing of modules"""
-        extension = QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
+        extension = QtRepoProperty.extension_for_arch(arch, version)
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590(\.addons)?\.(?P<module>[^.]+)\.gcc_64$")
         #          qt.qt6.680.addons.qtwebsockets.win64_msvc2022_64
@@ -1122,11 +1109,7 @@ class MetadataFactory:
         return self.fetch_archives(version, cmd_type, [], is_sde=True)
 
     def fetch_archives(self, version: Version, arch: str, modules: List[str], is_sde: bool = False) -> List[str]:
-        extension = (
-            QtRepoProperty.sde_ext(version)
-            if is_sde
-            else QtRepoProperty.extension_for_arch(arch, version >= Version("6.0.0"))
-        )
+        extension = QtRepoProperty.sde_ext(version) if is_sde else QtRepoProperty.extension_for_arch(arch, version)
         qt_version_str = self._get_qt_version_str(version)
         nonempty = MetadataFactory._has_nonempty_downloads
 

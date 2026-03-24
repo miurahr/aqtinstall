@@ -340,7 +340,7 @@ class QtArchives:
         )
 
     def _arch_ext(self) -> str:
-        ext = QtRepoProperty.extension_for_arch(self.arch, self.version >= Version("6.0.0"))
+        ext = QtRepoProperty.extension_for_arch(self.arch, self.version)
         return ("_" + ext) if ext else ""
 
     def _base_module_name(self) -> str:
