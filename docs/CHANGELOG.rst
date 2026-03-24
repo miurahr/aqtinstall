@@ -13,6 +13,27 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Fixed
+-----
+- installation of extensions for windows-arm64 (#941)
+- fix extensions for list-qt, install-qt command and android >= 6.7.0 (#946)
+- fix spec version input for all_os wasm not detecting 'wasm_*' architecture for Qt>=6.8.0 (#927)
+- fix a case of mac arm64 official installer (#948)
+- fix patching for Qt 6.10.1 cross compile (#952)
+- decode std streams when using an exernal extractro (#979)
+
+Added
+-----
+- Add windows-arm64, macos15-arm64 binaries (#931)
+- Support new IFW versions repository path (#963)
+
+Changed
+-------
+- Improve CI/CD, linting and test configurations (#931, #934, #935, #954, #961, #964, #966, #968, #972, #973)
+- Improve pyproject.toml for tox configurations (#962)
+- Streamline source distribution without tests (#971)
+- Some code style improvements (#960)
+
 `v3.3.0`_ (2, June, 2025)
 =========================
 
