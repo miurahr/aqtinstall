@@ -9,7 +9,7 @@ from typing import Dict, Optional
 
 MIRRORS = [
     "https://ftp.jaist.ac.jp/pub/qtproject",
-    "https://ftp1.nluug.nl/languages/qt",
+    "https://ftp.nluug.nl/languages/qt",
     "https://mirrors.dotsrc.org/qtproject",
 ]
 

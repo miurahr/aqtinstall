@@ -44,7 +44,7 @@ A file is like as follows:
     fallbacks:
         https://mirrors.ocf.berkeley.edu/qt
         https://ftp.jaist.ac.jp/pub/qtproject
-        http://ftp1.nluug.nl/languages/qt
+        https://ftp.nluug.nl/languages/qt
         https://mirrors.dotsrc.org/qtproject
 
     [kde_patches]
