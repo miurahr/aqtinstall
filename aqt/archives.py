@@ -566,43 +566,6 @@ class QtArchives:
             message = f"The packages {target_packages} were not found while parsing XML of package information!"
             raise NoPackageFound(message, suggested_action=self.help_msg(list(target_packages.get_modules())))
 
-    def _append_tool_update(self, os_target_folder, update_xml, target, tool_version_str):
-        packageupdate = update_xml.get(target)
-        if packageupdate is None:
-            message = f"The package '{self.arch}' was not found while parsing XML of package information!"
-            raise NoPackageFound(message, suggested_action=self.help_msg())
-        name = packageupdate.name
-        named_version = packageupdate.full_version
-        if tool_version_str and named_version != tool_version_str:
-            message = f"The package '{self.arch}' has the version '{named_version}', not the requested '{self.version}'."
-            raise NoPackageFound(message, suggested_action=self.help_msg())
-        package_desc = packageupdate.description
-        downloadable_archives = packageupdate.downloadable_archives
-        archive_install_paths = packageupdate.archive_install_paths
-        if not downloadable_archives:
-            message = f"The package '{self.arch}' contains no downloadable archives!"
-            raise NoPackageFound(message)
-        for archive, archive_install_path in zip_longest(downloadable_archives, archive_install_paths, fillvalue=""):
-            archive_path = posixpath.join(
-                # online/qtsdkrepository/linux_x64/desktop/tools_ifw/
-                os_target_folder,
-                # qt.tools.ifw.41/
-                name,
-                #  4.1.1-202105261130ifw-linux-x64.7z
-                f"{named_version}{archive}",
-            )
-            self.archives.append(
-                QtPackage(
-                    name=name,
-                    base_url=self.base,
-                    archive_path=archive_path,
-                    archive=archive,
-                    archive_install_path=archive_install_path,
-                    package_desc=package_desc,
-                    pkg_update_name=name,  # Redundant
-                )
-            )
-
     def help_msg(self, missing_modules: Optional[List[str]] = None) -> List[str]:
         _missing_modules: List[str] = missing_modules or []
         base_cmd = f"aqt list-qt {self.os_name} {self.target}"
@@ -708,9 +671,9 @@ class SrcDocExamplesArchives(QtArchives):
 class ToolArchives(QtArchives):
     """Hold tool archive package list
     when installing mingw tool, argument would be
-    ToolArchive(windows, desktop, 4.9.1-3, mingw)
+    ToolArchive(windows, desktop, mingw, 4.9.1-3)
     when installing ifw tool, argument would be
-    ToolArchive(linux, desktop, 3.1.1, ifw)
+    ToolArchive(linux, desktop, ifw, 3.1.1)
     """
 
     def __init__(
@@ -719,14 +682,12 @@ class ToolArchives(QtArchives):
         target: str,
         tool_name: str,
         base: str,
-        version_str: Optional[str] = None,
         arch: str = "",
         timeout: Tuple[float, float] = (5, 5),
     ):
         self.tool_name = tool_name
         self.os_name = os_name
         self.logger = getLogger("aqt.archives")
-        self.tool_version_str: Optional[str] = version_str
         super(ToolArchives, self).__init__(
             os_name=os_name,
             target=target,
@@ -747,18 +708,26 @@ class ToolArchives(QtArchives):
     def _get_archives(self):
         os_segment = self._resolve_os_segment()
         os_target_folder = self._main_repo_folder(os_segment, self.tool_name)
+
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
-        update_xml_text = self._download_update_xml(update_xml_url)
+        silent_attempt = self.tool_name == "tools_ifw"
+        update_xml_text = self._download_update_xml(update_xml_url, silent_attempt)
+        if not update_xml_text:
+            message = f"The package '{self.tool_name}' contains no downloadable archives for variant '{self.arch}'!"
+            raise NoPackageFound(message, suggested_action=self.help_msg())
+
         update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
         self._parse_update_xmls(update_xmls, None)
 
     def _main_repo_folder(self, os_segment: str, name: str) -> str:
         """Build the main repository folder path for Updates.xml."""
-        # For IFW, newer variants (e.g., tools_ifw410) live under 'ifw/<variant>',
-        # while legacy 'tools_ifw47' and unspecified version fall back to the
-        # generic desktop path '.../desktop/tools_ifw'. Ensure we don't join None.
-        if name == "tools_ifw" and self.tool_version_str and self.tool_version_str != "tools_ifw47":
-            os_target_folder = posixpath.join("online/qtsdkrepository", os_segment, "ifw", self.tool_version_str)
+        # For IFW, variants live under 'ifw/<variant>'. The variant 'tools_ifw47' still
+        # resides in the legacy place '.../desktop/tools_ifw' but we don't use it any
+        # more. Unspecified version won't go here and won't fall back to any version,
+        # but will include all versions.
+        if name == "tools_ifw":
+            ifw_version = self.arch.replace("qt.tools.ifw.", "tools_ifw_")
+            os_target_folder = posixpath.join("online/qtsdkrepository", os_segment, "ifw", ifw_version)
             self._debug_repo_choice = "ifw"
         else:
             os_target_folder = posixpath.join("online/qtsdkrepository", os_segment, self.target, name)
@@ -767,7 +736,7 @@ class ToolArchives(QtArchives):
 
     def _parse_update_xml(self, os_target_folder: str, update_xml_text: str, *ignored: Any) -> None:
         update_xml = Updates.fromstring(self.base, update_xml_text)
-        self._append_tool_update(os_target_folder, update_xml, self.arch, self.tool_version_str)
+        self._append_tool_update(os_target_folder, update_xml, self.arch)
 
     def help_msg(self, *args) -> List[str]:
         return [f"Please use 'aqt list-tool {self.os_name} {self.target} {self.tool_name}' to show tool variants available."]
@@ -778,3 +747,37 @@ class ToolArchives(QtArchives):
         :return tuple of three parameter, "Tools", target and arch
         """
         return TargetConfig("Tools", self.target, self.arch, self.os_name)
+
+    def _append_tool_update(self, os_target_folder, update_xml, target):
+        packageupdate = update_xml.get(target)
+        if packageupdate is None:
+            message = f"The package '{self.arch}' was not found while parsing XML of package information!"
+            raise NoPackageFound(message, suggested_action=self.help_msg())
+        name = packageupdate.name
+        named_version = packageupdate.full_version
+        package_desc = packageupdate.description
+        downloadable_archives = packageupdate.downloadable_archives
+        archive_install_paths = packageupdate.archive_install_paths
+        if not downloadable_archives:
+            message = f"The package '{self.arch}' contains no downloadable archives!"
+            raise NoPackageFound(message)
+        for archive, archive_install_path in zip_longest(downloadable_archives, archive_install_paths, fillvalue=""):
+            archive_path = posixpath.join(
+                # online/qtsdkrepository/linux_x64/ifw/tools_ifw_47/
+                os_target_folder,
+                # qt.tools.ifw.47/
+                name,
+                # 4.7.0-0-202402231255ifw-linux-x64.7z
+                f"{named_version}{archive}",
+            )
+            self.archives.append(
+                QtPackage(
+                    name=name,
+                    base_url=self.base,
+                    archive_path=archive_path,
+                    archive=archive,
+                    archive_install_path=archive_install_path,
+                    package_desc=package_desc,
+                    pkg_update_name=name,  # Redundant
+                )
+            )

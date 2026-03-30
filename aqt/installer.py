@@ -161,7 +161,6 @@ class InstallToolArgParser(CommonInstallArgParser):
     """Install-tool arguments and options"""
 
     tool_name: str
-    version: Optional[str]
     tool_variant: Optional[str]
 
 
@@ -618,9 +617,6 @@ class Cli:
         else:
             base_dir = output_dir
         sevenzip = self._set_sevenzip(args.external)
-        version = getattr(args, "version", None)
-        if version is not None:
-            Cli._validate_version_str(version, allow_minus=True)
         keep: bool = args.keep or Settings.always_keep_archives
         archive_dest: Optional[str] = args.archive_dest
         if args.base is not None:
@@ -650,7 +646,6 @@ class Cli:
                     tool_name=tool_name,
                     target=target,
                     base=base_url,
-                    version_str=version,
                     arch=arch,
                     timeout=timeout,
                 ),

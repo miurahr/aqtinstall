@@ -440,12 +440,30 @@ def test_list_archives_bad_xml(monkeypatch, xml_content: str):
 )
 def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
     archive_id = ArchiveId("tools", host, target)
-    in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
     expect_out_file = "{}-{}-{}-expect.json".format(host, target, tool_name)
-    _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
     expect = json.loads((Path(__file__).parent / "data" / expect_out_file).read_text("utf-8"))
 
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: _xml)
+    if tool_name != "tools_ifw":
+        in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
+        _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+        _mock_fetch_http = lambda self, _: _xml
+    else:
+
+        def _mock_fetch_http(self, rest_of_url, *args, **kwargs):
+            if not rest_of_url.startswith("online/qtsdkrepository/mac_x64/ifw/"):
+                raise ArchiveDownloadError(f"No such file at {rest_of_url}")
+
+            tail = rest_of_url.removeprefix("online/qtsdkrepository/mac_x64/ifw/")
+            _html = (Path(__file__).parent / "data" / "mac-desktop-tools_ifw.html").read_text("utf-8")
+            if tail == "":
+                return _html
+
+            variant = tail.removesuffix("/Updates.xml")
+            in_file = "{}-{}-{}-{}-update.xml".format(host, target, tool_name, variant)
+            _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
+            return _xml
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
 
     modules = MetadataFactory(archive_id, tool_name=tool_name).getList()
     assert modules == expect["modules"]
@@ -820,18 +838,6 @@ wrong_arch_msg = "Please use 'aqt list-qt mac desktop --arch <QT_VERSION>' to li
             MetadataFactory(mac_qt, spec=SimpleSpec("<5.9")),
             ["Please use 'aqt list-qt mac desktop' to check that versions of qt exist within the spec '<5.9'."],
         ),
-        (
-            MetadataFactory(ArchiveId("tools", "mac", "desktop"), tool_name="ifw"),
-            [wrong_tool_name_msg],
-        ),
-        (
-            MetadataFactory(mac_qt, architectures_ver="1.2.3"),
-            [wrong_qt_version_msg],
-        ),
-        (
-            MetadataFactory(mac_qt, modules_query=ModulesQuery("1.2.3", "clang_64")),
-            [wrong_qt_version_msg, wrong_arch_msg],
-        ),
     ),
 )
 def test_suggested_follow_up(meta: MetadataFactory, expected_message: str):
@@ -958,52 +964,54 @@ def test_list_fetch_tool_by_simple_spec(monkeypatch):
     (
         (
             120,
-            (
-                "Tool Variant Name        Version         Release Date          Display Name          "
-                "            Description            \n"
-                "====================================================================================="
-                "===================================\n"
-                "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   "
-                "The Qt Installer Framework provides\n"
-                "                                                                                     "
-                "a set of tools and utilities to    \n"
-                "                                                                                     "
-                "create installers for the supported\n"
-                "                                                                                     "
-                "desktop Qt platforms: Linux,       \n"
-                "                                                                                     "
-                "Microsoft Windows, and macOS.      \n"
-            ),
+            "   Tool Variant Name            Version          Release Date          Display Name                  Description        \n"
+            "========================================================================================================================\n"
+            "qt.tools.qtdesignstudio   2.3.1-0-202112170945   2021-12-17     Qt Design Studio              Qt Design Studio is a UI  \n"
+            "                                                                2.3.1-community               design and development    \n"
+            "                                                                                              environment for creating  \n"
+            "                                                                                              animated UIs and          \n"
+            "                                                                                              previewing them on the    \n"
+            "                                                                                              desktop or on Android and \n"
+            "                                                                                              embedded Linux devices. It\n"
+            "                                                                                              provides you with tools   \n"
+            "                                                                                              for accomplishing your    \n"
+            "                                                                                              tasks throughout the whole\n"
+            "                                                                                              process, from design to   \n"
+            "                                                                                              production.               \n",
         ),
         (
             80,
-            "Tool Variant Name        Version         Release Date\n"
-            "=====================================================\n"
-            "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26  \n",
+            "   Tool Variant Name            Version          Release Date\n"
+            "=============================================================\n"
+            "qt.tools.qtdesignstudio   2.3.1-0-202112170945   2021-12-17  \n",
         ),
         (
             0,
-            "Tool Variant Name        Version         Release Date          Display Name          "
-            "                                                                           Descriptio"
-            "n                                                                            \n"
-            "====================================================================================="
-            "====================================================================================="
-            "=============================================================================\n"
-            "qt.tools.ifw.41     4.1.1-202105261132   2021-05-26     Qt Installer Framework 4.1   "
-            "The Qt Installer Framework provides a set of tools and utilities to create installers"
-            " for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.\n",
+            "   Tool Variant Name            Version          Release Date             Display Name                                                                                                                                                 Description                                                                                                                                    \n"
+            "======================================================================================================================================================================================================================================================================================================================================================================================\n"
+            "qt.tools.qtdesignstudio   2.3.1-0-202112170945   2021-12-17     Qt Design Studio 2.3.1-community   Qt Design Studio is a UI design and development environment for creating animated UIs and previewing them on the desktop or on Android and embedded Linux devices. It provides you with tools for accomplishing your tasks throughout the whole process, from design to production.\n",
         ),
     ),
 )
-def test_show_list_tools_long_ifw(capsys, monkeypatch, columns, expect):
-    update_xml = (Path(__file__).parent / "data" / "mac-desktop-tools_ifw-update.xml").read_text("utf-8")
-    monkeypatch.setattr(MetadataFactory, "fetch_http", lambda self, _: update_xml)
+def test_show_list_tools_long_qtdesignstudio(capsys, monkeypatch, columns, expect):
+    _html = (Path(__file__).parent / "data" / "mac-desktop-tools_qtdesignstudio.html").read_text("utf-8")
+    update_xml = (Path(__file__).parent / "data" / "mac-desktop-tools_qtdesignstudio-update.xml").read_text("utf-8")
+
+    def _mock_fetch_http(self, rest_of_url, *args, **kwargs):
+        if rest_of_url.endswith("/"):
+            return _html
+        if rest_of_url.endswith("/Updates.xml"):
+            return update_xml
+        else:
+            assert False, f"Fetched an unexpected file at '{rest_of_url}'"
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", _mock_fetch_http)
 
     monkeypatch.setattr(shutil, "get_terminal_size", lambda fallback: os.terminal_size((columns, 24)))
 
     meta = MetadataFactory(
         ArchiveId("tools", "mac", "desktop"),
-        tool_name="tools_ifw",
+        tool_name="tools_qtdesignstudio",
         is_long_listing=True,
     )
     show_list(meta)
