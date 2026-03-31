@@ -446,7 +446,8 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
     if tool_name != "tools_ifw":
         in_file = "{}-{}-{}-update.xml".format(host, target, tool_name)
         _xml = (Path(__file__).parent / "data" / in_file).read_text("utf-8")
-        _mock_fetch_http = lambda self, _: _xml
+        def _mock_fetch_http(self, _, *args, **kwargs):
+            return _xml
     else:
 
         def _mock_fetch_http(self, rest_of_url, *args, **kwargs):
