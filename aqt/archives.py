@@ -710,11 +710,13 @@ class ToolArchives(QtArchives):
         os_target_folder = self._main_repo_folder(os_segment, self.tool_name)
 
         update_xml_url = posixpath.join(os_target_folder, "Updates.xml")
-        silent_attempt = self.tool_name == "tools_ifw"
-        update_xml_text = self._download_update_xml(update_xml_url, silent_attempt)
-        if not update_xml_text:
-            message = f"The package '{self.tool_name}' contains no downloadable archives for variant '{self.arch}'!"
-            raise NoPackageFound(message, suggested_action=self.help_msg())
+        try:
+            update_xml_text = self._download_update_xml(update_xml_url)
+        except ArchiveDownloadError as e:
+            if self.tool_name == "tools_ifw":
+                message = f"The package '{self.tool_name}' contains no downloadable archives for variant '{self.arch}'!"
+                raise NoPackageFound(message, suggested_action=self.help_msg()) from e
+            raise
 
         update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
         self._parse_update_xmls(update_xmls, None)
