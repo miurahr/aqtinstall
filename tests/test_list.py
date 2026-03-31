@@ -999,9 +999,9 @@ def test_show_list_tools_long_qtdesignstudio(capsys, monkeypatch, columns, expec
     update_xml = (Path(__file__).parent / "data" / "mac-desktop-tools_qtdesignstudio-update.xml").read_text("utf-8")
 
     def _mock_fetch_http(self, rest_of_url, *args, **kwargs):
-        if rest_of_url.endswith("/"):
+        if rest_of_url.endswith("/tools_qtdesignstudio/"):
             return _html
-        if rest_of_url.endswith("/Updates.xml"):
+        if rest_of_url.endswith("/tools_qtdesignstudio/Updates.xml"):
             return update_xml
         else:
             assert False, f"Fetched an unexpected file at '{rest_of_url}'"
