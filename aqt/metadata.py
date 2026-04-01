@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2021 David Dalcino
+# Copyright (C) 2021-2025 David Dalcino
+#               2023 Alberto Mardegan
+#               2023 lebarsfa
+#               2023 LuK1337
+#               2024-2025 tsteven4
+#               2024 Andrew Wason
+#               2024 J.D. Purcell
+#               2025 Alexandre 'Kidev' Poumaroux
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
