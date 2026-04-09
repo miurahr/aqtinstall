@@ -818,8 +818,9 @@ Install tools like QtIFW, mingw, Cmake, Conan, and vcredist.
 
 .. option:: tool variant name
 
-    Optional field to specify tool variant. It may be required for vcredist and mingw installation.
-    tool variant names may be 'qt.tools.win64_mingw810', 'qt.tools.vcredist_msvc2013_x64'.
+    Optional field to specify tool variant. It may be required for vcredist, mingw, and QtIFW
+    installation. Tool variant names may be 'qt.tools.vcredist_msvc2013_x64', 'qt.tools.win64_mingw810',
+    and 'qt.tools.ifw.48'.
 
 You should use the :ref:`List-Tool command` to display what tools and tool variant names are available.
     
@@ -959,9 +960,9 @@ Example: List the variants of IFW available:
 
 .. code-block:: console
 
-    aqt list-tool linux desktop tools_ifw       # prints 'qt.tools.ifw.41'
+    aqt list-tool linux desktop tools_ifw    # prints 'qt.tools.ifw.47', 'qt.tools.ifw.48', etc
     # Alternate: `tools_` prefix is optional
-    aqt list-tool linux desktop ifw             # prints 'qt.tools.ifw.41'
+    aqt list-tool linux desktop ifw          # prints 'qt.tools.ifw.47', 'qt.tools.ifw.48', etc
 
 
 Example: List the variants of IFW, including version, release date, description, etc.:
@@ -975,7 +976,7 @@ Example: Install an Install FrameWork (IFW):
 
 .. code-block:: console
 
-    aqt install-tool linux desktop tools_ifw
+    aqt install-tool linux desktop tools_ifw qt.tools.ifw.48
 
 
 Example: Install vcredist on Windows:
