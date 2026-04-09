@@ -673,7 +673,7 @@ class ToolArchives(QtArchives):
     when installing mingw tool, argument would be
     ToolArchive(windows, desktop, mingw, 4.9.1-3)
     when installing ifw tool, argument would be
-    ToolArchive(linux, desktop, ifw, 3.1.1)
+    ToolArchive(linux, desktop, ifw, "qt.tools.ifw.48")
     """
 
     def __init__(
