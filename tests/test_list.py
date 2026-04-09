@@ -966,20 +966,20 @@ def test_list_fetch_tool_by_simple_spec(monkeypatch):
     (
         (
             120,
-            "   Tool Variant Name            Version          Release Date          Display Name                  Description        \n"
-            "========================================================================================================================\n"
-            "qt.tools.qtdesignstudio   2.3.1-0-202112170945   2021-12-17     Qt Design Studio              Qt Design Studio is a UI  \n"
-            "                                                                2.3.1-community               design and development    \n"
-            "                                                                                              environment for creating  \n"
-            "                                                                                              animated UIs and          \n"
-            "                                                                                              previewing them on the    \n"
-            "                                                                                              desktop or on Android and \n"
-            "                                                                                              embedded Linux devices. It\n"
-            "                                                                                              provides you with tools   \n"
-            "                                                                                              for accomplishing your    \n"
-            "                                                                                              tasks throughout the whole\n"
-            "                                                                                              process, from design to   \n"
-            "                                                                                              production.               \n",
+            "   Tool Variant Name            Version          Release Date          Display Name                  Description        \n"  # noqa: E501
+            "========================================================================================================================\n"  # noqa: E501
+            "qt.tools.qtdesignstudio   2.3.1-0-202112170945   2021-12-17     Qt Design Studio              Qt Design Studio is a UI  \n"  # noqa: E501
+            "                                                                2.3.1-community               design and development    \n"  # noqa: E501
+            "                                                                                              environment for creating  \n"  # noqa: E501
+            "                                                                                              animated UIs and          \n"  # noqa: E501
+            "                                                                                              previewing them on the    \n"  # noqa: E501
+            "                                                                                              desktop or on Android and \n"  # noqa: E501
+            "                                                                                              embedded Linux devices. It\n"  # noqa: E501
+            "                                                                                              provides you with tools   \n"  # noqa: E501
+            "                                                                                              for accomplishing your    \n"  # noqa: E501
+            "                                                                                              tasks throughout the whole\n"  # noqa: E501
+            "                                                                                              process, from design to   \n"  # noqa: E501
+            "                                                                                              production.               \n",  # noqa: E501
         ),
         (
             80,
@@ -989,9 +989,9 @@ def test_list_fetch_tool_by_simple_spec(monkeypatch):
         ),
         (
             0,
-            "   Tool Variant Name            Version          Release Date             Display Name                                                                                                                                                 Description                                                                                                                                    \n"
-            "======================================================================================================================================================================================================================================================================================================================================================================================\n"
-            "qt.tools.qtdesignstudio   2.3.1-0-202112170945   2021-12-17     Qt Design Studio 2.3.1-community   Qt Design Studio is a UI design and development environment for creating animated UIs and previewing them on the desktop or on Android and embedded Linux devices. It provides you with tools for accomplishing your tasks throughout the whole process, from design to production.\n",
+            "   Tool Variant Name            Version          Release Date             Display Name                                                                                                                                                 Description                                                                                                                                    \n"  # noqa: E501
+            "======================================================================================================================================================================================================================================================================================================================================================================================\n"  # noqa: E501
+            "qt.tools.qtdesignstudio   2.3.1-0-202112170945   2021-12-17     Qt Design Studio 2.3.1-community   Qt Design Studio is a UI design and development environment for creating animated UIs and previewing them on the desktop or on Android and embedded Linux devices. It provides you with tools for accomplishing your tasks throughout the whole process, from design to production.\n",  # noqa: E501
         ),
     ),
 )
