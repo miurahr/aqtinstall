@@ -449,6 +449,7 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
 
         def _mock_fetch_http(self, _, *args, **kwargs):
             return _xml
+
     else:
 
         def _mock_fetch_http(self, rest_of_url, *args, **kwargs):
