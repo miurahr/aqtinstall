@@ -460,6 +460,8 @@ def test_tool_modules(monkeypatch, host: str, target: str, tool_name: str):
             _html = (Path(__file__).parent / "data" / "mac-desktop-tools_ifw.html").read_text("utf-8")
             if tail == "":
                 return _html
+            if not tail.endswith("/Updates.xml"):
+                assert False, f"Fetched an unexpected file at '{rest_of_url}'"
 
             variant = tail.removesuffix("/Updates.xml")
             in_file = "{}-{}-{}-{}-update.xml".format(host, target, tool_name, variant)
