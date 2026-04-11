@@ -4,7 +4,6 @@ Another Qt installer(aqt)
 - Release: |pypi|
 - Documentation: |docs|
 - Test status: |gha| and Coverage: |coveralls|
-- Code Quality: |codacy|
 - Project maturity |Package health|
 
 .. |pypi| image:: https://badge.fury.io/py/aqtinstall.svg
