@@ -1,3 +1,4 @@
+name: Publish Python 🐍 distributions 📦 to PyPI
 
 on:
   push:
