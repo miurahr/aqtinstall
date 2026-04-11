@@ -56,7 +56,7 @@ Requirements
     3.10
 
 - Recommended Python version:
-    3.13 (frequently tested on)
+    3.14 (frequently tested on)
 
 - Dependencies:
     requests
