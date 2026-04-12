@@ -5,7 +5,7 @@ jobs:
 - job: MatricesGenerator
   displayName: Matrices Generator
   pool:
-    vmImage: 'ubuntu-22.04'
+    vmImage: 'ubuntu-latest'
   steps:
     - task: UsePythonVersion@0
       inputs:
@@ -18,7 +18,7 @@ jobs:
 - job: Mac
   dependsOn: MatricesGenerator
   pool:
-    vmImage: 'macOS-14'
+    vmImage: 'macOS-latest'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.mac'] ]
   steps:
@@ -29,7 +29,7 @@ jobs:
 - job: Windows
   dependsOn: MatricesGenerator
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-latest'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.windows'] ]
   variables:
@@ -42,7 +42,7 @@ jobs:
 - job: Linux
   dependsOn: MatricesGenerator
   pool:
-    vmImage: 'ubuntu-22.04'
+    vmImage: 'ubuntu-latest'
   strategy:
     matrix: $[ dependencies.MatricesGenerator.outputs['mtrx.linux'] ]
   steps:
