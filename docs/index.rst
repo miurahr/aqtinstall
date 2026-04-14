@@ -13,7 +13,6 @@ Contents:
    official
    appendix
    CONTRIBUTE
-   CODE_OF_CONDUCT
    SECURITY
    authors
    CHANGELOG
