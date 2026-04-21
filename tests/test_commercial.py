@@ -182,13 +182,12 @@ def test_build_command(
 @pytest.mark.parametrize(
     "os, osarch, expected_suffix",
     [
-        pytest.param("windows", "windows", ".exe"),
         pytest.param("windows", "windows-x64", ".exe"),
         pytest.param("windows", "windows-arm64", ".exe"),
-        pytest.param("linux", "linux", ".run"),
         pytest.param("linux", "linux-x64", ".run"),
         pytest.param("linux", "linux-arm64", ".run"),
         pytest.param("mac", "mac-x64", ".dmg"),
+        pytest.param("mac", "mac-arm64", ".dmg"),
     ],
 )
 def test_commercial_installer_names(monkeypatch, os, osarch, expected_suffix):
@@ -200,7 +199,7 @@ def test_commercial_installer_names(monkeypatch, os, osarch, expected_suffix):
 
     assert installer_name.endswith(expected_suffix)
 
-    if os == get_os_name() and osarch in ["windows", "linux", "mac-x64"]:
+    if os == get_os_name() and osarch in ["windows-x64", "linux-x64", "mac-arm64"]:
         target_path = Settings.qt_installer_temp_path / Path(installer_name)
         base_url = Settings.baseurl
         timeout = (Settings.connection_timeout, Settings.response_timeout)
