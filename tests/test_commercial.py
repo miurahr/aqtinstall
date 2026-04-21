@@ -199,12 +199,12 @@ def test_commercial_installer_names(monkeypatch, os, osarch, expected_suffix):
 
     assert installer_name.endswith(expected_suffix)
 
-    if os == get_os_name() and osarch in ["windows-x64", "linux-x64", "mac-arm64"]:
-        target_path = Settings.qt_installer_temp_path / Path(installer_name)
-        base_url = Settings.baseurl
-        timeout = (Settings.connection_timeout, Settings.response_timeout)
-        download_installer(base_url, installer_name, target_path, timeout)
-        assert True
+    # make sure the installer can be downloaded for all os's and arch's.
+    target_path = Settings.qt_installer_temp_path / Path(installer_name)
+    base_url = Settings.baseurl
+    timeout = (Settings.connection_timeout, Settings.response_timeout)
+    download_installer(base_url, installer_name, target_path, timeout)
+    assert True
 
 
 @pytest.mark.parametrize(
@@ -347,7 +347,7 @@ def test_install_qt_commercial(
 
             modified.append(line)
 
-        return "\n".join(modified)
+        return "\n".join(modified) + "\n"
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(script_dir, "../aqt/settings.ini")
