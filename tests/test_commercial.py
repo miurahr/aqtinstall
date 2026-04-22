@@ -177,9 +177,18 @@ def test_build_command(
     )
     assert cmd == expected_cmd
 
+
 @pytest.fixture(scope="module")
-def get_qt_installers_once() -> dict[str, str]:
-    return get_qt_installers()
+def get_qt_installers_once():
+    cache = {}
+
+    def _get():
+        if "data" not in cache:
+            cache["data"] = get_qt_installers()
+        return cache["data"]
+
+    return _get
+
 
 @pytest.mark.enable_socket
 @pytest.mark.parametrize(
@@ -197,11 +206,12 @@ def test_commercial_installer_names(monkeypatch, get_qt_installers_once, osarch,
     """Test installer names finder"""
 
     monkeypatch.setattr("aqt.helper.get_os_arch", lambda: osarch)
-    monkeypatch.setattr("aqt.helper.get_qt_installers", lambda: get_qt_installers_once)
+    monkeypatch.setattr("aqt.helper.get_qt_installers", lambda: get_qt_installers_once())
 
     installer_name = get_qt_installer_name()
 
     assert installer_name.endswith(expected_suffix)
+
 
 @pytest.mark.parametrize(
     "modules, expected_command",
