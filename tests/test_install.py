@@ -11,7 +11,7 @@ import textwrap
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from tempfile import TemporaryDirectory, NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import py7zr
@@ -1596,10 +1596,14 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
                     )
 
                 for filepath, content in basic_files.items():
-                    with NamedTemporaryFile(delete_on_close=False) as mockfile:
+                    # use delete_on_close=False instead of delete=False, and context manager when python >= 3.12.
+                    mockfile = NamedTemporaryFile(delete=False)
+                    try:
                         mockfile.write(content.encode("utf-8"))
                         mockfile.close()
                         archive.write(mockfile.name, filepath)
+                    finally:
+                        os.unlink(mockfile.name)
 
     # Setup mocks
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
