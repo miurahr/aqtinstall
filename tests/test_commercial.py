@@ -8,7 +8,7 @@ import pytest
 
 from aqt.commercial import CommercialInstaller, QtPackageInfo, QtPackageManager
 from aqt.exceptions import DiskAccessNotPermitted
-from aqt.helper import Settings, download_installer, get_os_name, get_qt_account_path, get_qt_installer_name
+from aqt.helper import Settings, download_installer, get_qt_account_path, get_qt_installer_name
 from aqt.installer import Cli
 from aqt.metadata import Version
 
