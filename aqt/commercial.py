@@ -142,7 +142,12 @@ class QtPackageManager:
         cmd.append(base_package)
 
         try:
-            self.logger.info(f"Running: {cmd}")
+            log_cmd = cmd.copy()
+            for i in range(len(log_cmd) - 1):
+                if log_cmd[i] == "--email" or log_cmd[i] == "--pw":
+                    log_cmd[i + 1] = "***"
+
+            self.logger.info(f"Running: {log_cmd}")
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
             # Handle both string and CompletedProcess outputs
