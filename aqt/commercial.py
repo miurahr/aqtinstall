@@ -42,6 +42,15 @@ from aqt.helper import (
 from aqt.metadata import Version
 
 
+def _redact_credentials(cmd: List[str]) -> List[str]:
+    """Return a copy of cmd with values following --email/--pw replaced by '***'."""
+    redacted = cmd.copy()
+    for i in range(len(redacted) - 1):
+        if redacted[i] in ("--email", "--pw"):
+            redacted[i + 1] = "***"
+    return redacted
+
+
 @dataclass
 class QtPackageInfo:
     name: str
@@ -142,12 +151,7 @@ class QtPackageManager:
         cmd.append(base_package)
 
         try:
-            log_cmd = cmd.copy()
-            for i in range(len(log_cmd) - 1):
-                if log_cmd[i] == "--email" or log_cmd[i] == "--pw":
-                    log_cmd[i + 1] = "***"
-
-            self.logger.info(f"Running: {log_cmd}")
+            self.logger.info(f"Running: {_redact_credentials(cmd)}")
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
             # Handle both string and CompletedProcess outputs
@@ -378,16 +382,11 @@ class CommercialInstaller:
                 install_cmd = self.package_manager.get_install_command(self.modules, temp_dir)
                 cmd = [*base_cmd, *install_cmd]
 
-            log_cmd = cmd.copy()
-            for i in range(len(log_cmd) - 1):
-                if log_cmd[i] == "--email" or log_cmd[i] == "--pw":
-                    log_cmd[i + 1] = "***"
-
             if not self.dry_run:
-                self.logger.info(f"Running: {log_cmd}")
+                self.logger.info(f"Running: {_redact_credentials(cmd)}")
                 safely_run(cmd, Settings.qt_installer_timeout)
             else:
-                self.logger.info(f"Would run: {log_cmd}")
+                self.logger.info(f"Would run: {_redact_credentials(cmd)}")
 
         except Exception as e:
             self.logger.error(f"Installation failed: {str(e)}")
