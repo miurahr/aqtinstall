@@ -11,7 +11,7 @@ import textwrap
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import TemporaryDirectory
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import py7zr
@@ -1512,7 +1512,7 @@ def test_install(
         ("6.10.1", "6101", "wasm_singlethread", True),
     ],
 )
-def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version, wasm_arch, extract_target):
+def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, tmp_path, version, str_version, wasm_arch, extract_target):
     """Test installing Qt 6.8 WASM with autodesktop, which requires special handling for addons"""
 
     if sys.platform.startswith("linux"):
@@ -1596,14 +1596,9 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
                     )
 
                 for filepath, content in basic_files.items():
-                    # use delete_on_close=False instead of delete=False, and context manager when python >= 3.12.
-                    mockfile = NamedTemporaryFile(delete=False)
-                    try:
-                        mockfile.write(content.encode("utf-8"))
-                        mockfile.close()
-                        archive.write(mockfile.name, filepath)
-                    finally:
-                        os.unlink(mockfile.name)
+                    mockfile = tmp_path / Path(filepath).name
+                    mockfile.write_text(content, encoding="utf-8")
+                    archive.write(mockfile, filepath)
 
     # Setup mocks
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
