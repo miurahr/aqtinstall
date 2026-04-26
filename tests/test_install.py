@@ -1512,7 +1512,7 @@ def test_install(
         ("6.10.1", "6101", "wasm_singlethread", True),
     ],
 )
-def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version, wasm_arch, extract_target):
+def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, tmp_path, version, str_version, wasm_arch, extract_target):
     """Test installing Qt 6.8 WASM with autodesktop, which requires special handling for addons"""
 
     if sys.platform.startswith("linux"):
@@ -1582,10 +1582,10 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
                     basic_files.update(
                         {
                             f"{prefix}bin/target_qt.conf": "Prefix=...\n",  # Basic config
-                            f"{prefix}bin/qmake{extension}": "echo Mock qmake{extension}\n",
-                            f"{prefix}bin/qmake6{extension}": "echo Mock qmake6{extension}\n",
-                            f"{prefix}bin/qtpaths{extension}": "echo Mock qtpaths{extension}\n",
-                            f"{prefix}bin/qtpaths6{extension}": "echo Mock qtpaths6{extension}\n",
+                            f"{prefix}bin/qmake{extension}": f"echo Mock qmake{extension}\n",
+                            f"{prefix}bin/qmake6{extension}": f"echo Mock qmake6{extension}\n",
+                            f"{prefix}bin/qtpaths{extension}": f"echo Mock qtpaths{extension}\n",
+                            f"{prefix}bin/qtpaths6{extension}": f"echo Mock qtpaths6{extension}\n",
                         }
                     )
                 else:
@@ -1596,7 +1596,9 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, version, str_version,
                     )
 
                 for filepath, content in basic_files.items():
-                    archive.writestr(content.encode("utf-8"), filepath)
+                    mockfile = tmp_path / Path(filepath).name
+                    mockfile.write_text(content, encoding="utf-8")
+                    archive.write(mockfile, filepath)
 
     # Setup mocks
     monkeypatch.setattr("aqt.archives.getUrl", mock_get_url)
