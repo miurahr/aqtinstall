@@ -127,18 +127,10 @@ def get_qt_installers() -> dict[str, str]:
                         installers[f"{os_type}-arm64"] = filename
                     elif "x64" in filename.lower():
                         installers[f"{os_type}-x64"] = filename
-                        # Also add generic OS entry for x64 variants of Windows and Linux
-                        if os_type in ["windows", "linux"]:
-                            installers[os_type] = filename
-                    else:
-                        # Handle case with no explicit architecture
-                        # Most likely for macOS which might just say "mac" without arch
-                        installers[os_type] = filename
-
-            # macOS arm64 special case, as no official arm64 installer exists
-            # it should not override the arm64 installer if it appears later
-            if installers.get("mac-x64") and not installers.get("mac-arm64"):
-                installers["mac-arm64"] = installers["mac-x64"]
+                    elif "universal" in filename.lower():
+                        # Most likely for macOS which was using qt-online-installer-macOS-universal.dmg 25-Mar-2026.
+                        installers[f"{os_type}-arm64"] = filename
+                        installers[f"{os_type}-x64"] = filename
 
         return installers
 
