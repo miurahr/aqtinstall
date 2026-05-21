@@ -206,7 +206,7 @@ jobs:
             print('QT_INATALL_PREFIX {}\nExpected path {}'.format(result, expected_path))
         shell: python
         working-directory: ${{ github.workspace }}
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: matrix.artifact == 'binary'
         with:
           name: aqt-${{ matrix.os }}-standalone
