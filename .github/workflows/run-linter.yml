@@ -18,7 +18,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: '3.14'
           architecture: x64
       - name: Install dependencies
         run: |
@@ -35,7 +35,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: '3.14'
           architecture: x64
       - name: Install dependencies
         run: |

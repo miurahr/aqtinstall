@@ -36,10 +36,10 @@ jobs:
           done
           LATEST_TAG=$(git describe --tags --abbrev=0)
           echo "Nearest tag found: $LATEST_TAG"
-      - name: Set up Python 3.13🐍
+      - name: Set up Python 3.14🐍
         uses: actions/setup-python@v6
         with:
-          python-version: '3.13'
+          python-version: '3.14'
       - name: Install build and twine
         run: python -m pip install build twine --user
       - name: Build release assets

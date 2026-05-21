@@ -138,7 +138,7 @@ class PlatformBuildJobs:
         self.build_jobs = build_jobs
 
 
-python_versions = ["3.13"]
+python_versions = ["3.14"]
 
 qt_versions = ["6.8.1"]
 

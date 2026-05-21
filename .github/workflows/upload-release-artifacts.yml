@@ -22,7 +22,7 @@ jobs:
           {os: macos-15-intel, arch: x64, output_file: 'aqt_x64', primary_artifact: 'aqt-macos', secondary_artifact: 'aqt-macos_x64'},
           {os: macos-15, arch: arm64, output_file: 'aqt_arm64', primary_artifact: '', secondary_artifact: 'aqt-macos_arm64'}
         ]
-        py: [3.13]
+        py: [3.14]
     defaults:
       run:
         shell: ${{ startsWith(matrix.system.os, 'windows-') && 'pwsh' || 'bash' }} {0}

@@ -116,7 +116,7 @@ max-line-length = 125
 
 [tool.black]
 line-length = 125
-target-version = ['py313']
+target-version = ['py314']
 
 [tool.isort]
 line_length = 125
