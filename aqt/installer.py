@@ -66,6 +66,7 @@ from aqt.helper import (
     get_os_name,
     get_qt_installer_name,
     prepare_installer,
+    redact_credentials,
     retry_on_bad_connection,
     retry_on_errors,
     safely_run_save_output,
@@ -1053,7 +1054,7 @@ class Cli:
                 cmd.extend(args.search_terms)
 
             # Run search
-            self.logger.info(f"Running: {cmd}")
+            self.logger.info(f"Running: {redact_credentials(cmd)}")
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
             if output.stdout:

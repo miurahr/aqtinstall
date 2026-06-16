@@ -36,19 +36,11 @@ from aqt.helper import (
     get_qt_account_path,
     get_qt_installer_name,
     prepare_installer,
+    redact_credentials,
     safely_run,
     safely_run_save_output,
 )
 from aqt.metadata import Version
-
-
-def _redact_credentials(cmd: List[str]) -> List[str]:
-    """Return a copy of cmd with values following --email/--pw replaced by '***'."""
-    redacted = cmd.copy()
-    for i in range(len(redacted) - 1):
-        if redacted[i] in ("--email", "--pw"):
-            redacted[i + 1] = "***"
-    return redacted
 
 
 @dataclass
@@ -151,7 +143,7 @@ class QtPackageManager:
         cmd.append(base_package)
 
         try:
-            self.logger.info(f"Running: {_redact_credentials(cmd)}")
+            self.logger.info(f"Running: {redact_credentials(cmd)}")
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
             # Handle both string and CompletedProcess outputs
@@ -383,10 +375,10 @@ class CommercialInstaller:
                 cmd = [*base_cmd, *install_cmd]
 
             if not self.dry_run:
-                self.logger.info(f"Running: {_redact_credentials(cmd)}")
+                self.logger.info(f"Running: {redact_credentials(cmd)}")
                 safely_run(cmd, Settings.qt_installer_timeout)
             else:
-                self.logger.info(f"Would run: {_redact_credentials(cmd)}")
+                self.logger.info(f"Would run: {redact_credentials(cmd)}")
 
         except Exception as e:
             self.logger.error(f"Installation failed: {str(e)}")
