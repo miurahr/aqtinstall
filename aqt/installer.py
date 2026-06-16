@@ -1053,6 +1053,7 @@ class Cli:
                 cmd.extend(args.search_terms)
 
             # Run search
+            self.logger.info(f"Running: {cmd}")
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
             if output.stdout:
