@@ -20,7 +20,7 @@ jobs:
       AQT_TEST_PASSWORD: ${{ secrets.AQT_TEST_PASSWORD }}
     steps:
     - name: Checkout 🛎️
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Ensure nearest tag is present
       id: expandFetchDepth
       shell: bash
