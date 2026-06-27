@@ -804,3 +804,12 @@ def prepare_installer(installer_path: Path, os_name: str) -> Path:
         return dst_app_path / "Contents" / "MacOS" / Path(src_app_name).stem
     else:
         return installer_path
+
+
+def redact_credentials(cmd: List[str]) -> List[str]:
+    """Return a copy of cmd with values following --email/--pw replaced by '***'."""
+    redacted = cmd.copy()
+    for i in range(len(redacted) - 1):
+        if redacted[i] in ("--email", "--pw"):
+            redacted[i + 1] = "***"
+    return redacted
