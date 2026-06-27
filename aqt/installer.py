@@ -376,7 +376,6 @@ class Cli:
             arch = self._set_arch(args.arch, os_name, target, qt_version)
 
         if hasattr(args, "use_official_installer") and args.use_official_installer is not None:
-
             if len(args.use_official_installer) not in [0, 2]:
                 raise CliInputError(
                     "When providing arguments to --use-official-installer, exactly 2 arguments are required: "
@@ -666,7 +665,6 @@ class Cli:
         """Print versions of Qt, extensions, modules, architectures"""
 
         if hasattr(args, "use_official_installer") and args.use_official_installer is not None:
-
             if len(args.use_official_installer) not in [0, 2]:
                 raise CliInputError(
                     "When providing arguments to --use-official-installer, exactly 2 arguments are required: "
@@ -1311,7 +1309,7 @@ class Cli:
             "-b",
             "--base",
             nargs="?",
-            help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, " "where 'online' folder exist.",
+            help="Specify mirror base url such as http://mirrors.ocf.berkeley.edu/qt/, where 'online' folder exist.",
         )
         subparser.add_argument(
             "--timeout",

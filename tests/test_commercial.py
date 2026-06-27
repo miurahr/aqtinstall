@@ -237,7 +237,7 @@ def test_get_install_command(monkeypatch, modules: Optional[List[str]], expected
     "cmd, arch_dict, details, expected_command",
     [
         (
-            "install-qt-official desktop {} 6.8.1 " "--outputdir ./install-qt-official --email {} --pw {}",
+            "install-qt-official desktop {} 6.8.1 --outputdir ./install-qt-official --email {} --pw {}",
             {"windows": "win64_msvc2022_64", "linux": "linux_gcc_64", "mac": "clang_64"},
             ["./install-qt-official", "qt6", "681"],
             "qt-unified-{}-x64-online.run --email ******** --pw ******** --root {} "
@@ -314,8 +314,7 @@ def test_install_qt_commercial(
 
     # Create a new command with the temp directory
     new_cmd = (
-        f"install-qt-official desktop {arch} 6.8.{str(details[2])[-1]} --outputdir {abs_out} --email {email} "
-        f"--pw {password}"
+        f"install-qt-official desktop {arch} 6.8.{str(details[2])[-1]} --outputdir {abs_out} --email {email} --pw {password}"
     )
 
     # This should raise DiskAccessNotPermitted only for the first test (680)

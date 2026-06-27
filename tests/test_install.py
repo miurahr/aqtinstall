@@ -204,9 +204,9 @@ def make_mock_geturl_download_archive(
             <PackageUpdate>
              <Name>{archive.update_xml_name}</Name>
              <Version>{archive.version}-0-{archive.date.strftime("%Y%m%d%H%M")}</Version>
-             <Description>{getattr(archive, 'package_desc', 'none')}</Description>
+             <Description>{getattr(archive, "package_desc", "none")}</Description>
              <DownloadableArchives>{archive.filename_7z}</DownloadableArchives>
-             {'<Dependencies>qt.qt6.680.gcc_64</Dependencies>' if is_qt68_addon else ''}
+             {"<Dependencies>qt.qt6.680.gcc_64</Dependencies>" if is_qt68_addon else ""}
             </PackageUpdate>""")
 
     standard_xml = "<Updates>\n{}\n</Updates>".format(
@@ -382,10 +382,7 @@ def plain_qtbase_archive(update_xml_name: str, arch: str, host: str = "windows",
                 "QT_EDITION = Not OpenSource\n"
                 "QT_LICHECK = Not Empty\n"
                 "... blah blah blah ...\n",
-                patched_content="... blah blah blah ...\n"
-                "QT_EDITION = OpenSource\n"
-                "QT_LICHECK =\n"
-                "... blah blah blah ...\n",
+                patched_content="... blah blah blah ...\nQT_EDITION = OpenSource\nQT_LICHECK =\n... blah blah blah ...\n",
             ),
         ),
         should_install=should_install,
@@ -1314,9 +1311,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                             ),
                             PatchedFile(
                                 filename="bin/target_qt.conf",
-                                unpatched_content="... blah blah blah ...\n"
-                                "HostPrefix=../../\n"
-                                "... blah blah blah ...\n",
+                                unpatched_content="... blah blah blah ...\nHostPrefix=../../\n... blah blah blah ...\n",
                                 patched_content="... blah blah blah ...\n"
                                 "HostPrefix=../../msvc2022_64\n"
                                 "... blah blah blah ...\n",

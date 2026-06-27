@@ -57,7 +57,6 @@ test = [
 check = [
     "mypy>=1.10.0",
     "ruff>=0.6.0",
-    "black",
     "docutils",
     "check-manifest",
     "readme-renderer",
@@ -108,10 +107,6 @@ exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", 
 
 [tool.pylint]
 max-line-length = 125
-
-[tool.black]
-line-length = 125
-target-version = ['py314']
 
 [tool.ruff]
 line-length = 125
@@ -209,7 +204,7 @@ extras = ["check"]
 commands = [
     ["check-manifest", "{toxinidir}"],
     ["ruff", "check", "aqt", "tests"],
-    ["black", "--check", "aqt", "tests"],
+    ["ruff", "format", "--check", "aqt", "tests"],
 ]
 
 [tool.tox.env.mypy]
