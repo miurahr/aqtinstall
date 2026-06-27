@@ -206,7 +206,7 @@ def make_mock_geturl_download_archive(
              <Version>{archive.version}-0-{archive.date.strftime("%Y%m%d%H%M")}</Version>
              <Description>{getattr(archive, 'package_desc', 'none')}</Description>
              <DownloadableArchives>{archive.filename_7z}</DownloadableArchives>
-             {f'<Dependencies>qt.qt6.680.gcc_64</Dependencies>' if is_qt68_addon else ''}
+             {'<Dependencies>qt.qt6.680.gcc_64</Dependencies>' if is_qt68_addon else ''}
             </PackageUpdate>""")
 
     standard_xml = "<Updates>\n{}\n</Updates>".format(
