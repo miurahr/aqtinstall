@@ -54,13 +54,13 @@ Search available Qt packages using the official Qt installer.
 
 .. code-block:: bash
 
-   aqt list-qt-official [search_terms] [options]
+   aqt list-qt-official [search_term] [options]
 
 Options
 ~~~~~~~
 - ``--email <email>`` - Qt account email/username
 - ``--pw <password>`` - Qt account password
-- ``search_terms`` - Terms to search for in package names (grabs all that is not other options)
+- ``search_term`` - Term to search for in package names
 
 Override Mode
 ----------------------
