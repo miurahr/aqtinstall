@@ -1,13 +1,21 @@
 {
   "modules": [
-    "qt.tools.ifw.41"
+    "qt.tools.ifw.48",
+    "qt.tools.ifw.47"
   ],
   "long_listing": [
     [
-      "qt.tools.ifw.41",
-      "4.1.1-202105261132",
-      "2021-05-26",
-      "Qt Installer Framework 4.1",
+      "qt.tools.ifw.47",
+      "4.7.0-0-202402231255",
+      "2024-02-23",
+      "Qt Installer Framework 4.7",
+      "The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS."
+    ],
+    [
+      "qt.tools.ifw.48",
+      "4.8.1-0-202409251146",
+      "2024-09-25",
+      "Qt Installer Framework 4.8",
       "The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS."
     ]
   ]

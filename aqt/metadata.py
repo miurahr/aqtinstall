@@ -319,6 +319,11 @@ class ArchiveId:
             osarch=self.to_os_arch(),
         )
 
+    def to_ifw_url(self) -> str:
+        return "online/qtsdkrepository/{osarch}/ifw/".format(
+            osarch=self.to_os_arch(),
+        )
+
     def to_url(self) -> str:
         return "online/qtsdkrepository/{osarch}/{target}/".format(
             osarch=self.to_os_arch(),
@@ -969,12 +974,26 @@ class MetadataFactory:
         return f"{version.major}{version.minor}{patch}"
 
     def _fetch_module_metadata(self, folder: str, predicate: Optional[Callable[[Element], bool]] = None):
-        rest_of_url = posixpath.join(self.archive_id.to_url(), folder, "Updates.xml")
-        xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
-        return xml_to_modules(
-            xml,
-            predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
-        )
+        # For IFW, variants live under 'ifw/<variant>'.
+        if folder == "tools_ifw":
+            html_doc = self.fetch_http(self.archive_id.to_ifw_url(), False)
+            folders = list(self.iterate_folders(html_doc, self.base_url, filter_category="tools_ifw_"))
+            to_url = self.archive_id.to_ifw_url
+        else:
+            folders = [folder]
+            to_url = self.archive_id.to_url
+
+        result: Dict[str, Dict[str, str]] = {}
+        for folder in folders:
+            rest_of_url = posixpath.join(to_url(), folder, "Updates.xml")
+            xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
+            result.update(
+                xml_to_modules(
+                    xml,
+                    predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
+                )
+            )
+        return result
 
     def _fetch_extension_metadata(self, url: str, predicate: Optional[Callable[[Element], bool]] = None):
         rest_of_url = posixpath.join(url, "Updates.xml")

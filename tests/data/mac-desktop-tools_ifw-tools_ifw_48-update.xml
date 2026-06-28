@@ -1,0 +1,19 @@
+<Updates>
+ <ApplicationName>{AnyApplication}</ApplicationName>
+ <ApplicationVersion>1.0.0</ApplicationVersion>
+ <Checksum>true</Checksum>
+ <PackageUpdate>
+  <Name>qt.tools.ifw.48</Name>
+  <DisplayName>Qt Installer Framework 4.8</DisplayName>
+  <Description>The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.</Description>
+  <Version>4.8.1-0-202409251146</Version>
+  <ReleaseDate>2024-09-25</ReleaseDate>
+  <Default>false</Default>
+  <SortingPriority>481</SortingPriority>
+  <DownloadableArchives>ifw-mac-x64.7z</DownloadableArchives>
+  <UpdateFile CompressedSize="49899056" OS="Any" UncompressedSize="177656231"/>
+  <SHA1>a5b0c91e847645d9538b7a33b121e7932d278eb6</SHA1>
+ </PackageUpdate>
+ <SHA1>141b42fa308a9e97845e0f5abb9d6e40fe2d9edf</SHA1>
+ <MetadataName>2024-09-25-1153_meta.7z</MetadataName>
+</Updates>

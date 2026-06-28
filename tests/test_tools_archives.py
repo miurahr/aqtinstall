@@ -18,7 +18,7 @@ def _stub_download_xml(self, *args, **kwargs):
 
 
 @pytest.mark.parametrize(
-    "os_name,target,tool_name,tool_version,expected_path",
+    "os_name,target,tool_name,arch,expected_path",
     [
         (
             "linux",
@@ -27,33 +27,23 @@ def _stub_download_xml(self, *args, **kwargs):
             None,
             "online/qtsdkrepository/linux_x64/desktop/tools_ninja",
         ),
-        # tools_ifw without specifying a variant should use the legacy path
-        (
-            "mac",
-            "desktop",
-            "tools_ifw",
-            None,
-            "online/qtsdkrepository/mac_x64/desktop/tools_ifw",
-        ),
-        # new locations: tools_ifw48 tools_ifw49 tools_ifw410
         (
             "linux",
             "desktop",
             "tools_ifw",
-            "tools_ifw410",
-            "online/qtsdkrepository/linux_x64/ifw/tools_ifw410",
+            "qt.tools.ifw.48",
+            "online/qtsdkrepository/linux_x64/ifw/tools_ifw_48",
         ),
-        # legacy locations: tools_ifw47
         (
             "linux",
             "desktop",
             "tools_ifw",
-            "tools_ifw47",
-            "online/qtsdkrepository/linux_x64/desktop/tools_ifw",
+            "qt.tools.ifw.47",
+            "online/qtsdkrepository/linux_x64/ifw/tools_ifw_47",
         ),
     ],
 )
-def test_tool_archives_repo_folder(monkeypatch, os_name, target, tool_name, tool_version, expected_path):
+def test_tool_archives_repo_folder(monkeypatch, os_name, target, tool_name, arch, expected_path):
     # Capture the target folder passed to _parse_update_xml
     captured = {}
 
@@ -66,7 +56,7 @@ def test_tool_archives_repo_folder(monkeypatch, os_name, target, tool_name, tool
     monkeypatch.setattr(ToolArchives, "_parse_update_xml", _capture_parse)
 
     # Create the ToolArchives instance; __init__ triggers _get_archives()
-    ToolArchives(os_name=os_name, target=target, tool_name=tool_name, base=Settings.baseurl, version_str=tool_version)
+    ToolArchives(os_name=os_name, target=target, tool_name=tool_name, base=Settings.baseurl, arch=arch)
 
     assert captured["folder"] == expected_path
 

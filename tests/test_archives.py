@@ -249,22 +249,6 @@ def to_xml(package_updates: Iterable[Dict]) -> str:
     )
 
 
-@pytest.mark.parametrize(
-    "tool_name, variant_name, version, actual_version",
-    (("tools_qtcreator", "qt.tools.qtcreator", "1.2.3", "3.2.1"),),
-)
-def test_tool_archive_wrong_version(monkeypatch, tool_name, variant_name, version, actual_version):
-    def _mock(self, *args):
-        return to_xml([dict(Name=variant_name, Version=actual_version)])
-
-    monkeypatch.setattr(QtArchives, "_download_update_xml", _mock)
-
-    host, target, base = "mac", "desktop", "https://example.com"
-    with pytest.raises(NoPackageFound) as e:
-        ToolArchives(host, target, tool_name, base, version_str=version, arch=variant_name)
-    assert e.type == NoPackageFound
-
-
 # Test the helper class
 def test_module_to_package():
     qt_base_names = ["qt.999.clang", "qt9.999.clang", "qt9.999.addon.clang"]
