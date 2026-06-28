@@ -28,9 +28,9 @@ def test_get_semantic_version_valid(input_version, is_preview, expected):
         expected (Version): Expected semantic version output
     """
     result = get_semantic_version(input_version, is_preview)
-    assert (
-        result == expected
-    ), f"Failed for input '{input_version}' with is_preview={is_preview}. Expected '{expected}', but got '{result}'"
+    assert result == expected, (
+        f"Failed for input '{input_version}' with is_preview={is_preview}. Expected '{expected}', but got '{result}'"
+    )
 
 
 @pytest.mark.parametrize(

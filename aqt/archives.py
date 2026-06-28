@@ -65,9 +65,7 @@ class QtPackage:
     def __str__(self):
         v_info = f", version={self.version}" if self.version else ""
         return (
-            f"QtPackage(name={self.name}, url={self.archive_path}, "
-            f"archive={self.archive}, desc={self.package_desc}"
-            f"{v_info})"
+            f"QtPackage(name={self.name}, url={self.archive_path}, archive={self.archive}, desc={self.package_desc}{v_info})"
         )
 
 

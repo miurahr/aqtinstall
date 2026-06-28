@@ -48,7 +48,6 @@ aqt = "aqt.__main__:main"
 [project.optional-dependencies]
 test = [
     "pytest>=6.0",
-    "pytest-pep8",
     "pytest-cov",
     "pytest-remotedata>=0.4.1",
     "pytest-socket",
@@ -57,12 +56,7 @@ test = [
 ]
 check = [
     "mypy>=1.10.0",
-    "flake8>=6.0.0,<8.0.0",
-    "flake8-black",
-    "flake8-colors",
-    "flake8-isort>=6.0.0,<7.0.0",
-    "flake8-pyi",
-    "flake8-typing-imports",
+    "ruff>=0.6.0",
     "docutils",
     "check-manifest",
     "readme-renderer",
@@ -114,19 +108,20 @@ exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", 
 [tool.pylint]
 max-line-length = 125
 
-[tool.black]
+[tool.ruff]
 line-length = 125
-target-version = ['py314']
+target-version = "py310"
+extend-exclude = ["docs/conf.py", "build", "dist", "tmp", "venv"]
 
-[tool.isort]
-line_length = 125
-known_first_party = "aqt"
-known_third_party = ["docutils", "flake8", "pyannotate_runtime", "pytest", "pytz", "requests", "setuptools", "sphinx", "yaml", "packaging"]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-ensure_newline_before_comments = true
+[tool.ruff.lint]
+# E/W: pycodestyle, F: pyflakes, I: isort, PYI: flake8-pyi
+select = ["E", "W", "F", "I", "PYI"]
+# E203: whitespace before ':' (conflicts with black slice formatting)
+ignore = ["E203"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["aqt"]
+known-third-party = ["docutils", "flake8", "pyannotate_runtime", "pytest", "pytz", "requests", "setuptools", "sphinx", "yaml", "packaging"]
 
 [tool.mypy]
 # Untyped definitions and calls are disable in default
@@ -206,7 +201,11 @@ commands = [["python", "-m", "pytest", "-vv"]]
 
 [tool.tox.env.check]
 extras = ["check"]
-commands = [["check-manifest", "{toxinidir}"], ["flake8", "aqt", "tests"]]
+commands = [
+    ["check-manifest", "{toxinidir}"],
+    ["ruff", "check", "aqt", "tests", "ci", "tools"],
+    ["ruff", "format", "--check", "aqt", "tests", "ci", "tools"],
+]
 
 [tool.tox.env.mypy]
 extras = ["check"]

@@ -225,7 +225,7 @@ def test_helper_retry_on_error(num_attempts_before_success, num_retries_allowed)
     if num_attempts_before_success > num_retries_allowed:
         with pytest.raises(RuntimeError) as e:
             retry_on_errors(action, (RuntimeError,), num_retries_allowed, "do something")
-        assert e.type == RuntimeError
+        assert e.type is RuntimeError
     else:
         assert retry_on_errors(action, (RuntimeError,), num_retries_allowed, "do something")
 

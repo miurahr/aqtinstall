@@ -112,7 +112,7 @@ def test_versions(init_data, expect_str, expect_fmt, expect_flat, expect_last, e
 
     with pytest.raises(TypeError) as pytest_wrapped_e:
         format(versions, "x")
-    assert pytest_wrapped_e.type == TypeError
+    assert pytest_wrapped_e.type is TypeError
 
 
 @pytest.fixture
@@ -1305,7 +1305,7 @@ def test_select_default_mingw(monkeypatch, host: str, expected: Union[str, Excep
     if isinstance(expected, Exception):
         with pytest.raises(type(expected)) as e:
             MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(Version("1.2.3"))
-        assert e.type == type(expected)
+        assert e.type is type(expected)
     else:
         actual_arch = MetadataFactory(ArchiveId("qt", host, "desktop")).fetch_default_desktop_arch(Version("1.2.3"))
         assert actual_arch == expected
