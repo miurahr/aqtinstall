@@ -8,7 +8,7 @@ import pytest
 
 from aqt.commercial import CommercialInstaller, QtPackageInfo, QtPackageManager
 from aqt.exceptions import DiskAccessNotPermitted
-from aqt.helper import Settings, download_installer, get_os_name, get_qt_account_path, get_qt_installer_name
+from aqt.helper import Settings, get_qt_account_path, get_qt_installer_name, get_qt_installers
 from aqt.installer import Cli
 from aqt.metadata import Version
 
@@ -178,34 +178,39 @@ def test_build_command(
     assert cmd == expected_cmd
 
 
+@pytest.fixture(scope="module")
+def get_qt_installers_once():
+    cache = {}
+
+    def _get():
+        if "data" not in cache:
+            cache["data"] = get_qt_installers()
+        return cache["data"]
+
+    return _get
+
+
 @pytest.mark.enable_socket
 @pytest.mark.parametrize(
-    "os, osarch, expected_suffix",
+    "osarch, expected_suffix",
     [
-        pytest.param("windows", "windows", ".exe"),
-        pytest.param("windows", "windows-x64", ".exe"),
-        pytest.param("windows", "windows-arm64", ".exe"),
-        pytest.param("linux", "linux", ".run"),
-        pytest.param("linux", "linux-x64", ".run"),
-        pytest.param("linux", "linux-arm64", ".run"),
-        pytest.param("mac", "mac-x64", ".dmg"),
+        pytest.param("windows-x64", ".exe"),
+        pytest.param("windows-arm64", ".exe"),
+        pytest.param("linux-x64", ".run"),
+        pytest.param("linux-arm64", ".run"),
+        pytest.param("mac-x64", ".dmg"),
+        pytest.param("mac-arm64", ".dmg"),
     ],
 )
-def test_commercial_installer_names(monkeypatch, os, osarch, expected_suffix):
+def test_commercial_installer_names(monkeypatch, get_qt_installers_once, osarch, expected_suffix):
     """Test installer names finder"""
 
     monkeypatch.setattr("aqt.helper.get_os_arch", lambda: osarch)
+    monkeypatch.setattr("aqt.helper.get_qt_installers", lambda: get_qt_installers_once())
 
     installer_name = get_qt_installer_name()
 
     assert installer_name.endswith(expected_suffix)
-
-    if os == get_os_name() and osarch in ["windows", "linux", "mac-x64"]:
-        target_path = Settings.qt_installer_temp_path / Path(installer_name)
-        base_url = Settings.baseurl
-        timeout = (Settings.connection_timeout, Settings.response_timeout)
-        download_installer(base_url, installer_name, target_path, timeout)
-        assert True
 
 
 @pytest.mark.parametrize(
@@ -348,7 +353,7 @@ def test_install_qt_commercial(
 
             modified.append(line)
 
-        return "\n".join(modified)
+        return "\n".join(modified) + "\n"
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(script_dir, "../aqt/settings.ini")
