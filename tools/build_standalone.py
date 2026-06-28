@@ -1,7 +1,7 @@
 import argparse
 import os
-import PyInstaller.__main__
 
+import PyInstaller.__main__
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
