@@ -14,7 +14,7 @@ Another Qt installer(aqt)
    :target: https://github.com/miurahr/aqtinstall/actions?query=workflow%3A%22Test+on+GH+actions+environment%22
 .. |coveralls| image:: https://coveralls.io/repos/github/miurahr/aqtinstall/badge.svg?branch=master
    :target: https://coveralls.io/github/miurahr/aqtinstall?branch=master
-.. |Package health| image:: https://snyk.io/advisor/python/aqtinstall/badge.svg
+.. |Package health| image:: https://img.shields.io/badge/visit-snyk.io-azure
   :target: https://snyk.io/advisor/python/aqtinstall
   :alt: aqtinstall
 
