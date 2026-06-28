@@ -203,8 +203,8 @@ commands = [["python", "-m", "pytest", "-vv"]]
 extras = ["check"]
 commands = [
     ["check-manifest", "{toxinidir}"],
-    ["ruff", "check", "aqt", "tests"],
-    ["ruff", "format", "--check", "aqt", "tests"],
+    ["ruff", "check", "aqt", "tests", "ci", "tools"],
+    ["ruff", "format", "--check", "aqt", "tests", "ci", "tools"],
 ]
 
 [tool.tox.env.mypy]
