@@ -163,7 +163,7 @@ class MockArchive:
                     full_path.chmod(full_path.stat().st_mode | 0o111)
 
             if self.extract_target:
-                archive_name = "."
+                archive_name = ""
             else:
                 archive_name = "5.9" if self.version == "5.9.0" else self.version
             write_to_archive(archive, temp_path, arcname=archive_name)
