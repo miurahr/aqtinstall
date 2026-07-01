@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tarfile
 import textwrap
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -123,6 +124,16 @@ class MockArchive:
                  </PackageUpdate>""")
 
     def write_compressed_archive(self, dest: Path) -> None:
+
+        @contextmanager
+        def pushd(path):
+            old = os.getcwd()
+            os.chdir(path)
+            try:
+                yield
+            finally:
+                os.chdir(old)
+
         def open_writable_archive():
             if self.filename_7z.endswith(".7z"):
                 return py7zr.SevenZipFile(dest / self.filename_7z, "w")
@@ -163,10 +174,12 @@ class MockArchive:
                     full_path.chmod(full_path.stat().st_mode | 0o111)
 
             if self.extract_target:
-                archive_name = ""
+                # mimic Qt extension archive with multiple top level relative directories.
+                with pushd(temp_path):
+                    write_to_archive(archive, ".", None)
             else:
                 archive_name = "5.9" if self.version == "5.9.0" else self.version
-            write_to_archive(archive, temp_path, arcname=archive_name)
+                write_to_archive(archive, temp_path, arcname=archive_name)
 
 
 def make_mock_geturl_download_archive(
@@ -1155,7 +1168,8 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
             ),
         ),
         (  # extensions availability: qtpdf and qtwebengine
-            "install-qt windows desktop 6.8.1 win64_msvc2022_64 -m qtwebengine".split(),
+           # add --keep to debug created mock archive
+            "install-qt --keep windows desktop 6.8.1 win64_msvc2022_64 -m qtwebengine".split(),
             "windows",
             "desktop",
             "6.8.1",
