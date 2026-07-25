@@ -836,8 +836,10 @@ class Cli:
 
             commercial_installer.install()
             Settings.qt_installer_cleanup()
+        except AqtException:
+            raise
         except Exception as e:
-            self.logger.error(f"Error installing official installer: {str(e)}")
+            raise AqtException(f"Error installing official installer: {str(e)}") from e
         finally:
             self.logger.info("Done")
 
@@ -1057,8 +1059,10 @@ class Cli:
                     for line in output.stderr.splitlines():
                         self.logger.warning(line)
 
+        except AqtException:
+            raise
         except Exception as e:
-            self.logger.error(f"Failed to list Qt official packages: {e}")
+            raise AqtException(f"Failed to list Qt official packages: {e}") from e
         finally:
             Settings.qt_installer_cleanup()
 
