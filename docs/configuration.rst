@@ -52,6 +52,72 @@ A file is like as follows:
         0001-toolchain.prf-Use-vswhere-to-obtain-VS-installation-.patch
 
 
+Logging
+-------
+
+Set the ``LOG_CFG`` environment variable to the path of a logging configuration
+file to customize log levels, formatting and output destinations. This file is
+separate from ``settings.ini`` and is not selected by ``AQT_CONFIG`` or ``--config``.
+It uses Python's INI-style ``logging.config.fileConfig`` format.
+
+By default, ``aqt/logging.ini`` sends INFO and higher messages to stderr and
+DEBUG and higher messages to ``aqtinstall.log`` in the current directory.
+The following complete configuration instead sends DEBUG and higher messages
+to stderr without creating a log file. Save it as ``logging.ini``:
+
+.. code-block:: ini
+
+    [loggers]
+    keys=root,aqt
+
+    [handlers]
+    keys=console
+
+    [formatters]
+    keys=brief
+
+    [logger_root]
+    level=WARNING
+    handlers=console
+
+    [logger_aqt]
+    level=DEBUG
+    handlers=console
+    qualname=aqt
+    propagate=0
+
+    [handler_console]
+    class=StreamHandler
+    level=DEBUG
+    formatter=brief
+    args=(sys.stderr,)
+
+    [formatter_brief]
+    format=%(levelname)s %(name)s: %(message)s
+
+Select the file before running aqtinstall. For example, on a POSIX shell:
+
+.. code-block:: sh
+
+    LOG_CFG="/absolute/path/to/logging.ini" python -m aqt list-qt linux desktop
+
+Or in PowerShell:
+
+.. code-block:: powershell
+
+    $env:LOG_CFG = 'C:\\path\\to\\logging.ini'
+    python -m aqt list-qt windows desktop
+
+Both the logger and handler levels must allow DEBUG messages for them to appear.
+Change both to INFO for less verbose output. Relative configuration paths are
+resolved from the current working directory. If ``LOG_CFG`` is unset or names a
+path that does not exist, aqtinstall uses its default logging configuration.
+
+For other handlers and formatting options, see the Python
+`logging configuration file format
+<https://docs.python.org/3/library/logging.config.html#configuration-file-format>`_.
+
+
 Settings
 --------
 

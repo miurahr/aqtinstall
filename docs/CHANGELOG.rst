@@ -34,6 +34,7 @@ Added
 
 Changed
 -------
+- Document custom logging with LOG_CFG, including console-only debug output (#1025)
 - Minimum Python 3.10 (#970)
 - Migrate TOX configuration to native toml (#962)
 - Correct a config example and typos in a manual (#1034, #1033)
