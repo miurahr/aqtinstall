@@ -128,6 +128,24 @@ def test_cli_check_mirror():
     assert cli._check_mirror(args.base)
 
 
+def test_cli_external_option_is_repeatable():
+    cli = Cli()
+    args = cli.parser.parse_args(
+        [
+            "install-qt",
+            "mac",
+            "desktop",
+            "6.8.0",
+            "--external",
+            "7z",
+            "--external-option=-xr!*.dSYM",
+            "--external-option=-mmt=2",
+        ]
+    )
+
+    assert args.external_option == ["-xr!*.dSYM", "-mmt=2"]
+
+
 @pytest.mark.parametrize(
     "arch, host, target, version, expect",
     (

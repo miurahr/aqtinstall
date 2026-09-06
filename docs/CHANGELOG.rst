@@ -27,6 +27,7 @@ Fixed
 
 Added
 -----
+- Allow repeatable custom options for the external 7zip extractor (#760)
 - Release binaries for windows-arm64, macos15-arm64 (#931)
 - log commands of safely_run and safely_run_save_output (#1026)
 - Support Qt 6.11+ for Windows X64(#1000)

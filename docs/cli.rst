@@ -405,6 +405,13 @@ are described here:
     The Linux/Mac port of 7-zip is called ``p7zip``, and you can install it with brew_ on Mac,
     or on Linux with your package manager.
 
+.. option:: --external-option <7zip option>
+
+    Pass an additional option to the external 7zip command. Repeat this option
+    to pass more than one value. Options beginning with ``-`` must use the
+    equals form, for example ``--external-option=-xr!*.dSYM``. This option has
+    no effect when the internal py7zr extractor is used.
+
 .. _py7zr: https://pypi.org/project/py7zr/
 .. _7-zip: https://www.7-zip.org/
 .. _Choco: https://community.chocolatey.org/packages/7zip/

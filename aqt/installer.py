@@ -129,6 +129,7 @@ class CommonInstallArgParser(BaseArgumentParser):
     base: Optional[str]
     timeout: Optional[float]
     external: Optional[str]
+    external_option: List[str]
     internal: bool
     keep: bool
     archive_dest: Optional[str]
@@ -473,7 +474,15 @@ class Cli:
 
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-            run_installer(qt_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=dry_run)
+            run_installer(
+                qt_archives.get_packages(),
+                base_dir,
+                sevenzip,
+                keep,
+                _archive_dest,
+                dry_run=dry_run,
+                external_options=args.external_option,
+            )
 
             if dry_run:
                 return
@@ -570,7 +579,13 @@ class Cli:
         with TemporaryDirectory() as temp_dir:
             _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
             run_installer(
-                srcdocexamples_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=args.dry_run
+                srcdocexamples_archives.get_packages(),
+                base_dir,
+                sevenzip,
+                keep,
+                _archive_dest,
+                dry_run=args.dry_run,
+                external_options=args.external_option,
             )
         self.logger.info("Finished installation")
 
@@ -654,7 +669,15 @@ class Cli:
             )
             with TemporaryDirectory() as temp_dir:
                 _archive_dest = Cli.choose_archive_dest(archive_dest, keep, temp_dir)
-                run_installer(tool_archives.get_packages(), base_dir, sevenzip, keep, _archive_dest, dry_run=args.dry_run)
+                run_installer(
+                    tool_archives.get_packages(),
+                    base_dir,
+                    sevenzip,
+                    keep,
+                    _archive_dest,
+                    dry_run=args.dry_run,
+                    external_options=args.external_option,
+                )
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
@@ -1316,6 +1339,12 @@ class Cli:
             help="Specify connection timeout for download site.(default: 5 sec)",
         )
         subparser.add_argument("-E", "--external", nargs="?", help="Specify external 7zip command path.")
+        subparser.add_argument(
+            "--external-option",
+            action="append",
+            default=[],
+            help="Pass an option to the external 7zip command. May be specified multiple times.",
+        )
         subparser.add_argument("--internal", action="store_true", help="Use internal extractor.")
         subparser.add_argument(
             "-k",
@@ -1529,8 +1558,8 @@ def run_installer(
     keep: bool,
     archive_dest: Path,
     dry_run: bool = False,
+    external_options: Optional[List[str]] = None,
 ):
-
     if dry_run:
         logger = getLogger("aqt.installer")
         logger.info("DRY RUN: Would download and install the following:")
@@ -1556,7 +1585,18 @@ def run_installer(
     #
     tasks = []
     for arc in archives:
-        tasks.append((arc, base_dir, sevenzip, queue, archive_dest, Settings.configfile, keep))
+        tasks.append(
+            (
+                arc,
+                base_dir,
+                sevenzip,
+                queue,
+                archive_dest,
+                Settings.configfile,
+                keep,
+                external_options or [],
+            )
+        )
     ctx = multiprocessing.get_context("spawn")
     if is_64bit():
         pool = ctx.Pool(Settings.concurrency, init_worker_sh, (), 4)
@@ -1637,6 +1677,7 @@ def installer(
     archive_dest: Path,
     settings_ini: str,
     keep: bool,
+    external_options: Optional[List[str]] = None,
 ) -> None:
     """
     Installer function to download archive files and extract it.
@@ -1688,7 +1729,9 @@ def installer(
         with py7zr.SevenZipFile(archive, "r") as szf:
             szf.extractall(path=base_dir)
     else:
-        command_args = [command, "x", "-aoa", "-bd", "-y", "-o{}".format(base_dir), str(archive)]
+        command_args = [command, "x", "-aoa", "-bd", "-y"]
+        command_args.extend(external_options or [])
+        command_args.extend(["-o{}".format(base_dir), str(archive)])
         try:
             proc = subprocess.run(command_args, capture_output=True, check=True, text=True)
             logger.debug(proc.stdout)

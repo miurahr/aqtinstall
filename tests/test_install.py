@@ -1887,6 +1887,53 @@ def test_install_installer_archive_extraction_err(monkeypatch):
     assert err_msg == "Extraction error: 1\nout\nerr"
 
 
+def test_installer_passes_external_extractor_options(monkeypatch):
+    captured_args = None
+
+    def mock_extractor(args, **kwargs):
+        nonlocal captured_args
+        captured_args = args
+        return subprocess.CompletedProcess(args, 0, stdout="")
+
+    monkeypatch.setattr("aqt.installer.get_hash", lambda *args, **kwargs: "")
+    monkeypatch.setattr("aqt.installer.downloadBinaryFile", lambda *args: None)
+    monkeypatch.setattr("aqt.installer.subprocess.run", mock_extractor)
+
+    with TemporaryDirectory() as temp_dir:
+        archive = Path(temp_dir) / "archive.7z"
+        archive.touch()
+        installer(
+            qt_package=QtPackage(
+                "name",
+                "base_url",
+                "archive_path",
+                archive.name,
+                "",
+                "package_desc",
+                "pkg_update_name",
+            ),
+            base_dir=temp_dir,
+            command="7z",
+            queue=MockMultiprocessingManager.Queue(),
+            archive_dest=Path(temp_dir),
+            settings_ini=Settings.configfile,
+            keep=True,
+            external_options=["-xr!*.dSYM", "-mmt=2"],
+        )
+
+    assert captured_args == [
+        "7z",
+        "x",
+        "-aoa",
+        "-bd",
+        "-y",
+        "-xr!*.dSYM",
+        "-mmt=2",
+        f"-o{posixpath.join(temp_dir, '')}",
+        str(archive),
+    ]
+
+
 @pytest.mark.parametrize(
     "cmd, host, target, version, arch, arch_dir, base_url, updates_url, archives, expect_out",
     (
