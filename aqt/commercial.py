@@ -127,7 +127,7 @@ class QtPackageManager:
         return f"qt.qt{self.version.major}.{version_str}"
 
     def gather_packages(self, installer_path: str) -> None:
-        """Gather package information using qt installer search command."""
+        """Gather package information using a package-only Qt installer search."""
         if self._load_from_cache():
             return
 
@@ -139,8 +139,7 @@ class QtPackageManager:
         if self.username and self.password:
             cmd.extend(["--email", self.username, "--pw", self.password])
 
-        cmd.append("search")
-        cmd.append(base_package)
+        cmd.extend(["search", "--type", "package", base_package])
 
         try:
             self.logger.info(f"Running: {redact_credentials(cmd)}")

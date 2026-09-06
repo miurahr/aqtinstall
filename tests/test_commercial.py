@@ -113,6 +113,26 @@ def test_parse_packages_xml(xml_content: str, expected_packages: List[QtPackageI
         assert actual.version == expected.version
 
 
+def test_gather_packages_searches_package_type(monkeypatch):
+    """Test that package discovery bypasses installer alias resolution."""
+    manager = QtPackageManager(arch="gcc_64", version=Version("6.8.6"), target="desktop")
+    captured_command = []
+
+    def mock_safely_run_save_output(command, timeout):
+        captured_command.extend(command)
+        result = CompletedProcess(args=command, returncode=0)
+        result.stdout = MOCK_XML_RESPONSE
+        return result
+
+    monkeypatch.setattr(manager, "_load_from_cache", lambda: False)
+    monkeypatch.setattr(manager, "_save_to_cache", lambda: None)
+    monkeypatch.setattr("aqt.commercial.safely_run_save_output", mock_safely_run_save_output)
+
+    manager.gather_packages("/path/to/installer")
+
+    assert captured_command[-4:] == ["search", "--type", "package", "qt.qt6.686"]
+
+
 def test_commercial_installer_auto_answers():
     """Test generation of auto-answer options"""
     auto_answers = CommercialInstaller.get_auto_answers()
