@@ -409,7 +409,7 @@ are described here:
 
     Pass an additional option to the external 7zip command. Repeat this option
     to pass more than one value. Options beginning with ``-`` must use the
-    equals form, for example ``--external-option=-xr!*.dSYM``. This option has
+    equals form, for example ``--external-option='-xr!*.dSYM'``. This option has
     no effect when the internal py7zr extractor is used.
 
 .. _py7zr: https://pypi.org/project/py7zr/
