@@ -839,7 +839,7 @@ class Cli:
         except AqtException:
             raise
         except Exception as e:
-            raise AqtException(f"Error installing official installer: {str(e)}") from e
+            raise AqtException(f"Error installing official installer: {e!s}") from e
         finally:
             self.logger.info("Done")
 
@@ -1052,6 +1052,15 @@ class Cli:
             # Run search
             self.logger.info(f"Running: {redact_credentials(cmd)}")
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
+
+            # subprocess.run does not raise on a non-zero exit; without this
+            # check a failed installer run would fall through to the success
+            # path and the CLI would report success.
+            if output.returncode != 0:
+                raise AqtException(
+                    f"Official installer search failed with exit code "
+                    f"{output.returncode}: {output.stderr.strip()}"
+                )
 
             if output.stdout:
                 self.logger.info(output.stdout)
