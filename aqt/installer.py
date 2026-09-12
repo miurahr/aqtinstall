@@ -262,6 +262,15 @@ class Cli:
         elif os_name == "mac" and target == "desktop":
             return "clang_64"
         elif os_name == "mac" and target == "ios":
+            try:
+                if Version(qt_version_or_spec) >= Version("6.12.0"):
+                    raise CliInputError(
+                        "Please supply an iOS architecture for Qt 6.12 or newer: "
+                        "ios_device, ios_simulator_arm64, or ios_simulator_x86_64.",
+                        should_show_help=True,
+                    )
+            except ValueError:
+                pass  # Version specs are resolved before choosing the final default.
             return "ios"
         elif target == "android":
             try:
@@ -877,7 +886,7 @@ class Cli:
             nargs="?",
             help="\ntarget linux/desktop: linux_gcc_64, gcc_64, wasm_32"
             "\ntarget mac/desktop:   clang_64, wasm_32"
-            "\ntarget mac/ios:       ios"
+            "\ntarget mac/ios:       ios (<6.12), ios_device, ios_simulator_arm64, ios_simulator_x86_64 (6.12+)"
             "\nwindows/desktop:      win64_msvc2022_64"
             "\n                      win64_msvc2019_64, win32_msvc2019"
             "\n                      win64_msvc2017_64, win32_msvc2017"

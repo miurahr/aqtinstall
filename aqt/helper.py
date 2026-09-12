@@ -28,6 +28,7 @@ import logging.config
 import os
 import platform
 import posixpath
+import re
 import secrets
 import shutil
 import subprocess
@@ -402,11 +403,21 @@ def ssplit(data: str) -> Generator[str, None, None]:
         yield element.strip()
 
 
+def effective_package_name(name: str) -> str:
+    """Normalize iOS architecture spellings for matching, never for download URLs."""
+    return re.sub(
+        r"(^|\.)(?:qtfor)?ios\.(device|simulator_arm64|simulator_x86_64)(?=$|\.)",
+        r"\1ios_\2",
+        name,
+    )
+
+
 def xml_to_modules(
     xml_text: str,
     predicate: Callable[[Element], bool],
 ) -> Dict[str, Dict[str, str]]:
-    """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
+    """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by effective package name.
+    The original `Name` field is retained for repository URLs.
     Only report elements that satisfy `predicate(element)`.
     Reports all keys available in the PackageUpdate tag as strings.
 
@@ -421,7 +432,7 @@ def xml_to_modules(
     for packageupdate in parsed_xml.iter("PackageUpdate"):
         if not predicate(packageupdate):
             continue
-        name = packageupdate.find("Name").text
+        name = effective_package_name(packageupdate.find("Name").text)
         packages[name] = {}
         for child in packageupdate:
             if child.tag == "UpdateFile":
