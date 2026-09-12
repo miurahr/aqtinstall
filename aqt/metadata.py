@@ -645,10 +645,11 @@ class QtRepoProperty:
         return version in SimpleSpec(">=6.5.0")
 
     @staticmethod
-    def known_extensions(version: Version) -> List[str]:
+    def known_extensions(version: Version) -> Dict[str, Optional[Version]]:
+        """Map extensions to the first Qt release requiring independent versioning, or None."""
         if version >= Version("6.8.0"):
-            return ["qtpdf", "qtwebengine"]
-        return []
+            return {"qtpdf": Version("6.12.0"), "qtwebengine": Version("6.12.0")}
+        return {}
 
     @staticmethod
     def sde_ext(version: Version) -> str:
@@ -1010,6 +1011,38 @@ class MetadataFactory:
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
         )
 
+    def _fetch_listing_extensions(self, version: Version, arch: str) -> Dict[str, Dict[str, str]]:
+        """Collect unversioned and independently versioned extensions for module listings."""
+        qt_ver_str = self._get_qt_version_str(version)
+        modules: Dict[str, Dict[str, str]] = {}
+        for ext, versioned_since in QtRepoProperty.known_extensions(version).items():
+            folder = self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch)
+            root, arch_folder = folder.rstrip("/").rsplit("/", 1)
+            candidates = []
+            if versioned_since is not None and version >= versioned_since:
+                try:
+                    html = self.fetch_http(root + "/", False)
+                    for ext_version in sorted(set(self.iterate_folders(html, self.base_url))):
+                        if not re.fullmatch(str(version.major) + r"[0-9]{2,}", ext_version):
+                            continue
+                        label = f"{int(ext_version[0])}.{int(ext_version[1:-1])}.{int(ext_version[-1])}"
+                        candidates.append(
+                            (posixpath.join(root, ext_version, arch_folder), ext_version + ".", f"{ext}@{label}")
+                        )
+                except (ChecksumDownloadFailure, ArchiveDownloadError):
+                    pass
+            else:
+                candidates.append((folder, "", ext))
+            for url, version_segment, name in candidates:
+                try:
+                    metadata = self._fetch_extension_metadata(url)
+                except (ChecksumDownloadFailure, ArchiveDownloadError):
+                    continue
+                package = f"extensions.{ext}.{qt_ver_str}.{version_segment}{arch}"
+                if package in metadata:
+                    modules[name] = metadata[package]
+        return modules
+
     def fetch_modules(self, version: Version, arch: str) -> List[str]:
         """Returns list of modules"""
         extension = QtRepoProperty.extension_for_arch(arch, version)
@@ -1036,20 +1069,7 @@ class MetadataFactory:
             if _arch == arch:
                 modules.add(cast(str, module))
 
-        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
-        for ext in QtRepoProperty.known_extensions(version):
-            try:
-                ext_meta = self._fetch_extension_metadata(
-                    self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch)
-                )
-                for key, value in ext_meta.items():
-                    ext_match = ext_pattern.match(key)
-                    if ext_match is not None:
-                        module = ext_match.group("module")
-                        if module is not None:
-                            modules.add(ext)
-            except (ChecksumDownloadFailure, ArchiveDownloadError):
-                pass
+        modules.update(self._fetch_listing_extensions(version, arch))
         return sorted(modules)
 
     @staticmethod
@@ -1088,22 +1108,7 @@ class MetadataFactory:
                 if module is not None:
                     m[module] = value
 
-        # Examples: extensions.qtwebengine.680.debug_information
-        #           extensions.qtwebengine.680.win64_msvc2022_64
-        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
-        for ext in QtRepoProperty.known_extensions(version):
-            try:
-                ext_meta = self._fetch_extension_metadata(
-                    self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch)
-                )
-                for key, value in ext_meta.items():
-                    ext_match = ext_pattern.match(key)
-                    if ext_match is not None:
-                        module = ext_match.group("module")
-                        if module is not None:
-                            m[module] = value
-            except (ChecksumDownloadFailure, ArchiveDownloadError):
-                pass
+        m.update(self._fetch_listing_extensions(version, arch))
         return ModuleData(m)
 
     def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
