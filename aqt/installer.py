@@ -836,8 +836,10 @@ class Cli:
 
             commercial_installer.install()
             Settings.qt_installer_cleanup()
+        except AqtException:
+            raise
         except Exception as e:
-            self.logger.error(f"Error installing official installer: {str(e)}")
+            raise AqtException(f"Error installing official installer: {e!s}") from e
         finally:
             self.logger.info("Done")
 
@@ -1051,14 +1053,25 @@ class Cli:
             self.logger.info(f"Running: {redact_credentials(cmd)}")
             output = safely_run_save_output(cmd, Settings.qt_installer_timeout)
 
+            # subprocess.run does not raise on a non-zero exit; without this
+            # check a failed installer run would fall through to the success
+            # path and the CLI would report success.
+            if output.returncode != 0:
+                raise AqtException(
+                    f"Official installer search failed with exit code "
+                    f"{output.returncode}: {output.stderr.strip()}"
+                )
+
             if output.stdout:
                 self.logger.info(output.stdout)
                 if output.stderr:
                     for line in output.stderr.splitlines():
                         self.logger.warning(line)
 
+        except AqtException:
+            raise
         except Exception as e:
-            self.logger.error(f"Failed to list Qt official packages: {e}")
+            raise AqtException(f"Failed to list Qt official packages: {e}") from e
         finally:
             Settings.qt_installer_cleanup()
 

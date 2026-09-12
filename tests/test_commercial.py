@@ -385,3 +385,62 @@ def test_list_qt_commercial_errors(capsys, args, expected_error):
         cli.run(args)
     _, err = capsys.readouterr()
     assert expected_error in err
+
+
+def test_install_qt_commercial_failure_exit_code(monkeypatch, tmp_path):
+    """A failed official installation must exit non-zero, not report success."""
+
+    def mock_install(*args, **kwargs):
+        raise RuntimeError("Failed to find package information in installer output")
+
+    monkeypatch.setattr(CommercialInstaller, "install", mock_install)
+
+    cli = Cli()
+    cli._setup_settings()
+    cmd = [
+        "install-qt-official",
+        "desktop",
+        "gcc_64",
+        "6.8.0",
+        "--outputdir",
+        str(tmp_path),
+        "--email",
+        "user@example.com",
+        "--pw",
+        "secret",
+    ]
+    assert cli.run(cmd) == 1
+
+
+def test_list_qt_commercial_failure_exit_code(monkeypatch):
+    """A failed official listing must exit non-zero, not report success."""
+
+    def mock_download(*args, **kwargs):
+        raise RuntimeError("Failed to download installer")
+
+    monkeypatch.setattr("aqt.installer.get_qt_installer_name", lambda: "qt-online-installer")
+    monkeypatch.setattr("aqt.installer.download_installer", mock_download)
+
+    cli = Cli()
+    cli._setup_settings()
+    assert cli.run(["list-qt-official"]) == 1
+
+
+def test_list_qt_commercial_nonzero_exit_code(monkeypatch):
+    """An installer that exits non-zero must exit non-zero, not report success."""
+
+    class FakeCompletedProcess:
+        returncode = 1
+        stdout = ""
+        stderr = "installer failed"
+
+    monkeypatch.setattr("aqt.installer.get_qt_installer_name", lambda: "qt-online-installer")
+    monkeypatch.setattr("aqt.installer.download_installer", lambda *a, **k: None)
+    monkeypatch.setattr("aqt.installer.prepare_installer", lambda *a, **k: "/fake/installer")
+    monkeypatch.setattr(
+        "aqt.installer.safely_run_save_output", lambda *a, **k: FakeCompletedProcess()
+    )
+
+    cli = Cli()
+    cli._setup_settings()
+    assert cli.run(["list-qt-official"]) == 1
