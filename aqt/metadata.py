@@ -53,7 +53,7 @@ from aqt.exceptions import (
     CliInputError,
     EmptyMetadata,
 )
-from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
+from aqt.helper import Settings, effective_package_name, get_hash, getUrl, xml_to_modules
 
 
 class SimpleSpec(SemanticSimpleSpec):
@@ -260,6 +260,7 @@ class ArchiveId:
         "all_os": ["wasm", "qt", "android"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
+    EXTENSIONS_IOS_QT6_12 = {"device", "simulator_arm64", "simulator_x86_64"}
     EXTENSIONS_WIN_X64_QT6_11 = {"llvm_mingw", "mingw", "msvc2022_64", "msvc2022_arm64_cross_compiled"}
     ALL_EXTENSIONS = {
         "",
@@ -347,6 +348,8 @@ class ArchiveId:
             return f"{folderForVersion}/{folderForVersionAndExtension}"
 
     def all_extensions(self, version: Version) -> List[str]:
+        if self.target == "ios" and version >= Version("6.12.0"):
+            return sorted(ArchiveId.EXTENSIONS_IOS_QT6_12)
         if self.host == "windows" and version >= Version("6.11.0"):
             return list(ArchiveId.EXTENSIONS_WIN_X64_QT6_11)
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
@@ -532,6 +535,10 @@ class QtRepoProperty:
         elif architecture.startswith("android_") and version >= Version("6.0.0"):
             ext = architecture[len("android_") :]
             if ext in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6:
+                return ext
+        elif architecture.startswith("ios_") and version >= Version("6.12.0"):
+            ext = architecture[len("ios_") :]
+            if ext in ArchiveId.EXTENSIONS_IOS_QT6_12:
                 return ext
         elif architecture.startswith("win64_") and version >= Version("6.11.0"):
             ext = architecture[len("win64_") :]
@@ -1104,7 +1111,7 @@ class MetadataFactory:
         )
 
         def matches_arch(element: Element) -> bool:
-            return bool(pattern.match(MetadataFactory.require_text(element, "Name")))
+            return bool(pattern.match(effective_package_name(MetadataFactory.require_text(element, "Name"))))
 
         modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, extension), matches_arch)
         m: Dict[str, Dict[str, str]] = {}
@@ -1152,16 +1159,18 @@ class MetadataFactory:
         nonempty = MetadataFactory._has_nonempty_downloads
 
         def all_modules(element: Element) -> bool:
-            _module, _arch = MetadataFactory.require_text(element, "Name").split(".")[-2:]
+            _module, _arch = effective_package_name(MetadataFactory.require_text(element, "Name")).split(".")[-2:]
             return _arch == arch and _module != qt_version_str and nonempty(element)
 
         def specify_modules(element: Element) -> bool:
-            _module, _arch = MetadataFactory.require_text(element, "Name").split(".")[-2:]
+            _module, _arch = effective_package_name(MetadataFactory.require_text(element, "Name")).split(".")[-2:]
             return _arch == arch and _module in modules and nonempty(element)
 
         def no_modules(element: Element) -> bool:
             name: Optional[str] = getattr(element.find("Name"), "text", None)
-            return name is not None and name.endswith(f".{qt_version_str}.{arch}") and nonempty(element)
+            return (
+                name is not None and effective_package_name(name).endswith(f".{qt_version_str}.{arch}") and nonempty(element)
+            )
 
         predicate = no_modules if not modules else all_modules if "all" in modules else specify_modules
         try:

@@ -577,6 +577,11 @@ There are various combinations to accept according to Qt version.
 
    * wasm_singlethread or wasm_multithread for wasm
 
+   * ios for iOS before Qt 6.12 (the default for those releases)
+
+   * ios_device, ios_simulator_arm64, or ios_simulator_x86_64 for iOS starting with Qt 6.12.
+     An explicit architecture is required for these releases.
+
     Use the :ref:`List-Qt Command` to list available architectures.
 
 .. option:: --autodesktop

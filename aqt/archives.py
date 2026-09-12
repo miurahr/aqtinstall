@@ -34,7 +34,7 @@ from xml.etree.ElementTree import Element  # noqa
 from defusedxml import ElementTree
 
 from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, CliInputError, NoPackageFound
-from aqt.helper import Settings, get_hash, getUrl, ssplit
+from aqt.helper import Settings, effective_package_name, get_hash, getUrl, ssplit
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, Version
 
 
@@ -157,11 +157,15 @@ class PackageUpdate:
         return Version.permissive(self.full_version)
 
     @property
+    def effective_name(self) -> str:
+        return effective_package_name(self.name)
+
+    @property
     def arch(self):
-        return self.name.split(".")[-1]
+        return self.effective_name.split(".")[-1]
 
     def is_base_package(self) -> bool:
-        return self.name in (
+        return self.effective_name in (
             f"qt.qt{self.version.major}.{self._version_str()}.{self.arch}",
             f"qt.{self._version_str()}.{self.arch}",
         )
@@ -245,9 +249,9 @@ class Updates:
             # If we asked for `--noarchives`, we don't want the base module
             if not is_include_base and update.is_base_package():
                 continue
-            if target_packages is not None and not target_packages.has_package(update.name):
+            if target_packages is not None and not target_packages.has_package(update.effective_name):
                 continue
-            if arch in update.name:
+            if arch in update.effective_name:
                 result.append(update)
         return result
 
@@ -588,8 +592,10 @@ class QtArchives:
             package_updates = update_xml.get_from(self.arch, self.is_include_base_package, target_packages)
         for packageupdate in package_updates:
             if not self.all_extra:
-                target_packages.remove_module_for_package(packageupdate.name)
-            should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(packageupdate.name)
+                target_packages.remove_module_for_package(packageupdate.effective_name)
+            should_filter_archives: bool = bool(self.subarchives) and self.should_filter_archives(
+                packageupdate.effective_name
+            )
 
             for archive, archive_install_path in zip_longest(
                 packageupdate.downloadable_archives, packageupdate.archive_install_paths, fillvalue=""
