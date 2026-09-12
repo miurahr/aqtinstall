@@ -648,7 +648,7 @@ class QtRepoProperty:
     def known_extensions(version: Version) -> Dict[str, Optional[Version]]:
         """Map extensions to the first Qt release requiring independent versioning, or None."""
         if version >= Version("6.8.0"):
-            return {"qtpdf": Version("6.12.0"), "qtwebengine": Version("6.12.0")}
+            return {"qtwebengine": Version("6.12.0"), "qtpdf": Version("6.12.0")}
         return {}
 
     @staticmethod
@@ -1011,6 +1011,17 @@ class MetadataFactory:
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
         )
 
+    def fetch_extension_versions(self, version: Version, extension: str) -> Dict[Version, str]:
+        """Map independent extension versions to their repository directory names."""
+        root = posixpath.join(self.archive_id.to_extension_url(), extension, self._get_qt_version_str(version))
+        html = self.fetch_http(root + "/", False)
+        versions: Dict[Version, str] = {}
+        for folder in sorted(set(self.iterate_folders(html, self.base_url))):
+            if re.fullmatch(str(version.major) + r"[0-9]{2,}", folder):
+                version_number = Version(f"{int(folder[0])}.{int(folder[1:-1])}.{int(folder[-1])}")
+                versions[version_number] = folder
+        return versions
+
     def _fetch_listing_extensions(self, version: Version, arch: str) -> Dict[str, Dict[str, str]]:
         """Collect unversioned and independently versioned extensions for module listings."""
         qt_ver_str = self._get_qt_version_str(version)
@@ -1021,13 +1032,9 @@ class MetadataFactory:
             candidates = []
             if versioned_since is not None and version >= versioned_since:
                 try:
-                    html = self.fetch_http(root + "/", False)
-                    for ext_version in sorted(set(self.iterate_folders(html, self.base_url))):
-                        if not re.fullmatch(str(version.major) + r"[0-9]{2,}", ext_version):
-                            continue
-                        label = f"{int(ext_version[0])}.{int(ext_version[1:-1])}.{int(ext_version[-1])}"
+                    for ext_version, version_folder in self.fetch_extension_versions(version, ext).items():
                         candidates.append(
-                            (posixpath.join(root, ext_version, arch_folder), ext_version + ".", f"{ext}@{label}")
+                            (posixpath.join(root, version_folder, arch_folder), version_folder + ".", f"{ext}@{ext_version}")
                         )
                 except (ChecksumDownloadFailure, ArchiveDownloadError):
                     pass

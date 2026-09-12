@@ -33,9 +33,9 @@ from xml.etree.ElementTree import Element  # noqa
 
 from defusedxml import ElementTree
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, NoPackageFound
+from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, CliInputError, NoPackageFound
 from aqt.helper import Settings, get_hash, getUrl, ssplit
-from aqt.metadata import QtRepoProperty, Version
+from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, Version
 
 
 @dataclass
@@ -318,10 +318,39 @@ class QtArchives:
         self.mod_list: Set[str] = set(modules or [])
         self.is_include_base_package: bool = is_include_base_package
         self.timeout = timeout
+        self._extension_versions = self._validate_extension_requests()
         try:
             self._get_archives()
         except ArchiveDownloadError as e:
             self.handle_missing_updates_xml(e)
+
+    def _validate_extension_requests(self) -> Dict[str, str]:
+        """Validate explicit versions before downloading any repository metadata."""
+        known = QtRepoProperty.known_extensions(self.version)
+        versions: Dict[str, str] = {}
+        for module in sorted(self.mod_list):
+            if "@" not in module:
+                continue
+            name, version_text = module.split("@", 1)
+            threshold = known.get(name)
+            if threshold is None or self.version < threshold:
+                raise CliInputError(f"Extension version specifiers are not supported for '{name}' with Qt {self.version}.")
+            try:
+                version = Version(version_text)
+                if version.prerelease or version.build or version.major != self.version.major or version.patch > 9:
+                    raise ValueError
+            except ValueError as e:
+                raise CliInputError(
+                    f"Invalid extension version in '{module}': expected {self.version.major}.<minor>.<revision> "
+                    "with a single-digit revision."
+                ) from e
+            folder = f"{version.major}{version.minor}{version.patch}"
+            if name in versions and versions[name] != folder:
+                raise CliInputError(f"Cannot request multiple versions of extension '{name}' in one installation.")
+            versions[name] = folder
+        # An explicit version also satisfies an unqualified request for the same extension.
+        self.mod_list.difference_update(versions)
+        return versions
 
     def handle_missing_updates_xml(self, e: ArchiveDownloadError):
         msg = f"Failed to locate XML data for Qt version '{self.version}'."
@@ -376,6 +405,13 @@ class QtArchives:
         target_packages = ModuleToPackage(base_package if self.is_include_base_package else {})
 
         for module in self.mod_list:
+            if "@" in module:
+                extension = module.split("@", 1)[0]
+                target_packages.add(
+                    module,
+                    [f"extensions.{extension}.{self._version_str()}.{self._extension_versions[extension]}.{self.arch}"],
+                )
+                continue
             suffix = self._module_name_suffix(module)
             prefix = "qt.qt{}.{}.".format(self.version.major, self._version_str())
             basic_prefix = "qt.{}.".format(self._version_str())
@@ -480,12 +516,34 @@ class QtArchives:
         arch = self._compute_extension_arch(os_segment)
         if arch is None:
             return results
-        # Known extension repositories (can be expanded in the future)
-        extensions = ["qtwebengine", "qtpdf"]
-        for ext in extensions:
-            extensions_target_folder = posixpath.join(
-                "online/qtsdkrepository", os_segment, "extensions", ext, self._version_str(), arch
-            )
+        known = QtRepoProperty.known_extensions(self.version)
+        for ext, threshold in known.items():
+            root = posixpath.join("online/qtsdkrepository", os_segment, "extensions", ext, self._version_str())
+            if threshold is not None and self.version >= threshold:
+                explicitly_requested = ext in self._extension_versions or ext in self.mod_list
+                if not explicitly_requested and not self.all_extra:
+                    continue
+                if ext not in self._extension_versions:
+                    host = "all_os" if os_segment == "all_os" else self.os_name
+                    metadata = MetadataFactory(ArchiveId("qt", host, self.target), base_url=self.base)
+                    try:
+                        versions = metadata.fetch_extension_versions(self.version, ext)
+                    except (ChecksumDownloadFailure, ArchiveDownloadError):
+                        versions = {}
+                    if not versions:
+                        if explicitly_requested:
+                            raise NoPackageFound(
+                                f"No versions of extension '{ext}' were found for Qt {self.version}.",
+                                suggested_action=self.help_msg([ext]),
+                            )
+                        continue
+                    latest = max(versions)
+                    self._extension_versions[ext] = versions[latest]
+                    self.mod_list.discard(ext)
+                    self.mod_list.add(f"{ext}@{latest}")
+                    self.logger.info("Selected extension %s@%s", ext, latest)
+                root = posixpath.join(root, self._extension_versions[ext])
+            extensions_target_folder = posixpath.join(root, arch)
             extensions_xml_url = posixpath.join(extensions_target_folder, "Updates.xml")
             try:
                 extensions_xml_text = self._download_update_xml(extensions_xml_url, True)
