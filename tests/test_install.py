@@ -1855,7 +1855,10 @@ def test_install_pool_exception(monkeypatch, capsys, exception, settings_file, e
 
 
 def test_install_installer_archive_extraction_err(monkeypatch):
+    """Include the extractor exit status, stdout, and stderr when reporting an extraction failure."""
+
     def mock_extractor_that_fails(*args, **kwargs):
+        """Simulate an extractor failure with separate standard output and error text."""
         raise subprocess.CalledProcessError(returncode=1, cmd="some command", output="out", stderr="err")
 
     monkeypatch.setattr("aqt.installer.get_hash", lambda *args, **kwargs: "")
@@ -1888,9 +1891,11 @@ def test_install_installer_archive_extraction_err(monkeypatch):
 
 
 def test_installer_passes_external_extractor_options(monkeypatch):
+    """Insert custom extractor arguments after standard flags and before output and archive paths."""
     captured_args = None
 
     def mock_extractor(args, **kwargs):
+        """Capture the exact subprocess argument list and simulate successful extraction."""
         nonlocal captured_args
         captured_args = args
         return subprocess.CompletedProcess(args, 0, stdout="")

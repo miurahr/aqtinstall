@@ -528,6 +528,7 @@ class Cli:
                 self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
     def _run_src_doc_examples(self, flavor, args, cmd_name: Optional[str] = None):
+        """Install source, documentation, or example archives using the shared download and extraction options."""
         self.show_aqt_version()
         if getattr(args, "target", None) is not None:
             self._warn_on_deprecated_parameter("target", args.target)
@@ -1314,12 +1315,14 @@ class Cli:
         list_parser.set_defaults(func=self.run_list_tool)
 
     def _make_common_parsers(self, subparsers: argparse._SubParsersAction) -> None:
+        """Register help and version subcommands with their display handlers."""
         help_parser = subparsers.add_parser("help")
         help_parser.set_defaults(func=self.show_help)
         version_parser = subparsers.add_parser("version")
         version_parser.set_defaults(func=self.show_aqt_version)
 
     def _set_common_options(self, subparser: argparse.ArgumentParser) -> None:
+        """Register installation flags shared by subcommands, including repeatable external extractor options."""
         subparser.add_argument(
             "-O",
             "--outputdir",
@@ -1560,6 +1563,10 @@ def run_installer(
     dry_run: bool = False,
     external_options: Optional[List[str]] = None,
 ):
+    """Download and extract archives in worker processes, forwarding external extractor options.
+
+    Dry runs only log the planned archives and do not start installation workers.
+    """
     if dry_run:
         logger = getLogger("aqt.installer")
         logger.info("DRY RUN: Would download and install the following:")

@@ -119,6 +119,7 @@ def test_cli_validate_version(version: str, allow_latest: bool, allow_empty: boo
 
 
 def test_cli_check_mirror():
+    """Accept the default download mirror and an explicitly configured Qt mirror URL."""
     cli = Cli()
     cli._setup_settings()
     assert cli._check_mirror(None)
@@ -129,6 +130,7 @@ def test_cli_check_mirror():
 
 
 def test_cli_external_option_is_repeatable():
+    """Preserve repeated external extractor options in their command-line order."""
     cli = Cli()
     args = cli.parser.parse_args(
         [
