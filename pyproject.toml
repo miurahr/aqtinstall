@@ -27,6 +27,7 @@ dependencies = [
     "humanize",
     "patch-ng",
     "py7zr>=1.1.3",
+    "PyYAML",
     "requests>=2.31.0",
     "semantic-version",
     "texttable",

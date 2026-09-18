@@ -170,6 +170,47 @@ to make it working well with installed directory.
    Aqtinstall is tested for ios on MacOS 12 with Qt 6.2.4 and greater.
    All earlier versions of Qt are expected not to function.
 
+Requirements manifest
+----------------------
+
+If you want anyone who clones your repository to be able to reproduce the exact same Qt
+install with a single command, check in an ``aqt-requirements.yml`` manifest and run:
+
+.. code-block:: console
+
+    aqt install --requirements
+
+A manifest pins exact versions per package kind (``qt``, ``tool``, ``src``, ``doc``,
+``example``). The host OS is auto-detected, so fields that vary by host -- most commonly
+``arch``, for Windows' MSVC/MinGW toolchains -- can be given as a mapping of host name to
+value instead of a plain string:
+
+.. code-block:: yaml
+
+    qt:
+      - version: "6.5.3"
+        target: desktop
+        arch:
+          linux: gcc_64
+          mac: clang_64
+          windows: win64_msvc2019_64
+        modules: [qtcharts]
+
+    tool:
+      - name: ninja
+        variant:
+          linux: qt.tools.ninja
+          mac: qt.tools.ninja
+          windows: qt.tools.ninja
+
+Use ``--host`` to override host resolution (e.g. to stage another platform's binaries for
+cross-compilation on CI), ``--ensure-lgpl`` to check the manifest's Qt modules for
+LGPL-eligibility without installing anything (a heuristic aid, not legal advice), and
+``--generate-cmake-presets`` to write a standalone ``CMakeUserPresets.json`` for every
+installed Qt kit. See the `Command Line Options`_ documentation for full details.
+
+.. _`Command Line Options`: https://aqtinstall.readthedocs.io/en/latest/cli.html#install-command
+
 Testimonies
 -----------
 

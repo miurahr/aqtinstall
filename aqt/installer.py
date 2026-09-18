@@ -23,6 +23,7 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
+import copy
 import errno
 import gc
 import multiprocessing
@@ -40,10 +41,11 @@ from logging import getLogger
 from logging.handlers import QueueHandler
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Optional, Tuple, cast
+from typing import Any, List, Optional, Tuple, cast
 
 import aqt
 from aqt.archives import QtArchives, QtPackage, SrcDocExamplesArchives, ToolArchives
+from aqt.cmake_presets import generate_cmake_user_presets
 from aqt.commercial import CommercialInstaller
 from aqt.exceptions import (
     AqtException,
@@ -54,6 +56,7 @@ from aqt.exceptions import (
     CliInputError,
     CliKeyboardInterrupt,
     DiskAccessNotPermitted,
+    LgplComplianceError,
     OutOfDiskSpace,
     OutOfMemory,
 )
@@ -73,7 +76,18 @@ from aqt.helper import (
     safely_run_save_output,
     setup_logging,
 )
+from aqt.license_check import DISCLAIMER as LGPL_CHECK_DISCLAIMER
+from aqt.license_check import LgplCheckReport, check_modules
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, SimpleSpec, Version, show_list, suggested_follow_up
+from aqt.requirements import (
+    DEFAULT_REQUIREMENTS_FILENAME,
+    HOST_CHOICES,
+    QtRequirement,
+    SdeRequirement,
+    ToolRequirement,
+    detect_host,
+    load_requirements,
+)
 from aqt.updater import Updater, dir_for_version
 
 try:
@@ -164,6 +178,24 @@ class InstallToolArgParser(CommonInstallArgParser):
 
     tool_name: str
     tool_variant: Optional[str]
+
+
+class InstallRequirementsArgParser(BaseArgumentParser):
+    """Install (batch, from a requirements manifest) arguments and options"""
+
+    requirements: Optional[str]
+    host_override: Optional[str]
+    ensure_lgpl: bool
+    generate_cmake_presets: bool
+
+    outputdir: Optional[str]
+    base: Optional[str]
+    timeout: Optional[float]
+    external: Optional[str]
+    internal: bool
+    keep: bool
+    archive_dest: Optional[str]
+    dry_run: bool
 
 
 class Cli:
@@ -375,6 +407,13 @@ class Cli:
 
         if qt_version != qt_version_or_spec:
             arch = self._set_arch(args.arch, os_name, target, qt_version)
+
+        if getattr(args, "ensure_lgpl", False):
+            self._run_ensure_lgpl_check(
+                [(effective_os_name, target, qt_version, arch, modules or [])],
+                base_url=base,
+            )
+            return
 
         if hasattr(args, "use_official_installer") and args.use_official_installer is not None:
             if len(args.use_official_installer) not in [0, 2]:
@@ -658,6 +697,120 @@ class Cli:
         self.logger.info("Finished installation")
         self.logger.info("Time elapsed: {time:.8f} second".format(time=time.perf_counter() - start_time))
 
+    def _run_ensure_lgpl_check(self, checks, base_url: str) -> None:
+        """Runs the LGPL/commercial-use heuristic over a list of (host, target, version, arch, modules)
+        tuples, prints a combined report, and raises `LgplComplianceError` if anything failed to clear
+        it. This never installs anything -- see `--ensure-lgpl`'s help text.
+        """
+        reports: List[Tuple[str, LgplCheckReport]] = []
+        any_requested = False
+        for host, target, version, arch, modules in checks:
+            if modules:
+                any_requested = True
+            report = check_modules(host, target, version, arch, modules, base_url=base_url)
+            reports.append((f"Qt {version} ({target}/{arch})", report))
+
+        if not any_requested:
+            self.logger.info("No extra modules were requested; nothing to verify beyond the LGPL-licensed base Qt package.")
+        else:
+            self.logger.info("LGPL/commercial-use compliance check:")
+            for label, report in reports:
+                if not report.verdicts:
+                    continue
+                self.logger.info(f"{label}:")
+                self.logger.info(report.format())
+
+        self.logger.info(LGPL_CHECK_DISCLAIMER)
+
+        is_clean = all(report.is_clean for _, report in reports)
+        if not is_clean:
+            raise LgplComplianceError(
+                "One or more requested modules failed the LGPL/commercial-use check. "
+                "Verify licensing yourself, then rerun the same command without --ensure-lgpl to install."
+            )
+        self.logger.info(
+            "All requested modules passed the LGPL/commercial-use check. "
+            "Rerun the same command without --ensure-lgpl to install."
+        )
+
+    def _namespace_for_qt(
+        self, base_args: InstallRequirementsArgParser, entry: QtRequirement, host: str
+    ) -> InstallArgParser:
+        # `base_args` is really an argparse.Namespace at runtime (see `InstallRequirementsArgParser`'s
+        # docstring convention); `Any` lets us copy it and set the fields `run_install_qt` expects.
+        ns = cast(Any, copy.copy(base_args))
+        ns.host = host
+        ns.target = entry.target
+        ns.qt_version_spec = entry.version
+        ns.arch = entry.resolved_arch(host)
+        ns.modules = entry.modules or None
+        ns.archives = None
+        ns.noarchives = False
+        ns.autodesktop = False
+        ns.use_official_installer = None
+        ns.ensure_lgpl = False
+        return cast(InstallArgParser, ns)
+
+    def _namespace_for_tool(
+        self, base_args: InstallRequirementsArgParser, entry: ToolRequirement, host: str
+    ) -> InstallToolArgParser:
+        ns = cast(Any, copy.copy(base_args))
+        ns.host = host
+        ns.target = entry.target
+        ns.tool_name = entry.name
+        ns.tool_variant = entry.resolved_variant(host)
+        return cast(InstallToolArgParser, ns)
+
+    def _namespace_for_sde(
+        self, base_args: InstallRequirementsArgParser, entry: SdeRequirement, host: str
+    ) -> argparse.Namespace:
+        ns = cast(Any, copy.copy(base_args))
+        ns.host = host
+        ns.target = None  # deprecated positional; src/doc/examples are always "desktop"
+        ns.qt_version_spec = entry.version
+        ns.modules = entry.modules or None
+        ns.archives = None
+        ns.kde = False
+        return cast(argparse.Namespace, ns)
+
+    def run_install(self, args: InstallRequirementsArgParser) -> None:
+        """Run the 'install' subcommand: batch-install everything pinned in a requirements manifest."""
+        requirements_arg = getattr(args, "requirements", None)
+        if requirements_arg is None:
+            raise CliInputError(
+                "The 'install' command requires --requirements[=PATH] "
+                f"(bare '--requirements' looks for '{DEFAULT_REQUIREMENTS_FILENAME}' in the current directory).",
+                should_show_help=True,
+            )
+        path = Path(requirements_arg)
+        manifest = load_requirements(path)
+        host = args.host_override or detect_host()
+        base = args.base or Settings.baseurl
+        self.logger.info(f"Using requirements file '{path}' (resolved host: '{host}')")
+
+        if args.ensure_lgpl:
+            checks = [
+                (host, qt_req.target, qt_req.version, qt_req.resolved_arch(host), qt_req.modules) for qt_req in manifest.qt
+            ]
+            if not manifest.qt:
+                self.logger.info("No '[qt]' entries in the requirements file; nothing to verify.")
+                return
+            self._run_ensure_lgpl_check(checks, base_url=base)
+            return
+
+        for qt_req in manifest.qt:
+            self.run_install_qt(self._namespace_for_qt(args, qt_req, host))
+        for tool_req in manifest.tool:
+            self.run_install_tool(self._namespace_for_tool(args, tool_req, host))
+        for kind, entries in (("src", manifest.src), ("doc", manifest.doc), ("examples", manifest.example)):
+            for sde_req in entries:
+                self._run_src_doc_examples(kind, self._namespace_for_sde(args, sde_req, host))
+
+        if args.generate_cmake_presets:
+            output_dir = Path(args.outputdir) if args.outputdir else Path(os.getcwd())
+            preset_path = generate_cmake_user_presets(output_dir)
+            self.logger.info(f"Wrote CMake presets for all installed Qt kits to '{preset_path}'")
+
     def run_list_qt(self, args: ListArgumentParser):
         """Print versions of Qt, extensions, modules, architectures"""
 
@@ -920,6 +1073,13 @@ class Cli:
             "This redirects to install-qt-official. "
             "Arguments not compatible with the official installer will be ignored.",
         )
+        install_qt_parser.add_argument(
+            "--ensure-lgpl",
+            action="store_true",
+            help="Verify (but do not install) that the requested modules are LGPL-eligible according to Qt's "
+            "published metadata, then stop -- rerun the same command without this flag to actually install. "
+            "This is a heuristic aid, not legal advice.",
+        )
 
     def _set_install_tool_parser(self, install_tool_parser):
         install_tool_parser.set_defaults(func=self.run_install_tool)
@@ -944,6 +1104,41 @@ class Cli:
             "Please use 'aqt list-tool' to list acceptable values for this parameter.",
         )
         self._set_common_options(install_tool_parser)
+
+    def _set_install_requirements_parser(self, install_parser: argparse.ArgumentParser) -> None:
+        install_parser.set_defaults(func=self.run_install)
+        install_parser.add_argument(
+            "--requirements",
+            nargs="?",
+            const=DEFAULT_REQUIREMENTS_FILENAME,
+            default=None,
+            metavar="PATH",
+            help="Batch-install everything pinned in a requirements manifest. When given with no PATH, "
+            f"looks for '{DEFAULT_REQUIREMENTS_FILENAME}' in the current directory. Currently, this is "
+            "the only way to use the 'install' subcommand.",
+        )
+        install_parser.add_argument(
+            "--host",
+            dest="host_override",
+            choices=HOST_CHOICES,
+            default=None,
+            help="Override host-OS resolution for every entry in the manifest, e.g. to stage another "
+            "platform's binaries for cross-compilation. Defaults to auto-detecting the current machine.",
+        )
+        install_parser.add_argument(
+            "--ensure-lgpl",
+            action="store_true",
+            help="Verify (but do not install) that every '[qt]' entry's modules are LGPL-eligible "
+            "according to Qt's published metadata, then stop. This is a heuristic aid, not legal advice.",
+        )
+        install_parser.add_argument(
+            "--generate-cmake-presets",
+            action="store_true",
+            help="After installing, (re)write a CMakeUserPresets.json inside the output directory, "
+            "describing every Qt kit found there. The file is meant to be copied into whichever "
+            "project needs it.",
+        )
+        self._set_common_options(install_parser)
 
     def _set_install_qt_commercial_parser(self, install_qt_commercial_parser: argparse.ArgumentParser) -> None:
         install_qt_commercial_parser.set_defaults(func=self.run_install_qt_commercial)
@@ -1114,6 +1309,12 @@ class Cli:
         # Create install command parsers
         make_parser_it("install-qt", "Install Qt.", self._set_install_qt_parser, argparse.RawTextHelpFormatter)
         make_parser_it("install-tool", "Install tools.", self._set_install_tool_parser, None)
+        make_parser_it(
+            "install",
+            "Batch-install everything pinned in an aqt-requirements.yml manifest (see --requirements).",
+            self._set_install_requirements_parser,
+            argparse.RawTextHelpFormatter,
+        )
         make_parser_it(
             "install-qt-official",
             "Install Qt with official installer.",
