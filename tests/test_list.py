@@ -1362,9 +1362,7 @@ def test_list_versioned_extensions(monkeypatch, long_listing, qt_version, missin
     root = f"online/qtsdkrepository/windows_x86/extensions/qtwebengine/{qt_digits}"
     threshold = Version(versioned_since) if versioned_since else None
     is_versioned = threshold is not None and Version(qt_version) >= threshold
-    monkeypatch.setattr(
-        QtRepoProperty, "known_extensions", lambda version: {"qtwebengine": threshold, "qtdummyext": None}
-    )
+    monkeypatch.setattr(QtRepoProperty, "known_extensions", lambda version: {"qtwebengine": threshold, "qtdummyext": None})
     monkeypatch.setattr(factory, "_fetch_module_metadata", lambda *args: {})
     requested = []
 
