@@ -321,7 +321,7 @@ class Updater:
             ]:  # desktop version
                 updater.make_qtconf(base_dir, version_dir, arch_dir)
                 updater.patch_qmake()
-                if target.os_name == "linux":
+                if target.os_name.startswith("linux"):
                     updater.patch_pkgconfig("/home/qt/work/install", target.os_name)
                     updater.patch_libtool("/home/qt/work/install/lib", target.os_name)
                     updater.patch_prl("/home/qt/work/install/lib")
