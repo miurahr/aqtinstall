@@ -139,6 +139,7 @@ def test_cli_check_mirror():
         (None, "mac", "ios", "6.2.0", "ios"),
         (None, "mac", "android", "6.2.0", "android"),
         (None, "mac", "android", "5.12.0", None),
+        (None, "windows_arm64", "desktop", "6.8.0", "win64_msvc2022_arm64"),
         # SimpleSpec instead of Version
         ("impossible_arch", "windows", "desktop", "6.2", "impossible_arch"),
         ("", "windows", "desktop", "6.2", None),
@@ -147,6 +148,7 @@ def test_cli_check_mirror():
         (None, "mac", "desktop", "6.2", "clang_64"),
         (None, "mac", "ios", "6.2", "ios"),
         (None, "mac", "android", "6.2", None),  # No way to determine arch for android target w/o version
+        (None, "windows_arm64", "desktop", "6.8", "win64_msvc2022_arm64"),
     ),
 )
 def test_set_arch(arch: Optional[str], host: str, target: str, version: str, expect: Optional[str]):
