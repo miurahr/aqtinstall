@@ -270,7 +270,7 @@ class Cli:
             except ValueError:
                 pass
         elif os_name == "windows_arm64" and target == "desktop":
-            return "windows_msvc2022_arm64"
+            return "win64_msvc2022_arm64"
         raise CliInputError("Please supply a target architecture.", should_show_help=True)
 
     def _check_mirror(self, mirror):
