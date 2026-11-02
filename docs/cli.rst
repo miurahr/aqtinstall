@@ -500,6 +500,131 @@ are described here:
 +------------------+-------------------------+--------------------------------------------------+
 
 
+.. _install command:
+
+install command
+~~~~~~~~~~~~~~~
+
+.. program::  install
+
+.. code-block:: bash
+
+    aqt install --requirements [<path>]
+                [--host {linux,linux_arm64,mac,windows,windows_arm64}]
+                [--ensure-lgpl]
+                [--generate-cmake-presets]
+
+Batch-installs everything pinned in an ``aqt-requirements.yml`` manifest, so that anyone who
+clones a repository containing one can reproduce the exact same Qt install with a single
+command. This is currently the only supported use of ``install``; ``--requirements`` is
+required.
+
+.. option:: --requirements [<path>]
+
+    Path to the manifest to install from. When given with no path, aqt looks for
+    ``aqt-requirements.yml`` in the current directory.
+
+A manifest is a YAML file with one list per package kind: ``qt``, ``tool``, ``src``, ``doc``,
+and ``example``, mirroring the ``install-qt``, ``install-tool``, ``install-src``,
+``install-doc``, and ``install-example`` commands respectively. Every entry pins an *exact*
+version -- there is no support for version ranges or ``latest``, since the whole point of a
+manifest is a reproducible install.
+
+The host OS is never written into the manifest: it is auto-detected from the machine running
+``aqt`` (or overridden with ``--host``, see below). Any field that legitimately varies by host
+-- most commonly ``arch``, because Windows has multiple incompatible toolchains (MSVC vs
+MinGW, and several MSVC versions) -- may be given as a mapping of host name to value instead
+of a plain string, so that one entry works for a team spread across different OSes:
+
+.. code-block:: yaml
+
+    qt:
+      - version: "6.5.3"
+        target: desktop
+        arch:
+          linux: gcc_64
+          mac: clang_64
+          windows: win64_msvc2019_64
+        modules: [qtcharts]
+
+    tool:
+      - name: ninja
+        variant:
+          linux: qt.tools.ninja
+          mac: qt.tools.ninja
+          windows: qt.tools.ninja
+
+    src:
+      - version: "6.5.3"
+
+    doc:
+      - version: "6.5.3"
+        modules: [qtcharts]
+
+    example:
+      - version: "6.5.3"
+
+Each ``qt`` entry accepts the same ``target``, ``arch``, and ``modules`` you would pass to
+:ref:`install-qt <qt installation command>`. Each ``tool`` entry accepts the same ``target``
+(defaulting to ``desktop``) and ``variant`` you would pass to
+:ref:`install-tool <tools installation command>`; when ``variant`` is omitted, aqt picks the
+latest variant, same as the CLI. ``src``/``doc``/``example`` entries accept ``version`` and,
+for ``doc``/``example``, ``modules``.
+
+.. option:: --host {linux,linux_arm64,mac,windows,windows_arm64}
+
+    Overrides host-OS resolution for *every* entry in the manifest, instead of auto-detecting
+    the current machine. Useful for staging another platform's binaries on CI, e.g. to warm a
+    cache for a Windows build agent from a Linux one. To install only a subset of a manifest
+    for a different host, point ``--requirements`` at a separate, smaller manifest file
+    instead.
+
+.. _ensure lgpl flag:
+.. option:: --ensure-lgpl
+
+    Checks whether every module in the manifest's ``qt`` entries is LGPL-eligible according to
+    Qt's own published metadata, then **stops without installing anything**, regardless of the
+    result. This is a verification step, not an install modifier: once you have reviewed the
+    report and are satisfied, rerun the same command *without* ``--ensure-lgpl`` to actually
+    install.
+
+    This flag is also available directly on :ref:`install-qt <qt installation command>`, to
+    check a single ad-hoc install the same way.
+
+    Qt's package metadata has no machine-readable license field. In practice, Qt embeds a
+    consistent sentence in the free-text description of GPL-v3-only add-ons ("...available
+    under commercial licenses from The Qt Company, or under GPL v3...."), while LGPL-eligible
+    modules simply have an empty description. aqt sniffs this text live; it does **not**
+    maintain its own list of module licenses, so a module it cannot positively classify as
+    LGPL-eligible is treated as a failure, not assumed safe.
+
+    .. warning::
+
+        ``--ensure-lgpl`` is a best-effort heuristic, **not legal advice**. It cannot detect
+        every commercial-only component, and it cannot verify that *your* use of a module
+        actually complies with LGPL (for example, dynamic-linking/relinking obligations).
+        aqtinstall and its maintainers take no legal responsibility for mistakes this check
+        might make. Always verify licensing yourself before shipping a commercial product.
+
+.. option:: --generate-cmake-presets
+
+    After installing, (re)writes a ``CMakeUserPresets.json`` file *inside the output
+    directory* -- not the project tree -- describing every Qt kit found there (not just the
+    ones from the current manifest). This file is meant to be copied by hand into whichever
+    project needs it. Because nothing else should be writing into an aqt output directory,
+    this file is fully regenerated on every run rather than merged.
+
+    Each installed kit gets one standalone preset named ``qt-<version>-<arch>``
+    (e.g. ``qt-6.5.3-win64_msvc2019_64``), usable directly via ``cmake --preset=<name>`` with
+    no other CMake files required, setting ``CMAKE_PREFIX_PATH`` (and ``CMAKE_TOOLCHAIN_FILE``
+    when Qt ships one, e.g. for Android).
+
+``install`` accepts the same ``--outputdir``/``-O`` option as every other ``install-*``
+command, to choose where the manifest's packages are installed -- there is no separate
+``--install-dir`` flag. When ``--generate-cmake-presets`` is also given, it scans this same
+directory. See `common options`_ for this and the rest of the shared options (``--base``,
+``--timeout``, ``--keep``, ``--dry-run``, etc.).
+
 .. _qt installation command:
 
 install-qt command
@@ -607,6 +732,12 @@ There are various combinations to accept according to Qt version.
     an email and password to authenticate.
 
     See :ref:`the official installer section<official>` for more details.
+
+.. option:: --ensure-lgpl
+
+    Checks the requested ``--modules`` for LGPL-eligibility and stops without installing,
+    regardless of the result. See :ref:`--ensure-lgpl <ensure lgpl flag>` under the
+    `install command`_ for details and the disclaimer.
 
 See `common options`_.
 
