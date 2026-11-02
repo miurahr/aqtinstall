@@ -993,7 +993,7 @@ class Cli:
 
     def _set_list_qt_commercial_parser(self, list_qt_commercial_parser: argparse.ArgumentParser) -> None:
         """Configure parser for list-qt-official command with flexible argument handling."""
-        list_qt_commercial_parser.set_defaults(func=self.run_list_qt_commercial)
+        list_qt_commercial_parser.set_defaults(func=self.run_list_qt_official)
 
         list_qt_commercial_parser.add_argument(
             "--email",
@@ -1008,8 +1008,18 @@ class Cli:
         list_qt_commercial_parser.add_argument(
             "search_term",
             nargs="?",  # Zero or one arguments
-            help="Search term",
+            help="Host OS (windows, windows_arm64, linux, linux_arm64, mac) to list desktop Qt versions "
+            "without an installer, or a package search term to use the official installer.",
         )
+
+    def run_list_qt_official(self, args: ListArgumentParser) -> None:
+        host = args.search_term
+        if host is not None and host in ArchiveId.TARGETS_FOR_HOST and "desktop" in ArchiveId.TARGETS_FOR_HOST[host]:
+            if args.email or args.pw:
+                self.logger.warning("Qt account credentials are not used when listing versions from repository metadata.")
+            show_list(MetadataFactory(archive_id=ArchiveId("qt", host, "desktop")))
+            return
+        self.run_list_qt_commercial(args)
 
     def run_list_qt_commercial(self, args: ListArgumentParser, print_version: Optional[bool] = True) -> None:
         """Execute Qt commercial package listing."""
@@ -1122,7 +1132,7 @@ class Cli:
         )
         make_parser_it(
             "list-qt-official",
-            "Search packages using Qt official installer.",
+            "List desktop Qt versions for a host OS, or search packages using the Qt official installer.",
             self._set_list_qt_commercial_parser,
             argparse.RawTextHelpFormatter,
         )

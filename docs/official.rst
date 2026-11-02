@@ -6,7 +6,9 @@ Official Qt Installer
 .. important::
    * **You can use this for commercial and open-source Qt versions**
    * **You can only install for the OS running the CLI**
-   * **All commands require authentication, even for open-source.** The authentication process:
+   * **Commands using the official installer require authentication, even for open-source.**
+     Listing versions with ``list-qt-official <host>`` does not use the installer or require authentication.
+     The authentication process:
 
      * It first looks into the folder of your OS where the file ``qtaccount.ini`` can be:
 
@@ -50,7 +52,23 @@ Options
 
 ``list-qt-official``
 ---------------------
-Search available Qt packages using the official Qt installer.
+List available open-source desktop Qt versions for a host OS directly from Qt's
+repository metadata, without downloading or running the official installer:
+
+.. code-block:: bash
+
+   aqt list-qt-official windows
+
+Supported hosts are ``windows``, ``windows_arm64``, ``linux``, ``linux_arm64``,
+and ``mac``. The output contains only version numbers, matching
+``aqt list-qt <host> desktop``. This works across host operating systems and
+does not require a Qt account. It does not list commercial-only releases.
+Use ``aqt list-qt <host> <target>`` for non-desktop targets or additional
+version filters.
+
+Other search terms (or no search term) retain package-search behavior using the
+official installer for the current operating system. This mode downloads and
+runs the installer and requires authentication; it does not install Qt packages.
 
 .. code-block:: bash
 
@@ -60,7 +78,7 @@ Options
 ~~~~~~~
 - ``--email <email>`` - Qt account email/username
 - ``--pw <password>`` - Qt account password
-- ``search_term`` - Term to search for in package names
+- ``search_term`` - Host OS to list desktop versions, or a term to search for in package names
 
 Override Mode
 ----------------------
@@ -90,6 +108,9 @@ Examples
 
    # List packages containing 'wasm'
    aqt list-qt-official wasm --email user@example.com --pw pass
+
+   # List Windows desktop Qt versions without downloading an installer
+   aqt list-qt-official windows
 
    # Override mode
    aqt install-qt-official --override install qt.qt6.680.gcc_64 --email user@example.com --pw pass

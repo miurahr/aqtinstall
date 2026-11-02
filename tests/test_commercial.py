@@ -385,3 +385,31 @@ def test_list_qt_commercial_errors(capsys, args, expected_error):
         cli.run(args)
     _, err = capsys.readouterr()
     assert expected_error in err
+
+
+def test_list_qt_official_missing_installer(capsys, monkeypatch, tmp_path):
+    monkeypatch.setattr("aqt.helper.get_default_local_temp_path", lambda: tmp_path)
+    monkeypatch.setattr("aqt.helper.get_os_arch", lambda: "mac-arm64")
+    monkeypatch.setattr("aqt.helper.get_qt_installers", lambda: {})
+
+    assert Cli().run(["list-qt-official", "wasm"]) == 1
+
+    _, err = capsys.readouterr()
+    assert "No Qt installer found for mac-arm64" in err
+    assert "KeyError" not in err
+    assert "PLEASE FILE A BUG REPORT" not in err
+
+
+@pytest.mark.parametrize("search_term", [None, "wasm", r"qt\.qt6\."])
+def test_list_qt_official_package_search(monkeypatch, search_term):
+    calls = []
+
+    def mock_search(self, args):
+        calls.append((args.search_term, args.email, args.pw))
+
+    monkeypatch.setattr(Cli, "run_list_qt_commercial", mock_search)
+    args = ["list-qt-official", "--email", "user@example.com", "--pw", "test-password"]
+    if search_term is not None:
+        args.append(search_term)
+    assert Cli().run(args) == 0
+    assert calls == [(search_term, "user@example.com", "test-password")]

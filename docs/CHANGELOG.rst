@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
 
 Fixed
 -----
+- Make ``list-qt-official <host>`` print desktop Qt versions from repository metadata without downloading an installer.
+- Report official installer discovery failures without a ``KeyError``; add regression coverage for universal macOS installers.
 - fix list-qt-official, install-qt-official on macOS(#1015)
 - fix list-qt-official wrt types (#990)
 - fix IFW repository URLs (#1008)
