@@ -579,3 +579,153 @@ def test_get_module_to_package(target: str, in_file: str, expect_depend: str):
     module_to_package = ModuleToPackage({module: packages})
     assert module_to_package.has_package(target)
     assert module_to_package.has_package(expect_depend)
+
+
+@pytest.mark.parametrize(
+    "qt_version, modules, message",
+    [
+        ("6.11.1", ["qtpdf@6.140.0"], "not supported"),
+        ("6.12.0", ["qtdummyext@6.140.0"], "not supported"),
+        ("6.12.0", ["qtcharts@6.140.0"], "not supported"),
+        ("6.12.0", ["qtpdf@6.140.0", "qtpdf@6.150.0"], "multiple versions"),
+        *[
+            ("6.12.0", [f"qtpdf@{version}"], "Invalid extension version")
+            for version in ["", "6.140", "6.140.0@6.150.0", "7.140.0", "6.140.10", "6.140.0-beta", "6.140.0+build"]
+        ],
+    ],
+)
+def test_extension_request_syntax(monkeypatch, qt_version, modules, message):
+    from aqt.exceptions import CliInputError
+
+    def unexpected_download(*args, **kwargs):
+        pytest.fail("Invalid extension syntax must fail before downloading metadata")
+
+    monkeypatch.setattr(QtArchives, "_download_update_xml", unexpected_download)
+    with pytest.raises(CliInputError, match=message):
+        QtArchives("windows", "desktop", qt_version, "win64_msvc2022_64", Settings.baseurl, modules=modules)
+
+
+@pytest.mark.parametrize(
+    "modules, all_extra, expected, discovery",
+    [
+        (["qtpdf@6.140.0"], False, {"qtpdf": "61400"}, set()),
+        (["qtpdf"], False, {"qtpdf": "61500"}, {"qtpdf"}),
+        (["qtwebengine", "qtpdf@6.140.0"], False, {"qtpdf": "61400", "qtwebengine": "61500"}, {"qtwebengine"}),
+        (["qtpdf", "qtpdf@6.140.0"], False, {"qtpdf": "61400"}, set()),
+        (["qtpdf@6.140.0", "qtpdf@6.140.0"], False, {"qtpdf": "61400"}, set()),
+        (["all"], True, {"qtpdf": "61500", "qtwebengine": "61500"}, {"qtpdf", "qtwebengine"}),
+        (["all", "qtpdf@6.140.0"], True, {"qtpdf": "61400", "qtwebengine": "61500"}, {"qtwebengine"}),
+        ([], False, {}, set()),
+    ],
+)
+def test_install_versioned_extensions(monkeypatch, modules, all_extra, expected, discovery):
+    from aqt.metadata import MetadataFactory
+
+    arch = "win64_msvc2022_64"
+    discovered = []
+    downloads = []
+
+    def fetch_http(self, url, is_check_hash=True):
+        assert self.base_url == "https://example.com/qt"
+        assert not is_check_hash
+        extension = url.split("/")[-3]
+        assert extension in discovery
+        discovered.append(extension)
+        # Numeric ordering must win over lexicographic ordering (6.99.0 vs 6.150.0).
+        return "".join(f'<a href="{v}/">{v}/</a>' for v in ["6990", "61400", "61500", "61500_backup", "71500"])
+
+    def download(self, url, silent=False):
+        downloads.append(url)
+        if "/extensions/" not in url:
+            name = f"qt.qt6.6120.{arch}"
+        else:
+            ext, qt_version, ext_version, ext_arch, filename = url.split("/")[-5:]
+            assert qt_version == "6120"
+            assert ext_version == expected[ext]
+            assert ext_arch == "msvc2022_64"
+            name = f"extensions.{ext}.6120.{ext_version}.{arch}"
+        return f"""<Updates><PackageUpdate>
+          <Name>{name}</Name><Version>6.12.0-123</Version>
+          <Description>Test package</Description><DownloadableArchives>test.7z</DownloadableArchives>
+        </PackageUpdate></Updates>"""
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", fetch_http)
+    monkeypatch.setattr(QtArchives, "_download_update_xml", download)
+    archives = QtArchives(
+        "windows", "desktop", "6.12.0", arch, "https://example.com/qt", modules=modules, all_extra=all_extra
+    ).get_packages()
+    assert set(discovered) == discovery
+    assert len(discovered) == len(discovery)
+    assert len(downloads) == len(expected) + 1
+    assert len(archives) == len(expected) + 1
+    for ext, version in expected.items():
+        package_name = f"extensions.{ext}.6120.{version}.{arch}"
+        package = next(p for p in archives if p.pkg_update_name == package_name)
+        assert package.archive_path == (
+            f"online/qtsdkrepository/windows_x86/extensions/{ext}/6120/{version}/msvc2022_64/"
+            f"{package_name}/6.12.0-123test.7z"
+        )
+
+
+@pytest.mark.parametrize("threshold", [None, Version("6.14.0")])
+@pytest.mark.parametrize("qualified", [False, True])
+def test_install_unversioned_extension(monkeypatch, threshold, qualified):
+    from aqt.exceptions import CliInputError
+    from aqt.metadata import MetadataFactory, QtRepoProperty
+
+    monkeypatch.setattr(QtRepoProperty, "known_extensions", lambda version: {"qtdummyext": threshold})
+
+    def no_discovery(*args, **kwargs):
+        pytest.fail("Unversioned extensions must not trigger version discovery")
+
+    def download(self, url, silent=False):
+        assert not qualified, "Invalid version specifier should fail before downloading metadata"
+        if "/extensions/" not in url:
+            return "<Updates/>"
+        assert url.endswith("/extensions/qtdummyext/6120/msvc2022_64/Updates.xml")
+        return """<Updates><PackageUpdate>
+            <Name>extensions.qtdummyext.6120.win64_msvc2022_64</Name>
+            <Version>6.12.0</Version><DownloadableArchives>dummy.7z</DownloadableArchives>
+        </PackageUpdate></Updates>"""
+
+    monkeypatch.setattr(MetadataFactory, "fetch_extension_versions", no_discovery)
+    monkeypatch.setattr(QtArchives, "_download_update_xml", download)
+    args = ("windows", "desktop", "6.12.0", "win64_msvc2022_64", Settings.baseurl)
+    if qualified:
+        with pytest.raises(CliInputError, match="not supported"):
+            QtArchives(*args, modules=["qtdummyext@6.140.0"], is_include_base_package=False)
+    else:
+        archives = QtArchives(*args, modules=["qtdummyext"], is_include_base_package=False).get_packages()
+        assert len(archives) == 1
+        assert archives[0].pkg_update_name == "extensions.qtdummyext.6120.win64_msvc2022_64"
+
+
+@pytest.mark.parametrize("missing", ["index", "versions", "architecture"])
+@pytest.mark.parametrize("qualified", [False, True])
+def test_missing_extension_version(monkeypatch, missing, qualified):
+    from aqt.exceptions import ArchiveDownloadError
+    from aqt.metadata import MetadataFactory
+
+    def fetch_versions(*args):
+        assert not qualified, "Explicit versions do not require directory discovery"
+        if missing == "index":
+            raise ArchiveDownloadError("Missing directory listing")
+        return {} if missing == "versions" else {Version("6.140.0"): "61400"}
+
+    def download(self, url, silent=False):
+        if "/extensions/" in url:
+            assert "/61400/" in url, "Never fall back to stale unversioned metadata"
+        return "<Updates/>"
+
+    monkeypatch.setattr(MetadataFactory, "fetch_extension_versions", fetch_versions)
+    monkeypatch.setattr(QtArchives, "_download_update_xml", download)
+    with pytest.raises(NoPackageFound, match="qtpdf"):
+        QtArchives(
+            "windows",
+            "desktop",
+            "6.12.0",
+            "win64_msvc2022_64",
+            Settings.baseurl,
+            modules=["qtpdf@6.140.0" if qualified else "qtpdf"],
+            is_include_base_package=False,
+        )

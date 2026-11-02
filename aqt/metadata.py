@@ -53,7 +53,7 @@ from aqt.exceptions import (
     CliInputError,
     EmptyMetadata,
 )
-from aqt.helper import Settings, get_hash, getUrl, xml_to_modules
+from aqt.helper import Settings, effective_package_name, get_hash, getUrl, xml_to_modules
 
 
 class SimpleSpec(SemanticSimpleSpec):
@@ -260,6 +260,7 @@ class ArchiveId:
         "all_os": ["wasm", "qt", "android"],
     }
     EXTENSIONS_REQUIRED_ANDROID_QT6 = {"x86_64", "x86", "armv7", "arm64_v8a"}
+    EXTENSIONS_IOS_QT6_12 = {"device", "simulator_arm64", "simulator_x86_64"}
     EXTENSIONS_WIN_X64_QT6_11 = {"llvm_mingw", "mingw", "msvc2022_64", "msvc2022_arm64_cross_compiled"}
     ALL_EXTENSIONS = {
         "",
@@ -347,6 +348,8 @@ class ArchiveId:
             return f"{folderForVersion}/{folderForVersionAndExtension}"
 
     def all_extensions(self, version: Version) -> List[str]:
+        if self.target == "ios" and version >= Version("6.12.0"):
+            return sorted(ArchiveId.EXTENSIONS_IOS_QT6_12)
         if self.host == "windows" and version >= Version("6.11.0"):
             return list(ArchiveId.EXTENSIONS_WIN_X64_QT6_11)
         if self.target == "desktop" and QtRepoProperty.is_in_wasm_range(self.host, version):
@@ -533,6 +536,10 @@ class QtRepoProperty:
             ext = architecture[len("android_") :]
             if ext in ArchiveId.EXTENSIONS_REQUIRED_ANDROID_QT6:
                 return ext
+        elif architecture.startswith("ios_") and version >= Version("6.12.0"):
+            ext = architecture[len("ios_") :]
+            if ext in ArchiveId.EXTENSIONS_IOS_QT6_12:
+                return ext
         elif architecture.startswith("win64_") and version >= Version("6.11.0"):
             ext = architecture[len("win64_") :]
             if ext in ArchiveId.EXTENSIONS_WIN_X64_QT6_11:
@@ -645,10 +652,11 @@ class QtRepoProperty:
         return version in SimpleSpec(">=6.5.0")
 
     @staticmethod
-    def known_extensions(version: Version) -> List[str]:
+    def known_extensions(version: Version) -> Dict[str, Optional[Version]]:
+        """Map extensions to the first Qt release requiring independent versioning, or None."""
         if version >= Version("6.8.0"):
-            return ["qtpdf", "qtwebengine"]
-        return []
+            return {"qtwebengine": Version("6.12.0"), "qtpdf": Version("6.12.0")}
+        return {}
 
     @staticmethod
     def sde_ext(version: Version) -> str:
@@ -1010,6 +1018,45 @@ class MetadataFactory:
             predicate=predicate if predicate else MetadataFactory._has_nonempty_downloads,
         )
 
+    def fetch_extension_versions(self, version: Version, extension: str) -> Dict[Version, str]:
+        """Map independent extension versions to their repository directory names."""
+        root = posixpath.join(self.archive_id.to_extension_url(), extension, self._get_qt_version_str(version))
+        html = self.fetch_http(root + "/", False)
+        versions: Dict[Version, str] = {}
+        for folder in sorted(set(self.iterate_folders(html, self.base_url))):
+            if re.fullmatch(str(version.major) + r"[0-9]{2,}", folder):
+                version_number = Version(f"{int(folder[0])}.{int(folder[1:-1])}.{int(folder[-1])}")
+                versions[version_number] = folder
+        return versions
+
+    def _fetch_listing_extensions(self, version: Version, arch: str) -> Dict[str, Dict[str, str]]:
+        """Collect unversioned and independently versioned extensions for module listings."""
+        qt_ver_str = self._get_qt_version_str(version)
+        modules: Dict[str, Dict[str, str]] = {}
+        for ext, versioned_since in QtRepoProperty.known_extensions(version).items():
+            folder = self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch)
+            root, arch_folder = folder.rstrip("/").rsplit("/", 1)
+            candidates = []
+            if versioned_since is not None and version >= versioned_since:
+                try:
+                    for ext_version, version_folder in self.fetch_extension_versions(version, ext).items():
+                        candidates.append(
+                            (posixpath.join(root, version_folder, arch_folder), version_folder + ".", f"{ext}@{ext_version}")
+                        )
+                except (ChecksumDownloadFailure, ArchiveDownloadError):
+                    pass
+            else:
+                candidates.append((folder, "", ext))
+            for url, version_segment, name in candidates:
+                try:
+                    metadata = self._fetch_extension_metadata(url)
+                except (ChecksumDownloadFailure, ArchiveDownloadError):
+                    continue
+                package = f"extensions.{ext}.{qt_ver_str}.{version_segment}{arch}"
+                if package in metadata:
+                    modules[name] = metadata[package]
+        return modules
+
     def fetch_modules(self, version: Version, arch: str) -> List[str]:
         """Returns list of modules"""
         extension = QtRepoProperty.extension_for_arch(arch, version)
@@ -1036,20 +1083,7 @@ class MetadataFactory:
             if _arch == arch:
                 modules.add(cast(str, module))
 
-        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
-        for ext in QtRepoProperty.known_extensions(version):
-            try:
-                ext_meta = self._fetch_extension_metadata(
-                    self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch)
-                )
-                for key, value in ext_meta.items():
-                    ext_match = ext_pattern.match(key)
-                    if ext_match is not None:
-                        module = ext_match.group("module")
-                        if module is not None:
-                            modules.add(ext)
-            except (ChecksumDownloadFailure, ArchiveDownloadError):
-                pass
+        modules.update(self._fetch_listing_extensions(version, arch))
         return sorted(modules)
 
     @staticmethod
@@ -1077,7 +1111,7 @@ class MetadataFactory:
         )
 
         def matches_arch(element: Element) -> bool:
-            return bool(pattern.match(MetadataFactory.require_text(element, "Name")))
+            return bool(pattern.match(effective_package_name(MetadataFactory.require_text(element, "Name"))))
 
         modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, extension), matches_arch)
         m: Dict[str, Dict[str, str]] = {}
@@ -1088,22 +1122,7 @@ class MetadataFactory:
                 if module is not None:
                     m[module] = value
 
-        # Examples: extensions.qtwebengine.680.debug_information
-        #           extensions.qtwebengine.680.win64_msvc2022_64
-        ext_pattern = re.compile(r"^extensions\." + r"(?P<module>[^.]+)\." + qt_ver_str + r"\." + arch + r"$")
-        for ext in QtRepoProperty.known_extensions(version):
-            try:
-                ext_meta = self._fetch_extension_metadata(
-                    self.archive_id.to_extension_folder(ext, version, qt_ver_str, arch)
-                )
-                for key, value in ext_meta.items():
-                    ext_match = ext_pattern.match(key)
-                    if ext_match is not None:
-                        module = ext_match.group("module")
-                        if module is not None:
-                            m[module] = value
-            except (ChecksumDownloadFailure, ArchiveDownloadError):
-                pass
+        m.update(self._fetch_listing_extensions(version, arch))
         return ModuleData(m)
 
     def fetch_modules_sde(self, cmd_type: str, version: Version) -> List[str]:
@@ -1140,16 +1159,18 @@ class MetadataFactory:
         nonempty = MetadataFactory._has_nonempty_downloads
 
         def all_modules(element: Element) -> bool:
-            _module, _arch = MetadataFactory.require_text(element, "Name").split(".")[-2:]
+            _module, _arch = effective_package_name(MetadataFactory.require_text(element, "Name")).split(".")[-2:]
             return _arch == arch and _module != qt_version_str and nonempty(element)
 
         def specify_modules(element: Element) -> bool:
-            _module, _arch = MetadataFactory.require_text(element, "Name").split(".")[-2:]
+            _module, _arch = effective_package_name(MetadataFactory.require_text(element, "Name")).split(".")[-2:]
             return _arch == arch and _module in modules and nonempty(element)
 
         def no_modules(element: Element) -> bool:
             name: Optional[str] = getattr(element.find("Name"), "text", None)
-            return name is not None and name.endswith(f".{qt_version_str}.{arch}") and nonempty(element)
+            return (
+                name is not None and effective_package_name(name).endswith(f".{qt_version_str}.{arch}") and nonempty(element)
+            )
 
         predicate = no_modules if not modules else all_modules if "all" in modules else specify_modules
         try:
