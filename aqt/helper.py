@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2019-2021 Hiroshi Miura <miurahr@linux.com>
+# Copyright (C) 2019-2026 Hiroshi Miura <miurahr@linux.com>
+#               2021-2023 David Dalcino
+#               2023 Alberto Mardegan
+#               2025 Alexandre 'Kidev' Poumaroux
+#               2025 Arnaud de Mouhy
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -24,6 +28,7 @@ import logging.config
 import os
 import platform
 import posixpath
+import re
 import secrets
 import shutil
 import subprocess
@@ -107,44 +112,44 @@ def get_qt_installers() -> dict[str, str]:
     try:
         response = requests.get(url, timeout=Settings.response_timeout)
         response.raise_for_status()
-
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        installers = {}
-
-        os_types = ["windows", "linux", "mac"]
-
-        for link in soup.find_all("a"):
-            filename = link.text.strip()
-
-            if "Parent Directory" in filename or not any(ext in filename.lower() for ext in [".exe", ".dmg", ".run"]):
-                continue
-
-            for os_type in os_types:
-                if os_type.lower() in filename.lower():
-                    # Found an OS match, now look for architecture
-                    if "arm64" in filename.lower():
-                        installers[f"{os_type}-arm64"] = filename
-                    elif "x64" in filename.lower():
-                        installers[f"{os_type}-x64"] = filename
-                    elif "universal" in filename.lower():
-                        # Most likely for macOS which was using qt-online-installer-macOS-universal.dmg 25-Mar-2026.
-                        installers[f"{os_type}-arm64"] = filename
-                        installers[f"{os_type}-x64"] = filename
-
-        return installers
-
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+        raise ArchiveConnectionError(f"Failed to fetch Qt installer listing from {url}: {e}") from e
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching installer data: {e}")
-        return {}
-    except Exception as e:
-        print(f"Unexpected error processing installer data: {e}")
-        return {}
+        raise ArchiveDownloadError(f"Failed to fetch Qt installer listing from {url}: {e}") from e
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    installers = {}
+    os_types = ["windows", "linux", "mac"]
+
+    for link in soup.find_all("a"):
+        filename = link.text.strip()
+
+        if "Parent Directory" in filename or not any(ext in filename.lower() for ext in [".exe", ".dmg", ".run"]):
+            continue
+
+        for os_type in os_types:
+            if os_type.lower() in filename.lower():
+                # Found an OS match, now look for architecture
+                if "arm64" in filename.lower():
+                    installers[f"{os_type}-arm64"] = filename
+                elif "x64" in filename.lower():
+                    installers[f"{os_type}-x64"] = filename
+                elif "universal" in filename.lower():
+                    installers[f"{os_type}-arm64"] = filename
+                    installers[f"{os_type}-x64"] = filename
+
+    return installers
 
 
 def get_qt_installer_name() -> str:
     installer_dict = get_qt_installers()
-    return installer_dict[get_os_arch()]
+    osarch = get_os_arch()
+    try:
+        return installer_dict[osarch]
+    except KeyError as e:
+        raise ArchiveListError(
+            f"No Qt installer found for {osarch} at {Settings.baseurl}/official_releases/online_installers/"
+        ) from e
 
 
 def get_qt_installer_path() -> Path:
@@ -398,11 +403,21 @@ def ssplit(data: str) -> Generator[str, None, None]:
         yield element.strip()
 
 
+def effective_package_name(name: str) -> str:
+    """Normalize iOS architecture spellings for matching, never for download URLs."""
+    return re.sub(
+        r"(^|\.)(?:qtfor)?ios\.(device|simulator_arm64|simulator_x86_64)(?=$|\.)",
+        r"\1ios_\2",
+        name,
+    )
+
+
 def xml_to_modules(
     xml_text: str,
     predicate: Callable[[Element], bool],
 ) -> Dict[str, Dict[str, str]]:
-    """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by `Name` attribute.
+    """Converts an XML document to a dict of `PackageUpdate` dicts, indexed by effective package name.
+    The original `Name` field is retained for repository URLs.
     Only report elements that satisfy `predicate(element)`.
     Reports all keys available in the PackageUpdate tag as strings.
 
@@ -417,7 +432,7 @@ def xml_to_modules(
     for packageupdate in parsed_xml.iter("PackageUpdate"):
         if not predicate(packageupdate):
             continue
-        name = packageupdate.find("Name").text
+        name = effective_package_name(packageupdate.find("Name").text)
         packages[name] = {}
         for child in packageupdate:
             if child.tag == "UpdateFile":

@@ -21,6 +21,69 @@ def load_default_settings(use_defaults: bool = True):
         helper.Settings.load_settings()
 
 
+@pytest.mark.parametrize(
+    "osarch, filename",
+    [
+        ("windows-x64", "qt-online-installer-windows-x64-online.exe"),
+        ("windows-arm64", "qt-online-installer-windows-arm64-online.exe"),
+        ("linux-x64", "qt-online-installer-linux-x64-online.run"),
+        ("linux-arm64", "qt-online-installer-linux-arm64-online.run"),
+        ("mac-x64", "qt-online-installer-macOS-x64-online.dmg"),
+        ("mac-arm64", "qt-online-installer-macOS-arm64-online.dmg"),
+        ("mac-x64", "qt-online-installer-macOS-universal.dmg"),
+        ("mac-arm64", "qt-online-installer-macOS-universal.dmg"),
+    ],
+)
+def test_qt_installer_name(monkeypatch, osarch, filename):
+    response = Response()
+    response.status_code = 200
+    response._content = (
+        f'<a href="../">Parent Directory</a><a href="{filename}">{filename}</a><a href="{filename}.mirrorlist">Details</a>'
+    ).encode()
+
+    def mock_get(url, timeout):
+        assert url == f"{Settings.baseurl}/official_releases/online_installers/"
+        assert timeout == Settings.response_timeout
+        return response
+
+    monkeypatch.setattr(requests, "get", mock_get)
+    monkeypatch.setattr(helper, "get_os_arch", lambda: osarch)
+    assert helper.get_qt_installer_name() == filename
+
+
+@pytest.mark.parametrize(
+    "error",
+    [requests.exceptions.ConnectionError("Offline"), requests.exceptions.Timeout("Timed out")],
+)
+def test_qt_installers_connection_error(monkeypatch, error):
+    def mock_get(*args, **kwargs):
+        raise error
+
+    monkeypatch.setattr(requests, "get", mock_get)
+    with pytest.raises(ArchiveConnectionError, match="Failed to fetch Qt installer listing") as exc:
+        helper.get_qt_installer_name()
+    assert exc.value.__cause__ is error
+
+
+def test_qt_installers_http_error(monkeypatch):
+    response = Response()
+    response.status_code = 503
+    monkeypatch.setattr(requests, "get", lambda *args, **kwargs: response)
+    with pytest.raises(ArchiveDownloadError, match="Failed to fetch Qt installer listing"):
+        helper.get_qt_installer_name()
+
+
+@pytest.mark.parametrize("listing", ["", '<a href="windows-x64.exe">windows-x64.exe</a>'])
+def test_qt_installer_missing(monkeypatch, listing):
+    response = Response()
+    response.status_code = 200
+    response._content = listing.encode()
+    monkeypatch.setattr(requests, "get", lambda *args, **kwargs: response)
+    monkeypatch.setattr(helper, "get_os_arch", lambda: "mac-arm64")
+    with pytest.raises(helper.ArchiveListError, match="No Qt installer found for mac-arm64"):
+        helper.get_qt_installer_name()
+
+
 def test_helper_altlink(monkeypatch):
     class Message:
         headers = {"content-type": "text/plain", "length": 300}

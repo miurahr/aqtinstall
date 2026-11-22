@@ -37,7 +37,7 @@ jobs:
           LATEST_TAG=$(git describe --tags --abbrev=0)
           echo "Nearest tag found: $LATEST_TAG"
       - name: Set up Python 3.14🐍
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.14'
       - name: Install build and twine
@@ -67,9 +67,9 @@ jobs:
           path: dist/
       - name: Publish distribution 📦 to Test PyPI
         if: ${{ startsWith(github.event.ref, 'refs/heads/releases') }}
-        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b  # release/v1.14.0
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086  # release/v1.14.3
         with:
           repository-url: https://test.pypi.org/legacy/
       - name: Publish distribution 📦 to PyPI
         if: startsWith(github.event.ref, 'refs/tags')
-        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # release/v1.14.0
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1.14.3

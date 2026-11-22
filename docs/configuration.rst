@@ -22,7 +22,7 @@ A file is like as follows:
     print_stacktrace_on_error: False
     always_keep_archives: False
     archive_download_location: .
-    min_archive_size: 41
+    min_module_size: 41
 
     [requests]
     connection_timeout: 3.5
@@ -166,18 +166,18 @@ trusted_mirrors:
     ``aqtinstall`` uses the SHA-256 algorithm to perform this check.
 
     Alternatively, you can set ``AQT_MIRRORS_TRUSTED_MIRRORS`` as an environment
-    variable, which will override any value in ``settings.iniˇ.
+    variable, which will override any value in ``settings.ini``.
 
 blacklist:
     It is a list of URL where is a problematic mirror site.
-    Some mirror sites ignore a connection from IP addresses out of their preffered one.
+    Some mirror sites ignore a connection from IP addresses outside of their preferred range.
     It will cause connection error or connection timeout.
     There are some known mirror sites in default.
     If you are not happy with the default sites,
     you can override them with custom settings.
 
     Alternatively, you can set ``AQT_MIRRORS_BLACKLIST`` as an environment
-    variable, which will override any value in ``settings.iniˇ.
+    variable, which will override any value in ``settings.ini``.
 
 fallbacks:
     It is a list of URL where is a good for access.
@@ -185,4 +185,4 @@ fallbacks:
     You can find a list of mirrors at: https://download.qt.io/static/mirrorlist/
 
     Alternatively, you can set ``AQT_MIRRORS_FALLBACKS`` as an environment
-    variable, which will override any value in ``settings.iniˇ.
+    variable, which will override any value in ``settings.ini``.

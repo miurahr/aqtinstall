@@ -38,6 +38,43 @@ ModulesQuery = MetadataFactory.ModulesQuery
 Settings.load_settings()
 
 
+@pytest.mark.parametrize("host", ["windows", "windows_arm64", "linux", "linux_arm64", "mac"])
+def test_list_qt_official_versions(monkeypatch, capsys, host):
+    html = (Path(__file__).parent / "data" / "windows-desktop.html").read_text("utf-8")
+
+    def mock_fetch(self, path, is_check_hash=True):
+        assert host in path
+        return html
+
+    def unexpected_installer(*args, **kwargs):
+        pytest.fail("Version listing must not download or run the official installer")
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", mock_fetch)
+    for name in ("get_qt_installer_name", "download_installer", "prepare_installer", "safely_run_save_output"):
+        monkeypatch.setattr(f"aqt.installer.{name}", unexpected_installer)
+
+    cli = Cli()
+    assert cli.run(["list-qt", host, "desktop"]) == 0
+    expected, _ = capsys.readouterr()
+    assert cli.run(["list-qt-official", host]) == 0
+    out, _ = capsys.readouterr()
+
+    assert out == expected
+    assert out.split()
+    assert all(re.fullmatch(r"\d+\.\d+\.\d+", version) for version in out.split())
+
+
+def test_list_qt_official_versions_connection_error(monkeypatch, capsys):
+    def mock_fetch(*args, **kwargs):
+        raise ArchiveConnectionError("Repository unavailable")
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", mock_fetch)
+    assert Cli().run(["list-qt-official", "windows"]) == 1
+    _, err = capsys.readouterr()
+    assert "Repository unavailable" in err
+    assert "PLEASE FILE A BUG REPORT" not in err
+
+
 @pytest.mark.parametrize(
     "arch, version, expect",
     (
@@ -1349,3 +1386,70 @@ def test_find_installed_qt_mingw_dir(expected_result: str, installed_files: List
 
         actual_result = QtRepoProperty.find_installed_desktop_qt_dir(host, base_path, Version(qt_ver))
         assert (actual_result.name if actual_result else None) == expected_result
+
+
+@pytest.mark.parametrize("long_listing", [False, True])
+@pytest.mark.parametrize("qt_version", ["6.8.3", "6.12.0", "6.14.0"])
+@pytest.mark.parametrize("versioned_since", [None, "6.12.0", "6.14.0"])
+@pytest.mark.parametrize("missing", ["none", "unversioned", "index", "versioned"])
+def test_list_versioned_extensions(monkeypatch, long_listing, qt_version, missing, versioned_since):
+    factory = MetadataFactory(ArchiveId("qt", "windows", "desktop"))
+    arch = "win64_msvc2022_64"
+    qt_digits = qt_version.replace(".", "")
+    root = f"online/qtsdkrepository/windows_x86/extensions/qtwebengine/{qt_digits}"
+    threshold = Version(versioned_since) if versioned_since else None
+    is_versioned = threshold is not None and Version(qt_version) >= threshold
+    monkeypatch.setattr(QtRepoProperty, "known_extensions", lambda version: {"qtwebengine": threshold, "qtdummyext": None})
+    monkeypatch.setattr(factory, "_fetch_module_metadata", lambda *args: {})
+    requested = []
+
+    def fetch_http(url, checksum):
+        assert checksum is False
+        assert is_versioned
+        assert url == root + "/"
+        if missing == "index":
+            raise ArchiveDownloadError("No directory listing")
+        assert url == root + "/"
+        folders = ["61400", "61500", "610", "61400", "61", "71400", "61400_backup", "6ab0", "main"]
+        return "".join(f'<a href="{folder}/">{folder}/</a>' for folder in folders)
+
+    def fetch_metadata(url):
+        requested.append(url)
+        if "qtdummyext" in url:
+            assert url.endswith(f"/{qt_digits}/msvc2022_64/")
+            return {f"extensions.qtdummyext.{qt_digits}.{arch}": {}}
+        suffix = url[len(root) :].strip("/")
+        assert suffix in ["msvc2022_64", "61400/msvc2022_64", "61500/msvc2022_64", "610/msvc2022_64"]
+        versioned = "/" in suffix
+        assert versioned == is_versioned
+        if (missing == "unversioned" and not versioned) or (missing == "versioned" and versioned):
+            raise ArchiveDownloadError("No architecture metadata")
+        segment = suffix.split("/")[0] + "." if versioned else ""
+        prefix = f"extensions.qtwebengine.{qt_digits}.{segment}"
+        return {
+            prefix + arch: {"DisplayName": "Qt WebEngine"},
+            prefix + "debug_information." + arch: {},
+            prefix + "win64_msvc2022_arm64_cross_compiled": {},
+        }
+
+    monkeypatch.setattr(factory, "fetch_http", fetch_http)
+    monkeypatch.setattr(factory, "_fetch_extension_metadata", fetch_metadata)
+    expected = {"qtdummyext"}
+    if not is_versioned and missing != "unversioned":
+        expected.add("qtwebengine")
+    if is_versioned and missing not in ("index", "versioned"):
+        expected.update(["qtwebengine@6.1.0", "qtwebengine@6.140.0", "qtwebengine@6.150.0"])
+    if long_listing:
+        result = factory.fetch_long_modules(Version(qt_version), arch).table_data
+        assert set(result) == expected
+        for name in expected - {"qtdummyext"}:
+            assert result[name] == {"DisplayName": "Qt WebEngine"}
+    else:
+        assert factory.fetch_modules(Version(qt_version), arch) == sorted(expected)
+    assert len(requested) == len(set(requested))
+
+
+@pytest.mark.parametrize("qt_version", ["6.7.0", "6.8.0", "6.12.0"])
+def test_known_extensions_versioning(qt_version):
+    expected = {} if qt_version == "6.7.0" else {"qtpdf": Version("6.12.0"), "qtwebengine": Version("6.12.0")}
+    assert QtRepoProperty.known_extensions(Version(qt_version)) == expected

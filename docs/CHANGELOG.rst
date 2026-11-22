@@ -13,6 +13,51 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Fixed
+-----
+- Make ``list-qt-official <host>`` print desktop Qt versions from repository metadata without downloading an installer.
+- Report official installer discovery failures without a ``KeyError``; add regression coverage for universal macOS installers.
+- fix list-qt-official, install-qt-official on macOS(#1015)
+- fix list-qt-official wrt types (#990)
+- fix IFW repository URLs (#1008)
+- redact official-installer credentials in logs (#1026, #1019)
+- fix test_connection (#987)
+- NLUUG mirror URLs (#1006, #1005)
+- Patching for Qt 6.10.1 cross compile (#952)
+- fix qt-official-mac-arm64 installation (#948)
+- fix spec version input for all_os, wasm for Qt 6.8.0+ (#927, #926)
+
+Added
+-----
+- Release binaries for windows-arm64, macos15-arm64 (#931)
+- log commands of safely_run and safely_run_save_output (#1026)
+- Support Qt 6.11+ for Windows X64(#1000)
+- Support environment variable for config (#993)
+
+Changed
+-------
+- Minimum Python 3.10 (#970)
+- Migrate TOX configuration to native toml (#962)
+- Correct a config example and typos in a manual (#1034, #1033)
+- Use Ruff as a linter (#1030)
+- Improve test code (#1017, #1015)
+- Bump py7zr@1.1.3 for security (#1028)
+- Update README badge (#1031)
+- Update CI to run python 3.14, update dependencies, and more (#1013, #1012, #1009, #969, #1010, #972, #973, #968, #961)
+- Update CI/CD Actions to pin hash for safety (#934)
+- Update a continuous delivery code (#1011)
+- Update document build CI config (#991, #1001)
+- Update wasm install test code (#985)
+- Clean dead code (#989)
+- Update test and check code (#988, #966)
+- Skip patching license for Qt 6.7+ (#984)
+- Improve external extractor execution (#979)
+- pyproject.toml license configuration (#971)
+
+Removed
+-------
+- CODE_OF_CONDUCT and its reference (#994, #1014)
+
 `v3.3.0`_ (2, June, 2025)
 =========================
 

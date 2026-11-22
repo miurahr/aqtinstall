@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 #
 # Copyright (C) 2018 Linus Jahn <lnj@kaidan.im>
-# Copyright (C) 2019-2025 Hiroshi Miura <miurahr@linux.com>
-# Copyright (C) 2020, Aurélien Gâteau
+#               2019-2026 Hiroshi Miura <miurahr@linux.com>
+#               2020 Aurélien Gâteau
+#               2023 Alberto Mardegan
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
@@ -81,6 +82,9 @@ try:
     EXT7Z = False
 except ImportError:
     EXT7Z = True
+
+# 7z signature header ("7z\xbc\xaf\x27\x1c")
+SEVENZIP_SIGNATURE = b"7z\xbc\xaf\x27\x1c"
 
 
 class BaseArgumentParser(argparse.ArgumentParser):
@@ -261,6 +265,15 @@ class Cli:
         elif os_name == "mac" and target == "desktop":
             return "clang_64"
         elif os_name == "mac" and target == "ios":
+            try:
+                if Version(qt_version_or_spec) >= Version("6.12.0"):
+                    raise CliInputError(
+                        "Please supply an iOS architecture for Qt 6.12 or newer: "
+                        "ios_device, ios_simulator_arm64, or ios_simulator_x86_64.",
+                        should_show_help=True,
+                    )
+            except ValueError:
+                pass  # Version specs are resolved before choosing the final default.
             return "ios"
         elif target == "android":
             try:
@@ -876,7 +889,7 @@ class Cli:
             nargs="?",
             help="\ntarget linux/desktop: linux_gcc_64, gcc_64, wasm_32"
             "\ntarget mac/desktop:   clang_64, wasm_32"
-            "\ntarget mac/ios:       ios"
+            "\ntarget mac/ios:       ios (<6.12), ios_device, ios_simulator_arm64, ios_simulator_x86_64 (6.12+)"
             "\nwindows/desktop:      win64_msvc2022_64"
             "\n                      win64_msvc2019_64, win32_msvc2019"
             "\n                      win64_msvc2017_64, win32_msvc2017"
@@ -992,7 +1005,7 @@ class Cli:
 
     def _set_list_qt_commercial_parser(self, list_qt_commercial_parser: argparse.ArgumentParser) -> None:
         """Configure parser for list-qt-official command with flexible argument handling."""
-        list_qt_commercial_parser.set_defaults(func=self.run_list_qt_commercial)
+        list_qt_commercial_parser.set_defaults(func=self.run_list_qt_official)
 
         list_qt_commercial_parser.add_argument(
             "--email",
@@ -1007,8 +1020,18 @@ class Cli:
         list_qt_commercial_parser.add_argument(
             "search_term",
             nargs="?",  # Zero or one arguments
-            help="Search term",
+            help="Host OS (windows, windows_arm64, linux, linux_arm64, mac) to list desktop Qt versions "
+            "without an installer, or a package search term to use the official installer.",
         )
+
+    def run_list_qt_official(self, args: ListArgumentParser) -> None:
+        host = args.search_term
+        if host is not None and host in ArchiveId.TARGETS_FOR_HOST and "desktop" in ArchiveId.TARGETS_FOR_HOST[host]:
+            if args.email or args.pw:
+                self.logger.warning("Qt account credentials are not used when listing versions from repository metadata.")
+            show_list(MetadataFactory(archive_id=ArchiveId("qt", host, "desktop")))
+            return
+        self.run_list_qt_commercial(args)
 
     def run_list_qt_commercial(self, args: ListArgumentParser, print_version: Optional[bool] = True) -> None:
         """Execute Qt commercial package listing."""
@@ -1121,7 +1144,7 @@ class Cli:
         )
         make_parser_it(
             "list-qt-official",
-            "Search packages using Qt official installer.",
+            "List desktop Qt versions for a host OS, or search packages using the Qt official installer.",
             self._set_list_qt_commercial_parser,
             argparse.RawTextHelpFormatter,
         )
@@ -1628,6 +1651,22 @@ def init_worker_sh() -> None:
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
+def _is_7zfile(archive: Path) -> bool:
+    """Return True if *archive* starts with the 7z signature header.
+
+    py7zr is optional (an external ``7z`` binary may be used instead), so we
+    cannot rely on ``py7zr.is_7zfile``. Checking the signature explicitly also
+    lets us test for 7z before ``zipfile.is_zipfile``, which can report false
+    positives for some Qt ``.7z`` packages on CPython before 3.14
+    (python/cpython#72680, see #1042).
+    """
+    try:
+        with open(archive, "rb") as fh:
+            return fh.read(len(SEVENZIP_SIGNATURE)) == SEVENZIP_SIGNATURE
+    except OSError:
+        return False
+
+
 def installer(
     qt_package: QtPackage,
     base_dir: str,
@@ -1680,20 +1719,25 @@ def installer(
                 # remove this when the minimum Python version is 3.12
                 logger.warning("Extracting may be unsafe; consider updating Python to 3.11.4 or greater")
                 tar_archive.extractall(path=base_dir)
+    elif _is_7zfile(archive):
+        if command is None:
+            with py7zr.SevenZipFile(archive, "r") as szf:
+                szf.extractall(path=base_dir)
+        else:
+            command_args = [command, "x", "-aoa", "-bd", "-y", "-o{}".format(base_dir), str(archive)]
+            try:
+                proc = subprocess.run(command_args, capture_output=True, check=True, text=True)
+                logger.debug(proc.stdout)
+            except subprocess.CalledProcessError as cpe:
+                msg = "\n".join(filter(None, [f"Extraction error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
+                raise ArchiveExtractionError(msg) from cpe
     elif zipfile.is_zipfile(archive):
         with zipfile.ZipFile(archive) as zip_archive:
             zip_archive.extractall(path=base_dir)
-    elif command is None:
-        with py7zr.SevenZipFile(archive, "r") as szf:
-            szf.extractall(path=base_dir)
     else:
-        command_args = [command, "x", "-aoa", "-bd", "-y", "-o{}".format(base_dir), str(archive)]
-        try:
-            proc = subprocess.run(command_args, capture_output=True, check=True, text=True)
-            logger.debug(proc.stdout)
-        except subprocess.CalledProcessError as cpe:
-            msg = "\n".join(filter(None, [f"Extraction error: {cpe.returncode}", cpe.stdout, cpe.stderr]))
-            raise ArchiveExtractionError(msg) from cpe
+        raise ArchiveExtractionError(
+            f"Unable to extract '{archive.name}': unrecognized archive format (expected tar, 7z or zip)"
+        )
     if not keep:
         os.unlink(archive)
     logger.info("Finished installation of {} in {:.8f}".format(archive.name, time.perf_counter() - start_time))
