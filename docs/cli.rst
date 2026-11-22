@@ -577,6 +577,11 @@ There are various combinations to accept according to Qt version.
 
    * wasm_singlethread or wasm_multithread for wasm
 
+   * ios for iOS before Qt 6.12 (the default for those releases)
+
+   * ios_device, ios_simulator_arm64, or ios_simulator_x86_64 for iOS starting with Qt 6.12.
+     An explicit architecture is required for these releases.
+
     Use the :ref:`List-Qt Command` to list available architectures.
 
 .. option:: --autodesktop
@@ -866,6 +871,18 @@ Example: Installing Android (armv7) Qt 6.4.2:
 .. code-block:: console
 
     aqt install-qt linux android 6.4.2 android_armv7 --autodesktop
+
+
+Example: Select an independently versioned extension for Qt 6.12 or newer:
+
+.. code-block:: console
+
+    aqt install-qt windows desktop 6.12.0 win64_msvc2022_64 -m qtpdf@6.140.0
+    aqt install-qt windows desktop 6.12.0 win64_msvc2022_64 -m qtpdf
+
+The first command selects exactly Qt PDF 6.140.0. The second selects the highest available
+Qt PDF version for Qt 6.12.0. Qt PDF and Qt WebEngine use independent versioning starting with
+Qt 6.12.0; earlier Qt releases accept only the unversioned extension names.
 
 
 Example: Install examples, doc and source:

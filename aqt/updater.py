@@ -308,6 +308,9 @@ class Updater:
             updater = Updater(prefix, logger)
             if target.arch not in [
                 "ios",
+                "ios_device",
+                "ios_simulator_arm64",
+                "ios_simulator_x86_64",
                 "android",
                 "wasm_32",
                 "wasm_singlethread",
