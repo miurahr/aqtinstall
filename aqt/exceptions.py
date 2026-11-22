@@ -91,6 +91,10 @@ class CliInputError(AqtException):
     pass
 
 
+class LgplComplianceError(AqtException):
+    pass
+
+
 class CliKeyboardInterrupt(AqtException):
     pass
 
