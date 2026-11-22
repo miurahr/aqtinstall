@@ -20,7 +20,7 @@ import pytest
 from aqt.archives import QtPackage
 from aqt.exceptions import ArchiveDownloadError, ArchiveExtractionError
 from aqt.helper import Settings
-from aqt.installer import Cli, installer
+from aqt.installer import SEVENZIP_SIGNATURE, Cli, installer
 
 
 class MockMultiprocessingContext:
@@ -1863,8 +1863,8 @@ def test_install_installer_archive_extraction_err(monkeypatch):
     monkeypatch.setattr("aqt.installer.subprocess.run", mock_extractor_that_fails)
 
     with pytest.raises(ArchiveExtractionError) as err, TemporaryDirectory() as temp_dir:
-        with open(Path(temp_dir) / "archive", "w"):
-            pass
+        with open(Path(temp_dir) / "archive", "wb") as f:
+            f.write(SEVENZIP_SIGNATURE)
         installer(
             qt_package=QtPackage(
                 "name",
@@ -2006,3 +2006,56 @@ def test_installer_passes_base_to_metadatafactory(
         sys.stderr.write(err)
 
         assert expect_out.match(err), err
+
+
+def test_is_7zfile_detects_signature_even_if_is_zipfile(tmp_path, monkeypatch):
+    """Qt .7z archives can false-positive zipfile.is_zipfile on CPython < 3.14 (#1042)."""
+    from aqt.installer import _is_7zfile
+
+    archive = tmp_path / "oddly-named.zip"
+    archive.write_bytes(SEVENZIP_SIGNATURE + b"\x00" * 20)
+    monkeypatch.setattr("aqt.installer.zipfile.is_zipfile", lambda p: True)
+    assert _is_7zfile(archive) is True
+
+
+def test_is_7zfile_rejects_real_zip(tmp_path):
+    import zipfile as zf
+
+    from aqt.installer import _is_7zfile
+
+    archive = tmp_path / "payload.zip"
+    with zf.ZipFile(archive, "w") as z:
+        z.writestr("hello.txt", "hi")
+    assert _is_7zfile(archive) is False
+
+
+def test_is_7zfile_missing_file(tmp_path):
+    from aqt.installer import _is_7zfile
+
+    assert _is_7zfile(tmp_path / "does-not-exist.7z") is False
+
+
+def test_install_installer_unrecognized_archive_format(monkeypatch):
+    monkeypatch.setattr("aqt.installer.get_hash", lambda *args, **kwargs: "")
+    monkeypatch.setattr("aqt.installer.downloadBinaryFile", lambda *args: None)
+
+    with pytest.raises(ArchiveExtractionError) as err, TemporaryDirectory() as temp_dir:
+        (Path(temp_dir) / "archive").write_bytes(b"not an archive")
+        installer(
+            qt_package=QtPackage(
+                "name",
+                "base_url",
+                "archive_path",
+                "archive",
+                "archive_install_path",
+                "package_desc",
+                "pkg_update_name",
+            ),
+            base_dir=temp_dir,
+            command=None,
+            queue=MockMultiprocessingManager.Queue(),
+            archive_dest=Path(temp_dir),
+            settings_ini=Settings.configfile,
+            keep=False,
+        )
+    assert "unrecognized archive format" in format(err.value)
