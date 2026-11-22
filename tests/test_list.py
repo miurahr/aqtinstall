@@ -38,6 +38,43 @@ ModulesQuery = MetadataFactory.ModulesQuery
 Settings.load_settings()
 
 
+@pytest.mark.parametrize("host", ["windows", "windows_arm64", "linux", "linux_arm64", "mac"])
+def test_list_qt_official_versions(monkeypatch, capsys, host):
+    html = (Path(__file__).parent / "data" / "windows-desktop.html").read_text("utf-8")
+
+    def mock_fetch(self, path, is_check_hash=True):
+        assert host in path
+        return html
+
+    def unexpected_installer(*args, **kwargs):
+        pytest.fail("Version listing must not download or run the official installer")
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", mock_fetch)
+    for name in ("get_qt_installer_name", "download_installer", "prepare_installer", "safely_run_save_output"):
+        monkeypatch.setattr(f"aqt.installer.{name}", unexpected_installer)
+
+    cli = Cli()
+    assert cli.run(["list-qt", host, "desktop"]) == 0
+    expected, _ = capsys.readouterr()
+    assert cli.run(["list-qt-official", host]) == 0
+    out, _ = capsys.readouterr()
+
+    assert out == expected
+    assert out.split()
+    assert all(re.fullmatch(r"\d+\.\d+\.\d+", version) for version in out.split())
+
+
+def test_list_qt_official_versions_connection_error(monkeypatch, capsys):
+    def mock_fetch(*args, **kwargs):
+        raise ArchiveConnectionError("Repository unavailable")
+
+    monkeypatch.setattr(MetadataFactory, "fetch_http", mock_fetch)
+    assert Cli().run(["list-qt-official", "windows"]) == 1
+    _, err = capsys.readouterr()
+    assert "Repository unavailable" in err
+    assert "PLEASE FILE A BUG REPORT" not in err
+
+
 @pytest.mark.parametrize(
     "arch, version, expect",
     (
