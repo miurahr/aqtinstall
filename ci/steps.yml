@@ -281,13 +281,27 @@ steps:
 # Update the MSVC build step to use the new compiler flags
 - powershell: |
     if ( $env:TOOLCHAIN -eq 'MSVC' ) {
-      # Load modules from cache  
-      $Env:PSModulePath = '$(MODULES_FOLDER)', $Env:PSModulePath -join [System.IO.Path]::PathSeparator
-      Write-Host $Env:PSModulePath
-      Import-Module "Pscx"
-      Import-Module "VSSetup"
-    
-      Import-VisualStudioVars -VisualStudioVersion $(VSVER) -Architecture $(ARCHITECTURE)
+      $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+      if (-not (Test-Path $vswhere)) {
+        throw "vswhere.exe not found: $vswhere"
+      }
+
+      $vsPath = & $vswhere -latest -products '*' -property installationPath
+      if (-not $vsPath) {
+        throw 'Visual Studio installation not found'
+      }
+
+      $devShell = Join-Path $vsPath 'Common7\Tools\Launch-VsDevShell.ps1'
+      if (-not (Test-Path $devShell)) {
+        throw "Launch-VsDevShell.ps1 not found: $devShell"
+      }
+
+      $parts = '$(ARCHITECTURE)' -split '_'
+      $hostArch = $parts[0]
+      # If there is a second part, use it; otherwise, default to the host architecture
+      $targetArch = if ($parts.Count -gt 1) { $parts[1] } else { $parts[0] }
+      & $devShell -Arch $targetArch -HostArch $hostArch -SkipAutomaticLocation
+
       $env:Path += ";$(WIN_QT_BINDIR)"
       qmake $(Build.SourcesDirectory)/ci/helloworld
       jom
