@@ -273,6 +273,15 @@ class Updater:
         self._patch_textfile(target_qt_conf, "HostPrefix=../../", new_hostprefix)
         self._patch_textfile(target_qt_conf, "HostData=target", new_hostdata)
 
+    def patch_cmake_depends(self, base_path: Path, version_dir: str, desktop_arch_dir: str, version: Version):
+        if version >= Version("6.4.0"):
+            qt6dependencies = self.prefix / "lib" / "cmake" / "Qt6" / "Qt6Dependencies.cmake"
+            self.logger.info(f"Patching {qt6dependencies}")
+            patched = (base_path / version_dir / desktop_arch_dir).as_posix()
+
+            for unpatched in ["/home/qt/work/install", "/Users/qt/work/install"]:
+                self._patch_textfile(qt6dependencies, unpatched, patched)
+
     def patch_qdevice_file(self, base_dir: str, qt_version: str, arch_dir: str, os_name: str):
         """Qt 6.4.1+ specific, but it should not hurt anything if `mkspecs/qdevice.pri` does not exist"""
 
@@ -352,6 +361,7 @@ class Updater:
                     desktop_arch_dir = meta.fetch_default_desktop_arch(version, is_msvc="msvc" in target.arch)
 
                 updater.patch_qt_scripts(base_dir, version_dir, target.os_name, desktop_arch_dir, version)
+                updater.patch_cmake_depends(base_path, version_dir, desktop_arch_dir, version)
                 updater.patch_target_qt_conf(base_dir, version_dir, arch_dir, target.os_name, desktop_arch_dir)
                 updater.patch_qdevice_file(base_dir, version_dir, arch_dir, target.os_name)
         except IOError as e:
