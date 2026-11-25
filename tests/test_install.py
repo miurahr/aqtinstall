@@ -1225,7 +1225,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtwebengine...\n"
                 r"Finished installation of "
                 r"qtwebengine-Windows-Windows_11_23H2-MSVC2022-Windows-Windows_11_23H2-X86_64.7z in .*\n"
-                r"INFO    : Patching .*/6.8.1/msvc2022_64/lib/Qt6WebEngineCore.prl\n"
+                r"INFO    : Patching .*[/\\]6.8.1[/\\]msvc2022_64[/\\]lib[/\\]Qt6WebEngineCore.prl\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1441,7 +1441,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtwebengine...\n"
                 r"Finished installation of "
                 r"qtwebengine-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z in .*\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/lib/Qt6WebEngineCore.prl\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]lib[/\\]Qt6WebEngineCore.prl\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
