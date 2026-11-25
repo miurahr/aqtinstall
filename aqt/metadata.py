@@ -46,6 +46,7 @@ from semantic_version import Version as SemanticVersion
 from texttable import Texttable
 
 from aqt.exceptions import (
+    ArchiveChecksumError,
     ArchiveConnectionError,
     ArchiveDownloadError,
     ArchiveListError,
@@ -880,8 +881,9 @@ class MetadataFactory:
             raise CliInputError(e) from e
         return version
 
-    def fetch_http(self, rest_of_url: str, is_check_hash: bool = True) -> str:
-        timeout = (Settings.connection_timeout, Settings.response_timeout)
+    def fetch_http(self, rest_of_url: str, is_check_hash: bool = True, timeout: Optional[Tuple[float, float]] = None) -> str:
+        if timeout is None:
+            timeout = (Settings.connection_timeout, Settings.response_timeout)
         expected_hash = get_hash(rest_of_url, Settings.hash_algorithm, timeout) if is_check_hash else None
         base_urls = self.base_url, random.choice(Settings.fallbacks)
 
@@ -899,6 +901,24 @@ class MetadataFactory:
                         f"Connection to '{base_url}' failed. Retrying with fallback '{base_urls[i + 1]}'."
                     )
         raise err from err
+
+    def fetch_module_repo_folders(
+        self, parent_url: str, main_repo: str, timeout: Optional[Tuple[float, float]] = None
+    ) -> List[str]:
+        """Find the module repositories next to the main repository (Qt >= 6.12.1).
+
+        Qt 6.12.1 moved modules such as qtlocation into folders like ``qt6_6121/qt6_6121_qtlocation``,
+        next to the main repository ``qt6_6121/qt6_6121``.
+        """
+        html = self.fetch_http(parent_url.rstrip("/") + "/", False, timeout)
+        prefix = main_repo + "_"
+        folders = []
+        for folder in sorted(set(self.iterate_folders(html, self.base_url, filter_category=prefix))):
+            module = folder[len(prefix) :]
+            # Makes sure qt6_6121_x86_ can't also match qt6_6121_x86_64_qtlocation.
+            if module.startswith("qt") and "_" not in module:
+                folders.append(folder)
+        return folders
 
     def iterate_folders(self, html_doc: str, html_url: str, *, filter_category: str = "") -> Generator[str, None, None]:
         def link_to_folder(link: bs4.element.Tag) -> str:
@@ -988,7 +1008,13 @@ class MetadataFactory:
         )
         return f"{version.major}{version.minor}{patch}"
 
-    def _fetch_module_metadata(self, folder: str, predicate: Optional[Callable[[Element], bool]] = None):
+    def _fetch_module_metadata(
+        self,
+        folder: str,
+        predicate: Optional[Callable[[Element], bool]] = None,
+        include_module_repos: bool = False,
+    ):
+        module_repo_folders: List[str] = []
         # For IFW, variants live under 'ifw/<variant>'.
         if folder == "tools_ifw":
             html_doc = self.fetch_http(self.archive_id.to_ifw_url(), False)
@@ -997,11 +1023,28 @@ class MetadataFactory:
         else:
             folders = [folder]
             to_url = self.archive_id.to_url
+            parent, main_repo = posixpath.split(folder)
+            if include_module_repos and parent:
+                parent_url = posixpath.join(to_url(), parent)
+                try:
+                    module_repos = self.fetch_module_repo_folders(parent_url, main_repo)
+                except (ArchiveDownloadError, ArchiveConnectionError):
+                    getLogger("aqt.metadata").debug(f"Cannot list {parent_url}, module repositories skipped.")
+                    module_repos = []
+                module_repo_folders = [posixpath.join(parent, module_repo) for module_repo in module_repos]
 
         result: Dict[str, Dict[str, str]] = {}
-        for folder in folders:
+        for folder in folders + module_repo_folders:
             rest_of_url = posixpath.join(to_url(), folder, "Updates.xml")
-            xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
+            try:
+                xml = self.fetch_http(rest_of_url) if not Settings.ignore_hash else self.fetch_http(rest_of_url, False)
+            except ArchiveChecksumError:
+                raise
+            except (ArchiveDownloadError, ArchiveConnectionError):
+                if folder not in module_repo_folders:
+                    raise
+                getLogger("aqt.metadata").debug(f"Cannot download Updates.xml of {folder}")
+                continue
             result.update(
                 xml_to_modules(
                     xml,
@@ -1063,7 +1106,10 @@ class MetadataFactory:
         qt_ver_str = self._get_qt_version_str(version)
         # Example: re.compile(r"^(preview\.)?qt\.(qt5\.)?590\.(.+)$")
         pattern = re.compile(r"^(preview\.)?qt\.(qt" + str(version.major) + r"\.)?" + qt_ver_str + r"\.(.+)$")
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, extension))
+        modules_meta = self._fetch_module_metadata(
+            self.archive_id.to_folder(version, qt_ver_str, extension),
+            include_module_repos=version >= Version("6.12.1"),
+        )
 
         def to_module_arch(name: str) -> Tuple[Optional[str], Optional[str]]:
             _match = pattern.match(name)
@@ -1113,7 +1159,11 @@ class MetadataFactory:
         def matches_arch(element: Element) -> bool:
             return bool(pattern.match(effective_package_name(MetadataFactory.require_text(element, "Name"))))
 
-        modules_meta = self._fetch_module_metadata(self.archive_id.to_folder(version, qt_ver_str, extension), matches_arch)
+        modules_meta = self._fetch_module_metadata(
+            self.archive_id.to_folder(version, qt_ver_str, extension),
+            matches_arch,
+            include_module_repos=version >= Version("6.12.1"),
+        )
         m: Dict[str, Dict[str, str]] = {}
         for key, value in modules_meta.items():
             match = pattern.match(key)
@@ -1175,7 +1225,9 @@ class MetadataFactory:
         predicate = no_modules if not modules else all_modules if "all" in modules else specify_modules
         try:
             mod_metadata = self._fetch_module_metadata(
-                self.archive_id.to_folder(version, qt_version_str, extension), predicate=predicate
+                self.archive_id.to_folder(version, qt_version_str, extension),
+                predicate=predicate,
+                include_module_repos=not is_sde and version >= Version("6.12.1"),
             )
         except (AttributeError, ValueError) as e:
             raise ArchiveListError(f"Downloaded metadata is corrupted. {e}") from e

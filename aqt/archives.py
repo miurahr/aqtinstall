@@ -33,7 +33,15 @@ from xml.etree.ElementTree import Element  # noqa
 
 from defusedxml import ElementTree
 
-from aqt.exceptions import ArchiveDownloadError, ArchiveListError, ChecksumDownloadFailure, CliInputError, NoPackageFound
+from aqt.exceptions import (
+    ArchiveChecksumError,
+    ArchiveConnectionError,
+    ArchiveDownloadError,
+    ArchiveListError,
+    ChecksumDownloadFailure,
+    CliInputError,
+    NoPackageFound,
+)
 from aqt.helper import Settings, effective_package_name, get_hash, getUrl, ssplit
 from aqt.metadata import ArchiveId, MetadataFactory, QtRepoProperty, Version
 
@@ -478,11 +486,46 @@ class QtArchives:
         update_xml_text = self._download_update_xml(update_xml_url)
         update_xmls = [UpdateXmls(os_target_folder, update_xml_text)]
 
+        # Qt 6.12.1+ moves some modules into separate repositories (e.g qtlocation).
+        if self.version >= Version("6.12.1"):
+            update_xmls.extend(self._collect_module_repo_update_xmls(os_segment, name))
+
         # Qt 6.8+ introduces separate extension repositories.
         if self.version >= Version("6.8.0"):
             update_xmls.extend(self._collect_extension_update_xmls(os_segment))
 
         self._parse_update_xmls(update_xmls, self._target_packages())
+
+    def _collect_module_repo_update_xmls(self, os_segment: str, name: str) -> List[UpdateXmls]:
+        """Collect UpdateXmls of the per-module repositories next to the main one (Qt >= 6.12.1).
+
+        Qt 6.12.1 moved modules such as qtlocation into folders like ``qt6_6121/qt6_6121_qtlocation``,
+        next to the main repository ``qt6_6121/qt6_6121``.
+        """
+        parent, main_repo = posixpath.split(name)
+        if not parent:
+            return []
+        parent_folder = self._main_repo_folder(os_segment, parent)
+        metadata = MetadataFactory(ArchiveId("qt", self.os_name, self.target), base_url=self.base)
+        try:
+            module_repos = metadata.fetch_module_repo_folders(parent_folder, main_repo, self.timeout)
+        except (ArchiveDownloadError, ArchiveConnectionError):
+            self.logger.debug("Cannot list %s, so no per-module repositories are used", parent_folder)
+            return []
+        results: List[UpdateXmls] = []
+        for folder in module_repos:
+            module_folder = posixpath.join(parent_folder, folder)
+            try:
+                update_xml_text = self._download_update_xml(posixpath.join(module_folder, "Updates.xml"), True)
+            except ArchiveChecksumError:
+                raise
+            except (ArchiveDownloadError, ArchiveConnectionError):
+                self.logger.debug("Cannot download Updates.xml of %s", folder)
+                continue
+            if update_xml_text:
+                self.logger.info("Found module repository {}".format(folder))
+                results.append(UpdateXmls(module_folder, update_xml_text))
+        return results
 
     def _compute_extension_arch(self, os_segment: str) -> Optional[str]:
         """Normalize the arch segment for extension repositories (Qt >= 6.8).
