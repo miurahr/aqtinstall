@@ -1400,7 +1400,7 @@ def test_list_versioned_extensions(monkeypatch, long_listing, qt_version, missin
     threshold = Version(versioned_since) if versioned_since else None
     is_versioned = threshold is not None and Version(qt_version) >= threshold
     monkeypatch.setattr(QtRepoProperty, "known_extensions", lambda version: {"qtwebengine": threshold, "qtdummyext": None})
-    monkeypatch.setattr(factory, "_fetch_module_metadata", lambda *args: {})
+    monkeypatch.setattr(factory, "_fetch_module_metadata", lambda *args, **kwargs: {})
     requested = []
 
     def fetch_http(url, checksum):
@@ -1453,3 +1453,51 @@ def test_list_versioned_extensions(monkeypatch, long_listing, qt_version, missin
 def test_known_extensions_versioning(qt_version):
     expected = {} if qt_version == "6.7.0" else {"qtpdf": Version("6.12.0"), "qtwebengine": Version("6.12.0")}
     assert QtRepoProperty.known_extensions(Version(qt_version)) == expected
+
+
+def test_fetch_module_repo_folders(monkeypatch):
+    factory = MetadataFactory(ArchiveId("qt", "all_os", "android"))
+    parent = "online/qtsdkrepository/all_os/android/qt6_6121"
+    folders = [
+        "qt6_6121_x86",
+        "qt6_6121_x86_qtlocation",
+        "qt6_6121_x86_qt3d",
+        "qt6_6121_x86_64",
+        "qt6_6121_x86_64_qtlocation",
+        "qt6_6121_arm64_v8a_qtlocation",
+    ]
+
+    def fetch_http(url, checksum, timeout):
+        assert url == parent + "/"
+        assert checksum is False
+        assert timeout == (3, 4)
+        return "".join(f'<a href="{folder}/">{folder}/</a>' for folder in folders)
+
+    monkeypatch.setattr(factory, "fetch_http", fetch_http)
+    assert factory.fetch_module_repo_folders(parent, "qt6_6121_x86", (3, 4)) == [
+        "qt6_6121_x86_qt3d",
+        "qt6_6121_x86_qtlocation",
+    ]
+
+
+@pytest.mark.parametrize("qt_version, listed", [("6.12.0", False), ("6.12.1", True)])
+def test_fetch_modules_includes_module_repos(monkeypatch, qt_version, listed):
+    factory = MetadataFactory(ArchiveId("qt", "linux", "desktop"))
+    digits = qt_version.replace(".", "")
+    root = f"online/qtsdkrepository/linux_x64/desktop/qt6_{digits}"
+    xml_by_url = {
+        f"{root}/qt6_{digits}/Updates.xml": f"qt.qt6.{digits}.addons.qtpositioning.linux_gcc_64",
+        f"{root}/qt6_{digits}_qtlocation/Updates.xml": f"qt.qt6.{digits}.addons.qtlocation.linux_gcc_64",
+    }
+
+    def fetch_http(url, checksum=True, timeout=None):
+        if url == root + "/":
+            assert listed
+            return f'<a href="qt6_{digits}/">x</a><a href="qt6_{digits}_qtlocation/">x</a>'
+        return xml_by_url[url]
+
+    monkeypatch.setattr(factory, "fetch_http", fetch_http)
+    monkeypatch.setattr("aqt.metadata.xml_to_modules", lambda xml, predicate: {xml: {}})
+    monkeypatch.setattr(factory, "_fetch_listing_extensions", lambda version, arch: {})
+    expected = ["qtlocation", "qtpositioning"] if listed else ["qtpositioning"]
+    assert factory.fetch_modules(Version(qt_version), "linux_gcc_64") == expected
