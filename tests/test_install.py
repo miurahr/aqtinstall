@@ -943,7 +943,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"Finished installation of qtbase-MacOS-MacOS_12-Clang-Android-Android_ANY-ARM64\.7z in .*\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qtpaths\n"
-                r"INFO    : Patching .*6\.4\.1/android_arm64_v8a/lib/cmake/Qt6/Qt6Dependencies\.cmake\n"
+                r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]lib[/\\]cmake[/\\]Qt6[/\\]Qt6Dependencies\.cmake\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -1380,12 +1380,12 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtwebengine...\n"
                 r"Finished installation of "
                 r"qtwebengine-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z in .*\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qmake.bat\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qtpaths.bat\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qmake6.bat\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qtpaths6.bat\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/lib/cmake/Qt6/Qt6Dependencies.cmake\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/target_qt.conf\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]qmake.bat\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]qtpaths.bat\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]qmake6.bat\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]qtpaths6.bat\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]lib[/\\]cmake[/\\]Qt6[/\\]Qt6Dependencies.cmake\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1523,7 +1523,11 @@ def test_install(
                     if file_path.name == "qmake":
                         assert os.access(file_path, os.X_OK), "qmake file must be executable"
 
-                    expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
+                    if file_path.name == "Qt6Dependencies.cmake":
+                        expect_content = patched_file.expected_content(base_dir=Path(output_dir).as_posix(), sep="/")
+                    else:
+                        expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
+
                     actual_content = file_path.read_text(encoding="utf_8")
                     assert actual_content == expect_content
 
