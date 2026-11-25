@@ -835,9 +835,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                             ),
                             PatchedFile(
                                 filename="lib/cmake/Qt6/Qt6Dependencies.cmake",
-                                unpatched_content="... blah blah blah ...\n"
-                                "/Users/qt/work/install\n"
-                                "... blah blah blah ...\n",
+                                unpatched_content="... blah blah blah ...\n/Users/qt/work/install\n... blah blah blah ...\n",
                                 patched_content="... blah blah blah ...\n"
                                 "{base_dir}/6.5.2/msvc2019_64\n"
                                 "... blah blah blah ...\n",
@@ -1340,9 +1338,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                             ),
                             PatchedFile(
                                 filename="lib/cmake/Qt6/Qt6Dependencies.cmake",
-                                unpatched_content="... blah blah blah ...\n"
-                                "/Users/qt/work/install\n"
-                                "... blah blah blah ...\n",
+                                unpatched_content="... blah blah blah ...\n/Users/qt/work/install\n... blah blah blah ...\n",
                                 patched_content="... blah blah blah ...\n"
                                 "{base_dir}/6.10.0/msvc2022_64\n"
                                 "... blah blah blah ...\n",
