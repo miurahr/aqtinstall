@@ -311,6 +311,7 @@ class Updater:
         os_name = target.os_name
         version_dir = dir_for_version(version)
         arch_dir = QtRepoProperty.get_arch_dir_name(os_name, arch, version)
+        base_path = base_path.absolute()
         base_dir = str(base_path)
         try:
             prefix = base_path / version_dir / arch_dir
