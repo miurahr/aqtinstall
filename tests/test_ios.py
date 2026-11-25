@@ -119,7 +119,7 @@ def test_ios_install_package_selection(ios_repository, mode):
 @pytest.mark.parametrize("arch", ["ios_device", "ios_simulator_arm64", "ios_simulator_x86_64"])
 def test_ios_mobile_patching(monkeypatch, tmp_path, arch):
     calls = []
-    for method in ("patch_qt_scripts", "patch_target_qt_conf", "patch_qdevice_file"):
+    for method in ("patch_qt_scripts", "patch_cmake_depends", "patch_target_qt_conf", "patch_qdevice_file"):
         monkeypatch.setattr(Updater, method, lambda self, *args, method=method: calls.append(method))
 
     def unexpected(*args):
@@ -127,7 +127,7 @@ def test_ios_mobile_patching(monkeypatch, tmp_path, arch):
 
     monkeypatch.setattr(Updater, "make_qtconf", unexpected)
     Updater.update(TargetConfig("6.12.0", "ios", arch, "mac"), tmp_path, "macos")
-    assert calls == ["patch_qt_scripts", "patch_target_qt_conf", "patch_qdevice_file"]
+    assert calls == ["patch_qt_scripts", "patch_cmake_depends", "patch_target_qt_conf", "patch_qdevice_file"]
 
 
 @pytest.mark.parametrize(
