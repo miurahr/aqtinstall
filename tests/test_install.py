@@ -833,6 +833,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "{base_dir}\\6.5.2\\msvc2019_64\\bin\n"
                                 "... blah blah blah ...\n",
                             ),
+                            PatchedFile(
+                                filename="lib/cmake/Qt6/Qt6Dependencies.cmake",
+                                unpatched_content="... blah blah blah ...\n/Users/qt/work/install\n... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.5.2/msvc2019_64\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
                 ],
@@ -843,7 +850,8 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : You are installing the MSVC Arm64 version of Qt\n"
                 r"INFO    : Downloading qtbase...\n"
                 r"(?:.*\n)*?"
-                r"(INFO    : Patching .*?[/\\]6\.5\.2[/\\]msvc2019_arm64[/\\]bin[/\\](?:qmake|qtpaths)(?:6)?\.bat\n)*"
+                r"(INFO    : Patching .*?[/\\]6\.5\.2[/\\]msvc2019_arm64[/\\]"
+                r"(?:bin[/\\](?:qmake|qtpaths)(?:6)?\.bat|lib[/\\]cmake[/\\]Qt6[/\\]Qt6Dependencies\.cmake)\n)*"
                 r"INFO    : \n"
                 r"INFO    : Autodesktop will now install windows desktop 6\.5\.2 "
                 r"win64_msvc2019_64 as required by MSVC Arm64\n"
@@ -911,6 +919,17 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "{base_dir}/6.4.1/gcc_64/bin\n"
                                 "... blah blah blah ...\n",
                             ),
+                            PatchedFile(
+                                filename="lib/cmake/Qt6/Qt6Dependencies.cmake",
+                                unpatched_content="... blah blah blah ...\n"
+                                "/home/qt/work/install\n"
+                                "/Users/qt/work/install\n"
+                                "... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.4.1/gcc_64\n"
+                                "{base_dir}/6.4.1/gcc_64\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
                 ]
@@ -924,6 +943,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"Finished installation of qtbase-MacOS-MacOS_12-Clang-Android-Android_ANY-ARM64\.7z in .*\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qmake\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]qtpaths\n"
+                r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]lib[/\\]cmake[/\\]Qt6[/\\]Qt6Dependencies\.cmake\n"
                 r"INFO    : Patching .*6\.4\.1[/\\]android_arm64_v8a[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
@@ -1205,7 +1225,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtwebengine...\n"
                 r"Finished installation of "
                 r"qtwebengine-Windows-Windows_11_23H2-MSVC2022-Windows-Windows_11_23H2-X86_64.7z in .*\n"
-                r"INFO    : Patching .*/6.8.1/msvc2022_64/lib/Qt6WebEngineCore.prl\n"
+                r"INFO    : Patching .*[/\\]6.8.1[/\\]msvc2022_64[/\\]lib[/\\]Qt6WebEngineCore.prl\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1316,6 +1336,13 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                                 "HostPrefix=../../msvc2022_64\n"
                                 "... blah blah blah ...\n",
                             ),
+                            PatchedFile(
+                                filename="lib/cmake/Qt6/Qt6Dependencies.cmake",
+                                unpatched_content="... blah blah blah ...\n/Users/qt/work/install\n... blah blah blah ...\n",
+                                patched_content="... blah blah blah ...\n"
+                                "{base_dir}/6.10.0/msvc2022_64\n"
+                                "... blah blah blah ...\n",
+                            ),
                         ),
                     ),
                 ],
@@ -1353,11 +1380,12 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtwebengine...\n"
                 r"Finished installation of "
                 r"qtwebengine-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z in .*\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qmake.bat\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qtpaths.bat\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qmake6.bat\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/qtpaths6.bat\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/bin/target_qt.conf\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]qmake.bat\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]qtpaths.bat\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]qmake6.bat\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]qtpaths6.bat\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]lib[/\\]cmake[/\\]Qt6[/\\]Qt6Dependencies.cmake\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]bin[/\\]target_qt.conf\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1413,7 +1441,7 @@ def tool_archive(host: str, tool_name: str, variant: str, date: datetime = datet
                 r"INFO    : Downloading qtwebengine...\n"
                 r"Finished installation of "
                 r"qtwebengine-Windows-Windows_11_24H2-MSVC2022-Windows-Windows_11_24H2-ARM64.7z in .*\n"
-                r"INFO    : Patching .*/6.10.0/msvc2022_arm64/lib/Qt6WebEngineCore.prl\n"
+                r"INFO    : Patching .*[/\\]6.10.0[/\\]msvc2022_arm64[/\\]lib[/\\]Qt6WebEngineCore.prl\n"
                 r"INFO    : Finished installation\n"
                 r"INFO    : Time elapsed: .* second"
             ),
@@ -1495,7 +1523,11 @@ def test_install(
                     if file_path.name == "qmake":
                         assert os.access(file_path, os.X_OK), "qmake file must be executable"
 
-                    expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
+                    if file_path.name == "Qt6Dependencies.cmake":
+                        expect_content = patched_file.expected_content(base_dir=Path(output_dir).as_posix(), sep="/")
+                    else:
+                        expect_content = patched_file.expected_content(base_dir=output_dir, sep=os.sep)
+
                     actual_content = file_path.read_text(encoding="utf_8")
                     assert actual_content == expect_content
 
@@ -1581,6 +1613,7 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, tmp_path, version, st
                             f"{prefix}bin/qmake6{extension}": f"echo Mock qmake6{extension}\n",
                             f"{prefix}bin/qtpaths{extension}": f"echo Mock qtpaths{extension}\n",
                             f"{prefix}bin/qtpaths6{extension}": f"echo Mock qtpaths6{extension}\n",
+                            f"{prefix}lib/cmake/Qt6/Qt6Dependencies.cmake": "echo Mock Qt6Dependencies.cmake\n",
                         }
                     )
                 else:
@@ -1638,8 +1671,9 @@ def test_install_qt6_wasm_autodesktop(monkeypatch, capsys, tmp_path, version, st
         r"(?:INFO    : Found extension .*?\n)*"
         r"(?:INFO    : Downloading qt[^\n]*\n"
         r"Finished installation of .*?\.7z in \d+\.\d+\n)*"
-        rf"(?:INFO    : Patching .*[/\\]{re.escape(version)}[/\\]wasm_singlethread[/\\]bin[/\\]"
-        r"(?:qmake(?:6)?(?:\.bat)?|qtpaths(?:6)?(?:\.bat)?|target_qt\.conf)\n)*"
+        rf"(?:INFO    : Patching .*[/\\]{re.escape(version)}[/\\]wasm_singlethread[/\\]"
+        r"(?:bin[/\\](?:qmake(?:6)?(?:\.bat)?|qtpaths(?:6)?(?:\.bat)?|target_qt\.conf)|"
+        r"lib[/\\]cmake[/\\]Qt6[/\\]Qt6Dependencies\.cmake)\n)*"
         r"INFO    : \n"
         rf"INFO    : Autodesktop will now install (?:linux|mac|windows) desktop {re.escape(version)} {platform_arch}"
         r" as required by Qt6-WASM\n"
